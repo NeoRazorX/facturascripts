@@ -29,6 +29,11 @@
         <type>integer</type>
     </column>
     <column>
+        <name>pagado</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>plazovencimiento</name>
         <type>integer</type>
     </column>

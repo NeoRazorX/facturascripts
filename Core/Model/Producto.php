@@ -304,7 +304,7 @@ class Producto extends Base\ModelClass
         $this->observaciones = Utils::noHtml($this->observaciones);
         $this->referencia = Utils::noHtml($this->referencia);
         if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']));
             return false;
         }
 

@@ -83,7 +83,7 @@ class WebRender
         }
 
         $this->i18n = new Translator();
-        $path = FS_DEBUG ? FS_FOLDER . '/Core/View' : FS_FOLDER . '/Dinamic/View';
+        $path = FS_DEBUG ? \FS_FOLDER . '/Core/View' : \FS_FOLDER . '/Dinamic/View';
         $this->loader = new FilesystemLoader($path);
         $this->miniLog = new MiniLog();
         $this->pluginManager = new PluginManager();
@@ -100,7 +100,7 @@ class WebRender
 
         /// asset functions
         $assetFunction = new TwigFunction('asset', function ($string) {
-            $path = FS_ROUTE . '/';
+            $path = \FS_ROUTE . '/';
             if (substr($string, 0, strlen($path)) == $path) {
                 return $string;
             }
@@ -126,10 +126,10 @@ class WebRender
     public function loadPluginFolders()
     {
         /// Core namespace
-        $this->loader->addPath(FS_FOLDER . '/Core/View', 'Core');
+        $this->loader->addPath(\FS_FOLDER . '/Core/View', 'Core');
 
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-            $pluginPath = FS_FOLDER . '/Plugins/' . $pluginName . '/View';
+            $pluginPath = \FS_FOLDER . '/Plugins/' . $pluginName . '/View';
             if (!file_exists($pluginPath)) {
                 continue;
             }

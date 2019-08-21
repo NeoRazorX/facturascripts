@@ -30,7 +30,7 @@ class AssetManager
      *
      * @var array
      */
-    private static $list;
+    protected static $list;
 
     /**
      * Adds and asset to the list.
@@ -44,14 +44,14 @@ class AssetManager
         static::init();
 
         /// avoid duplicates
-        foreach (self::$list[$type] as $item) {
+        foreach (static::$list[$type] as $item) {
             if ($item['asset'] == $asset) {
                 return;
             }
         }
 
         /// insert
-        self::$list[$type][] = [
+        static::$list[$type][] = [
             'asset' => $asset,
             'priority' => $priority,
         ];
@@ -62,7 +62,7 @@ class AssetManager
      */
     public static function clear()
     {
-        self::$list = [
+        static::$list = [
             'css' => [],
             'js' => [],
         ];
@@ -80,12 +80,12 @@ class AssetManager
         $txt = '';
         foreach (static::get($type) as $file) {
             $filePath = $file;
-            if (FS_ROUTE == substr($file, 0, strlen(FS_ROUTE))) {
-                $filePath = substr($file, strlen(FS_ROUTE) + 1);
+            if (\FS_ROUTE == substr($file, 0, strlen(\FS_ROUTE))) {
+                $filePath = substr($file, strlen(\FS_ROUTE) + 1);
             }
 
-            $content = file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . $filePath) . "\n";
-            $txt .= static::fixCombineContent($content, FS_ROUTE . DIRECTORY_SEPARATOR . $filePath);
+            $content = file_get_contents(\FS_FOLDER . DIRECTORY_SEPARATOR . $filePath) . "\n";
+            $txt .= static::fixCombineContent($content, \FS_ROUTE . DIRECTORY_SEPARATOR . $filePath);
         }
 
         return $txt;
@@ -103,7 +103,7 @@ class AssetManager
         static::init();
 
         /// sort by priority
-        uasort(self::$list[$type], function ($item1, $item2) {
+        uasort(static::$list[$type], function ($item1, $item2) {
             if ($item1['priority'] > $item2['priority']) {
                 return -1;
             } elseif ($item1['priority'] < $item2['priority']) {
@@ -115,7 +115,7 @@ class AssetManager
 
         /// extract assets
         $assets = [];
-        foreach (self::$list[$type] as $item) {
+        foreach (static::$list[$type] as $item) {
             $assets[] = $item['asset'];
         }
         return $assets;
@@ -132,14 +132,14 @@ class AssetManager
 
         /// find js file with $name name
         $jsFile = $base . 'JS' . DIRECTORY_SEPARATOR . $name . '.js';
-        if (file_exists(FS_FOLDER . $jsFile)) {
-            self::add('js', FS_ROUTE . $jsFile, 0);
+        if (file_exists(\FS_FOLDER . $jsFile)) {
+            static::add('js', \FS_ROUTE . $jsFile, 0);
         }
 
         /// find css file with $name name
         $cssFile = $base . 'CSS' . DIRECTORY_SEPARATOR . $name . '.css';
-        if (file_exists(FS_FOLDER . $cssFile)) {
-            self::add('css', FS_ROUTE . $cssFile, 0);
+        if (file_exists(\FS_FOLDER . $cssFile)) {
+            static::add('css', \FS_ROUTE . $cssFile, 0);
         }
     }
 
@@ -169,9 +169,9 @@ class AssetManager
 
         // Replace relative paths in url()
         $replace = [
-            'url("' => 'url("' . self::dirname($url) . '/',
-            'url(../' => "url(" . self::dirname($url, 2) . '/',
-            "url('../" => "url('" . self::dirname($url, 2) . '/',
+            'url("' => 'url("' . static::dirname($url) . '/',
+            'url(../' => "url(" . static::dirname($url, 2) . '/',
+            "url('../" => "url('" . static::dirname($url, 2) . '/',
         ];
         $buffer = str_replace(array_keys($replace), $replace, $buffer);
 
@@ -190,7 +190,7 @@ class AssetManager
 
     protected static function init()
     {
-        if (!isset(self::$list)) {
+        if (!isset(static::$list)) {
             static::clear();
         }
     }

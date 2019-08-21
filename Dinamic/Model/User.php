@@ -2,9 +2,8 @@
 
 /**
  * Class created by Core/Base/PluginManager
- * @package FacturaScripts\Dinamic\Model
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author FacturaScripts <carlos@facturascripts.com>
  */
-class User extends \FacturaScripts\Plugins\presencecontrol\Model\User
+class User extends \FacturaScripts\Core\Model\User
 {
 }

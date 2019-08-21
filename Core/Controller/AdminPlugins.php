@@ -47,7 +47,7 @@ class AdminPlugins extends Base\Controller
     public function getAllPlugins()
     {
         $downloadTools = new Base\DownloadTools();
-        $json = json_decode($downloadTools->getContents(self::PLUGIN_LIST_URL), true);
+        $json = json_decode($downloadTools->getContents(self::PLUGIN_LIST_URL, 3), true);
         if (empty($json)) {
             return [];
         }
@@ -107,7 +107,7 @@ class AdminPlugins extends Base\Controller
         }
 
         /// exclude hidden plugins
-        $hiddenPlugins = \explode(',', FS_HIDDEN_PLUGINS);
+        $hiddenPlugins = \explode(',', \FS_HIDDEN_PLUGINS);
         foreach ($installedPlugins as $key => $plugin) {
             if (\in_array($plugin['name'], $hiddenPlugins, false)) {
                 unset($installedPlugins[$key]);
@@ -142,7 +142,7 @@ class AdminPlugins extends Base\Controller
     private function disablePlugin($pluginName)
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return false;
         }
 
@@ -160,7 +160,7 @@ class AdminPlugins extends Base\Controller
     private function enablePlugin($pluginName)
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return false;
         }
 
@@ -210,7 +210,7 @@ class AdminPlugins extends Base\Controller
     private function removePlugin($pluginName)
     {
         if (!$this->permissions->allowDelete) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-delete'));
             return false;
         }
 
@@ -238,6 +238,11 @@ class AdminPlugins extends Base\Controller
 
             $this->pluginManager->install($uploadFile->getPathname(), $uploadFile->getClientOriginalName());
             unlink($uploadFile->getPathname());
+        }
+
+        if ($this->pluginManager->deploymentRequired()) {
+            $this->miniLog->notice($this->i18n->trans('reloading'));
+            $this->redirect($this->url(), 3);
         }
     }
 }

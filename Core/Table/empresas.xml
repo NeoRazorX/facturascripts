@@ -40,7 +40,7 @@
     </column>
     <column>
         <name>fax</name>
-        <type>character varying(20)</type>
+        <type>character varying(30)</type>
     </column>
     <column>
         <name>fechaalta</name>
@@ -50,7 +50,6 @@
         <name>idempresa</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('empresas_idempresa_seq'::regclass)</default>
     </column>
     <column>
         <name>idlogo</name>

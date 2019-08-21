@@ -22,8 +22,9 @@ use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Lib\ExtendedController;
-use FacturaScripts\Dinamic\Lib\EmailTools;
+use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
  * Controller to edit main settings
@@ -59,7 +60,7 @@ class EditSettings extends ExtendedController\PanelController
     private function allSettingsXMLViews()
     {
         $names = [];
-        foreach (FileManager::scanFolder(FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
+        foreach (FileManager::scanFolder(\FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
             if (0 === strpos($fileName, self::KEY_SETTINGS)) {
                 $names[] = substr($fileName, 0, -4);
             }
@@ -133,6 +134,31 @@ class EditSettings extends ExtendedController\PanelController
     }
 
     /**
+     * 
+     * @return bool
+     */
+    protected function checkTax()
+    {
+        $appSettings = new AppSettings();
+        $appSettings->reload();
+
+        /// find current default tax
+        $taxModel = new Impuesto();
+        $codimpuesto = $appSettings->get('default', 'codimpuesto');
+        if ($taxModel->loadFromCode($codimpuesto)) {
+            return true;
+        }
+
+        foreach ($taxModel->all() as $tax) {
+            $appSettings->set('default', 'codimpuesto', $tax->codimpuesto);
+            $appSettings->save();
+            break;
+        }
+
+        return false;
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
@@ -172,6 +198,7 @@ class EditSettings extends ExtendedController\PanelController
         /// check warehouse-company and payment-method-company relations
         $this->checkPaymentMethod();
         $this->checkWarehouse();
+        $this->checkTax();
         return true;
     }
 
@@ -187,9 +214,9 @@ class EditSettings extends ExtendedController\PanelController
                 break;
 
             case 'testmail':
-                $emailTools = new EmailTools();
-                if ($this->editAction() && $emailTools->test()) {
-                    $this->miniLog->info($this->i18n->trans('mail-test-ok'));
+                $email = new NewMail();
+                if ($this->editAction() && $email->test()) {
+                    $this->miniLog->notice($this->i18n->trans('mail-test-ok'));
                 } else {
                     $this->miniLog->error($this->i18n->trans('mail-test-error'));
                 }

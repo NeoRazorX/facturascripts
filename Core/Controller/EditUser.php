@@ -84,7 +84,7 @@ class EditUser extends EditController
         if ($result && $this->views['EditUser']->model->nick === $this->user->nick) {
             $this->i18n->setLangCode($this->views['EditUser']->model->langcode);
 
-            $expire = time() + FS_COOKIES_EXPIRE;
+            $expire = time() + \FS_COOKIES_EXPIRE;
             $this->response->headers->setCookie(new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire));
         }
 
@@ -136,7 +136,7 @@ class EditUser extends EditController
             case 'EditRoleUser':
                 $nick = $this->getViewModelValue('EditUser', 'nick');
                 $where = [new DataBaseWhere('nick', $nick)];
-                $view->loadData('', $where, ['id' => 'DESC'], 0, 0);
+                $view->loadData('', $where, ['id' => 'DESC']);
                 break;
 
             case 'EditUser':

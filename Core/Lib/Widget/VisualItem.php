@@ -106,6 +106,14 @@ class VisualItem
             case 'dark':
             case 'info':
             case 'light':
+            case 'outline-danger':
+            case 'outline-dark':
+            case 'outline-info':
+            case 'outline-light':
+            case 'outline-primary':
+            case 'outline-secondary':
+            case 'outline-success':
+            case 'outline-warning':
             case 'primary':
             case 'secondary':
             case 'success':

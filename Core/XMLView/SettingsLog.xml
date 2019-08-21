@@ -25,26 +25,17 @@
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
-            <column name="type-info" numcolumns="3" order="100">
-                <widget type="checkbox" fieldname="info"/>
-            </column>
-            <column name="type-notice" numcolumns="3" order="110">
+            <column name="type-notice" numcolumns="3" order="100">
                 <widget type="checkbox" fieldname="notice"/>
             </column>
-            <column name="type-warning" numcolumns="3" order="120">
+            <column name="type-warning" numcolumns="3" order="110">
                 <widget type="checkbox" fieldname="warning"/>
             </column>
-            <column name="type-error" numcolumns="3" order="130">
+            <column name="type-error" numcolumns="3" order="120">
                 <widget type="checkbox" fieldname="error"/>
             </column>
-            <column name="type-critical" numcolumns="3" order="140">
+            <column name="type-critical" numcolumns="3" order="130">
                 <widget type="checkbox" fieldname="critical"/>
-            </column>
-            <column name="type-alert" numcolumns="3" order="150">
-                <widget type="checkbox" fieldname="alert"/>
-            </column>
-            <column name="type-emergency" numcolumns="3" order="160">
-                <widget type="checkbox" fieldname="emergency"/>
             </column>
         </group>
     </columns>

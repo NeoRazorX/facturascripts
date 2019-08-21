@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,9 +23,7 @@ use FacturaScripts\Core\Base\Cache\FileCache;
 use FacturaScripts\Core\Base\Cache\MemcacheAdapter;
 
 /**
- * Class Cache
- *
- * @package FacturaScripts\Core\Base
+ * Cache management class.
  */
 class Cache
 {
@@ -45,7 +43,7 @@ class Cache
         if (self::$engine === null) {
             if (extension_loaded('apc') && ini_get('apc.enabled') && ini_get('apc.enable_cli')) {
                 self::$engine = new APCAdapter();
-            } elseif (FS_CACHE_HOST !== '' && \class_exists('Memcache')) {
+            } elseif (\FS_CACHE_HOST !== '' && \class_exists('Memcache')) {
                 $this->loadMemcache();
             }
 

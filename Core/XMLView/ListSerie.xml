@@ -33,7 +33,7 @@
             </widget>
         </column>
         <column name="channel" order="130">
-            <widget type="number" fieldname="canal" min="0"/>
+            <widget type="number" fieldname="canal" decimal="0" min="0"/>
         </column>
         <column name="without-taxation" display="center" order="140">
             <widget type="checkbox" fieldname="siniva" />

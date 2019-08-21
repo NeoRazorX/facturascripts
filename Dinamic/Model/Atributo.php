@@ -2,9 +2,8 @@
 
 /**
  * Class created by Core/Base/PluginManager
- * @package FacturaScripts\Dinamic\Model
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Atributo extends \FacturaScripts\Plugins\atecresacorefs\Model\Atributo
+class Atributo extends \FacturaScripts\Core\Model\Atributo
 {
 }

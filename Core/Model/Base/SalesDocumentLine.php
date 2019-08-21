@@ -29,14 +29,14 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
     /**
      * False -> the quantity column is not displayed when printing.
      *
-     * @var boolean
+     * @var bool
      */
     public $mostrar_cantidad;
 
     /**
      * False -> price, discount, tax and total columns are not displayed when printing.
      *
-     * @var boolean
+     * @var bool
      */
     public $mostrar_precio;
 

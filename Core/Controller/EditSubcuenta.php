@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Dinamic\Model\Partida;
 
 /**
  * Controller to edit a single item from the SubCuenta model
@@ -62,15 +61,14 @@ class EditSubcuenta extends EditController
      * 
      * @param string $viewName
      */
-    protected function createAccountingView($viewName = 'ListAsiento')
+    protected function createDepartureView($viewName = 'ListPartidaAsiento')
     {
-        $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->views[$viewName]->addOrderBy(['numero'], 'number', 2);
-        $this->views[$viewName]->addOrderBy(['importe'], 'amount');
+        $this->addListView($viewName, 'ModelView\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->views[$viewName]->searchFields[] = 'concepto';
+        $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date', 2);
 
-        /// disable columns
-        $this->views[$viewName]->disableColumn('exercise');
+        /// disable column
+        $this->views[$viewName]->disableColumn('subaccount');
     }
 
     /**
@@ -81,7 +79,7 @@ class EditSubcuenta extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->createAccountingView();
+        $this->createDepartureView();
     }
 
     /**
@@ -93,13 +91,9 @@ class EditSubcuenta extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'ListAsiento':
-                /// needed dependency
-                new Partida();
-
+            case 'ListPartidaAsiento':
                 $idsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'idsubcuenta');
-                $inSQL = 'SELECT idasiento FROM partidas WHERE idsubcuenta = ' . $this->dataBase->var2str($idsubcuenta);
-                $where = [new DataBaseWhere('idasiento', $inSQL, 'IN')];
+                $where = [new DataBaseWhere('idsubcuenta', $idsubcuenta)];
                 $view->loadData('', $where);
                 break;
 

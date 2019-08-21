@@ -133,12 +133,12 @@ class TransferenciaStock extends Base\ModelClass
         $this->observaciones = Utils::noHtml($this->observaciones);
 
         if ($this->codalmacenorigen == $this->codalmacendestino) {
-            self::$miniLog->alert(self::$i18n->trans('warehouse-cant-be-same'));
+            self::$miniLog->warning(self::$i18n->trans('warehouse-cant-be-same'));
             return false;
         }
 
         if ($this->getIdempresa($this->codalmacendestino) !== $this->getIdempresa($this->codalmacenorigen)) {
-            self::$miniLog->alert(self::$i18n->trans('warehouse-must-be-same-business'));
+            self::$miniLog->warning(self::$i18n->trans('warehouse-must-be-same-business'));
             return false;
         }
 

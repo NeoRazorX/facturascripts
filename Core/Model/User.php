@@ -30,6 +30,7 @@ class User extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+    use Base\PasswordTrait;
 
     const DEFAULT_LEVEL = 2;
 
@@ -104,32 +105,11 @@ class User extends Base\ModelClass
     public $logkey;
 
     /**
-     * New password.
-     *
-     * @var string
-     */
-    public $newPassword;
-
-    /**
-     * Repeated new password.
-     *
-     * @var string
-     */
-    public $newPassword2;
-
-    /**
      * Primary key. Varchar (50).
      *
      * @var string
      */
     public $nick;
-
-    /**
-     * Password hashed with password_hash()
-     *
-     * @var string
-     */
-    public $password;
 
     /**
      * Reset the values of all model properties.
@@ -139,7 +119,7 @@ class User extends Base\ModelClass
         parent::clear();
         $this->enabled = true;
         $this->idempresa = AppSettings::get('default', 'idempresa', 1);
-        $this->langcode = FS_LANG;
+        $this->langcode = \FS_LANG;
         $this->level = self::DEFAULT_LEVEL;
     }
 
@@ -156,11 +136,11 @@ class User extends Base\ModelClass
         new Page();
         new Empresa();
 
-        self::$miniLog->info(self::$i18n->trans('created-default-admin-account'));
+        self::$miniLog->notice(self::$i18n->trans('created-default-admin-account'));
 
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,admin,enabled,idempresa,langcode,homepage,level)'
             . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT)
-            . "',TRUE,TRUE,'1','" . FS_LANG . "','Wizard','99');";
+            . "',TRUE,TRUE,'1','" . \FS_LANG . "','Wizard','99');";
     }
 
     /**
@@ -186,16 +166,6 @@ class User extends Base\ModelClass
     public static function primaryColumn()
     {
         return 'nick';
-    }
-
-    /**
-     * Asigns the new password to the user.
-     *
-     * @param string $value
-     */
-    public function setPassword($value)
-    {
-        $this->password = password_hash($value, PASSWORD_DEFAULT);
     }
 
     /**
@@ -226,20 +196,11 @@ class User extends Base\ModelClass
 
         $this->nick = trim($this->nick);
         if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']));
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']));
             return false;
         }
 
-        if (isset($this->newPassword, $this->newPassword2) && $this->newPassword !== '' && $this->newPassword2 !== '') {
-            if ($this->newPassword !== $this->newPassword2) {
-                self::$miniLog->alert(self::$i18n->trans('different-passwords', ['%userNick%' => $this->nick]));
-                return false;
-            }
-
-            $this->setPassword($this->newPassword);
-        }
-
-        return parent::test();
+        return $this->testPassword() && parent::test();
     }
 
     /**
@@ -263,26 +224,6 @@ class User extends Base\ModelClass
     public function verifyLogkey($value)
     {
         return $this->logkey === $value;
-    }
-
-    /**
-     * Verifies password. It also rehash the password if needed.
-     *
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function verifyPassword($value)
-    {
-        if (password_verify($value, $this->password)) {
-            if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {
-                $this->setPassword($value);
-            }
-
-            return true;
-        }
-
-        return false;
     }
 
     /**

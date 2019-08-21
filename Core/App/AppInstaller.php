@@ -75,7 +75,7 @@ class AppInstaller
         if ($installed && !empty($this->request->get('unattended', ''))) {
             echo 'OK';
         } elseif ($installed) {
-            header('Location: ' . $this->getUri());
+            $this->render('Installer/Redir.html.twig');
         } elseif ('TRUE' === $this->request->get('phpinfo', '')) {
             /** @noinspection ForgottenDebugOutputInspection */
             phpinfo();
@@ -102,7 +102,7 @@ class AppInstaller
 
         $dbType = $this->request->request->get('fs_db_type');
         if ('postgresql' == $dbType && strtolower($dbData['name']) != $dbData['name']) {
-            $this->miniLog->alert($this->i18n->trans('database-name-must-be-lowercase'));
+            $this->miniLog->warning($this->i18n->trans('database-name-must-be-lowercase'));
             return false;
         }
 
@@ -175,7 +175,7 @@ class AppInstaller
     {
         $dataLanguage = explode(';', filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
         $userLanguage = str_replace('-', '_', explode(',', $dataLanguage[0])[0]);
-        return file_exists(FS_FOLDER . '/Core/Translation/' . $userLanguage . '.json') ? $userLanguage : 'en_EN';
+        return file_exists(\FS_FOLDER . '/Core/Translation/' . $userLanguage . '.json') ? $userLanguage : 'en_EN';
     }
 
     /**
@@ -212,21 +212,24 @@ class AppInstaller
 
     /**
      * Renders HTML.
+     * 
+     * @param string $template
      */
-    private function render()
+    private function render($template = 'Installer/Install.html.twig')
     {
         /// HTML template variables
         $templateVars = [
-            'license' => file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
+            'license' => file_get_contents(\FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
             'memcache_prefix' => $this->randomString(8),
-            'timezones' => $this->getTimezoneList()
+            'timezones' => $this->getTimezoneList(),
+            'version' => PluginManager::CORE_VERSION
         ];
 
         /// Load the template engine
         $webRender = new WebRender();
 
         /// Generate and return the HTML
-        $response = new Response($webRender->render('Installer/Install.html.twig', $templateVars), Response::HTTP_OK);
+        $response = new Response($webRender->render($template, $templateVars), Response::HTTP_OK);
         $response->send();
     }
 
@@ -237,8 +240,8 @@ class AppInstaller
      */
     private function saveHtaccess()
     {
-        $contentFile = FileManager::extractFromMarkers(FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
-        return FileManager::insertWithMarkers($contentFile, FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
+        $contentFile = FileManager::extractFromMarkers(\FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
+        return FileManager::insertWithMarkers($contentFile, \FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
     }
 
     /**
@@ -248,14 +251,15 @@ class AppInstaller
      */
     private function saveInstall()
     {
-        $file = fopen(FS_FOLDER . '/config.php', 'wb');
+        $file = fopen(\FS_FOLDER . '/config.php', 'wb');
         if (\is_resource($file)) {
             fwrite($file, "<?php\n");
             fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 604800) . ");\n");
             fwrite($file, "define('FS_ROUTE', '" . $this->request->request->get('fs_route', $this->getUri()) . "');\n");
             fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
-            fwrite($file, "define('FS_DB_INTEGER', 'INTEGER');\n");
             fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
+            fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8');\n");
+            fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
 
             $fields = [
                 'lang', 'timezone', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user',
@@ -309,7 +313,7 @@ class AppInstaller
             $errors = true;
         }
 
-        if (!is_writable(FS_FOLDER)) {
+        if (!is_writable(\FS_FOLDER)) {
             $this->miniLog->critical($this->i18n->trans('folder-not-writable'));
             $errors = true;
         }

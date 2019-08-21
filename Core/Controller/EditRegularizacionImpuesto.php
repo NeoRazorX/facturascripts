@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Lib\Accounting\VatRegularizationToAccounting;
+use FacturaScripts\Dinamic\Lib\SubAccountTools;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\ModelView\PartidaImpuestoResumen;
 use FacturaScripts\Dinamic\Model\RegularizacionImpuesto;
@@ -79,6 +80,7 @@ class EditRegularizacionImpuesto extends EditController
     }
 
     /**
+     * Returns the class name of the model to use in the editView.
      *
      * @return string
      */
@@ -102,7 +104,9 @@ class EditRegularizacionImpuesto extends EditController
     }
 
     /**
-     * 
+     * Add to the view container the view with the lines of
+     * the accounting entry generated.
+     *
      * @param string $viewName
      */
     protected function addEntryLineView($viewName = 'ListPartida')
@@ -112,7 +116,8 @@ class EditRegularizacionImpuesto extends EditController
     }
 
     /**
-     * 
+     * Add to the view container the view with the list of sales documents included.
+     *
      * @param string $viewName
      * @param string $caption
      * @param string $icon
@@ -124,7 +129,8 @@ class EditRegularizacionImpuesto extends EditController
     }
 
     /**
-     * 
+     * Add to container views with the summary view or total liquidation.
+     *
      * @param string $viewName
      */
     protected function addTaxSummaryView($viewName = 'ListPartidaImpuestoResumen')
@@ -135,28 +141,13 @@ class EditRegularizacionImpuesto extends EditController
 
     /**
      * Run the autocomplete action with exercise filter
-     * Returns a JSON string for the searched values.
      *
      * @return array
      */
     protected function autocompleteAction(): array
     {
-        $results = [];
-        $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', 'codejercicio']);
-        $fields = $data['fieldcode'] . '|' . $data['fieldtitle'];
-        $where = [
-            new DataBaseWhere('codejercicio', $data['codejercicio']),
-            new DataBaseWhere($fields, mb_strtolower($data['term'], 'UTF8'), 'LIKE')
-        ];
-
-        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $row) {
-            $results[] = ['key' => $row->code, 'value' => $row->description];
-        }
-
-        if (empty($results)) {
-            $results[] = ['key' => null, 'value' => $this->i18n->trans('no-value')];
-        }
-        return $results;
+        $keys = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', 'codejercicio']);
+        return SubAccountTools::autocompleteAction($keys);
     }
 
     /**
@@ -167,17 +158,18 @@ class EditRegularizacionImpuesto extends EditController
     protected function calculateAmounts($data)
     {
         /// Init totals values
-        $this->previousBalance = 0.00;    /// TODO: Calculate previous balance from special account
+        $this->previousBalance = 0.00;    /// TODO: Calculate previous balance from generated accounting entry
         $this->sales = 0.00;
         $this->purchases = 0.00;
 
+        $subAccountTools = new SubAccountTools();
         foreach ($data as $row) {
-            if (in_array($row->codcuentaesp, ['IVAREX', 'IVAREP', 'IVARUE', 'IVARRE'])) {
+            if ($subAccountTools->isOutputTax($row->codcuentaesp)) {
                 $this->sales += $row->cuotaiva + $row->cuotarecargo;
                 continue;
             }
 
-            if (in_array($row->codcuentaesp, ['IVASEX', 'IVASIM', 'IVASOP', 'IVASUE'])) {
+            if ($subAccountTools->isInputTax($row->codcuentaesp)) {
                 $this->purchases += $row->cuotaiva + $row->cuotarecargo;
             }
         }
@@ -186,6 +178,7 @@ class EditRegularizacionImpuesto extends EditController
     }
 
     /**
+     * Generates the accounting entry for the settlement.
      *
      * @param int $code
      */
@@ -202,7 +195,7 @@ class EditRegularizacionImpuesto extends EditController
     }
 
     /**
-     * Load views
+     * Add the view set.
      */
     protected function createViews()
     {
@@ -215,6 +208,11 @@ class EditRegularizacionImpuesto extends EditController
         $this->addEntryLineView();
     }
 
+    /**
+     * Disable the add and remove buttons from the indicated view.
+     *
+     * @param string $viewName
+     */
     protected function disableButtons($viewName)
     {
         $this->views[$viewName]->settings['btnDelete'] = false;
@@ -240,6 +238,11 @@ class EditRegularizacionImpuesto extends EditController
         return parent::execPreviousAction($action);
     }
 
+    /**
+     * Load data of Partida view if master view has data.
+     *
+     * @param BaseView $view
+     */
     protected function getListPartida($view)
     {
         $idasiento = $this->getViewModelValue('EditRegularizacionImpuesto', 'idasiento');
@@ -249,41 +252,23 @@ class EditRegularizacionImpuesto extends EditController
         }
     }
 
-    protected function getListPartidaImpuesto1($view)
+    /**
+     * Load data of PartidaImpuesto if master view has data.
+     *
+     * @param BaseView $view
+     * @param int      $group
+     */
+    protected function getListPartidaImpuesto($view, $group)
     {
         $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregiva');
         if (!empty($id)) {
-            $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
-            $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
-            $endDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechafin');
-            $where = [
-                new DataBaseWhere('asientos.codejercicio', $exercise),
-                new DataBaseWhere('asientos.fecha', $startDate, '>='),
-                new DataBaseWhere('asientos.fecha', $endDate, '<='),
-                new DataBaseWhere('subcuentas.codcuentaesp', 'IVASEX,IVASIM,IVASOP,IVASUE', 'IN')
-            ];
-            $view->loadData(false, $where, ['partidas.codserie' => 'ASC', 'partidas.factura' => 'ASC']);
-        }
-    }
-
-    protected function getListPartidaImpuesto2($view)
-    {
-        $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregiva');
-        if (!empty($id)) {
-            $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
-            $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
-            $endDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechafin');
-            $where = [
-                new DataBaseWhere('asientos.codejercicio', $exercise),
-                new DataBaseWhere('asientos.fecha', $startDate, '>='),
-                new DataBaseWhere('asientos.fecha', $endDate, '<='),
-                new DataBaseWhere('subcuentas.codcuentaesp', 'IVAREX,IVAREP,IVARUE,IVARRE', 'IN')
-            ];
+            $where = $this->getPartidaImpuestoWhere($group);
             $view->loadData(false, $where, ['partidas.codserie' => 'ASC', 'partidas.factura' => 'ASC']);
         }
     }
 
     /**
+     * Load data of PartidaImpuestoResumen if master view has data.
      *
      * @param BaseView $view
      */
@@ -291,24 +276,38 @@ class EditRegularizacionImpuesto extends EditController
     {
         $id = $this->getViewModelValue('EditRegularizacionImpuesto', 'idregiva');
         if (!empty($id)) {
-            $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
-            $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
-            $endDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechafin');
-            $where = [
-                new DataBaseWhere('asientos.codejercicio', $exercise),
-                new DataBaseWhere('asientos.fecha', $startDate, '>='),
-                new DataBaseWhere('asientos.fecha', $endDate, '<='),
-                new DataBaseWhere('subcuentas.codcuentaesp', 'IVAREX,IVAREP,IVARUE,IVARRE,IVASEX,IVASIM,IVASOP,IVASUE', 'IN')
-            ];
             $orderby = [
                 'cuentasesp.descripcion' => 'ASC',
-                'subcuentas.codimpuesto' => 'ASC',
                 'partidas.iva' => 'ASC',
                 'partidas.recargo' => 'ASC'
             ];
+            $where = $this->getPartidaImpuestoWhere(SubAccountTools::SPECIAL_GROUP_TAX_ALL);
             $view->loadData(false, $where, $orderby);
             $this->calculateAmounts($view->cursor);
         }
+    }
+
+    /**
+     * Get DataBaseWhere filter for tax group
+     *
+     * @param int $group
+     *
+     * @return DataBaseWhere[]
+     */
+    protected function getPartidaImpuestoWhere($group)
+    {
+        $subAccountTools = new SubAccountTools();
+        $idasiento = $this->getViewModelValue('EditRegularizacionImpuesto', 'idasiento');
+        $exercise = $this->getViewModelValue('EditRegularizacionImpuesto', 'codejercicio');
+        $startDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechainicio');
+        $endDate = $this->getViewModelValue('EditRegularizacionImpuesto', 'fechafin');
+        return [
+            new DataBaseWhere('asientos.idasiento', $idasiento, '!='),
+            new DataBaseWhere('asientos.codejercicio', $exercise),
+            new DataBaseWhere('asientos.fecha', $startDate, '>='),
+            new DataBaseWhere('asientos.fecha', $endDate, '<='),
+            $subAccountTools->whereForSpecialAccounts('COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp)', $group)
+        ];
     }
 
     /**
@@ -322,7 +321,7 @@ class EditRegularizacionImpuesto extends EditController
         switch ($viewName) {
             case 'EditRegularizacionImpuesto':
                 parent::loadData($viewName, $view);
-                $this->setCustomWidgetValues($viewName);
+                $this->setCustomWidgetValues($view);
                 break;
 
             case 'ListPartida':
@@ -334,20 +333,21 @@ class EditRegularizacionImpuesto extends EditController
                 break;
 
             case 'ListPartidaImpuesto-1':
-                $this->getListPartidaImpuesto1($view);
+                $this->getListPartidaImpuesto($view, SubAccountTools::SPECIAL_GROUP_TAX_INPUT);
                 break;
 
             case 'ListPartidaImpuesto-2':
-                $this->getListPartidaImpuesto2($view);
+                $this->getListPartidaImpuesto($view, SubAccountTools::SPECIAL_GROUP_TAX_OUTPUT);
                 break;
         }
     }
 
     /**
+     * Configure and initialize main view widgets.
      *
-     * @param string $viewName
+     * @param BaseView $view
      */
-    protected function setCustomWidgetValues($viewName)
+    protected function setCustomWidgetValues($view)
     {
         $openExercises = [];
         $exerciseModel = new Ejercicio();
@@ -357,15 +357,15 @@ class EditRegularizacionImpuesto extends EditController
             }
         }
 
-        $columnExercise = $this->views[$viewName]->columnForName('exercise');
+        $columnExercise = $view->columnForName('exercise');
         if ($columnExercise) {
             $columnExercise->widget->setValuesFromArrayKeys($openExercises);
         }
 
         /// Model exists?
-        if (!$this->views[$viewName]->model->exists()) {
-            $this->views[$viewName]->disableColumn('tax-credit-account', false, 'true');
-            $this->views[$viewName]->disableColumn('tax-debit-account', false, 'true');
+        if (!$view->model->exists()) {
+            $view->disableColumn('tax-credit-account', false, 'true');
+            $view->disableColumn('tax-debit-account', false, 'true');
         }
     }
 }

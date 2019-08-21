@@ -146,7 +146,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         /// TODO: Check if accounting entry have VAT Accounts
         $regularization = new RegularizacionImpuesto();
         if ($regularization->getFechaInside($this->fecha)) {
-            self::$miniLog->alert(self::$i18n->trans('acounting-within-regularization', ['%tax%' => FS_IVA]));
+            self::$miniLog->warning(self::$i18n->trans('acounting-within-regularization'));
             return false;
         }
 
@@ -253,7 +253,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         $where = empty($codjercicio) ? [] : [new DataBaseWhere('codejercicio', $codjercicio)];
 
         foreach ($ejercicio->all($where) as $eje) {
-            if ($ejercicio->isOpened() === false) {
+            if ($eje->isOpened() === false) {
                 continue;
             }
 
@@ -265,21 +265,10 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
 
             $asientos = self::$dataBase->selectLimit($sql, 1000, $offset);
             while (!empty($asientos)) {
-                $sql2 = '';
-                foreach ($asientos as $col) {
-                    if (self::$dataBase->var2str($col['numero']) !== self::$dataBase->var2str($number)) {
-                        $sql2 .= 'UPDATE ' . static::tableName() . ' SET numero = ' . self::$dataBase->var2str($number)
-                            . ' WHERE idasiento = ' . self::$dataBase->var2str($col['idasiento']) . ';';
-                    }
-
-                    ++$number;
-                }
-
-                if (!empty($sql2) && !self::$dataBase->exec($sql2)) {
-                    self::$miniLog->alert(self::$i18n->trans('renumber-accounting-error', ['%exerciseCode%' => $eje->codejercicio]));
+                if (!$this->renumberAccountingEntries($asientos, $number)) {
+                    self::$miniLog->warning(self::$i18n->trans('renumber-accounting-error', ['%exerciseCode%' => $eje->codejercicio]));
                     return false;
                 }
-
                 $offset += 1000;
                 $asientos = self::$dataBase->selectLimit($sql, 1000, $offset);
             }
@@ -329,7 +318,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         $this->documento = Utils::noHtml($this->documento);
 
         if (strlen($this->concepto) == 0 || strlen($this->concepto) > 255) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']));
             return false;
         }
 
@@ -338,7 +327,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         }
 
         if ($this->testErrorInData()) {
-            self::$miniLog->alert(self::$i18n->trans('accounting-data-missing'));
+            self::$miniLog->warning(self::$i18n->trans('accounting-data-missing'));
             return false;
         }
 
@@ -384,6 +373,28 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     private function testErrorInData(): bool
     {
         return empty($this->codejercicio) || empty($this->concepto) || empty($this->fecha);
+    }
+
+    /**
+     * Update accounting entry number for
+     * 
+     * @param Asiento[] $entries
+     * @param int $number
+     * @return bool
+     */
+    protected function renumberAccountingEntries($entries, &$number)
+    {
+        $sql = '';
+        foreach ($entries as $row) {
+            if (self::$dataBase->var2str($row['numero']) !== self::$dataBase->var2str($number)) {
+                $sql .= 'UPDATE ' . static::tableName() . ' SET numero = ' . self::$dataBase->var2str($number)
+                    . ' WHERE idasiento = ' . self::$dataBase->var2str($row['idasiento']) . ';';
+            }
+
+            ++$number;
+        }
+
+        return empty($sql) || self::$dataBase->exec($sql);
     }
 
     /**

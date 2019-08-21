@@ -82,7 +82,7 @@ class Serie extends Base\ModelClass
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-serie'));
+            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-serie'));
             return false;
         }
 
@@ -140,7 +140,7 @@ class Serie extends Base\ModelClass
     {
         $this->codserie = trim($this->codserie);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codserie)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codserie, '%column%' => 'codserie', '%min%' => '1', '%max%' => '4']));
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codserie, '%column%' => 'codserie', '%min%' => '1', '%max%' => '4']));
             return false;
         }
 

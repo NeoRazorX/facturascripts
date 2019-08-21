@@ -15,7 +15,6 @@
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('pages_options_id_seq'::regclass)</default>
     </column>
     <column>
         <name>modals</name>

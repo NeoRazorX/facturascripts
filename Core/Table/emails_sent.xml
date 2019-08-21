@@ -22,11 +22,15 @@
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('emailsent_id_seq'::regclass)</default>
     </column>
     <column>
         <name>nick</name>
         <type>character varying(50)</type>
+    </column>
+    <column>
+        <name>opened</name>
+        <type>boolean</type>
+        <default>false</default>
     </column>
     <column>
         <name>subject</name>
@@ -35,5 +39,9 @@
     <constraint>
         <name>emails_sent_pkey</name>
         <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>emails_sent_user</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
 </table>

@@ -276,6 +276,11 @@ class PDFDocument extends PDFCore
             $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => $this->combineAddress($model)];
         }
 
+        /// rectified invoice?
+        if (isset($model->codigorect) && !empty($model->codigorect)) {
+            array_unshift($tableData, ['key' => $this->i18n->trans('original'), 'value' => $model->codigorect]);
+        }
+
         $tableOptions = [
             'width' => $this->tableWidth,
             'showHeadings' => 0,
@@ -384,8 +389,8 @@ class PDFDocument extends PDFCore
             $address .= empty($company->provincia) ? '' : ' (' . $company->provincia . ') ' . $this->getCountryName($company->codpais);
             $contactData = empty($company->telefono1) ? '' : $company->telefono1 . ' ';
             $contactData .= empty($company->telefono2) ? '' : $company->telefono2 . ' ';
-            $contactData .= empty($company->email) ? '' : $company->email . ' ';
-            $contactData .= empty($company->web) ? '' : $company->web;
+            $contactData .= empty($company->web) ? '' : $company->web . "\n";
+            $contactData .= empty($company->email) ? '' : $company->email;
             $lineText = $company->cifnif . ' - ' . $address . "\n" . $contactData;
             $this->pdf->ezText($lineText . "\n", self::FONT_SIZE, ['justification' => 'right']);
 

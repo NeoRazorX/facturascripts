@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\Widget;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model;
+use SimpleXMLElement;
 
 /**
  * Description of VisualItemLoadEngine
@@ -67,9 +68,9 @@ class VisualItemLoadEngine
     {
         $model->name = $name;
 
-        $fileName = FS_FOLDER . '/Dinamic/XMLView/' . $name . '.xml';
-        if (FS_DEBUG && !file_exists($fileName)) {
-            $fileName = FS_FOLDER . '/Core/XMLView/' . $name . '.xml';
+        $fileName = \FS_FOLDER . '/Dinamic/XMLView/' . $name . '.xml';
+        if (\FS_DEBUG && !file_exists($fileName)) {
+            $fileName = \FS_FOLDER . '/Core/XMLView/' . $name . '.xml';
         }
 
         if (!file_exists($fileName)) {
@@ -121,7 +122,7 @@ class VisualItemLoadEngine
         static::getGroupsColumns($model->modals, $modals);
 
         foreach ($model->rows as $name => $item) {
-            $className = self::$namespace . 'Row' . ucfirst($name);
+            $className = static::getNamespace() . 'Row' . ucfirst($name);
             if (class_exists($className)) {
                 $rowItem = new $className($item);
                 $rows[$name] = $rowItem;
@@ -129,7 +130,7 @@ class VisualItemLoadEngine
         }
 
         /// we allways need a row type actions
-        $className = self::$namespace . 'RowActions';
+        $className = static::getNamespace() . 'RowActions';
         if (!isset($rows['actions']) && class_exists($className)) {
             $rowItem = new $className([]);
             $rows['actions'] = $rowItem;
@@ -144,7 +145,7 @@ class VisualItemLoadEngine
      */
     private static function getGroupsColumns($columns, &$target)
     {
-        $groupClass = self::$namespace . 'GroupItem';
+        $groupClass = static::getNamespace() . 'GroupItem';
         $newGroupArray = [
             'children' => [],
             'name' => 'main',
@@ -182,7 +183,7 @@ class VisualItemLoadEngine
     /**
      * Turns an xml into an array.
      *
-     * @param \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      *
      * @return array
      */
@@ -222,7 +223,7 @@ class VisualItemLoadEngine
     /**
      * 
      * @param string            $tag
-     * @param \SimpleXMLElement $attributes
+     * @param SimpleXMLElement $attributes
      *
      * @return string
      */

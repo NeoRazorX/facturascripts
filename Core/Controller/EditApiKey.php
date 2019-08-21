@@ -147,17 +147,18 @@ class EditApiKey extends EditController
     {
         $resources = [];
 
-        $path = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Lib' . DIRECTORY_SEPARATOR . 'API';
+        $path = \FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Lib' . DIRECTORY_SEPARATOR . 'API';
         foreach (scandir($path, SCANDIR_SORT_NONE) as $resource) {
-            if (substr($resource, -4) === '.php') {
-                $class = substr('FacturaScripts\\Dinamic\\Lib\\API\\' . $resource, 0, -4);
-                $APIClass = new $class($this->response, $this->request, $this->miniLog, $this->i18n, []);
-                if (isset($APIClass) && method_exists($APIClass, 'getResources')) {
-                    foreach ($APIClass->getResources() as $name => $data) {
-                        $resources[] = $name;
-                    }
+            if (substr($resource, -4) !== '.php') {
+                continue;
+            }
+
+            $class = substr('FacturaScripts\\Dinamic\\Lib\\API\\' . $resource, 0, -4);
+            $APIClass = new $class($this->response, $this->request, $this->miniLog, $this->i18n, []);
+            if (isset($APIClass) && method_exists($APIClass, 'getResources')) {
+                foreach ($APIClass->getResources() as $name => $data) {
+                    $resources[] = $name;
                 }
-                unset($APIClass);
             }
         }
 
@@ -177,7 +178,7 @@ class EditApiKey extends EditController
             case 'EditApiAccess':
                 $idApiKey = $this->getViewModelValue($this->getMainViewName(), 'id');
                 $where = [new DataBaseWhere('idapikey', $idApiKey)];
-                $view->loadData('', $where, ['resource' => 'ASC'], 0, 0);
+                $view->loadData('', $where, ['resource' => 'ASC']);
                 if (!$this->views[$this->active]->model->exists()) {
                     $this->views[$this->active]->model->nick = $this->user->nick;
                 }

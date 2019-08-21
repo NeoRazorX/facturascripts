@@ -71,8 +71,7 @@ class DownloadTools
 
             /// save in log
             $error = curl_error($ch) === '' ? 'ERROR ' . $httpCode : curl_error($ch);
-            $minilog = new MiniLog();
-            $minilog->alert($error . ' - ' . $url);
+            $this->getMiniLog()->warning($error . ' - ' . $url);
 
             curl_close($ch);
             return 'ERROR';
@@ -101,7 +100,10 @@ class DownloadTools
             case 303:
                 list($header) = explode("\r\n\r\n", $data, 2);
                 $matches = [];
-                preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
+                if (1 !== preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches)) {
+                    break;
+                }
+
                 $url = trim(str_replace($matches[1], "", $matches[0]));
                 $url_parsed = parse_url($url);
                 if (isset($url_parsed)) {
@@ -138,9 +140,18 @@ class DownloadTools
                 return true;
             }
         } catch (Exception $exc) {
-            /// nothing to do
+            $this->getMiniLog()->error($exc->getMessage() . ' - ' . $url);
         }
 
         return false;
+    }
+
+    /**
+     * 
+     * @return MiniLog
+     */
+    protected function getMiniLog()
+    {
+        return $minilog = new MiniLog();
     }
 }

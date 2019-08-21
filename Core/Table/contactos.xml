@@ -6,6 +6,11 @@
 -->
 <table>
     <column>
+        <name>aceptaprivacidad</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>admitemarketing</name>
         <type>boolean</type>
         <default>false</default>
@@ -71,10 +76,14 @@
         <type>date</type>
     </column>
     <column>
+        <name>habilitado</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
         <name>idcontacto</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('contactos_idcontacto_seq'::regclass)</default>
     </column>
     <column>
         <name>lastactivity</name>

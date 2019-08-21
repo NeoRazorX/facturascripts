@@ -57,8 +57,8 @@ class PeriodTools
      */
     public static function applyFormatToPeriod(&$startdate, &$enddate, $startformat, $endformat, $dateformat = 'd-m-Y')
     {
-        $startdate = self::applyFormatToDate($startformat, $dateformat);
-        $enddate = self::applyFormatToDate($endformat, $dateformat);
+        $startdate = static::applyFormatToDate($startformat, $dateformat);
+        $enddate = static::applyFormatToDate($endformat, $dateformat);
     }
 
     /**
@@ -75,75 +75,75 @@ class PeriodTools
     {
         switch ($period) {
             case 'today':
-                self::applyFormatToPeriod($startdate, $enddate, 'today', 'today');
+                static::applyFormatToPeriod($startdate, $enddate, 'today', 'today');
                 break;
 
             case 'yesterday':
-                self::applyFormatToPeriod($startdate, $enddate, 'yesterday', 'yesterday');
+                static::applyFormatToPeriod($startdate, $enddate, 'yesterday', 'yesterday');
                 break;
 
             case 'this-week':
-                self::applyFormatToPeriod($startdate, $enddate, 'mon this week', 'sun this week');
+                static::applyFormatToPeriod($startdate, $enddate, 'mon this week', 'sun this week');
                 break;
 
             case 'this-month':
-                self::applyFormatToPeriod($startdate, $enddate, 'first day of', 'last day of');
+                static::applyFormatToPeriod($startdate, $enddate, 'first day of', 'last day of');
                 break;
 
             case 'this-year':
-                self::applyFormatToPeriod($startdate, $enddate, 'first day of january', 'last day of december');
+                static::applyFormatToPeriod($startdate, $enddate, 'first day of january', 'last day of december');
                 break;
 
             case 'this-last-week':
-                self::applyFormatToPeriod($startdate, $enddate, '-7 day', '-1 day');
+                static::applyFormatToPeriod($startdate, $enddate, '-7 day', '-1 day');
                 break;
 
             case 'this-last-fortnight':
-                self::applyFormatToPeriod($startdate, $enddate, '-15 day', '-1 day');
+                static::applyFormatToPeriod($startdate, $enddate, '-15 day', '-1 day');
                 break;
 
             case 'this-last-month':
-                self::applyFormatToPeriod($startdate, $enddate, '-1 month', '-1 day');
+                static::applyFormatToPeriod($startdate, $enddate, '-1 month', '-1 day');
                 break;
 
             case 'this-last-year':
-                self::applyFormatToPeriod($startdate, $enddate, '-1 year', '-1 day');
+                static::applyFormatToPeriod($startdate, $enddate, '-1 year', '-1 day');
                 break;
 
             case 'last-week':
-                self::applyFormatToPeriod($startdate, $enddate, 'mon last week', 'sun last week');
+                static::applyFormatToPeriod($startdate, $enddate, 'mon last week', 'sun last week');
                 break;
 
             case 'last-month':
-                self::applyFormatToPeriod($startdate, $enddate, 'first day of last month', 'last day of last month');
+                static::applyFormatToPeriod($startdate, $enddate, 'first day of last month', 'last day of last month');
                 break;
 
             case 'last-bimester':
-                $date = self::applyFormatToDate('first day of');
-                $startdate = self::applyFormatToDate('-2 month', $dateformat, $date);
-                $enddate = self::applyFormatToDate('-1 day', $dateformat, $date);
+                $date = static::applyFormatToDate('first day of');
+                $startdate = static::applyFormatToDate('-2 month', $dateformat, $date);
+                $enddate = static::applyFormatToDate('-1 day', $dateformat, $date);
                 break;
 
             case 'last-trimester':
-                $date = self::applyFormatToDate('first day of');
-                $startdate = self::applyFormatToDate('-3 month', $dateformat, $date);
-                $enddate = self::applyFormatToDate('-1 day', $dateformat, $date);
+                $date = static::applyFormatToDate('first day of');
+                $startdate = static::applyFormatToDate('-3 month', $dateformat, $date);
+                $enddate = static::applyFormatToDate('-1 day', $dateformat, $date);
                 break;
 
             case 'last-quarter':
-                $date = self::applyFormatToDate('first day of');
-                $startdate = self::applyFormatToDate('-4 month', $dateformat, $date);
-                $enddate = self::applyFormatToDate('-1 day', $dateformat, $date);
+                $date = static::applyFormatToDate('first day of');
+                $startdate = static::applyFormatToDate('-4 month', $dateformat, $date);
+                $enddate = static::applyFormatToDate('-1 day', $dateformat, $date);
                 break;
 
             case 'last-semester':
-                $date = self::applyFormatToDate('first day of');
-                $startdate = self::applyFormatToDate('-6 month', $dateformat, $date);
-                $enddate = self::applyFormatToDate('-1 day', $dateformat, $date);
+                $date = static::applyFormatToDate('first day of');
+                $startdate = static::applyFormatToDate('-6 month', $dateformat, $date);
+                $enddate = static::applyFormatToDate('-1 day', $dateformat, $date);
                 break;
 
             case 'last-year':
-                self::applyFormatToPeriod($startdate, $enddate, 'first day of january last year', 'last day of december last year');
+                static::applyFormatToPeriod($startdate, $enddate, 'first day of january last year', 'last day of december last year');
         }
     }
 
@@ -159,7 +159,7 @@ class PeriodTools
         $result = [
             ['code' => '', 'description' => '------']
         ];
-        foreach (self::getPeriods() as $value) {
+        foreach (static::getPeriods() as $value) {
             $result[] = ['code' => $value, 'description' => $i18n->trans($value)];
         }
         return $result;
@@ -202,7 +202,7 @@ class PeriodTools
     public static function getWidgetOptions(&$i18n)
     {
         $result = [];
-        foreach (self::getPeriods() as $value) {
+        foreach (static::getPeriods() as $value) {
             $result[] = ['value' => $value, 'title' => $i18n->trans($value)];
         }
         return $result;

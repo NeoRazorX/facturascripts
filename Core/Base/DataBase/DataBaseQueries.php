@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Base\DataBase;
 /**
  * Interface to manage the SQL statements needed by the database
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-interface DataBaseSQL
+interface DataBaseQueries
 {
 
     /**
@@ -65,7 +65,7 @@ interface DataBaseSQL
      *
      * @return string
      */
-    public function sqlAlterConstraintDefault($tableName, $colData);
+    public function sqlAlterColumnDefault($tableName, $colData);
 
     /**
      * SQL statement to alter a given table column's null constraint
@@ -75,7 +75,7 @@ interface DataBaseSQL
      *
      * @return string
      */
-    public function sqlAlterConstraintNull($tableName, $colData);
+    public function sqlAlterColumnNull($tableName, $colData);
 
     /**
      * SQL statement to alter a given table column's definition
@@ -159,15 +159,6 @@ interface DataBaseSQL
      * @return string
      */
     public function sqlLastValue();
-
-    /**
-     * SQL statement to create a sequence
-     *
-     * @param string $seqName
-     *
-     * @return string
-     */
-    public function sqlSequenceExists($seqName);
 
     /**
      * Generates the SQL to establish the given restrictions.

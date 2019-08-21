@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -94,17 +94,12 @@ class DivisaTools extends NumberTools
     public static function format($number, $decimals = FS_NF0, $decoration = 'symbol')
     {
         $txt = parent::format($number, $decimals);
-
         switch ($decoration) {
             case 'symbol':
-                $symbol = self::$selectedDivisa->simbolo;
-                if (FS_CURRENCY_POS === 'right') {
-                    return $txt . ' ' . $symbol;
-                }
-                return $symbol . ' ' . $txt;
+                return FS_CURRENCY_POS === 'right' ? $txt . ' ' . static::getSymbol() : static::getSymbol() . ' ' . $txt;
 
             case 'coddivisa':
-                return $txt . ' ' . self::$selectedDivisa->coddivisa;
+                return isset(self::$selectedDivisa) ? $txt . ' ' . self::$selectedDivisa->coddivisa : $txt . ' ???';
 
             default:
                 return $txt;
@@ -115,9 +110,9 @@ class DivisaTools extends NumberTools
      * 
      * @return string
      */
-    public function getSymbol()
+    public static function getSymbol()
     {
-        return (string) self::$selectedDivisa->simbolo;
+        return isset(self::$selectedDivisa) ? (string) self::$selectedDivisa->simbolo : '?';
     }
 
     /**

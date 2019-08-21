@@ -23,8 +23,16 @@
         <column name="name" order="100">
             <widget type="text" fieldname="tipoidfiscal" required="true"/>
         </column>
-        <column name="code" order="110">
+        <column name="validate" display="center" order="110">
+            <widget type="checkbox" fieldname="validar" />
+        </column>
+        <column name="code" display="right" order="120">
             <widget type="text" maxlength="2" fieldname="codeid"/>
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="success" fieldname="validar">1</option>
+        </row>
+    </rows>
 </view>

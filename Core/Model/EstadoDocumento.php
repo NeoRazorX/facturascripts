@@ -107,7 +107,7 @@ class EstadoDocumento extends Base\ModelClass
     public function delete()
     {
         if ($this->bloquear) {
-            self::$miniLog->alert(self::$i18n->trans('locked'));
+            self::$miniLog->warning(self::$i18n->trans('locked'));
             return false;
         }
 
@@ -131,7 +131,7 @@ class EstadoDocumento extends Base\ModelClass
     public function save()
     {
         if ($this->bloquear) {
-            self::$miniLog->alert(self::$i18n->trans('locked'));
+            self::$miniLog->warning(self::$i18n->trans('locked'));
             return false;
         }
 

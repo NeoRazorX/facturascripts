@@ -24,7 +24,6 @@
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('cronjobs_id_seq'::regclass)</default>
     </column>
     <column>
         <name>jobname</name>

@@ -25,6 +25,12 @@ use FacturaScripts\Core\Model\Base\ModelView;
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * 
+ * @property float $baseimponible
+ * @property float $cuotaiva
+ * @property float $cuotarecargo
+ * @property float $iva
+ * @property float $recargo
  */
 class PartidaImpuesto extends ModelView
 {
@@ -48,23 +54,22 @@ class PartidaImpuesto extends ModelView
     protected function getFields(): array
     {
         return [
-            'codejercicio' => 'asientos.codejercicio',
-            'idasiento' => 'asientos.idasiento',
-            'numero' => 'asientos.numero',
-            'fecha' => 'asientos.fecha',
-            'idpartida' => 'partidas.idpartida',
-            'idcontrapartida' => 'partidas.idcontrapartida',
-            'codcontrapartida' => 'partidas.codcontrapartida',
-            'concepto' => 'partidas.concepto',
-            'documento' => 'partidas.documento',
-            'cifnif' => 'partidas.cifnif',
-            'codserie' => 'partidas.codserie',
-            'factura' => 'partidas.factura',
             'baseimponible' => 'partidas.baseimponible',
+            'cifnif' => 'partidas.cifnif',
+            'codcontrapartida' => 'partidas.codcontrapartida',
+            'codcuentaesp' => 'COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp)',
+            'codejercicio' => 'asientos.codejercicio',
+            'concepto' => 'partidas.concepto',
+            'codserie' => 'partidas.codserie',
+            'documento' => 'partidas.documento',
+            'factura' => 'partidas.factura',
+            'fecha' => 'asientos.fecha',
+            'idasiento' => 'asientos.idasiento',
+            'idcontrapartida' => 'partidas.idcontrapartida',
+            'idpartida' => 'partidas.idpartida',
             'iva' => 'partidas.iva',
+            'numero' => 'asientos.numero',
             'recargo' => 'partidas.recargo',
-            'codcuentaesp' => 'subcuentas.codcuentaesp',
-            'codimpuesto' => 'subcuentas.codimpuesto'
         ];
     }
 
@@ -73,11 +78,10 @@ class PartidaImpuesto extends ModelView
      */
     protected function getSQLFrom(): string
     {
-        return 'asientos '
+        return 'asientos'
             . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
             . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
-            . ' AND subcuentas.codimpuesto IS NOT NULL'
-            . ' AND subcuentas.codcuentaesp IS NOT NULL';
+            . ' INNER JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta';
     }
 
     /**
@@ -88,7 +92,8 @@ class PartidaImpuesto extends ModelView
         return [
             'asientos',
             'partidas',
-            'subcuentas'
+            'subcuentas',
+            'cuentas'
         ];
     }
 
@@ -100,7 +105,6 @@ class PartidaImpuesto extends ModelView
     protected function loadFromData($data)
     {
         parent::loadFromData($data);
-
         $this->cuotaiva = $this->baseimponible * ($this->iva / 100.00);
         $this->cuotarecargo = $this->baseimponible * ($this->recargo / 100.00);
     }

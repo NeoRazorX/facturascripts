@@ -262,7 +262,7 @@ abstract class BaseController extends Base\Controller
     protected function deleteAction()
     {
         if (!$this->permissions->allowDelete) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-delete'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-delete'));
             return false;
         }
 

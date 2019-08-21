@@ -110,7 +110,7 @@ class ListProducto extends ListController
      */
     protected function createViewStock($name = 'ListStock')
     {
-        $this->addView($name, 'Stock', 'stock', 'fas fa-tasks');
+        $this->addView($name, 'Stock', 'stock', 'fas fa-dolly');
         $this->addSearchFields($name, ['referencia']);
         $this->addOrderBy($name, ['referencia'], 'reference');
         $this->addOrderBy($name, ['cantidad'], 'quantity');

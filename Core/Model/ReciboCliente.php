@@ -82,11 +82,11 @@ class ReciboCliente extends Base\Receipt
 
     /**
      * 
-     * @param string $codpago
+     * @param string $date
      */
-    public function setPaymentMethod($codpago)
+    public function setExpiration($date)
     {
-        parent::setPaymentMethod($codpago);
+        parent::setExpiration($date);
 
         $days = $this->getSubject()->getPaymentDays();
         if (empty($days)) {
@@ -147,7 +147,7 @@ class ReciboCliente extends Base\Receipt
 
         $pago = new PagoCliente();
         $pago->codpago = $this->codpago;
-        $pago->fecha = $this->fecha;
+        $pago->fecha = $this->fechapago ?? $pago->fecha;
         $pago->gastos = $this->gastos;
         $pago->idrecibo = $this->idrecibo;
         $pago->importe = $this->pagado ? $this->importe : 0 - $this->importe;

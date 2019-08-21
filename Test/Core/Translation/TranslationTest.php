@@ -42,7 +42,7 @@ class TranslationTest extends TestCase
      */
     protected function setUp()
     {
-        $this->basePath = FS_FOLDER . '/Core/Translation/';
+        $this->basePath = \FS_FOLDER . '/Core/Translation/';
         $this->mainLang = 'en_EN.json';
     }
 

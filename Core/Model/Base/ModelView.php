@@ -138,22 +138,19 @@ abstract class ModelView
      * @param int             $offset
      * @param int             $limit
      *
-     * @return self[]
+     * @return static[]
      */
     public function all(array $where, array $order = [], int $offset = 0, int $limit = 0)
     {
         $result = [];
         if ($this->checkTables()) {
-            $class = get_class($this);
-            $sql = 'SELECT ' . $this->fieldsList()
-                . ' FROM ' . $this->getSQLFrom()
-                . DataBaseWhere::getSQLWhere($where)
-                . $this->getGroupBy()
-                . $this->getOrderBy($order);
-            foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $d) {
-                $result[] = new $class($d);
+            $sql = 'SELECT ' . $this->fieldsList() . ' FROM ' . $this->getSQLFrom()
+                . DataBaseWhere::getSQLWhere($where) . $this->getGroupBy() . $this->getOrderBy($order);
+            foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $row) {
+                $result[] = new static($row);
             }
         }
+
         return $result;
     }
 

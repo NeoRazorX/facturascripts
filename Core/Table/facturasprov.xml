@@ -81,7 +81,6 @@
         <name>idfactura</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('facturasprov_idfactura_seq'::regclass)</default>
     </column>
     <column>
         <name>idfacturarect</name>

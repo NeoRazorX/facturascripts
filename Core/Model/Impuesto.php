@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 
 /**
@@ -90,11 +91,24 @@ class Impuesto extends Base\ModelClass
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-tax'));
+            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-tax'));
             return false;
         }
 
         return parent::delete();
+    }
+
+    /**
+     * Gets the input tax accounting subaccount indicated.
+     * If it does not exist, the default tax is returned.
+     * 
+     * @param string $subAccount
+     *
+     * @return self
+     */
+    public function inputVatFromSubAccount($subAccount)
+    {
+        return $this->getVatFromSubAccount('codsubcuentarep', $subAccount);
     }
 
     /**
@@ -118,6 +132,19 @@ class Impuesto extends Base\ModelClass
     }
 
     /**
+     * Gets the output tax accounting subaccount indicated.
+     * If it does not exist, the default tax is returned.
+     * 
+     * @param string $subAccount
+     *
+     * @return self
+     */
+    public function outputVatFromSubAccount($subAccount)
+    {
+        return $this->getVatFromSubAccount('codsubcuentasop', $subAccount);
+    }
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -136,7 +163,7 @@ class Impuesto extends Base\ModelClass
     {
         $this->codimpuesto = trim($this->codimpuesto);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codimpuesto, '%column%' => 'codimpuesto', '%min%' => '1', '%max%' => '10']));
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codimpuesto, '%column%' => 'codimpuesto', '%min%' => '1', '%max%' => '10']));
             return false;
         }
 
@@ -144,5 +171,24 @@ class Impuesto extends Base\ModelClass
         $this->codsubcuentasop = empty($this->codsubcuentasop) ? null : $this->codsubcuentasop;
         $this->descripcion = Utils::noHtml($this->descripcion);
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param string $field
+     * @param string $subAccount
+     *
+     * @return static
+     */
+    private function getVatFromSubAccount($field, $subAccount)
+    {
+        $result = new Impuesto();
+        $where = [new DataBaseWhere($field, $subAccount)];
+        if ($result->loadFromCode('', $where)) {
+            return $result;
+        }
+
+        $result->loadFromCode(AppSettings::get('default', 'codimpuesto'));
+        return $result;
     }
 }

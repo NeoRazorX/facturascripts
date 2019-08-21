@@ -15,6 +15,11 @@
         <type>character varying(25)</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>validar</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
     <constraint>
         <name>idsfiscales_pkey</name>
         <type>PRIMARY KEY (tipoidfiscal)</type>

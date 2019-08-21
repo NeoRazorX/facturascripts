@@ -1,8 +1,9 @@
 {
     "default": {
         "coddivisa": "MXN",
+        "codimpuesto": "002",
         "codserie": "A",
         "codpago": "CONT",
-        "codimpuesto": "002"
+        "tipoidfiscal": "RFC"
     }
 }

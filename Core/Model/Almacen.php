@@ -68,7 +68,7 @@ class Almacen extends Base\Address
     public function delete()
     {
         if ($this->isDefault()) {
-            self::$miniLog->alert(self::$i18n->trans('cant-delete-default-warehouse'));
+            self::$miniLog->warning(self::$i18n->trans('cant-delete-default-warehouse'));
             return false;
         }
 
@@ -133,14 +133,28 @@ class Almacen extends Base\Address
      */
     public function test()
     {
-        $this->codalmacen = empty($this->codalmacen) ? (string) $this->newCode() : trim($this->codalmacen);
-        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codalmacen, '%column%' => 'codalmacen', '%min%' => '1', '%max%' => '4']));
+        if (!empty($this->codalmacen) && !preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codalmacen, '%column%' => 'codalmacen', '%min%' => '1', '%max%' => '4']));
             return false;
         }
 
         $this->nombre = Utils::noHtml($this->nombre);
         $this->telefono = Utils::noHtml($this->telefono);
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->codalmacen)) {
+            $this->codalmacen = (string) $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 }

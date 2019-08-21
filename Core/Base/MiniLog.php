@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,20 +32,6 @@ class MiniLog
      * @var array
      */
     private static $dataLog = [];
-
-    /**
-     * Action must be taken immediately.
-     *
-     * Example: Entire website down, dataBase unavailable, etc. This should
-     * trigger the SMS alerts and wake you up.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function alert($message, array $context = [])
-    {
-        $this->log('alert', $message, $context);
-    }
 
     /**
      * Clean the log.
@@ -80,17 +66,6 @@ class MiniLog
     }
 
     /**
-     * System is unusable.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function emergency($message, array $context = [])
-    {
-        $this->log('emergency', $message, $context);
-    }
-
-    /**
      * Runtime errors that do not require immediate action but should typically
      * be logged and monitored.
      *
@@ -100,19 +75,6 @@ class MiniLog
     public function error($message, array $context = [])
     {
         $this->log('error', $message, $context);
-    }
-
-    /**
-     * Interesting events.
-     *
-     * Example: User logs in, SQL logs.
-     *
-     * @param string $message
-     * @param array  $context
-     */
-    public function info($message, array $context = [])
-    {
-        $this->log('info', $message, $context);
     }
 
     /**
@@ -133,7 +95,7 @@ class MiniLog
      *
      * @return array
      */
-    public function read(array $levels = ['info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'])
+    public function read(array $levels = ['notice', 'warning', 'error', 'critical'])
     {
         $messages = [];
         foreach (self::$dataLog as $data) {

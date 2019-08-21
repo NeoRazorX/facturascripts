@@ -85,7 +85,7 @@ class AppController extends App
     {
         parent::__construct($uri);
         $this->debugBar = new StandardDebugBar();
-        if (FS_DEBUG) {
+        if (\FS_DEBUG) {
             $this->debugBar['time']->startMeasure('init', 'AppController::__construct()');
             $this->debugBar->addCollector(new DataBaseCollector($this->miniLog));
             $this->debugBar->addCollector(new TranslationCollector($this->i18n));
@@ -179,7 +179,7 @@ class AppController extends App
      */
     private function loadController(string $pageName)
     {
-        if (FS_DEBUG) {
+        if (\FS_DEBUG) {
             $this->debugBar['time']->stopMeasure('init');
             $this->debugBar['time']->startMeasure('loadController', 'AppController::loadController()');
         }
@@ -220,7 +220,7 @@ class AppController extends App
 
         $this->response->setStatusCode($httpStatus);
         if ($template) {
-            if (FS_DEBUG) {
+            if (\FS_DEBUG) {
                 $this->debugBar['time']->stopMeasure('loadController');
                 $this->debugBar['time']->startMeasure('renderHtml', 'AppController::renderHtml()');
             }
@@ -252,8 +252,8 @@ class AppController extends App
         $webRender = new WebRender();
         $webRender->loadPluginFolders();
 
-        if (FS_DEBUG) {
-            $baseUrl = FS_ROUTE . '/vendor/maximebf/debugbar/src/DebugBar/Resources/';
+        if (\FS_DEBUG) {
+            $baseUrl = \FS_ROUTE . '/vendor/maximebf/debugbar/src/DebugBar/Resources/';
             $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
 
             /// add log data to the debugBar
@@ -301,7 +301,7 @@ class AppController extends App
         }
 
         $this->ipFilter->setAttempt($this->ipFilter->getClientIp());
-        $this->miniLog->alert($this->i18n->trans('login-user-not-found', ['%nick%' => $nick]));
+        $this->miniLog->warning($this->i18n->trans('login-user-not-found', ['%nick%' => $nick]));
         return false;
     }
 
@@ -331,7 +331,7 @@ class AppController extends App
             return false;
         }
 
-        $this->miniLog->alert($this->i18n->trans('login-user-not-found', ['%nick%' => $cookieNick]));
+        $this->miniLog->warning($this->i18n->trans('login-user-not-found', ['%nick%' => $cookieNick]));
         return false;
     }
 
@@ -347,7 +347,7 @@ class AppController extends App
             $user->updateActivity($this->ipFilter->getClientIp());
             $user->save();
 
-            $expire = time() + FS_COOKIES_EXPIRE;
+            $expire = \time() + \FS_COOKIES_EXPIRE;
             $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, $expire));
             $this->response->headers->setCookie(new Cookie('fsLogkey', $user->logkey, $expire));
             $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));

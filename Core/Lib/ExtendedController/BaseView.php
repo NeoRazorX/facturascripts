@@ -163,7 +163,7 @@ abstract class BaseView
     /**
      * Loads view data.
      */
-    abstract public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
+    abstract public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = \FS_ITEM_LIMIT);
 
     /**
      * Process form data.
@@ -268,27 +268,6 @@ abstract class BaseView
     }
 
     /**
-     * Gets the column by the column name from source group
-     *
-     * @param string $columnName
-     * @param array  $source
-     *
-     * @return ColumnItem
-     */
-    public function getColumnForName(string $columnName, &$source)
-    {
-        foreach ($source as $group) {
-            foreach ($group->columns as $key => $column) {
-                if ($key === $columnName) {
-                    return $column;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Returns the column configuration
      *
      * @return GroupItem[]
@@ -323,13 +302,13 @@ abstract class BaseView
             $pages[$key1] = [
                 'active' => ($key2 == $this->offset),
                 'num' => $key1 + 1,
-                'offset' => $key1 * FS_ITEM_LIMIT,
+                'offset' => $key1 * \FS_ITEM_LIMIT,
             ];
             if ($key2 == $this->offset) {
                 $current = $key1;
             }
             $key1++;
-            $key2 += FS_ITEM_LIMIT;
+            $key2 += \FS_ITEM_LIMIT;
         }
 
         /// now descarting pages
@@ -416,6 +395,27 @@ abstract class BaseView
     }
 
     /**
+     * Gets the column by the column name from source group
+     *
+     * @param string $columnName
+     * @param array  $source
+     *
+     * @return ColumnItem
+     */
+    protected function getColumnForName(string $columnName, &$source)
+    {
+        foreach ($source as $group) {
+            foreach ($group->columns as $key => $column) {
+                if ($key === $columnName) {
+                    return $column;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Returns DataBaseWhere[] for locate a pageOption model.
      *
      * @param User|false $user
@@ -431,7 +431,7 @@ abstract class BaseView
         return [
             new DataBaseWhere('name', $viewName),
             new DataBaseWhere('nick', $user->nick),
-            new DataBaseWhere('nick', 'NULL', 'IS', 'OR'),
+            new DataBaseWhere('nick', null, 'IS', 'OR'),
         ];
     }
 }

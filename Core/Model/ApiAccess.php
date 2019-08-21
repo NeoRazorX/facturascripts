@@ -90,7 +90,7 @@ class ApiAccess extends Base\ModelClass
      */
     public static function addResourcesToApiKey($idApiKey, $resources, $state = false)
     {
-        $apiAccess = new self();
+        $apiAccess = new static();
 
         foreach ($resources as $resource) {
             $where = [new DataBaseWhere('idapikey', $idApiKey)];

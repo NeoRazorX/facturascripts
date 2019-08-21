@@ -138,9 +138,10 @@ class Proveedor extends Base\ComercialContact
      */
     public function test()
     {
-        $this->codproveedor = empty($this->codproveedor) ? (string) $this->newCode() : trim($this->codproveedor);
-        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codproveedor, '%column%' => 'codproveedor', '%min%' => '1', '%max%' => '10']));
+        if (!empty($this->codproveedor) && !preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
+            self::$miniLog->warning(
+                self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codproveedor, '%column%' => 'codproveedor', '%min%' => '1', '%max%' => '10'])
+            );
             return false;
         }
 
@@ -155,6 +156,10 @@ class Proveedor extends Base\ComercialContact
      */
     protected function saveInsert(array $values = [])
     {
+        if (empty($this->codproveedor)) {
+            $this->codproveedor = (string) $this->newCode();
+        }
+
         $return = parent::saveInsert($values);
         if ($return && empty($this->idcontacto)) {
             /// creates new contact

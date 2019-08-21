@@ -54,13 +54,6 @@ class Subcuenta extends Base\ModelClass
     public $codejercicio;
 
     /**
-     * Tax code.
-     *
-     * @var string
-     */
-    public $codimpuesto;
-
-    /**
      * Sub-account code.
      *
      * @var string
@@ -249,19 +242,19 @@ class Subcuenta extends Base\ModelClass
         $this->codsubcuenta = trim($this->codsubcuenta);
         $this->descripcion = Utils::noHtml($this->descripcion);
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']));
+            self::$miniLog->warning(self::$i18n->trans('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']));
             return false;
         }
 
         if (!self::$disableAditionTest) {
             if (!$this->testErrorInLengthSubAccount()) {
-                self::$miniLog->alert(self::$i18n->trans('account-length-error'));
+                self::$miniLog->warning(self::$i18n->trans('account-length-error'));
                 return false;
             }
 
             $this->idcuenta = $this->getIdAccount();
             if (empty($this->idcuenta)) {
-                self::$miniLog->alert(self::$i18n->trans('account-data-error'));
+                self::$miniLog->warning(self::$i18n->trans('account-data-error'));
                 return false;
             }
         }
@@ -299,7 +292,6 @@ class Subcuenta extends Base\ModelClass
                 . ' WHERE idsubcuenta = ' . $this->idsubcuenta;
             self::$dataBase->exec($sql);
 
-            /// save transaction
             if ($inTransaction === false) {
                 self::$dataBase->commit();
             }
@@ -309,7 +301,7 @@ class Subcuenta extends Base\ModelClass
         } finally {
             if (!$inTransaction && self::$dataBase->inTransaction()) {
                 self::$dataBase->rollback();
-                self::$miniLog->alert(self::$i18n->trans('update-account-balance-error'));
+                self::$miniLog->warning(self::$i18n->trans('update-account-balance-error'));
                 return false;
             }
         }

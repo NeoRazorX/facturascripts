@@ -29,7 +29,7 @@ class AppRouter
     /**
      * Path to list of routes stored on file.
      */
-    const ROUTE_LIST_FILE = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'routes.json';
+    const ROUTE_LIST_FILE = \FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . 'routes.json';
 
     /**
      * List of routes.
@@ -104,11 +104,11 @@ class AppRouter
     public function getFile(): bool
     {
         $uri = $this->getUri();
-        $filePath = FS_FOLDER . $uri;
+        $filePath = \FS_FOLDER . $uri;
 
         /// favicon.ico
         if ('/favicon.ico' == $uri) {
-            $filePath = FS_FOLDER . '/Dinamic/Assets/Images/favicon.ico';
+            $filePath = \FS_FOLDER . '/Dinamic/Assets/Images/favicon.ico';
             header('Content-Type: ' . $this->getMime($filePath));
             readfile($filePath);
             return true;
@@ -163,7 +163,7 @@ class AppRouter
      */
     private function deploy()
     {
-        if (!file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic')) {
+        if (!file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic')) {
             $pluginManager = new \FacturaScripts\Core\Base\PluginManager();
             $pluginManager->deploy();
         }

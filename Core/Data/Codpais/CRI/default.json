@@ -1,0 +1,9 @@
+{
+    "default": {
+        "coddivisa": "CRC",
+        "codimpuesto": "002",
+        "codserie": "A",
+        "codpago": "CONT",
+        "tipoidfiscal": "RFC"
+    }
+}

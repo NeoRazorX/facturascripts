@@ -249,7 +249,7 @@ class DocumentReports extends Controller
                 break;
         }
 
-        if (strtolower(FS_DB_TYPE) === 'mysql') {
+        if (strtolower(\FS_DB_TYPE) === 'mysql') {
             return 'CONCAT(' . implode(', ', $concat) . ')';
         }
 

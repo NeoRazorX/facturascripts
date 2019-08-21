@@ -37,7 +37,6 @@
         <name>idasiento</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('asientos_idasiento_seq'::regclass)</default>
     </column>
     <column>
         <name>iddiario</name>

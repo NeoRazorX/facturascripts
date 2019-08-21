@@ -41,10 +41,12 @@
         <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
         <div class="card bg-light mb-2">
             <div class="card-header">
-                <button class="btn btn-sm btn-success" type="button" data-toggle="collapse" data-target="#{{ formName }}Collapse" aria-expanded="false" aria-controls="collapseExample">
+                <button class="btn btn-outline-success" type="button" data-toggle="collapse" data-target="#{{ formName }}Collapse" aria-expanded="false" aria-controls="collapseExample">
                     <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                     {{ i18n.trans('new') }}
                 </button>
+                &nbsp;
+                {{ i18n.trans(currentView.title) }}
             </div>
             <div class="collapse" id="{{ formName }}Collapse">
                 <div class="card-body">
@@ -120,10 +122,6 @@
             </div>
         </div>
     </form>
-{% else %}
-    <div class="alert alert-warning">
-        {{ i18n.trans('no-data') }}
-    </div>
 {% endfor %}
 
 <br/>

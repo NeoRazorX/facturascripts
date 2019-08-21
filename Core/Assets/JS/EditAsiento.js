@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,7 @@ var mainForm, accountDescription, accountBalance, total, unbalance, vatRegister;
 var vatModal, vatBody;
 var accountData = {"subaccount": ""};
 var accountGraph = null;
+
 /*
  * AMOUNT Functions Management
  */
@@ -82,7 +83,7 @@ function setAccountData(data) {
     // Update data labels and buttons
     accountDescription.textContent = data.description;
     accountBalance.textContent = data.balance;
-    vatRegister.prop("disabled", !data.codevat);
+    vatRegister.prop("disabled", !data.hasvat);
     // Update graphic bars
     accountGraph.data.datasets.forEach((dataset) => {
         dataset.data.lenght = 0; // Force delete old data
@@ -263,6 +264,7 @@ $(document).ready(function () {
         // Add control events to Grid Controller
         addEvent("afterChange", customAfterChange);
         addEvent("afterSelection", customAfterSelection);
+
         // Graphic bars
         var ctx = document.getElementById("detail-balance");
         if (ctx) {

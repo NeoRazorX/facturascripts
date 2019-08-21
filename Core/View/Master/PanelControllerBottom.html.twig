@@ -34,8 +34,7 @@
                 {% if fsc.views | length > 2 %}
                     <ul class="nav nav-pills mb-3 d-print-none" id="mainTabs" role="tablist">
                         {% for viewName, view in fsc.views %}
-                            {% set showView = view.settings.active and viewName != firstViewName %}
-                            {% if showView %}
+                            {% if view.settings.active and viewName != firstViewName %}
                                 <li class="nav-item">
                                     {% set active = (viewName == fsc.active) or (fsc.active == firstViewName and loop.index == 2) ? ' active' : '' %}
                                     <a href="#{{ viewName }}" class="nav-link{{ active }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
@@ -52,8 +51,7 @@
                 {% endif %}
                 <div class="tab-content" id="mainTabsContent">
                     {% for viewName, view in fsc.views %}
-                        {% set showView = view.settings.active and viewName != firstViewName %}
-                        {% if showView %}
+                        {% if view.settings.active and viewName != firstViewName %}
                             {% set active = (viewName == fsc.active) or (fsc.active == firstViewName and loop.index == 2) ? ' show active' : '' %}
                             <div class="tab-pane{{ active }}" id="{{ viewName }}" role="tabpanel">
                                 {% do fsc.setCurrentView(viewName) %}

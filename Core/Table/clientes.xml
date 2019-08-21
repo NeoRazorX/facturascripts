@@ -125,7 +125,7 @@
     </column>
     <column>
         <name>web</name>
-        <type>character varying(250)</type>
+        <type>character varying(100)</type>
     </column>
     <constraint>
         <name>clientes_pkey</name>

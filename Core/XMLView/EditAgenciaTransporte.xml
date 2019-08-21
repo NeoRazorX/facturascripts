@@ -26,13 +26,13 @@
                 <widget type="text" fieldname="codtrans" icon="fas fa-hashtag" maxlength="8" readonly="dinamic" />
             </column>
             <column name="name" order="110">
-                <widget type="text" fieldname="nombre" required="true" />
+                <widget type="text" fieldname="nombre" maxlength="100" required="true" />
             </column>
             <column name="phone" numcolumns="2" order="120">
-                <widget type="text" fieldname="telefono" icon="fas fa-phone" />
+                <widget type="text" fieldname="telefono" maxlength="30" icon="fas fa-phone" />
             </column>
             <column name="url" order="130">
-                <widget type="link" fieldname="web" icon="fas fa-globe-americas" />
+                <widget type="link" fieldname="web" maxlength="100" />
             </column>
         </group>
         <group name="data2" numcolumns="12">

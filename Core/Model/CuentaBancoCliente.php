@@ -45,7 +45,7 @@ class CuentaBancoCliente extends Base\BankAccount
     /**
      * Is it the customer's main account?
      *
-     * @var boolean
+     * @var bool
      */
     public $principal;
 
@@ -59,13 +59,29 @@ class CuentaBancoCliente extends Base\BankAccount
     }
 
     /**
-     * Returns the name of the column that is the model's primary key.
-     *
+     * 
      * @return string
      */
-    public static function primaryColumn()
+    public function install()
     {
-        return 'codcuenta';
+        /// needed dependencies
+        new Cliente();
+
+        return parent::install();
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function save()
+    {
+        if (parent::save()) {
+            $this->updatePrimaryAccount();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -78,33 +94,15 @@ class CuentaBancoCliente extends Base\BankAccount
         return 'cuentasbcocli';
     }
 
-    /**
-     * Stores the model data in the database.
-     *
-     * @return bool
-     */
-    public function save()
+    protected function updatePrimaryAccount()
     {
-        if ($this->test()) {
-            if ($this->exists()) {
-                $allOK = $this->saveUpdate();
-            } else {
-                $this->codcuenta = $this->newCode();
-                $allOK = $this->saveInsert();
-            }
-
-            if ($allOK) {
-                /// If this account is the main one, we demarcate the others
-                $sql = 'UPDATE ' . static::tableName()
-                    . ' SET principal = false'
-                    . ' WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente)
-                    . ' AND codcuenta <> ' . self::$dataBase->var2str($this->codcuenta) . ';';
-                $allOK = self::$dataBase->exec($sql);
-            }
-
-            return $allOK;
+        if ($this->principal) {
+            /// If this account is the main one, we demarcate the others
+            $sql = 'UPDATE ' . static::tableName()
+                . ' SET principal = false'
+                . ' WHERE codcliente = ' . self::$dataBase->var2str($this->codcliente)
+                . ' AND codcuenta != ' . self::$dataBase->var2str($this->codcuenta) . ';';
+            self::$dataBase->exec($sql);
         }
-
-        return false;
     }
 }

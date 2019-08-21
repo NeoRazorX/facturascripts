@@ -5,19 +5,15 @@ php:
   - 7.0
   - 7.1
   - 7.2
-  - nightly
-
-env:
-  - DB=postgres
+  - 7.3
 
 install: travis_retry composer install --no-interaction --prefer-source
 
 services:
   - memcached
-  - mysql
 
 addons:
-  mariadb: '10.0'
+  mariadb: '10.3'
 
 before_script:
   - mysql -e 'DROP DATABASE IF EXISTS facturascripts;'
@@ -31,6 +27,4 @@ script:
 # Run PHPUnit test.
   - vendor/bin/phpunit --configuration phpunit.xml
 matrix:
-  allow_failures:
-    - php: nightly
   fast_finish: true

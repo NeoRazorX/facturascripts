@@ -13,8 +13,7 @@
     </column>
     <column>
         <name>idlinea</name>
-        <type>integer</type>
-        <default>nextval('lineastransferenciasstock_idlinea_seq'::regclass)</default>
+        <type>serial</type>
     </column>
     <column>
         <name>idproducto</name>

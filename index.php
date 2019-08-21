@@ -39,7 +39,7 @@ if (!file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'config.php')) {
     if ((int) substr(phpversion(), 0, 1) < 7) {
         die('You need PHP 7<br/>You have PHP ' . phpversion());
     } elseif (!file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'vendor')) {
-        die('<h1>COMPOSER ERROR</h1><p>You need to run: composer install</p>');
+        die('<h1>COMPOSER ERROR</h1><p>You need to run: composer install</p><p>You should also run: npm install</p>');
     }
 
     /**

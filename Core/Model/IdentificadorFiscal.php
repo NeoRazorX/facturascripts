@@ -42,6 +42,18 @@ class IdentificadorFiscal extends Base\ModelClass
 
     /**
      *
+     * @var bool
+     */
+    public $validar;
+
+    public function clear()
+    {
+        parent::clear();
+        $this->validar = false;
+    }
+
+    /**
+     *
      * @return string
      */
     public static function primaryColumn()
@@ -66,7 +78,7 @@ class IdentificadorFiscal extends Base\ModelClass
     {
         $this->tipoidfiscal = trim($this->tipoidfiscal);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,25}$/i', $this->tipoidfiscal)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->tipoidfiscal, '%column%' => 'tipoidfiscal', '%min%' => '1', '%max%' => '25']));
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->tipoidfiscal, '%column%' => 'tipoidfiscal', '%min%' => '1', '%max%' => '25']));
             return false;
         }
 

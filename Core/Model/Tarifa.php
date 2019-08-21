@@ -30,10 +30,13 @@ class Tarifa extends Base\ModelClass
 
     use Base\ModelTrait;
 
+    const APPLY_COST = 'coste';
+    const APPLY_PRICE = 'pvp';
+
     /**
-     * Formula to apply.
+     * Formula to apply. Possible values (coste or pvp).
      *
-     * @var
+     * @var string
      */
     public $aplicar;
 
@@ -89,11 +92,11 @@ class Tarifa extends Base\ModelClass
         $finalPrice = 0.0;
 
         switch ($this->aplicar) {
-            case 'coste':
+            case self::APPLY_COST:
                 $finalPrice += $cost + ($cost * $this->valorx / 100) + $this->valory;
                 break;
 
-            case 'pvp':
+            case self::APPLY_PRICE:
                 $finalPrice += $price - ($price * $this->valorx / 100) - $this->valory;
                 break;
         }
@@ -113,7 +116,7 @@ class Tarifa extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->aplicar = 'pvp';
+        $this->aplicar = self::APPLY_PRICE;
         $this->maxpvp = false;
         $this->mincoste = false;
         $this->valorx = 0.0;
@@ -158,7 +161,7 @@ class Tarifa extends Base\ModelClass
     {
         $this->codtarifa = trim($this->codtarifa);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codtarifa)) {
-            self::$miniLog->alert(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codtarifa, '%column%' => 'codtarifa', '%min%' => '1', '%max%' => '6']));
+            self::$miniLog->error(self::$i18n->trans('invalid-alphanumeric-code', ['%value%' => $this->codtarifa, '%column%' => 'codtarifa', '%min%' => '1', '%max%' => '6']));
             return false;
         }
 

@@ -78,7 +78,7 @@ class RoleAccess extends Base\ModelClass
     public static function addPagesToRole($codrole, $pages)
     {
         $where = [new DataBaseWhere('codrole', $codrole)];
-        $roleAccess = new self();
+        $roleAccess = new static();
 
         foreach ($pages as $record) {
             $where[] = new DataBaseWhere('pagename', $record->name);

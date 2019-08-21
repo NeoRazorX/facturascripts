@@ -25,11 +25,14 @@
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
-            <column name="email" numcolumns="3" order="100">
-                <widget type="text" fieldname="email" icon="fas fa-at" />
+            <column name="email" order="100">
+                <widget type="text" fieldname="email" icon="fas fa-envelope" />
             </column>
-            <column name="password" numcolumns="3" order="100">
+            <column name="password" order="110">
                 <widget type="password" fieldname="password" icon="fas fa-key" />
+            </column>
+            <column name="email-signature" numcolumns="12" order="120">
+                <widget type="textarea" fieldname="signature" />
             </column>
         </group>
         <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-server">

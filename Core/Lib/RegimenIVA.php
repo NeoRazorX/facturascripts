@@ -26,6 +26,10 @@ namespace FacturaScripts\Core\Lib;
 class RegimenIVA
 {
 
+    const TAX_SYSTEM_EXEMPT = 'Exento';
+    const TAX_SYSTEM_GENERAL = 'General';
+    const TAX_SYSTEM_SURCHARGE = 'Recargo';
+
     /**
      * Returns all the available options
      *
@@ -34,9 +38,9 @@ class RegimenIVA
     public static function all()
     {
         return [
-            'Exento' => 'Exento',
-            'General' => 'General',
-            'Recargo' => 'Recargo de equivalencia'
+            self::TAX_SYSTEM_EXEMPT => 'Exento',
+            self::TAX_SYSTEM_GENERAL => 'General',
+            self::TAX_SYSTEM_SURCHARGE => 'Recargo de equivalencia'
         ];
     }
 
@@ -47,6 +51,6 @@ class RegimenIVA
      */
     public static function defaultValue()
     {
-        return 'General';
+        return self::TAX_SYSTEM_GENERAL;
     }
 }

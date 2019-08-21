@@ -71,7 +71,7 @@ class Translator
      *
      * @param string $lang
      */
-    public function __construct($lang = FS_LANG)
+    public function __construct($lang = \FS_LANG)
     {
         if (self::$translator === null) {
             self::$defaultLang = $lang;
@@ -136,12 +136,12 @@ class Translator
     {
         self::$languages[] = $lang;
 
-        $file = FS_FOLDER . '/Core/Translation/' . $lang . '.json';
+        $file = \FS_FOLDER . '/Core/Translation/' . $lang . '.json';
         self::$translator->addResource('json', $file, $lang);
 
         $pluginManager = new PluginManager();
         foreach ($pluginManager->enabledPlugins() as $pluginName) {
-            $file = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . $lang . '.json';
+            $file = \FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . $lang . '.json';
             if (file_exists($file)) {
                 self::$translator->addResource('json', $file, $lang);
             }
@@ -156,7 +156,7 @@ class Translator
     public function getAvailableLanguages()
     {
         $languages = [];
-        $dir = FS_FOLDER . '/Core/Translation';
+        $dir = \FS_FOLDER . '/Core/Translation';
         foreach (scandir($dir, SCANDIR_SORT_ASCENDING) as $fileName) {
             if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
                 $key = substr($fileName, 0, -5);

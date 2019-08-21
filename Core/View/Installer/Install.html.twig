@@ -45,7 +45,7 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
             <a class="navbar-brand" href="" onclick="location.reload();">
                 <img src="Core/Assets/Images/logo.png" width="30" height="30" class="align-top" alt="FacturaScripts"/>
-                FacturaScripts 2018
+                FacturaScripts {{ version }}
             </a>
             <ul class="nav navbar-nav mr-auto"></ul>
             <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
@@ -61,10 +61,9 @@
                 <div class="col-sm-12">
                     <br/>
                     {% from 'Macro/Utils.html.twig' import message as show_message %}
-                    {{ show_message(log, ['error', 'critical', 'alert', 'emergency'], 'danger') }}
+                    {{ show_message(log, ['error', 'critical'], 'danger') }}
                     {{ show_message(log, ['warning'], 'warning') }}
                     {{ show_message(log, ['notice'], 'success') }}
-                    {{ show_message(log, ['info'], 'info') }}
                 </div>
             </div>
         </div>

@@ -220,11 +220,11 @@ class Controller
         $defaultPage = $this->request->query->get('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
-            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE));
+            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() + \FS_COOKIES_EXPIRE));
             $this->user->save();
         } elseif ($defaultPage === 'FALSE') {
             $this->user->homepage = null;
-            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE));
+            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() - \FS_COOKIES_EXPIRE));
             $this->user->save();
         }
     }

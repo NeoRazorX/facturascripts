@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Contacto;
 
@@ -76,9 +77,10 @@ class EditEmailSent extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $mainView = $this->getMainViewName();
+        $this->setTabsPosition('bottom');
 
         /// buttons
+        $mainView = $this->getMainViewName();
         $newButton = [
             'action' => 'contact',
             'color' => 'info',
@@ -90,8 +92,29 @@ class EditEmailSent extends EditController
 
         /// settings
         $this->setSettings($mainView, 'btnNew', false);
+
+        /// other view
+        $this->createViewOtherEmails();
     }
 
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewOtherEmails($viewName = 'ListEmailSent')
+    {
+        $this->addListView($viewName, 'EmailSent', 'emails', 'fas fa-paper-plane');
+        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
+        $this->views[$viewName]->searchFields = ['body', 'subject'];
+
+        /// settings
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    /**
+     * 
+     * @param string $action
+     */
     protected function execAfterAction($action)
     {
         switch ($action) {
@@ -101,6 +124,31 @@ class EditEmailSent extends EditController
 
             default:
                 parent::execAfterAction($action);
+        }
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListEmailSent':
+                $addressee = $this->getViewModelValue($this->getMainViewName(), 'addressee');
+                $id = $this->getViewModelValue($this->getMainViewName(), 'id');
+                $where = [
+                    new DataBaseWhere('addressee', $addressee),
+                    new DataBaseWhere('id', $id, '!=')
+                ];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
         }
     }
 }

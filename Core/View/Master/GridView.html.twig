@@ -59,7 +59,7 @@
         {% if detailMasterColumns is not empty %}
             {{ _self.tabRender(currentView, i18n) }}
         {% endif %}
-        <div class="tab-content mt-1">
+        <div class="tab-content">
             <div class="tab-pane show active" id="tab{{ detailViewName }}" role="tabpanel">
                 {# -- Row header -- #}
                 {% if detailMasterColumns is not empty %}
@@ -94,9 +94,8 @@
                             {% endblock %}
                         </div>
                     </div>
-                    <br>
                     {# Grid zone #}
-                    <div class="row no-gutters">
+                    <div class="row no-gutters mt-2">
                         <script type="text/javascript">
                             documentLineData = {{ currentView.getGridData() | raw }};
                         </script>
@@ -112,7 +111,7 @@
                         {% endblock %}
                     </div>
                     {# Buttons actions #}
-                    <div class="row">
+                    <div class="row no-gutters mt-2">
                         <div class="card col-12">
                             <div class="card-body d-flex justify-content-between" style="padding: 1rem 0rem;">
                                 {# -- Delete action -- #}

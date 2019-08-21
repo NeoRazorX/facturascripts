@@ -50,21 +50,23 @@ class ListEjercicio extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListEjercicio', 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
-        $this->addSearchFields('ListEjercicio', ['nombre', 'codejercicio']);
-        $this->addOrderBy('ListEjercicio', ['fechainicio'], 'start-date', 2);
-        $this->addOrderBy('ListEjercicio', ['codejercicio'], 'code');
-        $this->addOrderBy('ListEjercicio', ['nombre'], 'name');
-        $this->addOrderBy('ListEjercicio', ['idempresa, codejercicio'], 'company');
+        $viewName = 'ListEjercicio';
+        $this->addView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
+        $this->addSearchFields($viewName, ['nombre', 'codejercicio']);
+        $this->addOrderBy($viewName, ['fechainicio'], 'start-date', 2);
+        $this->addOrderBy($viewName, ['codejercicio'], 'code');
+        $this->addOrderBy($viewName, ['nombre'], 'name');
+        $this->addOrderBy($viewName, ['idempresa, codejercicio'], 'company');
 
+        /// filters
         $selectValues = $this->codeModel->all('empresas', 'idempresa', 'nombre');
-        $this->addFilterSelect('ListEjercicio', 'idempresa', 'company', 'idempresa', $selectValues);
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $selectValues);
 
         $values = [
+            ['label' => $this->i18n->trans('all'), 'where' => []],
             ['label' => $this->i18n->trans('only-active'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_OPEN)]],
             ['label' => $this->i18n->trans('only-closed'), 'where' => [new DataBaseWhere('estado', Ejercicio::EXERCISE_STATUS_CLOSED)]],
-            ['label' => $this->i18n->trans('all'), 'where' => []]
         ];
-        $this->addFilterSelectWhere('ListEjercicio', 'status', $values);
+        $this->addFilterSelectWhere($viewName, 'status', $values);
     }
 }

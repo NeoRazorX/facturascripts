@@ -79,7 +79,7 @@ class WidgetFile extends BaseWidget
                 continue;
             }
 
-            if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
+            if ($uploadFile->move(\FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
                 $model->{$this->fieldname} = $uploadFile->getClientOriginalName();
                 break;
             }

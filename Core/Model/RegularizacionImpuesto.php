@@ -122,12 +122,16 @@ class RegularizacionImpuesto extends Base\ModelClass
      */
     public function delete()
     {
-        $asiento = $this->getAsiento();
-        if ($asiento->exists()) {
-            $asiento->delete();
+        if (parent::delete()) {
+            $asiento = $this->getAsiento();
+            if ($asiento->exists()) {
+                $asiento->delete();
+            }
+
+            return true;
         }
 
-        return parent::delete();
+        return false;
     }
 
     /**
@@ -170,7 +174,7 @@ class RegularizacionImpuesto extends Base\ModelClass
             . ' AND fechafin >= ' . self::$dataBase->var2str($fecha) . ';';
 
         $data = self::$dataBase->select($sql);
-        return empty($data) ? false : new self($data[0]);
+        return empty($data) ? false : new static($data[0]);
     }
 
     /**

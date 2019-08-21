@@ -31,6 +31,14 @@ class Contacto extends Base\Contact
 {
 
     use Base\ModelTrait;
+    use Base\PasswordTrait;
+
+    /**
+     * True if contact accepts the privacy policy.
+     *
+     * @var bool
+     */
+    public $aceptaprivacidad;
 
     /**
      * True if it supports marketing, but False.
@@ -124,6 +132,12 @@ class Contacto extends Base\Contact
     public $empresa;
 
     /**
+     *
+     * @var bool
+     */
+    public $habilitado;
+
+    /**
      * Primary key.
      *
      * @var int
@@ -157,13 +171,6 @@ class Contacto extends Base\Contact
      * @var string
      */
     public $logkey;
-
-    /**
-     * Password hashed with password_hash()
-     *
-     * @var string
-     */
-    public $password;
 
     /**
      * Contact province.
@@ -214,8 +221,10 @@ class Contacto extends Base\Contact
     public function clear()
     {
         parent::clear();
+        $this->aceptaprivacidad = false;
         $this->admitemarketing = false;
         $this->codpais = AppSettings::get('default', 'codpais');
+        $this->habilitado = true;
         $this->level = 1;
         $this->puntos = 0;
         $this->verificado = false;
@@ -347,7 +356,6 @@ class Contacto extends Base\Contact
         $this->lastactivity = date('d-m-Y H:i:s');
         $this->lastip = $ipAddress;
         $this->logkey = Utils::randomString(99);
-
         return $this->logkey;
     }
 
@@ -369,16 +377,6 @@ class Contacto extends Base\Contact
     public function primaryDescriptionColumn()
     {
         return 'descripcion';
-    }
-
-    /**
-     * Asigns the new password to the contact.
-     *
-     * @param string $pass
-     */
-    public function setPassword(string $pass)
-    {
-        $this->password = password_hash($pass, PASSWORD_DEFAULT);
     }
 
     /**
@@ -410,7 +408,7 @@ class Contacto extends Base\Contact
         $this->empresa = Utils::noHtml($this->empresa);
         $this->provincia = Utils::noHtml($this->provincia);
 
-        return parent::test();
+        return $this->testPassword() && parent::test();
     }
 
     /**
@@ -421,9 +419,9 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List')
     {
-        return parent::url($type, 'ListCliente?activetab=List');
+        return parent::url($type, $list);
     }
 
     /**
@@ -436,25 +434,5 @@ class Contacto extends Base\Contact
     public function verifyLogkey($value)
     {
         return $this->logkey === $value;
-    }
-
-    /**
-     * Verifies password. It also rehash the password if needed.
-     *
-     * @param string $pass
-     *
-     * @return bool
-     */
-    public function verifyPassword(string $pass): bool
-    {
-        if (password_verify($pass, $this->password)) {
-            if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {
-                $this->setPassword($pass);
-            }
-
-            return true;
-        }
-
-        return false;
     }
 }

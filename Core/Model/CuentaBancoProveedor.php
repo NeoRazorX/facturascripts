@@ -51,20 +51,30 @@ class CuentaBancoProveedor extends Base\BankAccount
         $this->principal = true;
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function install()
     {
+        /// needed dependencies
         new Proveedor();
+
         return parent::install();
     }
 
     /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
+     * 
+     * @return bool
      */
-    public static function primaryColumn()
+    public function save()
     {
-        return 'codcuenta';
+        if (parent::save()) {
+            $this->updatePrimaryAccount();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -77,33 +87,15 @@ class CuentaBancoProveedor extends Base\BankAccount
         return 'cuentasbcopro';
     }
 
-    /**
-     * Stores the model data in the database.
-     *
-     * @return bool
-     */
-    public function save()
+    protected function updatePrimaryAccount()
     {
-        if ($this->test()) {
-            if ($this->exists()) {
-                $allOK = $this->saveUpdate();
-            } else {
-                $this->codcuenta = $this->newCode();
-                $allOK = $this->saveInsert();
-            }
-
-            if ($allOK) {
-                /// If this account is the main one, we demarcate the others
-                $sql = 'UPDATE ' . static::tableName()
-                    . ' SET principal = false'
-                    . ' WHERE codproveedor = ' . self::$dataBase->var2str($this->codproveedor)
-                    . ' AND codcuenta <> ' . self::$dataBase->var2str($this->codcuenta) . ';';
-                $allOK = self::$dataBase->exec($sql);
-            }
-
-            return $allOK;
+        if ($this->principal) {
+            /// If this account is the main one, we demarcate the others
+            $sql = 'UPDATE ' . static::tableName()
+                . ' SET principal = false'
+                . ' WHERE codproveedor = ' . self::$dataBase->var2str($this->codproveedor)
+                . ' AND codcuenta <> ' . self::$dataBase->var2str($this->codcuenta) . ';';
+            self::$dataBase->exec($sql);
         }
-
-        return false;
     }
 }

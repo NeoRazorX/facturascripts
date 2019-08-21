@@ -21,10 +21,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>codimpuesto</name>
-        <type>character varying(10)</type>
-    </column>
-    <column>
         <name>codsubcuenta</name>
         <type>character varying(15)</type>
         <null>NO</null>
@@ -55,7 +51,6 @@
         <name>idsubcuenta</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('subcuentas_idsubcuenta_seq'::regclass)</default>
     </column>
     <column>
         <name>saldo</name>
@@ -82,9 +77,5 @@
     <constraint>
         <name>ca_subcuentas_cuentasesp</name>
         <type>FOREIGN KEY (codcuentaesp) REFERENCES cuentasesp (codcuentaesp) ON DELETE SET NULL ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
-        <name>ca_subcuentas_impuestos</name>
-        <type>FOREIGN KEY (codimpuesto) REFERENCES impuestos (codimpuesto) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

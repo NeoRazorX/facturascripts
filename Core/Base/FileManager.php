@@ -19,9 +19,7 @@
 namespace FacturaScripts\Core\Base;
 
 /**
- * Class to manage the actions with folders and files
- *
- * @package FacturaScripts\Core\Base
+ * Class to manage the actions with folders and files.
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
@@ -217,7 +215,7 @@ class FileManager
     public static function notWritableFolders(): array
     {
         $notwritable = [];
-        foreach (static::scanFolder(FS_FOLDER, true) as $folder) {
+        foreach (static::scanFolder(\FS_FOLDER, true) as $folder) {
             if (is_dir($folder) && !is_writable($folder)) {
                 $notwritable[] = $folder;
             }

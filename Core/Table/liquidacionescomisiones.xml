@@ -33,7 +33,6 @@
         <name>idliquidacion</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('liquidacionescomisiones_id_seq'::regclass)</default>
     </column>
     <column>
         <name>observaciones</name>

@@ -30,7 +30,6 @@
         <name>idstock</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('stocks_idstock_seq'::regclass)</default>
     </column>
     <column>
         <name>pterecibir</name>

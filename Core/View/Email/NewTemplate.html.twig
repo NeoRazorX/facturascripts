@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ title }}</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type="text/css">
+            {% block css %}
+                #body {
+                    background-color: #E8EAED;
+                    color: black;
+                }
+                .container {
+                    background-color: #FFFFFF;
+                    border-radius: 5px;
+                    color: black;
+                    font-size: 1em;
+                    padding: 10px;
+                }
+                .company {
+                    color: #3D67AC;
+                    font-size: 2em;
+                    font-weight: bold;
+                }
+                .footer {
+                    font-size: 10px;
+                    color: black;
+                    padding: 10px;
+                }
+                .btn {
+                    border-radius: 5px;
+                    background-color: #2E7EFA;
+                    color: #FFFFFF;
+                }
+                .btn a {
+                    padding: 10px;
+                    font-family: Helvetica, Arial, sans-serif;
+                    font-size: 14px;
+                    border-radius: 5px;
+                    background-color: #2E7EFA;
+                    color: #FFFFFF; 
+                    text-decoration: none;
+                    font-weight: bold;
+                    display: inline-block;
+                }
+                .company a {
+                    color: #3D67AC;
+                    text-decoration: none;
+                }
+                .text-center {
+                    text-align: center;
+                }
+            {% endblock %}
+        </style>
+        {% block javascripts %}
+        {% endblock %}
+    </head>
+    <body>
+        <div id="body">
+            {% block body %}
+                <table width="100%">
+                    <tr>
+                        <td></td>
+                        <td>
+                            <h3 class="company text-center">
+                                {% if empresa.web is empty %}
+                                    {{ empresa.nombrecorto }}
+                                {% else %}
+                                    <a href="{{ empresa.web }}">
+                                        {{ empresa.nombrecorto }}
+                                    </a>
+                                {% endif %}
+                            </h3>
+                            <div class="container">
+                                {% for block in mainBlocks %}
+                                    {{ block.render() | raw }}
+                                {% endfor %}
+                            </div>
+                            <div class="footer">
+                                {% for block in footerBlocks %}
+                                    {{ block.render() | raw }}
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
+            {% endblock %}
+        </div>
+    </body>
+</html>

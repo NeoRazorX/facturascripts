@@ -25,6 +25,13 @@ use FacturaScripts\Core\Model\Base\ModelView;
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * 
+ * @property float $baseimponible
+ * @property float $cuotaiva
+ * @property float $cuotarecargo
+ * @property float $iva
+ * @property float $recargo
+ * @property float $total
  */
 class PartidaImpuestoResumen extends ModelView
 {
@@ -49,15 +56,14 @@ class PartidaImpuestoResumen extends ModelView
     protected function getFields(): array
     {
         return [
+            'baseimponible' => 'SUM(partidas.baseimponible)',
+            'codcuentaesp' => 'COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp)',
             'codejercicio' => 'asientos.codejercicio',
-            'codcuentaesp' => 'subcuentas.codcuentaesp',
-            'descripcion' => 'cuentasesp.descripcion',
-            'codimpuesto' => 'subcuentas.codimpuesto',
-            'idsubcuenta' => 'partidas.idsubcuenta',
             'codsubcuenta' => 'partidas.codsubcuenta',
+            'descripcion' => 'cuentasesp.descripcion',
+            'idsubcuenta' => 'partidas.idsubcuenta',
             'iva' => 'partidas.iva',
             'recargo' => 'partidas.recargo',
-            'baseimponible' => 'SUM(partidas.baseimponible)'
         ];
     }
 
@@ -69,10 +75,12 @@ class PartidaImpuestoResumen extends ModelView
     protected function getGroupFields(): string
     {
         return 'asientos.codejercicio,'
-            . 'subcuentas.codcuentaesp,'
-            . 'cuentasesp.descripcion, subcuentas.codimpuesto,'
-            . 'partidas.idsubcuenta, partidas.codsubcuenta,'
-            . 'partidas.iva, partidas.recargo';
+            . 'COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp),'
+            . 'cuentasesp.descripcion,'
+            . 'partidas.idsubcuenta,'
+            . 'partidas.codsubcuenta,'
+            . 'partidas.iva,'
+            . 'partidas.recargo';
     }
 
     /**
@@ -83,9 +91,8 @@ class PartidaImpuestoResumen extends ModelView
         return 'asientos'
             . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
             . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
-            . ' AND subcuentas.codimpuesto IS NOT NULL'
-            . ' AND subcuentas.codcuentaesp IS NOT NULL'
-            . ' LEFT JOIN cuentasesp ON cuentasesp.codcuentaesp = subcuentas.codcuentaesp';
+            . ' INNER JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
+            . ' LEFT JOIN cuentasesp ON cuentasesp.codcuentaesp = COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp)';
     }
 
     /**
@@ -96,7 +103,9 @@ class PartidaImpuestoResumen extends ModelView
         return [
             'asientos',
             'partidas',
-            'subcuentas'
+            'subcuentas',
+            'cuentas',
+            'cuentasesp'
         ];
     }
 
@@ -108,7 +117,6 @@ class PartidaImpuestoResumen extends ModelView
     protected function loadFromData($data)
     {
         parent::loadFromData($data);
-
         $this->cuotaiva = $this->baseimponible * ($this->iva / 100.00);
         $this->cuotarecargo = $this->baseimponible * ($this->recargo / 100.00);
         $this->total = $this->baseimponible + $this->cuotaiva + $this->cuotarecargo;

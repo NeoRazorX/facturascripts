@@ -81,7 +81,8 @@
                         </button>
                     </div>
                 {% endif %}
-                <div class="col">
+                {% set extraClass = fsc.hasData and currentView.settings.btnDelete ? 'text-center' : '' %}
+                <div class="col {{ extraClass }}">
                     {# -- Row actions -- #}
                     {% set row = currentView.getRow('actions') %}
                     {{ row.render(false, currentView.getViewName()) | raw }}

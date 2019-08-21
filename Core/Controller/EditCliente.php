@@ -141,6 +141,10 @@ class EditCliente extends ComercialContactController
                 break;
 
             case 'EditCuentaBancoCliente':
+                $where = [new DataBaseWhere('codcliente', $codcliente)];
+                $view->loadData('', $where, ['codcuenta' => 'DESC']);
+                break;
+
             case 'ListAlbaranCliente':
             case 'ListContacto':
             case 'ListFacturaCliente':

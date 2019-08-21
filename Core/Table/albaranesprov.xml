@@ -65,7 +65,6 @@
         <name>idalbaran</name>
         <type>serial</type>
         <null>NO</null>
-        <default>nextval('albaranesprov_idalbaran_seq'::regclass)</default>
     </column>
     <column>
         <name>idempresa</name>

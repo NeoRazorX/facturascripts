@@ -2,8 +2,7 @@
 
 /**
  * Class created by Core/Base/PluginManager
- * @package FacturaScripts\Dinamic\Lib\ExtendedController
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author FacturaScripts <carlos@facturascripts.com>
  */
 class EditListView extends \FacturaScripts\Core\Lib\ExtendedController\EditListView
 {

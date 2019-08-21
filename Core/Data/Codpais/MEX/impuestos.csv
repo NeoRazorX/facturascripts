@@ -1,5 +1,5 @@
 codimpuesto;descripcion;iva;recargo
-999;EXCENTO;0;0
-001;ISR 30%;30;0
-002;IVA 16%;16;0
-003;IEPS 35%;35;0
+"999";"EXCENTO";"0";"0"
+"001";"ISR 30%";"30";"0"
+"002";"IVA 16%";16;"0"
+"003";"IEPS 35%";35;"0"

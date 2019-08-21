@@ -1,8 +1,9 @@
 {
     "default": {
         "coddivisa": "DOP",
+        "codimpuesto": "ITBIS18",
         "codserie": "A",
         "codpago": "CONT",
-        "codimpuesto": "ITBIS18"
+        "tipoidfiscal": "RNC"
     }
 }

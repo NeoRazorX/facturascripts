@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -62,12 +63,25 @@ class MAILExport extends PDFExport
 
     /**
      * 
+     * @param ModelClass $model
+     * @param array      $columns
+     * @param string     $title
+     */
+    public function generateModelPage($model, $columns, $title = '')
+    {
+        parent::generateModelPage($model, $columns, $title);
+        $this->sendParams['modelClassName'] = $model->modelClassName();
+        $this->sendParams['modelCode'] = $model->primaryColumnValue();
+    }
+
+    /**
+     * 
      * @param Response $response
      */
     public function show(Response &$response)
     {
         $fileName = 'Mail_' . time() . '.pdf';
-        $filePath = FS_FOLDER . '/MyFiles/' . $fileName;
+        $filePath = \FS_FOLDER . '/MyFiles/' . $fileName;
         file_put_contents($filePath, $this->getDoc());
 
         $this->sendParams['fileName'] = $fileName;

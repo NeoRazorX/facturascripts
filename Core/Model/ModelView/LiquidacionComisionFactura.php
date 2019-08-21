@@ -55,7 +55,7 @@ class LiquidacionComisionFactura extends ModelView
      */
     public function addInvoiceToSettle($settled, $where)
     {
-        $where[] = new DataBaseWhere('facturascli.idliquidacion', 'NULL', 'IS');
+        $where[] = new DataBaseWhere('facturascli.idliquidacion', null, 'IS');
         $invoices = $this->all($where);
         if (count($invoices) == 0) {
             return;

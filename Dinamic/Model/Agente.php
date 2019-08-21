@@ -2,9 +2,8 @@
 
 /**
  * Class created by Core/Base/PluginManager
- * @package FacturaScripts\Dinamic\Model
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Agente extends \FacturaScripts\Plugins\presencecontrol\Model\Agente
+class Agente extends \FacturaScripts\Core\Model\Agente
 {
 }

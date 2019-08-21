@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
-use FacturaScripts\Core\Base\Translator;
 use mysqli;
 
 /**
@@ -28,34 +27,20 @@ use mysqli;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Mysql implements DataBaseEngine
+class MysqlEngine extends DataBaseEngine
 {
-
-    /**
-     * Contains the translator.
-     *
-     * @var Translator
-     */
-    private $i18n;
-
-    /**
-     * Last error message.
-     *
-     * @var string
-     */
-    private $lastErrorMsg;
 
     /**
      * Open transaction list.
      *
      * @var array
      */
-    private $transactions;
+    private $transactions = [];
 
     /**
      * Link to the SQL statements for the connected database.
      *
-     * @var DataBaseSQL;
+     * @var DataBaseQueries
      */
     private $utilsSQL;
 
@@ -64,10 +49,8 @@ class Mysql implements DataBaseEngine
      */
     public function __construct()
     {
-        $this->i18n = new Translator();
-        $this->lastErrorMsg = '';
-        $this->transactions = [];
-        $this->utilsSQL = new MysqlSQL();
+        parent::__construct();
+        $this->utilsSQL = new MysqlQueries();
     }
 
     /**
@@ -81,7 +64,7 @@ class Mysql implements DataBaseEngine
     /**
      * Starts an SQL transaction.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return bool
      */
@@ -96,25 +79,9 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * With the default field in a table it checks whether it refers to a
-     * sequence and if a sequence exists. If it can't find it, i will create one.
-     *
-     * @param \mysqli $link
-     * @param string  $tableName
-     * @param string  $default
-     * @param string  $colname
-     *
-     * @return bool
-     */
-    public function checkSequence($link, $tableName, $default, $colname)
-    {
-        return true;
-    }
-
-    /**
      * Disconnect from the database.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return bool
      */
@@ -143,7 +110,7 @@ class Mysql implements DataBaseEngine
     /**
      * Commits changes in a SQL transaction.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return bool
      */
@@ -167,22 +134,23 @@ class Mysql implements DataBaseEngine
      */
     public function compareDataTypes($dbType, $xmlType)
     {
-        $result = (
-            ($dbType === $xmlType) ||
-            ($dbType === 'tinyint(1)' && $xmlType === 'boolean') ||
-            (substr($dbType, 8, -1) === substr($xmlType, 18, -1)) ||
-            (substr($dbType, 5, -1) === substr($xmlType, 18, -1))
-            );
-
-        if (!$result) {
-            $result = $this->compareDataTypeNumeric($dbType, $xmlType);
+        if (parent::compareDataTypes($dbType, $xmlType)) {
+            return true;
+        } else if ($dbType == 'tinyint(1)' && $xmlType == 'boolean') {
+            return true;
+        } else if (substr($dbType, 0, 4) == 'int(' && strtolower($xmlType) == 'integer') {
+            return true;
+        } else if (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision') {
+            return true;
+        } else if (substr($dbType, 0, 8) == 'varchar(' && substr($xmlType, 0, 18) == 'character varying(') {
+            /// check length
+            return (substr($dbType, 8, -1) == substr($xmlType, 18, -1));
+        } else if (substr($dbType, 0, 5) == 'char(' && substr($xmlType, 0, 18) == 'character varying(') {
+            /// check length
+            return (substr($dbType, 5, -1) == substr($xmlType, 18, -1));
         }
 
-        if (!$result) {
-            $result = $this->compareDataTypeChar($dbType, $xmlType);
-        }
-
-        return $result;
+        return false;
     }
 
     /**
@@ -199,7 +167,7 @@ class Mysql implements DataBaseEngine
             return null;
         }
 
-        $result = new \mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int) FS_DB_PORT);
+        $result = new mysqli(\FS_DB_HOST, \FS_DB_USER, \FS_DB_PASS, \FS_DB_NAME, (int) \FS_DB_PORT);
         if ($result->connect_errno) {
             $error = $result->connect_error;
             $this->lastErrorMsg = $error;
@@ -210,7 +178,7 @@ class Mysql implements DataBaseEngine
         $result->autocommit(false);
 
         /// disable foreign keys
-        if (!FS_DB_FOREIGN_KEYS) {
+        if (!\FS_DB_FOREIGN_KEYS) {
             $this->exec($result, 'SET foreign_key_checks = 0;');
         }
 
@@ -218,32 +186,22 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Returns the date format from the database engine.
-     *
-     * @return string
-     */
-    public function dateStyle()
-    {
-        return 'Y-m-d';
-    }
-
-    /**
      * Returns the last run statement error.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return string
      */
     public function errorMessage($link)
     {
-        return ($link->error !== '') ? $link->error : $this->lastErrorMsg;
+        return empty($link->error) ? $this->lastErrorMsg : $link->error;
     }
 
     /**
      * Escapes quotes from a text string.
      *
-     * @param \mysqli $link
-     * @param string  $str
+     * @param mysqli $link
+     * @param string $str
      *
      * @return string
      */
@@ -255,8 +213,8 @@ class Mysql implements DataBaseEngine
     /**
      * Runs SQL statement in the database (inserts, updates or deletes).
      *
-     * @param \mysqli $link
-     * @param string  $sql
+     * @param mysqli $link
+     * @param string $sql
      *
      * @return bool
      */
@@ -269,8 +227,8 @@ class Mysql implements DataBaseEngine
                 } while ($more);
             }
             $result = ($link->errno === 0);
-        } catch (Exception $e) {
-            $this->lastErrorMsg = $e->getMessage();
+        } catch (Exception $err) {
+            $this->lastErrorMsg = $err->getMessage();
             $result = false;
         }
 
@@ -278,21 +236,9 @@ class Mysql implements DataBaseEngine
     }
 
     /**
-     * Indicates the operator for the database engine.
-     *
-     * @param string $operator
-     *
-     * @return string
-     */
-    public function getOperator($operator)
-    {
-        return $operator;
-    }
-
-    /**
      * Returns the link to the SQL class from the engine.
      *
-     * @return DataBaseSQL
+     * @return DataBaseQueries
      */
     public function getSQL()
     {
@@ -302,7 +248,7 @@ class Mysql implements DataBaseEngine
     /**
      * Indicates if the connection has an active transaction.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return bool
      */
@@ -314,22 +260,17 @@ class Mysql implements DataBaseEngine
     /**
      * Returns an array with the database table names.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return array
      */
     public function listTables($link)
     {
-        $aux = $this->select($link, 'SHOW TABLES;');
-        if (empty($aux)) {
-            return [];
-        }
-
         $tables = [];
-        foreach ($aux as $a) {
-            $key = 'Tables_in_' . FS_DB_NAME;
-            if (isset($a[$key])) {
-                $tables[] = $a[$key];
+        foreach ($this->select($link, 'SHOW TABLES;') as $row) {
+            $key = 'Tables_in_' . \FS_DB_NAME;
+            if (isset($row[$key])) {
+                $tables[] = $row[$key];
             }
         }
 
@@ -339,7 +280,7 @@ class Mysql implements DataBaseEngine
     /**
      * Rolls back a transaction.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return bool
      */
@@ -357,8 +298,8 @@ class Mysql implements DataBaseEngine
      * Runs a SELECT SQL statement, and returns an array with the results,
      * or an empty array when it fails.
      *
-     * @param \mysqli $link
-     * @param string  $sql
+     * @param mysqli $link
+     * @param string $sql
      *
      * @return array
      */
@@ -374,8 +315,8 @@ class Mysql implements DataBaseEngine
                 }
                 $aux->free();
             }
-        } catch (Exception $e) {
-            $this->lastErrorMsg = $e->getMessage();
+        } catch (Exception $err) {
+            $this->lastErrorMsg = $err->getMessage();
             $result = [];
         }
 
@@ -385,45 +326,13 @@ class Mysql implements DataBaseEngine
     /**
      * Returns the database engine and its version.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      *
      * @return string
      */
     public function version($link)
     {
         return 'MYSQL ' . $link->server_version;
-    }
-
-    /**
-     * Compares the data types from an alphanumeric column.
-     *
-     * @param string $dbType
-     * @param string $xmlType
-     *
-     * @return bool
-     */
-    private function compareDataTypeChar($dbType, $xmlType)
-    {
-        $result = 0 === strpos($xmlType, 'character varying(');
-        if ($result) {
-            $result = (0 === strpos($dbType, 'varchar(')) || (0 === strpos($dbType, 'char('));
-        }
-
-        return $result;
-    }
-
-    /**
-     * Compares the data types from a numeric column.
-     *
-     * @param string $dbType
-     * @param string $xmlType
-     *
-     * @return bool
-     */
-    private function compareDataTypeNumeric($dbType, $xmlType)
-    {
-        return (0 === strpos($dbType, 'int(') && $xmlType === 'INTEGER') ||
-            (0 === strpos($dbType, 'double') && $xmlType === 'double precision');
     }
 
     /**
@@ -439,7 +348,7 @@ class Mysql implements DataBaseEngine
     /**
      * Delete from the list the specified transaction.
      *
-     * @param \mysqli $link
+     * @param mysqli $link
      */
     private function unsetTransaction($link)
     {

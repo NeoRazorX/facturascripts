@@ -108,7 +108,7 @@ abstract class ListBusinessDocument extends ListController
     protected function approveDocumentAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return true;
         }
 
@@ -278,7 +278,7 @@ abstract class ListBusinessDocument extends ListController
     protected function paidAction()
     {
         if (!$this->permissions->allowUpdate) {
-            $this->miniLog->alert($this->i18n->trans('not-allowed-modify'));
+            $this->miniLog->warning($this->i18n->trans('not-allowed-modify'));
             return true;
         }
 
@@ -295,6 +295,7 @@ abstract class ListBusinessDocument extends ListController
                 continue;
             }
 
+            $model->nick = $this->user->nick;
             $model->pagado = true;
             if (!$model->save()) {
                 $this->miniLog->error($this->i18n->trans('record-save-error'));

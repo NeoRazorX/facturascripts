@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
 use Skilla\ValidatorCifNifNie\Generator;
 use Skilla\ValidatorCifNifNie\Validator;
 
@@ -40,20 +41,44 @@ class FiscalNumberValitator
      */
     public static function validate($type, $number)
     {
+        /// does this fiscal identifier need validation?
+        $fiscalId = new IdentificadorFiscal();
+        if (!empty($type) && $fiscalId->loadFromCode($type) && !$fiscalId->validar) {
+            return true;
+        }
+
+        $upperNumber = \strtoupper($number);
         $validator = new Validator(new Generator());
 
         switch (\strtolower($type)) {
             case 'cif':
-                return $validator->isValidCIF($number);
+                return $validator->isValidCIF($upperNumber);
 
             case 'dni':
-                return $validator->isValidDNI($number);
+                return $validator->isValidDNI($upperNumber);
 
             case 'nie':
-                return $validator->isValidNIE($number);
+                return $validator->isValidNIE($upperNumber);
 
             case 'nif':
-                return $validator->isValidNIF($number);
+                return $validator->isValidNIF($upperNumber) || $validator->isValidDNI($upperNumber);
+
+            case 'rfc':
+                return static::isValidRFC($upperNumber);
         }
+
+        return true;
+    }
+
+    /**
+     * 
+     * @param string $number
+     *
+     * @return bool
+     */
+    protected static function isValidRFC($number)
+    {
+        $pattern = "/[A-Z]{3,4}[0-9]{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])[A-Z0-9]{2}[0-9A]/";
+        return 1 === preg_match($pattern, $number);
     }
 }

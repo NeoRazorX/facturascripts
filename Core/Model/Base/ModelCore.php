@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -136,7 +136,7 @@ abstract class ModelCore
      *
      * @param mixed $newValue
      *
-     * @return boolean
+     * @return bool
      */
     public function changePrimaryColumnValue($newValue)
     {
@@ -284,7 +284,7 @@ abstract class ModelCore
             return false;
         }
 
-        return ($field['is_nullable'] === 'NO') ? false : null;
+        return $field['is_nullable'] === 'NO' ? false : null;
     }
 
     /**
@@ -301,7 +301,7 @@ abstract class ModelCore
             return (float) $value;
         }
 
-        return ($field['is_nullable'] === 'NO') ? 0.0 : null;
+        return $field['is_nullable'] === 'NO' ? 0.0 : null;
     }
 
     /**
@@ -310,7 +310,7 @@ abstract class ModelCore
      * @param array  $field
      * @param string $value
      *
-     * @return integer|null
+     * @return int|null
      */
     private function getIntergerValueForField($field, $value)
     {
@@ -322,6 +322,6 @@ abstract class ModelCore
             return null;
         }
 
-        return ($field['is_nullable'] === 'NO') ? 0 : null;
+        return $field['is_nullable'] === 'NO' ? 0 : null;
     }
 }

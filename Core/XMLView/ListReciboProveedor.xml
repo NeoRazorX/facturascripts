@@ -63,4 +63,11 @@
             <option color="warning" fieldname="pagado">0</option>
         </row>
     </rows>
+    <modals>
+        <group name="generate-receipts" title="new">
+            <column name="receipts" numcolumns="12">
+                <widget type="number" fieldname="number" min="1" max="100" required="true" icon="fas fa-copy" />
+            </column>
+        </group>
+    </modals>
 </view>

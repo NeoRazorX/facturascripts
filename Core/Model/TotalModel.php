@@ -114,7 +114,7 @@ class TotalModel
      * @param array                    $fieldList (['key' => 'SUM(total)', 'key2' => 'MAX(total)' ...])
      * @param string                   $fieldCode (for multiples rows agruped by field code)
      *
-     * @return self[]
+     * @return static[]
      */
     public static function all($tableName, $where, $fieldList, $fieldCode = '')
     {
@@ -131,14 +131,14 @@ class TotalModel
             $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
             $sql .= ' FROM ' . $tableName . $sqlWhere . $groupby;
             $data = self::$dataBase->select($sql);
-            foreach ($data as $d) {
-                $result[] = new self($d);
+            foreach ($data as $row) {
+                $result[] = new static($row);
             }
         }
 
         /// if it is empty we are obliged to always return a record with the totals to zero
         if (empty($result)) {
-            $result[] = new self();
+            $result[] = new static();
             $result[0]->clearTotals(array_keys($fieldList));
         }
 
