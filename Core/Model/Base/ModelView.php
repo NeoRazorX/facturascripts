@@ -206,6 +206,20 @@ abstract class ModelView
     }
 
     /**
+     * Returns true if the model data is stored in the database.
+     *
+     * @return bool
+     */
+    public function exists()
+    {
+        if (isset($this->masterModel)) {
+            return $this->masterModel->exists();
+        }
+        
+        return ($this->count() > 0);
+    }
+    
+    /**
      * Fill the class with the registry values
      * whose primary column corresponds to the value $cod, or according to the condition
      * where indicated, if value is not reported in $cod.
