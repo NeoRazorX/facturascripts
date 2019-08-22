@@ -68,6 +68,19 @@ class TelemetryManager
         $this->idinstall = (int) $this->appSettings->get('default', 'telemetryinstall');
         $this->lastupdate = (int) $this->appSettings->get('default', 'telemetrylastu');
         $this->signkey = $this->appSettings->get('default', 'telemetrykey');
+
+        /**
+         * Is telemetry data defined in the config.php?
+         * FS_TELEMETRY_TOKEN = IDINSTALL:SIGNKEY
+         */
+        if (empty($this->idinstall) && defined('FS_TELEMETRY_TOKEN')) {
+            $data = explode(':', FS_TELEMETRY_TOKEN);
+            if (count($data) === 2) {
+                $this->idinstall = (int) $data[0];
+                $this->signkey = $data[1];
+                $this->save();
+            }
+        }
     }
 
     /**
