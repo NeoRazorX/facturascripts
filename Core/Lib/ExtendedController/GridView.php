@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -408,7 +407,7 @@ class GridView extends EditView
             case 'number':
             case 'money':
                 $item['type'] = 'numeric';
-                $item['numericFormat'] = DivisaTools::gridMoneyFormat();
+                $item['numericFormat'] = $this->toolBox()->coins()->gridMoneyFormat();
                 break;
 
             case 'select':
@@ -460,8 +459,9 @@ class GridView extends EditView
     /**
      * 
      * @param string $documentFieldKey
-     * @param int $documentFieldValue
-     * @param array $data
+     * @param int    $documentFieldValue
+     * @param array  $data
+     *
      * @return bool
      */
     private function saveLines($documentFieldKey, $documentFieldValue, &$data)

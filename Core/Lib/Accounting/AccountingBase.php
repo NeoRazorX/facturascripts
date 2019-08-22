@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DivisaTools;
+use FacturaScripts\Core\Base\ToolBox;
 
 /**
  * Description of AccountingBase
@@ -36,13 +36,6 @@ abstract class AccountingBase
      * @var DataBase
      */
     protected $dataBase;
-
-    /**
-     * Tools to work with currencies.
-     *
-     * @var DivisaTools
-     */
-    protected $divisaTools;
 
     /**
      * Start date.
@@ -74,7 +67,6 @@ abstract class AccountingBase
     public function __construct()
     {
         $this->dataBase = new DataBase();
-        $this->divisaTools = new DivisaTools();
     }
 
     /**
@@ -88,5 +80,14 @@ abstract class AccountingBase
     protected function addToDate($date, $add)
     {
         return \date('d-m-Y', strtotime($add, strtotime($date)));
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 }

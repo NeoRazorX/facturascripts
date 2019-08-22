@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,7 +63,7 @@ class DocumentStitcher extends Controller
      */
     public function fixDescription($description)
     {
-        return nl2br(Utils::fixHtml($description));
+        return nl2br($this->toolBox()->utils()->fixHtml($description));
     }
 
     /**

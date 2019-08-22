@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Description of ProfitAndLoss
  *
@@ -155,9 +153,9 @@ class ProfitAndLoss extends AccountingBase
      */
     protected function processLine($line)
     {
-        $line['descripcion'] = Utils::fixHtml($line['descripcion']);
-        $line['saldo'] = $this->divisaTools->format($line['saldo'], FS_NF0, '');
-        $line['saldoprev'] = $this->divisaTools->format($line['saldoprev'], FS_NF0, '');
+        $line['descripcion'] = $this->toolBox()->utils()->fixHtml($line['descripcion']);
+        $line['saldo'] = $this->toolBox()->coins()->format($line['saldo'], FS_NF0, '');
+        $line['saldoprev'] = $this->toolBox()->coins()->format($line['saldoprev'], FS_NF0, '');
 
         return $line;
     }

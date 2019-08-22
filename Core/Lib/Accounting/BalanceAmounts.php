@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
@@ -106,7 +105,7 @@ class BalanceAmounts extends AccountingBase
     private function getDescriptionSubcuenta($idsubcuenta)
     {
         $subcuenta = $this->subcuentaModel->get($idsubcuenta);
-        return $subcuenta === false ? '-' : Utils::fixHtml($subcuenta->descripcion);
+        return $subcuenta === false ? '-' : $this->toolBox()->utils()->fixHtml($subcuenta->descripcion);
     }
 
     /**
@@ -123,9 +122,9 @@ class BalanceAmounts extends AccountingBase
         return [
             'subcuenta' => $line['codsubcuenta'],
             'descripcion' => $this->getDescriptionSubcuenta($line['idsubcuenta']),
-            'debe' => $this->divisaTools->format($line['debe'], FS_NF0, ''),
-            'haber' => $this->divisaTools->format($line['haber'], FS_NF0, ''),
-            'saldo' => $this->divisaTools->format($saldo, FS_NF0, ''),
+            'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),
+            'haber' => $this->toolBox()->coins()->format($line['haber'], FS_NF0, ''),
+            'saldo' => $this->toolBox()->coins()->format($saldo, FS_NF0, ''),
         ];
     }
 }

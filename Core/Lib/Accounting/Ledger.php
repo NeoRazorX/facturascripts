@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\Utils;
-
 /**
  * Description of Ledger
  *
@@ -152,10 +150,10 @@ class Ledger extends AccountingBase
     protected function processLine($line, $grouping)
     {
         $item = $grouping ? [] : ['fecha' => $line['fecha'], 'numero' => $line['numero']];
-        $item['cuenta'] = (isset($line['cuenta'])) ? $line['cuenta'] : $line['codsubcuenta'];
-        $item['concepto'] = Utils::fixHtml($line['concepto']);
-        $item['debe'] = $this->divisaTools->format($line['debe'], FS_NF0, '');
-        $item['haber'] = $this->divisaTools->format($line['haber'], FS_NF0, '');
+        $item['cuenta'] = isset($line['cuenta']) ? $line['cuenta'] : $line['codsubcuenta'];
+        $item['concepto'] = $this->toolBox()->utils()->fixHtml($line['concepto']);
+        $item['debe'] = $this->toolBox()->coins()->format($line['debe'], FS_NF0, '');
+        $item['haber'] = $this->toolBox()->coins()->format($line['haber'], FS_NF0, '');
         return $item;
     }
 }

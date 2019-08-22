@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Dinamic\Model\TotalModel;
@@ -47,8 +46,7 @@ class EditAgente extends ComercialContactController
         ];
 
         $totalModel = TotalModel::all('facturascli', $where, ['total' => 'SUM(total)'], '')[0];
-        $divisaTools = new DivisaTools();
-        return $divisaTools->format($totalModel->totals['total'], 2);
+        return $this->toolBox()->coins()->format($totalModel->totals['total'], 2);
     }
 
     /**

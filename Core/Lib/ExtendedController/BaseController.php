@@ -230,8 +230,9 @@ abstract class BaseController extends Base\Controller
         }
 
         $results = [];
+        $utils = $this->toolBox()->utils();
         foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term']) as $value) {
-            $results[] = ['key' => Base\Utils::fixHtml($value->code), 'value' => Base\Utils::fixHtml($value->description)];
+            $results[] = ['key' => $utils->fixHtml($value->code), 'value' => $utils->fixHtml($value->description)];
         }
 
         if (empty($results) && '0' == $data['strict']) {

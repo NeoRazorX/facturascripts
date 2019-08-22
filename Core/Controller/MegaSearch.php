@@ -18,8 +18,10 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
-use FacturaScripts\Dinamic\Model;
+use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Dinamic\Model\Page;
+use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -27,7 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class MegaSearch extends Base\Controller
+class MegaSearch extends Controller
 {
 
     /**
@@ -68,9 +70,9 @@ class MegaSearch extends Base\Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response                   $response
-     * @param Model\User                 $user
-     * @param Base\ControllerPermissions $permissions
+     * @param Response              $response
+     * @param User                  $user
+     * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
@@ -79,7 +81,7 @@ class MegaSearch extends Base\Controller
         $this->sections = [];
 
         $query = $this->request->request->get('query', '');
-        $this->query = Base\Utils::noHtml(mb_strtolower($query, 'UTF8'));
+        $this->query = $this->toolBox()->utils()->noHtml(mb_strtolower($query, 'UTF8'));
         if ($this->query !== '') {
             $this->search();
         }
@@ -91,21 +93,22 @@ class MegaSearch extends Base\Controller
     protected function pageSearch()
     {
         $results = [];
-        $pageModel = new Model\Page();
+        $pageModel = new Page();
+        $i18n = $this->toolBox()->i18n();
         foreach ($pageModel->all([], [], 0, 500) as $page) {
             if (!$page->showonmenu) {
                 continue;
             }
 
             /// Does the page title coincide with the search $query?
-            $translation = mb_strtolower($this->toolBox()->i18n()->trans($page->title), 'UTF8');
+            $translation = mb_strtolower($i18n->trans($page->title), 'UTF8');
             if (stripos($page->title, $this->query) !== false || stripos($translation, $this->query) !== false) {
                 $results[] = [
                     'icon' => $page->icon,
                     'link' => $page->url(),
-                    'menu' => $this->toolBox()->i18n()->trans($page->menu),
-                    'submenu' => $this->toolBox()->i18n()->trans($page->submenu),
-                    'title' => $this->toolBox()->i18n()->trans($page->title),
+                    'menu' => $i18n->trans($page->menu),
+                    'submenu' => $i18n->trans($page->submenu),
+                    'title' => $i18n->trans($page->title),
                 ];
             }
 

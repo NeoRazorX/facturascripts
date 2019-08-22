@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\GridView;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -90,7 +89,7 @@ class AccountingEntryTools
 
             $balance = new SubcuentaSaldo();
             $result['balance'] = $balance->setSubAccountBalance($subAccount->idsubcuenta, $result['detail']);
-            $result['balance'] = DivisaTools::format($result['balance']);
+            $result['balance'] = $this->toolBox()->coins()->format($result['balance']);
         }
 
         return $result;

@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Lib\Accounting\VatRegularizationToAccounting;
@@ -65,19 +64,6 @@ class EditRegularizacionImpuesto extends EditController
      * @var float
      */
     public $total;
-
-    /**
-     * Formats the amount of the indicated field to currency
-     *
-     * @param string $field
-     *
-     * @return string
-     */
-    public function getAmount($field)
-    {
-        $divisaTools = new DivisaTools();
-        return $divisaTools->format($this->{$field}, 2);
-    }
 
     /**
      * Returns the class name of the model to use in the editView.
