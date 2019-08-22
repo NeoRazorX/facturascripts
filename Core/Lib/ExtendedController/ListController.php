@@ -37,10 +37,10 @@ abstract class ListController extends BaseController
     /**
      * Initializes all the objects and properties.
      *
-     * @param string          $className
-     * @param string          $uri
+     * @param string $className
+     * @param string $uri
      */
-    public function __construct($className, $uri = '')
+    public function __construct(string $className, string $uri = '')
     {
         parent::__construct($className, $uri);
         $this->setTemplate('Master/ListController');

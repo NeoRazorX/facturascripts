@@ -65,7 +65,7 @@ abstract class BusinessDocumentController extends PanelController
      * @param string $className
      * @param string $uri
      */
-    public function __construct($className, $uri = '')
+    public function __construct(string $className, string $uri = '')
     {
         parent::__construct($className, $uri);
         $this->documentTools = new BusinessDocumentTools();

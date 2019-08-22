@@ -248,14 +248,14 @@ class GridView extends EditView
 
             // delete old lines not used
             if (!$this->deleteLinesOld($linesOld, $data['lines'])) {
-                throw new Exception($this->toolBox()->i18n()->trans('lines-delete-error'));
+                throw new Exception($this->toolBox()->i18n()->trans('error-deleting-lines'));
             }
 
             // Proccess detail document data (new)
             $this->model->initTotals(); // Master Model must implement GridModelInterface
             foreach ($data['lines'] as $newLine) {
                 if (!$this->saveLines($documentFieldKey, $documentFieldValue, $newLine)) {
-                    throw new Exception($this->toolBox()->i18n()->trans('lines-save-error'));
+                    throw new Exception($this->toolBox()->i18n()->trans('error-saving-lines'));
                 }
                 $this->model->accumulateAmounts($newLine); // Master Model must implement GridModelInterface
             }
@@ -272,7 +272,7 @@ class GridView extends EditView
             $result['url'] = $this->model->url('edit') . '&action=save-ok';
         } catch (Exception $err) {
             $result['error'] = true;
-            $result['message'] = $err->getMessage();
+            $result['message'] = implode("\n", array_merge([$err->getMessage()], $this->getErrors()));
         } finally {
             if ($dataBase->inTransaction()) {
                 $dataBase->rollback();
@@ -338,6 +338,20 @@ class GridView extends EditView
             'field' => $datasource['fieldcode'],
             'title' => $datasource['fieldtitle']
         ];
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    private function getErrors(): array
+    {
+        $errors = [];
+        foreach ($this->toolBox()->log()->readAll() as $log) {
+            $errors[] = $log['message'];
+        }
+
+        return $errors;
     }
 
     /**

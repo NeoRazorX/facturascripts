@@ -95,7 +95,7 @@ abstract class BaseController extends Base\Controller
      * @param string $className
      * @param string $uri
      */
-    public function __construct($className, $uri = '')
+    public function __construct(string $className, string $uri = '')
     {
         parent::__construct($className, $uri);
         $activeTabGet = $this->request->query->get('activetab', '');

@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Model\Divisa;
+use FacturaScripts\Dinamic\Model\Divisa;
 
 /**
  * DivisaTools give us some basic and common methods for currency numbers.
@@ -68,7 +68,7 @@ class DivisaTools extends NumberTools
     /**
      * Finds a coddivisa and uses it as selected currency.
      * 
-     * @param mixed $model
+     * @param object $model
      */
     public function findDivisa($model)
     {
@@ -131,27 +131,22 @@ class DivisaTools extends NumberTools
 
         return ['pattern' => $moneyFormat];
     }
-    
+
     /**
-     * Convert the amount to corresponding value of coddivisa2
+     * Convert the amount form currency1 to currency2.
      *
-     * @param float $amount
+     * @param float  $amount
      * @param string $coddivisa1
-     * @param float $coddivisa2
+     * @param string $coddivisa2
+     *
      * @return float
      */
     public static function transform($amount, $coddivisa1, $coddivisa2)
     {
-        if($coddivisa1 != $coddivisa2) {
-            $divisa1 = new Divisa();
-            $divisa1->loadFromCode($coddivisa1);
-
-            $divisa2 = new Divisa();
-            $divisa2->loadFromCode($coddivisa2);
-
-            return $amount / $divisa1->tasaconv * $divisa2->tasaconv;
+        if ($coddivisa1 != $coddivisa2 && isset(self::$divisas[$coddivisa1], self::$divisas[$coddivisa2])) {
+            return (float) $amount / self::$divisas[$coddivisa1]->tasaconv * self::$divisas[$coddivisa2]->tasaconv;
         }
-        
-        return $amount;
+
+        return (float) $amount;
     }
 }

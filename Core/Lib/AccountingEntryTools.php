@@ -128,7 +128,7 @@ class AccountingEntryTools
                 $index = $data['changes'][0][0];
                 $line = &$result['lines'][$index];
                 $result['subaccount'] = $this->getAccountData($data['document']['codejercicio'], $line['codsubcuenta']);
-                $result['vat'] = $this->recalculateVatRegister($line, $data['document'], $result['subaccount']['specialaccount'], $result['unbalance']);
+                $result['vat'] = $this->recalculateVatRegister($line, $data['document'], (string) $result['subaccount']['specialaccount'], $result['unbalance']);
             }
         }
 

@@ -51,7 +51,7 @@ abstract class PanelController extends BaseController
      * @param string $className
      * @param string $uri
      */
-    public function __construct($className, $uri = '')
+    public function __construct(string $className, string $uri = '')
     {
         parent::__construct($className, $uri);
         $this->setTabsPosition('left');
