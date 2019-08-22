@@ -153,16 +153,6 @@ class Controller
     }
 
     /**
-     * Return the name of the controller.
-     *
-     * @return string
-     */
-    protected function getClassName(): string
-    {
-        return $this->className;
-    }
-
-    /**
      * Return the basic data for this page.
      *
      * @return array
@@ -261,6 +251,15 @@ class Controller
     }
 
     /**
+     * 
+     * @return ToolBox
+     */
+    public function toolBox()
+    {
+        return new ToolBox();
+    }
+
+    /**
      * Return the URL of the actual controller.
      *
      * @return string
@@ -271,11 +270,12 @@ class Controller
     }
 
     /**
-     * 
-     * @return ToolBox
+     * Return the name of the controller.
+     *
+     * @return string
      */
-    protected function toolBox()
+    protected function getClassName(): string
     {
-        return new ToolBox();
+        return $this->className;
     }
 }

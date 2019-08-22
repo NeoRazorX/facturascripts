@@ -63,13 +63,6 @@ abstract class BaseController extends Base\Controller
     public $exportManager;
 
     /**
-     * Tools to work with numbers.
-     *
-     * @var Base\NumberTools
-     */
-    public $numberTools;
-
-    /**
      * List of views displayed by the controller.
      *
      * @var BaseView[]|ListView[]
@@ -102,7 +95,6 @@ abstract class BaseController extends Base\Controller
         $this->active = $this->request->request->get('activetab', $activeTabGet);
         $this->codeModel = new CodeModel();
         $this->exportManager = new ExportManager();
-        $this->numberTools = new Base\NumberTools();
     }
 
     /**
