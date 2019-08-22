@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Lib\ExtendedController\GridView;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -333,5 +334,14 @@ class AccountingEntryTools
             $values['id'] = $supplier->cifnif;
             $values['surcharge'] = ($model->regimeniva == RegimenIVA::TAX_SYSTEM_SURCHARGE);
         }
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    private function toolBox()
+    {
+        return new ToolBox();
     }
 }
