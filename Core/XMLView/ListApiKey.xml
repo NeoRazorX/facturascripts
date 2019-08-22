@@ -33,19 +33,23 @@
         <column name="enabled" display="center" order="130">
             <widget type="checkbox" fieldname="enabled" />
         </column>
-        <column name="user" order="140">
+        <column name="full-access" display="center" order="140">
+            <widget type="checkbox" fieldname="fullaccess" />
+        </column>
+        <column name="user" order="150">
             <widget type="select" fieldname="nick" required="true">
                 <values source="users" fieldcode="nick" fieldtitle="nick"></values>
             </widget>
         </column>
-        <column name="created" display="right" order="150">
+        <column name="created" display="right" order="160">
             <widget type="date" fieldname="creationdate" />
         </column>
     </columns>
     <rows>
         <row type="status">
-            <option color="success" fieldname="enabled">1</option>
             <option color="danger" fieldname="enabled">0</option>
+            <option color="info" fieldname="fullaccess">1</option>
+            <option color="success" fieldname="enabled">1</option>
         </row>
     </rows>
 </view>

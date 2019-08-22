@@ -191,6 +191,10 @@ class AppAPI extends App
             return true;
         }
 
+        if ($this->apiKey->fullaccess) {
+            return true;
+        }
+
         $apiAccess = new ApiAccess();
         $where = [
             new DataBaseWhere('idapikey', $this->apiKey->id),

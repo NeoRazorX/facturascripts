@@ -42,6 +42,9 @@
             <column name="enabled" numcolumns="2" order="150">
                 <widget type="checkbox" fieldname="enabled" />
             </column>
+            <column name="full-access" order="160">
+                <widget type="checkbox" fieldname="fullaccess" />
+            </column>
         </group>
     </columns>
 </view>

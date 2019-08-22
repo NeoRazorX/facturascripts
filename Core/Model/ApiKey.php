@@ -59,6 +59,12 @@ class ApiKey extends Base\ModelClass
     public $enabled;
 
     /**
+     *
+     * @var bool
+     */
+    public $fullaccess;
+
+    /**
      * Primary key. Id autoincremental
      *
      * @var int
@@ -79,8 +85,9 @@ class ApiKey extends Base\ModelClass
     {
         parent::clear();
         $this->apikey = $this->toolBox()->utils()->randomString(20);
-        $this->enabled = true;
         $this->creationdate = date('d-m-Y');
+        $this->enabled = true;
+        $this->fullaccess = false;
     }
 
     /**
