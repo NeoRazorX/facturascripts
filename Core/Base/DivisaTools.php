@@ -56,13 +56,26 @@ class DivisaTools extends NumberTools
             self::$divisas = $divisa->all();
 
             $coddivisa = AppSettings::get('default', 'coddivisa');
-            foreach (self::$divisas as $div) {
-                if ($div->coddivisa == $coddivisa) {
-                    self::$selectedDivisa = $div;
-                    break;
-                }
-            }
+            self::$selectedDivisa = static::get($coddivisa);
         }
+    }
+
+    /**
+     * Convert the amount form currency1 to currency2.
+     *
+     * @param float  $amount
+     * @param string $coddivisa1
+     * @param string $coddivisa2
+     *
+     * @return float
+     */
+    public static function convert($amount, $coddivisa1, $coddivisa2)
+    {
+        if ($coddivisa1 != $coddivisa2) {
+            return (float) $amount / static::get($coddivisa1)->tasaconv * static::get($coddivisa2)->tasaconv;
+        }
+
+        return (float) $amount;
     }
 
     /**
@@ -73,12 +86,7 @@ class DivisaTools extends NumberTools
     public function findDivisa($model)
     {
         if (isset($model->coddivisa)) {
-            foreach (self::$divisas as $div) {
-                if ($div->coddivisa == $model->coddivisa) {
-                    self::$selectedDivisa = $div;
-                    break;
-                }
-            }
+            self::$selectedDivisa = static::get($model->coddivisa);
         }
     }
 
@@ -133,20 +141,19 @@ class DivisaTools extends NumberTools
     }
 
     /**
-     * Convert the amount form currency1 to currency2.
+     * 
+     * @param string $coddivisa
      *
-     * @param float  $amount
-     * @param string $coddivisa1
-     * @param string $coddivisa2
-     *
-     * @return float
+     * @return Divisa
      */
-    public static function transform($amount, $coddivisa1, $coddivisa2)
+    private static function get(string $coddivisa)
     {
-        if ($coddivisa1 != $coddivisa2 && isset(self::$divisas[$coddivisa1], self::$divisas[$coddivisa2])) {
-            return (float) $amount / self::$divisas[$coddivisa1]->tasaconv * self::$divisas[$coddivisa2]->tasaconv;
+        foreach (self::$divisas as $div) {
+            if ($div->coddivisa == $coddivisa) {
+                return $div;
+            }
         }
 
-        return (float) $amount;
+        return new Divisa();
     }
 }
