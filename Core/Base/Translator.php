@@ -192,17 +192,45 @@ class Translator
      */
     public function setDefaultLang(string $langCode)
     {
-        self::$defaultLang = $langCode;
+        self::$defaultLang = $this->findLang($langCode);
     }
 
     /**
      * Sets the language code in use.
      * 
-     * @param string $lang
+     * @param string $langCode
      */
-    public function setLang(string $lang)
+    public function setLang(string $langCode)
     {
-        $this->currentLang = $lang;
+        $this->currentLang = $this->findLang($langCode);
+    }
+
+    /**
+     * 
+     * @param string $langCode
+     *
+     * @return string
+     */
+    private function findLang(string $langCode): string
+    {
+        // First match is with default lang? (Avoid match with variants)
+        if (0 === strpos($this->getDefaultLang(), $langCode)) {
+            return $this->getDefaultLang();
+        }
+
+        // If not, check with all available languages
+        $finalKey = null;
+        foreach (array_keys($this->getAvailableLanguages()) as $key) {
+            if ($key === $langCode) {
+                return $key;
+            }
+
+            if ($finalKey === null && 0 === strpos($key, $langCode)) {
+                $finalKey = $key;
+            }
+        }
+
+        return $finalKey ?? $this->getDefaultLang();
     }
 
     /**
