@@ -35,7 +35,7 @@
                 <widget type="date" fieldname="creationdate" readonly="true" />
             </column>
             <column name="user" titleurl="ListUser" numcolumns="2" order="140">
-                <widget type="select" fieldname="nick" icon="fas fa-user" onclick="EditUser" readonly="true" required="true">
+                <widget type="select" fieldname="nick" icon="fas fa-user-circle" onclick="EditUser" readonly="true" required="true">
                     <values source="users" fieldcode="nick" fieldtitle="nick"></values>
                 </widget>
             </column>

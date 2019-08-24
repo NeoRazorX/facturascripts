@@ -35,7 +35,7 @@
                 <widget type="text" fieldname="level" required="true" readonly="true" />
             </column>
             <column name="user" order="130">
-                <widget type="text" fieldname="nick" readonly="true" />
+                <widget type="text" fieldname="nick" icon="fas fa-user-circle" onclick="EditUser" readonly="true" />
             </column>
             <column name="ip" order="140">
                 <widget type="text" fieldname="ip" readonly="true" />

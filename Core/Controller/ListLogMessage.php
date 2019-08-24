@@ -62,7 +62,7 @@ class ListLogMessage extends ListController
      * 
      * @param string $viewName
      */
-    protected function createCronJobView($viewName = 'ListCronJob')
+    protected function createCronJobView(string $viewName = 'ListCronJob')
     {
         $this->addView($viewName, 'CronJob', 'crons', 'fas fa-cogs');
         $this->addSearchFields($viewName, ['jobname', 'pluginname']);
@@ -84,7 +84,7 @@ class ListLogMessage extends ListController
      * 
      * @param string $viewName
      */
-    protected function createEmailSentView($viewName = 'ListEmailSent')
+    protected function createEmailSentView(string $viewName = 'ListEmailSent')
     {
         $this->addView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
         $this->addOrderBy($viewName, ['date'], 'date', 2);
@@ -105,7 +105,7 @@ class ListLogMessage extends ListController
      * 
      * @param string $viewName
      */
-    protected function createLogMessageView($viewName = 'ListLogMessage')
+    protected function createLogMessageView(string $viewName = 'ListLogMessage')
     {
         $this->addView($viewName, 'LogMessage', 'logs', 'fas fa-file-medical-alt');
         $this->addSearchFields($viewName, ['message', 'uri']);
@@ -113,6 +113,9 @@ class ListLogMessage extends ListController
         $this->addOrderBy($viewName, ['level'], 'level');
 
         /// filters
+        $channels = $this->codeModel->all('logs', 'channel', 'channel');
+        $this->addFilterSelect($viewName, 'channel', 'channel', 'channel', $channels);
+
         $levels = $this->codeModel->all('logs', 'level', 'level');
         $this->addFilterSelect($viewName, 'level', 'level', 'level', $levels);
 
@@ -164,7 +167,7 @@ class ListLogMessage extends ListController
             $counter = 0;
             foreach ($allFilteredLogs as $log) {
                 if (!$log->delete()) {
-                    $this->toolBox()->i18nLog()->warning('record-deleted-error');
+                    $this->toolBox()->i18nLog()->error('record-deleted-error');
                     break;
                 }
 

@@ -27,6 +27,7 @@ class MiniLog
 {
 
     const ALL_LEVELS = ['critical', 'debug', 'error', 'notice', 'warning'];
+    const DEFAULT_CHANNEL = 'master';
     const DEFAULT_LEVELS = ['critical', 'error', 'notice', 'warning'];
 
     /**
@@ -48,7 +49,7 @@ class MiniLog
      */
     public function __construct(string $channel = '')
     {
-        $this->channel = $channel;
+        $this->channel = empty($channel) ? self::DEFAULT_CHANNEL : $channel;
     }
 
     /**
