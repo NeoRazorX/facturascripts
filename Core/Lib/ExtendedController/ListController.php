@@ -341,7 +341,7 @@ abstract class ListController extends BaseController
 
         /// we search in all listviews
         foreach ($this->views as $viewName => $listView) {
-            if (!$this->getSettings($viewName, 'megasearch')) {
+            if (!$this->getSettings($viewName, 'megasearch') || empty($listView->searchFields)) {
                 continue;
             }
 

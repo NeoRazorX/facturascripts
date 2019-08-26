@@ -40,7 +40,10 @@
             <column name="ip" order="140">
                 <widget type="text" fieldname="ip" readonly="true" />
             </column>
-            <column name="message" numcolumns="12" order="150">
+            <column name="url" numcolumns="12" order="150">
+                <widget type="link" fieldname="uri" readonly="true" />
+            </column>
+            <column name="message" numcolumns="12" order="160">
                 <widget type="textarea" fieldname="message" required="true" readonly="true" />
             </column>
         </group>
