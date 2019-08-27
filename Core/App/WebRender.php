@@ -83,7 +83,7 @@ class WebRender
         $twig = new Environment($this->loader, $this->getOptions());
 
         /// asset functions
-        $assetFunction = new TwigFunction('asset', function ($string) {
+        $assetFunction = new TwigFunction('asset', function($string) {
             $path = \FS_ROUTE . '/';
             if (substr($string, 0, strlen($path)) == $path) {
                 return $string;
@@ -93,7 +93,7 @@ class WebRender
         $twig->addFunction($assetFunction);
 
         /// fixHtml functions
-        $fixHtmlFunction = new TwigFilter('fixHtml', function ($string) {
+        $fixHtmlFunction = new TwigFilter('fixHtml', function($string) {
             return Utils::fixHtml($string);
         });
         $twig->addFilter($fixHtmlFunction);

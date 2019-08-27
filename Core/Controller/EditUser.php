@@ -178,7 +178,7 @@ class EditUser extends EditController
             }
 
             /// sorting
-            usort($langs, function ($objA, $objB) {
+            usort($langs, function($objA, $objB) {
                 return strcmp($objA['title'], $objB['title']);
             });
 

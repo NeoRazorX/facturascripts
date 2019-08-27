@@ -74,7 +74,7 @@ class EventManager
     private static function get(string $eventName)
     {
         /// sort by priority
-        uasort(self::$listeners[$eventName], function ($item1, $item2) {
+        uasort(self::$listeners[$eventName], function($item1, $item2) {
             if ($item1['priority'] > $item2['priority']) {
                 return -1;
             } elseif ($item1['priority'] < $item2['priority']) {
