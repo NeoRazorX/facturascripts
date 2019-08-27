@@ -57,7 +57,7 @@ class BusinessDocumentGenerator
         $newDoc = new $newDocClass();
         foreach (array_keys($prototype->getModelFields()) as $field) {
             /// exclude some properties
-            if (in_array($field, $exclude) || !property_exists($newDocClass, $field)) {
+            if (in_array($field, $exclude)) {
                 continue;
             }
 

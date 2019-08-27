@@ -20,7 +20,9 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseTools;
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 
 /**
