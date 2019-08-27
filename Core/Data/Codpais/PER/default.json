@@ -1,0 +1,9 @@
+{
+    "default": {
+        "coddivisa": "PEN",
+        "codimpuesto": "IGV",
+        "codserie": "A",
+        "codpago": "CONT",
+        "tipoidfiscal": "RUC"
+    }
+}
