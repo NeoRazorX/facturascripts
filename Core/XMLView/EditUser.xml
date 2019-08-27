@@ -22,42 +22,54 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" title="nick" numcolumns="3" order="100">
+            <column name="code" title="nick" order="100">
                 <widget type="text" fieldname="nick" icon="fas fa-hashtag" maxlength="50" required="true" readonly="dinamic" />
             </column>
-            <column name="new-password" numcolumns="3" order="110">
-                <widget type="password" fieldname="newPassword" icon="fas fa-key" />
-            </column>
-            <column name="repeat-new-password" numcolumns="3" order="120">
-                <widget type="password" fieldname="newPassword2" icon="fas fa-key" />
-            </column>
-            <column name="email" numcolumns="3" order="130">
+            <column name="email" order="110">
                 <widget type="email" fieldname="email" icon="fas fa-envelope" />
             </column>
-            <column name="is-admin" order="140">
+            <column name="new-password" order="120">
+                <widget type="password" fieldname="newPassword" icon="fas fa-key" />
+            </column>
+            <column name="repeat-new-password" order="130">
+                <widget type="password" fieldname="newPassword2" icon="fas fa-key" />
+            </column>
+            <column name="level" order="140">
+                <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision" />
+            </column>
+        </group>
+        <group name="advanced" numcolumns="12">
+            <column name="is-admin" order="100">
                 <widget type="checkbox" fieldname="admin"/>
             </column>
-            <column name="enabled" order="150">
+            <column name="enabled" order="110">
                 <widget type="checkbox" fieldname="enabled" />
             </column>
         </group>
         <group name="other" numcolumns="12">
-            <column name="level" numcolumns="3" order="100">
-                <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision" />
+            <column name="language" order="100">
+                <widget type="select" fieldname="langcode" icon="fas fa-language">
+                    <values></values>
+                </widget>
             </column>
-            <column name="homepage" numcolumns="3" order="110">
+            <column name="homepage" order="110">
                 <widget type="select" fieldname="homepage" icon="fas fa-home">
                     <values></values>
                 </widget>
             </column>
-            <column name="company" titleurl="ListEmpresa" numcolumns="3" order="120">
+            <column name="company" titleurl="ListEmpresa" order="120">
                 <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
-            <column name="lang-code" numcolumns="3" order="130">
-                <widget type="select" fieldname="langcode" icon="fas fa-language">
-                    <values></values>
+            <column name="warehouse" titleurl="ListAlmacen" order="130">
+                <widget type="select" fieldname="codalmacen" icon="fas fa-warehouse" onclick="EditAlmacen">
+                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="agent" titleurl="ListAgente" order="140">
+                <widget type="select" fieldname="codagente" icon="fas fa-user-tie" onclick="EditAgente">
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
                 </widget>
             </column>
         </group>

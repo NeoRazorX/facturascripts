@@ -80,10 +80,13 @@ class ListUser extends ListController
         $levels = $this->codeModel->all('users', 'level', 'level');
         $this->addFilterSelect($name, 'level', 'level', 'level', $levels);
 
-        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-        $this->addFilterSelect($name, 'company', 'company', 'idempresa', $companies);
-
         $languages = $this->codeModel->all('users', 'langcode', 'langcode');
-        $this->addFilterSelect($name, 'langcode', 'lang-code', 'langcode', $languages);
+        $this->addFilterSelect($name, 'langcode', 'language', 'langcode', $languages);
+
+        $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect($name, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
+
+        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
+        $this->addFilterSelect($name, 'idempresa', 'company', 'idempresa', $companies);
     }
 }

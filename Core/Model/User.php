@@ -39,6 +39,18 @@ class User extends Base\ModelClass
     public $admin;
 
     /**
+     *
+     * @var string
+     */
+    public $codagente;
+
+    /**
+     *
+     * @var string
+     */
+    public $codalmacen;
+
+    /**
      * user's email.
      *
      * @var string
@@ -205,7 +217,7 @@ class User extends Base\ModelClass
             return false;
         }
 
-        return $this->testPassword() && parent::test();
+        return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();
     }
 
     /**
@@ -269,5 +281,43 @@ class User extends Base\ModelClass
             $this->save();
             break;
         }
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function testAgent(): bool
+    {
+        if (empty($this->codagente)) {
+            $this->codagente = null;
+            return true;
+        }
+
+        $agent = new Agente();
+        if (!$agent->loadFromCode($this->codagente)) {
+            $this->codagente = null;
+        }
+
+        return true;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function testWarehouse(): bool
+    {
+        if (empty($this->codalmacen)) {
+            $this->codalmacen = null;
+            return true;
+        }
+
+        $warehouse = new Almacen();
+        if (!$warehouse->loadFromCode($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
+            $this->codalmacen = null;
+        }
+
+        return true;
     }
 }

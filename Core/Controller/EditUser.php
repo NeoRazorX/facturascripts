@@ -170,17 +170,19 @@ class EditUser extends EditController
      */
     protected function loadLanguageValues()
     {
-        $columnLangCode = $this->views['EditUser']->columnForName('lang-code');
-        $langs = [];
-        foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
-            $langs[] = ['value' => $key, 'title' => $value];
+        $columnLangCode = $this->views['EditUser']->columnForName('language');
+        if ($columnLangCode) {
+            $langs = [];
+            foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
+                $langs[] = ['value' => $key, 'title' => $value];
+            }
+
+            /// sorting
+            usort($langs, function ($objA, $objB) {
+                return strcmp($objA['title'], $objB['title']);
+            });
+
+            $columnLangCode->widget->setValuesFromArray($langs, false);
         }
-
-        /// sorting
-        usort($langs, function ($objA, $objB) {
-            return strcmp($objA['title'], $objB['title']);
-        });
-
-        $columnLangCode->widget->setValuesFromArray($langs, false);
     }
 }
