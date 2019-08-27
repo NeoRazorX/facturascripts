@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -74,7 +74,7 @@ class EventManager
     private static function get(string $eventName)
     {
         /// sort by priority
-        uasort(self::$listeners[$eventName], function($item1, $item2) {
+        uasort(self::$listeners[$eventName], function ($item1, $item2) {
             if ($item1['priority'] > $item2['priority']) {
                 return -1;
             } elseif ($item1['priority'] < $item2['priority']) {

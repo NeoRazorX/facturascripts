@@ -50,11 +50,6 @@ abstract class BusinessDocumentController extends PanelController
     abstract public function getNewSubjectUrl();
 
     /**
-     * Loads custom contact data for additional address details.
-     */
-    abstract protected function loadCustomContactsWidget(&$view);
-
-    /**
      * Sets subject for this document.
      */
     abstract protected function setSubject(&$view, $formData);
@@ -188,21 +183,23 @@ abstract class BusinessDocumentController extends PanelController
     {
         $primaryKey = $this->request->request->get($view->model->primaryColumn());
         $code = $this->request->query->get('code', $primaryKey);
-        if (empty($code)) {
-            return;
-        }
 
         switch ($viewName) {
             case 'Edit' . $this->getModelClassName():
                 $view->loadData($code);
-                $this->loadCustomContactsWidget($view);
                 break;
 
             case $this->getLineXMLView():
+                if (empty($code)) {
+                    $view->model->setAuthor($this->user);
+                    break;
+                }
+
                 $view->loadData($code);
+
                 /// data not found?
                 $action = $this->request->request->get('action', '');
-                if (!empty($code) && !$view->model->exists() && '' === $action) {
+                if ('' === $action && !$view->model->exists()) {
                     $this->toolBox()->i18nLog()->warning('record-not-found');
                 }
                 break;
@@ -255,6 +252,7 @@ abstract class BusinessDocumentController extends PanelController
 
         /// loads model
         $data = $this->getBusinessFormData();
+        $this->views[$this->active]->model->setAuthor($this->user);
         $this->views[$this->active]->loadFromData($data['form']);
         $this->views[$this->active]->lines = $this->views[$this->active]->model->getLines();
 
@@ -291,10 +289,6 @@ abstract class BusinessDocumentController extends PanelController
      */
     protected function saveDocumentResult(BusinessDocumentView &$view, array &$data)
     {
-        if (!$view->model->exists()) {
-            $view->model->nick = $this->user->nick;
-        }
-
         /// start transaction
         $this->dataBase->beginTransaction();
 

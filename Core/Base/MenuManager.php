@@ -320,7 +320,7 @@ class MenuManager
     private function sortMenu(&$result)
     {
         /// sort this menu
-        uasort($result, function($menu1, $menu2) {
+        uasort($result, function ($menu1, $menu2) {
             return strcasecmp($menu1->title, $menu2->title);
         });
 

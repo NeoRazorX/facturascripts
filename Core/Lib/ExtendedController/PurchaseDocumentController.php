@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
@@ -66,17 +67,8 @@ abstract class PurchaseDocumentController extends BusinessDocumentController
 
     /**
      * 
-     * @param mixed $view
-     */
-    protected function loadCustomContactsWidget(&$view)
-    {
-        ;
-    }
-
-    /**
-     * 
-     * @param mixed $view
-     * @param array $formData
+     * @param BaseView $view
+     * @param array    $formData
      * 
      * @return string
      */

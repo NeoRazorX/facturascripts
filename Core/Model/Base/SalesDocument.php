@@ -24,6 +24,7 @@ use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Tarifa;
+use FacturaScripts\Dinamic\Model\User;
 
 /**
  * Description of SalesDocument
@@ -193,6 +194,26 @@ abstract class SalesDocument extends TransformerDocument
         new Cliente();
 
         return $result;
+    }
+
+    /**
+     * Sets the author for this document.
+     * 
+     * @param User $author
+     *
+     * @return bool
+     */
+    public function setAuthor($author)
+    {
+        if (!isset($author->nick)) {
+            return false;
+        }
+
+        $this->codagente = $author->codagente ?? $this->codagente;
+        $this->codalmacen = $author->codalmacen ?? $this->codalmacen;
+        $this->idempresa = $author->idempresa ?? $this->idempresa;
+        $this->nick = $author->nick;
+        return true;
     }
 
     /**

@@ -213,6 +213,11 @@ abstract class BusinessDocument extends ModelOnChangeClass
     abstract public function getSubject();
 
     /**
+     * Sets the author for this document.
+     */
+    abstract public function setAuthor($author);
+
+    /**
      * Sets subject for this document.
      */
     abstract public function setSubject($subject);

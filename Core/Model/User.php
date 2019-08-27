@@ -147,9 +147,9 @@ class User extends Base\ModelClass
 
         $this->toolBox()->i18nLog()->notice('created-default-admin-account');
 
-        return 'INSERT INTO ' . static::tableName() . ' (nick,password,admin,enabled,idempresa,langcode,homepage,level)'
+        return 'INSERT INTO ' . static::tableName() . ' (nick,password,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
             . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT)
-            . "',TRUE,TRUE,'1','" . \FS_LANG . "','Wizard','99');";
+            . "',TRUE,TRUE,'1','1','" . \FS_LANG . "','Wizard','99');";
     }
 
     /**
@@ -308,14 +308,18 @@ class User extends Base\ModelClass
      */
     protected function testWarehouse(): bool
     {
+        $appSettings = $this->toolBox()->appSettings();
+
         if (empty($this->codalmacen)) {
-            $this->codalmacen = null;
+            $this->codalmacen = $appSettings->get('default', 'codalmacen');
+            $this->idempresa = $appSettings->get('default', 'idempresa');
             return true;
         }
 
         $warehouse = new Almacen();
         if (!$warehouse->loadFromCode($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
-            $this->codalmacen = null;
+            $this->codalmacen = $appSettings->get('default', 'codalmacen');
+            $this->idempresa = $appSettings->get('default', 'idempresa');
         }
 
         return true;

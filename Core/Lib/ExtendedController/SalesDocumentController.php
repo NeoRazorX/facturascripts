@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Model\Cliente;
 
 /**
@@ -67,9 +68,9 @@ abstract class SalesDocumentController extends BusinessDocumentController
     /**
      * Loads custom contact data for additional address details.
      *
-     * @param mixed $view
+     * @param BaseView $view
      */
-    protected function loadCustomContactsWidget(&$view)
+    protected function loadCustomContactsWidget($view)
     {
         $cliente = new Cliente();
         if (!$cliente->loadFromCode($view->model->codcliente)) {
@@ -83,17 +84,36 @@ abstract class SalesDocumentController extends BusinessDocumentController
 
         /// billing address
         $columnBilling = $view->columnForName('billingaddr');
-        $columnBilling->widget->setValuesFromArray($addresses, false);
+        if ($columnBilling) {
+            $columnBilling->widget->setValuesFromArray($addresses, false);
+        }
 
         /// shipping address
         $columnShipping = $view->columnForName('shippingaddr');
-        $columnShipping->widget->setValuesFromArray($addresses, false, true);
+        if ($columnShipping) {
+            $columnShipping->widget->setValuesFromArray($addresses, false, true);
+        }
     }
 
     /**
      * 
-     * @param mixed $view
-     * @param array $formData
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        parent::loadData($viewName, $view);
+        switch ($viewName) {
+            case 'Edit' . $this->getModelClassName():
+                $this->loadCustomContactsWidget($view);
+                break;
+        }
+    }
+
+    /**
+     * 
+     * @param BaseView $view
+     * @param array    $formData
      *
      * @return string
      */

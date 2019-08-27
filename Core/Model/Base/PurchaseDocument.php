@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\User;
 
 /**
  * Description of PurchaseDocument
@@ -87,6 +88,25 @@ abstract class PurchaseDocument extends TransformerDocument
         new Proveedor();
 
         return $result;
+    }
+
+    /**
+     * Sets the author for this document.
+     * 
+     * @param User $author
+     *
+     * @return bool
+     */
+    public function setAuthor($author)
+    {
+        if (!isset($author->nick)) {
+            return false;
+        }
+
+        $this->codalmacen = $author->codalmacen ?? $this->codalmacen;
+        $this->idempresa = $author->idempresa ?? $this->idempresa;
+        $this->nick = $author->nick;
+        return true;
     }
 
     /**

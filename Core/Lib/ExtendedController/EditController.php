@@ -87,9 +87,9 @@ abstract class EditController extends PanelController
                 $code = $this->request->query->get('code', $primaryKey);
                 $view->loadData($code);
 
-                /// data not found?
+                /// Data not found?
                 $action = $this->request->request->get('action', '');
-                if (!empty($code) && !$view->model->exists() && '' === $action) {
+                if ('' === $action && !empty($code) && !$view->model->exists()) {
                     $this->toolBox()->i18nLog()->warning('record-not-found');
                 }
                 break;
