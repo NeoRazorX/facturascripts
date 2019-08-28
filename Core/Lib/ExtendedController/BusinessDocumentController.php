@@ -176,8 +176,8 @@ abstract class BusinessDocumentController extends PanelController
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
-     * @param BaseView $view
+     * @param string               $viewName
+     * @param BusinessDocumentView $view
      */
     protected function loadData($viewName, $view)
     {

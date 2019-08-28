@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\BusinessDocumentView;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
@@ -67,8 +67,8 @@ abstract class PurchaseDocumentController extends BusinessDocumentController
 
     /**
      * 
-     * @param BaseView $view
-     * @param array    $formData
+     * @param BusinessDocumentView $view
+     * @param array                $formData
      * 
      * @return string
      */

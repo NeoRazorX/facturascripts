@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\BusinessDocumentView;
 use FacturaScripts\Dinamic\Model\Cliente;
 
 /**
@@ -68,7 +68,7 @@ abstract class SalesDocumentController extends BusinessDocumentController
     /**
      * Loads custom contact data for additional address details.
      *
-     * @param BaseView $view
+     * @param BusinessDocumentView $view
      */
     protected function loadCustomContactsWidget($view)
     {
@@ -97,8 +97,8 @@ abstract class SalesDocumentController extends BusinessDocumentController
 
     /**
      * 
-     * @param string   $viewName
-     * @param BaseView $view
+     * @param string               $viewName
+     * @param BusinessDocumentView $view
      */
     protected function loadData($viewName, $view)
     {
@@ -112,8 +112,8 @@ abstract class SalesDocumentController extends BusinessDocumentController
 
     /**
      * 
-     * @param BaseView $view
-     * @param array    $formData
+     * @param BusinessDocumentView $view
+     * @param array                $formData
      *
      * @return string
      */

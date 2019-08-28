@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -48,6 +49,13 @@ class BusinessDocumentView extends BaseView
      * @var BusinessDocumentLine[]
      */
     public $lines = [];
+
+    /**
+     * Model to use in this view.
+     *
+     * @var BusinessDocument
+     */
+    public $model;
 
     /**
      * 
