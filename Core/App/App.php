@@ -154,6 +154,15 @@ abstract class App
     }
 
     /**
+     * Add or increase the attempt counter of the current client IP address.
+     */
+    protected function ipWarning()
+    {
+        $ipFilter = $this->toolBox()->ipFilter();
+        $ipFilter->setAttempt($ipFilter->getClientIp());
+    }
+
+    /**
      * Returns true if the client IP has been banned.
      *
      * @return bool

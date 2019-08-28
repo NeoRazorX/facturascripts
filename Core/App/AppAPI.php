@@ -80,11 +80,13 @@ class AppAPI extends App
 
         if (!$this->checkAuthToken()) {
             $this->fatalError('AUTH-TOKEN-INVALID', Response::HTTP_FORBIDDEN);
+            $this->ipWarning();
             return false;
         }
 
         if (!$this->isAllowed()) {
             $this->fatalError('FORBIDDEN', Response::HTTP_FORBIDDEN);
+            $this->ipWarning();
             return false;
         }
 

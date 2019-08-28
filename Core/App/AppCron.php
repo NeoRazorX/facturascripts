@@ -30,7 +30,7 @@ class AppCron extends App
     {
         $content = $this->response->getContent();
 
-        $lines = empty($content) ? [] : [$lines];
+        $lines = empty($content) ? [] : [$content];
         foreach ($this->toolBox()->log()->readAll() as $log) {
             $lines[] = $log["message"];
         }

@@ -215,6 +215,7 @@ class AppController extends App
             }
         } else {
             $this->toolBox()->i18nLog()->critical('controller-not-found');
+            $this->ipWarning();
         }
 
         $this->response->setStatusCode($httpStatus);
@@ -285,22 +286,21 @@ class AppController extends App
             return $this->cookieAuth($user);
         }
 
-        $ipFilter = $this->toolBox()->ipFilter();
         if ($user->loadFromCode($nick) && $user->enabled) {
             if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
                 $this->toolBox()->events()->trigger('App:User:Login', $user);
                 $this->updateCookies($user, true);
-                $ipFilter->clear();
+                $this->toolBox()->ipFilter()->clear();
                 $this->toolBox()->i18nLog()->debug('login-ok', ['%nick%' => $nick]);
                 return $user;
             }
 
-            $ipFilter->setAttempt($ipFilter->getClientIp());
+            $this->ipWarning();
             $this->toolBox()->i18nLog()->warning('login-password-fail');
             return false;
         }
 
-        $ipFilter->setAttempt($ipFilter->getClientIp());
+        $this->ipWarning();
         $this->toolBox()->i18nLog()->warning('login-user-not-found', ['%nick%' => $nick]);
         return false;
     }
