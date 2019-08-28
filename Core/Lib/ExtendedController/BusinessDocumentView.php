@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
@@ -53,7 +53,7 @@ class BusinessDocumentView extends BaseView
     /**
      * Model to use in this view.
      *
-     * @var BusinessDocument
+     * @var TransformerDocument
      */
     public $model;
 

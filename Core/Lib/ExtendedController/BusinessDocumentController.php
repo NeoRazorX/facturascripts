@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 
 /**
@@ -139,6 +140,7 @@ abstract class BusinessDocumentController extends PanelController
         $data = ['custom' => [], 'final' => [], 'form' => [], 'lines' => [], 'subject' => []];
         foreach ($this->request->request->all() as $field => $value) {
             switch ($field) {
+                case 'codpago':
                 case 'codserie':
                     $data['custom'][$field] = $value;
                     break;
@@ -388,8 +390,8 @@ abstract class BusinessDocumentController extends PanelController
     /**
      * Updates oldLine with newLine data.
      *
-     * @param mixed $oldLine
-     * @param array $newLine
+     * @param BusinessDocumentLine $oldLine
+     * @param array                $newLine
      *
      * @return bool
      */

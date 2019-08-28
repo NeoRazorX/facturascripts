@@ -62,6 +62,7 @@ function businessDocViewSubjectChanged() {
         dataType: "json",
         data: data,
         success: function (results) {
+            $("#doc_codpago").val(results.codpago);
             $("#doc_codserie").val(results.codserie);
             console.log("results", results);
 
