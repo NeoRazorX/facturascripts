@@ -496,6 +496,7 @@
     "invoice-regularized-cant-delete": "Die Rechnung liegt innerhalb einer Regularisierung von 0. Sie kann nicht gelöscht werden.",
     "invoices": "Banknoten",
     "ip": "IP",
+    "ip-banned": "ip-banned",
     "irpf": "Einkommensteuer",
     "is-admin": "Ist Administrator",
     "is-creditor": "Ist Gläubiger",

@@ -127,7 +127,7 @@ abstract class App
         $telemetry->update();
 
         /// save log
-        new MiniLogSave($this->toolBox()->ipFilter()->getClientIp() ?? '', $nick, $this->uri);
+        new MiniLogSave($this->toolBox()->ipFilter()->getClientIp(), $nick, $this->uri);
 
         $this->dataBase->close();
     }
@@ -161,7 +161,12 @@ abstract class App
     protected function isIPBanned()
     {
         $ipFilter = $this->toolBox()->ipFilter();
-        return $ipFilter->isBanned($ipFilter->getClientIp());
+        if ($ipFilter->isBanned($ipFilter->getClientIp())) {
+            $this->toolBox()->i18nLog()->critical('ip-banned');
+            return true;
+        }
+
+        return false;
     }
 
     /**

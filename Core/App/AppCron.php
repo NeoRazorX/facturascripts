@@ -29,11 +29,13 @@ class AppCron extends App
     public function render()
     {
         $content = $this->response->getContent();
+
+        $lines = empty($content) ? [] : [$lines];
         foreach ($this->toolBox()->log()->readAll() as $log) {
-            $content .= $log["message"] . "\n";
+            $lines[] = $log["message"];
         }
 
-        $this->response->setContent($content);
+        $this->response->setContent(implode("\n", $lines));
         parent::render();
     }
 
@@ -45,20 +47,22 @@ class AppCron extends App
     public function run()
     {
         $this->response->headers->set('Content-Type', 'text/plain');
-        if ($this->dataBase->connected()) {
-            $startTime = new \DateTime();
-            $this->toolBox()->i18nLog()->notice('starting-cron');
-
-            $this->runPlugins();
-
-            $endTime = new \DateTime();
-            $executionTime = $startTime->diff($endTime);
-            $this->toolBox()->i18nLog()->notice('finished-cron', ['%timeNeeded%' => $executionTime->format("%H:%I:%S")]);
-            return true;
+        if (!$this->dataBase->connected()) {
+            $this->response->setContent($this->toolBox()->i18n()->trans('cant-connect-database'));
+            return false;
+        } elseif ($this->isIPBanned()) {
+            return false;
         }
 
-        $this->response->setContent('DB-ERROR');
-        return false;
+        $startTime = new \DateTime();
+        $this->toolBox()->i18nLog()->notice('starting-cron');
+
+        $this->runPlugins();
+
+        $endTime = new \DateTime();
+        $executionTime = $startTime->diff($endTime);
+        $this->toolBox()->i18nLog()->notice('finished-cron', ['%timeNeeded%' => $executionTime->format("%H:%I:%S")]);
+        return true;
     }
 
     /**

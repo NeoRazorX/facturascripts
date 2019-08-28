@@ -116,7 +116,7 @@ class AppController extends App
             $this->renderHtml('Error/DbError.html.twig');
         } elseif ($this->isIPBanned()) {
             $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $this->response->setContent('IP-BANNED');
+            $this->response->setContent($this->toolBox()->i18n()->trans('ip-banned'));
         } elseif ($this->request->query->get('logout')) {
             $this->userLogout();
             $this->renderHtml('Login/Login.html.twig');
@@ -232,7 +232,7 @@ class AppController extends App
      * Creates HTML with the selected template. The data will not be inserted in it
      * until render() is executed
      *
-     * @param string $template       html file to use
+     * @param string $template
      * @param string $controllerName
      */
     private function renderHtml(string $template, string $controllerName = '')

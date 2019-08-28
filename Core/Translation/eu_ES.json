@@ -496,6 +496,7 @@
     "invoice-regularized-cant-delete": "Faktura %tax% erregularizazioan dago. Ezin da ezabatu.",
     "invoices": "Fakturak",
     "ip": "IP",
+    "ip-banned": "ip-banned",
     "irpf": "PFEZ",
     "is-admin": "Administratzailea da",
     "is-creditor": "Hartzekoduna da",

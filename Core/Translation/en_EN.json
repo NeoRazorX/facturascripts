@@ -496,6 +496,7 @@
     "invoice-regularized-cant-delete": "The invoice is within a regularization of %tax%. It cann't be deleted.",
     "invoices": "Invoices",
     "ip": "IP",
+    "ip-banned": "For security reasons access from your IP has been temporarily blocked.",
     "irpf": "IRPF",
     "is-admin": "Is administrator",
     "is-creditor": "Is creditor",

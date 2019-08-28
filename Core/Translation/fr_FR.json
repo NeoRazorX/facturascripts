@@ -496,6 +496,7 @@
     "invoice-regularized-cant-delete": "La facture est dans une régularisation de %tax%. Elle ne peut pas être supprimée.",
     "invoices": "factures",
     "ip": "IP",
+    "ip-banned": "ip-banned",
     "irpf": "IRPP",
     "is-admin": "Est administrateur",
     "is-creditor": "Est créancier",
