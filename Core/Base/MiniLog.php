@@ -26,11 +26,12 @@ namespace FacturaScripts\Core\Base;
 class MiniLog
 {
 
-    const ALL_LEVELS = ['critical', 'debug', 'error', 'notice', 'warning'];
+    const ALL_LEVELS = ['critical', 'debug', 'error', 'info', 'notice', 'warning'];
     const DEFAULT_CHANNEL = 'master';
-    const DEFAULT_LEVELS = ['critical', 'error', 'notice', 'warning'];
+    const DEFAULT_LEVELS = ['critical', 'error', 'info', 'notice', 'warning'];
 
     /**
+     * Current channel.
      *
      * @var string
      */
@@ -94,6 +95,17 @@ class MiniLog
     public function error(string $message, array $context = [])
     {
         $this->log('error', $message, $context);
+    }
+
+    /**
+     * Interesting information, advices.
+     *
+     * @param string $message
+     * @param array  $context
+     */
+    public function info(string $message, array $context = [])
+    {
+        $this->log('info', $message, $context);
     }
 
     /**

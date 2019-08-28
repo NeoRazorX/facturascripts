@@ -70,7 +70,7 @@ class EditApiKey extends EditController
     {
         // add Pages to Rol
         if (!Model\ApiAccess::addResourcesToApiKey($idApiKey, $apiAccess, $state)) {
-            throw new \Exception($this->toolBox()->i18n()->trans('cancel-process'));
+            throw new Exception($this->toolBox()->i18n()->trans('cancel-process'));
         }
     }
 
