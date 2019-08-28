@@ -69,12 +69,7 @@ abstract class App
      */
     protected $uri;
 
-    /**
-     * Selects and runs the corresponding controller.
-     *
-     * @return bool
-     */
-    abstract public function run();
+    abstract protected function die(int $status, string $message = '');
 
     /**
      * Initializes the app.
@@ -104,7 +99,7 @@ abstract class App
      *
      * @return bool
      */
-    public function connect()
+    public function connect(): bool
     {
         if ($this->dataBase->connect()) {
             $this->toolBox()->appSettings()->load();
@@ -141,13 +136,33 @@ abstract class App
     }
 
     /**
+     * Runs the application core.
+     * 
+     * @return bool
+     */
+    public function run(): bool
+    {
+        if (!$this->dataBase->connected()) {
+            $this->toolBox()->i18nLog()->critical('cant-connect-database');
+            $this->die(Response::HTTP_INTERNAL_SERVER_ERROR);
+            return false;
+        } elseif ($this->isIPBanned()) {
+            $this->toolBox()->i18nLog()->critical('ip-banned');
+            $this->die(Response::HTTP_TOO_MANY_REQUESTS);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Returns param number $num in uri.
      *
      * @param int $num
      *
      * @return string
      */
-    protected function getUriParam(string $num)
+    protected function getUriParam(string $num): string
     {
         $params = explode('/', substr($this->uri, 1));
         return isset($params[$num]) ? $params[$num] : '';
@@ -167,15 +182,10 @@ abstract class App
      *
      * @return bool
      */
-    protected function isIPBanned()
+    protected function isIPBanned(): bool
     {
         $ipFilter = $this->toolBox()->ipFilter();
-        if ($ipFilter->isBanned($ipFilter->getClientIp())) {
-            $this->toolBox()->i18nLog()->critical('ip-banned');
-            return true;
-        }
-
-        return false;
+        return $ipFilter->isBanned($ipFilter->getClientIp());
     }
 
     /**

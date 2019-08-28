@@ -26,16 +26,19 @@ namespace FacturaScripts\Core\App;
 class AppCron extends App
 {
 
+    /**
+     * Returns the data into the standard output.
+     */
     public function render()
     {
-        $content = $this->response->getContent();
+        $this->response->headers->set('Content-Type', 'text/plain');
 
-        $lines = empty($content) ? [] : [$content];
+        $content = $this->response->getContent();
         foreach ($this->toolBox()->log()->readAll() as $log) {
-            $lines[] = $log["message"];
+            $content .= empty($content) ? $log["message"] : "\n" . $log["message"];
         }
 
-        $this->response->setContent(implode("\n", $lines));
+        $this->response->setContent($content);
         parent::render();
     }
 
@@ -44,13 +47,9 @@ class AppCron extends App
      *
      * @return bool
      */
-    public function run()
+    public function run(): bool
     {
-        $this->response->headers->set('Content-Type', 'text/plain');
-        if (!$this->dataBase->connected()) {
-            $this->response->setContent($this->toolBox()->i18n()->trans('cant-connect-database'));
-            return false;
-        } elseif ($this->isIPBanned()) {
+        if (!parent::run()) {
             return false;
         }
 
@@ -63,6 +62,18 @@ class AppCron extends App
         $executionTime = $startTime->diff($endTime);
         $this->toolBox()->i18nLog()->notice('finished-cron', ['%timeNeeded%' => $executionTime->format("%H:%I:%S")]);
         return true;
+    }
+
+    /**
+     * 
+     * @param int    $status
+     * @param string $message
+     */
+    protected function die(int $status, string $message = '')
+    {
+        $content = $this->toolBox()->i18n()->trans($message);
+        $this->response->setContent($content);
+        $this->response->setStatusCode($status);
     }
 
     /**

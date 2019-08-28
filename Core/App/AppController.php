@@ -109,31 +109,42 @@ class AppController extends App
      *
      * @return bool
      */
-    public function run()
+    public function run(): bool
     {
-        if (!$this->dataBase->connected()) {
-            $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-            $this->renderHtml('Error/DbError.html.twig');
-        } elseif ($this->isIPBanned()) {
-            $this->response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $this->response->setContent($this->toolBox()->i18n()->trans('ip-banned'));
+        if (!parent::run()) {
+            return false;
         } elseif ($this->request->query->get('logout')) {
             $this->userLogout();
             $this->renderHtml('Login/Login.html.twig');
             $route = empty(\FS_ROUTE) ? 'index.php' : \FS_ROUTE;
             $this->response->headers->set('Refresh', '0; ' . $route);
-        } else {
-            $this->user = $this->userAuth();
-
-            /// returns the name of the controller to load
-            $pageName = $this->getPageName();
-            $this->loadController($pageName);
-
-            /// returns true for testing purpose
-            return true;
+            return false;
         }
 
-        return false;
+        $this->user = $this->userAuth();
+
+        /// returns the name of the controller to load
+        $pageName = $this->getPageName();
+        $this->loadController($pageName);
+
+        /// returns true for testing purpose
+        return true;
+    }
+
+    /**
+     * 
+     * @param int    $status
+     * @param string $message
+     */
+    protected function die(int $status, string $message = '')
+    {
+        $content = $this->toolBox()->i18n()->trans($message);
+        foreach ($this->toolBox()->log()->readAll() as $log) {
+            $content .= empty($content) ? $log["message"] : "\n" . $log["message"];
+        }
+
+        $this->response->setContent(nl2br($content));
+        $this->response->setStatusCode($status);
     }
 
     /**

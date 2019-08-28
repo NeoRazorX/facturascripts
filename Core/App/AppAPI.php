@@ -44,49 +44,41 @@ class AppAPI extends App
     protected $apiKey;
 
     /**
+     * Returns the data into the standard output.
+     */
+    public function render()
+    {
+        $this->response->headers->set('Access-Control-Allow-Origin', '*');
+        $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+        $this->response->headers->set('Content-Type', 'application/json');
+
+        $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
+        if ($this->request->server->get('REQUEST_METHOD') == "OPTIONS" && !is_null($allowHeaders)) {
+            $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
+        } else {
+            parent::render();
+        }
+    }
+
+    /**
      * Runs the API.
      *
      * @return bool
      */
     public function run(): bool
     {
-        $this->response->headers->set('Access-Control-Allow-Origin', '*');
-        $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-        $this->response->headers->set('Content-Type', 'application/json');
-
-        if ($this->request->server->get('REQUEST_METHOD') == "OPTIONS") {
-            if (!is_null($this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS'))) {
-                $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
-                $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
-            }
-
-            return true;
-        }
-
-        if ($this->isDisabled()) {
-            $this->fatalError('API-DISABLED', Response::HTTP_NOT_FOUND);
+        if (!parent::run()) {
             return false;
-        }
-
-        if (!$this->dataBase->connected()) {
-            $this->fatalError('DB-ERROR', Response::HTTP_INTERNAL_SERVER_ERROR);
+        } elseif ($this->isDisabled()) {
+            $this->die(Response::HTTP_NOT_FOUND, 'api-disabled');
             return false;
-        }
-
-        if ($this->isIPBanned()) {
-            $this->fatalError('IP-BANNED', Response::HTTP_FORBIDDEN);
-            return false;
-        }
-
-        if (!$this->checkAuthToken()) {
-            $this->fatalError('AUTH-TOKEN-INVALID', Response::HTTP_FORBIDDEN);
+        } elseif (!$this->checkAuthToken()) {
             $this->ipWarning();
+            $this->die(Response::HTTP_FORBIDDEN, 'auth-token-invalid');
             return false;
-        }
-
-        if (!$this->isAllowed()) {
-            $this->fatalError('FORBIDDEN', Response::HTTP_FORBIDDEN);
+        } elseif (!$this->isAllowed()) {
             $this->ipWarning();
+            $this->die(Response::HTTP_FORBIDDEN, 'forbidden');
             return false;
         }
 
@@ -118,6 +110,22 @@ class AppAPI extends App
     }
 
     /**
+     * 
+     * @param int    $status
+     * @param string $message
+     */
+    protected function die(int $status, string $message = '')
+    {
+        $content = $this->toolBox()->i18n()->trans($message);
+        foreach ($this->toolBox()->log()->readAll() as $log) {
+            $content .= empty($content) ? $log["message"] : "\n" . $log["message"];
+        }
+
+        $this->response->setContent(json_encode(['error' => $content]));
+        $this->response->setStatusCode($status);
+    }
+
+    /**
      * Expose resource.
      *
      * @param array $map
@@ -130,18 +138,6 @@ class AppAPI extends App
         }
 
         $this->response->setContent(json_encode($json));
-    }
-
-    /**
-     * Return an array with the error message, and the corresponding status.
-     *
-     * @param string $text
-     * @param int    $status
-     */
-    private function fatalError(string $text, int $status)
-    {
-        $this->response->setContent(json_encode(['error' => $text]));
-        $this->response->setStatusCode($status);
     }
 
     /**
@@ -189,11 +185,7 @@ class AppAPI extends App
     private function isAllowed(): bool
     {
         $resource = $this->getUriParam(2);
-        if ($resource === '') {
-            return true;
-        }
-
-        if ($this->apiKey->fullaccess) {
+        if ($resource === '' || $this->apiKey->fullaccess) {
             return true;
         }
 
@@ -202,23 +194,21 @@ class AppAPI extends App
             new DataBaseWhere('idapikey', $this->apiKey->id),
             new DataBaseWhere('resource', $resource)
         ];
-        if (!$apiAccess->loadFromCode('', $where)) {
-            return false;
-        }
+        if ($apiAccess->loadFromCode('', $where)) {
+            switch ($this->request->getMethod()) {
+                case 'DELETE':
+                    return $apiAccess->allowdelete;
 
-        switch ($this->request->getMethod()) {
-            case 'DELETE':
-                return $apiAccess->allowdelete;
+                case 'GET':
+                    return $apiAccess->allowget;
 
-            case 'GET':
-                return $apiAccess->allowget;
+                case 'PATCH':
+                case 'PUT':
+                    return $apiAccess->allowput;
 
-            case 'PATCH':
-            case 'PUT':
-                return $apiAccess->allowput;
-
-            case 'POST':
-                return $apiAccess->allowpost;
+                case 'POST':
+                    return $apiAccess->allowpost;
+            }
         }
 
         return false;
@@ -251,7 +241,7 @@ class AppAPI extends App
         }
 
         if (!isset($map[$resourceName]['API'])) {
-            $this->fatalError('invalid-resource', Response::HTTP_BAD_REQUEST);
+            $this->die(Response::HTTP_BAD_REQUEST, 'invalid-resource');
             return false;
         }
 
@@ -267,7 +257,8 @@ class AppAPI extends App
             $APIClass = new $map[$resourceName]['API']($this->response, $this->request, $params);
             return $APIClass->processResource($map[$resourceName]['Name']);
         } catch (Exception $exc) {
-            $this->fatalError('API-ERROR: ' . $exc->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->toolBox()->log()->critical('API-ERROR: ' . $exc->getMessage());
+            $this->die(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return false;
@@ -284,7 +275,7 @@ class AppAPI extends App
             return $this->selectResource();
         }
 
-        $this->fatalError('API-VERSION-NOT-FOUND', Response::HTTP_NOT_FOUND);
+        $this->die(Response::HTTP_NOT_FOUND, 'api-version-not-found');
         return true;
     }
 }
