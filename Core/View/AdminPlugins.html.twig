@@ -27,15 +27,15 @@
         <div class="row">
             <div class="col-5">
                 <div class="btn-group d-xs-none">
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}">
-                        <i class="fas fa-sync" aria-hidden="true"></i>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" title="{{ i18n.trans('refresh') }}">
+                        <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                     {% if fsc.getPageData()['name'] == fsc.user.homepage %}
-                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE">
+                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE" title="{{ i18n.trans('marked-as-homepage') }}">
                             <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
-                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE">
+                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE" title="{{ i18n.trans('mark-as-homepage') }}">
                             <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}

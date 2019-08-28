@@ -148,7 +148,7 @@ class DocumentReports extends Controller
     {
         $data = parent::getPageData();
         $data['menu'] = 'reports';
-        $data['title'] = 'document-reports';
+        $data['title'] = 'document-report';
         $data['icon'] = 'fas fa-chart-area';
         return $data;
     }

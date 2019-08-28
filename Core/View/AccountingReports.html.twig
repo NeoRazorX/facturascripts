@@ -21,16 +21,11 @@
 
 {% block body %}
     {# -- Calculate texts according to language -- #}
-    {% set refresh = i18n.trans('refresh-page') %}
-    {% set defaultT, defaultF = i18n.trans('mark-as-homepage'), i18n.trans('marked-as-homepage') %}
     {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
     {% set generate, generate_title = i18n.trans('generate'), i18n.trans('generate-title') %}
 
     {# -- Others Values -- #}
     {% set exportOptions = fsc.exportManager.options() %}
-
-    {# -- Visual macros -- #}
-    {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
 
     {# -- Main Body -- #}
     <div class="container-fluid d-print-none">
@@ -40,15 +35,15 @@
         <div class="row">
             <div class="col-sm-7 col-6">
                 <div class="btn-group d-xs-none">
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
-                        <i class="fas fa-sync" aria-hidden="true"></i>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" title="{{ i18n.trans('refresh') }}">
+                        <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                     {% if fsc.getPageData()['name'] == fsc.user.homepage %}
-                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
+                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE" title="{{ i18n.trans('marked-as-homepage') }}">
                             <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
-                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
+                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE" title="{{ i18n.trans('marked-as-homepage') }}">
                             <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
@@ -131,7 +126,7 @@
                                                 </div>
 
                                                 <div class="col-3">
-                                                    <button type="submit" class="btn btn-primary" {{ popoverTitle(generate_title, 'bottom') }}>
+                                                    <button type="submit" class="btn btn-primary" title="{{ generate_title }}">
                                                         <i class="fas fa-eye fa-fw" aria-hidden="true"></i> {{ generate }}
                                                     </button>
                                                 </div>

@@ -35,6 +35,34 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('node_modules/chart.js/dist/Chart.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var ctx = document.getElementById('documentChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels: [{{ fsc.getLabels() | raw }}],
+                    datasets: [
+                            {% for source in fsc.sources %}
+                            {
+                                label: '{{ i18n.trans(source.source) }}',
+                                borderColor: 'rgb({{ source.color }})',
+                                backgroundColor: 'rgb({{ source.color }})',
+                                fill: false,
+                                data: [{{ fsc.getDataTable(source.source) | raw }}]
+                            },
+                            {% endfor %}
+                        ]
+                    },
+
+                    // Configuration options go here
+                    options: {}
+                });
+            });
+    </script>
 {% endblock %}
 
 {% block body %}
@@ -45,7 +73,6 @@
     {% set dataSource, othersFilters = i18n.trans('data-source'), i18n.trans('others-filters') %}
 
     {# Macros Template Imports #}
-    {% from 'Macro/Utils.html.twig' import popoverTitle as popoverTitle %}
     {% import 'Macro/Forms.html.twig' as forms %}
 
     {# Others working values #}
@@ -61,15 +88,15 @@
         <div class="row">
             <div class="col-sm-7 col-6">
                 <div class="btn-group d-xs-none">
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" {{ popoverTitle(refresh, 'bottom') }}>
-                        <i class="fas fa-sync" aria-hidden="true"></i>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" title="{{ i18n.trans('refresh') }}">
+                        <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                     {% if fsc.getPageData()['name'] == fsc.user.homepage %}
-                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE" {{ popoverTitle(defaultF, 'bottom') }}>
+                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE" title="{{ i18n.trans('marked-as-homepage') }}">
                             <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
-                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE" {{ popoverTitle(defaultT, 'bottom') }}>
+                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE" title="{{ i18n.trans('mark-as-homepage') }}">
                             <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
@@ -231,35 +258,4 @@
             </div>
         </div>
     </div>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var ctx = document.getElementById('documentChart').getContext('2d');
-            var chart = new Chart(ctx, {
-                // The type of chart we want to create
-                type: 'line',
-
-                // The data for our dataset
-                data: {
-                    labels: [{{ fsc.getLabels()|raw }}],
-                    datasets: [
-        {% for source in fsc.sources %}
-                            {
-                                label: '{{ i18n.trans(source.source) }}',
-                                borderColor: 'rgb({{ source.color }})',
-                                backgroundColor: 'rgb({{ source.color }})',
-                                fill: false,
-                                data: [{{ fsc.getDataTable(source.source)|raw }}]
-                            },
-        {% endfor %}
-                        ]
-                    },
-
-                    // Configuration options go here
-                    options: {}
-                });
-            });
-    </script>
-
 {% endblock %}
-
