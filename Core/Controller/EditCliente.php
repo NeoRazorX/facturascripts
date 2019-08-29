@@ -123,6 +123,25 @@ class EditCliente extends ComercialContactController
     }
 
     /**
+     * 
+     * @return bool
+     */
+    protected function insertAction()
+    {
+        if (parent::insertAction()) {
+            $returnUrl = $this->request->query->get('return');
+            if (!empty($returnUrl)) {
+                $model = $this->views[$this->active]->model;
+                $this->redirect($returnUrl . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Load view data procedure
      *
      * @param string   $viewName

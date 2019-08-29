@@ -51,7 +51,7 @@ abstract class SalesDocumentController extends BusinessDocumentController
     public function getNewSubjectUrl()
     {
         $cliente = new Cliente();
-        return $cliente->url('new');
+        return $cliente->url('new') . '?return=' . $this->url();
     }
 
     /**

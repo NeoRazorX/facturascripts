@@ -49,6 +49,7 @@
     <rows>
         <row type="status" fieldname="level">
             <option color="seccondary">debug</option>
+            <option color="info">info</option>
             <option color="success">notice</option>
             <option color="warning">warning</option>
             <option color="danger">error</option>
