@@ -90,6 +90,9 @@ class AppAPI extends App
      * In the header you have to pass a token using the header 'Token' or the
      * standard 'X-Auth-Token', returning true if the token passed by any of
      * those headers is valid.
+     * 
+     * We can define a master API KEY in the config.php by defining the constant
+     * FS_API_KEY.
      *
      * @return bool
      */
@@ -100,6 +103,12 @@ class AppAPI extends App
         $token = $this->request->headers->get('X-Auth-Token', $altToken);
         if (empty($token)) {
             return false;
+        }
+
+        if (defined('FS_API_KEY') && $token == \FS_API_KEY) {
+            $this->apiKey->apikey = \FS_API_KEY;
+            $this->apiKey->fullaccess = true;
+            return true;
         }
 
         $where = [
@@ -215,12 +224,18 @@ class AppAPI extends App
     }
 
     /**
-     * Check if API is disabled
+     * Check if API is disabled. API can't be disabled if FS_API_KEY is defined
+     * in the config.php file.
      *
      * @return bool
      */
     private function isDisabled(): bool
     {
+        /// Is FS_API_KEY defined in the config?
+        if (defined('FS_API_KEY')) {
+            return false;
+        }
+
         return $this->toolBox()->appSettings()->get('default', 'enable_api', false) == false;
     }
 
