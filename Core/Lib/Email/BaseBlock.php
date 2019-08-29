@@ -25,5 +25,21 @@ namespace FacturaScripts\Core\Lib\Email;
  */
 abstract class BaseBlock
 {
-    abstract public function render();
+
+    /**
+     *
+     * @var string
+     */
+    protected $verificode;
+
+    abstract public function render(): string;
+
+    /**
+     * 
+     * @param string $code
+     */
+    public function setVerificode(string $code)
+    {
+        $this->verificode = $code;
+    }
 }

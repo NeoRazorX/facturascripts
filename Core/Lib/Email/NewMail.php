@@ -94,6 +94,12 @@ class NewMail
      */
     public $title;
 
+    /**
+     *
+     * @var string
+     */
+    public $verificode;
+
     public function __construct()
     {
         $appSettings = $this->toolBox()->appSettings();
@@ -116,6 +122,7 @@ class NewMail
 
         $this->signature = $appSettings->get('email', 'signature', '');
         $this->template = self::DEFAULT_TEMPLATE;
+        $this->verificode = $this->toolBox()->utils()->randomString(20);
     }
 
     /**
@@ -165,6 +172,7 @@ class NewMail
      */
     public function addFooterBlock($block)
     {
+        $block->setVerificode($this->verificode);
         $this->footerBlocks[] = $block;
     }
 
@@ -174,6 +182,7 @@ class NewMail
      */
     public function addMainBlock($block)
     {
+        $block->setVerificode($this->verificode);
         $this->mainBlocks[] = $block;
     }
 
@@ -327,6 +336,7 @@ class NewMail
             $emailSent->body = $this->text;
             $emailSent->nick = $this->fromNick;
             $emailSent->subject = $this->title;
+            $emailSent->verificode = $this->verificode;
             $emailSent->save();
         }
     }

@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Model EmailSent
  *
@@ -78,6 +80,12 @@ class EmailSent extends Base\ModelClass
     public $subject;
 
     /**
+     *
+     * @var string
+     */
+    public $verificode;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -130,5 +138,32 @@ class EmailSent extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'ListLogMessage?activetab=List')
     {
         return parent::url($type, $list);
+    }
+
+    /**
+     * 
+     * @param string $verificode
+     * @param string $addressee
+     *
+     * @return bool
+     */
+    public static function verify(string $verificode, string $addressee = ''): bool
+    {
+        $found = false;
+
+        $model = new static();
+        $where = [new DataBaseWhere('verificode', $verificode)];
+        if (!empty($addressee)) {
+            $where[] = new DataBaseWhere('addressee', $addressee);
+        }
+
+        foreach ($model->all($where) as $item) {
+            $item->opened = true;
+            $item->save();
+
+            $found = true;
+        }
+
+        return $found;
     }
 }

@@ -55,6 +55,20 @@ class ButtonBlock extends BaseBlock
      */
     public function render(): string
     {
-        return '<span class="btn"><a href="' . $this->link . '">' . $this->label . '</a></span>';
+        return '<span class="btn"><a href="' . $this->link() . '">' . $this->label . '</a></span>';
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function link(): string
+    {
+        $query = parse_url($this->link, PHP_URL_QUERY);
+        if ($query) {
+            return $this->link . '&verificode=' . $this->verificode;
+        }
+
+        return $this->link . '?verificode=' . $this->verificode;
     }
 }
