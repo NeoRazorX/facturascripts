@@ -469,6 +469,7 @@
     "idem-wildcard-info": "Copiar el valor de la linea anterior",
     "impacted-tax-subaccount": "Subcuenta de impuesto repercutido",
     "import-accounting-plan": "Importar plan contable",
+    "import-accounting-plan-p": "Deje este campo en blanco para usar el plan contable predeterminado. O bien seleccione un archivo con su plan contable personalizado.",
     "income-and-expenses": "Ingresos y Gastos",
     "incompatible-document": "Documento incompatible: %code%. Distinto cliente, proveedor o divisa.",
     "incompatible-with-facturascripts": "Incompatible con la versión %version% de FacturaScripts",

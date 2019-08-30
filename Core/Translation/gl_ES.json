@@ -469,6 +469,7 @@
     "idem-wildcard-info": "Copiar o valor da línea anterior",
     "impacted-tax-subaccount": "Subconta IVE repercutido",
     "import-accounting-plan": "Importar plan contable",
+    "import-accounting-plan-p": "import-accounting-plan-p",
     "income-and-expenses": "Ingresos e Gastos",
     "incompatible-document": "O documento %code% non se pode agrupar co resto por ser incompatible (distinto cliente\/proveedor ou divisa)",
     "incompatible-with-facturascripts": "Incompatible coa versión %version% de FacturaScripts",

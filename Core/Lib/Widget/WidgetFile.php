@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -42,7 +42,10 @@ class WidgetFile extends BaseWidget
     public function edit($model, $title = '', $description = '', $titleurl = '')
     {
         $this->setValue($model);
-        $description = static::$i18n->trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]) . ' ' . $description;
+
+        $additionalDesc = static::$i18n->trans('help-server-accepts-filesize', ['%size%' => $this->getMaxFileUpload()]);
+        $finalDesc = empty($description) ? $additionalDesc : static::$i18n->trans($description) . ' ' . $additionalDesc;
+
         if ($this->readonly()) {
             $cssFormControl = $this->css('form-control');
             return '<div class="form-group">'
@@ -52,7 +55,7 @@ class WidgetFile extends BaseWidget
                 . '</div>';
         }
 
-        return parent::edit($model, $title, $description, $titleurl);
+        return parent::edit($model, $title, $finalDesc, $titleurl);
     }
 
     /**

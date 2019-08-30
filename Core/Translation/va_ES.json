@@ -469,6 +469,7 @@
     "idem-wildcard-info": "Còpia el valor de la llínea anterior",
     "impacted-tax-subaccount": "Subconte del IVA repercutit",
     "import-accounting-plan": "Importar el pla contable",
+    "import-accounting-plan-p": "import-accounting-plan-p",
     "income-and-expenses": "Ingressos i Despeses",
     "incompatible-document": "Document incompatible: % code%. Diferent client, proveïdor o divisa.",
     "incompatible-with-facturascripts": "Incompatible en la versió %version%  de FacturaScripts",

@@ -133,12 +133,10 @@ class EditEjercicio extends EditController
     {
         switch ($action) {
             case 'export-accounting':
-                $this->exportAccountingPlan();
-                return true;
+                return $this->exportAccountingPlan();
 
             case 'import-accounting':
-                $this->importAccountingPlan();
-                return true;
+                return $this->importAccountingPlan();
 
             default:
                 return parent::execPreviousAction($action);
@@ -152,18 +150,18 @@ class EditEjercicio extends EditController
      */
     protected function exportAccountingPlan()
     {
-        $code = $this->request->get('code', '');
-        if (empty($code)) {
+        $codejercicio = $this->request->get('code', '');
+        if (empty($codejercicio)) {
             $this->toolBox()->i18nLog()->error('exercise-not-found');
-            return false;
+            return true;
         }
 
         $this->setTemplate(false);
         $this->response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $this->response->headers->set('Content-Disposition', 'attachment;filename=' . $code . '.csv');
+        $this->response->headers->set('Content-Disposition', 'attachment;filename=' . $codejercicio . '.csv');
         $accountingPlanExport = new AccountingPlanExport();
-        $this->response->setContent($accountingPlanExport->exportCSV($code));
-        return true;
+        $this->response->setContent($accountingPlanExport->exportCSV($codejercicio));
+        return false;
     }
 
     /**
@@ -173,42 +171,68 @@ class EditEjercicio extends EditController
      */
     protected function importAccountingPlan()
     {
-        $code = $this->request->request->get('codejercicio', '');
-        if (empty($code)) {
+        $codejercicio = $this->request->request->get('codejercicio', '');
+        if (empty($codejercicio)) {
             $this->toolBox()->i18nLog()->error('exercise-not-found');
-            return false;
+            return true;
         }
 
-        $uploadFile = $this->request->files->get('accountingfile', false);
-        if ($uploadFile === false) {
-            $this->toolBox()->i18nLog()->warning('file-not-found', ['%fileName%' => '']);
-            return false;
+        $uploadFile = $this->request->files->get('accountingfile');
+        if (empty($uploadFile)) {
+            return $this->importDefaultPlan($codejercicio);
         }
 
         $accountingPlanImport = new AccountingPlanImport();
         switch ($uploadFile->getMimeType()) {
             case 'application/xml':
             case 'text/xml':
-                if ($accountingPlanImport->importXML($uploadFile->getPathname(), $code)) {
+                if ($accountingPlanImport->importXML($uploadFile->getPathname(), $codejercicio)) {
                     $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-                } else {
-                    $this->toolBox()->i18nLog()->error('record-save-error');
+                    return true;
                 }
+
+                $this->toolBox()->i18nLog()->error('record-save-error');
                 break;
 
             case 'text/csv':
             case 'text/plain':
-                if ($accountingPlanImport->importCSV($uploadFile->getPathname(), $code)) {
+                if ($accountingPlanImport->importCSV($uploadFile->getPathname(), $codejercicio)) {
                     $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-                } else {
-                    $this->toolBox()->i18nLog()->error('record-save-error');
+                    return true;
                 }
+
+                $this->toolBox()->i18nLog()->error('record-save-error');
                 break;
 
             default:
                 $this->toolBox()->i18nLog()->error('file-not-supported');
         }
 
+        return true;
+    }
+
+    /**
+     * 
+     * @param string $codejercicio
+     *
+     * @return bool
+     */
+    protected function importDefaultPlan(string $codejercicio)
+    {
+        $codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
+        $filePath = \FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
+        if (!file_exists($filePath)) {
+            $this->toolBox()->i18nLog()->warning('file-not-found', ['%fileName%' => $filePath]);
+            return true;
+        }
+
+        $accountingPlanImport = new AccountingPlanImport();
+        if ($accountingPlanImport->importCSV($filePath, $codejercicio)) {
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            return true;
+        }
+
+        $this->toolBox()->i18nLog()->error('record-save-error');
         return true;
     }
 }

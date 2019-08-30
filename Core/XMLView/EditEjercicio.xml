@@ -53,21 +53,18 @@
     <rows>
         <row type="footer">
             <group name="footer-actions" footer="specials-actions">
-                <button type="modal" label="import-accounting-plan" color="info" action="import-accounting" icon="fas fa-file-import" />
+                <button type="modal" label="import-accounting-plan" color="warning" action="import-accounting" icon="fas fa-file-import" />
                 <button type="action" label="export" color="info" action="export-accounting" icon="fas fa-file-export" />
             </group>
         </row>
     </rows>
     <modals>
         <group name="import-accounting" title="import-accounting-plan" icon="fas fa-file-import">
-            <column name="exercise" numcolumns="4" order="100">
+            <column name="exercise" display="none" order="100">
                 <widget type="text" fieldname="codejercicio" readonly="true" />
             </column>
-            <column name="name" numcolumns="8" order="110">
-                <widget type="text" fieldname="nombre" readonly="true" />
-            </column>
-            <column name="accounting-plan" titleurl="https://www.facturascripts.com/doc/1/configuracion/plan-contable" numcolumns="12" order="120">
-                <widget type="file" fieldname="accountingfile" required="true" />
+            <column name="accounting-plan" titleurl="https://www.facturascripts.com/doc/1/configuracion/plan-contable" description="import-accounting-plan-p" numcolumns="12" order="110">
+                <widget type="file" fieldname="accountingfile" />
             </column>
         </group>
     </modals>

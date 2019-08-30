@@ -469,6 +469,7 @@
     "idem-wildcard-info": "Copy the value of the previous line",
     "impacted-tax-subaccount": "Impacted tax subaccount",
     "import-accounting-plan": "Import accounting plan",
+    "import-accounting-plan-p": "Leave this field blank to use the default accounting plan. Or select a file with your personalized accounting plan.",
     "income-and-expenses": "Income and Expenses",
     "incompatible-document": "Incompatible document: %code%. Different customer, supplier or currency.",
     "incompatible-with-facturascripts": "Incompatible with FacturaScripts %version%",
