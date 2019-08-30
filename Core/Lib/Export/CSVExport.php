@@ -215,6 +215,15 @@ class CSVExport implements ExportInterface
     }
 
     /**
+     * 
+     * @param string $orientation
+     */
+    public function setOrientation(string $orientation)
+    {
+        /// not implemented
+    }
+
+    /**
      * Assigns the received separator.
      * By default it will use ';' semicolons.
      *

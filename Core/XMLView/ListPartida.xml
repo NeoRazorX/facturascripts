@@ -42,4 +42,10 @@
             </widget>
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="success" fieldname="debe">gt:0</option>
+            <option color="warning" fieldname="haber">gt:0</option>
+        </row>
+    </rows>
 </view>

@@ -7,22 +7,17 @@
     }
 </style>
 
-<div class="item-data text-info">
-    <h4><i class="fas fa-map-signs mr-2"></i>{{ i18n.trans('previous-balance') }}</h4>
-    <h4>{{ fsc.toolBox().coins().format('previousBalance') }}</h4>
-</div>
-
-<div class="item-data text-info">
+<div class="item-data text-success">
     <h4><i class="fas fa-sign-out-alt mr-2"></i>{{ i18n.trans('sales') }}</h4>
-    <h4>{{ fsc.toolBox().coins().format('sales') }}</h4>
+    <h4>{{ fsc.toolBox().coins().format(fsc.sales) }}</h4>
 </div>
 
-<div class="item-data text-info">
+<div class="item-data text-warning">
     <h4><i class="fas fa-sign-in-alt mr-2"></i>{{ i18n.trans('purchases') }}</h4>
-    <h4>{{ fsc.toolBox().coins().format('purchases') }}</h4>
+    <h4>{{ fsc.toolBox().coins().format(fsc.purchases) }}</h4>
 </div>
 
-<div class="item-data {% if fsc.total > 0 %}text-danger{% else %}text-primary{% endif %}">
+<div class="item-data text-primary">
     <h4><i class="fas fa-list-alt mr-2"></i>{{ i18n.trans('result') }}</h4>
-    <h4>{{ fsc.toolBox().coins().format('total') }}</h4>
+    <h4>{{ fsc.toolBox().coins().format(fsc.total) }}</h4>
 </div>

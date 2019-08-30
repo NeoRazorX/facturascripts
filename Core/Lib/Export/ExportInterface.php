@@ -78,6 +78,13 @@ interface ExportInterface
      * Blank document.
      */
     public function newDoc();
+    
+    /**
+     * Sets default orientation.
+     * 
+     * @param string $orientation
+     */
+    public function setOrientation(string $orientation);
 
     /**
      * Set headers and output document content to response.

@@ -88,7 +88,7 @@ class DocumentReports extends Controller
         $namespace = '\\FacturaScripts\\Dinamic\\Model\\';
         $this->filters = [
             'employee' => new DocumentReportsFilterList($namespace . 'Agente', '', 'fas fa-users'),
-            'serie' => new DocumentReportsFilterList($namespace . 'Serie', $appSettings->get('default', 'codserie')),
+            'serie' => new DocumentReportsFilterList($namespace . 'Serie'),
             'currency' => new DocumentReportsFilterList($namespace . 'Divisa', $appSettings->get('default', 'coddivisa')),
             'payment-method' => new DocumentReportsFilterList($namespace . 'FormaPago'),
         ];

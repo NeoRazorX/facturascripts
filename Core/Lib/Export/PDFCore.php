@@ -104,6 +104,16 @@ class PDFCore
     }
 
     /**
+     * Sets default orientation.
+     * 
+     * @param string $orientation
+     */
+    public function setOrientation(string $orientation)
+    {
+        $this->newPage($orientation);
+    }
+
+    /**
      * 
      * @param AttachedFile $file
      * @param int|float    $xPos

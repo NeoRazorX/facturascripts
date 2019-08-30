@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Export\ExportInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -32,7 +33,7 @@ class ExportManager
     /**
      * The selected engine/class to export.
      *
-     * @var mixed
+     * @var ExportInterface
      */
     protected static $engine;
 
@@ -156,6 +157,16 @@ class ExportManager
     }
 
     /**
+     * Sets default orientation.
+     * 
+     * @param string $orientation
+     */
+    public function setOrientation(string $orientation)
+    {
+        static::$engine->setOrientation($orientation);
+    }
+
+    /**
      * Returns the formated data.
      *
      * @param Response $response
@@ -175,11 +186,7 @@ class ExportManager
     private function getExportClassName($option)
     {
         $className = '\\FacturaScripts\\Dinamic\\Lib\\Export\\' . $option . 'Export';
-        if (class_exists($className)) {
-            return $className;
-        }
-
-        return '\\FacturaScripts\\Core\\Lib\\Export\\' . $option . 'Export';
+        return class_exists($className) ? $className : '\\FacturaScripts\\Core\\Lib\\Export\\' . $option . 'Export';
     }
 
     /**

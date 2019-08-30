@@ -85,4 +85,9 @@
             </widget>
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="secondary" fieldname="iva">0</option>
+        </row>
+    </rows>
 </view>

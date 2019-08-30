@@ -47,13 +47,13 @@
         </column>
     </columns>
     <rows>
-        <row type="status" fieldname="level">
-            <option color="seccondary">debug</option>
-            <option color="info">info</option>
-            <option color="success">notice</option>
-            <option color="warning">warning</option>
-            <option color="danger">error</option>
-            <option color="dark">critical</option>
+        <row type="status">
+            <option color="seccondary" fieldname="level">debug</option>
+            <option color="info" fieldname="level">info</option>
+            <option color="success" fieldname="level">notice</option>
+            <option color="warning" fieldname="level">warning</option>
+            <option color="danger" fieldname="level">error</option>
+            <option color="dark" fieldname="level">critical</option>
         </row>
         <row type="actions">
             <button type="action" label="delete-all" color="warning" action="delete-selected-filters" icon="fas fa-trash-alt" confirm="true" />

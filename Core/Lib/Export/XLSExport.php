@@ -182,8 +182,17 @@ class XLSExport implements ExportInterface
      */
     public function newDoc()
     {
-        $this->writer = new \XLSXWriter();
+        $this->writer = new XLSXWriter();
         $this->writer->setAuthor('FacturaScripts');
+    }
+
+    /**
+     * 
+     * @param string $orientation
+     */
+    public function setOrientation(string $orientation)
+    {
+        /// Not implemented
     }
 
     /**
