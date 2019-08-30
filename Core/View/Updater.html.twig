@@ -22,21 +22,33 @@
 {% block body %}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-6">
                 <div class="btn-group">
                     <a href="AdminPlugins" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">{{ i18n.trans('back') }} </span>
+                        <span class="d-none d-md-inline-block">{{ i18n.trans('plugins') }} </span>
                     </a>
                     <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                 </div>
+                {% if fsc.telemetryManager.ready() %}
+                    <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal" data-target="#modalTelemetry">
+                        <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
+                        <span class="d-none d-md-inline-block">{{ i18n.trans('register-installation') }} </span>
+                    </button>
+                {% else %}
+                    <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#modalTelemetry">
+                        <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
+                        <span class="d-none d-md-inline-block">{{ i18n.trans('register-installation') }}</span>
+                    </button>
+                {% endif %}
             </div>
-            <div class="col-sm-10 text-right">
+            <div class="col-sm-6 text-right">
                 <h1 class="h3">
-                    <i class="fas fa-cloud-download-alt" aria-hidden="true"></i> {{ i18n.trans('updater') }}
+                    {{ i18n.trans('updater') }}
                     <small class="text-info">{{ fsc.getCoreVersion() }}</small>
+                    <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
                 </h1>
             </div>
         </div>
@@ -60,6 +72,9 @@
                                 <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
                                     <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ i18n.trans('update') }}
                                 </a>
+                                <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-times fa-fw" aria-hidden="true"></i> {{ i18n.trans('cancel') }}
+                                </a>
                             {% elseif item.stable %}
                                 <a href="{{ fsc.url() }}?action=download&item={{ item.id }}" class="btn btn-sm btn-secondary">
                                     <i class="fas fa-cloud-download-alt fa-fw" aria-hidden="true"></i> {{ i18n.trans('download') }}
@@ -79,22 +94,39 @@
             </tbody>
         </table>
     </div>
-    {% if fsc.telemetryManager.ready() %}
-    {% else %}
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-header">
-                            {{ i18n.trans('register-installation') }}
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">{{ i18n.trans('register-installation-p') }}</p>
-                            <a href="{{ fsc.url() }}?action=register" class="btn btn-primary">{{ i18n.trans('register-installation') }}</a>
-                        </div>
+    <div class="modal fade" id="modalTelemetry" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {% if fsc.telemetryManager.ready() %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ i18n.trans('registered-installation', {'%number%': fsc.telemetryManager.id()}) }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </div>
+                    <div class="modal-body">
+                        <p>{{ i18n.trans('registered-installation-p') }}</p>
+                    </div>
+                {% else %}
+                    <form method="post">
+                        <input type="hidden" name="action" value="register" />
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{ i18n.trans('register-installation') }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>{{ i18n.trans('register-installation-p') }}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">
+                                {{ i18n.trans('register-installation') }}
+                            </button>
+                        </div>
+                    </form>
+                {% endif %}
             </div>
         </div>
-    {% endif %}
+    </div>
 {% endblock %}

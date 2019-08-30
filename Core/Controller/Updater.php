@@ -115,9 +115,25 @@ class Updater extends Controller
     }
 
     /**
-     * Downloads core zip.
+     * Removed downloaded file.
      */
-    private function download()
+    private function cancelAction()
+    {
+        $idItem = $this->request->get('item', '');
+        $fileName = 'update-' . $idItem . '.zip';
+        if (file_exists($fileName)) {
+            unlink(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName);
+            $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
+        }
+
+        $this->toolBox()->i18nLog()->notice('reloading');
+        $this->redirect($this->getClassName() . '?action=post-update', 3);
+    }
+
+    /**
+     * Download selected update.
+     */
+    private function downloadAction()
     {
         $idItem = $this->request->get('item', '');
         foreach ($this->updaterItems as $key => $item) {
@@ -146,9 +162,13 @@ class Updater extends Controller
     private function execAction(string $action)
     {
         switch ($action) {
+            case 'cancel':
+                $this->cancelAction();
+                break;
+
             case 'download':
                 $this->updaterItems = $this->getUpdateItems();
-                $this->download();
+                $this->downloadAction();
                 break;
 
             case 'post-update':
@@ -162,7 +182,7 @@ class Updater extends Controller
                 break;
 
             case 'update':
-                if ($this->update()) {
+                if ($this->updateAction()) {
                     $this->pluginManager->deploy(true, true);
                     $this->toolBox()->i18nLog()->notice('reloading');
                     $this->redirect($this->getClassName() . '?action=post-update', 3);
@@ -304,7 +324,7 @@ class Updater extends Controller
      * 
      * @return bool
      */
-    private function update(): bool
+    private function updateAction(): bool
     {
         $idItem = $this->request->get('item', '');
         $fileName = 'update-' . $idItem . '.zip';

@@ -775,6 +775,8 @@
     "register-installation": "Registrar instalación",
     "register-installation-p": "Registre su instalación para poder actualizar plugins de pago o privados.",
     "register-symbol": "#",
+    "registered-installation": "Instalación registrada #%number%",
+    "registered-installation-p": "Esta instalación ya ha sido registrada.",
     "reloading": "Recargando...",
     "renew": "Renovar",
     "renumber-accounting": "Renumerar Asientos",

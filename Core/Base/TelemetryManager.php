@@ -85,6 +85,15 @@ class TelemetryManager
 
     /**
      * 
+     * @return string
+     */
+    public function id()
+    {
+        return $this->idinstall;
+    }
+
+    /**
+     * 
      * @return bool
      */
     public function install(): bool
