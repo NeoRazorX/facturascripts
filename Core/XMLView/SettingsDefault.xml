@@ -61,7 +61,7 @@
                 </widget>
             </column>
             <column name="codimpuesto" title="tax" numcolumns="3" order="170">
-                <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto" required="true">
+                <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
                 </widget>
             </column>

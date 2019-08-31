@@ -33,25 +33,14 @@ class AppSettings
      *
      * @var array
      */
-    private static $data;
+    private static $data = [];
 
     /**
      * Contains if need to save data.
      *
      * @var bool
      */
-    private static $save;
-
-    /**
-     * AppSettings constructor.
-     */
-    public function __construct()
-    {
-        if (!isset(self::$data)) {
-            self::$data = [];
-            self::$save = false;
-        }
-    }
+    private static $save = false;
 
     /**
      * Return the value of property in group.
@@ -94,6 +83,8 @@ class AppSettings
     public function load()
     {
         $this->reload();
+
+        /// Constants
         $constants = [
             'FS_CODPAIS' => ['property' => 'codpais', 'default' => 'ESP'],
             'FS_NF0' => ['property' => 'decimals', 'default' => 2],
@@ -103,6 +94,9 @@ class AppSettings
             'FS_ITEM_LIMIT' => ['property' => 'item_limit', 'default' => 50],
         ];
         $this->setConstants($constants);
+
+        /// Other default values
+        static::get('default', 'coddivisa', 'EUR');
         static::get('default', 'homepage', 'Wizard');
 
         if (self::$save) {

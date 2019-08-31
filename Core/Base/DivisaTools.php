@@ -146,7 +146,7 @@ class DivisaTools extends NumberTools
      *
      * @return Divisa
      */
-    private static function get(string $coddivisa)
+    private static function get($coddivisa)
     {
         foreach (self::$divisas as $div) {
             if ($div->coddivisa == $coddivisa) {

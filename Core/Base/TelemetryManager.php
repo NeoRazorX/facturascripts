@@ -78,7 +78,7 @@ class TelemetryManager
             if (count($data) === 2) {
                 $this->idinstall = (int) $data[0];
                 $this->signkey = $data[1];
-                $this->save();
+                $this->update();
             }
         }
     }

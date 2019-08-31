@@ -24,7 +24,7 @@
     {% import 'Macro/Forms.html.twig' as forms %}
 
     {% set ciudad = fsc.empresa ? fsc.empresa.ciudad : '' %}
-    {% set codpais = appSettings.get('default','codpais','ESP') %}
+    {% set codpais = fsc.empresa ? fsc.empresa.codpais : appSettings.get('default','codpais','ESP') %}
     {% set provincia = fsc.empresa ? fsc.empresa.provincia : '' %}
 
     <div class="container">
