@@ -86,6 +86,14 @@ abstract class DataBaseEngine
     abstract public function errorMessage($link);
 
     /**
+     * Escape the given column name
+     *
+     * @param mixed  $link
+     * @param string $name
+     */
+    abstract public function escapeColumn($link, $name);
+
+    /**
      * Escape the given string
      *
      * @param mixed  $link

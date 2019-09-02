@@ -333,7 +333,7 @@ class Wizard extends Controller
         $this->saveAddress($codpais);
 
         /// change user homepage
-        $this->user->homepage = 'AdminPlugins';
+        $this->user->homepage = 'ListFacturaCliente';
         $this->user->save();
 
         /// change default log values to enabled
@@ -347,6 +347,6 @@ class Wizard extends Controller
         $appRouter->clear();
 
         /// redirect to EditSettings
-        $this->redirect('EditSettings');
+        $this->redirect('ListFacturaCliente');
     }
 }

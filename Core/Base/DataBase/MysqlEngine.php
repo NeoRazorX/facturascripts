@@ -198,6 +198,19 @@ class MysqlEngine extends DataBaseEngine
     }
 
     /**
+     * Escapes the column name.
+     * 
+     * @param mysqli $link
+     * @param string $name
+     *
+     * @return string
+     */
+    public function escapeColumn($link, $name)
+    {
+        return '`' . $name . '`';
+    }
+
+    /**
      * Escapes quotes from a text string.
      *
      * @param mysqli $link

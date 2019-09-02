@@ -165,6 +165,18 @@ class DataBase
     }
 
     /**
+     * Escape the quotes from the column name.
+     * 
+     * @param string $name
+     *
+     * @return string
+     */
+    public function escapeColumn($name)
+    {
+        return self::$engine->escapeColumn(self::$link, $name);
+    }
+
+    /**
      * Escape the quotes from the text string.
      *
      * @param string $str

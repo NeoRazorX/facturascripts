@@ -331,7 +331,7 @@ abstract class ModelClass extends ModelCore
                 $fieldName = $field['name'];
                 $fieldValue = isset($values[$fieldName]) ? $values[$fieldName] : $this->{$fieldName};
 
-                $insertFields[] = $fieldName;
+                $insertFields[] = self::$dataBase->escapeColumn($fieldName);
                 $insertValues[] = self::$dataBase->var2str($fieldValue);
             }
         }
@@ -372,7 +372,7 @@ abstract class ModelClass extends ModelCore
             if ($field['name'] !== static::primaryColumn()) {
                 $fieldName = $field['name'];
                 $fieldValue = isset($values[$fieldName]) ? $values[$fieldName] : $this->{$fieldName};
-                $sql .= $coma . ' ' . $fieldName . ' = ' . self::$dataBase->var2str($fieldValue);
+                $sql .= $coma . ' ' . self::$dataBase->escapeColumn($fieldName) . ' = ' . self::$dataBase->var2str($fieldValue);
                 $coma = ', ';
             }
         }

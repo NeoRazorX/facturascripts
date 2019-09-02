@@ -131,7 +131,7 @@ class EditPageOption extends Controller
      *
      * @return array
      */
-    private function checkGroupItem($group)
+    protected function checkGroupItem($group)
     {
         foreach ($group['children'] as $key => $child) {
             if (!isset($child['level'])) {
@@ -147,7 +147,7 @@ class EditPageOption extends Controller
      * It determines if we edit a configuration for all the users or one,
      * and if there is already configuration for the nick
      */
-    private function checkNickAndID()
+    protected function checkNickAndID()
     {
         if ($this->model->nick != $this->selectedUser) {
             $this->model->id = null;
@@ -162,7 +162,7 @@ class EditPageOption extends Controller
     /**
      * Delete configuration for view
      */
-    private function deleteData()
+    protected function deleteData()
     {
         $nick = $this->request->get('nick');
         $where = [
@@ -222,7 +222,7 @@ class EditPageOption extends Controller
     /**
      * Save new configuration for view
      */
-    private function saveData()
+    protected function saveData()
     {
         $this->checkNickAndID();
         $data = $this->request->request->all();
@@ -238,6 +238,6 @@ class EditPageOption extends Controller
             return;
         }
 
-        $this->toolBox()->i18nLog()->error('data-save-error');
+        $this->toolBox()->i18nLog()->error('record-save-error');
     }
 }
