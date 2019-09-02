@@ -330,7 +330,7 @@
     "email": "E-mail",
     "email-bcc": "Email Blind Carbon Copy",
     "email-cc": "Email Carbon Copy",
-    "email-not-configured": "Email not configured",
+    "email-not-configured": "Email not configured. You can configure the email from the administrator menu, control panel, application preferences.",
     "email-not-sent": "Not sent",
     "email-sent": "Sent by Mail",
     "email-signature": "Email signature",

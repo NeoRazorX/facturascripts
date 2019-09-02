@@ -71,7 +71,10 @@ class DownloadTools
 
             /// save in log
             $error = curl_error($ch) === '' ? 'ERROR ' . $httpCode : curl_error($ch);
-            $this->log()->warning($error . ' - ' . $url);
+            if (\FS_DEBUG) {
+                $error .= ' - ' . $url;
+            }
+            $this->log()->warning($error);
 
             curl_close($ch);
             return 'ERROR';
@@ -140,7 +143,8 @@ class DownloadTools
                 return true;
             }
         } catch (Exception $exc) {
-            $this->log()->error($exc->getMessage() . ' - ' . $url);
+            $message = \FS_DEBUG ? $exc->getMessage() . ' - ' . $url : $exc->getMessage();
+            $this->log()->error($message);
         }
 
         return false;

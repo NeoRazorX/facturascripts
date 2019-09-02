@@ -330,7 +330,7 @@
     "email": "Email.",
     "email-bcc": "Email con copia oculta",
     "email-cc": "Email con copia",
-    "email-not-configured": "Email no configurado",
+    "email-not-configured": "Email no configurado. Puedes configurar el email desde el menú administrador, panel de control, preferencias de aplicación.",
     "email-not-sent": "No enviado.",
     "email-sent": "Email enviado.",
     "email-signature": "Firma del email",

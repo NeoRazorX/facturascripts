@@ -323,7 +323,7 @@ abstract class SalesDocument extends TransformerDocument
         $this->nombrecliente = $subject->razonsocial;
 
         /// commercial data
-        $this->codagente = $subject->codagente ?? $this->codagente;
+        $this->codagente = $this->codagente ?? $subject->codagente;
         $this->codpago = $subject->codpago ?? $this->codpago;
         $this->codserie = $subject->codserie ?? $this->codserie;
         $this->irpf = $subject->irpf() ?? $this->irpf;
