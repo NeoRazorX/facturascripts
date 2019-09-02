@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Lib\Export;
+namespace FacturaScripts\Core\Lib\PDF;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -51,7 +51,7 @@ class PDFDocument extends PDFCore
      *
      * @return string
      */
-    private function combineAddress($model): string
+    protected function combineAddress($model): string
     {
         $completeAddress = Utils::fixHtml($model->direccion);
         $completeAddress .= empty($model->apartado) ? '' : ', ' . $this->i18n->trans('box') . ' ' . $model->apartado;
@@ -301,7 +301,7 @@ class PDFDocument extends PDFCore
      *
      * @param BusinessDocument $model
      */
-    private function insertBusinessDocShipping($model)
+    protected function insertBusinessDocShipping($model)
     {
         $this->pdf->ezText("\n" . $this->i18n->trans('shipping-address') . "\n", self::FONT_SIZE + 6);
         $this->newLine();
