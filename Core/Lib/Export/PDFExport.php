@@ -19,9 +19,9 @@
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\PDF\PDFDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Dinamic\Lib\PDF\PDFDocument;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
