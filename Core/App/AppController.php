@@ -204,26 +204,19 @@ class AppController extends App
             $this->menuManager->setUser($this->user);
             $permissions = new ControllerPermissions($this->user, $pageName);
 
-            try {
-                $this->controller = new $controllerName($pageName, $this->uri);
-                if ($this->user === false) {
-                    $this->controller->publicCore($this->response);
-                    $template = $this->controller->getTemplate();
-                } elseif ($permissions->allowAccess) {
-                    $this->menuManager->selectPage($this->controller->getPageData());
-                    $this->controller->privateCore($this->response, $this->user, $permissions);
-                    $template = $this->controller->getTemplate();
-                } else {
-                    $template = 'Error/AccessDenied.html.twig';
-                }
-
-                $httpStatus = Response::HTTP_OK;
-            } catch (Exception $exc) {
-                $this->toolBox()->log()->critical($exc->getMessage());
-                $this->debugBar['exceptions']->addException($exc);
-                $httpStatus = Response::HTTP_INTERNAL_SERVER_ERROR;
-                $template = 'Error/ControllerError.html.twig';
+            $this->controller = new $controllerName($pageName, $this->uri);
+            if ($this->user === false) {
+                $this->controller->publicCore($this->response);
+                $template = $this->controller->getTemplate();
+            } elseif ($permissions->allowAccess) {
+                $this->menuManager->selectPage($this->controller->getPageData());
+                $this->controller->privateCore($this->response, $this->user, $permissions);
+                $template = $this->controller->getTemplate();
+            } else {
+                $template = 'Error/AccessDenied.html.twig';
             }
+
+            $httpStatus = Response::HTTP_OK;
         } else {
             $this->toolBox()->i18nLog()->critical('controller-not-found');
             $this->ipWarning();
