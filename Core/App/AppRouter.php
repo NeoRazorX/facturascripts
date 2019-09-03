@@ -81,7 +81,7 @@ class AppRouter
 
         foreach ($this->routes as $key => $data) {
             if ($uri === $key) {
-                return new AppController($uri, $data['controller']);
+                return $this->newAppController($uri, $data['controller']);
             }
 
             if ('*' !== substr($key, -1)) {
@@ -89,11 +89,11 @@ class AppRouter
             }
 
             if (0 === strncmp($uri, $key, strlen($key) - 1)) {
-                return new AppController($uri, $data['controller']);
+                return $this->newAppController($uri, $data['controller']);
             }
         }
 
-        return new AppController($uri);
+        return $this->newAppController($uri);
     }
 
     /**
@@ -218,6 +218,18 @@ class AppRouter
         }
 
         return [];
+    }
+
+    /**
+     * 
+     * @param string $uri
+     * @param string $pageName
+     *
+     * @return App
+     */
+    private function newAppController(string $uri, string $pageName = '')
+    {
+        return \FS_DEBUG ? new AppDebugController($uri, $pageName) : new AppController($uri, $pageName);
     }
 
     /**
