@@ -20,18 +20,18 @@
     position: fixed;
     z-index: 10;
     bottom: 0px;
-    left: 0px;
+    right: 0px;
     list-style-type: none;
     margin: 0;
     padding: 0;
     background-color: white;
-    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
     border-top: 1px solid silver;
-    border-right: 1px solid silver;
+    border-left: 1px solid silver;
 }
 
 .debugbar-item {
-    float: left;
+    float: right;
     padding: 5px;
     margin: 0px;
 }
@@ -53,7 +53,7 @@
     position: fixed;
     z-index: 10;
     bottom: 40px;
-    left: 5px;
+    right: 5px;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #6B757C;
