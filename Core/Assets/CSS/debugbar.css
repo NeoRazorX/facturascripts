@@ -24,13 +24,16 @@
     list-style-type: none;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    background-color: white;
+    border-top-right-radius: 3px;
+    border-top: 1px solid silver;
+    border-right: 1px solid silver;
 }
 
 .debugbar-item {
     float: left;
     padding: 5px;
-    background-color: white;
+    margin: 0px;
 }
 
 .debugbar-item a {

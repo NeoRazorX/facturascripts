@@ -22,6 +22,7 @@ function hideDebugBarModal(key) {
 }
 
 function showDebugBarModal(key) {
+    $(".debugbar-modal, .debugbar-modal-xl").hide();
     $("#debugbarModal" + key).show();
     return false;
 }
