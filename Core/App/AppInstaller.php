@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\App;
 
+use DateTimeZone;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\ToolBox;
 use Symfony\Component\HttpFoundation\Request;
@@ -160,26 +161,6 @@ class AppInstaller
     }
 
     /**
-     * Timezones list with GMT offset
-     *
-     * @return array
-     *
-     * @link http://stackoverflow.com/a/9328760
-     */
-    private function getTimezoneList()
-    {
-        $zonesArray = [];
-        $timestamp = time();
-        foreach (timezone_identifiers_list() as $key => $zone) {
-            date_default_timezone_set($zone);
-            $zonesArray[$key]['zone'] = $zone;
-            $zonesArray[$key]['diff_from_GMT'] = 'UTC/GMT ' . date('P', $timestamp);
-        }
-
-        return $zonesArray;
-    }
-
-    /**
      * Renders HTML.
      * 
      * @param string $template
@@ -190,7 +171,7 @@ class AppInstaller
         $templateVars = [
             'license' => file_get_contents(\FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
             'memcache_prefix' => $this->toolBox()->utils()->randomString(8),
-            'timezones' => $this->getTimezoneList(),
+            'timezones' => DateTimeZone::listIdentifiers(),
             'version' => PluginManager::CORE_VERSION
         ];
 

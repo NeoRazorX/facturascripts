@@ -124,7 +124,7 @@
                                             </div>
                                             <div class="col-sm-4">
                                                 <div class="form-group">
-                                                    {{ i18n.trans('select-timezone') }}:
+                                                    {{ i18n.trans('timezone') }}:
                                                     <div class="input-group">
                                                         <span class="input-group-prepend">
                                                             <span class="input-group-text">
@@ -133,7 +133,7 @@
                                                         </span>
                                                         <select name="fs_timezone" class="form-control">
                                                             {% for tz in timezones %}
-                                                                <option value="{{ tz['zone'] }}">{{ tz['zone'] }} - {{ tz['diff_from_GMT']}}</option>
+                                                                <option value="{{ tz }}">{{ tz }}</option>
                                                             {% endfor %}
                                                         </select>
                                                     </div>
