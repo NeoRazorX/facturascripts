@@ -59,6 +59,7 @@ class DebugBar extends DumbBar
         $items = [];
         $this->addItemTimer($items);
         $this->addItemMemory($items);
+        $this->addItemInputs($items);
         $this->addItemLogs($items);
         $this->addItemTranslations($items);
 
@@ -95,6 +96,33 @@ class DebugBar extends DumbBar
     {
         $key = 1 + count($items);
         $items[$key] = ['label' => $label, 'data' => $data, 'big' => $big];
+    }
+
+    /**
+     * 
+     * @param array $items
+     */
+    private function addItemInputs(array &$items)
+    {
+        $inputs = [
+            'get' => filter_input_array(INPUT_GET),
+            'post' => filter_input_array(INPUT_POST),
+            'cookie' => filter_input_array(INPUT_COOKIE),
+        ];
+
+        foreach ($inputs as $type => $rows) {
+            if (empty($rows)) {
+                continue;
+            }
+
+            $label = '<i class="fas fa-keyboard"></i> ' . $type;
+            $data = [];
+            foreach ($rows as $key => $value) {
+                $data[] = [$key, $value];
+            }
+
+            $this->addItem($items, $label, $data, true);
+        }
     }
 
     /**
