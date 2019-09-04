@@ -1,0 +1,83 @@
+/*!
+ * This file is part of FacturaScripts
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+.debugbar {
+    position: fixed;
+    z-index: 10;
+    bottom: 0px;
+    left: 0px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.debugbar-item {
+    float: left;
+    padding: 5px;
+    background-color: white;
+}
+
+.debugbar-item a {
+    color: #007bff;
+}
+
+.debugbar-item span {
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 2px;
+    background-color: #6B757C;
+    color: white;
+}
+
+.debugbar-modal, .debugbar-modal-xl {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    bottom: 35px;
+    left: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #6B757C;
+    background-color: white;
+}
+
+.debugbar-modal-xl {
+    max-width: 90%;
+    max-height: 50%;
+    overflow: auto;
+}
+
+.debugbar-modal-header {
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #6B757C;
+}
+
+.debugbar-modal-close {
+    float: right;
+}
+
+.debugbar-modal-table tr:hover {
+    background-color: #E9ECEF;
+}
+
+.debugbar-modal-table td {
+    padding-left: 5px;
+    padding-right: 5px;
+}

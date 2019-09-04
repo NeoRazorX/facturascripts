@@ -62,10 +62,17 @@ class DebugBar extends DumbBar
         $this->addItemLogs($items);
         $this->addItemTranslations($items);
 
-        return '<nav class="navbar navbar-dark bg-secondary fixed-bottom d-print-none">'
-            . '<ul class="navbar-nav flex-row mr-auto">' . $this->renderItems($items) . '</ul>'
-            . '</nav>'
-            . $this->renderModals($items);
+        return '<ul class="debugbar">' . $this->renderItems($items) . '</ul>' . $this->renderModals($items);
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function renderHead(): string
+    {
+        return '<link rel="stylesheet" href="' . \FS_ROUTE . '/Dinamic/Assets/CSS/debugbar.css" />'
+            . '<script src="' . \FS_ROUTE . '/Dinamic/Assets/JS/DebugBar.js"></script>';
     }
 
     /**
@@ -195,9 +202,9 @@ class DebugBar extends DumbBar
     {
         $html = '';
         foreach ($items as $key => $item) {
-            $label = $item['big'] ? $item['label'] . ' <span class="badge badge-light">' . count($item['data']) . '</span>' : $item['label'];
-            $html .= '<li class="nav-item mr-3">'
-                . '<a href="#debugModal" class="nav-link" data-toggle="modal" data-target="#debugModal' . $key . '">'
+            $label = $item['big'] ? $item['label'] . ' <span>' . count($item['data']) . '</span>' : $item['label'];
+            $html .= '<li class="debugbar-item">'
+                . '<a href="#debugModal' . $key . '" onclick="return showDebugBarModal(' . $key . ');">'
                 . $label
                 . '</a>'
                 . '</li>';
@@ -216,16 +223,14 @@ class DebugBar extends DumbBar
     {
         $html = '';
         foreach ($items as $key => $item) {
-            $modalDialog = $item['big'] ? 'modal-dialog modal-xl' : 'modal-dialog';
-            $html .= '<div class="modal fade" id="debugModal' . $key . '" role="dialog" aria-hidden="true">'
-                . '<div class="' . $modalDialog . '" role="document">'
-                . '<div class="modal-content">'
-                . '<div class="modal-header">'
-                . '<h5 class="modal-title">' . $item['label'] . '</h5>'
-                . '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                . '</div><div class="table-responsive">'
-                . '<table class="table table-hover">' . $this->renderTable($item['data']) . '</table>'
-                . '</div></div></div></div>';
+            $modalDialog = $item['big'] ? 'debugbar-modal-xl' : 'debugbar-modal';
+            $html .= '<div id="debugbarModal' . $key . '" class="' . $modalDialog . '">'
+                . '<div class="debugbar-modal-header">'
+                . $item['label']
+                . '<a href="#" class="debugbar-modal-close" onclick="return hideDebugBarModal(' . $key . ');">X</a>'
+                . '</div>'
+                . '<table class="debugbar-modal-table">' . $this->renderTable($item['data']) . '</table>'
+                . '</div>';
         }
 
         return $html;
