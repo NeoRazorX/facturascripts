@@ -63,7 +63,7 @@ class DebugBar extends DumbBar
         $this->addItemLogs($items);
         $this->addItemTranslations($items);
 
-        return '<ul class="debugbar">' . $this->renderItems($items) . '</ul>' . $this->renderModals($items);
+        return '<div class="debugbar"><ul>' . $this->renderItems($items) . '</ul>' . $this->renderSections($items) . '</div>';
     }
 
     /**
@@ -90,12 +90,12 @@ class DebugBar extends DumbBar
      * @param array  $items
      * @param string $label
      * @param array  $data
-     * @param bool   $big
+     * @param bool   $counter
      */
-    private function addItem(array &$items, string $label, array $data, bool $big = false)
+    private function addItem(array &$items, string $label, array $data, bool $counter = false)
     {
         $key = 1 + count($items);
-        $items[$key] = ['label' => $label, 'data' => $data, 'big' => $big];
+        $items[$key] = ['label' => $label, 'data' => $data, 'counter' => $counter];
     }
 
     /**
@@ -228,11 +228,14 @@ class DebugBar extends DumbBar
      */
     private function renderItems(array $items): string
     {
-        $html = '';
+        $html = '<li class="debugbar-item debugbar-minimize">'
+            . '<a href="#" onclick="return hideAllDebugBar();"><i class="fas fa-chevron-down"></i></a>'
+            . '</li>';
+
         foreach ($items as $key => $item) {
-            $label = $item['big'] ? $item['label'] . ' <span>' . count($item['data']) . '</span>' : $item['label'];
+            $label = $item['counter'] ? $item['label'] . ' <span>' . count($item['data']) . '</span>' : $item['label'];
             $html .= '<li class="debugbar-item">'
-                . '<a href="#debugModal' . $key . '" onclick="return showDebugBarModal(' . $key . ');">'
+                . '<a href="#debugSection' . $key . '" id="debugbarBtn' . $key . '" onclick="return showDebugBarSection(' . $key . ');">'
                 . $label
                 . '</a>'
                 . '</li>';
@@ -247,17 +250,12 @@ class DebugBar extends DumbBar
      *
      * @return string
      */
-    private function renderModals(array $items): string
+    private function renderSections(array $items): string
     {
         $html = '';
         foreach ($items as $key => $item) {
-            $modalDialog = $item['big'] ? 'debugbar-modal-xl' : 'debugbar-modal';
-            $html .= '<div id="debugbarModal' . $key . '" class="' . $modalDialog . '">'
-                . '<div class="debugbar-modal-header">'
-                . $item['label']
-                . '<a href="#" class="debugbar-modal-close" onclick="return hideDebugBarModal(' . $key . ');">X</a>'
-                . '</div>'
-                . '<table class="debugbar-modal-table">' . $this->renderTable($item['data']) . '</table>'
+            $html .= '<div id="debugbarSection' . $key . '" class="debugbar-section">'
+                . '<table class="debugbar-section-table">' . $this->renderTable($item['data']) . '</table>'
                 . '</div>';
         }
 

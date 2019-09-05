@@ -16,13 +16,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function hideDebugBarModal(key) {
-    $("#debugbarModal" + key).hide();
+function hideAllDebugBar() {
+    $(".debugbar ul li a.active").removeClass('active');
+    $(".debugbar-section").hide('fast');
     return false;
 }
 
-function showDebugBarModal(key) {
-    $(".debugbar-modal, .debugbar-modal-xl").hide();
-    $("#debugbarModal" + key).show();
+function showDebugBarSection(key) {
+    hideAllDebugBar();
+    $("#debugbarBtn" + key).addClass('active');
+    $("#debugbarSection" + key).show('fast');
     return false;
 }

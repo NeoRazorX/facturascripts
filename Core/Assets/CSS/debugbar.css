@@ -21,66 +21,70 @@
     z-index: 10;
     bottom: 0px;
     right: 0px;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
+    max-width: 90%;
+    max-height: 50%;
     background-color: white;
     border-top-left-radius: 3px;
     border-top: 1px solid silver;
     border-left: 1px solid silver;
+    overflow: auto;
+}
+
+.debugbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
 .debugbar-item {
-    float: right;
+    display: inline-block;
     padding: 5px;
     margin: 0px;
+}
+
+.debugbar-minimize {
+    padding-left: 10px;
+    padding-right: 10px;
+    border-right: 1px solid silver;
+    margin-right: 5px;
 }
 
 .debugbar-item a {
     color: #007bff;
 }
 
+.debugbar-item a.active {
+    color: black;
+    font-weight: bold;
+}
+
 .debugbar-item span {
     padding-left: 5px;
     padding-right: 5px;
-    border-radius: 2px;
-    background-color: #6B757C;
+    border-radius: 5px;
+    background-color: #7B858C;
     color: white;
 }
 
-.debugbar-modal, .debugbar-modal-xl {
+.debugbar-section {
     display: none;
-    position: fixed;
-    z-index: 10;
-    bottom: 40px;
-    right: 5px;
     padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #6B757C;
-    background-color: white;
+    border-top: 1px solid silver;
 }
 
-.debugbar-modal-xl {
-    max-width: 90%;
-    max-height: 50%;
-    overflow: auto;
+.debugbar-section-table {
+    width: 100%;
 }
 
-.debugbar-modal-header {
-    padding-bottom: 5px;
-    margin-bottom: 5px;
-    border-bottom: 1px solid #6B757C;
+.debugbar-section-table tr:nth-child(even) {
+    background-color: #F1F1F1;
 }
 
-.debugbar-modal-close {
-    float: right;
-}
-
-.debugbar-modal-table tr:hover {
+.debugbar-section-table tr:hover {
     background-color: #E9ECEF;
 }
 
-.debugbar-modal-table td {
+.debugbar-section-table td {
     padding-left: 5px;
     padding-right: 5px;
 }
