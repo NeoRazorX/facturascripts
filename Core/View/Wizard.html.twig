@@ -30,43 +30,58 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <h1>
+                <h1 class="h2">
                     <i class="fas fa-magic" aria-hidden="true"></i> {{ i18n.trans('wizard') }}
                     <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                 </h1>
+                <p>{{ i18n.trans('wizard-p') }}</p>
                 <hr/>
             </div>
         </div>
         <form action="#" method="post" class="form">
             <div class="row">
-                {% if fsc.showChangePasswd %}
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key', {'autofocus': '', 'class': 'form-control is-invalid'}) }}
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'), 'fas fa-key', {'class': 'form-control is-invalid'}) }}
-                        </div>
-                    </div>
-                {% endif %}
-                {% if fsc.showIntroduceEmail %}
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            {{ forms.simpleInput('email', 'email', fsc.user.email, 'email', i18n.trans('email'), 'fas fa-envelope', {'required': '', 'class': 'form-control is-invalid'}) }}
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-            <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombrecorto, 'text', i18n.trans('company'), 'fas fa-building', {'maxlength': '100', 'required': ''}) }}
+                        {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombre, 'text', i18n.trans('company-name'), '', {'maxlength': '100', 'required': ''}) }}
                     </div>
                 </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        {{ forms.simpleInput('nombrecorto', 'nombrecorto', fsc.empresa.nombrecorto, 'text', i18n.trans('short-name'), '', {'maxlength': '32', 'required': ''}) }}
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        {{ forms.simpleInput('cifnif', 'cifnif', fsc.empresa.cifnif, 'text', i18n.trans('cifnif'), '', {'maxlength': '30'}) }}
+                    </div>
+                </div>
+                {% if fsc.empresa.email is empty or fsc.user.email is empty %}
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            {{ forms.simpleInput('email', 'email', fsc.empresa.email, 'email', i18n.trans('email'), 'fas fa-envelope', {'required': '', 'class': 'form-control is-invalid'}) }}
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        {{ forms.simpleInput('telefono1', 'telefono1', fsc.empresa.telefono1, 'text', i18n.trans('phone'), 'fas fa-phone', {'maxlength': '30'}) }}
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        {{ forms.simpleInput('telefono2', 'telefono2', fsc.empresa.telefono2, 'text', i18n.trans('phone2'), 'fas fa-mobile-alt', {'maxlength': '30'}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h2 class="h3 mt-3">{{ i18n.trans('address') }}</h2>
+                    <hr/>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-sm-8">
                     <div class="form-group">
                         {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'), 'fas fa-map-marked', {'maxlength': '100', 'required': ''}) }}
@@ -93,8 +108,28 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-12">
+            {% if fsc.showChangePasswd %}
+                <div class="row">
+                    <div class="col mt-3">
+                        <h3 class="h4">{{ i18n.trans('you-should-change-passwd') }}</h3>
+                        <hr/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key', {'autofocus': '', 'class': 'form-control is-invalid'}) }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'), 'fas fa-key', {'class': 'form-control is-invalid'}) }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row mt-5">
+                <div class="col-sm-12 text-right">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save fa-fw" aria-hidden="true"></i>
                         {{ i18n.trans('save') }}

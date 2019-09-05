@@ -44,13 +44,6 @@ class Wizard extends Controller
     public $showChangePasswd = false;
 
     /**
-     * Check if the user must introduce the email.
-     *
-     * @var bool
-     */
-    public $showIntroduceEmail = false;
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -100,10 +93,6 @@ class Wizard extends Controller
         // Show message if user and password are admin
         if ($this->user->nick === 'admin' && $this->user->verifyPassword('admin')) {
             $this->showChangePasswd = true;
-        }
-
-        if (empty($this->user->email)) {
-            $this->showIntroduceEmail = true;
         }
 
         $pass = $this->request->request->get('password', '');
@@ -246,12 +235,16 @@ class Wizard extends Controller
     {
         $appSettings = $this->toolBox()->appSettings();
 
+        $this->empresa->cifnif = $this->request->request->get('cifnif', '');
         $this->empresa->ciudad = $this->request->request->get('ciudad', '');
         $this->empresa->codpais = $codpais;
         $this->empresa->codpostal = $this->request->request->get('codpostal', '');
         $this->empresa->direccion = $this->request->request->get('direccion', '');
-        $this->empresa->nombre = $this->empresa->nombrecorto = $this->request->request->get('empresa', '');
+        $this->empresa->nombre = $this->request->request->get('empresa', '');
+        $this->empresa->nombrecorto = $this->request->request->get('nombrecorto', '');
         $this->empresa->provincia = $this->request->request->get('provincia', '');
+        $this->empresa->telefono1 = $this->request->request->get('telefono1', '');
+        $this->empresa->telefono2 = $this->request->request->get('telefono2', '');
         $this->empresa->save();
 
         /// assignes warehouse?
@@ -266,7 +259,7 @@ class Wizard extends Controller
             $almacen->codpostal = $this->empresa->codpostal;
             $almacen->direccion = $this->empresa->direccion;
             $almacen->idempresa = $this->empresa->idempresa;
-            $almacen->nombre = $this->empresa->nombre;
+            $almacen->nombre = $this->empresa->nombrecorto;
             $almacen->provincia = $this->empresa->provincia;
             $almacen->save();
 
@@ -283,7 +276,7 @@ class Wizard extends Controller
         $almacen->codpostal = $this->empresa->codpostal;
         $almacen->direccion = $this->empresa->direccion;
         $almacen->idempresa = $this->empresa->idempresa;
-        $almacen->nombre = $this->empresa->nombre;
+        $almacen->nombre = $this->empresa->nombrecorto;
         $almacen->provincia = $this->empresa->provincia;
         $almacen->save();
 
@@ -300,8 +293,15 @@ class Wizard extends Controller
      */
     private function saveEmail(string $email): bool
     {
-        $this->user->email = $email;
-        return $this->user->save();
+        if (empty($this->user->email)) {
+            $this->user->email = $email;
+        }
+
+        if (empty($this->empresa->email)) {
+            $this->empresa->email = $email;
+        }
+
+        return $this->user->save() && $this->empresa->save();
     }
 
     /**
@@ -346,7 +346,7 @@ class Wizard extends Controller
         $appRouter = new AppRouter();
         $appRouter->clear();
 
-        /// redirect to EditSettings
-        $this->redirect('ListFacturaCliente');
+        /// redirect to the home page
+        $this->redirect($this->user->homepage);
     }
 }
