@@ -18,12 +18,10 @@
  */
 namespace FacturaScripts\Core\App;
 
-use DebugBar\StandardDebugBar;
 use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DebugBar\DataBaseCollector;
-use FacturaScripts\Core\Base\DebugBar\TranslationCollector;
+use FacturaScripts\Core\Base\Debug\DumbBar;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\User;
@@ -46,13 +44,6 @@ class AppController extends App
      * @var Controller
      */
     private $controller;
-
-    /**
-     * PHDebugBar.
-     *
-     * @var StandardDebugBar
-     */
-    private $debugBar;
 
     /**
      * Load user's menu
@@ -83,13 +74,6 @@ class AppController extends App
     public function __construct(string $uri = '/', string $pageName = '')
     {
         parent::__construct($uri);
-        $this->debugBar = new StandardDebugBar();
-        if (\FS_DEBUG) {
-            $this->debugBar['time']->startMeasure('init', 'AppController::__construct()');
-            $this->debugBar->addCollector(new DataBaseCollector());
-            $this->debugBar->addCollector(new TranslationCollector());
-        }
-
         $this->menuManager = new MenuManager();
         $this->pageName = $pageName;
     }
@@ -102,6 +86,15 @@ class AppController extends App
     {
         $selectedNick = (false !== $this->user) ? $this->user->nick : '';
         parent::close($selectedNick);
+    }
+
+    /**
+     * 
+     * @return DumbBar
+     */
+    public function debugBar()
+    {
+        return new DumbBar();
     }
 
     /**
@@ -187,13 +180,8 @@ class AppController extends App
      *
      * @param string $pageName
      */
-    private function loadController(string $pageName)
+    protected function loadController(string $pageName)
     {
-        if (\FS_DEBUG) {
-            $this->debugBar['time']->stopMeasure('init');
-            $this->debugBar['time']->startMeasure('loadController', 'AppController::loadController()');
-        }
-
         $controllerName = $this->getControllerFullName($pageName);
         $template = 'Error/ControllerNotFound.html.twig';
         $httpStatus = Response::HTTP_NOT_FOUND;
@@ -224,11 +212,6 @@ class AppController extends App
 
         $this->response->setStatusCode($httpStatus);
         if ($template) {
-            if (\FS_DEBUG) {
-                $this->debugBar['time']->stopMeasure('loadController');
-                $this->debugBar['time']->startMeasure('renderHtml', 'AppController::renderHtml()');
-            }
-
             $this->renderHtml($template, $controllerName);
         }
     }
@@ -240,14 +223,14 @@ class AppController extends App
      * @param string $template
      * @param string $controllerName
      */
-    private function renderHtml(string $template, string $controllerName = '')
+    protected function renderHtml(string $template, string $controllerName = '')
     {
         /// HTML template variables
         $templateVars = [
             'appSettings' => $this->toolBox()->appSettings(),
             'assetManager' => new AssetManager(),
             'controllerName' => $controllerName,
-            'debugBarRender' => false,
+            'debugBarRender' => $this->debugBar(),
             'fsc' => $this->controller,
             'menuManager' => $this->menuManager,
             'template' => $template,
@@ -256,22 +239,10 @@ class AppController extends App
         $webRender = new WebRender();
         $webRender->loadPluginFolders();
 
-        if (\FS_DEBUG) {
-            $baseUrl = \FS_ROUTE . '/vendor/maximebf/debugbar/src/DebugBar/Resources/';
-            $templateVars['debugBarRender'] = $this->debugBar->getJavascriptRenderer($baseUrl);
-
-            /// add log data to the debugBar
-            foreach ($this->toolBox()->log()->read(['debug']) as $msg) {
-                $this->debugBar['messages']->info($msg['message']);
-            }
-            $this->debugBar['messages']->info('END');
-        }
-
         try {
             $this->response->setContent($webRender->render($template, $templateVars));
         } catch (Exception $exc) {
             $this->toolBox()->log()->critical($exc->getMessage());
-            $this->debugBar['exceptions']->addException($exc);
             $this->response->setContent($webRender->render('Error/TemplateError.html.twig', $templateVars));
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }

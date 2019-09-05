@@ -1,0 +1,90 @@
+/*!
+ * This file is part of FacturaScripts
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+.debugbar {
+    position: fixed;
+    z-index: 10;
+    bottom: 0px;
+    right: 0px;
+    max-width: 90%;
+    max-height: 50%;
+    background-color: white;
+    border-top-left-radius: 3px;
+    border-top: 1px solid silver;
+    border-left: 1px solid silver;
+    overflow: auto;
+}
+
+.debugbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.debugbar-item {
+    display: inline-block;
+    padding: 5px;
+    margin: 0px;
+}
+
+.debugbar-minimize {
+    padding-left: 10px;
+    padding-right: 10px;
+    border-right: 1px solid silver;
+    margin-right: 5px;
+}
+
+.debugbar-item a {
+    color: #007bff;
+}
+
+.debugbar-item a.active {
+    color: black;
+    font-weight: bold;
+}
+
+.debugbar-item span {
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 5px;
+    background-color: #7B858C;
+    color: white;
+}
+
+.debugbar-section {
+    display: none;
+    padding: 10px;
+    border-top: 1px solid silver;
+}
+
+.debugbar-section-table {
+    width: 100%;
+}
+
+.debugbar-section-table tr:nth-child(even) {
+    background-color: #F1F1F1;
+}
+
+.debugbar-section-table tr:hover {
+    background-color: #E9ECEF;
+}
+
+.debugbar-section-table td {
+    padding-left: 5px;
+    padding-right: 5px;
+}
