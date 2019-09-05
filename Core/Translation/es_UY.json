@@ -767,7 +767,7 @@
     "record-deleted-error": "Error al eliminar el registro.",
     "record-not-found": "Registro no encontrado",
     "record-save-error": "Ha ocurrido un error mientras se guardaban los datos",
-    "record-updated-correctly": "Registro actualizado correctamente!",
+    "record-updated-correctly": "Registro actualizado correctamente.",
     "recreate-system-integrity": "Volver a crear la integridad del sistema",
     "reference": "Referencia",
     "reference+description": "Referencia + Descripción",
