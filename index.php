@@ -47,29 +47,13 @@ require_once __DIR__ . '/config.php';
 /// Disable 30 seconds PHP limit
 @set_time_limit(0);
 
-/**
- * Error handler
- */
-function fatal_handler()
-{
-    $error = error_get_last();
-    if (isset($error) && in_array($error["type"], [1, 64])) {
-        ob_clean();
-        die("<h1 style='text-align: center;'>FATAL ERROR #" . $error["type"] . "</h1>"
-            . "<ul>"
-            . "<li><b>File:</b> " . $error["file"] . " (Line " . $error["line"] . ")</li>"
-            . "<li><b>Message:</b> " . $error["message"] . "</li>"
-            . "</ul>");
-    }
-}
 /// Register error handler
 if (FS_DEBUG) {
     $whoops = new \Whoops\Run;
-    $whoops->prependHandler(new \Whoops\Handler\PrettyPageHandler);
+    $whoops->prependHandler(new \Whoops\Handler\PrettyPageHandler());
     $whoops->register();
 } else {
-    ob_start();
-    register_shutdown_function("fatal_handler");
+    $errorHandler = new \FacturaScripts\Core\Base\Debug\ProductionErrorHandler();
 }
 
 /**

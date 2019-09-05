@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\App;
 use Exception;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DebugBar\DumbBar;
+use FacturaScripts\Core\Base\Debug\DumbBar;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\User;

@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\App;
 
-use FacturaScripts\Core\Base\DebugBar\DebugBar;
+use FacturaScripts\Core\Base\Debug\DebugBar;
 
 /**
  * Description of AppDebugController
