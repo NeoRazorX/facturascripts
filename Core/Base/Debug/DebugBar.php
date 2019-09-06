@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Base\Debug;
 
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
  * Description of DebugBar
@@ -59,6 +60,7 @@ class DebugBar extends DumbBar
         $items = [];
         $this->addItemTimer($items);
         $this->addItemMemory($items);
+        $this->addItemAssets($items);
         $this->addItemInputs($items);
         $this->addItemLogs($items);
         $this->addItemTranslations($items);
@@ -96,6 +98,21 @@ class DebugBar extends DumbBar
     {
         $key = 1 + count($items);
         $items[$key] = ['label' => $label, 'data' => $data, 'counter' => $counter];
+    }
+
+    /**
+     * 
+     * @param array $items
+     */
+    private function addItemAssets(array &$items)
+    {
+        foreach (['css', 'js'] as $type) {
+            $label = '<i class="fas fa-file"></i> ' . strtoupper($type);
+            $data = AssetManager::get($type);
+            if (!empty($data)) {
+                $this->addItem($items, $label, $data, true);
+            }
+        }
     }
 
     /**
