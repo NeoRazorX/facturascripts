@@ -174,6 +174,16 @@ class BaseWidget extends VisualItem
     }
 
     /**
+     * Set custom fixed value to widget
+     * 
+     * @param string $value
+     */
+    public function setCustomValue($value)
+    {
+        $this->value = $value;
+    }
+    
+    /**
      *
      * @param object $model
      * @param string $display
@@ -271,8 +281,11 @@ class BaseWidget extends VisualItem
      * @param object $model
      */
     protected function setValue($model)
-    {
-        $this->value = @$model->{$this->fieldname};
+    {        
+        $modelValue = @$model->{$this->fieldname};
+        if (!empty($modelValue)) {
+            $this->value = $modelValue;
+        }
     }
 
     /**
