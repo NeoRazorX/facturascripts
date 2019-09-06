@@ -34,4 +34,10 @@ final class AtributoTest extends CustomTest
     {
         $this->model = new Atributo();
     }
+    
+    public function testPrimaryColumnValue()
+    {
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }    
 }

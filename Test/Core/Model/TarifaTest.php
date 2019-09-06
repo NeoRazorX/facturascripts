@@ -34,4 +34,10 @@ final class TarifaTest extends CustomTest
     {
         $this->model = new Tarifa();
     }
+
+    public function testPrimaryColumnValue()
+    {
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }    
 }

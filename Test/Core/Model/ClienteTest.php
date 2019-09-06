@@ -34,4 +34,12 @@ final class ClienteTest extends CustomTest
     {
         $this->model = new Cliente();
     }
+    
+    public function testPrimaryColumnValue()
+    {
+        $this->model->nombre = 'test description';
+        
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }    
 }

@@ -34,4 +34,10 @@ final class ImpuestoTest extends CustomTest
     {
         $this->model = new Impuesto();
     }
+    
+    public function testPrimaryColumnValue()
+    {
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }    
 }

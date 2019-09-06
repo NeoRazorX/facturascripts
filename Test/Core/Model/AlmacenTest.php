@@ -32,4 +32,10 @@ final class AlmacenTest extends CustomTest
     {
         $this->model = new Almacen();
     }
+    
+    public function testPrimaryColumnValue()
+    {
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }    
 }

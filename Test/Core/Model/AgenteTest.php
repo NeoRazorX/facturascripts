@@ -32,4 +32,10 @@ final class AgenteTest extends CustomTest
     {
         $this->model = new Agente();
     }
+    
+    public function testPrimaryColumnValue()
+    {
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }    
 }
