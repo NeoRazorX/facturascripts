@@ -19,6 +19,7 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -29,6 +30,10 @@ use PHPUnit\Framework\TestCase;
 class CustomTest extends TestCase
 {
 
+    /**
+     *
+     * @var ModelClass
+     */
     public $model;
 
     public function testInit()

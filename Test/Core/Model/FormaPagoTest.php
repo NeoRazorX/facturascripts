@@ -34,4 +34,12 @@ final class FormaPagoTest extends CustomTest
     {
         $this->model = new FormaPago();
     }
+    
+    public function testPrimaryColumnValue()
+    {
+        $this->model->plazovencimiento = 0;
+        
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }    
 }

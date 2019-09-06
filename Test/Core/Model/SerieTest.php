@@ -34,4 +34,10 @@ final class SerieTest extends CustomTest
     {
         $this->model = new Serie();
     }
+    
+    public function testPrimaryColumnValue()
+    {
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }    
 }

@@ -34,4 +34,10 @@ final class ProveedorTest extends CustomTest
     {
         $this->model = new Proveedor();
     }
+    
+    public function testPrimaryColumnValue()
+    {
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }    
 }
