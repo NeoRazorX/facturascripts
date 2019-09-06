@@ -319,7 +319,13 @@ class AppController extends App
     private function updateCookies(User &$user, bool $force = false)
     {
         if ($force || \time() - \strtotime($user->lastactivity) > self::USER_UPDATE_ACTIVITY_PERIOD) {
-            $user->updateActivity($this->toolBox()->ipFilter()->getClientIp());
+            $ipAddress = $this->toolBox()->ipFilter()->getClientIp();
+            if ($force) {
+                $user->newLogkey($ipAddress);
+            } else {
+                $user->updateActivity($ipAddress);
+            }
+
             $user->save();
 
             $expire = \time() + \FS_COOKIES_EXPIRE;
