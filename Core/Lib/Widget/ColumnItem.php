@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -111,7 +111,7 @@ class ColumnItem extends VisualItem
             return $this->widget->inputHidden($model);
         }
 
-        $divClass = ($this->numcolumns > 0) ? $this->css('col-md-') . $this->numcolumns : $this->css('col');
+        $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css('col');
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
         return '<div' . $divID . ' class="' . $divClass . '">'
             . $this->widget->edit($model, $this->title, $this->description, $this->titleurl)

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,6 +69,12 @@ class GroupItem extends VisualItem
 
     /**
      *
+     * @var string
+     */
+    public $valign;
+
+    /**
+     *
      * @param array $data
      */
     public function __construct($data)
@@ -79,6 +85,7 @@ class GroupItem extends VisualItem
         $this->numcolumns = isset($data['numcolumns']) ? (int) $data['numcolumns'] : 0;
         $this->order = isset($data['order']) ? (int) $data['order'] : 0;
         $this->title = isset($data['title']) ? $data['title'] : '';
+        $this->valign = isset($data['valign']) ? $data['valign'] : '';
         $this->loadColumns($data['children']);
     }
 
@@ -91,11 +98,11 @@ class GroupItem extends VisualItem
      */
     public function edit($model, $forceReadOnly = false)
     {
-        $divClass = ($this->numcolumns > 0) ? $this->css('col-md-') . $this->numcolumns : $this->css('col');
+        $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css('col');
         $divId = empty($this->id) ? '' : ' id="' . $this->id . '"';
-        $html = '<div' . $divId . ' class="' . $divClass . '">'
-            . '<div class="' . $this->css('form-row') . '">';
+        $rowClass = $this->css('form-row') . ' ' . $this->valign();
 
+        $html = '<div' . $divId . ' class="' . $divClass . '"><div class="' . $rowClass . '">';
         if (!empty($this->title)) {
             $html .= $this->legend();
         }
@@ -212,5 +219,23 @@ class GroupItem extends VisualItem
         }
 
         uasort($this->columns, ['self', 'sortColumns']);
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function valign()
+    {
+        switch ($this->valign) {
+            case 'bottom':
+                return 'align-items-end';
+
+            case 'center':
+                return 'align-items-center';
+
+            default:
+                return '';
+        }
     }
 }

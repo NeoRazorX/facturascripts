@@ -49,29 +49,27 @@
                 <widget type="textarea" fieldname="descripcion" required="true" />
             </column>
         </group>
-        <group name="stock" numcolumns="4">
+        <group name="options" numcolumns="12" valign="bottom">
             <column name="stock" order="100">
                 <widget type="number" fieldname="stockfis" readonly="true"/>
             </column>
             <column name="nostock" title="no-stock" order="110">
                 <widget type="checkbox" fieldname="nostock" />
             </column>
-        </group>
-        <group name="options" numcolumns="8">
-            <column name="secompra" title="for-purchase" order="100">
+            <column name="secompra" title="for-purchase" order="120">
                 <widget type="checkbox" fieldname="secompra" />
             </column>
-            <column name="sevende" title="for-sale" order="110">
+            <column name="sevende" title="for-sale" order="130">
                 <widget type="checkbox" fieldname="sevende" />
-            </column>
-            <column name="publico" title="public" order="120">
-                <widget type="checkbox" fieldname="publico" />
-            </column>
-            <column name="bloqueado" title="blocked" order="130">
-                <widget type="checkbox" fieldname="bloqueado"/>
             </column>
             <column name="ventasinstock" title="allow-sale-without-stock" order="140">
                 <widget type="checkbox" fieldname="ventasinstock"/>
+            </column>
+            <column name="bloqueado" title="blocked" order="150">
+                <widget type="checkbox" fieldname="bloqueado"/>
+            </column>
+            <column name="publico" title="public" order="160">
+                <widget type="checkbox" fieldname="publico" />
             </column>
         </group>
         <group name="observations" numcolumns="12">
