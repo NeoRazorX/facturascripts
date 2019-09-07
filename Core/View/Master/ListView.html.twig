@@ -36,7 +36,7 @@
     <div class="container-fluid">
         <div class="row">
             {# -- Left buttons -- #}
-            <div class="col">
+            <div class="col-6 col-md-3 mb-2">
                 <div class="btn-group">
                     {% if currentView.settings.btnNew %}
                         {% if currentView.settings.modalInsert %}
@@ -62,7 +62,7 @@
                 {% endif %}
             </div>
             {# -- Row actions -- #}
-            <div class="col">
+            <div class="col-6 col-md-2 mb-2">
                 {% set row = currentView.getRow('actions') %}
                 {{ row.render(true, currentView.getViewName()) | raw }}
             </div>
@@ -70,8 +70,7 @@
             {% if currentView.searchFields is not empty %}
                 {{ _self.searchControl(currentView, i18n) }}
             {% endif %}
-            {# -- Center buttons -- #}
-            <div class="col">
+            <div class="col-6 col-md-2">
                 {# -- Filters button -- #}
                 {% if currentView.filters is not empty %}
                     {{ _self.filterButton(currentView, i18n) }}
@@ -82,7 +81,7 @@
             </div>
             {# -- Right buttons -- #}
             {% if currentView.orderOptions is empty %}
-                <div class="col">
+                <div class="col-6 col-md-3">
                 </div>
             {% else %}
                 {# -- OrderBy button -- #}
@@ -264,7 +263,7 @@
 {% endmacro %}
 
 {% macro searchControl(currentView, i18n) %}
-    <div class="col-sm-3">
+    <div class="col-12 col-md">
         <div class="form-group">
             <div class="input-group">
                 <input class="form-control" type="text" name="query" value="{{ currentView.query }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}"/>
