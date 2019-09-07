@@ -34,4 +34,12 @@ final class FamiliaTest extends CustomTest
     {
         $this->model = new Familia();
     }
+    
+    public function testPrimaryColumnValue()
+    {
+        $this->model->descripcion = 'test description';
+        
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }    
 }

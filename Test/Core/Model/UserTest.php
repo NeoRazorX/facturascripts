@@ -34,4 +34,12 @@ final class UserTest extends CustomTest
     {
         $this->model = new User();
     }
+    
+    public function testPrimaryColumnValue()
+    {
+        $this->model->email = 'test@test.com';
+        
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }
 }

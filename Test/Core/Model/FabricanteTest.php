@@ -34,4 +34,12 @@ final class FabricanteTest extends CustomTest
     {
         $this->model = new Fabricante();
     }
+    
+    public function testPrimaryColumnValue()
+    {
+        $this->model->nombre = 'test descripciont';
+
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }    
 }

@@ -32,4 +32,10 @@ final class AgenciaTransporteTest extends CustomTest
     {
         $this->model = new AgenciaTransporte();
     }
+    
+    public function testPrimaryColumnValue()
+    {
+        $this->model->{$this->model->primaryColumn()} = 'n"l123';
+        $this->assertFalse($this->model->test());
+    }    
 }
