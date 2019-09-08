@@ -137,7 +137,7 @@ class PluginDeploy
     {
         switch ($namespace) {
             case 'FacturaScripts\Dinamic\Controller':
-            case 'FacturaScripts\Dinamic\Model';
+            case 'FacturaScripts\Dinamic\Model':
                 return true;
 
             default:

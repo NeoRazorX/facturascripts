@@ -243,8 +243,8 @@ abstract class ModelCore
 
     /**
      * 
-     * @param type $name
-     * @param type $arguments
+     * @param string $name
+     * @param array  $arguments
      *
      * @return mixed
      */
