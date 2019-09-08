@@ -193,6 +193,7 @@ abstract class BaseController extends Base\Controller
 
         // Create the views to display
         $this->createViews();
+        $this->pipe('createViews');
     }
 
     /**
