@@ -80,6 +80,20 @@ abstract class ModelCore
     abstract protected function loadModelFields(DataBase &$dataBase, string $tableName);
 
     /**
+     * Returns the name of the class of the model.
+     *
+     * @return string
+     */
+    abstract public function modelClassName();
+
+    /**
+     * Returns the name of the model.
+     *
+     * @return string
+     */
+    abstract protected function modelName();
+
+    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
@@ -123,6 +137,15 @@ abstract class ModelCore
         } else {
             $this->loadFromData($data);
         }
+    }
+
+    /**
+     * 
+     * @param mixed $extension
+     */
+    public static function addExtension($extension)
+    {
+        static::toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
     }
 
     /**
@@ -216,6 +239,19 @@ abstract class ModelCore
                     $this->{$key} = ($value === null && $field['is_nullable'] === 'NO') ? '' : $value;
             }
         }
+    }
+
+    /**
+     * 
+     * @param type $name
+     * @param type $arguments
+     *
+     * @return mixed
+     */
+    public function pipe($name, ...$arguments)
+    {
+        $this->toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
+        return null;
     }
 
     /**
@@ -323,7 +359,7 @@ abstract class ModelCore
      * 
      * @return ToolBox
      */
-    protected function toolBox()
+    protected static function toolBox()
     {
         return new ToolBox();
     }

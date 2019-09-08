@@ -153,6 +153,15 @@ class Controller
     }
 
     /**
+     * 
+     * @param mixed $extension
+     */
+    public static function addExtension($extension)
+    {
+        static::toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
+    }
+
+    /**
      * Return the basic data for this page.
      *
      * @return array
@@ -178,6 +187,19 @@ class Controller
     public function getTemplate()
     {
         return $this->template;
+    }
+
+    /**
+     * 
+     * @param type $name
+     * @param type $arguments
+     *
+     * @return mixed
+     */
+    public function pipe($name, ...$arguments)
+    {
+        $this->toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
+        return null;
     }
 
     /**
@@ -254,7 +276,7 @@ class Controller
      * 
      * @return ToolBox
      */
-    public function toolBox()
+    public static function toolBox()
     {
         return new ToolBox();
     }

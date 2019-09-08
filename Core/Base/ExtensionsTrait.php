@@ -76,7 +76,7 @@ trait ExtensionsTrait
      */
     public function pipe($name, ...$arguments)
     {
-        $return = true;
+        $return = null;
         foreach (static::$extensions as $ext) {
             if ($ext['name'] !== $name) {
                 continue;
@@ -84,7 +84,7 @@ trait ExtensionsTrait
                 $return = call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
             }
 
-            if ($return !== false) {
+            if ($return !== null) {
                 break;
             }
         }

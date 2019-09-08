@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -119,12 +119,30 @@ class PluginDeploy
      */
     private function createFolder(string $folder): bool
     {
-        if (!$this->toolBox()->files()->createFolder($folder, true)) {
-            $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => $folder]);
-            return false;
+        if ($this->toolBox()->files()->createFolder($folder, true)) {
+            return true;
         }
 
-        return true;
+        $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => $folder]);
+        return false;
+    }
+
+    /**
+     * 
+     * @param string $namespace
+     *
+     * @return bool
+     */
+    private function extensionSupport(string $namespace)
+    {
+        switch ($namespace) {
+            case 'FacturaScripts\Dinamic\Controller':
+            case 'FacturaScripts\Dinamic\Model';
+                return true;
+
+            default:
+                return false;
+        }
     }
 
     /**
@@ -206,7 +224,9 @@ class PluginDeploy
             . ' * Class created by Core/Base/PluginManager' . "\n"
             . ' * @author FacturaScripts <carlos@facturascripts.com>' . "\n"
             . ' */' . "\n"
-            . $this->getClassType($fileName, $folder, $place, $pluginName) . ' ' . $className . ' extends \\' . $namespace . '\\' . $className . "\n{\n}\n";
+            . $this->getClassType($fileName, $folder, $place, $pluginName) . ' ' . $className . ' extends \\' . $namespace . '\\' . $className;
+
+        $txt .= $this->extensionSupport($newNamespace) ? "\n{\n\tuse \FacturaScripts\Core\Base\ExtensionsTrait;\n}\n" : "\n{\n}\n";
 
         file_put_contents(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName, $txt);
         $this->fileList[$folder][$fileName] = $fileName;

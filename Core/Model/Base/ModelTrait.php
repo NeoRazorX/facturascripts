@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\ExtensionsTrait;
 
 /**
  * The class from which all models inherit, connects to the database,
@@ -29,8 +28,6 @@ use FacturaScripts\Core\Base\ExtensionsTrait;
  */
 trait ModelTrait
 {
-
-    use ExtensionsTrait;
 
     /**
      * List of fields in the table.
@@ -73,8 +70,8 @@ trait ModelTrait
     /**
      * Loads table fields if is necessary.
      *
-     * @param DataBase  $dataBase
-     * @param string    $tableName
+     * @param DataBase $dataBase
+     * @param string   $tableName
      */
     protected function loadModelFields(DataBase &$dataBase, string $tableName)
     {

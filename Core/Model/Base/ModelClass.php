@@ -31,20 +31,6 @@ abstract class ModelClass extends ModelCore
 {
 
     /**
-     * Returns the name of the class of the model.
-     *
-     * @return string
-     */
-    abstract public function modelClassName();
-
-    /**
-     * Returns the name of the model.
-     *
-     * @return string
-     */
-    abstract protected function modelName();
-
-    /**
      * Returns all models that correspond to the selected filters.
      *
      * @param array $where filters to apply to model records.
