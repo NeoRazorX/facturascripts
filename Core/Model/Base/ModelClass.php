@@ -109,11 +109,18 @@ abstract class ModelClass extends ModelCore
      */
     public function delete()
     {
+        if ($this->pipe('deleteBefore') === 'false') {
+            return false;
+        }
+
         $sql = 'DELETE FROM ' . static::tableName() . ' WHERE ' . static::primaryColumn()
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
         if (self::$dataBase->exec($sql)) {
+            /// TODO: remove after 2018.13
             $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':delete', $this);
+
+            $this->pipe('delete');
             return true;
         }
 
@@ -233,14 +240,21 @@ abstract class ModelClass extends ModelCore
      */
     public function save()
     {
-        if ($this->test()) {
-            if ($this->exists()) {
-                return $this->saveUpdate();
-            }
+        /// TODO: remove after 2018.13
+        $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':save:before', $this);
 
-            return $this->saveInsert();
+        if ($this->pipe('saveBefore') === false) {
+            return false;
         }
 
+        if ($this->test()) {
+            return $this->exists() ? $this->saveUpdate() : $this->saveInsert();
+        }
+
+        /// TODO: remove after 2018.13
+        $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':save', $this);
+
+        $this->pipe('save');
         return false;
     }
 
@@ -306,9 +320,12 @@ abstract class ModelClass extends ModelCore
      */
     protected function saveInsert(array $values = [])
     {
-        $eventManager = $this->toolBox()->events();
-        $eventManager->trigger('Model:' . $this->modelClassName() . ':saveInsert:before', $this);
-        $eventManager->trigger('Model:' . $this->modelClassName() . ':save:before', $this);
+        /// TODO: remove after 2018.13
+        $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':saveInsert:before', $this);
+
+        if ($this->pipe('saveInsertBefore') === false) {
+            return false;
+        }
 
         $insertFields = [];
         $insertValues = [];
@@ -330,8 +347,10 @@ abstract class ModelClass extends ModelCore
                 self::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
             }
 
-            $eventManager->trigger('Model:' . $this->modelClassName() . ':saveInsert', $this);
-            $eventManager->trigger('Model:' . $this->modelClassName() . ':save', $this);
+            /// TODO: remove after 2018.13
+            $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':saveInsert', $this);
+
+            $this->pipe('saveInsert');
             return true;
         }
 
@@ -347,9 +366,12 @@ abstract class ModelClass extends ModelCore
      */
     protected function saveUpdate(array $values = [])
     {
-        $eventManager = $this->toolBox()->events();
-        $eventManager->trigger('Model:' . $this->modelClassName() . ':saveUpdate:before', $this);
-        $eventManager->trigger('Model:' . $this->modelClassName() . ':save:before', $this);
+        /// TODO: remove after 2018.13
+        $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':saveUpdate:before', $this);
+
+        if ($this->pipe('saveUpdateBefore') === false) {
+            return false;
+        }
 
         $sql = 'UPDATE ' . static::tableName();
         $coma = ' SET';
@@ -365,8 +387,10 @@ abstract class ModelClass extends ModelCore
 
         $sql .= ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
         if (self::$dataBase->exec($sql)) {
-            $eventManager->trigger('Model:' . $this->modelClassName() . ':saveUpdate', $this);
-            $eventManager->trigger('Model:' . $this->modelClassName() . ':save', $this);
+            /// TODO: remove after 2018.13
+            $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':saveUpdate', $this);
+
+            $this->pipe('saveUpdate');
             return true;
         }
 
