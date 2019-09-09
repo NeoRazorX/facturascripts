@@ -135,14 +135,7 @@ class PluginDeploy
      */
     private function extensionSupport(string $namespace)
     {
-        switch ($namespace) {
-            case 'FacturaScripts\Dinamic\Controller':
-            case 'FacturaScripts\Dinamic\Model':
-                return true;
-
-            default:
-                return false;
-        }
+        return $namespace === 'FacturaScripts\Dinamic\Controller';
     }
 
     /**

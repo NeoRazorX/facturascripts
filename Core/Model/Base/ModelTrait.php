@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\ExtensionsTrait;
 
 /**
  * The class from which all models inherit, connects to the database,
@@ -28,6 +29,8 @@ use FacturaScripts\Core\Base\DataBase;
  */
 trait ModelTrait
 {
+
+    use ExtensionsTrait;
 
     /**
      * List of fields in the table.

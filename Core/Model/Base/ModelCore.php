@@ -65,6 +65,13 @@ abstract class ModelCore
     protected static $miniLog;
 
     /**
+     * Adds an extension to this model.
+     * 
+     * @param mixed $extension
+     */
+    abstract public static function addExtension($extension);
+
+    /**
      * Returns the list of fields in the table.
      *
      * @return array
@@ -74,8 +81,8 @@ abstract class ModelCore
     /**
      * Loads table fields if is necessary.
      *
-     * @param DataBase  $dataBase
-     * @param string    $tableName
+     * @param DataBase $dataBase
+     * @param string   $tableName
      */
     abstract protected function loadModelFields(DataBase &$dataBase, string $tableName);
 
@@ -92,6 +99,16 @@ abstract class ModelCore
      * @return string
      */
     abstract protected function modelName();
+
+    /**
+     * Executes all $name methods added from the extensions.
+     * 
+     * @param string $name
+     * @param array  $arguments
+     *
+     * @return mixed
+     */
+    abstract public function pipe($name, ...$arguments);
 
     /**
      * Returns the name of the column that is the model's primary key.
@@ -140,15 +157,6 @@ abstract class ModelCore
     }
 
     /**
-     * 
-     * @param mixed $extension
-     */
-    public static function addExtension($extension)
-    {
-        static::toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
-    }
-
-    /**
      * Change the value of the primary column in the model and the database.
      *
      * @param mixed $newValue
@@ -179,6 +187,8 @@ abstract class ModelCore
         foreach ($this->getModelFields() as $field) {
             $this->{$field['name']} = null;
         }
+
+        $this->pipe('clear');
     }
 
     /**
@@ -239,19 +249,6 @@ abstract class ModelCore
                     $this->{$key} = ($value === null && $field['is_nullable'] === 'NO') ? '' : $value;
             }
         }
-    }
-
-    /**
-     * 
-     * @param string $name
-     * @param array  $arguments
-     *
-     * @return mixed
-     */
-    public function pipe($name, ...$arguments)
-    {
-        $this->toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
-        return null;
     }
 
     /**
