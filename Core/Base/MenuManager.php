@@ -170,7 +170,7 @@ class MenuManager
         $access = [];
         $roleUserModel = new RoleUser();
         $filter = [new DataBaseWhere('nick', $nick)];
-        foreach ($roleUserModel->all($filter) as $roleUser) {
+        foreach ($roleUserModel->all($filter, [], 0, 0) as $roleUser) {
             foreach ($roleUser->getRoleAccess() as $roleAccess) {
                 $access[] = $roleAccess;
             }
