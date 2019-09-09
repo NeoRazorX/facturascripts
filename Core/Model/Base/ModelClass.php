@@ -247,15 +247,19 @@ abstract class ModelClass extends ModelCore
             return false;
         }
 
+        $done = false;
         if ($this->test()) {
-            return $this->exists() ? $this->saveUpdate() : $this->saveInsert();
+            $done = $this->exists() ? $this->saveUpdate() : $this->saveInsert();
         }
 
-        /// TODO: remove after 2018.13
-        $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':save', $this);
+        if ($done) {
+            /// TODO: remove after 2018.13
+            $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':save', $this);
 
-        $this->pipe('save');
-        return false;
+            $this->pipe('save');
+        }
+
+        return $done;
     }
 
     /**
