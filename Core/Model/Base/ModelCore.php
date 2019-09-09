@@ -65,6 +65,13 @@ abstract class ModelCore
     protected static $miniLog;
 
     /**
+     * Adds an extension to this model.
+     * 
+     * @param mixed $extension
+     */
+    abstract public static function addExtension($extension);
+
+    /**
      * Returns the list of fields in the table.
      *
      * @return array
@@ -74,10 +81,34 @@ abstract class ModelCore
     /**
      * Loads table fields if is necessary.
      *
-     * @param DataBase  $dataBase
-     * @param string    $tableName
+     * @param DataBase $dataBase
+     * @param string   $tableName
      */
     abstract protected function loadModelFields(DataBase &$dataBase, string $tableName);
+
+    /**
+     * Returns the name of the class of the model.
+     *
+     * @return string
+     */
+    abstract public function modelClassName();
+
+    /**
+     * Returns the name of the model.
+     *
+     * @return string
+     */
+    abstract protected function modelName();
+
+    /**
+     * Executes all $name methods added from the extensions.
+     * 
+     * @param string $name
+     * @param array  $arguments
+     *
+     * @return mixed
+     */
+    abstract public function pipe($name, ...$arguments);
 
     /**
      * Returns the name of the column that is the model's primary key.
@@ -156,6 +187,8 @@ abstract class ModelCore
         foreach ($this->getModelFields() as $field) {
             $this->{$field['name']} = null;
         }
+
+        $this->pipe('clear');
     }
 
     /**
@@ -323,7 +356,7 @@ abstract class ModelCore
      * 
      * @return ToolBox
      */
-    protected function toolBox()
+    protected static function toolBox()
     {
         return new ToolBox();
     }

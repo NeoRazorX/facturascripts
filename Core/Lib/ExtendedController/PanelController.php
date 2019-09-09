@@ -81,7 +81,7 @@ abstract class PanelController extends BaseController
         $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
         // Run operations on the data before reading it
-        if (!$this->execPreviousAction($action)) {
+        if ($this->execPreviousAction($action) === false || $this->pipe('execPreviousAction', $action) === false) {
             return;
         }
 
@@ -94,6 +94,7 @@ abstract class PanelController extends BaseController
             }
 
             $this->loadData($viewName, $view);
+            $this->pipe('loadData', $viewName, $view);
 
             // check if we are processing the main view
             if ($viewName === $this->getMainViewName()) {
@@ -109,6 +110,7 @@ abstract class PanelController extends BaseController
 
         // General operations with the loaded data
         $this->execAfterAction($action);
+        $this->pipe('execAfterAction', $action);
     }
 
     /**

@@ -58,6 +58,7 @@ class ToolBox
 
     /**
      * 
+     * @deprecated since version 2018.11
      * @return EventManager
      */
     public static function events()

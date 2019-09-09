@@ -38,6 +38,35 @@ abstract class InitClass
 
     /**
      * 
+     * @return string
+     */
+    protected function getNamespace()
+    {
+        return substr(static::class, 0, -5);
+    }
+
+    /**
+     * 
+     * @param mixed $extension
+     *
+     * @return bool
+     */
+    protected function loadExtension($extension)
+    {
+        $namespace = get_class($extension);
+        $findNamespace = $this->getNamespace() . '\\Extension\\';
+        if (strpos($namespace, $findNamespace) !== 0) {
+            $this->toolBox()->log()->error('Target object not found for: ' . $namespace);
+            return false;
+        }
+
+        $targetClass = '\\FacturaScripts\\Dinamic\\' . substr($namespace, strlen($findNamespace));
+        $targetClass::addExtension($extension);
+        return true;
+    }
+
+    /**
+     * 
      * @return ToolBox
      */
     protected function toolBox()
