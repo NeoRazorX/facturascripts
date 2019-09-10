@@ -84,7 +84,7 @@
             <column name="address" numcolumns="4" order="100">
                 <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked" />
             </column>
-            <column name="postalmail" numcolumns="1" order="110">
+            <column name="post-office-box" numcolumns="1" order="110">
                 <widget type="text" fieldname="apartado" maxlength="10" />
             </column>
             <column name="zip-code" numcolumns="1" order="120">

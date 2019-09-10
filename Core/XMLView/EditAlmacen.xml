@@ -41,11 +41,11 @@
             <column name="address" numcolumns="6" order="100">
                 <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked" />
             </column>
-            <column name="postalcode" numcolumns="3" order="110">
-                <widget type="text" fieldname="codpostal" maxlength="10" />
-            </column>
-            <column name="postalmail" numcolumns="3" order="120">
+            <column name="post-office-box" numcolumns="3" order="110">
                 <widget type="text" fieldname="apartado" maxlength="10" />
+            </column>
+            <column name="zip-code" numcolumns="3" order="120">
+                <widget type="text" fieldname="codpostal" maxlength="10" />
             </column>
             <column name="city" numcolumns="4" order="130">
                 <widget type="text" fieldname="ciudad" />
