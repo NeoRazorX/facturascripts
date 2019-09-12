@@ -22,7 +22,7 @@
     Loads and displays a list of messages from the given types
 #}
 {% macro message(log, types, style) %}
-    {% set messages = log.read(types) %}
+    {% set messages = log.readAll(types) %}
     {% if messages | length > 0 %}
         <div class="alert alert-{{ style }}" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
