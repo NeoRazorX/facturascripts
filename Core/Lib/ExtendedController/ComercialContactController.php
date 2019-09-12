@@ -114,6 +114,10 @@ abstract class ComercialContactController extends EditController
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
+        
+        /// disable columns
+        $this->views[$viewName]->disableColumn('customer');
+        $this->views[$viewName]->disableColumn('supplier');
     }
 
     /**
