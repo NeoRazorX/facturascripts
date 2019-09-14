@@ -20,8 +20,6 @@
 {% extends "Master/MenuTemplate.html.twig" %}
 
 {% block body %}
-    {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
-
     <div class="container-fluid mb-2">
         {{ parent() }}
         <div class="row">
@@ -40,15 +38,18 @@
                         </a>
                     {% endif %}
                 </div>
-                <div class="btn-group d-xs-none">
-                    <button class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#modalAddPlugin">
-                        <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
-                        <span class="d-none d-sm-inline-block">{{ i18n.trans('add') }}</span>
-                    </button>
-                </div>
+                <button class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#modalAddPlugin">
+                    <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">{{ i18n.trans('add') }}</span>
+                </button>
+                <a href="{{ fsc.url() }}?action=rebuild" class="btn btn-sm btn-outline-warning">
+                    <i class="fas fa-hammer fa-fw" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">{{ i18n.trans('rebuild') }}</span>
+                </a>
             </div>
             <div class="col text-right">
                 <h1 class="h3">
+                    {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
                     {{ title }} <i class="{{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
                 </h1>
             </div>
@@ -207,25 +208,23 @@
                         {% endif %}
                         <td>{{ plugin.description | nl2br }}</td>
                         <td class="text-right">
-                            <span class="btn-group d-xs-none">
-                                {% if plugin.enabled %}
-                                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin.name }}">
-                                        <i class="fas fa-times fa-fw" aria-hidden="true"></i>
-                                        <span class="d-none d-sm-inline-block">{{ i18n.trans('disable') }}</span>
+                            {% if plugin.enabled %}
+                                <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin.name }}">
+                                    <i class="fas fa-times fa-fw" aria-hidden="true"></i>
+                                    <span class="d-none d-sm-inline-block">{{ i18n.trans('disable') }}</span>
+                                </a>
+                            {% elseif plugin.compatible %}
+                                <a class="btn btn-sm btn-success" href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}">
+                                    <i class="fas fa-check fa-fw" aria-hidden="true"></i>
+                                    <span class="d-none d-sm-inline-block">{{ i18n.trans('enable') }}</span>
+                                </a>
+                                {% if not constant('FS_DISABLE_RM_PLUGINS') %}
+                                    <a class="btn btn-sm btn-danger" href="#" onclick="deletePlugin('{{ plugin.name }}')">
+                                        <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+                                        <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
                                     </a>
-                                {% elseif plugin.compatible %}
-                                    <a class="btn btn-sm btn-success" href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}">
-                                        <i class="fas fa-check fa-fw" aria-hidden="true"></i>
-                                        <span class="d-none d-sm-inline-block">{{ i18n.trans('enable') }}</span>
-                                    </a>
-                                    {% if not constant('FS_DISABLE_RM_PLUGINS') %}
-                                        <a class="btn btn-sm btn-danger" href="#" onclick="deletePlugin('{{ plugin.name }}')">
-                                            <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
-                                            <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
-                                        </a>
-                                    {% endif %}
                                 {% endif %}
-                            </span>
+                            {% endif %}
                         </td>
                     </tr>
                 {% else %}

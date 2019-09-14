@@ -757,6 +757,8 @@
     "rates": "Tarifas",
     "re": "RE",
     "re-open": "Reabrir",
+    "rebuild": "Reconstruir",
+    "rebuild-completed": "Reconstrucción completada",
     "receipt": "Recibo",
     "receipt-expense-account": "Gastos en el recibo %document%",
     "receipt-payment-concept": "Pago del recibo %document%",

@@ -757,6 +757,8 @@
     "rates": "Tarifes",
     "re": "RE",
     "re-open": "Reobrir",
+    "rebuild": "rebuild",
+    "rebuild-completed": "rebuild-completed",
     "receipt": "rebut",
     "receipt-expense-account": "Despeses en el rebut %document%",
     "receipt-payment-concept": "concepte de pagament de rebut",

@@ -757,6 +757,8 @@
     "rates": "Rates",
     "re": "RE",
     "re-open": "Reopen",
+    "rebuild": "Rebuild",
+    "rebuild-completed": "Rebuild completed",
     "receipt": "Receipt",
     "receipt-expense-account": "Expenses in the remittance %document%",
     "receipt-payment-concept": "Receipt payment %document%",

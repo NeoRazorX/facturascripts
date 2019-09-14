@@ -184,6 +184,12 @@ class AdminPlugins extends Base\Controller
                 $this->enablePlugin($this->request->get('plugin', ''));
                 break;
 
+            case 'rebuild':
+                $this->pluginManager->deploy(true, true);
+                $this->toolBox()->cache()->clear();
+                $this->toolBox()->i18nLog()->notice('rebuild-completed');
+                break;
+
             case 'remove':
                 $this->removePlugin($this->request->get('plugin', ''));
                 break;
@@ -193,9 +199,11 @@ class AdminPlugins extends Base\Controller
                 break;
 
             default:
-                /// For now, always deploy the contents of Dinamic, for testing purposes
-                $this->pluginManager->deploy(true, true);
-                $this->toolBox()->cache()->clear();
+                if (\FS_DEBUG) {
+                    /// On debug mode, always deploy the contents of Dinamic.
+                    $this->pluginManager->deploy(true, true);
+                    $this->toolBox()->cache()->clear();
+                }
                 break;
         }
     }
