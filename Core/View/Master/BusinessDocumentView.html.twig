@@ -150,6 +150,12 @@
         {% block extras %}
         {% endblock %}
         <div class="col text-right">
+            {% if currentView.settings.btnUndo %}
+                <a class="btn btn-sm btn-secondary" href="{{ currentView.model.url() }}">
+                    <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">{{ i18n.trans('undo') }}</span>
+                </a>
+            {% endif %}
             {% if currentView.settings.btnSave %}
                 <button type="button" class="btn btn-sm btn-primary" onclick="businessDocViewSave();">
                     <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
