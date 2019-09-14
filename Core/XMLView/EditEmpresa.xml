@@ -47,10 +47,10 @@
             <column name="address" numcolumns="10" order="100">
                 <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked"/>
             </column>
-            <column name="postalmail" numcolumns="2" order="110">
-                <widget type="text" fieldname="apartado"/>
+            <column name="post-office-box" numcolumns="2" order="110">
+                <widget type="text" fieldname="apartado" maxlength="10" />
             </column>
-            <column name="postalcode" numcolumns="2" order="120">
+            <column name="zip-code" numcolumns="2" order="120">
                 <widget type="text" fieldname="codpostal" maxlength="10" />
             </column>
             <column name="city" numcolumns="4" order="130">

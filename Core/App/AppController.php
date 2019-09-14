@@ -207,7 +207,6 @@ class AppController extends App
             $httpStatus = Response::HTTP_OK;
         } else {
             $this->toolBox()->i18nLog()->critical('controller-not-found');
-            $this->ipWarning();
         }
 
         $this->response->setStatusCode($httpStatus);
@@ -265,7 +264,7 @@ class AppController extends App
             if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
                 /// TODO: remove after 2018.13
                 $this->toolBox()->events()->trigger('App:User:Login', $user);
-                
+
                 /// Execute actions from User model extensions
                 $user->pipe('login');
 

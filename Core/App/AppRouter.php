@@ -114,15 +114,15 @@ class AppRouter
             return true;
         }
 
-        /// Not a file?
-        if (!is_file($filePath)) {
+        /// Not a file? Not a safe file?
+        if (!is_file($filePath) || !$this->isFileSafe($filePath)) {
             return false;
         }
 
         /// Allowed folder?
         $allowedFolders = ['node_modules', 'vendor', 'Dinamic', 'Core', 'Plugins'];
         foreach ($allowedFolders as $folder) {
-            if ('/' . $folder === substr($uri, 0, strlen($folder) + 1)) {
+            if ('/' . $folder === substr($uri, 0, 1 + strlen($folder))) {
                 header('Content-Type: ' . $this->getMime($filePath));
                 readfile($filePath);
                 return true;
@@ -196,11 +196,24 @@ class AppRouter
      */
     private function getUri()
     {
-        $uri = filter_input(INPUT_SERVER, 'REQUEST_URI');
-        $uri2 = ($uri === null) ? filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL) : $uri;
+        $uri = \filter_input(\INPUT_SERVER, 'REQUEST_URI');
+        $uri2 = is_null($uri) ? \filter_var($_SERVER['REQUEST_URI'], \FILTER_SANITIZE_URL) : $uri;
         $uriArray = explode('?', $uri2);
 
         return substr($uriArray[0], strlen(FS_ROUTE));
+    }
+
+    /**
+     * 
+     * @param string $filePath
+     *
+     * @return bool
+     */
+    private function isFileSafe(string $filePath): bool
+    {
+        $parts = explode('.', $filePath);
+        $safe = ['css', 'eot', 'gif', 'ico', 'jpg', 'js', 'png', 'svg', 'ttf', 'woff', 'woff2'];
+        return in_array(end($parts), $safe, true);
     }
 
     /**

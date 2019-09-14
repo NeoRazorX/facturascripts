@@ -235,6 +235,7 @@ class Wizard extends Controller
     {
         $appSettings = $this->toolBox()->appSettings();
 
+        $this->empresa->apartado = $this->request->request->get('apartado', '');
         $this->empresa->cifnif = $this->request->request->get('cifnif', '');
         $this->empresa->ciudad = $this->request->request->get('ciudad', '');
         $this->empresa->codpais = $codpais;

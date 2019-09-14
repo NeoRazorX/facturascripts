@@ -53,11 +53,11 @@
             <column name="address" numcolumns="5" order="120">
                 <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked" />
             </column>
-            <column name="zip-code" numcolumns="2" order="130">
-                <widget type="text" fieldname="codpostal" maxlength="10" />
-            </column>
-            <column name="postalmail" numcolumns="2" order="140">
+            <column name="post-office-box" numcolumns="2" order="130">
                 <widget type="text" fieldname="apartado" maxlength="10" />
+            </column>
+            <column name="zip-code" numcolumns="2" order="140">
+                <widget type="text" fieldname="codpostal" maxlength="10" />
             </column>
             <column name="city" numcolumns="3" order="150">
                 <widget type="text" fieldname="ciudad" />

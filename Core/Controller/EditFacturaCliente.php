@@ -109,7 +109,8 @@ class EditFacturaCliente extends SalesDocumentController
         ];
         $this->addButton($viewName, $payButton);
 
-        /// disable column
+        /// disable columns
+        $this->views[$viewName]->disableColumn('customer');
         $this->views[$viewName]->disableColumn('invoice');
 
         /// settings

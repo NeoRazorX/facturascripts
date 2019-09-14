@@ -109,8 +109,9 @@ class EditFacturaProveedor extends PurchaseDocumentController
         ];
         $this->addButton($viewName, $payButton);
 
-        /// disable column
+        /// disable columns
         $this->views[$viewName]->disableColumn('invoice');
+        $this->views[$viewName]->disableColumn('supplier');
 
         /// settings
         $this->setSettings($viewName, 'modalInsert', 'generate-receipts');

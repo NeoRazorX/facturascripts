@@ -82,14 +82,19 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-8">
+                <div class="col-sm-6">
                     <div class="form-group">
                         {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'), 'fas fa-map-marked', {'maxlength': '100', 'required': ''}) }}
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <div class="form-group">
-                        {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('postal-code'), NULL, {'maxlength': '10'}) }}
+                        {{ forms.simpleInput('apartado', 'apartado', fsc.empresa.apartado, 'text', i18n.trans('post-office-box'), NULL, {'maxlength': '10', 'placeholder': i18n.trans('optional')}) }}
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('zip-code'), NULL, {'maxlength': '10'}) }}
                     </div>
                 </div>
                 <div class="col-sm-4">
@@ -118,7 +123,7 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key', {'autofocus': '', 'class': 'form-control is-invalid'}) }}
+                            {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key', {'class': 'form-control is-invalid'}) }}
                         </div>
                     </div>
                     <div class="col-sm-6">

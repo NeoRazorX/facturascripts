@@ -38,7 +38,7 @@
         <column name="city" order="130">
             <widget type="text" fieldname="ciudad" />
         </column>
-        <column name="postal-code" display="none" order="140">
+        <column name="zip-code" display="none" order="140">
             <widget type="text" fieldname="codpostal" />
         </column>
         <column name="province" display="center" order="150">
