@@ -212,7 +212,7 @@ class AppRouter
     private function isFileSafe(string $filePath): bool
     {
         $parts = explode('.', $filePath);
-        $safe = ['css', 'eot', 'gif', 'ico', 'jpg', 'js', 'png', 'svg', 'ttf', 'woff', 'woff2'];
+        $safe = ['css', 'eot', 'gif', 'ico', 'jpg', 'js', 'map', 'png', 'svg', 'ttf', 'woff', 'woff2'];
         return in_array(end($parts), $safe, true);
     }
 
