@@ -250,7 +250,7 @@ class AdminPlugins extends Base\Controller
 
         if ($this->pluginManager->deploymentRequired()) {
             $this->toolBox()->i18nLog()->notice('reloading');
-            $this->redirect($this->url(), 3);
+            $this->redirect($this->url() . '?action=rebuild', 3);
         }
     }
 }
