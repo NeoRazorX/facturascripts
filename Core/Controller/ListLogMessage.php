@@ -69,6 +69,7 @@ class ListLogMessage extends ListController
         $this->addOrderBy($viewName, ['jobname'], 'job-name');
         $this->addOrderBy($viewName, ['pluginname'], 'plugin');
         $this->addOrderBy($viewName, ['date'], 'date');
+        $this->addOrderBy($viewName, ['duration'], 'duration');
 
         /// filters
         $plugins = $this->codeModel->all('cronjobs', 'pluginname', 'pluginname');
