@@ -20,7 +20,7 @@
 -->
 <view>
     <columns>
-        <group name="data" numcolumns="12">
+        <group name="data" valign="bottom" numcolumns="12">
             <column name="id" numcolumns="2" order="100">
                 <widget type="text" fieldname="id" icon="fas fa-hashtag" readonly="dinamic" />
             </column>
@@ -36,8 +36,11 @@
             <column name="enabled" numcolumns="2" display="center" order="140">
                 <widget type="checkbox" fieldname="enabled" />
             </column>
-            <column name="done" numcolumns="2" order="150">
+            <column name="done" order="150">
                 <widget type="checkbox" fieldname="done" readonly="true" />
+            </column>
+            <column name="duration" numcolumns="2" display="right" order="160">
+                <widget type="number" fieldname="duration" icon="fas fa-clock" readonly="true" />
             </column>
         </group>
     </columns>

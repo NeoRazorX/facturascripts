@@ -36,7 +36,10 @@
         <column name="done" display="center" order="140">
             <widget type="checkbox" fieldname="done" />
         </column>
-        <column name="date" display="right" order="150">
+        <column name="duration" display="right" order="150">
+            <widget type="number" fieldname="duration" />
+        </column>
+        <column name="date" display="right" order="160">
             <widget type="datetime" fieldname="date" />
         </column>
     </columns>

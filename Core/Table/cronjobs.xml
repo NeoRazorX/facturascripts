@@ -16,6 +16,10 @@
         <default>false</default>
     </column>
     <column>
+        <name>duration</name>
+        <type>double precision</type>
+    </column>
+    <column>
         <name>enabled</name>
         <type>boolean</type>
         <default>true</default>

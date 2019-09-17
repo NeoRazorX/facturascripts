@@ -39,6 +39,12 @@ abstract class CronClass
 
     /**
      *
+     * @var int
+     */
+    private $init;
+
+    /**
+     *
      * @var string
      */
     private $pluginName;
@@ -59,6 +65,9 @@ abstract class CronClass
     {
         $this->dataBase = new DataBase();
         $this->pluginName = $pluginName;
+
+        /// initialize duration counter
+        $this->init = microtime(true);
     }
 
     /**
@@ -72,6 +81,9 @@ abstract class CronClass
      */
     public function isTimeForJob(string $jobName, string $period = '1 day')
     {
+        /// initialize duration counter
+        $this->init = microtime(true);
+
         $cronJob = new CronJob();
         $where = [
             new DataBaseWhere('pluginname', $this->pluginName),
@@ -114,6 +126,7 @@ abstract class CronClass
 
         $cronJob->date = date('d-m-Y H:i:s');
         $cronJob->done = true;
+        $cronJob->duration = microtime(true) - $this->init;
         if (!$cronJob->save()) {
             $this->toolBox()->i18nLog('cron')->error('record-save-error');
         }

@@ -43,7 +43,12 @@ class CronJob extends Base\ModelClass
     public $done;
 
     /**
-     * 
+     *
+     * @var float
+     */
+    public $duration;
+
+    /**
      *
      * @var bool
      */
@@ -78,6 +83,7 @@ class CronJob extends Base\ModelClass
         parent::clear();
         $this->date = date('d-m-Y H:i:s');
         $this->done = false;
+        $this->duration = 0.0;
         $this->enabled = true;
     }
 
