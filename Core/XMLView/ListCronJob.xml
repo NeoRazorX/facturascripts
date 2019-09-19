@@ -37,7 +37,9 @@
             <widget type="checkbox" fieldname="done" />
         </column>
         <column name="duration" display="right" order="150">
-            <widget type="number" fieldname="duration" />
+            <widget type="number" fieldname="duration">
+                <option color="danger">gt:30</option>
+            </widget>
         </column>
         <column name="date" display="right" order="160">
             <widget type="datetime" fieldname="date" />
