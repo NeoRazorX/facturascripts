@@ -34,15 +34,15 @@
             <column name="repeat-new-password" order="130">
                 <widget type="password" fieldname="newPassword2" icon="fas fa-key" />
             </column>
-            <column name="level" order="140">
+            <column name="level" level="99" order="140">
                 <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision" />
             </column>
         </group>
         <group name="advanced" numcolumns="12">
-            <column name="is-admin" order="100">
+            <column name="is-admin" level="99" order="100">
                 <widget type="checkbox" fieldname="admin"/>
             </column>
-            <column name="enabled" order="110">
+            <column name="enabled" level="99" order="110">
                 <widget type="checkbox" fieldname="enabled" />
             </column>
         </group>
