@@ -155,4 +155,12 @@ class EditAgente extends ComercialContactController
                 break;
         }
     }
+    
+    /**
+     *
+     * @param string $viewName
+     */
+    protected function setCustomWidgetValues($viewName)
+    {       
+    }
 }

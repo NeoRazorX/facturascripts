@@ -99,6 +99,7 @@ class EditProveedor extends ComercialContactController
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
         $this->createSubaccountsView();
+        $this->createViewEmailSent();
 
         $this->createSupplierListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
         $this->createLineView('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
@@ -151,11 +152,6 @@ class EditProveedor extends ComercialContactController
     {
         $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
         switch ($viewName) {
-            case 'EditProveedor':
-                parent::loadData($viewName, $view);
-                $this->setCustomWidgetValues($viewName);
-                break;
-
             case 'EditCuentaBancoProveedor':
                 $where = [new DataBaseWhere('codproveedor', $codproveedor)];
                 $view->loadData('', $where, ['codcuenta' => 'DESC']);
@@ -177,10 +173,8 @@ class EditProveedor extends ComercialContactController
                 $view->loadData('', $where);
                 break;
 
-            case 'ListSubcuenta':
-                $codsubcuenta = $this->getViewModelValue('EditProveedor', 'codsubcuenta');
-                $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
-                $view->loadData('', $where);
+            default:
+                parent::loadData($viewName, $view);
                 break;
         }
     }
