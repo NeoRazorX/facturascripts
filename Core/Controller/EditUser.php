@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
@@ -35,6 +36,23 @@ use Symfony\Component\HttpFoundation\Cookie;
 class EditUser extends EditController
 {
 
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param Response              $response
+     * @param User                  $user
+     * @param ControllerPermissions $permissions
+     */
+    public function privateCore(&$response, $user, $permissions)
+    {
+        $code = $this->request->query->get('code', '');            
+        if (!$user->admin || ($code == $user->nick)) {
+            $this->setTemplate('Error/AccessDenied');
+            return;
+        }
+        parent::privateCore($response, $user, $permissions);
+    }
+    
     /**
      * 
      * @return string
@@ -66,18 +84,33 @@ class EditUser extends EditController
         parent::createViews();
         $this->setTabsPosition('top');
 
-        $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fas fa-address-card');
+        if ($this->user->admin) {
+            $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fas fa-address-card');
 
-        /// Disable column
-        $this->views['EditRoleUser']->disableColumn('user', true);
+            /// Disable column
+            $this->views['EditRoleUser']->disableColumn('user', true);
+        }
     }
-
+    
     /**
-     * 
+     * Action to delete data.
+     *
+     * @return bool
+     */
+    protected function deleteAction()
+    {
+        $this->permissions->allowDelete = $this->user->admin;
+        return parent::deleteAction();
+    }
+    
+    /**
+     * Runs the data edit action.
+     *
      * @return bool
      */
     protected function editAction()
     {
+        $this->permissions->allowUpdate = $this->allowUpdate();
         $result = parent::editAction();
 
         // Are we changing user language?
@@ -90,7 +123,18 @@ class EditUser extends EditController
 
         return $result;
     }
-
+    
+    /**
+     * Runs data insert action.
+     * 
+     * @return bool
+     */
+    protected function insertAction()
+    {
+        $this->permissions->allowUpdate = $this->user->admin;
+        return parent::insertAction();
+    }
+        
     /**
      * Return a list of pages where user has access.
      *
@@ -184,5 +228,19 @@ class EditUser extends EditController
 
             $columnLangCode->widget->setValuesFromArray($langs, false);
         }
+    }
+    
+    /**
+     * 
+     * @return boolean
+     */
+    private function allowUpdate()
+    {
+        if ($this->user->admin) {
+            return true;
+        }
+        
+        $code = $this->request->request->get('code', '');            
+        return ($code == $this->user->nick);
     }
 }
