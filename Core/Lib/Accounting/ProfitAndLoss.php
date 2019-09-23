@@ -18,6 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Dinamic\Model\BalanceCuentaA;
+use FacturaScripts\Dinamic\Model\Partida;
+
 /**
  * Description of ProfitAndLoss
  *
@@ -41,6 +44,15 @@ class ProfitAndLoss extends AccountingBase
      * @var string
      */
     protected $dateToPrev;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        /// needed dependencies
+        new Partida();
+        new BalanceCuentaA();
+    }
 
     /**
      * Generate the data results.

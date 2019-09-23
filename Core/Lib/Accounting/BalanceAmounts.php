@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
@@ -43,6 +44,9 @@ class BalanceAmounts extends AccountingBase
     {
         parent::__construct();
         $this->subcuentaModel = new Subcuenta();
+        
+        /// needed dependencies
+        new Partida();
     }
 
     /**

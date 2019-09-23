@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Dinamic\Model\Partida;
+
 /**
  * Description of Ledger
  *
@@ -26,6 +28,14 @@ namespace FacturaScripts\Core\Lib\Accounting;
  */
 class Ledger extends AccountingBase
 {
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        /// needed dependecies
+        new Partida();
+    }
 
     /**
      * Generate the ledger between two dates.
