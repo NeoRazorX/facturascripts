@@ -249,6 +249,7 @@ abstract class ListController extends BaseController
     {
         $title = empty($viewTitle) ? $this->title : $viewTitle;
         $view = new ListView($viewName, $title, self::MODEL_NAMESPACE . $modelName, $icon);
+        $view->template = ListView::MINI_TEMPLATE;
         $this->addCustomView($viewName, $view);
         $this->setSettings($viewName, 'btnPrint', true);
         $this->setSettings($viewName, 'megasearch', true);

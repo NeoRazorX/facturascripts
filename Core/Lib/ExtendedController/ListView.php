@@ -36,6 +36,9 @@ use Symfony\Component\HttpFoundation\Request;
 class ListView extends BaseView
 {
 
+    const DEFAULT_TEMPLATE = 'Master/ListView.html.twig';
+    const MINI_TEMPLATE = 'Master/ListViewMin.html.twig';
+
     /**
      * Filter configuration preset by the user
      *
@@ -100,7 +103,7 @@ class ListView extends BaseView
     public function __construct($name, $title, $modelName, $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
-        $this->template = 'Master/ListView.html.twig';
+        $this->template = self::DEFAULT_TEMPLATE;
     }
 
     /**

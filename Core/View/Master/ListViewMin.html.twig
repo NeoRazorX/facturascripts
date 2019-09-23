@@ -33,129 +33,124 @@
     <input type="hidden" name="loadfilter" value="{{ currentView.pageFilterKey }}"/>
     <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
-    <div class="card">
-        <div class="container-fluid mt-3">
-            <div class="row">
-                {# -- Left buttons -- #}
-                <div class="col-6 col-md-3 mb-2">
-                    <div class="btn-group">
-                        {% if currentView.settings.btnNew %}
-                            {% if currentView.settings.modalInsert %}
-                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal{{ currentView.settings.modalInsert }}">
-                                    <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
-                                </button>
-                            {% else %}
-                                <a href="{{ currentView.btnNewUrl() }}" class="btn btn-success">
-                                    <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
-                                </a>
-                            {% endif %}
-                        {% endif %}
-                        {% if currentView.settings.btnDelete %}
-                            <button type="button" class="btn btn-danger" onclick="listViewDelete('{{ currentView.getViewName() }}');">
-                                <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+    <div class="container-fluid">
+        <div class="row">
+            {# -- Left buttons -- #}
+            <div class="col-6 col-md-3 mb-2">
+                <div class="btn-group">
+                    {% if currentView.settings.btnNew %}
+                        {% if currentView.settings.modalInsert %}
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal{{ currentView.settings.modalInsert }}">
+                                <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                             </button>
+                        {% else %}
+                            <a href="{{ currentView.btnNewUrl() }}" class="btn btn-success">
+                                <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                            </a>
                         {% endif %}
-                    </div>
-                    {% if currentView.settings.btnPrint %}
-                        <div class="btn-group">
-                            {{ _self.printButton(fsc, currentView, i18n) }}
-                        </div>
+                    {% endif %}
+                    {% if currentView.settings.btnDelete %}
+                        <button type="button" class="btn btn-danger" onclick="listViewDelete('{{ currentView.getViewName() }}');">
+                            <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+                        </button>
                     {% endif %}
                 </div>
-                {# -- Row actions -- #}
-                <div class="col-6 col-md-2 mb-2">
-                    {% set row = currentView.getRow('actions') %}
-                    {{ row.render(true, currentView.getViewName()) | raw }}
-                </div>
-                {# -- Search field -- #}
-                {% if currentView.searchFields is not empty %}
-                    {{ _self.searchControl(currentView, i18n) }}
-                {% endif %}
-                <div class="col-6 col-md-2">
-                    {# -- Filters button -- #}
-                    {% if currentView.filters is not empty %}
-                        {{ _self.filterButton(currentView, i18n) }}
-                    {% endif %}
-                    {# -- Row statistics -- #}
-                    {% set row = currentView.getRow('statistics') %}
-                    {{ row.render(fsc) | raw }}
-                </div>
-                {# -- Right buttons -- #}
-                {% if currentView.orderOptions is empty %}
-                    <div class="col-6 col-md-3">
+                {% if currentView.settings.btnPrint %}
+                    <div class="btn-group">
+                        {{ _self.printButton(fsc, currentView, i18n) }}
                     </div>
-                {% else %}
-                    {# -- OrderBy button -- #}
-                    {{ _self.sortButton(currentView) }}
                 {% endif %}
             </div>
-            {# -- Filters -- #}
-            {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
-            <div id="form{{ currentView.getViewName() }}Filters" class="row" style="{{ divFiltersStyle }}">
-                {% for filterName, filter in currentView.filters %}
-                    {{ filter.render() | raw }}
-                {% endfor %}
+            {# -- Row actions -- #}
+            <div class="col-6 col-md-2 mb-2">
+                {% set row = currentView.getRow('actions') %}
+                {{ row.render(true, currentView.getViewName()) | raw }}
             </div>
-            {# -- Row header -- #}
-            <div class="row">
-                {% set row = currentView.getRow('header') %}
-                {{ row.render(currentView.getViewName(), 'listViewSetAction', fsc) | raw }}
+            {# -- Search field -- #}
+            {% if currentView.searchFields is not empty %}
+                {{ _self.searchControl(currentView, i18n) }}
+            {% endif %}
+            <div class="col-6 col-md-2">
+                {# -- Filters button -- #}
+                {% if currentView.filters is not empty %}
+                    {{ _self.filterButton(currentView, i18n) }}
+                {% endif %}
+                {# -- Row statistics -- #}
+                {% set row = currentView.getRow('statistics') %}
+                {{ row.render(fsc) | raw }}
             </div>
+            {# -- Right buttons -- #}
+            {% if currentView.orderOptions is empty %}
+                <div class="col-6 col-md-3">
+                </div>
+            {% else %}
+                {# -- OrderBy button -- #}
+                {{ _self.sortButton(currentView) }}
+            {% endif %}
         </div>
-        {# -- Table -- #}
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
-                    <tr>
-                        {% if currentView.cursor | length > 0 %}
-                            <th width="50">
-                                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                                    <input class="form-check-input listActionCB" type="checkbox" />
-                                </div>
-                            </th>
-                        {% endif %}
+        {# -- Filters -- #}
+        {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
+        <div id="form{{ currentView.getViewName() }}Filters" class="row" style="{{ divFiltersStyle }}">
+            {% for filterName, filter in currentView.filters %}
+                {{ filter.render() | raw }}
+            {% endfor %}
+        </div>
+        {# -- Row header -- #}
+        <div class="row">
+            {% set row = currentView.getRow('header') %}
+            {{ row.render(currentView.getViewName(), 'listViewSetAction', fsc) | raw }}
+        </div>
+    </div>
+    {# -- Table -- #}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    {% if currentView.cursor | length > 0 %}
+                        <th width="50">
+                            <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                <input class="form-check-input listActionCB" type="checkbox" />
+                            </div>
+                        </th>
+                    {% endif %}
+                    {% for column in currentView.getColumns() %}
+                        {{ column.tableHeader() | raw }}
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% set rowStatus = currentView.getRow('status') %}
+                {% for model in currentView.cursor %}
+                    {% set trClass = rowStatus.trClass(model) %}
+                    <tr class="clickableRow {{ trClass }}" data-href="{{ model.url() }}">
+                        <td class="cancelClickable">
+                            <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
+                            </div>
+                        </td>
                         {% for column in currentView.getColumns() %}
-                            {{ column.tableHeader() | raw }}
+                            {{ column.tableCell(model) | raw }}
                         {% endfor %}
                     </tr>
-                </thead>
-                <tbody>
-                    {% set rowStatus = currentView.getRow('status') %}
-                    {% for model in currentView.cursor %}
-                        {% set trClass = rowStatus.trClass(model) %}
-                        <tr class="clickableRow {{ trClass }}" data-href="{{ model.url() }}">
-                            <td class="cancelClickable">
-                                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                                    <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
-                                </div>
-                            </td>
-                            {% for column in currentView.getColumns() %}
-                                {{ column.tableCell(model) | raw }}
-                            {% endfor %}
-                        </tr>
-                    {% else %}
-                        <tr class="table-warning">
-                            <td colspan="{{ 1 + currentView.getColumns() | length }}">{{ i18n.trans('no-data') }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                {% else %}
+                    <tr class="table-warning">
+                        <td colspan="{{ 1 + currentView.getColumns() | length }}">{{ i18n.trans('no-data') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {# -- Pagination -- #}
+    <div class="text-center">
+        <div class="btn-group">
+            {% for page in currentView.getPagination() %}
+                {% if page.active %}
+                    <button type="button" class="btn btn-light active" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
+                {% else %}
+                    <button type="button" class="btn btn-light" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
+                {% endif %}
+            {% endfor %}
         </div>
-        {# -- Pagination -- #}
-        {% set pages = currentView.getPagination() %}
-        {% if pages | length > 0 %}
-            <div class="card-footer text-center">
-                <div class="btn-group">
-                    {% for page in currentView.getPagination() %}
-                        {% if page.active %}
-                            <button type="button" class="btn btn-light active" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
-                        {% else %}
-                            <button type="button" class="btn btn-light" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-        {% endif %}
     </div>
     <br/>
     {# -- Row footer -- #}
