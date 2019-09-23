@@ -65,6 +65,8 @@ class FiscalNumberValitator
 
             case 'rfc':
                 return static::isValidRFC($upperNumber);
+            case 'rnc':
+                return static::isValidRNC($upperNumber);				
         }
 
         return true;
@@ -81,4 +83,47 @@ class FiscalNumberValitator
         $pattern = "/[A-Z]{3,4}[0-9]{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])[A-Z0-9]{2}[0-9A]/";
         return 1 === preg_match($pattern, $number);
     }
+    /**
+     * Validate RNC Rep. Dominicana 
+     * 
+     * Accept two format : only number: "000000000" or official format: "000-00000-0"
+     * 
+     */	
+    protected static function isValidRNC($number)
+        {
+		$pattern = "/^[0-9]{3}-[0-9]{5}-[0-9]{1}+$/";
+		$pattern2 = "/^[0-9]+$/";
+
+		if (preg_match($pattern2, $number)){
+			}elseif (preg_match($pattern, $number)){
+				$number = str_replace("-","",$number);
+		}
+		
+        if (strlen($number) != 9)
+            return false;
+
+		$seed = array('7','9','8','6','5','4','3','2');
+
+		$validate = str_split($number);
+		$step = 0;
+		$div = 0;
+
+		foreach($seed as $key=>$value) {
+			$step += $value * $validate[$key];
+		}
+		$rest = $step % 11;
+		$crc = 0;
+            
+		if ($rest == 0 )
+			$crc = 2;
+		else if ($rest == 1)
+			$crc = 1;
+		else 
+			$crc = 11 - $rest;
+            
+		if ($crc != $validate[8] )
+			return false;                  
+
+        return true;
+    }	
 }
