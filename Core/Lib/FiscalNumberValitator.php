@@ -81,7 +81,9 @@ class FiscalNumberValitator
      */
     protected static function isValidRFC($number)
     {
-        $pattern = "/[A-Z]{3,4}[0-9]{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])[A-Z0-9]{2}[0-9A]/";
+        /*$pattern = "/[A-Z]{3,4}[0-9]{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])[A-Z0-9]{2}[0-9A]/";*/
+        
+        $pattern = "/^[A-Z]{3,4}([0-9]{2})(1[0-2]|0[1-9])([0-3][0-9])([A-Z0-9]{3})$/";
         return 1 === preg_match($pattern, $number);
     }
 
