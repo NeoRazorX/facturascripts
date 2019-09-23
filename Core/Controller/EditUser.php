@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
@@ -36,23 +35,6 @@ use Symfony\Component\HttpFoundation\Cookie;
 class EditUser extends EditController
 {
 
-    /**
-     * Runs the controller's private logic.
-     *
-     * @param Response              $response
-     * @param User                  $user
-     * @param ControllerPermissions $permissions
-     */
-    public function privateCore(&$response, $user, $permissions)
-    {
-        $code = $this->request->query->get('code', '');            
-        if (!$user->admin || ($code == $user->nick)) {
-            $this->setTemplate('Error/AccessDenied');
-            return;
-        }
-        parent::privateCore($response, $user, $permissions);
-    }
-    
     /**
      * 
      * @return string
@@ -77,6 +59,19 @@ class EditUser extends EditController
     }
 
     /**
+     * 
+     * @return boolean
+     */
+    private function allowUpdate()
+    {
+        if ($this->user->admin) {
+            return true;
+        }
+
+        return $this->user->nick === $this->request->get('code', '');
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
@@ -91,7 +86,7 @@ class EditUser extends EditController
             $this->views['EditRoleUser']->disableColumn('user', true);
         }
     }
-    
+
     /**
      * Action to delete data.
      *
@@ -102,7 +97,7 @@ class EditUser extends EditController
         $this->permissions->allowDelete = $this->user->admin;
         return parent::deleteAction();
     }
-    
+
     /**
      * Runs the data edit action.
      *
@@ -123,7 +118,7 @@ class EditUser extends EditController
 
         return $result;
     }
-    
+
     /**
      * Runs data insert action.
      * 
@@ -134,7 +129,7 @@ class EditUser extends EditController
         $this->permissions->allowUpdate = $this->user->admin;
         return parent::insertAction();
     }
-        
+
     /**
      * Return a list of pages where user has access.
      *
@@ -187,6 +182,9 @@ class EditUser extends EditController
                 parent::loadData($viewName, $view);
                 $this->loadHomepageValues();
                 $this->loadLanguageValues();
+                if (!$this->allowUpdate()) {
+                    $this->setTemplate('Error/AccessDenied');
+                }
                 break;
 
             default:
@@ -228,19 +226,5 @@ class EditUser extends EditController
 
             $columnLangCode->widget->setValuesFromArray($langs, false);
         }
-    }
-    
-    /**
-     * 
-     * @return boolean
-     */
-    private function allowUpdate()
-    {
-        if ($this->user->admin) {
-            return true;
-        }
-        
-        $code = $this->request->request->get('code', '');            
-        return ($code == $this->user->nick);
     }
 }

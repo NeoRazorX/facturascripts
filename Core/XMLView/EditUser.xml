@@ -57,17 +57,17 @@
                     <values></values>
                 </widget>
             </column>
-            <column name="company" titleurl="ListEmpresa" order="120">
+            <column name="company" titleurl="ListEmpresa" level="99" order="120">
                 <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
-            <column name="warehouse" titleurl="ListAlmacen" order="130">
+            <column name="warehouse" titleurl="ListAlmacen" level="99" order="130">
                 <widget type="select" fieldname="codalmacen" icon="fas fa-warehouse" onclick="EditAlmacen" required="true">
                     <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="agent" titleurl="ListAgente" order="140">
+            <column name="agent" titleurl="ListAgente" level="99" order="140">
                 <widget type="select" fieldname="codagente" icon="fas fa-user-tie" onclick="EditAgente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
                 </widget>
