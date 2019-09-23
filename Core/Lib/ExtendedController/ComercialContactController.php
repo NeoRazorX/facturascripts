@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
@@ -31,6 +32,28 @@ use FacturaScripts\Dinamic\Model\Proveedor;
 abstract class ComercialContactController extends EditController
 {
 
+    /**
+     * Set custom configuration when load main data
+     * 
+     * @param string $viewName
+     */
+    abstract protected function setCustomWidgetValues($viewName);
+    
+    /**
+     * Add a Email Sent List View.
+     *
+     * @param string $viewName
+     */
+    protected function createViewEmailSent($viewName = 'ListEmailSent') 
+    {
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
+        $this->views[$viewName]->searchFields = ['subject', 'text', 'addressee'];
+        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+    
     /**
      * Add a Contact List View.
      *
@@ -181,6 +204,35 @@ abstract class ComercialContactController extends EditController
 
         /// disable columns
         $this->views[$viewName]->disableColumn($fields['linkfield'], true);
+    }
+    
+    /**
+     * Load view data
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        $mainViewName = $this->getMainViewName();
+        switch ($viewName) {
+            case $mainViewName:
+                parent::loadData($viewName, $view);
+                $this->setCustomWidgetValues($viewName);
+                break;
+            
+            case 'ListSubcuenta':
+                $codsubcuenta = $this->getViewModelValue($mainViewName, 'codsubcuenta');
+                $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
+                $view->loadData('', $where);
+                break;
+            
+            case 'ListEmailSent':
+                $addressee = $this->getViewModelValue($mainViewName, 'email');
+                $where = [new DataBaseWhere('addressee', $addressee)];
+                $view->loadData('', $where);
+                break;
+        }        
     }
 
     /**
