@@ -38,22 +38,7 @@ abstract class ComercialContactController extends EditController
      * @param string $viewName
      */
     abstract protected function setCustomWidgetValues($viewName);
-    
-    /**
-     * Add a Email Sent List View.
-     *
-     * @param string $viewName
-     */
-    protected function createViewEmailSent($viewName = 'ListEmailSent') 
-    {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
-        $this->views[$viewName]->searchFields = ['subject', 'text', 'addressee'];
-        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
 
-        /// disable buttons
-        $this->setSettings($viewName, 'btnNew', false);
-    }
-    
     /**
      * Add a Contact List View.
      *
@@ -88,6 +73,21 @@ abstract class ComercialContactController extends EditController
     protected function createCustomerListView($viewName, $model, $label)
     {
         $this->createListView($viewName, $model, $label, $this->getCustomerFields());
+    }
+
+    /**
+     * Add a Email Sent List View.
+     *
+     * @param string $viewName
+     */
+    protected function createEmailsView($viewName = 'ListEmailSent')
+    {
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
+        $this->views[$viewName]->searchFields = ['subject', 'text', 'addressee'];
+        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
@@ -137,7 +137,7 @@ abstract class ComercialContactController extends EditController
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
-        
+
         /// disable columns
         $this->views[$viewName]->disableColumn('customer');
         $this->views[$viewName]->disableColumn('supplier');
@@ -205,35 +205,6 @@ abstract class ComercialContactController extends EditController
         /// disable columns
         $this->views[$viewName]->disableColumn($fields['linkfield'], true);
     }
-    
-    /**
-     * Load view data
-     *
-     * @param string   $viewName
-     * @param BaseView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        $mainViewName = $this->getMainViewName();
-        switch ($viewName) {
-            case $mainViewName:
-                parent::loadData($viewName, $view);
-                $this->setCustomWidgetValues($viewName);
-                break;
-            
-            case 'ListSubcuenta':
-                $codsubcuenta = $this->getViewModelValue($mainViewName, 'codsubcuenta');
-                $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
-                $view->loadData('', $where);
-                break;
-            
-            case 'ListEmailSent':
-                $addressee = $this->getViewModelValue($mainViewName, 'email');
-                $where = [new DataBaseWhere('addressee', $addressee)];
-                $view->loadData('', $where);
-                break;
-        }        
-    }
 
     /**
      * Customer special fields
@@ -261,6 +232,35 @@ abstract class ComercialContactController extends EditController
             'numfield' => 'numproveedor',
             'numtitle' => 'numsupplier'
         ];
+    }
+
+    /**
+     * Load view data
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        $mainViewName = $this->getMainViewName();
+        switch ($viewName) {
+            case $mainViewName:
+                parent::loadData($viewName, $view);
+                $this->setCustomWidgetValues($viewName);
+                break;
+
+            case 'ListSubcuenta':
+                $codsubcuenta = $this->getViewModelValue($mainViewName, 'codsubcuenta');
+                $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
+                $view->loadData('', $where);
+                break;
+
+            case 'ListEmailSent':
+                $addressee = $this->getViewModelValue($mainViewName, 'email');
+                $where = [new DataBaseWhere('addressee', $addressee)];
+                $view->loadData('', $where);
+                break;
+        }
     }
 
     /**

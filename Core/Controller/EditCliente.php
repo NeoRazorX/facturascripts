@@ -99,7 +99,7 @@ class EditCliente extends ComercialContactController
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
         $this->createSubaccountsView();
-        $this->createViewEmailSent();
+        $this->createEmailsView();
 
         $this->createCustomerListView('ListFacturaCliente', 'FacturaCliente', 'invoices');
         $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente');
@@ -151,7 +151,7 @@ class EditCliente extends ComercialContactController
     protected function loadData($viewName, $view)
     {
         $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
-        switch ($viewName) {            
+        switch ($viewName) {
             case 'EditCuentaBancoCliente':
                 $where = [new DataBaseWhere('codcliente', $codcliente)];
                 $view->loadData('', $where, ['codcuenta' => 'DESC']);
@@ -172,7 +172,7 @@ class EditCliente extends ComercialContactController
                 $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
                 $view->loadData('', $where);
                 break;
-            
+
             default:
                 parent::loadData($viewName, $view);
                 break;

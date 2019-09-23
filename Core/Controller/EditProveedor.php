@@ -99,7 +99,7 @@ class EditProveedor extends ComercialContactController
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
         $this->createSubaccountsView();
-        $this->createViewEmailSent();
+        $this->createEmailsView();
 
         $this->createSupplierListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
         $this->createLineView('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
