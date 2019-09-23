@@ -184,7 +184,6 @@ class AppController extends App
     {
         $controllerName = $this->getControllerFullName($pageName);
         $template = 'Error/ControllerNotFound.html.twig';
-        $httpStatus = Response::HTTP_NOT_FOUND;
 
         /// If we found a controller, load it
         if (class_exists($controllerName)) {
@@ -203,13 +202,11 @@ class AppController extends App
             } else {
                 $template = 'Error/AccessDenied.html.twig';
             }
-
-            $httpStatus = Response::HTTP_OK;
         } else {
             $this->toolBox()->i18nLog()->critical('controller-not-found');
+            $this->response->setStatusCode(Response::HTTP_NOT_FOUND);
         }
 
-        $this->response->setStatusCode($httpStatus);
         if ($template) {
             $this->renderHtml($template, $controllerName);
         }

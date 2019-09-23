@@ -87,6 +87,18 @@ class TelemetryManager
      * 
      * @return string
      */
+    public function claimUrl(): string
+    {
+        $params = $this->collectData(true);
+        $params['action'] = 'claim';
+        $this->calculateHash($params);
+        return self::TELEMETRY_URL . '?' . http_build_query($params);
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public function id()
     {
         return $this->idinstall;
@@ -123,6 +135,23 @@ class TelemetryManager
 
     /**
      * 
+     * @param string $url
+     *
+     * @return string
+     */
+    public function signUrl(string $url): string
+    {
+        if (empty($this->idinstall)) {
+            return $url;
+        }
+
+        $params = $this->collectData(true);
+        $this->calculateHash($params);
+        return $url . '?' . http_build_query($params);
+    }
+
+    /**
+     * 
      * @return bool
      */
     public function update(): bool
@@ -133,18 +162,13 @@ class TelemetryManager
 
         $params = $this->collectData();
         $params['action'] = 'update';
-        $params['idinstall'] = $this->idinstall;
         $this->calculateHash($params);
 
         $json = $this->getDownloader()->getContents(self::TELEMETRY_URL . '?' . http_build_query($params), 3);
         $data = json_decode($json, true);
-        if ($data['ok']) {
-            $this->save();
-            return true;
-        }
 
         $this->save();
-        return false;
+        return (bool) $data['ok'];
     }
 
     /**
@@ -158,28 +182,39 @@ class TelemetryManager
 
     /**
      * 
+     * @param bool $minimum
+     *
      * @return array
      */
-    private function collectData(): array
+    private function collectData(bool $minimum = false): array
     {
+        $data = [
+            'codpais' => FS_CODPAIS,
+            'coreversion' => PluginManager::CORE_VERSION,
+            'idinstall' => $this->idinstall,
+            'langcode' => FS_LANG,
+            'phpversion' => (float) PHP_VERSION,
+            'randomnum' => mt_rand(),
+        ];
+
+        if ($minimum) {
+            return $data;
+        }
+
         $customer = new Cliente();
         $invoice = new FacturaCliente();
         $pluginManager = new PluginManager();
         $variant = new Variante();
         $user = new User();
-
-        return [
-            'codpais' => FS_CODPAIS,
-            'coreversion' => PluginManager::CORE_VERSION,
-            'langcode' => FS_LANG,
+        $more = [
             'numcustomers' => $customer->count(),
             'numinvoices' => $invoice->count(),
             'numusers' => $user->count(),
             'numvariants' => $variant->count(),
-            'phpversion' => (float) PHP_VERSION,
             'pluginlist' => implode(',', $pluginManager->enabledPlugins()),
-            'randomnum' => mt_rand(),
         ];
+
+        return array_merge($data, $more);
     }
 
     /**

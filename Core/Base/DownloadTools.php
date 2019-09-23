@@ -64,7 +64,7 @@ class DownloadTools
                     $redirs = 0;
                     return $this->curlRedirectExec($ch, $redirs);
 
-                case 404:
+                default:
                     curl_close($ch);
                     return 'ERROR';
             }

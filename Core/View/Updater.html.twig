@@ -106,9 +106,12 @@
                     </div>
                     <div class="modal-body">
                         <p>{{ i18n.trans('registered-installation-p') }}</p>
+                        <a class="btn btn-primary" href="{{ fsc.url() }}?action=claim-install" target="_blank">
+                            {{ i18n.trans('manage') }}
+                        </a>
                     </div>
                 {% else %}
-                    <form method="post">
+                    <form action="{{ fsc.url() }}" method="post">
                         <input type="hidden" name="action" value="register" />
                         <div class="modal-header">
                             <h5 class="modal-title">{{ i18n.trans('register-installation') }}</h5>
@@ -118,8 +121,6 @@
                         </div>
                         <div class="modal-body">
                             <p>{{ i18n.trans('register-installation-p') }}</p>
-                        </div>
-                        <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">
                                 {{ i18n.trans('register-installation') }}
                             </button>

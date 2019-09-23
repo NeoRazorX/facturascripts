@@ -48,12 +48,21 @@ class AppDebugController extends AppController
         return new DebugBar();
     }
 
+    /**
+     * 
+     * @param string $pageName
+     */
     protected function loadController(string $pageName)
     {
         DebugBar::start($pageName);
         parent::loadController($pageName);
     }
 
+    /**
+     * 
+     * @param string $template
+     * @param string $controllerName
+     */
     protected function renderHtml(string $template, string $controllerName = '')
     {
         $parts = explode('\\', $controllerName);

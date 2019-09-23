@@ -298,6 +298,11 @@ class DebugBar extends DumbBar
 
             $html .= '<tr><td>#' . $count . '</td>';
             foreach ($row as $cell) {
+                if (is_array($cell)) {
+                    $html .= '<td>[' . implode(', ', $cell) . ']</td>';
+                    continue;
+                }
+
                 $html .= '<td>' . $cell . '</td>';
             }
             $html .= '</tr>';

@@ -146,11 +146,15 @@ class Updater extends Controller
             }
 
             $downloader = new DownloadTools();
-            if ($downloader->download($item['url'], \FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
+            $url = $this->telemetryManager->signUrl($item['url']);
+            if ($downloader->download($url, \FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
                 $this->toolBox()->i18nLog()->notice('download-completed');
                 $this->updaterItems[$key]['downloaded'] = true;
                 $this->toolBox()->cache()->clear();
+                break;
             }
+
+            $this->toolBox()->i18nLog()->error('download-error');
         }
     }
 
@@ -164,6 +168,11 @@ class Updater extends Controller
         switch ($action) {
             case 'cancel':
                 $this->cancelAction();
+                $this->updaterItems = $this->getUpdateItems();
+                break;
+
+            case 'claim-install':
+                $this->redirect($this->telemetryManager->claimUrl());
                 break;
 
             case 'download':
@@ -178,7 +187,12 @@ class Updater extends Controller
                 break;
 
             case 'register':
-                $this->telemetryManager->install();
+                if ($this->telemetryManager->install()) {
+                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+                } else {
+                    $this->toolBox()->i18nLog()->error('record-save-error');
+                }
+                $this->updaterItems = $this->getUpdateItems();
                 break;
 
             case 'update':
