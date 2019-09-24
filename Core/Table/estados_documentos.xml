@@ -23,6 +23,10 @@
         <type>character varying(30)</type>
     </column>
     <column>
+        <name>icon</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
         <name>idestado</name>
         <type>serial</type>
         <null>NO</null>
