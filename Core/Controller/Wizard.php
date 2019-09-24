@@ -119,13 +119,12 @@ class Wizard extends Controller
     private function addDefaultRoleAccess(): bool
     {
         $role = new Model\Role();
-        if ($role->loadFromCode($role->codrole)) {
-            return $this->addPagesToRole($role->codrole);
-        }
+        $role->codrole = \mb_strtolower($this->toolBox()->i18n()->trans('employee'), 'UTF8');
+        $role->descripcion = $this->toolBox()->i18n()->trans('employee');
 
-        $role->codrole = \mb_strtolower($this->toolBox()->i18n()->trans('agents'), 'UTF8');
-        $role->descripcion = $this->toolBox()->i18n()->trans('agents');
-        if ($role->save()) {
+        if ($role->exists()) {
+            return true;
+        } elseif ($role->save()) {
             return $this->addPagesToRole($role->codrole);
         }
 
@@ -135,25 +134,31 @@ class Wizard extends Controller
     /**
      * Adds to received codrole, all pages that are not in admin menu and are not yet enabled.
      *
-     * @param $codrole
+     * @param string $codrole
      *
      * @return bool Returns true on success, false otherwise and rollback the changes
      */
     private function addPagesToRole($codrole): bool
     {
-        $roleAccess = new Model\RoleAccess();
-
         $this->dataBase->beginTransaction();
 
         try {
             $page = new Model\Page();
-            /// All pages not in admin menu and not yet enabled
+            $roleAccess = new Model\RoleAccess();
+
+            /// all pages not in admin menu and not yet enabled
             $inSQL = "SELECT name FROM pages WHERE menu != 'admin' AND name NOT IN ("
                 . 'SELECT pagename FROM roles_access WHERE codrole = ' . $this->dataBase->var2str($codrole)
                 . ')';
             $where = [new DataBaseWhere('name', $inSQL, 'IN')];
             $pages = $page->all($where, [], 0, 0);
-            // add Pages to Rol
+
+            /// add EditUser page
+            if ($page->loadFromCode('EditUser')) {
+                $pages[] = $page;
+            }
+
+            /// add pages to the role
             if (!$roleAccess->addPagesToRole($codrole, $pages)) {
                 throw new Exception($this->toolBox()->i18n()->trans('cancel-process'));
             }
@@ -340,7 +345,7 @@ class Wizard extends Controller
         /// change default log values to enabled
         $this->enableLogs();
 
-        /// add the default role for agents
+        /// add the default role for employees
         $this->addDefaultRoleAccess();
 
         /// clear routes

@@ -77,22 +77,24 @@ class RoleAccess extends Base\ModelClass
      */
     public static function addPagesToRole($codrole, $pages)
     {
-        $where = [new DataBaseWhere('codrole', $codrole)];
         $roleAccess = new static();
+        foreach ($pages as $page) {
+            $where = [
+                new DataBaseWhere('codrole', $codrole),
+                new DataBaseWhere('pagename', $page->name)
+            ];
 
-        foreach ($pages as $record) {
-            $where[] = new DataBaseWhere('pagename', $record->name);
-
-            if (!$roleAccess->loadFromCode('', $where)) {
-                $roleAccess->codrole = $codrole;
-                $roleAccess->pagename = $record->name;
-                $roleAccess->allowdelete = true;
-                $roleAccess->allowupdate = true;
-                if (!$roleAccess->save()) {
-                    return false;
-                }
+            if ($roleAccess->loadFromCode('', $where)) {
+                continue;
             }
-            unset($where[1]);
+
+            $roleAccess->codrole = $codrole;
+            $roleAccess->pagename = $page->name;
+            $roleAccess->allowdelete = true;
+            $roleAccess->allowupdate = true;
+            if (!$roleAccess->save()) {
+                return false;
+            }
         }
 
         return true;
