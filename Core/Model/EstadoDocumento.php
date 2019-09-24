@@ -57,6 +57,13 @@ class EstadoDocumento extends Base\ModelClass
      * @var string
      */
     public $generadoc;
+    
+    /**
+     * Icon of EstadoDocumento.
+     *
+     * @var string
+     */
+    public $icon;
 
     /**
      * Primary key.
