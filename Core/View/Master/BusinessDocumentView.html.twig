@@ -258,38 +258,26 @@
         {% set status = model.getStatus() %}
         {% if status.generadoc %}
             <button class="btn btn-secondary" type="button">
-                <i class="fas fa-check fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
             </button>
         {% else %}
             <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {% if status.editable %}
-                    <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
-                {% else %}
-                    <i class="fas fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
-                {% endif %}
+                <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
             </button>
             <div class="dropdown-menu dropdown-menu-right">
                 {% set showDocumentStitcher = false %}
                 {% for status in view.documentStatus %}
                     {% if model.idestado == status.idestado %}
                         <a class="dropdown-item active" href="#">
-                            {% if status.editable %}
-                                <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
-                            {% else %}
-                                <i class="fas fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
-                            {% endif %}
+                            <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         </a>
                     {% else %}
                         <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ status.idestado }}');
                                 businessDocViewSave();">
                             {% if status.generadoc %}
-                                <i class="fas fa-check fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                                 {% set showDocumentStitcher = true %}
-                            {% elseif status.editable %}
-                                <i class="fas fa-tag fa-fw" aria-hidden="true"></i> {{ status.nombre }}
-                            {% else %}
-                                <i class="fas fa-lock fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                             {% endif %}
+                            <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                         </a>
                     {% endif %}
                 {% endfor %}

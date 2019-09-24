@@ -24,12 +24,9 @@
         <group name="data" numcolumns="12">
             <column name="id" display="none" order="100">
                 <widget type="text" fieldname="idestado" readonly="dinamic" />
-            </column>            
+            </column>
             <column name="name" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
-            </column>
-            <column name="icon" order="110">
-                <widget type="text" fieldname="icon"/>
             </column>
             <column name="doc-type" order="120">
                 <widget type="select" fieldname="tipodoc" required="true" translate="true">
@@ -65,14 +62,17 @@
                 </widget>
             </column>
         </group>
-        <group name="config" numcolumns="12">
-            <column name="editable" order="150">
+        <group name="config" valign="bottom" numcolumns="12">
+            <column name="icon" titleurl="https://fontawesome.com/icons?d=gallery" numcolumns="3" order="100">
+                <widget type="text" fieldname="icon" icon="fas fa-icons"/>
+            </column>
+            <column name="editable" order="110">
                 <widget type="checkbox" fieldname="editable"></widget>
             </column>
-            <column name="locked" display="none" order="160">
+            <column name="locked" display="none" order="120">
                 <widget type="checkbox" fieldname="bloquear"></widget>
             </column>
-            <column name="default" order="170">
+            <column name="default" order="130">
                 <widget type="checkbox" fieldname="predeterminado"></widget>
             </column>
         </group>

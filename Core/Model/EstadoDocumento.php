@@ -57,7 +57,7 @@ class EstadoDocumento extends Base\ModelClass
      * @var string
      */
     public $generadoc;
-    
+
     /**
      * Icon of EstadoDocumento.
      *
@@ -117,6 +117,21 @@ class EstadoDocumento extends Base\ModelClass
         }
 
         return parent::delete();
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function icon(): string
+    {
+        if (!empty($this->icon)) {
+            return $this->icon;
+        } elseif (!empty($this->generadoc)) {
+            return 'fas fa-check';
+        }
+
+        return $this->editable ? 'fas fa-tag' : 'fas fa-lock';
     }
 
     /**
