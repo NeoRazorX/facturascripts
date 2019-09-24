@@ -8,6 +8,10 @@
 -->
 <table>
     <column>
+        <name>cantidad</name>
+        <type>double precision</type>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>

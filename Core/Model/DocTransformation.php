@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 
 /**
  * A model to manage the transformations of documents. For example aprobe order to delibery note.
@@ -31,6 +32,12 @@ class DocTransformation extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+
+    /**
+     *
+     * @var float
+     */
+    public $cantidad;
 
     /**
      * Primary key. Autoincremental.
@@ -81,6 +88,28 @@ class DocTransformation extends Base\ModelClass
      */
     public $model2;
 
+    public function clear()
+    {
+        parent::clear();
+        $this->cantidad = 0.0;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        /// update served quantity in parent line
+        $line = $this->getParentLine();
+        if ($line->exists() && isset($line->servido)) {
+            $line->servido -= $this->cantidad;
+            $line->save();
+        }
+
+        return parent::delete();
+    }
+
     /**
      * Removes related data from this document.
      * 
@@ -107,6 +136,22 @@ class DocTransformation extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return BusinessDocumentLine
+     */
+    public function getParentLine()
+    {
+        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\Linea' . $this->model1;
+        if (class_exists($modelClass)) {
+            $line = new $modelClass();
+            $line->loadFromCode($this->idlinea1);
+            return $line;
+        }
+
+        return new LineaAlbaranCliente();
+    }
+
+    /**
      * Returns the name of the column that is the primary key of the model.
      *
      * @return string
@@ -124,5 +169,27 @@ class DocTransformation extends Base\ModelClass
     public static function tableName()
     {
         return 'doctransformations';
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (parent::saveInsert($values)) {
+            /// update served quantity in parent line
+            $line = $this->getParentLine();
+            if ($line->exists() && isset($line->servido)) {
+                $line->servido += $this->cantidad;
+                $line->save();
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }

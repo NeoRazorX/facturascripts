@@ -87,43 +87,6 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * Returns default quantity avaliable from this line.
-     * 
-     * @param Model\Base\BusinessDocumentLine $line
-     *
-     * @return int|float
-     */
-    public function getDefaultQuantity($line)
-    {
-        $quantity = $line->cantidad;
-
-        $idlines = [];
-        $docTransformationModel = new Model\DocTransformation();
-        $where = [new DataBaseWhere('idlinea1', $line->idlinea)];
-        foreach ($docTransformationModel->all($where) as $docTrans) {
-            $idlines[] = $docTrans->idlinea2;
-        }
-
-        $idchildren = [];
-        foreach ($this->documents as $doc) {
-            foreach ($doc->childrenDocuments() as $child) {
-                if (in_array($child->primaryColumnValue(), $idchildren)) {
-                    continue;
-                }
-
-                $idchildren[] = $child->primaryColumnValue();
-                foreach ($child->getLines() as $childLine) {
-                    if (in_array($childLine->primaryColumnValue(), $idlines)) {
-                        $quantity -= $childLine->cantidad;
-                    }
-                }
-            }
-        }
-
-        return $quantity;
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -195,7 +158,7 @@ class DocumentStitcher extends Controller
         foreach ($this->documents as $doc) {
             $update = true;
             foreach ($doc->getLines() as $line) {
-                if ($this->getDefaultQuantity($line) > 0) {
+                if ($line->servido < $line->cantidad) {
                     $update = false;
                     break;
                 }

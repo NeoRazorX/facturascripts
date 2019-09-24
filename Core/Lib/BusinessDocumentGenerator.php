@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 
 /**
@@ -134,6 +135,7 @@ class BusinessDocumentGenerator
 
             /// save relation
             $docTrans->clear();
+            $docTrans->cantidad = $newLine->cantidad;
             $docTrans->model1 = $prototype->modelClassName();
             $docTrans->iddoc1 = $line->documentColumnValue();
             $docTrans->idlinea1 = $line->primaryColumnValue();
