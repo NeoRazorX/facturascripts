@@ -198,8 +198,9 @@ class PluginManager
         $pathINI = $zipFile->getNameIndex($zipIndex);
         $info = $this->getPluginInfo($zipName, $zipFile->getFromIndex($zipIndex));
         if (!$info['compatible']) {
+            $errorTag = empty($info['min_version']) ? 'plugin-unsupported-version' : 'plugin-needs-fs-version';
             $this->toolBox()->i18nLog()->error(
-                'plugin-needs-fs-version', ['%pluginName%' => $zipName, '%minVersion%' => $info['min_version'], '%version%' => self::CORE_VERSION]
+                $errorTag, ['%pluginName%' => $zipName, '%minVersion%' => $info['min_version'], '%version%' => self::CORE_VERSION]
             );
             return false;
         }
