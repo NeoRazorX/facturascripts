@@ -86,6 +86,9 @@ abstract class ComercialContactController extends EditController
         $this->views[$viewName]->searchFields = ['subject', 'text', 'addressee'];
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
 
+        /// disable column
+        $this->views[$viewName]->disableColumn('to');
+
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }

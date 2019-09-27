@@ -102,6 +102,9 @@ class EditContacto extends EditController
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
         $this->views[$viewName]->searchFields = ['subject', 'text', 'addressee'];
 
+        /// disable column
+        $this->views[$viewName]->disableColumn('to');
+
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }
