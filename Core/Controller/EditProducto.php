@@ -65,6 +65,23 @@ class EditProducto extends EditController
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fas fa-dolly');
     }
 
+    /**
+     * 
+     * @return bool
+     */
+    protected function insertAction()
+    {
+        if (parent::insertAction()) {
+            return true;
+        }
+
+        if ($this->active === 'EditProducto') {
+            $this->views['EditProducto']->disableColumn('reference', false, 'false');
+        }
+
+        return false;
+    }
+
     protected function loadCustomStockWidget()
     {
         $references = [];
