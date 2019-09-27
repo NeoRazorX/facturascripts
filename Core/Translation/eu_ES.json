@@ -897,6 +897,7 @@
     "swift": "Swift",
     "symbol": "Ikurra",
     "table-checked": "%tableName% taula egiaztatua.",
+    "table-not-found": "table-not-found",
     "tables": "Taulak",
     "tasks-completed-title": "Amaitutako zereginak",
     "tasks-component-title": "Zereginak",

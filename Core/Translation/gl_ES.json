@@ -897,6 +897,7 @@
     "swift": "Swift",
     "symbol": "Símbolo",
     "table-checked": "Tabla %tableName% comprobada.",
+    "table-not-found": "table-not-found",
     "tables": "Táboas",
     "tasks-completed-title": "Tarefas completadas",
     "tasks-component-title": "Tarefas",

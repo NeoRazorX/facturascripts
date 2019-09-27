@@ -897,6 +897,7 @@
     "swift": "Rapide",
     "symbol": "symbole",
     "table-checked": "Tableau %tableName% vérifié.",
+    "table-not-found": "table-not-found",
     "tables": "Tableau",
     "tasks-completed-title": "Tâches terminées",
     "tasks-component-title": "les tâches",

@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\ToolBox;
 
 /**
  * Auxiliary model to load a list of codes and their descriptions
@@ -97,12 +98,15 @@ class CodeModel
         }
 
         self::initDataBase();
-        if (self::$dataBase->tableExists($tableName)) {
-            $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description '
-                . 'FROM ' . $tableName . DataBaseWhere::getSQLWhere($where) . ' ORDER BY 2 ASC';
-            foreach (self::$dataBase->selectLimit($sql, self::ALL_LIMIT) as $row) {
-                $result[] = new static($row);
-            }
+        if (!self::$dataBase->tableExists($tableName)) {
+            static::toolBox()->i18nLog()->error('table-not-found', ['%tableName%' => $tableName]);
+            return $result;
+        }
+
+        $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description '
+            . 'FROM ' . $tableName . DataBaseWhere::getSQLWhere($where) . ' ORDER BY 2 ASC';
+        foreach (self::$dataBase->selectLimit($sql, self::ALL_LIMIT) as $row) {
+            $result[] = new static($row);
         }
 
         return $result;
@@ -191,5 +195,14 @@ class CodeModel
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
         }
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected static function toolBox()
+    {
+        return new ToolBox();
     }
 }
