@@ -183,16 +183,17 @@ class PluginDeploy
                 continue;
             }
 
-            $infoFile = pathinfo($fileName);
+            $fileInfo = pathinfo($fileName);
             if (is_dir($path . DIRECTORY_SEPARATOR . $fileName)) {
                 $this->createFolder(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName);
                 continue;
-            } elseif ($infoFile['filename'] === '' || !is_file($path . DIRECTORY_SEPARATOR . $fileName)) {
+            } elseif ($fileInfo['filename'] === '' || !is_file($path . DIRECTORY_SEPARATOR . $fileName)) {
                 continue;
             }
 
             $filePath = $path . DIRECTORY_SEPARATOR . $fileName;
-            switch ($infoFile['extension']) {
+            $extension = $fileInfo["extension"] ?? '';
+            switch ($extension) {
                 case 'php':
                     $this->linkPHPFile($fileName, $folder, $place, $pluginName);
                     break;
