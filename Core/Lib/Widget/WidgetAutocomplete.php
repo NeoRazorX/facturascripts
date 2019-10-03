@@ -38,6 +38,13 @@ class WidgetAutocomplete extends WidgetSelect
     public $strict = true;
 
     /**
+     * Descriptive text of the selected value
+     * 
+     * @var string 
+     */
+    protected $selected = null;
+            
+    /**
      *
      * @param object $model
      * @param string $title
@@ -79,6 +86,28 @@ class WidgetAutocomplete extends WidgetSelect
     }
 
     /**
+     * Set a descriptive text for the selected value
+     * 
+     * @param string $text
+     */
+    public function setSelected($text)
+    {
+        $this->selected = $text;            
+    }
+    
+    /**
+     * Get the descriptive text of the selected value
+     * 
+     * @return string
+     */
+    protected function getSelected()
+    {
+        return empty($this->selected)
+            ? static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
+            : $this->selected;
+    }
+        
+    /**
      * Adds assets to the asset manager.
      */
     protected function assets()
@@ -116,8 +145,7 @@ class WidgetAutocomplete extends WidgetSelect
     {
         $cssFormControl = $this->css('form-control');
         $class = empty($extraClass) ? $cssFormControl : $cssFormControl . ' ' . $extraClass;
-        $selected = static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle);
-        return '<input type="' . $type . '" value="' . $selected . '" class="' . $class . '" data-field="' . $this->fieldname
+        return '<input type="' . $type . '" value="' . $this->getSelected() . '" class="' . $class . '" data-field="' . $this->fieldname
             . '" data-source="' . $this->source . '" data-fieldcode="' . $this->fieldcode . '" data-fieldtitle="' . $this->fieldtitle
             . '" data-strict="' . $this->strictStr() . '" autocomplete="off"' . $this->inputHtmlExtraParams() . '/>';
     }
