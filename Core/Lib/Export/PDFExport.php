@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author Carlos Jiménez Gómez         <carlos@evolunext.es>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class PDFExport extends PDFDocument implements ExportInterface
+class PDFExport extends PDFDocument
 {
 
     const LIST_LIMIT = 500;
@@ -71,6 +71,8 @@ class PDFExport extends PDFDocument implements ExportInterface
      */
     public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
     {
+        $this->setFileName($title);
+
         $orientation = 'portrait';
         $tableCols = [];
         $tableColsTitle = [];
@@ -182,15 +184,17 @@ class PDFExport extends PDFDocument implements ExportInterface
             $this->pdf->ezText('');
         }
 
-        return $this->pdf->ezStream(['Content-Disposition' => 'doc_' . mt_rand(1, 999999) . '.pdf']);
+        return $this->pdf->ezStream(['Content-Disposition' => $this->getFileName() . '.pdf']);
     }
 
     /**
      * Blank document.
+     * 
+     * @param string $title
      */
-    public function newDoc()
+    public function newDoc(string $title)
     {
-        ;
+        $this->setFileName($title);
     }
 
     /**

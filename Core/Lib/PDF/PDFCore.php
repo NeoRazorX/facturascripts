@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\NumberTools;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Lib\Export\ExportBase;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
 /**
@@ -30,7 +31,7 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class PDFCore
+abstract class PDFCore extends ExportBase
 {
 
     /**

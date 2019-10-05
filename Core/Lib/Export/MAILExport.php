@@ -84,7 +84,7 @@ class MAILExport extends PDFExport
      */
     public function show(Response &$response)
     {
-        $fileName = 'Mail_' . time() . '.pdf';
+        $fileName = $this->getFileName(). '_mail_' . time() . '.pdf';
         $filePath = \FS_FOLDER . '/MyFiles/' . $fileName;
         file_put_contents($filePath, $this->getDoc());
 

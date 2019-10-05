@@ -151,13 +151,14 @@ class ExportManager
      * Create a new doc and set headers.
      *
      * @param string $option
+     * @param string $title
      */
-    public function newDoc($option)
+    public function newDoc(string $option, string $title = '')
     {
         /// calls to the appropiate engine to generate the doc
         $className = $this->getExportClassName($option);
         static::$engine = new $className();
-        static::$engine->newDoc();
+        static::$engine->newDoc($title);
         if (!empty($this->orientation)) {
             static::$engine->setOrientation($this->orientation);
         }

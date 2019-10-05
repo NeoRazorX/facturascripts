@@ -35,7 +35,7 @@ use FacturaScripts\Dinamic\Model\Pais;
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
-class PDFDocument extends PDFCore
+abstract class PDFDocument extends PDFCore
 {
 
     /**

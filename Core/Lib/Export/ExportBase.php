@@ -25,46 +25,73 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-interface ExportInterface
+abstract class ExportBase
 {
+
+    /**
+     *
+     * @var string
+     */
+    private $fileName;
 
     /**
      * Adds a new page with the document data.
      */
-    public function addBusinessDocPage($model): bool;
+    abstract public function addBusinessDocPage($model): bool;
 
     /**
      * Adds a new page with a table listing the models data.
      */
-    public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool;
+    abstract public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool;
 
     /**
      * Adds a new page with the model data.
      */
-    public function addModelPage($model, $columns, $title = ''): bool;
+    abstract public function addModelPage($model, $columns, $title = ''): bool;
 
     /**
      * Adds a new page with the table.
      */
-    public function addTablePage($headers, $rows): bool;
+    abstract public function addTablePage($headers, $rows): bool;
 
     /**
      * Return the full document.
      */
-    public function getDoc();
+    abstract public function getDoc();
 
     /**
      * Blank document.
      */
-    public function newDoc();
+    abstract public function newDoc(string $title);
 
     /**
      * Sets default orientation.
      */
-    public function setOrientation(string $orientation);
+    abstract public function setOrientation(string $orientation);
 
     /**
      * Set headers and output document content to response.
      */
-    public function show(Response &$response);
+    abstract public function show(Response &$response);
+
+    /**
+     * 
+     * @return string
+     */
+    public function getFileName(): string
+    {
+        return $this->fileName;
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @param bool   $force
+     */
+    public function setFileName(string $name, bool $force = false)
+    {
+        if (empty($this->fileName) || $force) {
+            $this->fileName = str_replace([' ', '"', "'"], ['_', '_', '_'], $name);
+        }
+    }
 }

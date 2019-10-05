@@ -32,7 +32,7 @@ use XLSXWriter;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class XLSExport implements ExportInterface
+class XLSExport extends ExportBase
 {
 
     const LIST_LIMIT = 1000;
@@ -118,6 +118,8 @@ class XLSExport implements ExportInterface
      */
     public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
     {
+        $this->setFileName($title);
+
         /// Get the columns
         $tableCols = [];
         $sheetHeaders = [];
@@ -194,9 +196,12 @@ class XLSExport implements ExportInterface
 
     /**
      * Blank document.
+     * 
+     * @param string $title
      */
-    public function newDoc()
+    public function newDoc(string $title)
     {
+        $this->setFileName($title);
         $this->writer = new XLSXWriter();
         $this->writer->setAuthor('FacturaScripts');
     }
@@ -218,7 +223,7 @@ class XLSExport implements ExportInterface
     public function show(Response &$response)
     {
         $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=doc.xlsx');
+        $response->headers->set('Content-Disposition', 'attachment;filename=' . $this->getFileName() . '.xlsx');
         $response->setContent($this->getDoc());
     }
 

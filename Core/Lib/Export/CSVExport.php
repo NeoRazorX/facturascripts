@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class CSVExport implements ExportInterface
+class CSVExport extends ExportBase
 {
 
     const LIST_LIMIT = 1000;
@@ -93,6 +93,8 @@ class CSVExport implements ExportInterface
      */
     public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
     {
+        $this->setFileName($title);
+
         $tableCols = [];
         $sheetHeaders = [];
         $tableData = [];
@@ -216,10 +218,13 @@ class CSVExport implements ExportInterface
 
     /**
      * Blank document.
+     * 
+     * @param string $title
      */
-    public function newDoc()
+    public function newDoc(string $title)
     {
         $this->csv = [];
+        $this->setFileName($title);
     }
 
     /**
@@ -261,7 +266,7 @@ class CSVExport implements ExportInterface
     public function show(Response &$response)
     {
         $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=doc.csv');
+        $response->headers->set('Content-Disposition', 'attachment;filename=' . $this->getFileName() . '.csv');
         $response->setContent($this->getDoc());
     }
 
