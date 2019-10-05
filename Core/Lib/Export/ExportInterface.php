@@ -18,9 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\ModelClass;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -33,44 +30,26 @@ interface ExportInterface
 
     /**
      * Adds a new page with the document data.
-     *
-     * @param BusinessDocument $model
      */
-    public function generateBusinessDocPage($model);
+    public function addBusinessDocPage($model): bool;
 
     /**
      * Adds a new page with a table listing the models data.
-     *
-     * @param ModelClass      $model
-     * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param array           $columns
-     * @param string          $title
      */
-    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '');
+    public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool;
 
     /**
      * Adds a new page with the model data.
-     *
-     * @param ModelClass $model
-     * @param array      $columns
-     * @param string     $title
      */
-    public function generateModelPage($model, $columns, $title = '');
+    public function addModelPage($model, $columns, $title = ''): bool;
 
     /**
      * Adds a new page with the table.
-     *
-     * @param array $headers
-     * @param array $rows
      */
-    public function generateTablePage($headers, $rows);
+    public function addTablePage($headers, $rows): bool;
 
     /**
      * Return the full document.
-     *
-     * @return mixed
      */
     public function getDoc();
 
@@ -78,18 +57,14 @@ interface ExportInterface
      * Blank document.
      */
     public function newDoc();
-    
+
     /**
      * Sets default orientation.
-     * 
-     * @param string $orientation
      */
     public function setOrientation(string $orientation);
 
     /**
      * Set headers and output document content to response.
-     *
-     * @param Response $response
      */
     public function show(Response &$response);
 }

@@ -109,29 +109,6 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
-     * Run the controller after actions
-     *
-     * @param string $action
-     */
-    protected function execAfterAction($action)
-    {
-        switch ($action) {
-            case 'export':
-                $this->setTemplate(false);
-                $this->exportManager->newDoc($this->request->get('option'));
-                foreach ($this->views as $selectedView) {
-                    $selectedView->export($this->exportManager);
-                    break;
-                }
-                $this->exportManager->show($this->response);
-                break;
-
-            default:
-                parent::execAfterAction($action);
-        }
-    }
-
-    /**
      * 
      * @return array
      */

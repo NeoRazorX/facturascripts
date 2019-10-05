@@ -45,7 +45,7 @@ class AccountingPlanExport
         $rows = array_merge($this->getAccountsData($code), $this->getSubaccountsData($code));
 
         $csvExport = new CSVExport();
-        $csvExport->generateTablePage($columns, $rows);
+        $csvExport->addTablePage($columns, $rows);
         return $csvExport->getDoc();
     }
 

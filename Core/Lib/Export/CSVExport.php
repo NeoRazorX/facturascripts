@@ -24,8 +24,7 @@ use FacturaScripts\Core\Model\Base\ModelClass;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class to export to CSV
- * Follow the XLSExport style to have a more uniform code
+ * Class to export data to CSV format.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -59,8 +58,10 @@ class CSVExport implements ExportInterface
      * Adds a new page with the document data.
      *
      * @param BusinessDocument $model
+     *
+     * @return bool
      */
-    public function generateBusinessDocPage($model)
+    public function addBusinessDocPage($model): bool
     {
         $tableData = [];
         foreach ((array) $model as $key => $value) {
@@ -73,6 +74,9 @@ class CSVExport implements ExportInterface
         }
 
         $this->writeSheet($tableData, ['key' => 'string', 'value' => 'string']);
+
+        /// do not continue with export
+        return false;
     }
 
     /**
@@ -84,8 +88,10 @@ class CSVExport implements ExportInterface
      * @param int             $offset
      * @param array           $columns
      * @param string          $title
+     *
+     * @return bool
      */
-    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
+    public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
     {
         $tableCols = [];
         $sheetHeaders = [];
@@ -113,6 +119,9 @@ class CSVExport implements ExportInterface
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
+
+        /// do not continue with export
+        return false;
     }
 
     /**
@@ -121,8 +130,10 @@ class CSVExport implements ExportInterface
      * @param ModelClass $model
      * @param array      $columns
      * @param string     $title
+     *
+     * @return bool
      */
-    public function generateModelPage($model, $columns, $title = '')
+    public function addModelPage($model, $columns, $title = ''): bool
     {
         $tableData = [];
         foreach ((array) $model as $key => $value) {
@@ -135,6 +146,9 @@ class CSVExport implements ExportInterface
         }
 
         $this->writeSheet($tableData, ['key' => 'string', 'value' => 'string']);
+
+        /// do not continue with export
+        return false;
     }
 
     /**
@@ -142,8 +156,10 @@ class CSVExport implements ExportInterface
      *
      * @param array $headers
      * @param array $rows
+     *
+     * @return bool
      */
-    public function generateTablePage($headers, $rows)
+    public function addTablePage($headers, $rows): bool
     {
         /// fix headers
         foreach ($headers as $key => $value) {
@@ -163,6 +179,9 @@ class CSVExport implements ExportInterface
             $body[] = \implode($this->separator, $row);
         }
         $this->csv[] = \implode(PHP_EOL, $body);
+
+        /// do not continue with export
+        return false;
     }
 
     /**

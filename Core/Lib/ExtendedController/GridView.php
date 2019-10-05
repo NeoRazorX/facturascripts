@@ -91,10 +91,15 @@ class GridView extends EditView
     /**
      * 
      * @param ExportManager $exportManager
+     *
+     * @return bool
      */
-    public function export(&$exportManager)
+    public function export(&$exportManager): bool
     {
-        parent::export($exportManager);
+        if (!parent::export($exportManager)) {
+            return false;
+        }
+
         $headers = $this->gridData['headers'];
         $formattedRows = [];
         foreach ($this->gridData['rows'] as $row) {
@@ -104,7 +109,7 @@ class GridView extends EditView
             }
             $formattedRows[] = array_combine($headers, $formattedRow);
         }
-        $exportManager->generateTablePage($headers, $formattedRows);
+        return $exportManager->addTablePage($headers, $formattedRows);
     }
 
     /**

@@ -155,7 +155,7 @@ class AccountingReports extends Controller
 
         foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);
-            $this->exportManager->generateTablePage($headers, $data);
+            $this->exportManager->addTablePage($headers, $data);
         }
 
         $this->exportManager->show($this->response);

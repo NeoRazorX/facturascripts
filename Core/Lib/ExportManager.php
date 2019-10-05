@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Export\ExportInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,11 +44,61 @@ class ExportManager
     protected static $options;
 
     /**
+     * Default document orientation.
+     *
+     * @var string
+     */
+    protected $orientation;
+
+    /**
      * ExportManager constructor.
      */
     public function __construct()
     {
         static::init();
+    }
+
+    /**
+     * Adds a new page with the document data.
+     *
+     * @param mixed $model
+     *
+     * @return bool
+     */
+    public function addBusinessDocPage($model): bool
+    {
+        return empty(static::$engine) ? false : static::$engine->addBusinessDocPage($model);
+    }
+
+    /**
+     * Adds a new page with a table listing the models data.
+     *
+     * @param mixed  $model
+     * @param array  $where
+     * @param array  $order
+     * @param int    $offset
+     * @param array  $columns
+     * @param string $title
+     *
+     * @return bool
+     */
+    public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
+    {
+        return empty(static::$engine) ? false : static::$engine->addListModelPage($model, $where, $order, $offset, $columns, $title);
+    }
+
+    /**
+     * Adds a new page with the model data.
+     *
+     * @param mixed  $model
+     * @param array  $columns
+     * @param string $title
+     *
+     * @return bool
+     */
+    public function addModelPage($model, $columns, $title = ''): bool
+    {
+        return empty(static::$engine) ? false : static::$engine->addModelPage($model, $columns, $title);
     }
 
     /**
@@ -66,63 +115,14 @@ class ExportManager
     }
 
     /**
-     * Returns default option.
-     *
-     * @return string
-     */
-    public function defaultOption()
-    {
-        foreach (array_keys(static::$options) as $key) {
-            return $key;
-        }
-
-        return '';
-    }
-
-    /**
-     * Adds a new page with the document data.
-     *
-     * @param mixed $model
-     */
-    public function generateBusinessDocPage($model)
-    {
-        static::$engine->generateBusinessDocPage($model);
-    }
-
-    /**
-     * Adds a new page with a table listing the models data.
-     *
-     * @param mixed           $model
-     * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param array           $columns
-     * @param string          $title
-     */
-    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
-    {
-        static::$engine->generateListModelPage($model, $where, $order, $offset, $columns, $title);
-    }
-
-    /**
-     * Adds a new page with the model data.
-     *
-     * @param mixed  $model
-     * @param array  $columns
-     * @param string $title
-     */
-    public function generateModelPage($model, $columns, $title = '')
-    {
-        static::$engine->generateModelPage($model, $columns, $title);
-    }
-
-    /**
      * Adds a new page with the table data.
      *
      * @param array $headers
      * @param array $rows
+     *
+     * @return bool
      */
-    public function generateTablePage($headers, $rows)
+    public function addTablePage($headers, $rows): bool
     {
         /// We need headers key to be equal to value
         $fixedHeaders = [];
@@ -130,7 +130,21 @@ class ExportManager
             $fixedHeaders[$value] = $value;
         }
 
-        static::$engine->generateTablePage($fixedHeaders, $rows);
+        return empty(static::$engine) ? false : static::$engine->addTablePage($fixedHeaders, $rows);
+    }
+
+    /**
+     * Returns default option.
+     *
+     * @return string
+     */
+    public static function defaultOption()
+    {
+        foreach (array_keys(static::$options) as $key) {
+            return $key;
+        }
+
+        return '';
     }
 
     /**
@@ -144,6 +158,9 @@ class ExportManager
         $className = $this->getExportClassName($option);
         static::$engine = new $className();
         static::$engine->newDoc();
+        if (!empty($this->orientation)) {
+            static::$engine->setOrientation($this->orientation);
+        }
     }
 
     /**
@@ -151,7 +168,7 @@ class ExportManager
      *
      * @return array
      */
-    public function options()
+    public static function options()
     {
         return static::$options;
     }
@@ -163,7 +180,7 @@ class ExportManager
      */
     public function setOrientation(string $orientation)
     {
-        static::$engine->setOrientation($orientation);
+        $this->orientation = $orientation;
     }
 
     /**
@@ -173,7 +190,9 @@ class ExportManager
      */
     public function show(Response &$response)
     {
-        static::$engine->show($response);
+        if (!empty(static::$engine)) {
+            static::$engine->show($response);
+        }
     }
 
     /**

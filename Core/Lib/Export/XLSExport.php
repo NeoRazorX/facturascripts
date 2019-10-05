@@ -71,8 +71,10 @@ class XLSExport implements ExportInterface
      * Adds a new page with the document data.
      *
      * @param BusinessDocument $model
+     *
+     * @return bool
      */
-    public function generateBusinessDocPage($model)
+    public function addBusinessDocPage($model): bool
     {
         $headers = [
             'reference' => $this->i18n->trans('reference'),
@@ -95,8 +97,11 @@ class XLSExport implements ExportInterface
                 'total' => $this->numberTools->format($line->pvptotal),
             ];
         }
-        $this->generateTablePage($headers, $tableData);
-        $this->generateModelPage($model, [], 'doc');
+        $this->addTablePage($headers, $tableData);
+        $this->addModelPage($model, [], 'doc');
+
+        /// do not continue with export
+        return false;
     }
 
     /**
@@ -108,8 +113,10 @@ class XLSExport implements ExportInterface
      * @param int             $offset
      * @param array           $columns
      * @param string          $title
+     *
+     * @return bool
      */
-    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
+    public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
     {
         /// Get the columns
         $tableCols = [];
@@ -131,6 +138,8 @@ class XLSExport implements ExportInterface
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
+
+        return true;
     }
 
     /**
@@ -139,8 +148,10 @@ class XLSExport implements ExportInterface
      * @param ModelClass $model
      * @param array      $columns
      * @param string     $title
+     *
+     * @return bool
      */
-    public function generateModelPage($model, $columns, $title = '')
+    public function addModelPage($model, $columns, $title = ''): bool
     {
         $tableData = [];
         foreach ((array) $model as $key => $value) {
@@ -150,6 +161,7 @@ class XLSExport implements ExportInterface
         }
 
         $this->writer->writeSheet($tableData, $title, ['key' => 'string', 'value' => 'string']);
+        return true;
     }
 
     /**
@@ -157,14 +169,17 @@ class XLSExport implements ExportInterface
      *
      * @param array $headers
      * @param array $rows
+     *
+     * @return bool
      */
-    public function generateTablePage($headers, $rows)
+    public function addTablePage($headers, $rows): bool
     {
         $this->writer->writeSheetRow('sheet1', $headers);
-
         foreach ($rows as $row) {
             $this->writer->writeSheetRow('sheet1', $row);
         }
+
+        return true;
     }
 
     /**

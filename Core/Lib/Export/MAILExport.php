@@ -39,12 +39,29 @@ class MAILExport extends PDFExport
     /**
      * 
      * @param BusinessDocument $model
+     *
+     * @return bool
      */
-    public function generateBusinessDocPage($model)
+    public function addBusinessDocPage($model): bool
     {
-        parent::generateBusinessDocPage($model);
         $this->sendParams['modelClassName'] = $model->modelClassName();
         $this->sendParams['modelCode'] = $model->primaryColumnValue();
+        return parent::addBusinessDocPage($model);
+    }
+
+    /**
+     * 
+     * @param ModelClass $model
+     * @param array      $columns
+     * @param string     $title
+     *
+     * @return bool
+     */
+    public function addModelPage($model, $columns, $title = ''): bool
+    {
+        $this->sendParams['modelClassName'] = $model->modelClassName();
+        $this->sendParams['modelCode'] = $model->primaryColumnValue();
+        return parent::addModelPage($model, $columns, $title);
     }
 
     /**
@@ -59,19 +76,6 @@ class MAILExport extends PDFExport
         }
 
         return $this->pdf->ezOutput();
-    }
-
-    /**
-     * 
-     * @param ModelClass $model
-     * @param array      $columns
-     * @param string     $title
-     */
-    public function generateModelPage($model, $columns, $title = '')
-    {
-        parent::generateModelPage($model, $columns, $title);
-        $this->sendParams['modelClassName'] = $model->modelClassName();
-        $this->sendParams['modelCode'] = $model->primaryColumnValue();
     }
 
     /**

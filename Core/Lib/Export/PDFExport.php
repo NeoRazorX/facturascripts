@@ -40,8 +40,10 @@ class PDFExport extends PDFDocument implements ExportInterface
      * Adds a new page with the document data.
      *
      * @param BusinessDocument $model
+     *
+     * @return bool
      */
-    public function generateBusinessDocPage($model)
+    public function addBusinessDocPage($model): bool
     {
         $this->format = $this->getDocumentFormat($model);
 
@@ -50,6 +52,9 @@ class PDFExport extends PDFDocument implements ExportInterface
         $this->insertBusinessDocHeader($model);
         $this->insertBusinessDocBody($model);
         $this->insertBusinessDocFooter($model);
+
+        /// do not continue with export
+        return false;
     }
 
     /**
@@ -61,8 +66,10 @@ class PDFExport extends PDFDocument implements ExportInterface
      * @param int             $offset
      * @param array           $columns
      * @param string          $title
+     *
+     * @return bool
      */
-    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
+    public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
     {
         $orientation = 'portrait';
         $tableCols = [];
@@ -98,6 +105,7 @@ class PDFExport extends PDFDocument implements ExportInterface
 
         $this->newLongTitles($longTitles, $tableColsTitle);
         $this->insertFooter();
+        return true;
     }
 
     /**
@@ -106,8 +114,10 @@ class PDFExport extends PDFDocument implements ExportInterface
      * @param ModelClass $model
      * @param array      $columns
      * @param string     $title
+     *
+     * @return bool
      */
-    public function generateModelPage($model, $columns, $title = '')
+    public function addModelPage($model, $columns, $title = ''): bool
     {
         $this->newPage();
         $this->insertHeader();
@@ -137,6 +147,7 @@ class PDFExport extends PDFDocument implements ExportInterface
 
         $this->insertParalellTable($tableDataAux, '', $tableOptions);
         $this->insertFooter();
+        return true;
     }
 
     /**
@@ -144,8 +155,10 @@ class PDFExport extends PDFDocument implements ExportInterface
      *
      * @param array $headers
      * @param array $rows
+     *
+     * @return bool
      */
-    public function generateTablePage($headers, $rows)
+    public function addTablePage($headers, $rows): bool
     {
         $orientation = count($headers) > 5 ? 'landscape' : 'portrait';
         $this->newPage($orientation);
@@ -154,6 +167,7 @@ class PDFExport extends PDFDocument implements ExportInterface
         $this->insertHeader();
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
         $this->insertFooter();
+        return true;
     }
 
     /**
