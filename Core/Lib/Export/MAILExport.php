@@ -66,25 +66,11 @@ class MAILExport extends PDFExport
 
     /**
      * 
-     * @return mixed
-     */
-    public function getDoc()
-    {
-        if ($this->pdf === null) {
-            $this->newPage();
-            $this->pdf->ezText('');
-        }
-
-        return $this->pdf->ezOutput();
-    }
-
-    /**
-     * 
      * @param Response $response
      */
     public function show(Response &$response)
     {
-        $fileName = $this->getFileName(). '_mail_' . time() . '.pdf';
+        $fileName = $this->getFileName() . '_mail_' . time() . '.pdf';
         $filePath = \FS_FOLDER . '/MyFiles/' . $fileName;
         file_put_contents($filePath, $this->getDoc());
 

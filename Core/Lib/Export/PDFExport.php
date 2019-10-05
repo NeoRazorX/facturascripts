@@ -184,7 +184,7 @@ class PDFExport extends PDFDocument
             $this->pdf->ezText('');
         }
 
-        return $this->pdf->ezStream(['Content-Disposition' => $this->getFileName() . '.pdf']);
+        return $this->pdf->ezOutput();
     }
 
     /**

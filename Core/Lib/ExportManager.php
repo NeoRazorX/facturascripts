@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Lib\Export\ExportInterface;
+use FacturaScripts\Core\Lib\Export\ExportBase;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -32,7 +32,7 @@ class ExportManager
     /**
      * The selected engine/class to export.
      *
-     * @var ExportInterface
+     * @var ExportBase
      */
     protected static $engine;
 
