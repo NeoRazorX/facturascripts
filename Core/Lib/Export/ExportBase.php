@@ -99,7 +99,7 @@ abstract class ExportBase
             }
 
             if (!$col->hidden()) {
-                $titles[$col->widget->fieldname] = $this->i18n->trans($col->title);
+                $titles[$col->widget->fieldname] = $this->toolBox()->i18n()->trans($col->title);
             }
         }
 
