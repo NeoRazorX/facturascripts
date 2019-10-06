@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -76,9 +78,128 @@ abstract class ExportBase
 
     /**
      * 
+     * @param array $columns
+     *
+     * @return array
+     */
+    protected function getColumnTitles($columns): array
+    {
+        $titles = [];
+        foreach ($columns as $col) {
+            if (is_string($col)) {
+                $titles[$col] = $col;
+                continue;
+            }
+
+            if (isset($col->columns)) {
+                foreach ($this->getColumnTitles($col->columns) as $key2 => $col2) {
+                    $titles[$key2] = $col2;
+                }
+                continue;
+            }
+
+            if (!$col->hidden()) {
+                $titles[$col->widget->fieldname] = $this->i18n->trans($col->title);
+            }
+        }
+
+        return $titles;
+    }
+
+    /**
+     * 
+     * @param array $columns
+     *
+     * @return array
+     */
+    protected function getColumnWidgets($columns): array
+    {
+        $widgets = [];
+        foreach ($columns as $col) {
+            if (is_string($col)) {
+                continue;
+            }
+
+            if (isset($col->columns)) {
+                foreach ($this->getColumnWidgets($col->columns) as $key2 => $col2) {
+                    $widgets[$key2] = $col2;
+                }
+                continue;
+            }
+
+            if (!$col->hidden()) {
+                $widgets[$col->widget->fieldname] = $col->widget;
+            }
+        }
+
+        return $widgets;
+    }
+
+    /**
+     * 
+     * @param ModelClass[] $cursor
+     * @param array        $columns
+     *
+     * @return array
+     */
+    protected function getCursorData($cursor, $columns): array
+    {
+        $data = [];
+        $widgets = $this->getColumnWidgets($columns);
+        foreach ($cursor as $num => $row) {
+            foreach ($widgets as $key => $widget) {
+                $data[$num][$key] = $widget->plainText($row);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * 
+     * @param ModelClass[] $cursor
+     * @param array        $fields
+     *
+     * @return array
+     */
+    protected function getCursorRawData($cursor, $fields = []): array
+    {
+        $data = [];
+        foreach ($cursor as $num => $row) {
+            if (empty($fields)) {
+                $fields = array_keys($row->getModelFields());
+            }
+
+            foreach ($fields as $key) {
+                $value = (isset($row->{$key}) && null !== $row->{$key}) ? $row->{$key} : '';
+                $data[$num][$key] = $value;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * 
+     * @param ModelClass $model
+     *
+     * @return array
+     */
+    protected function getModelFields($model): array
+    {
+        $fields = [];
+        foreach (array_keys($model->getModelFields()) as $key) {
+            $fields[$key] = $key;
+        }
+
+        return $fields;
+    }
+
+    /**
+     * 
      * @return string
      */
-    public function getFileName(): string
+    protected function getFileName(): string
     {
         return $this->fileName;
     }
@@ -86,12 +207,20 @@ abstract class ExportBase
     /**
      * 
      * @param string $name
-     * @param bool   $force
      */
-    public function setFileName(string $name, bool $force = false)
+    protected function setFileName(string $name)
     {
-        if (empty($this->fileName) || $force) {
+        if (empty($this->fileName)) {
             $this->fileName = str_replace([' ', '"', "'"], ['_', '_', '_'], $name);
         }
+    }
+
+    /**
+     * 
+     * @return ToolBox
+     */
+    protected function toolBox()
+    {
+        return new ToolBox();
     }
 }
