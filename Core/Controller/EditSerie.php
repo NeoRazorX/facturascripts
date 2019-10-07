@@ -60,6 +60,19 @@ class EditSerie extends EditController
      * 
      * @param string $viewName
      */
+    protected function createFormatView($viewName = 'ListFormatoDocumento')
+    {
+        $this->addListView($viewName, 'FormatoDocumento', 'printing-format', 'fas fa-print');
+        $this->views[$viewName]->addOrderBy(['tipodoc'], 'document-type', 2);
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('serie');
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
     protected function createSequenceView($viewName = 'ListSecuenciaDocumento')
     {
         $this->addListView($viewName, 'SecuenciaDocumento', 'document-sequences', 'fas fa-code');
@@ -78,6 +91,7 @@ class EditSerie extends EditController
         $this->setTabsPosition('bottom');
 
         $this->createSequenceView();
+        $this->createFormatView();
     }
 
     /**
@@ -89,6 +103,7 @@ class EditSerie extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
+            case 'ListFormatoDocumento':
             case 'ListSecuenciaDocumento':
                 $codserie = $this->getViewModelValue($this->getMainViewName(), 'codserie');
                 $where = [new DataBaseWhere('codserie', $codserie)];
