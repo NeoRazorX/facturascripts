@@ -53,7 +53,7 @@
                         <a class="nav-link{{ active }}" data-toggle="pill" href="#v-pills-{{ key }}" role="tab" aria-controls="v-pills-{{ key }}" aria-expanded="true">
                             <span class='badge badge-secondary float-right'>{{ result.results | length }}</span>
                             <i class="{{ result.icon }} fa-fw"></i>
-                            {{ i18n.trans(result.title) | capitalize }}
+                            {{ i18n.trans(result.title) }}
                         </a>
                     {% endfor %}
                 </div>

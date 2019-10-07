@@ -91,6 +91,8 @@ abstract class EditController extends PanelController
                 $action = $this->request->request->get('action', '');
                 if ('' === $action && !empty($code) && !$view->model->exists()) {
                     $this->toolBox()->i18nLog()->warning('record-not-found');
+                } else {
+                    $this->title .= ' ' . $view->model->primaryDescription();
                 }
                 break;
         }

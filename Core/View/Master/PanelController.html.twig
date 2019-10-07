@@ -38,7 +38,7 @@
                             </li>
                         {% endif %}
                         <li class="breadcrumb-item">
-                            <a href="{{ firstView.model.url('list') }}">{{ fsc.title }}</a>
+                            <a href="{{ firstView.model.url('list') }}">{{ i18n.trans(pageData.title) }}</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
                             {{ firstView.model.primaryDescription() | raw }}
@@ -107,7 +107,7 @@
             {# -- Top right text -- #}
             <div class="col-md-4 text-right">
                 <h1 class="h4 d-none d-md-inline-block">
-                    {{ fsc.title }}<br/>
+                    {{ i18n.trans(pageData.title) }}<br/>
                     {% if fsc.hasData %}
                         <small class="text-info">{{ firstView.model.primaryDescription() | raw }}</small>
                     {% else %}

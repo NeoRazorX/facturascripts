@@ -289,6 +289,7 @@ abstract class PDFCore extends ExportBase
             $this->pdf = new Cezpdf('a4', $orientation);
             $this->pdf->addInfo('Creator', 'FacturaScripts');
             $this->pdf->addInfo('Producer', 'FacturaScripts');
+            $this->pdf->addInfo('Title', $this->getFileName());
             $this->pdf->tempPath = \FS_FOLDER . '/MyFiles/Cache';
 
             $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
