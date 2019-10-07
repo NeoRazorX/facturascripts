@@ -105,12 +105,15 @@ abstract class PDFDocument extends PDFCore
     protected function getDocumentFormat($model)
     {
         $documentFormat = new FormatoDocumento();
-        $where = [
-            new DataBaseWhere('tipodoc', $model->modelClassName()),
-            new DataBaseWhere('idempresa', $model->idempresa)
-        ];
-        foreach ($documentFormat->all($where, ['codserie' => 'DESC']) as $format) {
-            if ($format->codserie == $model->codserie || null === $format->codserie) {
+        $where = [new DataBaseWhere('idempresa', $model->idempresa)];
+        foreach ($documentFormat->all($where, ['tipodoc' => 'DESC', 'codserie' => 'DESC']) as $format) {
+            if ($format->tipodoc === $model->modelClassName() && $format->codserie === $model->codserie) {
+                return $format;
+            } elseif ($format->tipodoc === $model->modelClassName() && $format->codserie === null) {
+                return $format;
+            } elseif ($format->tipodoc === null && $format->codserie === $model->codserie) {
+                return $format;
+            } elseif ($format->tipodoc === null && $format->codserie === null) {
                 return $format;
             }
         }

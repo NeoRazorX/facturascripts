@@ -53,6 +53,10 @@ class ListFormatoDocumento extends ListController
         $this->addSearchFields($viewName, ['titulo', 'texto']);
         $this->addOrderBy($viewName, ['id'], 'id');
         $this->addOrderBy($viewName, ['titulo'], 'title');
+
+        /// Filters
+        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
     }
 
     /**
@@ -68,8 +72,8 @@ class ListFormatoDocumento extends ListController
         $this->addOrderBy($viewName, ['numero'], 'number');
 
         /// Filters
-        $warehouses = $this->codeModel->all('empresas', 'idempresa', 'nombre');
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $warehouses);
+        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
 
         $exercises = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
         $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $exercises);

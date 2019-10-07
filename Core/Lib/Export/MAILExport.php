@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Dinamic\Lib\Export\PDFExport as ParentClass;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -27,7 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class MAILExport extends PDFExport
+class MAILExport extends ParentClass
 {
 
     /**
