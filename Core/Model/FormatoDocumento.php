@@ -51,6 +51,12 @@ class FormatoDocumento extends Base\ModelClass
     public $idempresa;
 
     /**
+     *
+     * @var int
+     */
+    public $idlogo;
+
+    /**
      * 
      *
      * @var string

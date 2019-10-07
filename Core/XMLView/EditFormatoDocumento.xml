@@ -50,7 +50,12 @@
             <column name="title" order="140" >
                 <widget type="text" fieldname="titulo" />
             </column>
-            <column name="additional-text" numcolumns="12" order="150">
+            <column name="logo" titleurl="ListAttachedFile" order="150">
+                <widget type="select" fieldname="idlogo" onclick="EditAttachedFile">
+                    <values source="attached_files" fieldcode="idfile" fieldtitle="filename"></values>
+                </widget>
+            </column>
+            <column name="additional-text" numcolumns="12" order="160">
                 <widget type="textarea" fieldname="texto" />
             </column>
         </group>

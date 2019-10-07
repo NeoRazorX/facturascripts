@@ -397,7 +397,8 @@ abstract class PDFDocument extends PDFCore
             $lineText = $company->cifnif . ' - ' . $address . "\n" . $contactData;
             $this->pdf->ezText($lineText, self::FONT_SIZE, ['justification' => 'right']);
 
-            $this->insertCompanyLogo($company->idlogo);
+            $idlogo = $this->format->idlogo ?? $company->idlogo;
+            $this->insertCompanyLogo($idlogo);
         }
     }
 }
