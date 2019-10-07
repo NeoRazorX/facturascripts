@@ -97,31 +97,6 @@ abstract class PDFDocument extends PDFCore
     }
 
     /**
-     * 
-     * @param BusinessDocument $model
-     *
-     * @return FormatoDocumento
-     */
-    protected function getDocumentFormat($model)
-    {
-        $documentFormat = new FormatoDocumento();
-        $where = [new DataBaseWhere('idempresa', $model->idempresa)];
-        foreach ($documentFormat->all($where, ['tipodoc' => 'DESC', 'codserie' => 'DESC']) as $format) {
-            if ($format->tipodoc === $model->modelClassName() && $format->codserie === $model->codserie) {
-                return $format;
-            } elseif ($format->tipodoc === $model->modelClassName() && $format->codserie === null) {
-                return $format;
-            } elseif ($format->tipodoc === null && $format->codserie === $model->codserie) {
-                return $format;
-            } elseif ($format->tipodoc === null && $format->codserie === null) {
-                return $format;
-            }
-        }
-
-        return $documentFormat;
-    }
-
-    /**
      * Generate the body of the page with the model data.
      *
      * @param BusinessDocument $model

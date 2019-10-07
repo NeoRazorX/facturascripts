@@ -18,8 +18,11 @@
  */
 namespace FacturaScripts\Core\Lib\Export;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -177,6 +180,31 @@ abstract class ExportBase
         }
 
         return $data;
+    }
+
+    /**
+     * 
+     * @param BusinessDocument $model
+     *
+     * @return FormatoDocumento
+     */
+    protected function getDocumentFormat($model)
+    {
+        $documentFormat = new FormatoDocumento();
+        $where = [new DataBaseWhere('idempresa', $model->idempresa)];
+        foreach ($documentFormat->all($where, ['tipodoc' => 'DESC', 'codserie' => 'DESC']) as $format) {
+            if ($format->tipodoc === $model->modelClassName() && $format->codserie === $model->codserie) {
+                return $format;
+            } elseif ($format->tipodoc === $model->modelClassName() && $format->codserie === null) {
+                return $format;
+            } elseif ($format->tipodoc === null && $format->codserie === $model->codserie) {
+                return $format;
+            } elseif ($format->tipodoc === null && $format->codserie === null) {
+                return $format;
+            }
+        }
+
+        return $documentFormat;
     }
 
     /**

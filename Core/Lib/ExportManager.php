@@ -41,7 +41,7 @@ class ExportManager
      *
      * @var array
      */
-    protected static $options;
+    protected static $options = [];
 
     /**
      * Default document orientation.
@@ -49,6 +49,13 @@ class ExportManager
      * @var string
      */
     protected $orientation;
+
+    /**
+     * Tools list.
+     *
+     * @var array
+     */
+    protected static $tools = [];
 
     /**
      * ExportManager constructor.
@@ -115,6 +122,20 @@ class ExportManager
     }
 
     /**
+     * Adds a new tool.
+     *
+     * @param string $key
+     * @param string $link
+     * @param string $description
+     * @param string $icon
+     */
+    public static function addTool($key, $link, $description, $icon)
+    {
+        static::init();
+        static::$tools[$key] = ['link' => $link, 'description' => $description, 'icon' => $icon];
+    }
+
+    /**
      * Adds a new page with the table data.
      *
      * @param array $headers
@@ -169,7 +190,7 @@ class ExportManager
      *
      * @return array
      */
-    public static function options()
+    public static function options(): array
     {
         return static::$options;
     }
@@ -197,6 +218,15 @@ class ExportManager
     }
 
     /**
+     * 
+     * @return array
+     */
+    public static function tools(): array
+    {
+        return self::$tools;
+    }
+
+    /**
      * Returns the full class name.
      *
      * @param string $option
@@ -214,7 +244,7 @@ class ExportManager
      */
     protected static function init()
     {
-        if (static::$options === null) {
+        if (empty(static::$options)) {
             static::$options = [
                 'PDF' => ['description' => 'print', 'icon' => 'fas fa-print'],
                 'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fas fa-file-excel'],

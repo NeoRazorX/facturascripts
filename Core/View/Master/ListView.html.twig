@@ -263,6 +263,15 @@
                     {{ i18n.trans(option.description) }}
                 </a>
             {% endfor %}
+            {% if fsc.exportManager.tools is not empty %}
+                <div class="dropdown-divider"></div>
+                {% for key, tool in fsc.exportManager.tools() %}
+                    <a href="{{ tool.link }}" class="dropdown-item">
+                        <i class="{{ tool.icon }} fa-fw" aria-hidden="true"></i>
+                        {{ i18n.trans(tool.description) }}
+                    </a>
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
 {% endmacro %}
