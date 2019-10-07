@@ -138,7 +138,7 @@ abstract class PDFDocument extends PDFCore
         $tableData = [];
         foreach ($model->getlines() as $line) {
             $tableData[] = [
-                'reference' => Utils::fixHtml($line->referencia . " - " . $line->descripcion),
+                'reference' => empty($line->referencia) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->referencia . " - " . $line->descripcion),
                 'quantity' => $this->numberTools->format($line->cantidad),
                 'price' => $this->numberTools->format($line->pvpunitario),
                 'discount' => $this->numberTools->format($line->dtopor),
@@ -382,7 +382,7 @@ abstract class PDFDocument extends PDFCore
         $code = $idempresa ?? AppSettings::get('default', 'idempresa', '');
         $company = new Empresa();
         if ($company->loadFromCode($code)) {
-            $this->pdf->ezText($company->nombre, self::FONT_SIZE + 9, ['justification' => 'right']);
+            $this->pdf->ezText($company->nombre, self::FONT_SIZE + 7, ['justification' => 'right']);
             $address = $company->direccion;
             $address .= empty($company->codpostal) ? '' : "\n" . $company->codpostal . ', ';
             $address .= empty($company->ciudad) ? '' : $company->ciudad;
@@ -392,7 +392,7 @@ abstract class PDFDocument extends PDFCore
             $contactData .= empty($company->web) ? '' : $company->web . "\n";
             $contactData .= empty($company->email) ? '' : $company->email;
             $lineText = $company->cifnif . ' - ' . $address . "\n" . $contactData;
-            $this->pdf->ezText($lineText . "\n", self::FONT_SIZE, ['justification' => 'right']);
+            $this->pdf->ezText($lineText, self::FONT_SIZE, ['justification' => 'right']);
 
             $this->insertCompanyLogo($company->idlogo);
         }
