@@ -90,12 +90,13 @@ class XLSExport extends ExportBase
         $this->setFileName($title);
 
         $headers = $this->getColumnHeaders($columns);
+        $titles = $this->getColumnTitles($columns);
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
             $this->writer->writeSheet([], $title, $headers);
         }
         while (!empty($cursor)) {
-            $rows = $this->getCursorData($cursor, $columns);
+            $rows = $this->getCursorRawData($cursor, array_keys($titles));
             $this->writer->writeSheet($rows, $title, $headers);
 
             /// Advance within the results
@@ -118,7 +119,8 @@ class XLSExport extends ExportBase
     public function addModelPage($model, $columns, $title = ''): bool
     {
         $headers = $this->getColumnHeaders($columns);
-        $rows = $this->getCursorData([$model], $columns);
+        $titles = $this->getColumnTitles($columns);
+        $rows = $this->getCursorRawData([$model], array_keys($titles));
         $this->writer->writeSheet($rows, $title, $headers);
         return true;
     }
