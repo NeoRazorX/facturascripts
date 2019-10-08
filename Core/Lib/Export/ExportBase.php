@@ -85,6 +85,36 @@ abstract class ExportBase
      *
      * @return array
      */
+    protected function getColumnAlignments($columns): array
+    {
+        $alignments = [];
+        foreach ($columns as $col) {
+            if (is_string($col)) {
+                $alignments[$col] = 'left';
+                continue;
+            }
+
+            if (isset($col->columns)) {
+                foreach ($this->getColumnAlignments($col->columns) as $key2 => $col2) {
+                    $alignments[$key2] = $col2;
+                }
+                continue;
+            }
+
+            if (!$col->hidden()) {
+                $alignments[$col->widget->fieldname] = $col->display;
+            }
+        }
+
+        return $alignments;
+    }
+
+    /**
+     * 
+     * @param array $columns
+     *
+     * @return array
+     */
     protected function getColumnTitles($columns): array
     {
         $titles = [];
@@ -205,6 +235,39 @@ abstract class ExportBase
         }
 
         return $documentFormat;
+    }
+
+    /**
+     * 
+     * @param ModelClass $model
+     * @param array      $columns
+     *
+     * @return array
+     */
+    protected function getModelColumnsData($model, $columns): array
+    {
+        $data = [];
+        foreach ($columns as $col) {
+            if (is_string($col)) {
+                continue;
+            }
+
+            if (isset($col->columns)) {
+                foreach ($this->getModelColumnsData($model, $col->columns) as $key2 => $col2) {
+                    $data[$key2] = $col2;
+                }
+                continue;
+            }
+
+            if (!$col->hidden()) {
+                $data[$col->widget->fieldname] = [
+                    'title' => $this->toolBox()->i18n()->trans($col->title),
+                    'value' => $col->widget->plainText($model)
+                ];
+            }
+        }
+
+        return $data;
     }
 
     /**
