@@ -194,6 +194,14 @@ class Translator
             'PedidoProveedor' => 'supplier-order',
             'PresupuestoCliente' => 'customer-estimation',
             'PresupuestoProveedor' => 'supplier-estimation',
+            'AlbaranCliente-min' => 'delivery-note',
+            'AlbaranProveedor-min' => 'delivery-note',
+            'FacturaCliente-min' => 'invoice',
+            'FacturaProveedor-min' => 'invoice',
+            'PedidoCliente-min' => 'order',
+            'PedidoProveedor-min' => 'order',
+            'PresupuestoCliente-min' => 'estimation',
+            'PresupuestoProveedor-min' => 'estimation',
         ];
 
         return isset($specialKeys[$txt]) ? $specialKeys[$txt] : $txt;

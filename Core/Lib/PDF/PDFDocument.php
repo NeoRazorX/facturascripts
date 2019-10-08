@@ -205,7 +205,7 @@ abstract class PDFDocument extends PDFCore
     protected function insertBusinessDocHeader($model)
     {
         $headerData = [
-            'title' => $this->i18n->trans('delivery-note'),
+            'title' => $this->i18n->trans($model->modelClassName() . '-min'),
             'subject' => $this->i18n->trans('customer'),
             'fieldName' => 'nombrecliente'
         ];
@@ -213,23 +213,6 @@ abstract class PDFDocument extends PDFCore
         if (isset($model->codproveedor)) {
             $headerData['subject'] = $this->i18n->trans('supplier');
             $headerData['fieldName'] = 'nombre';
-        }
-
-        switch ($model->modelClassName()) {
-            case 'FacturaProveedor':
-            case 'FacturaCliente':
-                $headerData['title'] = $this->i18n->trans('invoice');
-                break;
-
-            case 'PedidoProveedor':
-            case 'PedidoCliente':
-                $headerData['title'] = $this->i18n->trans('order');
-                break;
-
-            case 'PresupuestoProveedor':
-            case 'PresupuestoCliente':
-                $headerData['title'] = $this->i18n->trans('estimation');
-                break;
         }
 
         if (!empty($this->format->titulo)) {
