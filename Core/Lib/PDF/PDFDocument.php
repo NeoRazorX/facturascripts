@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Lib\PDF;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Dinamic\Model\AttachedFile;

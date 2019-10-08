@@ -89,7 +89,7 @@
             {% for parentDoc in currentView.model.parentDocuments() %}
                 <div class="col">
                     <div class="alert alert-warning text-center">
-                        <i class="fas fa-backward fa-fw" aria-hidden="true"></i> {{ parentDoc.modelClassName() }}
+                        <i class="fas fa-backward fa-fw" aria-hidden="true"></i> {{ i18n.trans(parentDoc.modelClassName()) }}
                         <a href="{{ parentDoc.url() }}">{{ parentDoc.primaryDescription() }}</a>
                     </div>
                 </div>
@@ -125,7 +125,7 @@
             {% for childrenDoc in currentView.model.childrenDocuments() %}
                 <div class="col">
                     <div class="alert alert-success text-center">
-                        <i class="fas fa-forward fa-fw" aria-hidden="true"></i> {{ childrenDoc.modelClassName() }}
+                        <i class="fas fa-forward fa-fw" aria-hidden="true"></i> {{ i18n.trans(childrenDoc.modelClassName()) }}
                         <a href="{{ childrenDoc.url() }}">{{ childrenDoc.primaryDescription() }}</a>
                     </div>
                 </div>
