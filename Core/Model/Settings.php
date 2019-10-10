@@ -43,11 +43,22 @@ class Settings extends Base\ModelClass
      */
     public $properties;
 
+    /**
+     * 
+     * @param string $name
+     *
+     * @return mixed
+     */
     public function __get($name)
     {
         return isset($this->properties[$name]) ? $this->properties[$name] : null;
     }
 
+    /**
+     * 
+     * @param string $name
+     * @param mixed  $value
+     */
     public function __set($name, $value)
     {
         $this->properties[$name] = $value;
@@ -92,6 +103,18 @@ class Settings extends Base\ModelClass
     public static function tableName()
     {
         return 'settings';
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'Edit'): string
+    {
+        return parent::url($type, $list);
     }
 
     /**
