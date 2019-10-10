@@ -87,13 +87,13 @@ class WidgetSelect extends BaseWidget
             if (isset($child['source'])) {
                 $this->setSourceData($child);
                 break;
-            } elseif (isset($child['title'])) {
-                $this->setValuesFromArray($data['children'], $this->translate, !$this->required, 'text');
-                break;
             } elseif (isset($child['start'])) {
                 $this->setValuesFromRange($child['start'], $child['end'], $child['step']);
                 break;
             }
+
+            $this->setValuesFromArray($data['children'], $this->translate, !$this->required, 'text');
+            break;
         }
     }
 
@@ -128,36 +128,28 @@ class WidgetSelect extends BaseWidget
      * - If it's a value array, it must uses the value of each element as title and value
      * - If it's a multidimensional array, the indexes value and title must be set for each element
      *
-     * @param array  $values
+     * @param array  $items
      * @param bool   $translate
      * @param bool   $addEmpty
      * @param string $col1
      * @param string $col2
      */
-    public function setValuesFromArray($values, $translate = false, $addEmpty = false, $col1 = 'value', $col2 = 'title')
+    public function setValuesFromArray($items, $translate = false, $addEmpty = false, $col1 = 'value', $col2 = 'title')
     {
-        $this->values = [];
-        if ($addEmpty) {
-            $this->values[] = ['value' => null, 'title' => '------'];
-        }
+        $this->values = $addEmpty ? ['value' => null, 'title' => '------'] : [];
 
-        foreach ($values as $value) {
-            if (isset($value['tag']) && $value['tag'] !== 'values') {
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                $this->values[] = ['value' => $item, 'title' => $item];
                 continue;
             }
 
-            if (is_array($value)) {
+            if (isset($item['tag']) && $item['tag'] === 'values' && isset($item[$col1])) {
                 $this->values[] = [
-                    'title' => isset($value[$col2]) ? $value[$col2] : '------',
-                    'value' => isset($value[$col1]) ? $value[$col1] : null,
+                    'value' => $item[$col1],
+                    'title' => isset($item[$col2]) ? $item[$col2] : $item[$col1]
                 ];
-                continue;
             }
-
-            $this->values[] = [
-                'value' => $value,
-                'title' => '',
-            ];
         }
 
         if ($translate) {
@@ -173,10 +165,7 @@ class WidgetSelect extends BaseWidget
      */
     public function setValuesFromArrayKeys($values, $translate = false, $addEmpty = false)
     {
-        $this->values = [];
-        if ($addEmpty) {
-            $this->values[] = ['value' => null, 'title' => '------'];
-        }
+        $this->values = $addEmpty ? ['value' => null, 'title' => '------'] : [];
 
         foreach ($values as $key => $value) {
             $this->values[] = [
