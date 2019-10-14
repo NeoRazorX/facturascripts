@@ -142,9 +142,11 @@ class WidgetSelect extends BaseWidget
             if (!is_array($item)) {
                 $this->values[] = ['value' => $item, 'title' => $item];
                 continue;
+            } elseif (isset($item['tag']) && $item['tag'] !== 'values') {
+                continue;
             }
 
-            if (isset($item['tag']) && $item['tag'] === 'values' && isset($item[$col1])) {
+            if (isset($item[$col1])) {
                 $this->values[] = [
                     'value' => $item[$col1],
                     'title' => isset($item[$col2]) ? $item[$col2] : $item[$col1]
