@@ -50,8 +50,8 @@ class ListFormatoDocumento extends ListController
     protected function createFormatView($viewName = 'ListFormatoDocumento')
     {
         $this->addView($viewName, 'FormatoDocumento', 'printing-formats', 'fas fa-print');
-        $this->addSearchFields($viewName, ['titulo', 'texto']);
-        $this->addOrderBy($viewName, ['tipodoc', 'id'], 'id');
+        $this->addSearchFields($viewName, ['nombre', 'titulo', 'texto']);
+        $this->addOrderBy($viewName, ['nombre'], 'name');
         $this->addOrderBy($viewName, ['titulo'], 'title');
 
         /// Filters

@@ -24,21 +24,24 @@
         <column name="id" display="none" order="100">
             <widget type="text" fieldname="id" onclick="EditFormatoDocumento" />
         </column>
-        <column name="doc-type" order="110">
+        <column name="name" order="110">
+            <widget type="text" fieldname="nombre" />
+        </column>
+        <column name="doc-type" order="120">
             <widget type="text" fieldname="tipodoc" />
         </column>
-        <column name="company" order="120">
+        <column name="company" order="130">
             <widget type="select" fieldname="idempresa">
                 <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
             </widget>
         </column>
-        <column name="serie" order="130">
+        <column name="serie" order="140">
             <widget type="text" fieldname="codserie" />
         </column>
-        <column name="title" order="140">
+        <column name="title" order="150">
             <widget type="text" fieldname="titulo" />
         </column>
-        <column name="additional-text" order="150">
+        <column name="additional-text" order="160">
             <widget type="textarea" fieldname="texto" />
         </column>
     </columns>
