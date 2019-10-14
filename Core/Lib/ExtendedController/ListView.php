@@ -129,19 +129,10 @@ class ListView extends BaseView
             'type' => 'DESC',
         ];
 
-        switch ($default) {
-            case 1:
-                $this->setSelectedOrderBy($key1);
-                break;
-
-            case 2:
-                $this->setSelectedOrderBy($key2);
-                break;
-
-            default:
-                if (empty($this->order)) {
-                    $this->setSelectedOrderBy($key1);
-                }
+        if ($default === 2) {
+            $this->setSelectedOrderBy($key2);
+        } elseif ($default === 1 || empty($this->order)) {
+            $this->setSelectedOrderBy($key1);
         }
     }
 

@@ -150,19 +150,21 @@ class DebugBar extends DumbBar
     {
         $channels = [];
 
+        $lastMicrotime = self::$init[''];
         $logger = new MiniLog();
         foreach ($logger->readAll(MiniLog::ALL_LEVELS) as $log) {
             if (!isset($channels[$log['channel']])) {
                 $channels[$log['channel']] = [
                     'label' => $log['channel'],
-                    'data' => [
-                        ['level' => $log['level'], 'message' => $log['message']]
-                    ]
+                    'data' => []
                 ];
-                continue;
             }
 
-            $channels[$log['channel']]['data'][] = ['level' => $log['level'], 'message' => $log['message']];
+            $diff = $log['microtime'] - $lastMicrotime;
+            $channels[$log['channel']]['data'][] = [
+                'level' => $log['level'], 'message' => $log['message'], 'time' => number_format($diff * 1000) . 'ms'
+            ];
+            $lastMicrotime = $log['microtime'];
         }
 
         foreach ($channels as $channel) {

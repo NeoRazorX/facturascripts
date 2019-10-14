@@ -186,6 +186,7 @@ class MiniLog
                 'context' => $context,
                 'level' => $level,
                 'message' => $message,
+                'microtime' => microtime(true),
                 'time' => time(),
             ];
         }
