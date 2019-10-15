@@ -333,7 +333,7 @@ class PluginDeploy
 
             foreach ($source->attributes() as $attr => $attrValue) {
                 if ($attr == $extAttr) {
-                    return $extAttrValue == $attrValue;
+                    return (string) $extAttrValue == (string) $attrValue;
                 }
             }
         }
