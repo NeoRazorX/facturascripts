@@ -25,6 +25,7 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Empresa;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use FacturaScripts\Dinamic\Model\Pais;
 
@@ -192,6 +193,11 @@ abstract class PDFDocument extends PDFCore
         ];
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
 
+        /// receipts
+        if ($model->modelClassName() === 'FacturaCliente') {
+            $this->insertInvoiceReceipts($model);
+        }
+
         if (!empty($this->format->texto)) {
             $this->pdf->ezText("\n" . Utils::fixHtml($this->format->texto), self::FONT_SIZE);
         }
@@ -347,15 +353,59 @@ abstract class PDFDocument extends PDFCore
             $address .= empty($company->codpostal) ? '' : "\n" . $company->codpostal . ', ';
             $address .= empty($company->ciudad) ? '' : $company->ciudad;
             $address .= empty($company->provincia) ? '' : ' (' . $company->provincia . ') ' . $this->getCountryName($company->codpais);
-            $contactData = empty($company->telefono1) ? '' : $company->telefono1 . ' ';
-            $contactData .= empty($company->telefono2) ? '' : $company->telefono2 . ' ';
-            $contactData .= empty($company->web) ? '' : $company->web . "\n";
-            $contactData .= empty($company->email) ? '' : $company->email;
-            $lineText = $company->cifnif . ' - ' . $address . "\n" . $contactData;
+
+            $contactData = [];
+            foreach (['telefono1', 'telefono2', 'email', 'web'] as $field) {
+                if (!empty($company->{$field})) {
+                    $contactData[] = $company->{$field};
+                }
+            }
+
+            $lineText = $company->cifnif . ' - ' . $address . "\n\n" . implode(' · ', $contactData);
             $this->pdf->ezText($lineText, self::FONT_SIZE, ['justification' => 'right']);
 
             $idlogo = $this->format->idlogo ?? $company->idlogo;
             $this->insertCompanyLogo($idlogo);
+        }
+    }
+
+    /**
+     * 
+     * @param FacturaCliente $invoice
+     */
+    protected function insertInvoiceReceipts($invoice)
+    {
+        $receipts = $invoice->getReceipts();
+        if (count($receipts) > 0) {
+            $this->newPage();
+
+            $headers = [
+                'numero' => $this->i18n->trans('receipt'),
+                'codpago' => $this->i18n->trans('payment-method'),
+                'importe' => $this->i18n->trans('amount'),
+                'vencimiento' => $this->i18n->trans('expiration')
+            ];
+            $rows = [];
+            foreach ($receipts as $receipt) {
+                $rows[] = [
+                    'numero' => $receipt->numero,
+                    'codpago' => $receipt->codpago,
+                    'importe' => $this->numberTools->format($receipt->importe),
+                    'vencimiento' => $receipt->pagado ? $this->i18n->trans('paid') : $receipt->vencimiento
+                ];
+            }
+            $tableOptions = [
+                'cols' => [
+                    'numero' => ['justification' => 'center'],
+                    'codpago' => ['justification' => 'center'],
+                    'importe' => ['justification' => 'right'],
+                    'vencimiento' => ['justification' => 'right']
+                ],
+                'shadeCol' => [0.95, 0.95, 0.95],
+                'shadeHeadingCol' => [0.95, 0.95, 0.95],
+                'width' => $this->tableWidth
+            ];
+            $this->pdf->ezTable($rows, $headers, '', $tableOptions);
         }
     }
 }

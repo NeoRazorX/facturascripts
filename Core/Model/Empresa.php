@@ -153,7 +153,7 @@ class Empresa extends Base\Contact
         $num = mt_rand(1, 9999);
         return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,'
             . 'direccion,administrador,cifnif,nombre,nombrecorto,personafisica,regimeniva)'
-            . "VALUES (1,'https://www.facturascripts.com','ESP','',"
+            . "VALUES (1,'','ESP','',"
             . "'','00000014Z','Empresa " . $num . " S.L.','E-" . $num . "','0',"
             . "'" . RegimenIVA::defaultValue() . "');";
     }

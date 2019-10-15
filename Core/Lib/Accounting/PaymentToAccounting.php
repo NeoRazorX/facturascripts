@@ -137,7 +137,7 @@ class PaymentToAccounting extends AccountingClass
     {
         /// Get Subaccounts
         $supplier = $this->receipt->getSubject();
-        $supplierSubaccount = $this->getCustomerAccount($supplier);
+        $supplierSubaccount = $this->getSupplierAccount($supplier);
         $paymentSubaccount = $this->getPaymentAccount($this->document->codpago);
         if (!$supplierSubaccount->exists() || !$paymentSubaccount->exists()) {
             return false;
