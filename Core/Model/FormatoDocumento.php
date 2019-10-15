@@ -131,4 +131,16 @@ class FormatoDocumento extends Base\ModelClass
         $this->titulo = $utils->noHtml($this->titulo);
         return parent::test();
     }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'ListSecuenciaDocumento?activetab=List')
+    {
+        return parent::url($type, $list);
+    }
 }

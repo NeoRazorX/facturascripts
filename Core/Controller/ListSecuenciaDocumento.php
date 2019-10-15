@@ -26,7 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
-class ListFormatoDocumento extends ListController
+class ListSecuenciaDocumento extends ListController
 {
 
     /**
@@ -109,9 +109,9 @@ class ListFormatoDocumento extends ListController
      */
     protected function createViews()
     {
-        $this->createFormatView();
-        $this->createStateView();
         $this->createSequenceView();
+        $this->createStateView();
+        $this->createFormatView();
     }
 
     /**
