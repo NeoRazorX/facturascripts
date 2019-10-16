@@ -38,6 +38,7 @@ use Symfony\Component\HttpFoundation\Response;
 class SendMail extends Controller
 {
 
+    /// 2 hours
     const MAX_FILE_AGE = 7200;
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
@@ -197,11 +198,10 @@ class SendMail extends Controller
      */
     protected function removeOld()
     {
-        $regex = '/Mail_([0-9]+).pdf/';
-        foreach (glob(\FS_FOLDER . '/MyFiles/Mail_*.pdf') as $fileName) {
-            $fileTime = [];
-            preg_match($regex, $fileName, $fileTime);
-            if ($fileTime[1] < (time() - self::MAX_FILE_AGE)) {
+        foreach (glob(\FS_FOLDER . '/MyFiles/*_mail_*.pdf') as $fileName) {
+            $parts = explode('_', $fileName);
+            $time = (int) substr(end($parts), 0, -4);
+            if ($time < (time() - self::MAX_FILE_AGE)) {
                 unlink($fileName);
             }
         }

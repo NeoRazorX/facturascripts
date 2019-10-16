@@ -211,21 +211,11 @@ class EditRegularizacionImpuesto extends EditController
      */
     protected function execAfterAction($action)
     {
-        switch ($action) {
-            case 'export':
-                $this->setTemplate(false);
-                $this->exportManager->newDoc($this->request->get('option', ''));
-                $this->exportManager->setOrientation('landscape');
-                foreach ($this->views as $selectedView) {
-                    $selectedView->export($this->exportManager);
-                }
-                $this->exportManager->show($this->response);
-                break;
-
-            default:
-                parent::execAfterAction($action);
-                break;
+        if ($action === 'export') {
+            $this->exportManager->setOrientation('landscape');
         }
+
+        parent::execAfterAction($action);
     }
 
     /**

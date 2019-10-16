@@ -128,16 +128,4 @@ class SecuenciaDocumento extends Base\ModelClass
         $this->patron = $this->toolBox()->utils()->noHtml($this->patron);
         return parent::test();
     }
-
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListFormatoDocumento?activetab=List')
-    {
-        return parent::url($type, $list);
-    }
 }

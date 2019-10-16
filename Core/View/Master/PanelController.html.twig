@@ -38,7 +38,7 @@
                             </li>
                         {% endif %}
                         <li class="breadcrumb-item">
-                            <a href="{{ firstView.model.url('list') }}">{{ fsc.title }}</a>
+                            <a href="{{ firstView.model.url('list') }}">{{ i18n.trans(pageData.title) }}</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
                             {{ firstView.model.primaryDescription() | raw }}
@@ -60,21 +60,7 @@
                     </a>
                 </div>
                 {# -- Options button -- #}
-                <div class="btn-group">
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-wrench fa-fw" aria-hidden="true"></i>
-                            <span class="d-none d-md-inline-block">{{ i18n.trans('options') }}</span>
-                        </button>
-                        <div class="dropdown-menu">
-                            {% for viewName, view in fsc.views %}
-                                <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
-                                    <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
-                                </a>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
+                {{ _self.optionsButton(fsc, firstView, i18n) }}
             </div>
             {# -- Top center buttons -- #}
             <div class="col-md-3 col-6 text-center">
@@ -85,29 +71,13 @@
                     </a>
                 {% endif %}
                 {% if fsc.hasData %}
-                    <div class="btn-group">
-                        <a href="{{ firstView.model.url() }}&action=export&option={{ fsc.exportManager.defaultOption() }}" target="_blank" class="btn btn-sm btn-light">
-                            <i class="fas fa-print fa-fw" aria-hidden="true"></i>
-                            <span class="d-none d-md-inline-block">{{ i18n.trans('print') }}</span>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <div class="dropdown-menu">
-                            {% for key, option in fsc.exportManager.options() %}
-                                <a href="{{ firstView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
-                                    <i class="{{ option.icon }} fa-fw" aria-hidden="true"></i>
-                                    {{ i18n.trans(option.description) }}
-                                </a>
-                            {% endfor %}
-                        </div>
-                    </div>
+                    {{ _self.printButton(fsc, firstView, i18n) }}
                 {% endif %}
             </div>
             {# -- Top right text -- #}
             <div class="col-md-4 text-right">
                 <h1 class="h4 d-none d-md-inline-block">
-                    {{ fsc.title }}<br/>
+                    {{ i18n.trans(pageData.title) }}<br/>
                     {% if fsc.hasData %}
                         <small class="text-info">{{ firstView.model.primaryDescription() | raw }}</small>
                     {% else %}
@@ -181,3 +151,50 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro optionsButton(fsc, firstView, i18n) %}
+    <div class="btn-group">
+        <div class="dropdown">
+            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-wrench fa-fw" aria-hidden="true"></i>
+                <span class="d-none d-md-inline-block">{{ i18n.trans('options') }}</span>
+            </button>
+            <div class="dropdown-menu">
+                {% for viewName, view in fsc.views %}
+                    <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
+                        <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro printButton(fsc, firstView, i18n) %}
+    <div class="btn-group">
+        <a href="{{ firstView.model.url() }}&action=export&option={{ fsc.exportManager.defaultOption() }}" target="_blank" class="btn btn-sm btn-light">
+            <i class="fas fa-print fa-fw" aria-hidden="true"></i>
+            <span class="d-none d-lg-inline-block">{{ i18n.trans('print') }}</span>
+        </a>
+        <button type="button" class="btn btn-sm btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="sr-only">{{ i18n.trans('more') }}</span>
+        </button>
+        <div class="dropdown-menu">
+            {% for key, option in fsc.exportManager.options() %}
+                <a href="{{ firstView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
+                    <i class="{{ option.icon }} fa-fw" aria-hidden="true"></i>
+                    {{ i18n.trans(option.description) }}
+                </a>
+            {% endfor %}
+            {% if fsc.exportManager.tools is not empty %}
+                <div class="dropdown-divider"></div>
+                {% for key, tool in fsc.exportManager.tools() %}
+                    <a href="{{ tool.link }}" class="dropdown-item">
+                        <i class="{{ tool.icon }} fa-fw" aria-hidden="true"></i>
+                        {{ i18n.trans(tool.description) }}
+                    </a>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}

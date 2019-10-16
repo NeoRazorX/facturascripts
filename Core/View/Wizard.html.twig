@@ -17,7 +17,7 @@
      * along with this program. If not, see http://www.gnu.org/licenses/.
      */
 #}
-{% extends "Master/MenuTemplate.html.twig" %}
+{% extends "Master/MicroTemplate.html.twig" %}
 
 {% block body %}
     <!-- Macros Template Imports -->
@@ -27,10 +27,11 @@
     {% set codpais = fsc.empresa ? fsc.empresa.codpais : appSettings.get('default','codpais','ESP') %}
     {% set provincia = fsc.empresa ? fsc.empresa.provincia : '' %}
 
-    <div class="container">
+    <br/>
+    <div class="container card">
         <div class="row">
             <div class="col-12">
-                <h1 class="h2">
+                <h1 class="h2 mt-3">
                     <i class="fas fa-magic" aria-hidden="true"></i> {{ i18n.trans('wizard') }}
                     <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
@@ -133,7 +134,7 @@
                     </div>
                 </div>
             {% endif %}
-            <div class="row mt-5">
+            <div class="row mb-3 mt-2">
                 <div class="col-sm-12 text-right">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save fa-fw" aria-hidden="true"></i>
@@ -143,4 +144,13 @@
             </div>
         </form>
     </div>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        body {
+            background-color: #3A414B;
+        }
+    </style>
 {% endblock %}

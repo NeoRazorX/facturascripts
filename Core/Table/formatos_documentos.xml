@@ -20,6 +20,14 @@
         <type>integer</type>
     </column>
     <column>
+        <name>idlogo</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>nombre</name>
+        <type>character varying(30)</type>
+    </column>
+    <column>
         <name>texto</name>
         <type>text</type>
     </column>
@@ -42,5 +50,9 @@
     <constraint>
         <name>ca_formatos_documentos_empresas</name>
         <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_formatos_documentos_attached_files</name>
+        <type>FOREIGN KEY (idlogo) REFERENCES attached_files (idfile) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
 </table>

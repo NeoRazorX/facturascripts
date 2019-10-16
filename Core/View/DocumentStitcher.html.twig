@@ -30,7 +30,7 @@
                 <div class="col">
                     <h1 class="h3">
                         <i class="{{ pageData.icon }}" aria-hidden="true"></i>
-                        {{ i18n.trans(pageData.title) | capitalize }}
+                        {{ i18n.trans(pageData.title) }}
                     </h1>
                 </div>
                 <div class="col text-right mb-2">
@@ -41,7 +41,7 @@
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             {% for status in fsc.getAvaliableStatus() %}
                                 <button type="button" onclick="sendFormData('{{ status.primaryColumnValue() }}');" class="dropdown-item">
-                                    <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ status.generadoc }}
+                                    <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ i18n.trans(status.generadoc) }}
                                 </button>
                             {% endfor %}
                         </div>
@@ -99,7 +99,7 @@
             <div class="row mb-2 align-items-center">
                 <div class="col">
                     <a href="{{ doc.url() }}">
-                        <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ fsc.modelName }} {{ doc.codigo }}
+                        <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ i18n.trans(fsc.modelName) }} {{ doc.codigo }}
                     </a>
                     &nbsp;
                     <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}

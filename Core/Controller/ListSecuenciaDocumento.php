@@ -26,7 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
-class ListFormatoDocumento extends ListController
+class ListSecuenciaDocumento extends ListController
 {
 
     /**
@@ -50,9 +50,13 @@ class ListFormatoDocumento extends ListController
     protected function createFormatView($viewName = 'ListFormatoDocumento')
     {
         $this->addView($viewName, 'FormatoDocumento', 'printing-formats', 'fas fa-print');
-        $this->addSearchFields($viewName, ['titulo', 'texto']);
-        $this->addOrderBy($viewName, ['id'], 'id');
+        $this->addSearchFields($viewName, ['nombre', 'titulo', 'texto']);
+        $this->addOrderBy($viewName, ['nombre'], 'name');
         $this->addOrderBy($viewName, ['titulo'], 'title');
+
+        /// Filters
+        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
     }
 
     /**
@@ -68,8 +72,8 @@ class ListFormatoDocumento extends ListController
         $this->addOrderBy($viewName, ['numero'], 'number');
 
         /// Filters
-        $warehouses = $this->codeModel->all('empresas', 'idempresa', 'nombre');
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $warehouses);
+        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
 
         $exercises = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
         $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $exercises);
@@ -105,9 +109,9 @@ class ListFormatoDocumento extends ListController
      */
     protected function createViews()
     {
-        $this->createFormatView();
-        $this->createStateView();
         $this->createSequenceView();
+        $this->createStateView();
+        $this->createFormatView();
     }
 
     /**

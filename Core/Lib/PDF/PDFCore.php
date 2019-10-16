@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\NumberTools;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Lib\Export\ExportBase;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
 /**
@@ -30,7 +31,7 @@ use FacturaScripts\Dinamic\Model\AttachedFile;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class PDFCore
+abstract class PDFCore extends ExportBase
 {
 
     /**
@@ -288,6 +289,7 @@ class PDFCore
             $this->pdf = new Cezpdf('a4', $orientation);
             $this->pdf->addInfo('Creator', 'FacturaScripts');
             $this->pdf->addInfo('Producer', 'FacturaScripts');
+            $this->pdf->addInfo('Title', $this->getFileName());
             $this->pdf->tempPath = \FS_FOLDER . '/MyFiles/Cache';
 
             $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;

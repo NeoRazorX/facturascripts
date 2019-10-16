@@ -51,6 +51,18 @@ class FormatoDocumento extends Base\ModelClass
     public $idempresa;
 
     /**
+     *
+     * @var int
+     */
+    public $idlogo;
+
+    /**
+     *
+     * @var string
+     */
+    public $nombre;
+
+    /**
      * 
      *
      * @var string
@@ -114,8 +126,21 @@ class FormatoDocumento extends Base\ModelClass
     public function test()
     {
         $utils = $this->toolBox()->utils();
+        $this->nombre = empty($this->nombre) ? $utils->noHtml($this->titulo) : $utils->noHtml($this->nombre);
         $this->texto = $utils->noHtml($this->texto);
         $this->titulo = $utils->noHtml($this->titulo);
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'ListSecuenciaDocumento?activetab=List')
+    {
+        return parent::url($type, $list);
     }
 }

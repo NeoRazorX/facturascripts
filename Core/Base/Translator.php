@@ -114,18 +114,19 @@ class Translator
             $this->locateFiles($langCode);
         }
 
+        $transKey = $this->getTransKey($txt);
         $catalogue = self::$translator->getCatalogue($langCode);
-        if ($catalogue->has($txt)) {
-            self::$usedStrings[$txt] = $catalogue->get($txt);
-            return self::$translator->trans($txt, $parameters, null, $langCode);
+        if ($catalogue->has($transKey)) {
+            self::$usedStrings[$transKey] = $catalogue->get($transKey);
+            return self::$translator->trans($transKey, $parameters, null, $langCode);
         }
 
-        self::$missingStrings[$txt] = $txt;
+        self::$missingStrings[$transKey] = $transKey;
         if ($langCode === self::FALLBACK_LANG) {
-            return $txt;
+            return $transKey;
         }
 
-        return $this->customTrans(self::FALLBACK_LANG, $txt, $parameters);
+        return $this->customTrans(self::FALLBACK_LANG, $transKey, $parameters);
     }
 
     /**
@@ -174,6 +175,36 @@ class Translator
     public function getMissingStrings(): array
     {
         return self::$missingStrings;
+    }
+
+    /**
+     * 
+     * @param string $txt
+     *
+     * @return string
+     */
+    private function getTransKey(string $txt): string
+    {
+        $specialKeys = [
+            'AlbaranCliente' => 'customer-delivery-note',
+            'AlbaranProveedor' => 'supplier-delivery-note',
+            'FacturaCliente' => 'customer-invoice',
+            'FacturaProveedor' => 'supplier-invoice',
+            'PedidoCliente' => 'customer-order',
+            'PedidoProveedor' => 'supplier-order',
+            'PresupuestoCliente' => 'customer-estimation',
+            'PresupuestoProveedor' => 'supplier-estimation',
+            'AlbaranCliente-min' => 'delivery-note',
+            'AlbaranProveedor-min' => 'delivery-note',
+            'FacturaCliente-min' => 'invoice',
+            'FacturaProveedor-min' => 'invoice',
+            'PedidoCliente-min' => 'order',
+            'PedidoProveedor-min' => 'order',
+            'PresupuestoCliente-min' => 'estimation',
+            'PresupuestoProveedor-min' => 'estimation',
+        ];
+
+        return isset($specialKeys[$txt]) ? $specialKeys[$txt] : $txt;
     }
 
     /**

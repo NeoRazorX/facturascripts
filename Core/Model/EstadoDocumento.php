@@ -203,7 +203,7 @@ class EstadoDocumento extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListFormatoDocumento?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListSecuenciaDocumento?activetab=List')
     {
         return parent::url($type, $list);
     }

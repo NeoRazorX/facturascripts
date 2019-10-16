@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Dinamic\Lib\Export\PDFExport as ParentClass;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -27,7 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class MAILExport extends PDFExport
+class MAILExport extends ParentClass
 {
 
     /**
@@ -39,26 +40,14 @@ class MAILExport extends PDFExport
     /**
      * 
      * @param BusinessDocument $model
+     *
+     * @return bool
      */
-    public function generateBusinessDocPage($model)
+    public function addBusinessDocPage($model): bool
     {
-        parent::generateBusinessDocPage($model);
         $this->sendParams['modelClassName'] = $model->modelClassName();
         $this->sendParams['modelCode'] = $model->primaryColumnValue();
-    }
-
-    /**
-     * 
-     * @return mixed
-     */
-    public function getDoc()
-    {
-        if ($this->pdf === null) {
-            $this->newPage();
-            $this->pdf->ezText('');
-        }
-
-        return $this->pdf->ezOutput();
+        return parent::addBusinessDocPage($model);
     }
 
     /**
@@ -66,12 +55,14 @@ class MAILExport extends PDFExport
      * @param ModelClass $model
      * @param array      $columns
      * @param string     $title
+     *
+     * @return bool
      */
-    public function generateModelPage($model, $columns, $title = '')
+    public function addModelPage($model, $columns, $title = ''): bool
     {
-        parent::generateModelPage($model, $columns, $title);
         $this->sendParams['modelClassName'] = $model->modelClassName();
         $this->sendParams['modelCode'] = $model->primaryColumnValue();
+        return parent::addModelPage($model, $columns, $title);
     }
 
     /**
@@ -80,7 +71,7 @@ class MAILExport extends PDFExport
      */
     public function show(Response &$response)
     {
-        $fileName = 'Mail_' . time() . '.pdf';
+        $fileName = $this->getFileName() . '_mail_' . time() . '.pdf';
         $filePath = \FS_FOLDER . '/MyFiles/' . $fileName;
         file_put_contents($filePath, $this->getDoc());
 

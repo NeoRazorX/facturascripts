@@ -177,14 +177,18 @@ class ListView extends BaseView
      * Method to export the view data.
      *
      * @param ExportManager $exportManager
+     *
+     * @return bool
      */
-    public function export(&$exportManager)
+    public function export(&$exportManager): bool
     {
         if ($this->count > 0) {
-            $exportManager->generateListModelPage(
-                $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
+            return $exportManager->addListModelPage(
+                    $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
             );
         }
+
+        return true;
     }
 
     /**

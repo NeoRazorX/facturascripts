@@ -75,10 +75,12 @@ class BusinessDocumentView extends BaseView
      * Method to export the view data.
      *
      * @param ExportManager $exportManager
+     *
+     * @return bool
      */
-    public function export(&$exportManager)
+    public function export(&$exportManager): bool
     {
-        $exportManager->generateBusinessDocPage($this->model);
+        return $exportManager->addBusinessDocPage($this->model);
     }
 
     /**

@@ -24,12 +24,11 @@ use FacturaScripts\Core\Model\Base\ModelClass;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class to export to CSV
- * Follow the XLSExport style to have a more uniform code
+ * Class to export data to CSV format.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class CSVExport implements ExportInterface
+class CSVExport extends ExportBase
 {
 
     const LIST_LIMIT = 1000;
@@ -56,23 +55,34 @@ class CSVExport implements ExportInterface
     private $separator = ';';
 
     /**
-     * Adds a new page with the document data.
+     * Adds the fields form the business document, merging model and line data.
      *
      * @param BusinessDocument $model
+     *
+     * @return bool
      */
-    public function generateBusinessDocPage($model)
+    public function addBusinessDocPage($model): bool
     {
-        $tableData = [];
-        foreach ((array) $model as $key => $value) {
-            if (is_string($value)) {
-                $tableData[] = [
-                    'key' => $this->delimiter . $key . $this->delimiter,
-                    'value' => $this->delimiter . $value . $this->delimiter,
-                ];
+        $data = [];
+        $fields = [];
+
+        $data1 = $this->getCursorRawData([$model]);
+        foreach ($model->getLines() as $line) {
+            if (empty($fields)) {
+                $fields1 = $this->getModelFields($model);
+                $fields2 = $this->getModelFields($line);
+                $fields = array_merge($fields2, $fields1);
             }
+
+            /// merge
+            $data2 = $this->getCursorRawData([$line]);
+            $data[] = array_merge($data2[0], $data1[0]);
         }
 
-        $this->writeSheet($tableData, ['key' => 'string', 'value' => 'string']);
+        $this->writeData($data, $fields);
+
+        /// do not continue with export
+        return false;
     }
 
     /**
@@ -84,35 +94,30 @@ class CSVExport implements ExportInterface
      * @param int             $offset
      * @param array           $columns
      * @param string          $title
+     *
+     * @return bool
      */
-    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
+    public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
     {
-        $tableCols = [];
-        $sheetHeaders = [];
-        $tableData = [];
+        $this->setFileName($title);
 
-        /// Get the columns
-        foreach ($columns as $col) {
-            if ($col->hidden()) {
-                continue;
-            }
-
-            $tableCols[$col->widget->fieldname] = $col->widget->fieldname;
-            $sheetHeaders[$col->widget->fieldname] = 'string';
-        }
-
+        $fields = $this->getModelFields($model);
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
-            $this->writeSheet($tableData, $sheetHeaders);
+            $this->writeData([], $fields);
         }
+
         while (!empty($cursor)) {
-            $tableData = $this->getTableData($cursor, $tableCols);
-            $this->writeSheet($tableData, $sheetHeaders);
+            $data = $this->getCursorRawData($cursor);
+            $this->writeData($data, $fields);
 
             /// Advance within the results
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
+
+        /// do not continue with export
+        return false;
     }
 
     /**
@@ -121,20 +126,17 @@ class CSVExport implements ExportInterface
      * @param ModelClass $model
      * @param array      $columns
      * @param string     $title
+     *
+     * @return bool
      */
-    public function generateModelPage($model, $columns, $title = '')
+    public function addModelPage($model, $columns, $title = ''): bool
     {
-        $tableData = [];
-        foreach ((array) $model as $key => $value) {
-            if (is_string($value)) {
-                $tableData[] = [
-                    'key' => $this->delimiter . $key . $this->delimiter,
-                    'value' => $this->delimiter . $value . $this->delimiter,
-                ];
-            }
-        }
+        $fields = $this->getModelFields($model);
+        $data = $this->getCursorRawData([$model]);
+        $this->writeData($data, $fields);
 
-        $this->writeSheet($tableData, ['key' => 'string', 'value' => 'string']);
+        /// do not continue with export
+        return false;
     }
 
     /**
@@ -142,27 +144,15 @@ class CSVExport implements ExportInterface
      *
      * @param array $headers
      * @param array $rows
+     *
+     * @return bool
      */
-    public function generateTablePage($headers, $rows)
+    public function addTablePage($headers, $rows): bool
     {
-        /// fix headers
-        foreach ($headers as $key => $value) {
-            $headers[$key] = $this->delimiter . $value . $this->delimiter;
-        }
-        /// generate the headers line
-        $this->csv[] = \implode($this->separator, $headers);
+        $this->writeData($rows, $headers);
 
-        /// generate the data lines
-        $body = [];
-        foreach ($rows as $row) {
-            /// fix row
-            foreach ($row as $key => $value) {
-                $row[$key] = $this->delimiter . $value . $this->delimiter;
-            }
-
-            $body[] = \implode($this->separator, $row);
-        }
-        $this->csv[] = \implode(PHP_EOL, $body);
+        /// do not continue with export
+        return false;
     }
 
     /**
@@ -197,10 +187,13 @@ class CSVExport implements ExportInterface
 
     /**
      * Blank document.
+     * 
+     * @param string $title
      */
-    public function newDoc()
+    public function newDoc(string $title)
     {
         $this->csv = [];
+        $this->setFileName($title);
     }
 
     /**
@@ -242,51 +235,31 @@ class CSVExport implements ExportInterface
     public function show(Response &$response)
     {
         $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment;filename=doc.csv');
+        $response->headers->set('Content-Disposition', 'attachment;filename=' . $this->getFileName() . '.csv');
         $response->setContent($this->getDoc());
     }
 
     /**
      * Fills an array with the CSV data.
      * 
-     * @param array $tableData
-     * @param array $sheetHeaders
+     * @param array $data
+     * @param array $fields
      */
-    public function writeSheet($tableData, $sheetHeaders)
+    public function writeData($data, $fields)
     {
-        $header = [];
-        foreach (\array_keys($sheetHeaders) as $key) {
-            $header[] = $key;
+        $headers = [];
+        foreach ($fields as $field) {
+            $headers[] = $this->getDelimiter() . $field . $this->getDelimiter();
         }
-        $this->csv[] = \implode($this->separator, $header);
+        $this->csv[] = \implode($this->separator, $headers);
 
-        $body = [];
-        foreach ($tableData as $line) {
-            $body[] = \implode($this->separator, $line);
-        }
-        $this->csv[] = \implode(PHP_EOL, $body);
-    }
-
-    /**
-     * Returns the table data.
-     *
-     * @param array $cursor
-     * @param array $tableCols
-     *
-     * @return array
-     */
-    private function getTableData($cursor, $tableCols)
-    {
-        $tableData = [];
-
-        /// Get the data
-        foreach ($cursor as $key => $row) {
-            foreach ($tableCols as $col) {
-                $value = (isset($row->{$col}) && null !== $row->{$col}) ? $row->{$col} : '';
-                $tableData[$key][$col] = $this->delimiter . $value . $this->delimiter;
+        foreach ($data as $row) {
+            $line = [];
+            foreach ($row as $cell) {
+                $line[] = is_string($cell) ? $this->getDelimiter() . $cell . $this->getDelimiter() : $cell;
             }
-        }
 
-        return $tableData;
+            $this->csv[] = \implode($this->separator, $line);
+        }
     }
 }

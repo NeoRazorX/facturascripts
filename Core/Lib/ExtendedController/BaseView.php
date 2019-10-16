@@ -144,7 +144,7 @@ abstract class BaseView
     /**
      * Method to export the view data.
      */
-    abstract public function export(&$exportManager);
+    abstract public function export(&$exportManager): bool;
 
     /**
      * Loads view data.

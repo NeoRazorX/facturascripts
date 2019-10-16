@@ -18,8 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\Export\ExportInterface;
+use FacturaScripts\Core\Lib\Export\ExportBase;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -33,7 +32,7 @@ class ExportManager
     /**
      * The selected engine/class to export.
      *
-     * @var ExportInterface
+     * @var ExportBase
      */
     protected static $engine;
 
@@ -42,7 +41,21 @@ class ExportManager
      *
      * @var array
      */
-    protected static $options;
+    protected static $options = [];
+
+    /**
+     * Default document orientation.
+     *
+     * @var string
+     */
+    protected $orientation;
+
+    /**
+     * Tools list.
+     *
+     * @var array
+     */
+    protected static $tools = [];
 
     /**
      * ExportManager constructor.
@@ -50,6 +63,49 @@ class ExportManager
     public function __construct()
     {
         static::init();
+    }
+
+    /**
+     * Adds a new page with the document data.
+     *
+     * @param mixed $model
+     *
+     * @return bool
+     */
+    public function addBusinessDocPage($model): bool
+    {
+        return empty(static::$engine) ? false : static::$engine->addBusinessDocPage($model);
+    }
+
+    /**
+     * Adds a new page with a table listing the models data.
+     *
+     * @param mixed  $model
+     * @param array  $where
+     * @param array  $order
+     * @param int    $offset
+     * @param array  $columns
+     * @param string $title
+     *
+     * @return bool
+     */
+    public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
+    {
+        return empty(static::$engine) ? false : static::$engine->addListModelPage($model, $where, $order, $offset, $columns, $title);
+    }
+
+    /**
+     * Adds a new page with the model data.
+     *
+     * @param mixed  $model
+     * @param array  $columns
+     * @param string $title
+     *
+     * @return bool
+     */
+    public function addModelPage($model, $columns, $title = ''): bool
+    {
+        return empty(static::$engine) ? false : static::$engine->addModelPage($model, $columns, $title);
     }
 
     /**
@@ -66,11 +122,44 @@ class ExportManager
     }
 
     /**
+     * Adds a new tool.
+     *
+     * @param string $key
+     * @param string $link
+     * @param string $description
+     * @param string $icon
+     */
+    public static function addTool($key, $link, $description, $icon)
+    {
+        static::init();
+        static::$tools[$key] = ['link' => $link, 'description' => $description, 'icon' => $icon];
+    }
+
+    /**
+     * Adds a new page with the table data.
+     *
+     * @param array $headers
+     * @param array $rows
+     *
+     * @return bool
+     */
+    public function addTablePage($headers, $rows): bool
+    {
+        /// We need headers key to be equal to value
+        $fixedHeaders = [];
+        foreach ($headers as $value) {
+            $fixedHeaders[$value] = $value;
+        }
+
+        return empty(static::$engine) ? false : static::$engine->addTablePage($fixedHeaders, $rows);
+    }
+
+    /**
      * Returns default option.
      *
      * @return string
      */
-    public function defaultOption()
+    public static function defaultOption()
     {
         foreach (array_keys(static::$options) as $key) {
             return $key;
@@ -80,70 +169,20 @@ class ExportManager
     }
 
     /**
-     * Adds a new page with the document data.
-     *
-     * @param mixed $model
-     */
-    public function generateBusinessDocPage($model)
-    {
-        static::$engine->generateBusinessDocPage($model);
-    }
-
-    /**
-     * Adds a new page with a table listing the models data.
-     *
-     * @param mixed           $model
-     * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param array           $columns
-     * @param string          $title
-     */
-    public function generateListModelPage($model, $where, $order, $offset, $columns, $title = '')
-    {
-        static::$engine->generateListModelPage($model, $where, $order, $offset, $columns, $title);
-    }
-
-    /**
-     * Adds a new page with the model data.
-     *
-     * @param mixed  $model
-     * @param array  $columns
-     * @param string $title
-     */
-    public function generateModelPage($model, $columns, $title = '')
-    {
-        static::$engine->generateModelPage($model, $columns, $title);
-    }
-
-    /**
-     * Adds a new page with the table data.
-     *
-     * @param array $headers
-     * @param array $rows
-     */
-    public function generateTablePage($headers, $rows)
-    {
-        /// We need headers key to be equal to value
-        $fixedHeaders = [];
-        foreach ($headers as $value) {
-            $fixedHeaders[$value] = $value;
-        }
-
-        static::$engine->generateTablePage($fixedHeaders, $rows);
-    }
-
-    /**
      * Create a new doc and set headers.
      *
      * @param string $option
+     * @param string $title
      */
-    public function newDoc($option)
+    public function newDoc(string $option, string $title = '')
     {
         /// calls to the appropiate engine to generate the doc
         $className = $this->getExportClassName($option);
         static::$engine = new $className();
-        static::$engine->newDoc();
+        static::$engine->newDoc($title);
+        if (!empty($this->orientation)) {
+            static::$engine->setOrientation($this->orientation);
+        }
     }
 
     /**
@@ -151,7 +190,7 @@ class ExportManager
      *
      * @return array
      */
-    public function options()
+    public static function options(): array
     {
         return static::$options;
     }
@@ -163,7 +202,7 @@ class ExportManager
      */
     public function setOrientation(string $orientation)
     {
-        static::$engine->setOrientation($orientation);
+        $this->orientation = $orientation;
     }
 
     /**
@@ -173,7 +212,18 @@ class ExportManager
      */
     public function show(Response &$response)
     {
-        static::$engine->show($response);
+        if (!empty(static::$engine)) {
+            static::$engine->show($response);
+        }
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public static function tools(): array
+    {
+        return self::$tools;
     }
 
     /**
@@ -194,7 +244,7 @@ class ExportManager
      */
     protected static function init()
     {
-        if (static::$options === null) {
+        if (empty(static::$options)) {
             static::$options = [
                 'PDF' => ['description' => 'print', 'icon' => 'fas fa-print'],
                 'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fas fa-file-excel'],
