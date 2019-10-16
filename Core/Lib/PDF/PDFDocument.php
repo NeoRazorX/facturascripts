@@ -31,6 +31,7 @@ use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
+use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Pais;
 
 /**
@@ -129,6 +130,72 @@ abstract class PDFDocument extends PDFCore
     }
 
     /**
+     * 
+     * @param BusinessDocument $model
+     */
+    protected function getTaxesRows($model)
+    {
+        $subtotals = [];
+        foreach ($model->getLines() as $line) {
+            if (empty($line->iva) && empty($line->recargo)) {
+                continue;
+            }
+
+            $key = $line->codimpuesto . '_' . $line->iva . '_' . $line->recargo;
+            if (!isset($subtotals[$key])) {
+                $subtotals[$key] = [
+                    'tax' => $key,
+                    'taxbase' => 0,
+                    'taxp' => $line->iva,
+                    'taxamount' => 0,
+                    'taxsurchargep' => $line->recargo,
+                    'taxsurcharge' => 0,
+                ];
+
+                $impuesto = new Impuesto();
+                if (!empty($line->codimpuesto) && $impuesto->loadFromCode($line->codimpuesto)) {
+                    $subtotals[$key]['tax'] = $impuesto->descripcion;
+                }
+            }
+
+            $subtotals[$key]['taxbase'] += $line->pvptotal;
+            $subtotals[$key]['taxamount'] += $line->pvptotal * $line->iva / 100;
+            $subtotals[$key]['taxsurcharge'] += $line->pvptotal * $line->recargo / 100;
+        }
+
+        /// irpf
+        foreach ($model->getLines() as $line) {
+            if (empty($line->irpf)) {
+                continue;
+            }
+
+            $key = 'irpf_' . $line->irpf;
+            if (!isset($subtotals[$key])) {
+                $subtotals[$key] = [
+                    'tax' => $this->i18n->trans('irpf') . ' ' . $line->irpf . '%',
+                    'taxbase' => 0,
+                    'taxp' => $line->irpf,
+                    'taxamount' => 0,
+                    'taxsurchargep' => 0,
+                    'taxsurcharge' => 0,
+                ];
+            }
+
+            $subtotals[$key]['taxbase'] += $line->pvptotal;
+            $subtotals[$key]['taxamount'] -= $line->pvptotal * $line->irpf / 100;
+        }
+
+        /// round
+        foreach ($subtotals as $key => $value) {
+            $subtotals[$key]['taxbase'] = $this->numberTools->format($value['taxbase']);
+            $subtotals[$key]['taxamount'] = $this->numberTools->format($value['taxamount']);
+            $subtotals[$key]['taxsurcharge'] = $this->numberTools->format($value['taxsurcharge']);
+        }
+
+        return $subtotals;
+    }
+
+    /**
      * Generate the body of the page with the model data.
      *
      * @param BusinessDocument $model
@@ -192,6 +259,37 @@ abstract class PDFDocument extends PDFCore
         }
 
         $this->newPage();
+
+        /// taxes
+        $taxHeaders = [
+            'tax' => $this->i18n->trans('tax'),
+            'taxbase' => $this->i18n->trans('tax-base'),
+            'taxp' => $this->i18n->trans('percentage'),
+            'taxamount' => $this->i18n->trans('amount'),
+            'taxsurchargep' => $this->i18n->trans('surcharge'),
+            'taxsurcharge' => $this->i18n->trans('amount'),
+        ];
+        $taxRows = $this->getTaxesRows($model);
+        $taxTableOptions = [
+            'cols' => [
+                'tax' => ['justification' => 'right'],
+                'taxbase' => ['justification' => 'right'],
+                'taxp' => ['justification' => 'right'],
+                'taxamount' => ['justification' => 'right'],
+                'taxsurchargep' => ['justification' => 'right'],
+                'taxsurcharge' => ['justification' => 'right'],
+            ],
+            'shadeCol' => [0.95, 0.95, 0.95],
+            'shadeHeadingCol' => [0.95, 0.95, 0.95],
+            'width' => $this->tableWidth
+        ];
+        if (!empty($taxRows)) {
+            $this->removeEmptyCols($taxRows, $taxHeaders, $this->numberTools->format(0));
+            $this->pdf->ezTable($taxRows, $taxHeaders, '', $taxTableOptions);
+            $this->pdf->ezText("\n");
+        }
+
+        /// subtotals
         $headers = [
             'currency' => $this->i18n->trans('currency'),
             'net' => $this->i18n->trans('net'),
@@ -206,7 +304,7 @@ abstract class PDFDocument extends PDFCore
                 'net' => $this->numberTools->format($model->neto),
                 'taxes' => $this->numberTools->format($model->totaliva),
                 'totalSurcharge' => $this->numberTools->format($model->totalrecargo),
-                'totalIrpf' => $this->numberTools->format($model->totalirpf),
+                'totalIrpf' => $this->numberTools->format(0 - $model->totalirpf),
                 'total' => $this->numberTools->format($model->total),
             ]
         ];
