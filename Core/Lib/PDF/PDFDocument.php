@@ -19,13 +19,17 @@
 namespace FacturaScripts\Core\Lib\PDF;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\CuentaBanco;
+use FacturaScripts\Dinamic\Model\CuentaBancoCliente;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use FacturaScripts\Dinamic\Model\Pais;
 
@@ -60,6 +64,34 @@ abstract class PDFDocument extends PDFCore
         $completeAddress .= empty($model->provincia) ? '' : ' (' . Utils::fixHtml($model->provincia) . ')';
         $completeAddress .= empty($model->codpais) ? '' : ', ' . $this->getCountryName($model->codpais);
         return $completeAddress;
+    }
+
+    /**
+     * 
+     * @param string $codpago
+     * @param string $codcliente
+     *
+     * @return string
+     */
+    protected function getBankData($codpago, $codcliente): string
+    {
+        $paymentMethod = new FormaPago();
+        if (!$paymentMethod->loadFromCode($codpago)) {
+            return '-';
+        }
+
+        $cuentaBancoCli = new CuentaBancoCliente();
+        $where = [new DataBaseWhere('codcliente', $codcliente)];
+        if ($paymentMethod->domiciliado && $cuentaBancoCli->loadFromCode('', $where)) {
+            return $cuentaBancoCli->getIban(true);
+        }
+
+        $cuentaBanco = new CuentaBanco();
+        if (!empty($paymentMethod->codcuentabanco) && $cuentaBanco->loadFromCode($paymentMethod->codcuentabanco)) {
+            return $cuentaBanco->getIban(true);
+        }
+
+        return '-';
     }
 
     /**
@@ -381,7 +413,7 @@ abstract class PDFDocument extends PDFCore
 
             $headers = [
                 'numero' => $this->i18n->trans('receipt'),
-                'codpago' => $this->i18n->trans('payment-method'),
+                'bank' => $this->i18n->trans('bank-account'),
                 'importe' => $this->i18n->trans('amount'),
                 'vencimiento' => $this->i18n->trans('expiration')
             ];
@@ -389,7 +421,7 @@ abstract class PDFDocument extends PDFCore
             foreach ($receipts as $receipt) {
                 $rows[] = [
                     'numero' => $receipt->numero,
-                    'codpago' => $receipt->codpago,
+                    'bank' => $this->getBankData($receipt->codpago, $receipt->codcliente),
                     'importe' => $this->numberTools->format($receipt->importe),
                     'vencimiento' => $receipt->pagado ? $this->i18n->trans('paid') : $receipt->vencimiento
                 ];
@@ -397,7 +429,7 @@ abstract class PDFDocument extends PDFCore
             $tableOptions = [
                 'cols' => [
                     'numero' => ['justification' => 'center'],
-                    'codpago' => ['justification' => 'center'],
+                    'bank' => ['justification' => 'center'],
                     'importe' => ['justification' => 'right'],
                     'vencimiento' => ['justification' => 'right']
                 ],
@@ -405,7 +437,7 @@ abstract class PDFDocument extends PDFCore
                 'shadeHeadingCol' => [0.95, 0.95, 0.95],
                 'width' => $this->tableWidth
             ];
-            $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+            $this->pdf->ezTable($rows, $headers, $this->i18n->trans('payment-method'), $tableOptions);
         }
     }
 }
