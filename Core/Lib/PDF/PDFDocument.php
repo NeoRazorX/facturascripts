@@ -283,7 +283,7 @@ abstract class PDFDocument extends PDFCore
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'width' => $this->tableWidth
         ];
-        if (!empty($taxRows)) {
+        if (count($taxRows) > 1) {
             $this->removeEmptyCols($taxRows, $taxHeaders, $this->numberTools->format(0));
             $this->pdf->ezTable($taxRows, $taxHeaders, '', $taxTableOptions);
             $this->pdf->ezText("\n");
