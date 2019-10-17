@@ -125,7 +125,7 @@ class Variante extends Base\ModelClass
             . " ORDER BY v." . $field . " asc";
 
         foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $data) {
-            $this->completeDescription($data['description'], $data['idatributovalor1'], $data['idatributovalor2']);
+            $data['description'] = $this->getAttributeDescription($data['idatributovalor1'], $data['idatributovalor2'], $data['description']);
             $results[] = new CodeModel($data);
         }
 
@@ -136,11 +136,10 @@ class Variante extends Base\ModelClass
      * 
      * @return string
      */
-    public function description()
+    public function description(bool $onlyAttributes = false)
     {
-        $description = $this->getProducto()->descripcion;
-        $this->completeDescription($description, $this->idatributovalor1, $this->idatributovalor2);
-        return $description;
+        $description = $onlyAttributes ? '' : $this->getProducto()->descripcion;
+        return $this->getAttributeDescription($this->idatributovalor1, $this->idatributovalor2, $description);
     }
 
     /**
@@ -156,6 +155,34 @@ class Variante extends Base\ModelClass
         }
 
         return parent::delete();
+    }
+
+    /**
+     * 
+     * @param int    $idatributoval1
+     * @param int    $idatributoval2
+     * @param string $description
+     * @param string $separator1
+     * @param string $separator2
+     *
+     * @return string
+     */
+    protected function getAttributeDescription($idatributoval1, $idatributoval2, $description = '', $separator1 = "\n", $separator2 = ', ')
+    {
+        $atributeValue = new AtributoValor();
+        $extra = [];
+        foreach ([$idatributoval1, $idatributoval2] as $id) {
+            if (!empty($id) && $atributeValue->loadFromCode($id)) {
+                $extra[] = $atributeValue->descripcion;
+            }
+        }
+
+        /// compose text
+        if (empty($description)) {
+            return implode($separator2, $extra);
+        }
+
+        return empty($extra) ? $description : implode($separator1, [$description, implode($separator2, $extra)]);
     }
 
     /**
@@ -271,28 +298,5 @@ class Variante extends Base\ModelClass
 
         /// default
         return empty($this->idproducto) ? $list . 'Producto' : 'EditProducto?code=' . $this->idproducto;
-    }
-
-    /**
-     * 
-     * @param string $description
-     * @param int    $idatributoval1
-     * @param int    $idatributoval2
-     */
-    protected function completeDescription(&$description, $idatributoval1, $idatributoval2)
-    {
-        $atributo_valor = new AtributoValor();
-        $extra = '';
-
-        if (!empty($idatributoval1) && $atributo_valor->loadFromCode($idatributoval1)) {
-            $extra .= "\n" . $atributo_valor->descripcion;
-        }
-
-        if (!empty($idatributoval2) && $atributo_valor->loadFromCode($idatributoval2)) {
-            $extra .= empty($extra) ? "\n" : ', ';
-            $extra .= $atributo_valor->descripcion;
-        }
-
-        $description .= $extra;
     }
 }
