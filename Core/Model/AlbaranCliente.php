@@ -58,17 +58,17 @@ class AlbaranCliente extends Base\SalesDocument
      * Returns a new line for the document.
      * 
      * @param array $data
+     * @param array $exclude
      * 
      * @return LineaAlbaran
      */
-    public function getNewLine(array $data = [])
+    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idalbaran'])
     {
         $newLine = new LineaAlbaran();
         $newLine->idalbaran = $this->idalbaran;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
 
-        $exclude = ['actualizastock', 'idlinea', 'idalbaran'];
         $newLine->loadFromData($data, $exclude);
         return $newLine;
     }

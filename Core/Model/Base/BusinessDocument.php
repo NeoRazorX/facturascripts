@@ -205,7 +205,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     /**
      * Returns a new line for this business document.
      */
-    abstract public function getNewLine(array $data = []);
+    abstract public function getNewLine(array $data = [], array $exclude = []);
 
     /**
      * Returns the subject of this document.

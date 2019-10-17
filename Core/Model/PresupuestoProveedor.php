@@ -57,17 +57,17 @@ class PresupuestoProveedor extends Base\PurchaseDocument
      * Returns a new line for this document.
      *
      * @param array $data
+     * @param array $exclude
      *
      * @return LineaPresupuesto
      */
-    public function getNewLine(array $data = [])
+    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpresupuesto'])
     {
         $newLine = new LineaPresupuesto();
         $newLine->idpresupuesto = $this->idpresupuesto;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
 
-        $exclude = ['actualizastock', 'idlinea', 'idpresupuesto'];
         $newLine->loadFromData($data, $exclude);
         return $newLine;
     }

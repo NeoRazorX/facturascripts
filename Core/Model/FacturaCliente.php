@@ -65,17 +65,17 @@ class FacturaCliente extends Base\SalesDocument
      * Returns a new line for the document.
      *
      * @param array $data
+     * @param array $exclude
      *
      * @return LineaFactura
      */
-    public function getNewLine(array $data = [])
+    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idfactura'])
     {
         $newLine = new LineaFactura();
         $newLine->idfactura = $this->idfactura;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
 
-        $exclude = ['actualizastock', 'idlinea', 'idfactura'];
         $newLine->loadFromData($data, $exclude);
         return $newLine;
     }

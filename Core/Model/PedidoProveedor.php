@@ -57,17 +57,17 @@ class PedidoProveedor extends Base\PurchaseDocument
      * Returns a new line for this document.
      * 
      * @param array $data
+     * @param array $exclude
      *
      * @return LineaPedido
      */
-    public function getNewLine(array $data = [])
+    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpedido'])
     {
         $newLine = new LineaPedido();
         $newLine->idpedido = $this->idpedido;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
 
-        $exclude = ['actualizastock', 'idlinea', 'idpedido'];
         $newLine->loadFromData($data, $exclude);
         return $newLine;
     }

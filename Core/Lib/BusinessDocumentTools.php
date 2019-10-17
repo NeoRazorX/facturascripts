@@ -306,7 +306,7 @@ class BusinessDocumentTools
     {
         if (isset($fLine['cantidad']) && '' !== $fLine['cantidad']) {
             /// edit line
-            $newLine = $doc->getNewLine($fLine);
+            $newLine = $doc->getNewLine($fLine, ['actualizastock']);
         } elseif (isset($fLine['referencia']) && '' !== $fLine['referencia']) {
             /// new line with reference
             $newLine = $doc->getNewProductLine($fLine['referencia']);
