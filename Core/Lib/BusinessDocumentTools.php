@@ -314,7 +314,7 @@ class BusinessDocumentTools
         } else {
             /// new line without reference
             $newLine = $doc->getNewLine();
-            $newLine->descripcion = $fLine['descripcion'];
+            $newLine->descripcion = $fLine['descripcion'] ?? '';
             $this->recalculateFormLineTaxZones($newLine);
         }
 
