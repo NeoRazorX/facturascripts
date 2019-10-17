@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class PDFCore extends \FacturaScripts\Core\Lib\PDF\PDFCore
+abstract class PDFCore extends \FacturaScripts\Core\Lib\PDF\PDFCore
 {
 }
