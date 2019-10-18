@@ -91,7 +91,7 @@
             </div>
             {# -- Filters -- #}
             {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
-            <div id="form{{ currentView.getViewName() }}Filters" class="row" style="{{ divFiltersStyle }}">
+            <div id="form{{ currentView.getViewName() }}Filters" class="row align-items-center" style="{{ divFiltersStyle }}">
                 {% for filterName, filter in currentView.filters %}
                     {{ filter.render() | raw }}
                 {% endfor %}

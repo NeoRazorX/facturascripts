@@ -252,5 +252,15 @@ class ExportManager
                 'MAIL' => ['description' => 'email', 'icon' => 'fas fa-envelope'],
             ];
         }
+
+        if (empty(static::$tools)) {
+            static::$tools = [
+                'main' => [
+                    'link' => 'ListSecuenciaDocumento?activetab=ListFormatoDocumento',
+                    'description' => 'printing-formats',
+                    'icon' => 'fas fa-cog'
+                ],
+            ];
+        }
     }
 }
