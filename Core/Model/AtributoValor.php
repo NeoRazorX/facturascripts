@@ -50,11 +50,27 @@ class AtributoValor extends Base\ModelClass
     public $id;
 
     /**
+     * Position for visualization and print
+     *
+     * @var int
+     */
+    public $orden;
+
+    /**
      * Value of the attribute
      *
      * @var string
      */
     public $valor;
+
+    /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->orden = 0;
+    }
 
     /**
      * This function is called when creating the model table. Returns the SQL
@@ -108,7 +124,7 @@ class AtributoValor extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $list
      *

@@ -25,6 +25,10 @@
         <type>character varying(100)</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>orden</name>
+        <type>integer</type>
+    </column>
     <constraint>
         <name>atributos_valores_pkey</name>
         <type>PRIMARY KEY (id)</type>
@@ -32,5 +36,9 @@
     <constraint>
         <name>ca_atributos_valores</name>
         <type>FOREIGN KEY (codatributo) REFERENCES atributos (codatributo) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_values_atributos_valores</name>
+        <type>UNIQUE (codatributo,valor)</type>
     </constraint>
 </table>

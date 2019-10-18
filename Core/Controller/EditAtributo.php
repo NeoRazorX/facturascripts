@@ -35,7 +35,7 @@ class EditAtributo extends EditController
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -79,7 +79,7 @@ class EditAtributo extends EditController
             case 'EditAtributoValor':
                 $codatributo = $this->getViewModelValue($this->getMainViewName(), 'codatributo');
                 $where = [new DataBaseWhere('codatributo', $codatributo)];
-                $view->loadData('', $where, ['id' => 'DESC']);
+                $view->loadData('', $where, ['orden' => 'DESC', 'valor' => 'ASC', 'id' => 'ASC']);
                 break;
 
             default:
