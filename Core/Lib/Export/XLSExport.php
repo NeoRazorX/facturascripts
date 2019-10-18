@@ -89,14 +89,13 @@ class XLSExport extends ExportBase
     {
         $this->setFileName($title);
 
-        $headers = $this->getColumnHeaders($columns);
-        $titles = $this->getColumnTitles($columns);
+        $headers = $this->getModelHeaders($model);
         $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         if (empty($cursor)) {
             $this->writer->writeSheet([], $title, $headers);
         }
         while (!empty($cursor)) {
-            $rows = $this->getCursorRawData($cursor, array_keys($titles));
+            $rows = $this->getCursorRawData($cursor);
             $this->writer->writeSheet($rows, $title, $headers);
 
             /// Advance within the results
@@ -118,9 +117,8 @@ class XLSExport extends ExportBase
      */
     public function addModelPage($model, $columns, $title = ''): bool
     {
-        $headers = $this->getColumnHeaders($columns);
-        $titles = $this->getColumnTitles($columns);
-        $rows = $this->getCursorRawData([$model], array_keys($titles));
+        $headers = $this->getModelHeaders($model);
+        $rows = $this->getCursorRawData([$model]);
         $this->writer->writeSheet($rows, $title, $headers);
         return true;
     }
@@ -201,6 +199,25 @@ class XLSExport extends ExportBase
         }
 
         return $headers;
+    }
+
+    /**
+     * 
+     * @param array $cursor
+     * @param array $fields
+     *
+     * @return array
+     */
+    protected function getCursorRawData($cursor, $fields = []): array
+    {
+        $data = parent::getCursorRawData($cursor, $fields);
+        foreach ($data as $num => $row) {
+            foreach ($row as $key => $value) {
+                $data[$num][$key] = $this->toolBox()->utils()->fixHtml($value);
+            }
+        }
+
+        return $data;
     }
 
     /**
