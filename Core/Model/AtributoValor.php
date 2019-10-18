@@ -69,7 +69,7 @@ class AtributoValor extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->orden = 0;
+        $this->orden = 100;
     }
 
     /**

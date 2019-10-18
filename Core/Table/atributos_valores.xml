@@ -28,6 +28,7 @@
     <column>
         <name>orden</name>
         <type>integer</type>
+        <default>100</default>
     </column>
     <constraint>
         <name>atributos_valores_pkey</name>
