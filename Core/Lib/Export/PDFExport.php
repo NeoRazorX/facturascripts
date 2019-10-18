@@ -205,6 +205,7 @@ class PDFExport extends PDFDocument
     public function show(Response &$response)
     {
         $response->headers->set('Content-type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'inline;filename=' . $this->getFileName() . '.pdf');
         $response->setContent($this->getDoc());
     }
 }
