@@ -44,7 +44,7 @@
                 }
             }
         });
-
+        
         return false;
     }
 </script>
@@ -70,7 +70,7 @@
         {% endfor %}
         {{ _self.customSelect('doc_codpago', 'codpago', currentView.model.codpago, currentView.getSelectValues('FormaPago')) }}
         {{ _self.customSelect('doc_coddivisa', 'coddivisa', currentView.model.coddivisa, currentView.getSelectValues('Divisa')) }}
-        <div class="col-sm-3 col-md-2 col-lg">
+        <div class="col-sm-3 col-md-2 col-lg mb-2">
             <div class="input-group">
                 <input type="text" id="doc_total" name="total" value="{{ currentView.model.total }}" class="form-control text-right" disabled="" />
                 <div class="input-group-append">
@@ -254,40 +254,42 @@
 {% endmacro %}
 
 {% macro statusSelect(model, view, i18n) %}
-    <div class="dropdown">
-        {% set status = model.getStatus() %}
-        {% if status.generadoc %}
-            <button class="btn btn-secondary" type="button">
-                <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
-            </button>
-        {% else %}
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
-            </button>
-            <div class="dropdown-menu dropdown-menu-right">
-                {% set showDocumentStitcher = false %}
-                {% for status in view.documentStatus %}
-                    {% if model.idestado == status.idestado %}
-                        <a class="dropdown-item active" href="#">
-                            <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
-                        </a>
-                    {% else %}
-                        <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ status.idestado }}');
-                                businessDocViewSave();">
-                            {% if status.generadoc %}
-                                {% set showDocumentStitcher = true %}
-                            {% endif %}
-                            <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+    <div class="col mb-2">
+        <div class="dropdown">
+            {% set status = model.getStatus() %}
+            {% if status.generadoc %}
+                <button class="btn btn-block btn-secondary" type="button">
+                    <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                </button>
+            {% else %}
+                <button class="btn btn-block btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    {% set showDocumentStitcher = false %}
+                    {% for status in view.documentStatus %}
+                        {% if model.idestado == status.idestado %}
+                            <a class="dropdown-item active" href="#">
+                                <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                            </a>
+                        {% else %}
+                            <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ status.idestado }}');
+                               businessDocViewSave();">
+                                {% if status.generadoc %}
+                                    {% set showDocumentStitcher = true %}
+                                {% endif %}
+                                <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                    {% if model.exists() and showDocumentStitcher %}
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="DocumentStitcher?model={{ model.modelClassName() }}&codes={{ model.primaryColumnValue() }}">
+                            <i class="fas fa-magic fa-fw" aria-hidden="true"></i> {{ i18n.trans('group-or-split') }}
                         </a>
                     {% endif %}
-                {% endfor %}
-                {% if model.exists() and showDocumentStitcher %}
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="DocumentStitcher?model={{ model.modelClassName() }}&codes={{ model.primaryColumnValue() }}">
-                        <i class="fas fa-magic fa-fw" aria-hidden="true"></i> {{ i18n.trans('group-or-split') }}
-                    </a>
-                {% endif %}
-            </div>
-        {% endif %}
+                </div>
+            {% endif %}
+        </div>
     </div>
 {% endmacro %}

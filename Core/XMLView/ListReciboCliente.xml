@@ -20,11 +20,11 @@
 -->
 <view>
     <columns>
-        <column name="date" order="100">
-            <widget type="date" fieldname="fecha" />
-        </column>
-        <column name="id" display="none" order="110">
+        <column name="id" display="none" order="100">
             <widget type="text" fieldname="idrecibo" />
+        </column>
+        <column name="date" display="none" order="110">
+            <widget type="date" fieldname="fecha" />
         </column>
         <column name="invoice" order="120">
             <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaCliente" readonly="dinamic">

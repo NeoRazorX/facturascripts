@@ -125,7 +125,7 @@ class EditFacturaCliente extends SalesDocumentController
         parent::createViews();
         $this->createReceiptsView();
         $this->createAccountsView();
-        $this->addHtmlView('Devoluciones', 'Tab/DevolucionesFacturaCliente', 'FacturaCliente', 'refunds', 'fas fa-share-square');
+        $this->addHtmlView('Refund', 'Tab/RefundFacturaCliente', 'FacturaCliente', 'refunds', 'fas fa-share-square');
     }
 
     /**
@@ -216,7 +216,7 @@ class EditFacturaCliente extends SalesDocumentController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'Devoluciones':
+            case 'Refund':
             case 'ListReciboCliente':
                 $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($this->getLineXMLView(), 'idfactura'))];
                 $view->loadData('', $where);

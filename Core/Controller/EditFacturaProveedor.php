@@ -125,7 +125,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
         parent::createViews();
         $this->createReceiptsView();
         $this->createAccountsView();
-        $this->addHtmlView('Devoluciones', 'Tab/DevolucionesFacturaProveedor', 'FacturaProveedor', 'refunds', 'fas fa-share-square');
+        $this->addHtmlView('Refund', 'Tab/RefundFacturaProveedor', 'FacturaProveedor', 'refunds', 'fas fa-share-square');
     }
 
     /**
@@ -216,7 +216,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'Devoluciones':
+            case 'Refund':
             case 'ListReciboProveedor':
                 $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($this->getLineXMLView(), 'idfactura'))];
                 $view->loadData('', $where);
