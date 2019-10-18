@@ -24,8 +24,6 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  * Controller to list the items in the Atributo model
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
- * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
 class ListAtributo extends ListController
 {
@@ -54,8 +52,9 @@ class ListAtributo extends ListController
         $this->addOrderBy('ListAtributo', ['codatributo'], 'code');
         $this->addOrderBy('ListAtributo', ['nombre'], 'name');
 
-        $this->addView('EditAtributoValor', 'AtributoValor', 'values', 'fas fa-list');
-        $this->addSearchFields('EditAtributoValor', ['valor', 'codatributo']);
-        $this->addOrderBy('EditAtributoValor', ['codatributo'], 'code');
+        $this->addView('ListAtributoValor', 'AtributoValor', 'values', 'fas fa-list');
+        $this->addSearchFields('ListAtributoValor', ['valor', 'codatributo']);
+        $this->addOrderBy('ListAtributoValor', ['codatributo', 'orden', 'valor'], 'sort', 2);
+        $this->addOrderBy('ListAtributoValor', ['codatributo', 'valor'], 'value');
     }
 }
