@@ -50,6 +50,7 @@ require_once __DIR__ . '/config.php';
 /// Register error handler
 if (FS_DEBUG) {
     $whoops = new \Whoops\Run;
+    $whoops->prependHandler(new \Whoops\Handler\PlainTextHandler());
     $whoops->prependHandler(new \Whoops\Handler\PrettyPageHandler());
     $whoops->register();
 } else {
