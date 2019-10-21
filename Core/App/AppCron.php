@@ -38,7 +38,7 @@ class AppCron extends App
             $content .= empty($content) ? $log["message"] : "\n" . $log["message"];
         }
 
-        $this->response->setContent($content);
+        $this->response->setContent($content . "\n");
         parent::render();
     }
 
