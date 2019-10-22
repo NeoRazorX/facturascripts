@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\Utils;
@@ -27,6 +28,7 @@ use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\ImpuestoZona;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
  * A set of tools to recalculate business documents.
@@ -35,7 +37,6 @@ use FacturaScripts\Dinamic\Model\Serie;
  */
 class BusinessDocumentTools
 {
-
     /**
      *
      * @var CommissionTools
@@ -170,7 +171,7 @@ class BusinessDocumentTools
         $doc->total = round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0);
         $json = [
             'total' => $doc->total,
-            'lines' => $lines
+            'lines' => $lines,
         ];
 
         return json_encode($json);
@@ -226,11 +227,11 @@ class BusinessDocumentTools
     protected function loadRegimenIva($reg)
     {
         switch ($reg) {
-            case 'Exento':
+            case RegimenIVA::TAX_SYSTEM_EXEMPT:
                 $this->siniva = true;
                 break;
 
-            case 'Recargo':
+            case RegimenIVA::TAX_SYSTEM_SURCHARGE:
                 $this->recargo = true;
                 break;
         }
