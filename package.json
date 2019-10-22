@@ -32,6 +32,6 @@
     "handsontable": "^6.x",
     "jquery": "^3.4.1",
     "jquery-ui-dist": "^1.12.x",
-    "popper.js": "^1.15.0"
+    "popper.js": "^1.16.0"
   }
 }
