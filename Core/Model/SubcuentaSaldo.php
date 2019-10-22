@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * Description of SubcuentaSaldo
  *
  * @author Artex Trading sa     <jcuello@artextrading.com>
- * @author Carlos Garcí Gómez   <carlos@facturascripts.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class SubcuentaSaldo extends Base\ModelClass
 {

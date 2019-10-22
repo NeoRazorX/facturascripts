@@ -187,7 +187,7 @@ class WidgetSelect extends BaseWidget
      * @param array $rows
      * @param bool  $translate
      */
-    public function setValuesFromCodeModel(&$rows, $translate = false)
+    public function setValuesFromCodeModel($rows, $translate = false)
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
