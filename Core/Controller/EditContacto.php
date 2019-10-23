@@ -115,8 +115,6 @@ class EditContacto extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->setTabsPosition('top');
-
         $this->createEmailsView();
     }
 
