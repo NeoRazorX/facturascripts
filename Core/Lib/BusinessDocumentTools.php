@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\Utils;
@@ -28,7 +27,6 @@ use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\ImpuestoZona;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Serie;
-use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
  * A set of tools to recalculate business documents.
@@ -37,6 +35,7 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
  */
 class BusinessDocumentTools
 {
+
     /**
      *
      * @var CommissionTools
