@@ -259,9 +259,6 @@ class AppController extends App
 
         if ($user->loadFromCode($nick) && $user->enabled) {
             if ($user->verifyPassword($this->request->request->get('fsPassword'))) {
-                /// TODO: remove after 2018.13
-                $this->toolBox()->events()->trigger('App:User:Login', $user);
-
                 /// Execute actions from User model extensions
                 $user->pipe('login');
 
