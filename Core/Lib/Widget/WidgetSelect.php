@@ -278,7 +278,7 @@ class WidgetSelect extends BaseWidget
     protected function setSourceData(array $child, bool $loadData = true)
     {
         $this->source = $child['source'];
-        $this->fieldcode = $child['fieldcode'];
+        $this->fieldcode = $child['fieldcode'] ?? 'id';
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
         if ($loadData) {
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
