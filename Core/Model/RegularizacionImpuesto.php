@@ -281,7 +281,7 @@ class RegularizacionImpuesto extends Base\ModelClass
     private function getPeriod($period): array
     {
         /// Calculate actual year
-        $year = explode('-', date('d-m-Y'))[2];
+        $year = explode('-', date(self::DATE_STYLE))[2];
 
         // return periods values
         switch ($period) {

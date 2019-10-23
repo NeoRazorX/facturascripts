@@ -89,7 +89,7 @@ class LiquidacionComision extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->fecha = date('d-m-Y');
+        $this->fecha = date(self::DATE_STYLE);
         $this->total = 0.0;
     }
 

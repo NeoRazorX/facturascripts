@@ -129,7 +129,7 @@ abstract class Receipt extends ModelOnChangeClass
         $appSettings = $this->toolBox()->appSettings();
         $this->coddivisa = $appSettings->get('default', 'coddivisa');
         $this->codpago = $appSettings->get('default', 'codpago');
-        $this->fecha = date('d-m-Y');
+        $this->fecha = date(self::DATE_STYLE);
         $this->idempresa = $appSettings->get('default', 'idempresa');
         $this->importe = 0.0;
         $this->liquidado = 0.0;
@@ -199,7 +199,7 @@ abstract class Receipt extends ModelOnChangeClass
         if ($this->pagado === false) {
             $this->fechapago = null;
         } elseif (empty($this->fechapago)) {
-            $this->fechapago = date('d-m-Y');
+            $this->fechapago = date(self::DATE_STYLE);
         }
 
         /// check expiration date

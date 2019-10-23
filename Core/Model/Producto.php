@@ -178,7 +178,7 @@ class Producto extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->actualizado = date('d-m-Y H:i:s');
+        $this->actualizado = date(self::DATETIME_STYLE);
         $this->bloqueado = false;
         $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
         $this->nostock = false;
@@ -327,7 +327,7 @@ class Producto extends Base\ModelClass
             $this->publico = false;
         }
 
-        $this->actualizado = date('d-m-Y H:i:s');
+        $this->actualizado = date(self::DATETIME_STYLE);
         return parent::test();
     }
 

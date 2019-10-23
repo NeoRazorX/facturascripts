@@ -106,7 +106,7 @@ class ReciboCliente extends Base\Receipt
             }
         }
 
-        $this->vencimiento = date('d-m-Y', min($newDates));
+        $this->vencimiento = date(self::DATE_STYLE, min($newDates));
     }
 
     /**

@@ -91,7 +91,7 @@ class EmailSent extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->date = date('d-m-Y H:i:s');
+        $this->date = date(self::DATETIME_STYLE);
         $this->opened = false;
     }
 
