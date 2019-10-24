@@ -117,9 +117,6 @@ abstract class ModelClass extends ModelCore
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
         if (self::$dataBase->exec($sql)) {
-            /// TODO: remove after 2018.13
-            $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':delete', $this);
-
             $this->pipe('delete');
             return true;
         }
@@ -240,9 +237,6 @@ abstract class ModelClass extends ModelCore
      */
     public function save()
     {
-        /// TODO: remove after 2018.13
-        $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':save:before', $this);
-
         if ($this->pipe('saveBefore') === false) {
             return false;
         }
@@ -253,9 +247,6 @@ abstract class ModelClass extends ModelCore
         }
 
         if ($done) {
-            /// TODO: remove after 2018.13
-            $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':save', $this);
-
             $this->pipe('save');
         }
 
@@ -324,9 +315,6 @@ abstract class ModelClass extends ModelCore
      */
     protected function saveInsert(array $values = [])
     {
-        /// TODO: remove after 2018.13
-        $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':saveInsert:before', $this);
-
         if ($this->pipe('saveInsertBefore') === false) {
             return false;
         }
@@ -351,9 +339,6 @@ abstract class ModelClass extends ModelCore
                 self::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
             }
 
-            /// TODO: remove after 2018.13
-            $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':saveInsert', $this);
-
             $this->pipe('saveInsert');
             return true;
         }
@@ -370,9 +355,6 @@ abstract class ModelClass extends ModelCore
      */
     protected function saveUpdate(array $values = [])
     {
-        /// TODO: remove after 2018.13
-        $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':saveUpdate:before', $this);
-
         if ($this->pipe('saveUpdateBefore') === false) {
             return false;
         }
@@ -391,9 +373,6 @@ abstract class ModelClass extends ModelCore
 
         $sql .= ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
         if (self::$dataBase->exec($sql)) {
-            /// TODO: remove after 2018.13
-            $this->toolBox()->events()->trigger('Model:' . $this->modelClassName() . ':saveUpdate', $this);
-
             $this->pipe('saveUpdate');
             return true;
         }

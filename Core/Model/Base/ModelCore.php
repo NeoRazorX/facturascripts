@@ -20,9 +20,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseTools;
-use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 
 /**
@@ -33,6 +31,9 @@ use FacturaScripts\Dinamic\Lib\Import\CSVImport;
  */
 abstract class ModelCore
 {
+
+    const DATE_STYLE = 'd-m-Y';
+    const DATETIME_STYLE = 'd-m-Y H:i:s';
 
     /**
      * List of already tested tables.
@@ -47,22 +48,6 @@ abstract class ModelCore
      * @var DataBase
      */
     protected static $dataBase;
-
-    /**
-     * Multi-language translator.
-     *
-     * @deprecated since version 2018.09
-     * @var Translator
-     */
-    protected static $i18n;
-
-    /**
-     * Manage the log of all controllers, models and database.
-     *
-     * @deprecated since version 2018.09
-     * @var MiniLog
-     */
-    protected static $miniLog;
 
     /**
      * Adds an extension to this model.
@@ -133,8 +118,6 @@ abstract class ModelCore
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
-            self::$i18n = $this->toolBox()->i18n();
-            self::$miniLog = $this->toolBox()->log();
 
             $tables = $this->toolBox()->cache()->get('fs_checked_tables');
             if (is_array($tables) && !empty($tables)) {
@@ -242,7 +225,7 @@ abstract class ModelCore
                     break;
 
                 case 'date':
-                    $this->{$key} = empty($value) ? null : date('d-m-Y', strtotime($value));
+                    $this->{$key} = empty($value) ? null : date(self::DATE_STYLE, strtotime($value));
                     break;
 
                 default:

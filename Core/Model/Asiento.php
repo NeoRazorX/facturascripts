@@ -124,7 +124,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     {
         parent::clear();
         $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
-        $this->fecha = date('d-m-Y');
+        $this->fecha = date(self::DATE_STYLE);
         $this->editable = true;
         $this->importe = 0.0;
         $this->numero = '';

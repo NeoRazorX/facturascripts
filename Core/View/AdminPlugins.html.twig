@@ -121,25 +121,25 @@
     {% if not constant('FS_DISABLE_RM_PLUGINS') %}
         <script type="text/javascript">
             function deletePlugin(pluginName) {
-            bootbox.confirm({
-            title: "{{ i18n.trans('confirm-delete')|raw }}",
-            message: "{{ i18n.trans('are-you-sure') }}",
-            closeButton: false,
-            buttons: {
-            cancel: {
-            label: "<i class='fas fa-times'></i> {{ i18n.trans('cancel') }}"
-            },
-            confirm: {
-            label: "<i class='fas fa-check'></i> {{ i18n.trans('delete') }}",
-            className: 'btn-danger'
-            }
-            },
-            callback: function (result) {
-            if (result) {
-            window.location = "{{fsc.url()}}?action=remove" + "\u0026" + "plugin=" + pluginName;
-            }
-            }
-            });
+                bootbox.confirm({
+                    title: "{{ i18n.trans('confirm-delete')|raw }}",
+                    message: "{{ i18n.trans('are-you-sure') }}",
+                    closeButton: false,
+                    buttons: {
+                        cancel: {
+                            label: "<i class='fas fa-times'></i> {{ i18n.trans('cancel') }}"
+                        },
+                        confirm: {
+                            label: "<i class='fas fa-check'></i> {{ i18n.trans('delete') }}",
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            window.location = "{{fsc.url()}}?action=remove" + "\u0026" + "plugin=" + pluginName;
+                        }
+                    }
+                });
             }
         </script>
     {% endif %}
@@ -188,7 +188,8 @@
                     <th>{{ i18n.trans('name') }}</th>
                     <th class="text-right">{{ i18n.trans('version') }}</th>
                     <th>{{ i18n.trans('description') }}</th>
-                    <th class="text-center" colspan="2">{{ i18n.trans('actions') }}</th>
+                    <th></th>
+                    <th class="text-center">{{ i18n.trans('actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -210,19 +211,14 @@
                         {% endif %}
                         <td>{{ plugin.description | nl2br }}</td>
                         {% if plugin.enabled %}
-                            <td colspan="2">
+                            <td></td>
+                            <td>
                                 <a class="btn btn-block btn-sm btn-secondary" href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin.name }}">
                                     <i class="fas fa-times fa-fw" aria-hidden="true"></i>
                                     <span class="d-none d-sm-inline-block">{{ i18n.trans('disable') }}</span>
                                 </a>
                             </td>
                         {% elseif plugin.compatible %}
-                            <td>
-                                <a class="btn btn-block btn-sm btn-success" href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}">
-                                    <i class="fas fa-check fa-fw" aria-hidden="true"></i>
-                                    <span class="d-none d-sm-inline-block">{{ i18n.trans('enable') }}</span>
-                                </a>
-                            </td>
                             <td>
                                 {% if not constant('FS_DISABLE_RM_PLUGINS') %}
                                     <a class="btn btn-block btn-sm btn-danger" href="#" onclick="deletePlugin('{{ plugin.name }}')">
@@ -231,6 +227,14 @@
                                     </a>
                                 {% endif %}
                             </td>
+                            <td>
+                                <a class="btn btn-block btn-sm btn-success" href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}">
+                                    <i class="fas fa-check fa-fw" aria-hidden="true"></i>
+                                    <span class="d-none d-sm-inline-block">{{ i18n.trans('enable') }}</span>
+                                </a>
+                            </td>
+                        {% else %}
+                            <td colspan="2"></td>
                         {% endif %}
                     </tr>
                 {% else %}

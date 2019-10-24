@@ -170,7 +170,7 @@ class BusinessDocumentTools
         $doc->total = round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0);
         $json = [
             'total' => $doc->total,
-            'lines' => $lines
+            'lines' => $lines,
         ];
 
         return json_encode($json);
@@ -226,11 +226,11 @@ class BusinessDocumentTools
     protected function loadRegimenIva($reg)
     {
         switch ($reg) {
-            case 'Exento':
+            case RegimenIVA::TAX_SYSTEM_EXEMPT:
                 $this->siniva = true;
                 break;
 
-            case 'Recargo':
+            case RegimenIVA::TAX_SYSTEM_SURCHARGE:
                 $this->recargo = true;
                 break;
         }

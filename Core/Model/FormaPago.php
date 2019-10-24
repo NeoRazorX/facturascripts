@@ -119,7 +119,7 @@ class FormaPago extends Base\ModelClass
      */
     public function getExpiration($date)
     {
-        return date('d-m-Y', strtotime($date . ' +' . $this->plazovencimiento . ' ' . $this->tipovencimiento));
+        return date(self::DATE_STYLE, strtotime($date . ' +' . $this->plazovencimiento . ' ' . $this->tipovencimiento));
     }
 
     /**

@@ -288,7 +288,7 @@ class Stock extends Base\ModelClass
     {
         $total = $this->totalFromProducto($this->idproducto);
         $sql = "UPDATE " . Producto::tableName() . " SET stockfis = " . self::$dataBase->var2str($total)
-            . ", actualizado = " . self::$dataBase->var2str(date('d-m-Y H:i:s'))
+            . ", actualizado = " . self::$dataBase->var2str(date(self::DATETIME_STYLE))
             . " WHERE idproducto = " . self::$dataBase->var2str($this->idproducto) . ';';
 
         $totalVariant = $this->totalFromProducto($this->idproducto, $this->referencia);

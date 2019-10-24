@@ -106,7 +106,7 @@ abstract class Contact extends ModelClass
     public function clear()
     {
         parent::clear();
-        $this->fechaalta = date('d-m-Y');
+        $this->fechaalta = date(self::DATE_STYLE);
         $this->personafisica = true;
         $this->tipoidfiscal = $this->toolBox()->appSettings()->get('default', 'tipoidfiscal');
     }

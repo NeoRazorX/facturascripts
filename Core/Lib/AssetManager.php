@@ -78,14 +78,16 @@ class AssetManager
     public static function combine(string $type): string
     {
         $txt = '';
-        foreach (static::get($type) as $file) {
-            $filePath = $file;
-            if (\FS_ROUTE == substr($file, 0, strlen(\FS_ROUTE))) {
-                $filePath = substr($file, strlen(\FS_ROUTE) + 1);
-            }
 
-            $content = file_get_contents(\FS_FOLDER . DIRECTORY_SEPARATOR . $filePath) . "\n";
-            $txt .= static::fixCombineContent($content, \FS_ROUTE . DIRECTORY_SEPARATOR . $filePath);
+        $fsRouteLen = strlen(\FS_ROUTE);
+        foreach (static::get($type) as $file) {
+            $path = (\FS_ROUTE == substr($file, 0, $fsRouteLen)) ? substr($file, $fsRouteLen + 1) : $file;
+
+            $filePath = \FS_FOLDER . DIRECTORY_SEPARATOR . $path;
+            if (is_file($filePath)) {
+                $content = file_get_contents($filePath) . "\n";
+                $txt .= static::fixCombineContent($content, \FS_ROUTE . DIRECTORY_SEPARATOR . $path);
+            }
         }
 
         return $txt;

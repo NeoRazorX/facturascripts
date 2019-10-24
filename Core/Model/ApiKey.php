@@ -85,7 +85,7 @@ class ApiKey extends Base\ModelClass
     {
         parent::clear();
         $this->apikey = $this->toolBox()->utils()->randomString(20);
-        $this->creationdate = date('d-m-Y');
+        $this->creationdate = date(self::DATE_STYLE);
         $this->enabled = true;
         $this->fullaccess = false;
     }

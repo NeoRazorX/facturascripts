@@ -351,7 +351,7 @@ class Contacto extends Base\Contact
      */
     public function newLogkey($ipAddress)
     {
-        $this->lastactivity = date('d-m-Y H:i:s');
+        $this->lastactivity = date(self::DATETIME_STYLE);
         $this->lastip = $ipAddress;
         $this->logkey = $this->toolBox()->utils()->randomString(99);
         return $this->logkey;
