@@ -104,8 +104,8 @@ class AttachedFile extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->date = date('d-m-Y');
-        $this->hour = date('H:i:s');
+        $this->date = date(self::DATE_STYLE);
+        $this->hour = date(self::HOUR_STYLE);
         $this->size = 0;
     }
 

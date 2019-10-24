@@ -78,6 +78,23 @@ class CSVImport
     }
 
     /**
+     * 
+     * @param string $table
+     *
+     * @return string
+     */
+    public static function updateTableSQL(string $table): string
+    {
+        $filePath = static::getTableFilePath($table);
+        if ($filePath === '') {
+            return '';
+        }
+
+        /// TODO: complete this function
+        return '';
+    }
+
+    /**
      * Returns a value to SQL format.
      *
      * @param DataBase $dataBase

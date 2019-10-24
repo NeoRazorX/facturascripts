@@ -227,7 +227,7 @@ class User extends Base\ModelClass
      */
     public function updateActivity($ipAddress)
     {
-        $this->lastactivity = date('d-m-Y H:i:s');
+        $this->lastactivity = date(self::DATETIME_STYLE);
         $this->lastip = $ipAddress;
     }
 

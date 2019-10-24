@@ -32,6 +32,10 @@ use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 abstract class ModelCore
 {
 
+    const DATE_STYLE = 'd-m-Y';
+    const DATETIME_STYLE = 'd-m-Y H:i:s';
+    const HOUR_STYLE = 'H:i:s';
+
     /**
      * List of already tested tables.
      *
@@ -222,7 +226,7 @@ abstract class ModelCore
                     break;
 
                 case 'date':
-                    $this->{$key} = empty($value) ? null : date('d-m-Y', strtotime($value));
+                    $this->{$key} = empty($value) ? null : date(self::DATE_STYLE, strtotime($value));
                     break;
 
                 default:

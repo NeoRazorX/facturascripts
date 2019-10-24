@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Dinamic\Lib\Import\CSVImport;
+
 /**
  * Description of InitClass
  *
@@ -72,5 +74,18 @@ abstract class InitClass
     protected function toolBox()
     {
         return new ToolBox();
+    }
+
+    /**
+     * 
+     * @param string $tableName
+     */
+    protected function updateTableData(string $tableName)
+    {
+        $sql = CSVImport::updateTableSQL($tableName);
+        if (!empty($sql)) {
+            $dataBase = new DataBase();
+            $dataBase->exec($sql);
+        }
     }
 }

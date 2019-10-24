@@ -81,7 +81,7 @@ class CronJob extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->date = date('d-m-Y H:i:s');
+        $this->date = date(self::DATETIME_STYLE);
         $this->done = false;
         $this->duration = 0.0;
         $this->enabled = true;

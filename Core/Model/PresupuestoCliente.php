@@ -52,7 +52,7 @@ class PresupuestoCliente extends Base\SalesDocument
     public function clear()
     {
         parent::clear();
-        $this->finoferta = date('d-m-Y', strtotime(date('d-m-Y') . ' +1 month'));
+        $this->finoferta = date(self::DATE_STYLE, strtotime(date(self::DATE_STYLE) . ' +1 month'));
     }
 
     /**

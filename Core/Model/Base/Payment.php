@@ -82,8 +82,8 @@ abstract class Payment extends ModelClass
     public function clear()
     {
         parent::clear();
-        $this->fecha = date('d-m-Y');
-        $this->hora = date('H:i:s');
+        $this->fecha = date(self::DATE_STYLE);
+        $this->hora = date(self::HOUR_STYLE);
         $this->importe = 0.0;
     }
 
