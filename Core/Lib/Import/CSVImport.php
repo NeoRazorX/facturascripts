@@ -33,11 +33,13 @@ class CSVImport
     /**
      * Return the insert SQL reading a CSV file for the specific file
      *
-     * @param string $table
-     * @param string $filePath
+     * @param string  $table
+     * @param string  $filePath
+     * @param boolean $update
+     *
      * @return string
      */
-    public static function importFileSQL(string $table, string $filePath): string
+    public static function importFileSQL(string $table, string $filePath, bool $update = false): string
     {
         $csv = new Csv();
         $csv->auto($filePath);
@@ -55,6 +57,14 @@ class CSVImport
 
             $sql .= ')';
             $sep = ', ';
+        }
+
+        if ($update) {
+            $sql .= ' ON DUPLICATE KEY UPDATE ';
+
+            $sql .= implode(', ', array_map(function ($value) {
+                return "{$value} = VALUES({$value})";
+            }, $csv->titles, array_keys($csv->titles)));
         }
 
         return $sql . ';';
@@ -90,8 +100,7 @@ class CSVImport
             return '';
         }
 
-        /// TODO: complete this function
-        return '';
+        return static::importFileSQL($table, $filePath, true);
     }
 
     /**
