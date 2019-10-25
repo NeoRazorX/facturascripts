@@ -108,8 +108,7 @@ abstract class ListController extends BaseController
      */
     protected function addFilterAutocomplete($viewName, $key, $label, $field, $table, $fieldcode = '', $fieldtitle = '', $where = [])
     {
-        $filter = new ListFilter\AutocompleteFilter($key, $field, $label, $table, $fieldcode, $fieldtitle, $where);
-        $this->addFilter($viewName, $key, $filter);
+        $this->views[$viewName]->addFilterAutocomplete($key, $label, $field, $table, $fieldcode, $fieldtitle, $where);
     }
 
     /**
@@ -125,8 +124,7 @@ abstract class ListController extends BaseController
      */
     protected function addFilterCheckbox($viewName, $key, $label = '', $field = '', $operation = '=', $matchValue = true, $default = [])
     {
-        $filter = new ListFilter\CheckboxFilter($key, $field, $label, $operation, $matchValue, $default);
-        $this->addFilter($viewName, $key, $filter);
+        $this->views[$viewName]->addFilterCheckbox($key, $label, $field, $operation, $matchValue, $default);
     }
 
     /**
@@ -140,8 +138,7 @@ abstract class ListController extends BaseController
      */
     protected function addFilterDatePicker($viewName, $key, $label = '', $field = '', $operation = '>=')
     {
-        $filter = new ListFilter\DateFilter($key, $field, $label, $operation);
-        $this->addFilter($viewName, $key, $filter);
+        $this->views[$viewName]->addFilterDatePicker($key, $label, $field, $operation);
     }
 
     /**
@@ -155,8 +152,7 @@ abstract class ListController extends BaseController
      */
     protected function addFilterNumber($viewName, $key, $label = '', $field = '', $operation = '>=')
     {
-        $filter = new ListFilter\NumberFilter($key, $field, $label, $operation);
-        $this->addFilter($viewName, $key, $filter);
+        $this->views[$viewName]->addFilterNumber($key, $label, $field, $operation);
     }
 
     /**
@@ -170,8 +166,7 @@ abstract class ListController extends BaseController
      */
     protected function addFilterPeriod($viewName, $key, $label, $field)
     {
-        $filter = new ListFilter\PeriodFilter($key, $field, $label);
-        $this->addFilter($viewName, $key, $filter);
+        $this->views[$viewName]->addFilterPeriod($key, $label, $field);
     }
 
     /**
@@ -185,8 +180,7 @@ abstract class ListController extends BaseController
      */
     protected function addFilterSelect($viewName, $key, $label, $field, $values = [])
     {
-        $filter = new ListFilter\SelectFilter($key, $field, $label, $values);
-        $this->addFilter($viewName, $key, $filter);
+        $this->views[$viewName]->addFilterSelect($key, $label, $field, $values);
     }
 
     /**
@@ -205,8 +199,7 @@ abstract class ListController extends BaseController
      */
     protected function addFilterSelectWhere($viewName, $key, $values)
     {
-        $filter = new ListFilter\SelectWhereFilter($key, $values);
-        $this->addFilter($viewName, $key, $filter);
+        $this->views[$viewName]->addFilterSelectWhere($key, $values);
     }
 
     /**
@@ -232,9 +225,7 @@ abstract class ListController extends BaseController
      */
     protected function addSearchFields(string $viewName, array $fields)
     {
-        foreach ($fields as $field) {
-            $this->views[$viewName]->searchFields[] = $field;
-        }
+        $this->views[$viewName]->addSearchFields($fields);
     }
 
     /**
