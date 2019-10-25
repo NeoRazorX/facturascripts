@@ -71,9 +71,6 @@ class ListCliente extends ListController
         $this->addOrderBy($viewName, ['lastactivity'], 'last-activity', 2);
 
         /// filters
-        $cargoValues = $this->codeModel->all('contactos', 'cargo', 'cargo');
-        $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $cargoValues);
-
         $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
         $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', $countries);
 
@@ -84,7 +81,6 @@ class ListCliente extends ListController
         $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cities);
 
         $this->addFilterCheckbox($viewName, 'verificado', 'verified', 'verificado');
-        $this->addFilterCheckbox($viewName, 'admitemarketing', 'allow-marketing', 'admitemarketing');
     }
 
     /**
@@ -100,10 +96,11 @@ class ListCliente extends ListController
         $this->addOrderBy($viewName, ['fechaalta', 'codcliente'], 'date');
 
         /// filters
+        $i18n = $this->toolBox()->i18n();
         $values = [
-            ['label' => $this->toolBox()->i18n()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => $this->toolBox()->i18n()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
-            ['label' => $this->toolBox()->i18n()->trans('all'), 'where' => []]
+            ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => $i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => $i18n->trans('all'), 'where' => []]
         ];
         $this->addFilterSelectWhere($viewName, 'status', $values);
 
