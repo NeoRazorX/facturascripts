@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
+use FacturaScripts\Core\Lib\ListFilter;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
@@ -42,7 +42,7 @@ class ListView extends BaseView
     /**
      * Filter configuration preset by the user
      *
-     * @var BaseFilter[]
+     * @var ListFilter\BaseFilter[]
      */
     public $filters = [];
 
@@ -107,6 +107,107 @@ class ListView extends BaseView
     }
 
     /**
+     * Add an autocomplete type filter to the ListView.
+     *
+     * @param string $key
+     * @param string $label
+     * @param string $field
+     * @param string $table
+     * @param string $fieldcode
+     * @param string $fieldtitle
+     * @param array  $where
+     */
+    public function addFilterAutocomplete($key, $label, $field, $table, $fieldcode = '', $fieldtitle = '', $where = [])
+    {
+        $this->filters[$key] = new ListFilter\AutocompleteFilter($key, $field, $label, $table, $fieldcode, $fieldtitle, $where);
+    }
+
+    /**
+     * Adds a boolean condition type filter to the ListView.
+     *
+     * @param string          $key
+     * @param string          $label
+     * @param string          $field
+     * @param string          $operation
+     * @param mixed           $matchValue
+     * @param DataBaseWhere[] $default
+     */
+    public function addFilterCheckbox($key, $label = '', $field = '', $operation = '=', $matchValue = true, $default = [])
+    {
+        $this->filters[$key] = new ListFilter\CheckboxFilter($key, $field, $label, $operation, $matchValue, $default);
+    }
+
+    /**
+     * Adds a date type filter to the ListView.
+     *
+     * @param string $key
+     * @param string $label
+     * @param string $field
+     * @param string $operation
+     */
+    public function addFilterDatePicker($key, $label = '', $field = '', $operation = '>=')
+    {
+        $this->filters[$key] = new ListFilter\DateFilter($key, $field, $label, $operation);
+    }
+
+    /**
+     * Adds a numeric type filter to the ListView.
+     *
+     * @param string $key
+     * @param string $label
+     * @param string $field
+     * @param string $operation
+     */
+    public function addFilterNumber($key, $label = '', $field = '', $operation = '>=')
+    {
+        $this->filters[$key] = new ListFilter\NumberFilter($key, $field, $label, $operation);
+    }
+
+    /**
+     * Adds a period type filter to the ListView.
+     * (period + start date + end date)
+     *
+     * @param string $key
+     * @param string $label
+     * @param string $field
+     */
+    public function addFilterPeriod($key, $label, $field)
+    {
+        $this->filters[$key] = new ListFilter\PeriodFilter($key, $field, $label);
+    }
+
+    /**
+     * Add a select type filter to a ListView.
+     *
+     * @param string $key
+     * @param string $label
+     * @param string $field
+     * @param array  $values
+     */
+    public function addFilterSelect($key, $label, $field, $values = [])
+    {
+        $this->filters[$key] = new ListFilter\SelectFilter($key, $field, $label, $values);
+    }
+
+    /**
+     * Add a select where type filter to a ListView.
+     *
+     * @param string $key
+     * @param array  $values
+     *
+     * Example of values:
+     *   [
+     *    ['label' => 'Only active', 'where' => [ new DataBaseWhere('suspended', 'FALSE') ]]
+     *    ['label' => 'Only suspended', 'where' => [ new DataBaseWhere('suspended', 'TRUE') ]]
+     *    ['label' => 'All records', 'where' => []],
+     *   ]
+     */
+    public function addFilterSelectWhere($key, $values)
+    {
+        $this->filters[$key] = new ListFilter\SelectWhereFilter($key, $values);
+    }
+
+    /**
      * Adds a field to the Order By list
      *
      * @param array  $fields
@@ -133,6 +234,19 @@ class ListView extends BaseView
             $this->setSelectedOrderBy($key2);
         } elseif ($default === 1 || empty($this->order)) {
             $this->setSelectedOrderBy($key1);
+        }
+    }
+
+    /**
+     * Adds a list of fields to the search in the ListView.
+     * To use integer columns, use CAST(columnName AS CHAR(50)).
+     *
+     * @param array $fields
+     */
+    public function addSearchFields(array $fields)
+    {
+        foreach ($fields as $field) {
+            $this->searchFields[] = $field;
         }
     }
 

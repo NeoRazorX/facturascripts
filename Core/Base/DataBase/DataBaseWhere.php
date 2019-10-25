@@ -293,6 +293,7 @@ class DataBaseWhere
     {
         switch ($this->operator) {
             case 'IN':
+            case 'NOT IN':
                 return '(' . $this->getValueFromOperatorIn($value) . ')';
 
             case 'LIKE':
@@ -313,7 +314,7 @@ class DataBaseWhere
      */
     private function getValue($value): string
     {
-        if (in_array($this->operator, ['IN', 'LIKE', 'XLIKE'], false)) {
+        if (in_array($this->operator, ['IN', 'LIKE', 'NOT IN', 'XLIKE'], false)) {
             return $this->getValueFromOperator($value);
         }
 

@@ -83,7 +83,7 @@ abstract class Payment extends ModelClass
     {
         parent::clear();
         $this->fecha = date(self::DATE_STYLE);
-        $this->hora = date('H:i:s');
+        $this->hora = date(self::HOUR_STYLE);
         $this->importe = 0.0;
     }
 

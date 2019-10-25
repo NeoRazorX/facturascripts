@@ -244,7 +244,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->codpago = $appSettings->get('default', 'codpago');
         $this->codserie = $appSettings->get('default', 'codserie');
         $this->fecha = date(self::DATE_STYLE);
-        $this->hora = date('H:i:s');
+        $this->hora = date(self::HOUR_STYLE);
         $this->idempresa = $appSettings->get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;

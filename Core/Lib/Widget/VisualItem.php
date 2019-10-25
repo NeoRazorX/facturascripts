@@ -135,16 +135,18 @@ class VisualItem
      */
     public function getColorFromOption($option, $value, $prefix): string
     {
+        $text = $option['text'] ?? '';
+
         $applyOperator = '';
         $operators = ['>', 'gt:', 'gte:', '<', 'lt:', 'lte:', '!', 'neq:', 'like:', 'null:', 'notnull:'];
         foreach ($operators as $operator) {
-            if (0 === strpos($option['text'], $operator)) {
+            if (0 === strpos($text, $operator)) {
                 $applyOperator = $operator;
                 break;
             }
         }
 
-        $matchValue = substr($option['text'], strlen($applyOperator));
+        $matchValue = substr($text, strlen($applyOperator));
         $apply = $matchValue == $value;
 
         switch ($applyOperator) {
