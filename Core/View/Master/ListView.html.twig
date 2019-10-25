@@ -37,7 +37,7 @@
         <div class="container-fluid mt-3">
             <div class="row">
                 {# -- Left buttons -- #}
-                <div class="col-6 col-md-3 mb-2">
+                <div class="col-6 col-md mb-2">
                     <div class="btn-group">
                         {% if currentView.settings.btnNew %}
                             {% if currentView.settings.modalInsert %}
@@ -61,33 +61,23 @@
                             {{ _self.printButton(fsc, currentView, i18n) }}
                         </div>
                     {% endif %}
-                </div>
-                {# -- Row actions -- #}
-                <div class="col-6 col-md-2 mb-2">
-                    {% set row = currentView.getRow('actions') %}
-                    {{ row.render(true, currentView.getViewName()) | raw }}
-                </div>
-                {# -- Search field -- #}
-                {% if currentView.searchFields is not empty %}
-                    {{ _self.searchControl(currentView, i18n) }}
-                {% endif %}
-                <div class="col-6 col-md-2">
-                    {# -- Filters button -- #}
-                    {% if currentView.filters is not empty %}
-                        {{ _self.filterButton(currentView, i18n) }}
-                    {% endif %}
+                    {# -- Row actions -- #}
+                    {{ currentView.getRow('actions').render(true, currentView.getViewName()) | raw }}
                     {# -- Row statistics -- #}
-                    {% set row = currentView.getRow('statistics') %}
-                    {{ row.render(fsc) | raw }}
+                    {{ currentView.getRow('statistics').render(fsc) | raw }}
                 </div>
-                {# -- Right buttons -- #}
-                {% if currentView.orderOptions is empty %}
-                    <div class="col-6 col-md-3">
-                    </div>
-                {% else %}
+                <div class="col-6 col-md-2 mb-2">
+                    {# -- Search field -- #}
+                    {{ _self.searchControl(currentView, i18n) }}
+                </div>
+                <div class="col-6 col-md-3 mb-2">
+                    {# -- Filters button -- #}
+                    {{ _self.filterButton(currentView, i18n) }}
+                </div>
+                <div class="col-6 col-md-2 text-right mb-2">
                     {# -- OrderBy button -- #}
                     {{ _self.sortButton(currentView) }}
-                {% endif %}
+                </div>
             </div>
             {# -- Filters -- #}
             {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
@@ -98,8 +88,7 @@
             </div>
             {# -- Row header -- #}
             <div class="row">
-                {% set row = currentView.getRow('header') %}
-                {{ row.render(currentView.getViewName(), 'listViewSetAction', fsc) | raw }}
+                {{ currentView.getRow('header').render(currentView.getViewName(), 'listViewSetAction', fsc) | raw }}
             </div>
         </div>
         {# -- Table -- #}
@@ -120,9 +109,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% set rowStatus = currentView.getRow('status') %}
                     {% for model in currentView.cursor %}
-                        {% set trClass = rowStatus.trClass(model) %}
+                        {% set trClass = currentView.getRow('status').trClass(model) %}
                         <tr class="clickableRow {{ trClass }}" data-href="{{ model.url() }}">
                             <td class="cancelClickable">
                                 <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
@@ -161,14 +149,9 @@
     {# -- Row footer -- #}
     <div class="container-fluid">
         <div class="row">
-            {% set row = currentView.getRow('footer') %}
-            {{ row.render(currentView.getViewName(), 'listViewSetAction', fsc) | raw }}
+            {{ currentView.getRow('footer').render(currentView.getViewName(), 'listViewSetAction', fsc) | raw }}
         </div>
     </div>
-    {# -- Save Filter modal window -- #}
-    {% if currentView.showFilters %}
-        {{ _self.filterSaveModal(currentView, i18n) }}
-    {% endif %}
 </form>
 
 {# -- Modals -- #}
@@ -178,77 +161,14 @@
 
 {# -- Macros -- #}
 {% macro filterButton(currentView, i18n) %}
-    {% set viewName = currentView.getViewName() %}
-    {% set saveFilters = currentView.pageFilters %}
-    <div class="btn-group">
-        <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
-            <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
-        </button>
-        {% if saveFilters is not empty %}
-            <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="sr-only"></span>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right">
-                {% for pageFilter in saveFilters %}
-                    {% set activeClass = (pageFilter.id == currentView.pageFilterKey) ? ' active' : '' %}
-                    {% set icon = (pageFilter.nick is empty) ? 'fa-users' : 'fa-user' %}
-                    <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetLoadFilter('{{ viewName }}', '{{ pageFilter.id }}');">
-                        <i class="fas {{ icon }} fa-fw" aria-hidden="true"></i> {{ pageFilter.description }}
-                    </a>
-                {% endfor %}
-            </div>
-        {% endif %}
-    </div>
-    {% if currentView.pageFilterKey %}
-        <div class="btn-group ml-1">
-            <button type="button" class="btn btn-warning" onclick="listViewSetLoadFilter('{{ viewName }}', '');">
-                <i class="fas fa-times fa-fw"></i>
-            </button>
-            <button type="button" class="btn btn-danger" title="{{ i18n.trans('remove-filter') }}" onclick="listViewSetAction('{{ viewName }}', 'delete-filter');">
-                <i class="fas fa-trash-alt fa-fw"></i>
+    {% if currentView.filters is not empty %}
+        {% set viewName = currentView.getViewName() %}
+        <div class="btn-group">
+            <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
+                <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
             </button>
         </div>
-    {% elseif currentView.showFilters %}
-        <button type="button" class="btn btn-info ml-1" data-toggle="modal" data-target="#savefilter{{ viewName }}" title="{{ i18n.trans('save-filter') }}">
-            <i class="fas fa-save fa-fw"></i>
-        </button>
     {% endif %}
-{% endmacro %}
-
-{% macro filterSaveModal(currentView, i18n) %}
-    {% set viewName = currentView.getViewName() %}
-    <div class="modal" id="savefilter{{ viewName }}" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="fas fa-filter fa-fw"></i> {{ i18n.trans('save-filter') }}
-                    </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-group">
-                                <label>{{ i18n.trans('description') }}</label>
-                                <input type="text" name="filter-description" class="form-control noEnterKey" autofocus=""/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        {{ i18n.trans('cancel') }}
-                    </button>
-                    <button type="button" class="btn btn-primary" onclick="listViewSetAction('{{ viewName }}', 'save-filter');">
-                        {{ i18n.trans('accept') }}
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endmacro %}
 
 {% macro printButton(fsc, currentView, i18n) %}
@@ -277,7 +197,7 @@
 {% endmacro %}
 
 {% macro searchControl(currentView, i18n) %}
-    <div class="col-12 col-md">
+    {% if currentView.searchFields is not empty %}
         <div class="form-group">
             <div class="input-group">
                 <input class="form-control" type="text" name="query" value="{{ currentView.query }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}"/>
@@ -288,11 +208,11 @@
                 </span>
             </div>
         </div>
-    </div>
+    {% endif %}
 {% endmacro %}
 
 {% macro sortButton(currentView) %}
-    <div class="col text-right">
+    {% if currentView.orderOptions is not empty %}
         <div class="form-group">
             <div class="btn-group">
                 <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -312,5 +232,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 {% endmacro %}
