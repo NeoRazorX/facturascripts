@@ -109,7 +109,7 @@ class EditGrupoClientes extends EditController
             'action' => 'remove-customer',
             'color' => 'danger',
             'confirm' => true,
-            'icon' => 'fas fa-trash-alt',
+            'icon' => 'fas fa-user-times',
             'label' => 'remove',
         ];
         $this->addButton($viewName, $newButton);
@@ -121,7 +121,7 @@ class EditGrupoClientes extends EditController
      */
     protected function createViewNewCustomers(string $viewName = 'ListCliente-new')
     {
-        $this->addListView($viewName, 'Cliente', 'add', 'fas fa-user-plus');
+        $this->addListView($viewName, 'Cliente', 'add', 'fas fa-user-times');
         $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
         $this->views[$viewName]->addOrderBy(['email'], 'email');
         $this->views[$viewName]->addOrderBy(['fechaalta'], 'creation-date');
@@ -137,7 +137,7 @@ class EditGrupoClientes extends EditController
         $newButton = [
             'action' => 'add-customer',
             'color' => 'success',
-            'icon' => 'fas fa-check',
+            'icon' => 'fas fa-user-check',
             'label' => 'new',
         ];
         $this->addButton($viewName, $newButton);
