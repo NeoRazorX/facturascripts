@@ -31,7 +31,7 @@
     <div class="container card">
         <div class="row">
             <div class="col-12">
-                <h1 class="h2 mt-3">
+                <h1 class="h3 mt-3">
                     <i class="fas fa-magic" aria-hidden="true"></i> {{ i18n.trans('wizard') }}
                     <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
@@ -77,12 +77,6 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col">
-                    <h2 class="h3 mt-3">{{ i18n.trans('address') }}</h2>
-                    <hr/>
-                </div>
-            </div>
-            <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
                         {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'), 'fas fa-map-marked', {'maxlength': '100', 'required': ''}) }}
@@ -114,28 +108,46 @@
                     </div>
                 </div>
             </div>
-            {% if fsc.showChangePasswd %}
-                <div class="row">
-                    <div class="col mt-3">
-                        <h3 class="h4">{{ i18n.trans('you-should-change-passwd') }}</h3>
-                        <hr/>
+            <div class="row">
+                <div class="col mt-3">
+                    <h3 class="h4 text-info">
+                        <i class="fas fa-key" aria-hidden="true"></i> {{ i18n.trans('password') }}
+                    </h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    {{ forms.simpleInput('user', 'user', fsc.user.nick, 'text', i18n.trans('user'), 'fas fa-user', {'readonly': ''}) }}
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key', {'class': 'form-control is-invalid'}) }}
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key', {'class': 'form-control is-invalid'}) }}
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'), 'fas fa-key', {'class': 'form-control is-invalid'}) }}
-                        </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'), 'fas fa-key', {'class': 'form-control is-invalid'}) }}
                     </div>
                 </div>
-            {% endif %}
+            </div>
             <div class="row mb-3 mt-2">
-                <div class="col-sm-12 text-right">
+                {% set plugins = fsc.getAvaliablePlugins() %}
+                {% if plugins is not empty %}
+                    <div class="col-md-9">
+                        <h3 class="h4 text-info">
+                            <i class="fas fa-plug" aria-hidden="true"></i> {{ i18n.trans('plugins') }}
+                        </h3>
+                        {% for plugin in plugins %}
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="checkbox" name="plugins[]" value="{{ plugin.name }}" checked=""/>
+                                    <b>{{ plugin.name }}</b>: {{ plugin.description }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="col text-right">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save fa-fw" aria-hidden="true"></i>
                         {{ i18n.trans('save') }}
@@ -144,6 +156,10 @@
             </div>
         </form>
     </div>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
 {% endblock %}
 
 {% block css %}

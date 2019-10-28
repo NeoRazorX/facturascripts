@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Cliente;
 
 /**
  * Controller to edit a single item from the GrupoClientes model
@@ -57,23 +58,20 @@ class EditGrupoClientes extends EditController
         return $data;
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
-    protected function createCustomerView($viewName = 'ListCliente')
+    protected function addCustomerAction()
     {
-        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
-        $this->views[$viewName]->addOrderBy(['codcliente'], 'code', 1);
-        $this->views[$viewName]->addOrderBy(['email'], 'email');
-        $this->views[$viewName]->addOrderBy(['fechaalta'], 'creation-date');
-        $this->views[$viewName]->addOrderBy(['nombre'], 'name');
-        $this->views[$viewName]->searchFields = ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'];
+        $codes = $this->request->request->get('code', []);
+        if (is_array($codes)) {
+            foreach ($codes as $code) {
+                $cliente = new Cliente();
+                if ($cliente->loadFromCode($code)) {
+                    $cliente->codgrupo = $this->request->query->get('code');
+                    $cliente->save();
+                }
+            }
 
-        /// settings
-        $this->views[$viewName]->disableColumn('group');
-        $this->views[$viewName]->settings['btnNew'] = false;
-        $this->views[$viewName]->settings['btnDelete'] = false;
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        }
     }
 
     /**
@@ -84,7 +82,87 @@ class EditGrupoClientes extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        $this->createCustomerView();
+        $this->createViewCustomers();
+        $this->createViewNewCustomers();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewCustomers(string $viewName = 'ListCliente')
+    {
+        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-user-check');
+        $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
+        $this->views[$viewName]->addOrderBy(['email'], 'email');
+        $this->views[$viewName]->addOrderBy(['fechaalta'], 'creation-date');
+        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
+        $this->views[$viewName]->searchFields = ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'];
+
+        /// settings
+        $this->views[$viewName]->disableColumn('group');
+        $this->views[$viewName]->settings['btnNew'] = false;
+        $this->views[$viewName]->settings['btnDelete'] = false;
+
+        /// add action button
+        $newButton = [
+            'action' => 'remove-customer',
+            'color' => 'danger',
+            'confirm' => true,
+            'icon' => 'fas fa-user-times',
+            'label' => 'remove',
+        ];
+        $this->addButton($viewName, $newButton);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewNewCustomers(string $viewName = 'ListCliente-new')
+    {
+        $this->addListView($viewName, 'Cliente', 'add', 'fas fa-user-times');
+        $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
+        $this->views[$viewName]->addOrderBy(['email'], 'email');
+        $this->views[$viewName]->addOrderBy(['fechaalta'], 'creation-date');
+        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
+        $this->views[$viewName]->searchFields = ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'];
+
+        /// settings
+        $this->views[$viewName]->disableColumn('group');
+        $this->views[$viewName]->settings['btnNew'] = false;
+        $this->views[$viewName]->settings['btnDelete'] = false;
+
+        /// add action button
+        $newButton = [
+            'action' => 'add-customer',
+            'color' => 'success',
+            'icon' => 'fas fa-user-check',
+            'label' => 'new',
+        ];
+        $this->addButton($viewName, $newButton);
+    }
+
+    /**
+     * 
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'add-customer':
+                $this->addCustomerAction();
+                return true;
+
+            case 'remove-customer':
+                $this->removeCustomerAction();
+                return true;
+
+            default:
+                return parent::execPreviousAction($action);
+        }
     }
 
     /**
@@ -95,16 +173,37 @@ class EditGrupoClientes extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
         switch ($viewName) {
             case 'ListCliente':
-                $codgrupo = $this->getViewModelValue('EditGrupoClientes', 'codgrupo');
                 $where = [new DataBaseWhere('codgrupo', $codgrupo)];
+                $view->loadData('', $where);
+                break;
+
+            case 'ListCliente-new':
+                $where = [new DataBaseWhere('codgrupo', null, 'IS')];
                 $view->loadData('', $where);
                 break;
 
             default:
                 parent::loadData($viewName, $view);
                 break;
+        }
+    }
+
+    protected function removeCustomerAction()
+    {
+        $codes = $this->request->request->get('code', []);
+        if (is_array($codes)) {
+            foreach ($codes as $code) {
+                $cliente = new Cliente();
+                if ($cliente->loadFromCode($code)) {
+                    $cliente->codgrupo = null;
+                    $cliente->save();
+                }
+            }
+
+            $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
         }
     }
 }

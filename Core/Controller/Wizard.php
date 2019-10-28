@@ -38,10 +38,14 @@ class Wizard extends Controller
     const ITEM_SELECT_LIMIT = 500;
 
     /**
-     *
-     * @var bool
+     * 
+     * @return array
      */
-    public $showChangePasswd = false;
+    public function getAvaliablePlugins()
+    {
+        $pluginManager = new PluginManager;
+        return $pluginManager->installedPlugins();
+    }
 
     /**
      * Returns basic page attributes
@@ -89,21 +93,6 @@ class Wizard extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-
-        // Show message if user and password are admin
-        if ($this->user->nick === 'admin' && $this->user->verifyPassword('admin')) {
-            $this->showChangePasswd = true;
-        }
-
-        $pass = $this->request->request->get('password', '');
-        if ('' !== $pass && !$this->saveNewPassword($pass)) {
-            return;
-        }
-
-        $email = $this->request->request->get('email', '');
-        if ('' !== $email && !$this->saveEmail($email)) {
-            return;
-        }
 
         $codpais = $this->request->request->get('codpais', '');
         if ('' !== $codpais) {
@@ -201,9 +190,22 @@ class Wizard extends Controller
         new Model\Retencion();
         new Model\Serie();
         new Model\Provincia();
+    }
 
+    /**
+     * Initialize selected plugins
+     */
+    private function initPlugins()
+    {
         $pluginManager = new PluginManager();
         $pluginManager->deploy(true, true);
+
+        $plugins = $this->request->request->get('plugins', []);
+        if (is_array($plugins)) {
+            foreach ($plugins as $pluginName) {
+                $pluginManager->enable($pluginName);
+            }
+        }
     }
 
     /**
@@ -336,7 +338,20 @@ class Wizard extends Controller
         $appSettings->save();
 
         $this->initModels();
+        $this->initPlugins();
         $this->saveAddress($codpais);
+
+        /// change password
+        $pass = $this->request->request->get('password', '');
+        if ('' !== $pass && !$this->saveNewPassword($pass)) {
+            return;
+        }
+
+        /// change email
+        $email = $this->request->request->get('email', '');
+        if ('' !== $email && !$this->saveEmail($email)) {
+            return;
+        }
 
         /// change user homepage
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : 'ListFacturaCliente';

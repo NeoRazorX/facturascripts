@@ -68,8 +68,14 @@
     <rows>
         <row type="status">
             <option color="danger" fieldname="habilitado">0</option>
-            <option color="success" fieldname="verificado">1</option>
-            <option color="info" fieldname="personafisica">0</option>
+            <option color="warning" fieldname="email"></option>
+            <option color="warning" fieldname="email">null:</option>
+            <option color="warning" fieldname="telefono1"></option>
+            <option color="warning" fieldname="telefono1">null:</option>
+            <option color="warning" fieldname="direccion"></option>
+            <option color="warning" fieldname="direccion">null:</option>
+            <option color="warning" fieldname="verificado">0</option>
+            <option color="success" fieldname="direccion">notnull:</option>
         </row>
     </rows>
 </view>
