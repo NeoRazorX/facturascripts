@@ -95,16 +95,6 @@ class Wizard extends Controller
             $this->showChangePasswd = true;
         }
 
-        $pass = $this->request->request->get('password', '');
-        if ('' !== $pass && !$this->saveNewPassword($pass)) {
-            return;
-        }
-
-        $email = $this->request->request->get('email', '');
-        if ('' !== $email && !$this->saveEmail($email)) {
-            return;
-        }
-
         $codpais = $this->request->request->get('codpais', '');
         if ('' !== $codpais) {
             $this->saveStep1($codpais);
@@ -337,6 +327,18 @@ class Wizard extends Controller
 
         $this->initModels();
         $this->saveAddress($codpais);
+
+        /// change password
+        $pass = $this->request->request->get('password', '');
+        if ('' !== $pass && !$this->saveNewPassword($pass)) {
+            return;
+        }
+
+        /// change email
+        $email = $this->request->request->get('email', '');
+        if ('' !== $email && !$this->saveEmail($email)) {
+            return;
+        }
 
         /// change user homepage
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : 'ListFacturaCliente';
