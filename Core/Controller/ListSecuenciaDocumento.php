@@ -47,14 +47,8 @@ class ListSecuenciaDocumento extends ListController
      * 
      * @param string $viewName
      */
-    protected function createFormatView($viewName = 'ListFormatoDocumento')
+    protected function createComanyFilter(string $viewName)
     {
-        $this->addView($viewName, 'FormatoDocumento', 'printing-formats', 'fas fa-print');
-        $this->addSearchFields($viewName, ['nombre', 'titulo', 'texto']);
-        $this->addOrderBy($viewName, ['nombre'], 'name');
-        $this->addOrderBy($viewName, ['titulo'], 'title');
-
-        /// Filters
         $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
     }
@@ -63,7 +57,54 @@ class ListSecuenciaDocumento extends ListController
      * 
      * @param string $viewName
      */
-    protected function createSequenceView($viewName = 'ListSecuenciaDocumento')
+    protected function createDocTypeFilter(string $viewName)
+    {
+        $types = $this->codeModel->all('estados_documentos', 'tipodoc', 'tipodoc');
+
+        /// custom translation
+        foreach ($types as $key => $value) {
+            if (!empty($value->code)) {
+                $types[$key]->description = $this->toolBox()->i18n()->trans($value->code);
+            }
+        }
+
+        $this->addFilterSelect($viewName, 'tipodoc', 'doc-type', 'tipodoc', $types);
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        $this->createViewSequences();
+        $this->createViewStates();
+        $this->createViewFormats();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewFormats(string $viewName = 'ListFormatoDocumento')
+    {
+        $this->addView($viewName, 'FormatoDocumento', 'printing-formats', 'fas fa-print');
+        $this->addSearchFields($viewName, ['nombre', 'titulo', 'texto']);
+        $this->addOrderBy($viewName, ['nombre'], 'name');
+        $this->addOrderBy($viewName, ['titulo'], 'title');
+
+        /// Filters
+        $this->createDocTypeFilter($viewName);
+        $this->createComanyFilter($viewName);
+
+        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->addFilterSelect($viewName, 'codserie', 'serie', 'codserie', $series);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewSequences(string $viewName = 'ListSecuenciaDocumento')
     {
         $this->addView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code');
         $this->addSearchFields($viewName, ['patron', 'tipodoc']);
@@ -72,8 +113,8 @@ class ListSecuenciaDocumento extends ListController
         $this->addOrderBy($viewName, ['numero'], 'number');
 
         /// Filters
-        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
+        $this->createDocTypeFilter($viewName);
+        $this->createComanyFilter($viewName);
 
         $exercises = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
         $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $exercises);
@@ -86,32 +127,19 @@ class ListSecuenciaDocumento extends ListController
      * 
      * @param string $viewName
      */
-    protected function createStateView($viewName = 'ListEstadoDocumento')
+    protected function createViewStates(string $viewName = 'ListEstadoDocumento')
     {
         $this->addView($viewName, 'EstadoDocumento', 'states', 'fas fa-tags');
         $this->addSearchFields($viewName, ['nombre']);
         $this->addOrderBy($viewName, ['idestado'], 'id');
         $this->addOrderBy($viewName, ['nombre'], 'name');
 
-        $types = $this->codeModel->all('estados_documentos', 'tipodoc', 'tipodoc');
-        $this->addFilterSelect($viewName, 'tipodoc', 'doc-type', 'tipodoc', $types);
-
-        $generateTypes = $this->codeModel->all('estados_documentos', 'generadoc', 'generadoc');
-        $this->addFilterSelect($viewName, 'generadoc', 'generate-doc-type', 'generadoc', $generateTypes);
+        /// Filters
+        $this->createDocTypeFilter($viewName);
 
         $this->addFilterSelect($viewName, 'actualizastock', 'update-stock', 'actualizastock', $this->getActualizastockValues());
         $this->addFilterCheckbox($viewName, 'predeterminado', 'default', 'predeterminado');
         $this->addFilterCheckbox($viewName, 'editable', 'editable', 'editable');
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        $this->createSequenceView();
-        $this->createStateView();
-        $this->createFormatView();
     }
 
     /**
