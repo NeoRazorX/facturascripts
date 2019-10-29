@@ -212,8 +212,10 @@ class User extends Base\ModelClass
             return false;
         }
 
+        $this->email = $this->toolBox()->utils()->noHtml(mb_strtolower($this->email, 'UTF8'));
         if (!empty($this->email) && !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
+            $this->email = null;
             return false;
         }
 

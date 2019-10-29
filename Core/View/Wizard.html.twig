@@ -61,7 +61,7 @@
                 {% if fsc.empresa.email is empty or fsc.user.email is empty %}
                     <div class="col-sm-4">
                         <div class="form-group">
-                            {{ forms.simpleInput('email', 'email', fsc.empresa.email, 'email', i18n.trans('email'), 'fas fa-envelope', {'required': '', 'class': 'form-control is-invalid'}) }}
+                            {{ forms.simpleInput('email', 'email', fsc.empresa.email, 'email', i18n.trans('email'), 'fas fa-envelope', {'required': '', 'class': 'form-control'}) }}
                         </div>
                     </div>
                 {% endif %}
@@ -121,12 +121,12 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key', {'class': 'form-control is-invalid'}) }}
+                        {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key', {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'), 'fas fa-key', {'class': 'form-control is-invalid'}) }}
+                        {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'), 'fas fa-key', {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
                     </div>
                 </div>
             </div>
