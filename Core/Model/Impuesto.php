@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Lib\TypeTax;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
@@ -61,9 +60,9 @@ class Impuesto extends Base\ModelClass
     /**
      * Type of tax.
      *
-     * @var boolean
+     * @var int
      */
-    public $porcentaje;
+    public $tipo;
 
     /**
      * Value of VAT.
@@ -85,9 +84,9 @@ class Impuesto extends Base\ModelClass
     public function clear()
     {
         parent::clear();
+        $this->tipo = 1;
         $this->iva = 0.0;
         $this->recargo = 0.0;
-        $this->porcentaje = TypeTax::defaultValue();
     }
 
     /**

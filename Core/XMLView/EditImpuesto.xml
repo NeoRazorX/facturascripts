@@ -30,9 +30,10 @@
             <column name="description" numcolumns="6" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
-            <column name="type-tax" numcolumns="2" order="120">
-                <widget type="select" fieldname="porcentaje" required="true">
-                    <values></values>
+            <column name="type" numcolumns="2" order="120">
+                <widget type="select" fieldname="tipo" translate="true" required="true">
+                    <values title="percentage">1</values>
+                    <values title="fixed-value">2</values>
                 </widget>
             </column>
             <column name="rate" numcolumns="2" order="120">

@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\TypeTax;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
@@ -66,7 +65,6 @@ class EditImpuesto extends EditController
         $this->views['ListImpuestoZona']->addOrderBy(['id'], 'code');
         $this->views['ListImpuestoZona']->addOrderBy(['prioridad'], 'priority', 2);
         $this->views['ListImpuestoZona']->disableColumn('tax');
-        $this->views['EditImpuesto']->columnForName('type-tax')->widget->setValuesFromArrayKeys(TypeTax::all());
     }
 
     /**

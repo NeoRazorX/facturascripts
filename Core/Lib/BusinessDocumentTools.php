@@ -95,7 +95,17 @@ class BusinessDocumentTools
 
             $irpf = max([$irpf, $line->irpf]);
             $subtotals[$codimpuesto]['neto'] += $line->pvptotal;
-            $subtotals[$codimpuesto]['totaliva'] += ($impuesto->porcentaje == 1) ? ($line->pvptotal * $line->iva / 100) : ($line->iva * $line->cantidad);
+
+            switch ($impuesto->tipo) {
+                case 2:
+                    $subtotals[$codimpuesto]['totaliva'] = ($line->iva * $line->cantidad);
+                    break;
+
+                default:
+                    $subtotals[$codimpuesto]['totaliva'] = ($line->pvptotal * $line->iva / 100);
+                    break;
+            }
+
             $subtotals[$codimpuesto]['totalrecargo'] += $line->pvptotal * $line->recargo / 100;
             $totalIrpf += $line->pvptotal * $line->irpf / 100;
         }
