@@ -21,12 +21,12 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Lib\ExtendedController\GridView;
+use FacturaScripts\Core\Model\ModelView\SubcuentaSaldo;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Subcuenta;
-use FacturaScripts\Dinamic\Model\SubcuentaSaldo;
 
 /**
  * A set of tools to recalculate accounting entries.
@@ -43,7 +43,7 @@ class AccountingEntryTools
 
     /**
      *
-     * @var SubAccountTools 
+     * @var SubAccountTools
      */
     protected $subAccountTools;
 
@@ -60,10 +60,11 @@ class AccountingEntryTools
      *
      * @param string $exercise
      * @param string $codeSubAccount
+     * @param int    $channel
      *
      * @return array
      */
-    public function getAccountData(string $exercise, string $codeSubAccount): array
+    public function getAccountData($exercise, $codeSubAccount, $channel): array
     {
         $result = [
             'subaccount' => $codeSubAccount,
@@ -89,7 +90,7 @@ class AccountingEntryTools
             $result['hasvat'] = $this->subAccountTools->hasTax($result['specialaccount']);
 
             $balance = new SubcuentaSaldo();
-            $result['balance'] = $balance->setSubAccountBalance($subAccount->idsubcuenta, $result['detail']);
+            $result['balance'] = $balance->setSubAccountBalance($subAccount->idsubcuenta, $channel, $result['detail']);
             $result['balance'] = $this->toolBox()->coins()->format($result['balance']);
         }
 
@@ -127,11 +128,12 @@ class AccountingEntryTools
             if (count($data['changes']) === 1 && $data['changes'][0][1] === 'codsubcuenta') {
                 $index = $data['changes'][0][0];
                 $line = &$result['lines'][$index];
-                $result['subaccount'] = $this->getAccountData($data['document']['codejercicio'], $line['codsubcuenta']);
+                $exercise = $data['document']['codejercicio'];
+                $channel = $data['document']['canal'];
+                $result['subaccount'] = $this->getAccountData($exercise, $line['codsubcuenta'], $channel);
                 $result['vat'] = $this->recalculateVatRegister($line, $data['document'], (string) $result['subaccount']['specialaccount'], $result['unbalance']);
             }
         }
-
         $result['hasvat'] = !empty($result['vat']);
         return $result;
     }
@@ -262,7 +264,7 @@ class AccountingEntryTools
     }
 
     /**
-     * 
+     *
      * @param string $specialAccount
      * @return int
      */
@@ -319,7 +321,7 @@ class AccountingEntryTools
     }
 
     /**
-     * 
+     *
      * @param Cliente|Proveedor $model
      * @param string            $codeSubAccount
      * @param array             $values
@@ -337,7 +339,7 @@ class AccountingEntryTools
     }
 
     /**
-     * 
+     *
      * @return ToolBox
      */
     private function toolBox()

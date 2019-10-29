@@ -169,10 +169,12 @@ function customAfterSelection(row1, col1, row2, col2, preventScrolling) {
             }
 
             var exercise = $("#formGridEditAsiento input[name=codejercicio]")[0];
+            var channel = $("#formGridEditAsiento input[name=canal]")[0];
             var data = {
                 action: "account-data",
                 codsubcuenta: subAccount,
-                codejercicio: exercise.value
+                codejercicio: exercise.value,
+                canal: channel.value
             };
             $.ajax({
                 type: "POST",

@@ -29,7 +29,7 @@ use Symfony\Component\Translation\Translator as SymfonyTranslator;
 class Translator
 {
 
-    const FALLBACK_LANG = 'en_EN';
+    const FALLBACK_LANG = 'es_ES';
 
     /**
      *
