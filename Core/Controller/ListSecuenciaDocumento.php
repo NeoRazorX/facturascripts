@@ -47,7 +47,7 @@ class ListSecuenciaDocumento extends ListController
      * 
      * @param string $viewName
      */
-    protected function createComanyFilter(string $viewName)
+    protected function createCompanyFilter(string $viewName)
     {
         $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
@@ -94,7 +94,7 @@ class ListSecuenciaDocumento extends ListController
 
         /// Filters
         $this->createDocTypeFilter($viewName);
-        $this->createComanyFilter($viewName);
+        $this->createCompanyFilter($viewName);
 
         $series = $this->codeModel->all('series', 'codserie', 'descripcion');
         $this->addFilterSelect($viewName, 'codserie', 'serie', 'codserie', $series);
@@ -114,7 +114,7 @@ class ListSecuenciaDocumento extends ListController
 
         /// Filters
         $this->createDocTypeFilter($viewName);
-        $this->createComanyFilter($viewName);
+        $this->createCompanyFilter($viewName);
 
         $exercises = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
         $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $exercises);
