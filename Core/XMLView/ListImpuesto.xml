@@ -18,6 +18,7 @@
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Frank Aguirre        <faguirre@soenac.com>
 -->
 <view>
     <columns>
@@ -27,18 +28,24 @@
         <column name="description" order="110">
             <widget type="textarea" fieldname="descripcion" />
         </column>
-        <column name="vat" title="percentage-vat" display="right" order="120">
+        <column name="type-tax" order="120">
+            <widget type="select" fieldname="porcentaje" translate="true">
+                <values title="percentage">1</values>
+                <values title="fixed-value">0</values>
+            </widget>
+        </column>
+        <column name="vat" title="rate" display="right" order="130">
             <widget type="number" decimal="2" fieldname="iva" />
         </column>
-        <column name="surcharge" title="percentage-surcharge" display="right" order="130">
+        <column name="surcharge" title="percentage-surcharge" display="right" order="140">
             <widget type="number" decimal="2" fieldname="recargo" />
         </column>
-        <column name="impacted-tax-subaccount" order="140">
+        <column name="impacted-tax-subaccount" order="150">
             <widget type="autocomplete" fieldname="codsubcuentarep">
                 <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="supported-tax-subaccount" order="150">
+        <column name="supported-tax-subaccount" order="160">
             <widget type="autocomplete" fieldname="codsubcuentasop">
                 <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
             </widget>

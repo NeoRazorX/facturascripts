@@ -24,6 +24,11 @@
         <type>character varying(50)</type>
     </column>
     <column>
+        <name>porcentaje</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
+    <column>
         <name>iva</name>
         <type>double precision</type>
         <null>NO</null>

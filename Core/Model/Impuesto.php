@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Lib\TypeTax;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
@@ -58,6 +59,13 @@ class Impuesto extends Base\ModelClass
     public $descripcion;
 
     /**
+     * Type of tax.
+     *
+     * @var boolean
+     */
+    public $porcentaje;
+
+    /**
      * Value of VAT.
      *
      * @var float|int
@@ -79,6 +87,7 @@ class Impuesto extends Base\ModelClass
         parent::clear();
         $this->iva = 0.0;
         $this->recargo = 0.0;
+        $this->porcentaje = TypeTax::defaultValue();
     }
 
     /**
