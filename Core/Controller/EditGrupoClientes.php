@@ -61,17 +61,22 @@ class EditGrupoClientes extends EditController
     protected function addCustomerAction()
     {
         $codes = $this->request->request->get('code', []);
-        if (is_array($codes)) {
-            foreach ($codes as $code) {
-                $cliente = new Cliente();
-                if ($cliente->loadFromCode($code)) {
-                    $cliente->codgrupo = $this->request->query->get('code');
-                    $cliente->save();
+        if (!is_array($codes)) {
+            return;
+        }
+
+        $num = 0;
+        foreach ($codes as $code) {
+            $cliente = new Cliente();
+            if ($cliente->loadFromCode($code)) {
+                $cliente->codgrupo = $this->request->query->get('code');
+                if ($cliente->save()) {
+                    $num++;
                 }
             }
-
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         }
+
+        $this->toolBox()->i18nLog()->notice('items-added-correctly', ['%num%' => $num]);
     }
 
     /**
@@ -90,9 +95,8 @@ class EditGrupoClientes extends EditController
      * 
      * @param string $viewName
      */
-    protected function createViewCustomers(string $viewName = 'ListCliente')
+    protected function createViewCommon(string $viewName)
     {
-        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-user-check');
         $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
         $this->views[$viewName]->addOrderBy(['email'], 'email');
         $this->views[$viewName]->addOrderBy(['fechaalta'], 'creation-date');
@@ -104,13 +108,41 @@ class EditGrupoClientes extends EditController
         $this->views[$viewName]->settings['btnNew'] = false;
         $this->views[$viewName]->settings['btnDelete'] = false;
 
+        /// filters
+        $i18n = $this->toolBox()->i18n();
+        $values = [
+            ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => $i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => $i18n->trans('all'), 'where' => []]
+        ];
+        $this->views[$viewName]->addFilterSelectWhere('status', $values);
+
+        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $this->views[$viewName]->addFilterSelect('codserie', 'series', 'codserie', $series);
+
+        $retentions = $this->codeModel->all('retenciones', 'codretencion', 'descripcion');
+        $this->views[$viewName]->addFilterSelect('codretencion', 'retentions', 'codretencion', $retentions);
+
+        $paymentMethods = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        $this->views[$viewName]->addFilterSelect('codpago', 'payment-methods', 'codpago', $paymentMethods);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewCustomers(string $viewName = 'ListCliente')
+    {
+        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
+        $this->createViewCommon($viewName);
+
         /// add action button
         $newButton = [
             'action' => 'remove-customer',
             'color' => 'danger',
             'confirm' => true,
-            'icon' => 'fas fa-user-times',
-            'label' => 'remove',
+            'icon' => 'fas fa-user-minus',
+            'label' => 'remove-from-list',
         ];
         $this->addButton($viewName, $newButton);
     }
@@ -121,24 +153,15 @@ class EditGrupoClientes extends EditController
      */
     protected function createViewNewCustomers(string $viewName = 'ListCliente-new')
     {
-        $this->addListView($viewName, 'Cliente', 'add', 'fas fa-user-times');
-        $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
-        $this->views[$viewName]->addOrderBy(['email'], 'email');
-        $this->views[$viewName]->addOrderBy(['fechaalta'], 'creation-date');
-        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
-        $this->views[$viewName]->searchFields = ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'];
-
-        /// settings
-        $this->views[$viewName]->disableColumn('group');
-        $this->views[$viewName]->settings['btnNew'] = false;
-        $this->views[$viewName]->settings['btnDelete'] = false;
+        $this->addListView($viewName, 'Cliente', 'add', 'fas fa-user-plus');
+        $this->createViewCommon($viewName);
 
         /// add action button
         $newButton = [
             'action' => 'add-customer',
             'color' => 'success',
-            'icon' => 'fas fa-user-check',
-            'label' => 'new',
+            'icon' => 'fas fa-user-plus',
+            'label' => 'add',
         ];
         $this->addButton($viewName, $newButton);
     }
@@ -194,16 +217,21 @@ class EditGrupoClientes extends EditController
     protected function removeCustomerAction()
     {
         $codes = $this->request->request->get('code', []);
-        if (is_array($codes)) {
-            foreach ($codes as $code) {
-                $cliente = new Cliente();
-                if ($cliente->loadFromCode($code)) {
-                    $cliente->codgrupo = null;
-                    $cliente->save();
+        if (!is_array($codes)) {
+            return;
+        }
+
+        $num = 0;
+        foreach ($codes as $code) {
+            $cliente = new Cliente();
+            if ($cliente->loadFromCode($code)) {
+                $cliente->codgrupo = null;
+                if ($cliente->save()) {
+                    $num++;
                 }
             }
-
-            $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
         }
+
+        $this->toolBox()->i18nLog()->notice('items-removed-correctly', ['%num%' => $num]);
     }
 }
