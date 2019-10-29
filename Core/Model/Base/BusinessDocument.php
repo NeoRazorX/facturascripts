@@ -290,6 +290,9 @@ abstract class BusinessDocument extends ModelOnChangeClass
             $newLine->pvpunitario = isset($this->tarifa) ? $this->tarifa->apply($variant->coste, $variant->precio) : $variant->precio;
             $newLine->recargo = $impuesto->recargo;
             $newLine->referencia = $variant->referencia;
+
+            /// allow extensions
+            $this->pipe('getNewProductLine', $newLine, $variant, $product);
         }
 
         return $newLine;

@@ -28,7 +28,16 @@
             <widget type="text" fieldname="nombre" />
         </column>
         <column name="doc-type" order="120">
-            <widget type="text" fieldname="tipodoc" />
+            <widget type="select" fieldname="tipodoc" translate="true">
+                <values title="customer-estimation">PresupuestoCliente</values>
+                <values title="customer-order">PedidoCliente</values>
+                <values title="customer-delivery-note">AlbaranCliente</values>
+                <values title="customer-invoice">FacturaCliente</values>
+                <values title="supplier-estimation">PresupuestoProveedor</values>
+                <values title="supplier-order">PedidoProveedor</values>
+                <values title="supplier-delivery-note">AlbaranProveedor</values>
+                <values title="supplier-invoice">FacturaProveedor</values>
+            </widget>
         </column>
         <column name="company" order="130">
             <widget type="select" fieldname="idempresa">

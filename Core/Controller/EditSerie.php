@@ -75,7 +75,7 @@ class EditSerie extends EditController
      */
     protected function createSequenceView($viewName = 'ListSecuenciaDocumento')
     {
-        $this->addListView($viewName, 'SecuenciaDocumento', 'document-sequences', 'fas fa-code');
+        $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code');
         $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
 
         /// disable columns
