@@ -25,7 +25,7 @@ use ParseCsv\Csv;
 /**
  * Common CSV import actions.
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class CSVImport
 {
@@ -33,11 +33,13 @@ class CSVImport
     /**
      * Return the insert SQL reading a CSV file for the specific file
      *
-     * @param string $table
-     * @param string $filePath
+     * @param string  $table
+     * @param string  $filePath
+     * @param bool    $update
+     *
      * @return string
      */
-    public static function importFileSQL(string $table, string $filePath): string
+    public static function importFileSQL(string $table, string $filePath, bool $update = false): string
     {
         $csv = new Csv();
         $csv->auto($filePath);
@@ -57,6 +59,13 @@ class CSVImport
             $sep = ', ';
         }
 
+        if ($update) {
+            $sql .= ' ON DUPLICATE KEY UPDATE ';
+            $sql .= implode(', ', array_map(function ($value) {
+                    return "{$value} = VALUES({$value})";
+                }, $csv->titles, array_keys($csv->titles)));
+        }
+
         return $sql . ';';
     }
 
@@ -70,11 +79,7 @@ class CSVImport
     public static function importTableSQL(string $table): string
     {
         $filePath = static::getTableFilePath($table);
-        if ($filePath === '') {
-            return '';
-        }
-
-        return static::importFileSQL($table, $filePath);
+        return empty($filePath) ? '' : static::importFileSQL($table, $filePath);
     }
 
     /**
@@ -86,12 +91,7 @@ class CSVImport
     public static function updateTableSQL(string $table): string
     {
         $filePath = static::getTableFilePath($table);
-        if ($filePath === '') {
-            return '';
-        }
-
-        /// TODO: complete this function
-        return '';
+        return empty($filePath) ? '' : static::importFileSQL($table, $filePath, true);
     }
 
     /**

@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Producto;
 
 /**
  * Controller to edit a single item from the Familia model
@@ -55,13 +56,48 @@ class EditFamilia extends EditController
         return $data;
     }
 
+    protected function addProductAction()
+    {
+        $codes = $this->request->request->get('code', []);
+        if (!is_array($codes)) {
+            return;
+        }
+
+        $num = 0;
+        foreach ($codes as $code) {
+            $product = new Producto();
+            if ($product->loadFromCode($code)) {
+                $product->codfamilia = $this->request->query->get('code');
+                if ($product->save()) {
+                    $num++;
+                }
+            }
+        }
+
+        $this->toolBox()->i18nLog()->notice('items-added-correctly', ['%num%' => $num]);
+    }
+
+    /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        /// more tabs
+        $this->createViewProducts();
+        $this->createViewNewProducts();
+        $this->createViewFamilies();
+    }
+
     /**
      * 
      * @param string $viewName
      */
-    protected function createFamilyView($viewName = 'ListFamilia')
+    protected function createViewFamilies(string $viewName = 'ListFamilia')
     {
-        $this->addListView($viewName, 'Familia', 'families', 'fas fa-level-down-alt');
+        $this->addListView($viewName, 'Familia', 'subfamilies', 'fas fa-sitemap');
         $this->views[$viewName]->addOrderBy(['codfamilia'], 'code');
 
         /// disable column
@@ -75,29 +111,78 @@ class EditFamilia extends EditController
      * 
      * @param string $viewName
      */
-    protected function createProductView($viewName = 'ListProducto')
+    protected function createViewNewProducts(string $viewName = 'ListProducto-new')
+    {
+        $this->addListView($viewName, 'Producto', 'add', 'fas fa-folder-plus');
+        $this->createViewProductsCommon($viewName);
+
+        /// add action button
+        $newButton = [
+            'action' => 'add-product',
+            'color' => 'success',
+            'icon' => 'fas fa-folder-plus',
+            'label' => 'add',
+        ];
+        $this->addButton($viewName, $newButton);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewProducts(string $viewName = 'ListProducto')
     {
         $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
+        $this->createViewProductsCommon($viewName);
+
+        /// add action button
+        $newButton = [
+            'action' => 'remove-product',
+            'color' => 'danger',
+            'confirm' => true,
+            'icon' => 'fas fa-folder-minus',
+            'label' => 'remove-from-list',
+        ];
+        $this->addButton($viewName, $newButton);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewProductsCommon(string $viewName)
+    {
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
         $this->views[$viewName]->addOrderBy(['precio'], 'price');
         $this->views[$viewName]->addOrderBy(['stock'], 'stock');
         $this->views[$viewName]->searchFields = ['referencia', 'descripcion'];
 
-        /// disable column
+        /// disable columns and buttons
         $this->views[$viewName]->disableColumn('family');
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
-     * Load views
+     * 
+     * @param string $action
+     *
+     * @return bool
      */
-    protected function createViews()
+    protected function execPreviousAction($action)
     {
-        parent::createViews();
-        $this->setTabsPosition('bottom');
+        switch ($action) {
+            case 'add-product':
+                $this->addProductAction();
+                return true;
 
-        /// more tabs
-        $this->createProductView();
-        $this->createFamilyView();
+            case 'remove-product':
+                $this->removeProductAction();
+                return true;
+
+            default:
+                return parent::execPreviousAction($action);
+        }
     }
 
     /**
@@ -115,6 +200,11 @@ class EditFamilia extends EditController
                 $view->loadData('', $where);
                 break;
 
+            case 'ListProducto-new':
+                $where = [new DataBaseWhere('codfamilia', null, 'IS')];
+                $view->loadData('', $where);
+                break;
+
             case 'ListFamilia':
                 $where = [new DataBaseWhere('madre', $codfamilia)];
                 $view->loadData('', $where);
@@ -124,5 +214,26 @@ class EditFamilia extends EditController
                 parent::loadData($viewName, $view);
                 break;
         }
+    }
+
+    protected function removeProductAction()
+    {
+        $codes = $this->request->request->get('code', []);
+        if (!is_array($codes)) {
+            return;
+        }
+
+        $num = 0;
+        foreach ($codes as $code) {
+            $product = new Producto();
+            if ($product->loadFromCode($code)) {
+                $product->codfamilia = null;
+                if ($product->save()) {
+                    $num++;
+                }
+            }
+        }
+
+        $this->toolBox()->i18nLog()->notice('items-removed-correctly', ['%num%' => $num]);
     }
 }
