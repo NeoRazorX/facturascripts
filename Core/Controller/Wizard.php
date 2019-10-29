@@ -301,15 +301,15 @@ class Wizard extends Controller
      */
     private function saveEmail(string $email): bool
     {
-        if (empty($this->user->email)) {
-            $this->user->email = $email;
-        }
-
         if (empty($this->empresa->email)) {
             $this->empresa->email = $email;
         }
 
-        return $this->user->save() && $this->empresa->save();
+        if (empty($this->user->email)) {
+            $this->user->email = $email;
+        }
+
+        return $this->empresa->save() && $this->user->save();
     }
 
     /**
