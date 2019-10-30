@@ -19,6 +19,7 @@
  * @author Artex Trading sa             <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Frank Aguirre               <faguirre@soenac.com>
 -->
 <view>
     <columns>
@@ -29,7 +30,13 @@
             <column name="description" numcolumns="6" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
-            <column name="percentage-vat" numcolumns="2" order="120">
+            <column name="type" numcolumns="2" order="120">
+                <widget type="select" fieldname="tipo" translate="true" required="true">
+                    <values title="percentage">1</values>
+                    <values title="fixed-value">2</values>
+                </widget>
+            </column>
+            <column name="rate" numcolumns="2" order="120">
                 <widget type="number" decimal="2" fieldname="iva" required="true" />
             </column>
             <column name="percentage-surcharge" numcolumns="2" order="130">

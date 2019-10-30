@@ -19,14 +19,14 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Impuesto;
-use FacturaScripts\Dinamic\Model\ImpuestoZona;
 use FacturaScripts\Dinamic\Model\Proveedor;
-use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Dinamic\Model\ImpuestoZona;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 
 /**
  * A set of tools to recalculate business documents.
@@ -35,7 +35,6 @@ use FacturaScripts\Dinamic\Model\Serie;
  */
 class BusinessDocumentTools
 {
-
     /**
      *
      * @var CommissionTools
@@ -91,9 +90,22 @@ class BusinessDocumentTools
                 ];
             }
 
+            $impuesto = new Impuesto();
+            $impuesto->loadFromCode($line->codimpuesto);
+
             $irpf = max([$irpf, $line->irpf]);
             $subtotals[$codimpuesto]['neto'] += $line->pvptotal;
-            $subtotals[$codimpuesto]['totaliva'] += $line->pvptotal * $line->iva / 100;
+
+            switch ($impuesto->tipo) {
+                case 2:
+                    $subtotals[$codimpuesto]['totaliva'] = ($line->iva * $line->cantidad);
+                    break;
+
+                default:
+                    $subtotals[$codimpuesto]['totaliva'] = ($line->pvptotal * $line->iva / 100);
+                    break;
+            }
+
             $subtotals[$codimpuesto]['totalrecargo'] += $line->pvptotal * $line->recargo / 100;
             $totalIrpf += $line->pvptotal * $line->irpf / 100;
         }

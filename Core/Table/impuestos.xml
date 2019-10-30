@@ -24,6 +24,11 @@
         <type>character varying(50)</type>
     </column>
     <column>
+        <name>tipo</name>
+        <type>integer</type>
+        <default>1</default>
+    </column>
+    <column>
         <name>iva</name>
         <type>double precision</type>
         <null>NO</null>
