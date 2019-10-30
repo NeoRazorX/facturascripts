@@ -90,9 +90,10 @@ function configureAutocompleteColumns(columns) {
  * the order index of the lines.
  *
  * @param {string} fieldOrder
+ * @param {boolean} onlyWithData
  * @returns {Array}
  */
-function getGridData(fieldOrder = null) {
+function getGridData(fieldOrder = null, onlyWithData = false) {
     var rowIndex, lines = [];
     for (var i = 0, max = documentLineData.rows.length; i < max; i++) {
         rowIndex = gridObject.toVisualRow(i);
@@ -102,7 +103,11 @@ function getGridData(fieldOrder = null) {
         if (fieldOrder !== null) {
             documentLineData.rows[i][fieldOrder] = rowIndex;
         }
-        lines[rowIndex] = documentLineData.rows[i];
+        if (onlyWithData) {
+            lines.push(documentLineData.rows[i]);
+        } else {
+            lines[rowIndex] = documentLineData.rows[i];
+        }
     }
     return lines;
 }
