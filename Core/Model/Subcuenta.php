@@ -296,30 +296,6 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     * Insert the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
-    {
-        if (parent::saveInsert($values)) {
-            $accountBalance = new SubcuentaSaldo();
-            $accountBalance->idcuenta = $this->idcuenta;
-            $accountBalance->idsubcuenta = $this->idsubcuenta;
-            for ($index = 1; $index < 13; $index++) {
-                $accountBalance->mes = $index;
-                $accountBalance->id = null;
-                $accountBalance->save();
-            }
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Check if exists error in long of subaccount. Returns FALSE if error.
      *
      * @return bool
