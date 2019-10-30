@@ -58,6 +58,13 @@ class Impuesto extends Base\ModelClass
     public $descripcion;
 
     /**
+     * Type of tax.
+     *
+     * @var int
+     */
+    public $tipo;
+
+    /**
      * Value of VAT.
      *
      * @var float|int
@@ -77,6 +84,7 @@ class Impuesto extends Base\ModelClass
     public function clear()
     {
         parent::clear();
+        $this->tipo = 1;
         $this->iva = 0.0;
         $this->recargo = 0.0;
     }
