@@ -144,6 +144,13 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public $servido;
 
     /**
+     * Containt all avaliable taxes.
+     *
+     * @var Impuesto[]
+     */
+    private static $taxes = [];
+
+    /**
      * Returns the parent document of this line.
      */
     abstract public function getDocument();
@@ -197,6 +204,20 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $producto = new Producto();
         $producto->loadFromCode($this->idproducto);
         return $producto;
+    }
+
+    /**
+     * 
+     * @return Impuesto
+     */
+    public function getTax()
+    {
+        if (!isset(self::$taxes[$this->codimpuesto])) {
+            self::$taxes[$this->codimpuesto] = new Impuesto();
+            self::$taxes[$this->codimpuesto]->loadFromCode($this->codimpuesto);
+        }
+
+        return self::$taxes[$this->codimpuesto];
     }
 
     /**

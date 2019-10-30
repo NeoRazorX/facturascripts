@@ -19,7 +19,7 @@
  * @author Artex Trading sa             <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Frank Aguirre               <faguirre@soenac.com>
+ * @author Frank Aguirre                <faguirre@soenac.com>
 -->
 <view>
     <columns>
@@ -27,27 +27,27 @@
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codimpuesto" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" required="true" />
             </column>
-            <column name="description" numcolumns="6" order="110">
+            <column name="description" numcolumns="10" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
-            <column name="type" numcolumns="2" order="120">
+            <column name="type" order="120">
                 <widget type="select" fieldname="tipo" translate="true" required="true">
                     <values title="percentage">1</values>
                     <values title="fixed-value">2</values>
                 </widget>
             </column>
-            <column name="rate" numcolumns="2" order="120">
+            <column name="vat" order="130">
                 <widget type="number" decimal="2" fieldname="iva" required="true" />
             </column>
-            <column name="percentage-surcharge" numcolumns="2" order="130">
-                <widget type="number" decimal="2" fieldname="recargo" />
+            <column name="surcharge" order="140">
+                <widget type="number" decimal="2" fieldname="recargo" required="true" />
             </column>
-            <column name="impacted-tax-subaccount" description="optional" numcolumns="3" order="140">
+            <column name="impacted-tax-subaccount" description="optional" order="150">
                 <widget type="autocomplete" fieldname="codsubcuentarep">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="supported-tax-subaccount" description="optional" numcolumns="3" order="150">
+            <column name="supported-tax-subaccount" description="optional" order="160">
                 <widget type="autocomplete" fieldname="codsubcuentasop">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>

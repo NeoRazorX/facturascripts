@@ -264,7 +264,7 @@ abstract class PDFDocument extends PDFCore
         $taxHeaders = [
             'tax' => $this->i18n->trans('tax'),
             'taxbase' => $this->i18n->trans('tax-base'),
-            'taxp' => $this->i18n->trans('percentage'),
+            'taxp' => $this->i18n->trans('vat'),
             'taxamount' => $this->i18n->trans('amount'),
             'taxsurchargep' => $this->i18n->trans('surcharge'),
             'taxsurcharge' => $this->i18n->trans('amount'),
