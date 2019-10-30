@@ -36,7 +36,7 @@ class EditAsiento extends EditController
 
     /**
      * Returns the class name of the model to use in the editView.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -72,7 +72,7 @@ class EditAsiento extends EditController
 
     /**
      * Clone source document
-     * 
+     *
      * @return bool
      * @throws Exception
      */
@@ -210,9 +210,10 @@ class EditAsiento extends EditController
         $this->setTemplate(false);
         $subaccount = $this->request->get('codsubcuenta', '');
         $exercise = $this->request->get('codejercicio', '');
+        $channel = $this->request->get('canal', 0);
 
         $tools = new AccountingEntryTools();
-        $data = $tools->getAccountData($exercise, $subaccount);
+        $data = $tools->getAccountData($exercise, $subaccount, $channel);
         $this->response->setContent(json_encode($data));
     }
 
