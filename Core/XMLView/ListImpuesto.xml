@@ -34,10 +34,10 @@
                 <values title="fixed-value">2</values>
             </widget>
         </column>
-        <column name="vat" title="rate" display="right" order="130">
+        <column name="vat" display="right" order="130">
             <widget type="number" decimal="2" fieldname="iva" />
         </column>
-        <column name="surcharge" title="percentage-surcharge" display="right" order="140">
+        <column name="surcharge" display="right" order="140">
             <widget type="number" decimal="2" fieldname="recargo" />
         </column>
         <column name="impacted-tax-subaccount" order="150">
@@ -54,6 +54,7 @@
     <rows>
         <row type="status">
             <option color="warning" fieldname="iva">0</option>
+            <option color="info" fieldname="tipo">2</option>
         </row>
     </rows>
 </view>

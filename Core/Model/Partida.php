@@ -206,7 +206,7 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return Asiento
      */
     public function getAsiento()
@@ -217,7 +217,7 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @param string $codsubcuenta
      *
      * @return Subcuenta
@@ -302,7 +302,7 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $list
      *
@@ -314,9 +314,9 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * This mehtod is called before this record is save (update) in the database
+     * This method is called before this record is save (update) in the database
      * when some field value is changed.
-     * 
+     *
      * @param string $field
      *
      * @return bool
@@ -327,16 +327,14 @@ class Partida extends Base\ModelOnChangeClass
             case 'codsubcuenta':
                 $subcuenta = $this->getSubcuenta($this->codsubcuenta);
                 $this->idsubcuenta = $subcuenta->idsubcuenta;
+
+                $this->updateBalance($this->previousData['idsubcuenta'], ($this->previousData['debe'] * -1), ($this->previousData['haber'] * -1));
+                $this->updateBalance($this->idsubcuenta, $this->debe, $this->haber);
                 break;
 
             case 'debe':
             case 'haber':
-                $debit = $this->debe - $this->previousData['debe'];
-                $credit = $this->haber - $this->previousData['haber'];
-
-                /// update account balance
-                $asiento = $this->getAsiento();
-                $this->getSubcuenta()->updateBalance($asiento->fecha, $debit, $credit);
+                $this->updateBalance($this->idsubcuenta, $this->debe, $this->haber);
                 break;
         }
 
@@ -349,8 +347,7 @@ class Partida extends Base\ModelOnChangeClass
     protected function onDelete()
     {
         /// update account balance
-        $asiento = $this->getAsiento();
-        $this->getSubcuenta()->updateBalance($asiento->fecha, ($this->debe * -1), ($this->haber * -1));
+        $this->updateBalance($this->idsubcuenta, ($this->debe * -1), ($this->haber * -1));
     }
 
     /**
@@ -359,17 +356,16 @@ class Partida extends Base\ModelOnChangeClass
     protected function onInsert()
     {
         /// update account balance
-        $asiento = $this->getAsiento();
-        $this->getSubcuenta()->updateBalance($asiento->fecha, $this->debe, $this->haber);
+        $this->updateBalance($this->idsubcuenta, $this->debe, $this->haber);
     }
 
     /**
-     * 
+     *
      * @param array $fields
      */
     protected function setPreviousData(array $fields = array())
     {
-        $more = ['codsubcuenta', 'debe', 'haber'];
+        $more = ['idsubcuenta', 'codsubcuenta', 'debe', 'haber'];
         parent::setPreviousData(array_merge($more, $fields));
     }
 
@@ -390,5 +386,22 @@ class Partida extends Base\ModelOnChangeClass
         }
 
         return empty($this->idsubcuenta);
+    }
+
+    /**
+     * Update the subaccount balance
+     */
+    private function updateBalance($idsubaccount, $debit, $credit)
+    {
+        if ($debit + $credit == 0.00) {
+            return;
+        }
+
+        $subaccount = new Subcuenta();
+        $subaccount->loadFromCode($idsubaccount);
+        $subaccount->debe += $debit;
+        $subaccount->haber += $credit;
+        $subaccount->saldo += $debit - $credit;
+        $subaccount->save();
     }
 }

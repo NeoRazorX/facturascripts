@@ -19,14 +19,14 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\Utils;
-use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Impuesto;
-use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\ImpuestoZona;
-use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\Serie;
 
 /**
  * A set of tools to recalculate business documents.
@@ -35,6 +35,7 @@ use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
  */
 class BusinessDocumentTools
 {
+
     /**
      *
      * @var CommissionTools
@@ -90,24 +91,21 @@ class BusinessDocumentTools
                 ];
             }
 
-            $impuesto = new Impuesto();
-            $impuesto->loadFromCode($line->codimpuesto);
-
             $irpf = max([$irpf, $line->irpf]);
             $subtotals[$codimpuesto]['neto'] += $line->pvptotal;
+            $totalIrpf += $line->pvptotal * $line->irpf / 100;
 
-            switch ($impuesto->tipo) {
-                case 2:
-                    $subtotals[$codimpuesto]['totaliva'] = ($line->iva * $line->cantidad);
+            switch ($line->getTax()->tipo) {
+                case Impuesto::TYPE_FIXED_VALUE:
+                    $subtotals[$codimpuesto]['totaliva'] += $line->iva * $line->cantidad;
+                    $subtotals[$codimpuesto]['totalrecargo'] += $line->recargo * $line->cantidad;
                     break;
 
                 default:
-                    $subtotals[$codimpuesto]['totaliva'] = ($line->pvptotal * $line->iva / 100);
+                    $subtotals[$codimpuesto]['totaliva'] += $line->pvptotal * $line->iva / 100;
+                    $subtotals[$codimpuesto]['totalrecargo'] += $line->pvptotal * $line->recargo / 100;
                     break;
             }
-
-            $subtotals[$codimpuesto]['totalrecargo'] += $line->pvptotal * $line->recargo / 100;
-            $totalIrpf += $line->pvptotal * $line->irpf / 100;
         }
 
         /// IRPF to the first subtotal

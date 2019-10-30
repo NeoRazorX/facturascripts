@@ -126,7 +126,7 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      */
     public function disableAditionalTest()
     {
@@ -134,7 +134,7 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function getSpecialAccountCode()
@@ -212,7 +212,7 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function primaryDescriptionColumn()
@@ -265,53 +265,6 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     * 
-     * @param string $date
-     * @param float $debit
-     * @param float $credit
-     *
-     * @return bool
-     */
-    public function updateBalance(string $date, float $debit, float $credit): bool
-    {
-        $balance = $debit - $credit;
-        $month = (int) date("n", strtotime($date));
-        $detail = new SubcuentaSaldo();
-        $detail->idsubcuenta = $this->idsubcuenta;
-
-        $inTransaction = self::$dataBase->inTransaction();
-        try {
-            self::$dataBase->beginTransaction();
-
-            if (!$detail->updateBalance($month, $debit, $credit)) {
-                return false;
-            }
-
-            $sql = 'UPDATE ' . static::tableName() . ' SET '
-                . ' debe = debe + ' . $debit
-                . ',haber = haber + ' . $credit
-                . ',saldo = saldo + ' . $balance
-                . ' WHERE idsubcuenta = ' . $this->idsubcuenta;
-            self::$dataBase->exec($sql);
-
-            if ($inTransaction === false) {
-                self::$dataBase->commit();
-            }
-        } catch (\Exception $exc) {
-            $this->toolBox()->log()->error($exc->getMessage());
-            return false;
-        } finally {
-            if (!$inTransaction && self::$dataBase->inTransaction()) {
-                self::$dataBase->rollback();
-                $this->toolBox()->i18nLog()->warning('update-account-balance-error');
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Returns the url where to see / modify the data.
      *
      * @param string $type
@@ -325,7 +278,7 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function getDefaultCodejercicio()
@@ -340,30 +293,6 @@ class Subcuenta extends Base\ModelClass
         }
 
         return '';
-    }
-
-    /**
-     * Insert the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
-    {
-        if (parent::saveInsert($values)) {
-            $accountBalance = new SubcuentaSaldo();
-            $accountBalance->idcuenta = $this->idcuenta;
-            $accountBalance->idsubcuenta = $this->idsubcuenta;
-            for ($index = 1; $index < 13; $index++) {
-                $accountBalance->mes = $index;
-                $accountBalance->id = null;
-                $accountBalance->save();
-            }
-            return true;
-        }
-
-        return false;
     }
 
     /**

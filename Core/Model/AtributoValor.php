@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -73,6 +73,26 @@ class AtributoValor extends Base\ModelClass
     }
 
     /**
+     * 
+     * @param string $fieldCode
+     *
+     * @return CodeModel[]
+     */
+    public function codeModelAll(string $fieldCode = '')
+    {
+        $results = [];
+        $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
+
+        $sql = 'SELECT DISTINCT ' . $field . ' AS code, ' . $this->primaryDescriptionColumn() . ' AS description, codatributo, orden '
+            . 'FROM ' . static::tableName() . ' ORDER BY codatributo ASC, orden ASC';
+        foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $d) {
+            $results[] = new CodeModel($d);
+        }
+
+        return $results;
+    }
+
+    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
@@ -81,7 +101,9 @@ class AtributoValor extends Base\ModelClass
      */
     public function install()
     {
+        /// needed dependency
         new Atributo();
+
         return parent::install();
     }
 

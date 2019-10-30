@@ -31,6 +31,9 @@ class Impuesto extends Base\ModelClass
 
     use Base\ModelTrait;
 
+    const TYPE_PENCENTAGE = 1;
+    const TYPE_FIXED_VALUE = 2;
+
     /**
      * Primary key. varchar(10).
      *
@@ -84,7 +87,7 @@ class Impuesto extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->tipo = 1;
+        $this->tipo = self::TYPE_PENCENTAGE;
         $this->iva = 0.0;
         $this->recargo = 0.0;
     }
