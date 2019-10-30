@@ -66,9 +66,7 @@ class ListCliente extends ListController
         $this->addOrderBy($viewName, ['email'], 'email');
         $this->addOrderBy($viewName, ['nombre'], 'name');
         $this->addOrderBy($viewName, ['empresa'], 'company');
-        $this->addOrderBy($viewName, ['level'], 'level');
-        $this->addOrderBy($viewName, ['puntos'], 'points');
-        $this->addOrderBy($viewName, ['lastactivity'], 'last-activity', 2);
+        $this->addOrderBy($viewName, ['fechaalta'], 'creation-date', 2);
 
         /// filters
         $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
