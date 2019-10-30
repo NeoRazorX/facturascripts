@@ -256,6 +256,11 @@ class EditFacturaCliente extends SalesDocumentController
             $lines[] = $line;
         }
 
+        if (empty($quantities)) {
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            return false;
+        }
+
         $generator = new BusinessDocumentGenerator();
         if ($generator->generate($invoice, $invoice->modelClassName(), $lines, $quantities)) {
             foreach ($generator->getLastDocs() as $doc) {
