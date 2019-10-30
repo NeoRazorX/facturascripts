@@ -152,8 +152,10 @@ class AccountingEntryTools
         $unbalance = round(($credit - $debit), (int) FS_NF0);
         $index = count($data['lines']) - 1;
         $line = &$data['lines'][$index];
+        $lineDebit = (double) $line['debe'] ?? 0.00;
+        $lineCredit = (double) $line['haber'] ?? 0.00;
 
-        if (($line['debe'] + $line['haber']) === 0.00 && $index > 0) {
+        if (($lineDebit + $lineCredit) === 0.00 && $index > 0) {
             $offsetting = $data['lines'][$index - 1]['codcontrapartida'] ?? null;
             // if the sub-account is the same as the previous offsetting
             if ($line['codsubcuenta'] === $offsetting) {
