@@ -91,7 +91,7 @@ class AccountingEntryTools
 
             if ($this->toolBox()->appSettings()->get('default', 'balancegraphic', false)) {
                 $balance = new SubcuentaSaldo();
-                $result['balance'] = $balance->setSubAccountBalance($subAccount->idsubcuenta, $result['detail']);
+                $result['balance'] = $balance->setSubAccountBalance($subAccount->idsubcuenta, $channel, $result['detail']);
                 $result['balance'] = $this->toolBox()->coins()->format($result['balance']);
             }
         }
@@ -247,6 +247,11 @@ class AccountingEntryTools
 
         // Check lines data
         foreach ($lines as $item) {
+            if (empty($item['codsubcuenta'])) {
+                $result[] = $item;
+                continue;
+            }
+
             // check empty imports
             if (empty($item['debe'])) {
                 $item['debe'] = 0.00;
@@ -264,7 +269,6 @@ class AccountingEntryTools
             // Acumulate imports
             $totalCredit += $item['debe'];
             $totalDebit += $item['haber'];
-
             $result[] = $item;
         }
         return $result;
