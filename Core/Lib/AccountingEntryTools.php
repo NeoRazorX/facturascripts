@@ -89,9 +89,11 @@ class AccountingEntryTools
             $result['specialaccount'] = $subAccount->getSpecialAccountCode();
             $result['hasvat'] = $this->subAccountTools->hasTax($result['specialaccount']);
 
-            $balance = new SubcuentaSaldo();
-            $result['balance'] = $balance->setSubAccountBalance($subAccount->idsubcuenta, $channel, $result['detail']);
-            $result['balance'] = $this->toolBox()->coins()->format($result['balance']);
+            if ($this->toolBox()->appSettings()->get('default', 'balancegraphic', false)) {
+                $balance = new SubcuentaSaldo();
+                $result['balance'] = $balance->setSubAccountBalance($subAccount->idsubcuenta, $result['detail']);
+                $result['balance'] = $this->toolBox()->coins()->format($result['balance']);
+            }
         }
 
         return $result;
@@ -152,8 +154,9 @@ class AccountingEntryTools
         $line = &$data['lines'][$index];
 
         if (($line['debe'] + $line['haber']) === 0.00 && $index > 0) {
+            $offsetting = $data['lines'][$index - 1]['codcontrapartida'] ?? null;
             // if the sub-account is the same as the previous offsetting
-            if ($line['codsubcuenta'] === $data['lines'][$index - 1]['codcontrapartida']) {
+            if ($line['codsubcuenta'] === $offsetting) {
                 $field = $unbalance < 0 ? 'debe' : 'haber';
                 $line[$field] = abs($unbalance);
                 $unbalance = 0.00;
@@ -172,13 +175,17 @@ class AccountingEntryTools
      */
     protected function checkEmptyValues(array &$line, array $previousLine)
     {
-        if (empty($line['concepto'])) {
-            $line['concepto'] = $previousLine['concepto'];
-        }
+        if (isset($line['codsubcuenta']) && isset($previousLine['codsubcuenta'])) {
+            if (empty($line['concepto'])) {
+                $line['concepto'] = $previousLine['concepto'];
+            }
 
-        if (empty($line['codcontrapartida']) && !empty($line['codsubcuenta'])) {
-            // TODO: [Fix] Go through previous lines in search of the offsetting. The sub-account that uses the offsetting for the first time is needed
-            $line['codcontrapartida'] = ($line['codsubcuenta'] === $previousLine['codcontrapartida']) ? $previousLine['codsubcuenta'] : $previousLine['codcontrapartida'];
+            if (empty($line['codcontrapartida']) && !empty($line['codsubcuenta'])) {
+                // TODO: [Fix] Go through previous lines in search of the offsetting. The sub-account that uses the offsetting for the first time is needed
+                $line['codcontrapartida'] = ($line['codsubcuenta'] === $previousLine['codcontrapartida'])
+                    ? $previousLine['codsubcuenta']
+                    : $previousLine['codcontrapartida'];
+            }
         }
     }
 
@@ -308,11 +315,13 @@ class AccountingEntryTools
         }
 
         $vatModel = new Impuesto();
-        $vat = $typeVat == self::TYPE_TAX_INPUT ? $vatModel->inputVatFromSubAccount($line['codsubcuenta']) : $vatModel->outputVatFromSubAccount($line['codsubcuenta']);
+        $vat = $typeVat == self::TYPE_TAX_INPUT
+            ? $vatModel->inputVatFromSubAccount($line['codsubcuenta'])
+            : $vatModel->outputVatFromSubAccount($line['codsubcuenta']);
 
         $result = $this->getAccountVatID($document['codejercicio'], $line['codcontrapartida']);
 
-        $line['documento'] = $document['documento'];
+        $line['documento'] = $document['documento'] ?? null;
         $line['cifnif'] = $result['id'];
         $line['iva'] = $vat->iva;
         $line['recargo'] = $result['surcharge'] ? $vat->recargo : 0.00;

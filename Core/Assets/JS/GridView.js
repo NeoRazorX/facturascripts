@@ -102,7 +102,7 @@ function getGridData(fieldOrder = null) {
         if (fieldOrder !== null) {
             documentLineData.rows[i][fieldOrder] = rowIndex;
         }
-        lines.push(documentLineData.rows[i]);
+        lines[rowIndex] = documentLineData.rows[i];
     }
     return lines;
 }
@@ -110,6 +110,7 @@ function getGridData(fieldOrder = null) {
 /* Return column value */
 function getGridFieldData(row, fieldName) {
     var physicalRow = gridObject.toPhysicalRow(row);
+    console.log('physicalRow: ' + physicalRow);
     return documentLineData["rows"][physicalRow][fieldName];
 }
 
@@ -290,6 +291,7 @@ $(document).ready(function () {
             rowHeaders: true,
             stretchH: 'all'
         });
+
         Handsontable.hooks.add("afterSelection", eventAfterSelection);
         Handsontable.hooks.add("beforeChange", eventBeforeChange);
     }

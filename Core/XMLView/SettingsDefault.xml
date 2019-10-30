@@ -100,7 +100,7 @@
                 </widget>
             </column>
         </group>
-        <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-database">
+        <group name="advanced" title="advanced" numcolumns="12" valign="bottom" icon="fas fa-database">
             <column name="homepage" numcolumns="3" order="100">
                 <widget type="select" fieldname="homepage" icon="fas fa-home">
                     <values source="pages" fieldcode="name" fieldtitle="name"></values>
@@ -108,6 +108,9 @@
             </column>
             <column name="item_limit" numcolumns="3" order="110">
                 <widget type="number" fieldname="item_limit" required="true" />
+            </column>
+            <column name="balancegraphic" title="show-balance-graphic" order="120">
+                <widget type="checkbox" fieldname="balancegraphic" />
             </column>
         </group>
         <group name="api" title="api" numcolumns="12" icon="fas fa-laptop-code">

@@ -59,6 +59,16 @@ class EditAsiento extends EditController
     }
 
     /**
+     * Indicates whether the balance chart should be displayed
+     *
+     * @return bool
+     */
+    public function showBalanceGraphic()
+    {
+        return (bool)$this->toolBox()->appSettings()->get('default', 'balancegraphic');
+    }
+
+    /**
      * Overwrite autocomplete function to macro concepts in accounting concept.
      */
     protected function autocompleteAction(): array
