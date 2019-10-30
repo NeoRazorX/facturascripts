@@ -232,7 +232,7 @@ function saveDocument(mainFormName) {
     try {
         var data = {
             action: "save-document",
-            lines: getGridData("order"),
+            lines: getGridData("sortnum", true),
             document: {}
         };
         var mainForm = $("#" + mainFormName);

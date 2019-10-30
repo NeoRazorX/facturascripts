@@ -204,7 +204,7 @@ function customAfterChange(changes) {
     var data = {
         action: "recalculate-document",
         changes: changes,
-        lines: getGridData("order"),
+        lines: getGridData("sortnum"),
         document: {}
     };
     $.each(mainForm.serializeArray(), function (key, value) {
