@@ -44,23 +44,9 @@ abstract class ComercialContactController extends EditController
      *
      * @param string $viewName
      */
-    protected function createContactsView($viewName = 'ListContacto')
+    protected function createContactsView($viewName = 'EditDireccionContacto')
     {
-        $this->addListView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
-
-        /// sort options
-        $this->views[$viewName]->addOrderBy(['fechaalta'], 'date');
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'descripcion', 2);
-
-        /// search columns
-        $this->views[$viewName]->searchFields[] = 'apellidos';
-        $this->views[$viewName]->searchFields[] = 'descripcion';
-        $this->views[$viewName]->searchFields[] = 'direccion';
-        $this->views[$viewName]->searchFields[] = 'email';
-        $this->views[$viewName]->searchFields[] = 'nombre';
-
-        /// disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
+        $this->addEditListView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
     }
 
     /**

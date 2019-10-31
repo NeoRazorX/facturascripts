@@ -395,7 +395,7 @@ class Contacto extends Base\Contact
     public function test()
     {
         if (empty($this->descripcion)) {
-            $this->descripcion = $this->direccion ?? $this->fullName();
+            $this->descripcion = empty($this->codcliente) ? $this->fullName() : $this->direccion;
         }
 
         $utils = $this->toolBox()->utils();

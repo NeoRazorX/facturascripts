@@ -158,7 +158,7 @@ class EditProveedor extends ComercialContactController
                 break;
 
             case 'ListAlbaranProveedor':
-            case 'ListContacto':
+            case 'EditDireccionContacto':
             case 'ListFacturaProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
