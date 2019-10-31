@@ -90,9 +90,10 @@ function configureAutocompleteColumns(columns) {
  * the order index of the lines.
  *
  * @param {string} fieldOrder
+ * @param {boolean} onlyWithData
  * @returns {Array}
  */
-function getGridData(fieldOrder = null) {
+function getGridData(fieldOrder = null, onlyWithData = false) {
     var rowIndex, lines = [];
     for (var i = 0, max = documentLineData.rows.length; i < max; i++) {
         rowIndex = gridObject.toVisualRow(i);
@@ -102,7 +103,11 @@ function getGridData(fieldOrder = null) {
         if (fieldOrder !== null) {
             documentLineData.rows[i][fieldOrder] = rowIndex;
         }
-        lines.push(documentLineData.rows[i]);
+        if (onlyWithData) {
+            lines.push(documentLineData.rows[i]);
+        } else {
+            lines[rowIndex] = documentLineData.rows[i];
+        }
     }
     return lines;
 }
@@ -110,6 +115,7 @@ function getGridData(fieldOrder = null) {
 /* Return column value */
 function getGridFieldData(row, fieldName) {
     var physicalRow = gridObject.toPhysicalRow(row);
+    console.log('physicalRow: ' + physicalRow);
     return documentLineData["rows"][physicalRow][fieldName];
 }
 
@@ -231,7 +237,7 @@ function saveDocument(mainFormName) {
     try {
         var data = {
             action: "save-document",
-            lines: getGridData("order"),
+            lines: getGridData("sortnum", true),
             document: {}
         };
         var mainForm = $("#" + mainFormName);
@@ -290,6 +296,7 @@ $(document).ready(function () {
             rowHeaders: true,
             stretchH: 'all'
         });
+
         Handsontable.hooks.add("afterSelection", eventAfterSelection);
         Handsontable.hooks.add("beforeChange", eventBeforeChange);
     }
