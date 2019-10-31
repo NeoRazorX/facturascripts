@@ -268,7 +268,7 @@ class Contacto extends Base\Contact
 
         if ($create) {
             /// creates a new customer
-            $cliente->cifnif = $this->cifnif;
+            $cliente->cifnif = $this->cifnif ?? '';
             $cliente->codproveedor = $this->codproveedor;
             $cliente->email = $this->email;
             $cliente->fax = $this->fax;
@@ -304,7 +304,7 @@ class Contacto extends Base\Contact
 
         if ($create) {
             /// creates a new supplier
-            $proveedor->cifnif = $this->cifnif;
+            $proveedor->cifnif = $this->cifnif ?? '';
             $proveedor->codcliente = $this->codcliente;
             $proveedor->email = $this->email;
             $proveedor->fax = $this->fax;
