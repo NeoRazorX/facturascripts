@@ -49,22 +49,21 @@
                     {% endif %}
                 </div>
             </div>
-
             <div class="col-sm-5 col-6 text-right">
-                <h1 style="margin-top: 0px; margin-bottom: 0px;">
+                <h1 class="h3">
                     <i class="{{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i> {{ title }}
                 </h1>
             </div>
         </div>
 
         {# -- Data Row -- #}
-        <div class="row" style="margin-top: 15px;">
+        <div class="row">
             {# -- Left Panel -- #}
             <div class="col-sm-2">
                 <div class="nav flex-column nav-pills" id="mainTabs" role="tablist" aria-orientation="vertical">
                     {% for ejercicio in fsc.ejercicios %}
                         <a class="nav-link{% if loop.first %} active{% endif %}" id="tab-{{ ejercicio.codejercicio }}" data-toggle="pill" href="#data-{{ ejercicio.codejercicio }}" role="tab" aria-controls="data-{{ ejercicio.codejercicio }}" aria-selected="{{ loop.first }}">
-                            <i class="fas fa-calendar fa-fw" aria-hidden="true"></i> {{ ejercicio.nombre }}
+                            <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ ejercicio.nombre }}
                         </a>
                     {% endfor %}
                 </div>
@@ -85,7 +84,7 @@
                                             <div class="row">
                                                 {# -- Document Title -- #}
                                                 <div class="col-12">
-                                                    <h3 class="text-capitalize">
+                                                    <h3 class="h4 text-capitalize">
                                                         <i class="fas fa-book fa-fw" aria-hidden="true"></i> {{ i18n.trans(report.description) }}
                                                     </h3>
                                                 </div>

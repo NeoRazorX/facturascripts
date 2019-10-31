@@ -787,6 +787,7 @@
     "register-symbol": "#",
     "registered-installation": "Instalación registrada #%number%",
     "registered-installation-p": "Esta instalación ya ha sido registrada.",
+    "rejected": "Rechazado",
     "reloading": "Recargando...",
     "remove-from-list": "Quitar",
     "renew": "Renovar",
@@ -842,6 +843,7 @@
     "shipping-address": "Dirección de envío",
     "short": "Corto",
     "short-name": "Nombre Corto",
+    "show-balance-graphic": "Mostrar gráficos en asientos",
     "show-price": "Mostrar precio en la impresión",
     "show-quantity": "Mostrar cantidad en la impresión",
     "simple": "Simple",
@@ -1012,6 +1014,5 @@
     "you-should-change-passwd": "Debería cambiar su contraseña",
     "your": "Suyo",
     "zip-code": "Código Postal",
-    "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin.",
-    "disable-balance-accounting-entry": "Desactivar gráfico de saldos en la entrada de asientos"
+    "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin."
 }
