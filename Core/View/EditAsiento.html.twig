@@ -19,9 +19,11 @@
 #}
 {% extends "Master/GridView.html.twig" %}
 
+{% set showBalanceGraphic = fsc.showBalanceGraphic() %}
+
 {% block gridcard %}
     {# Grid data panel #}
-    <div class="col-9 mr-2">
+    <div class="col-{% if showBalanceGraphic %}9{% else %}12{% endif %} mr-2">
         <div class="card">
             <div class="card-header">
                 <span><small id="account-description"></small></span>
@@ -32,6 +34,7 @@
             </div>
         </div>
     </div>
+    {% if showBalanceGraphic %}
     {# Graphic panel #}
     <script src="node_modules/chart.js/dist/Chart.min.js"></script>
     <div class="col">
@@ -45,4 +48,5 @@
             </div>
         </div>
     </div>
+    {% endif %}
 {% endblock %}

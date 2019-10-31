@@ -334,7 +334,9 @@ class Partida extends Base\ModelOnChangeClass
 
             case 'debe':
             case 'haber':
-                $this->updateBalance($this->idsubcuenta, $this->debe, $this->haber);
+                $debit = $this->debe - $this->previousData['debe'];
+                $credit = $this->haber - $this->previousData['haber'];
+                $this->updateBalance($this->idsubcuenta, $debit, $credit);
                 break;
         }
 

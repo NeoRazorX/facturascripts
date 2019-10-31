@@ -89,7 +89,7 @@ class GridView extends EditView
     }
 
     /**
-     * 
+     *
      * @param ExportManager $exportManager
      *
      * @return bool
@@ -205,15 +205,14 @@ class GridView extends EditView
     public function processFormLines(&$lines): array
     {
         $result = [];
-        $primaryKey = $this->detailModel->primaryColumn();
         foreach ($lines as $data) {
-            if (!isset($data[$primaryKey])) {
-                foreach ($this->getDetailColumns('detail') as $col) {
-                    if (!isset($data[$col->widget->fieldname])) {
-                        // TODO: maybe the widget can have a default value method instead of null
-                        $data[$col->widget->fieldname] = null;
-                    }
-                }
+            if (!is_array($data)) {
+                $result[] = [];
+                continue;
+            }
+
+            if (!isset($data[$this->detailModel->primaryColumn()])) {
+                $this->initLineData($data);
             }
             $result[] = $data;
         }
@@ -222,7 +221,7 @@ class GridView extends EditView
     }
 
     /**
-     * 
+     *
      * @param array $data
      *
      * @return array
@@ -345,7 +344,7 @@ class GridView extends EditView
     }
 
     /**
-     * 
+     *
      * @return array
      */
     private function getErrors(): array
@@ -445,6 +444,20 @@ class GridView extends EditView
     }
 
     /**
+     * Set initial values for columns into a new line
+     *
+     * @param array|string $data
+     */
+    private function initLineData(&$data)
+    {
+        foreach ($this->getDetailColumns('detail') as $col) {
+            if (!isset($data[$col->widget->fieldname])) {
+                $data[$col->widget->fieldname] = null; // TODO: maybe the widget can have a default value method instead of null
+            }
+        }
+    }
+
+    /**
      * Load data of master document and set data from array
      *
      * @param string $field
@@ -462,7 +475,7 @@ class GridView extends EditView
     }
 
     /**
-     * 
+     *
      * @param string $documentFieldKey
      * @param int    $documentFieldValue
      * @param array  $data
