@@ -34,11 +34,13 @@
                 <widget type="select" fieldname="xcolumn" />
             </column>
             <column name="x-operation" order="150">
-                <widget type="select" fieldname="xoperation">
+                <widget type="select" fieldname="xoperation" translate="true">
                     <values title="group-by-day">DAY</values>
+                    <values title="group-by-week">WEEK</values>
                     <values title="group-by-month">MONTH</values>
                     <values title="group-by-year">YEAR</values>
                     <values title="group-by-day-unixtime">UNIXTIME_DAY</values>
+                    <values title="group-by-week-unixtime">UNIXTIME_WEEK</values>
                     <values title="group-by-month-unixtime">UNIXTIME_MONTH</values>
                     <values title="group-by-year-unixtime">UNIXTIME_YEAR</values>
                 </widget>

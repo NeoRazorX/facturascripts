@@ -163,12 +163,20 @@ class AreaChart
                 $xcol = "DATE_FORMAT(" . $report->xcolumn . ", '%Y-%m-%d')";
                 break;
 
+            case 'WEEK':
+                $xcol = "DATE_FORMAT(" . $report->xcolumn . ", '%Y-%u')";
+                break;
+
             case 'MONTH':
                 $xcol = "DATE_FORMAT(" . $report->xcolumn . ", '%Y-%m')";
                 break;
 
             case 'UNIXTIME_DAY':
                 $xcol = "DATE_FORMAT(FROM_UNIXTIME(" . $report->xcolumn . "), '%Y-%m-%d')";
+                break;
+
+            case 'UNIXTIME_WEEK':
+                $xcol = "DATE_FORMAT(FROM_UNIXTIME(" . $report->xcolumn . "), '%Y-%u')";
                 break;
 
             case 'UNIXTIME_MONTH':
