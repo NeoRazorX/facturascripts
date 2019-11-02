@@ -43,7 +43,7 @@
         <column name="quantity" display="right" order="150">
             <widget type="number" fieldname="cantidad" />
         </column>
-        <column name="quantity-served" display="right" order="160">
+        <column name="quantity-served" display="none" order="160">
             <widget type="number" fieldname="servido" />
         </column>
         <column name="price" display="right" order="170">

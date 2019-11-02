@@ -62,14 +62,16 @@ function clearAccountData() {
     accountData.vat = [];
     // Update data labels
     accountDescription.textContent = "";
-    accountBalance.textContent = "";
     vatRegister.prop("disabled", true);
-    // Update graphic bars
-    accountGraph.data.datasets.forEach((dataset) => {
-        dataset.data.lenght = 0;
-        dataset.data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    });
-    accountGraph.update();
+    // Update balance and graphic bars
+    if (accountGraph) {
+        accountBalance.textContent = "";
+        accountGraph.data.datasets.forEach((dataset) => {
+            dataset.data.lenght = 0;
+            dataset.data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        });
+        accountGraph.update();
+    }
 }
 
 /**
@@ -82,14 +84,16 @@ function setAccountData(data) {
     accountData.subaccount = data.subaccount;
     // Update data labels and buttons
     accountDescription.textContent = data.description;
-    accountBalance.textContent = data.balance;
     vatRegister.prop("disabled", !data.hasvat);
-    // Update graphic bars
-    accountGraph.data.datasets.forEach((dataset) => {
-        dataset.data.lenght = 0; // Force delete old data
-        dataset.data = Object.values(data.detail);
-    });
-    accountGraph.update();
+    // Update balance and graphic bars
+    if (accountGraph) {
+        accountBalance.textContent = data.balance;
+        accountGraph.data.datasets.forEach((dataset) => {
+            dataset.data.lenght = 0; // Force delete old data
+            dataset.data = Object.values(data.detail);
+        });
+        accountGraph.update();
+    }
 }
 
 /*
@@ -200,7 +204,7 @@ function customAfterChange(changes) {
     var data = {
         action: "recalculate-document",
         changes: changes,
-        lines: getGridData("order"),
+        lines: getGridData("sortnum"),
         document: {}
     };
     $.each(mainForm.serializeArray(), function (key, value) {

@@ -45,20 +45,22 @@ class CSVImport
         $csv->auto($filePath);
         $dataBase = new DataBase();
 
-        $sql = 'INSERT INTO ' . $table . ' (' . implode(', ', $csv->titles) . ') VALUES ';
-        $sep = '';
-        foreach ($csv->data as $row) {
-            $sql .= $sep . '(';
-            $sep2 = '';
-            foreach ($row as $value) {
-                $sql .= $sep2 . static::valueToSql($dataBase, $value);
-                $sep2 = ', ';
-            }
-
-            $sql .= ')';
-            $sep = ', ';
+        $insertFields = [];
+        foreach ($csv->titles as $title) {
+            $insertFields[] = $dataBase->escapeColumn($title);
         }
 
+        $insertRows = [];
+        foreach ($csv->data as $row) {
+            $insertRow = [];
+            foreach ($row as $value) {
+                $insertRow[] = static::valueToSql($dataBase, $value);
+            }
+
+            $insertRows[] = '(' . implode(',', $insertRow) . ')';
+        }
+
+        $sql = 'INSERT INTO ' . $table . ' (' . implode(',', $insertFields) . ') VALUES ' . implode(',', $insertRows);
         if ($update) {
             $sql .= ' ON DUPLICATE KEY UPDATE ';
             $sql .= implode(', ', array_map(function ($value) {

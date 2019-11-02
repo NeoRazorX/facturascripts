@@ -68,6 +68,14 @@ class ListProveedor extends ListController
         $this->addOrderBy($viewName, ['lastactivity'], 'last-activity', 2);
 
         /// filters
+        $values = [
+            [
+                'label' => $this->toolBox()->i18n()->trans('suppliers'),
+                'where' => [new DataBaseWhere('codproveedor', null, 'IS NOT')]
+            ]
+        ];
+        $this->addFilterSelectWhere($viewName, 'type', $values);
+
         $cargoValues = $this->codeModel->all('contactos', 'cargo', 'cargo');
         $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $cargoValues);
 

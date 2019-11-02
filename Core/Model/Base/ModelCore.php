@@ -229,6 +229,11 @@ abstract class ModelCore
                     $this->{$key} = empty($value) ? null : date(self::DATE_STYLE, strtotime($value));
                     break;
 
+                case 'datetime':
+                case 'timestamp':
+                    $this->{$key} = empty($value) ? null : date(self::DATETIME_STYLE, strtotime($value));
+                    break;
+
                 default:
                     $this->{$key} = ($value === null && $field['is_nullable'] === 'NO') ? '' : $value;
             }

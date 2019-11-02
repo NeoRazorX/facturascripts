@@ -268,7 +268,7 @@ class Contacto extends Base\Contact
 
         if ($create) {
             /// creates a new customer
-            $cliente->cifnif = $this->cifnif;
+            $cliente->cifnif = $this->cifnif ?? '';
             $cliente->codproveedor = $this->codproveedor;
             $cliente->email = $this->email;
             $cliente->fax = $this->fax;
@@ -304,7 +304,7 @@ class Contacto extends Base\Contact
 
         if ($create) {
             /// creates a new supplier
-            $proveedor->cifnif = $this->cifnif;
+            $proveedor->cifnif = $this->cifnif ?? '';
             $proveedor->codcliente = $this->codcliente;
             $proveedor->email = $this->email;
             $proveedor->fax = $this->fax;
@@ -395,7 +395,7 @@ class Contacto extends Base\Contact
     public function test()
     {
         if (empty($this->descripcion)) {
-            $this->descripcion = $this->direccion ?? $this->fullName();
+            $this->descripcion = empty($this->codcliente) ? $this->fullName() : $this->direccion;
         }
 
         $utils = $this->toolBox()->utils();

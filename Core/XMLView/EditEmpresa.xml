@@ -91,7 +91,7 @@
                     <values></values>
                 </widget>
             </column>
-            <column name="logo" titleurl="ListAttachedFile" numcolumns="3" order="120">
+            <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" numcolumns="3" order="120">
                 <widget type="select" fieldname="idlogo" onclick="EditAttachedFile">
                     <values source="attached_files" fieldcode="idfile" fieldtitle="filename"></values>
                 </widget>

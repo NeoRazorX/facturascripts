@@ -325,16 +325,16 @@ class Partida extends Base\ModelOnChangeClass
     {
         switch ($field) {
             case 'codsubcuenta':
-                $subcuenta = $this->getSubcuenta($this->codsubcuenta);
-                $this->idsubcuenta = $subcuenta->idsubcuenta;
-
+                $this->idsubcuenta = $this->getSubcuenta($this->codsubcuenta)->idsubcuenta;
                 $this->updateBalance($this->previousData['idsubcuenta'], ($this->previousData['debe'] * -1), ($this->previousData['haber'] * -1));
                 $this->updateBalance($this->idsubcuenta, $this->debe, $this->haber);
                 break;
 
             case 'debe':
             case 'haber':
-                $this->updateBalance($this->idsubcuenta, $this->debe, $this->haber);
+                $debit = $this->debe - $this->previousData['debe'];
+                $credit = $this->haber - $this->previousData['haber'];
+                $this->updateBalance($this->idsubcuenta, $debit, $credit);
                 break;
         }
 
@@ -389,7 +389,11 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * Update the subaccount balance
+     * Update the subaccount balance.
+     * 
+     * @param int   $idsubaccount
+     * @param float $debit
+     * @param float $credit
      */
     private function updateBalance($idsubaccount, $debit, $credit)
     {

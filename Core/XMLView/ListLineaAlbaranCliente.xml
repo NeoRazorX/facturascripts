@@ -80,7 +80,7 @@
         <row type="status">
             <option color="info" fieldname="referencia">null:</option>
             <option color="danger" fieldname="cantidad">lt:0</option>
-            <option color="success" fieldname="cantidad">gt:0</option>
+            <option color="success" fieldname="servido">gt:0</option>
         </row>
     </rows>
 </view>

@@ -158,7 +158,7 @@ class EditCliente extends ComercialContactController
                 break;
 
             case 'ListAlbaranCliente':
-            case 'ListContacto':
+            case 'EditDireccionContacto':
             case 'ListFacturaCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
