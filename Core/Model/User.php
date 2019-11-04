@@ -206,7 +206,7 @@ class User extends Base\ModelClass
         }
 
         $this->nick = trim($this->nick);
-        if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
+        if (!preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']
