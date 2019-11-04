@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseTools;
 use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Dinamic\Lib\Import\CSVImport;
+use FacturaScripts\Core\Lib\Import\CSVImport;
 
 /**
  * The class from which all models inherit, connects to the database,
