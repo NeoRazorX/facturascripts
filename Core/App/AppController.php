@@ -327,10 +327,10 @@ class AppController extends App
             $user->save();
 
             $expire = \time() + \FS_COOKIES_EXPIRE;
-            $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, $expire));
-            $this->response->headers->setCookie(new Cookie('fsLogkey', $user->logkey, $expire));
-            $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire));
-            $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire));
+            $this->response->headers->setCookie(new Cookie('fsNick', $user->nick, $expire, FS_ROUTE));
+            $this->response->headers->setCookie(new Cookie('fsLogkey', $user->logkey, $expire, FS_ROUTE));
+            $this->response->headers->setCookie(new Cookie('fsLang', $user->langcode, $expire, FS_ROUTE));
+            $this->response->headers->setCookie(new Cookie('fsCompany', $user->idempresa, $expire, FS_ROUTE));
         }
     }
 
