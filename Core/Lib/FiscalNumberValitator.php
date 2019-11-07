@@ -49,6 +49,8 @@ class FiscalNumberValitator
 
         $upperNumber = \strtoupper($number);
         $validator = new Validator(new Generator());
+        $validatorEC = new EcuadorFiscalNumber();
+
 
         switch (\strtolower($type)) {
             case 'cif':
@@ -67,7 +69,13 @@ class FiscalNumberValitator
                 return static::isValidRFC($upperNumber);
 
             case 'rnc':
+            case 'ci':
                 return static::isValidRNC($upperNumber);
+                return $validatorEC->validarCedula($upperNumber);
+            case 'ruc':
+                return $validatorEC->validarRucPersonaNatural($upperNumber) or
+                       $validatorEC->validarRucSociedadPrivada($upperNumber) or
+                       $validatorEC->validarRucSociedadPublica($upperNumber);
         }
 
         return true;
