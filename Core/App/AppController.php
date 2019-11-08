@@ -339,8 +339,9 @@ class AppController extends App
      */
     private function userLogout()
     {
-        $this->response->headers->clearCookie('fsNick');
-        $this->response->headers->clearCookie('fsLogkey');
+        $this->response->headers->clearCookie('fsNick', FS_ROUTE);
+        $this->response->headers->clearCookie('fsLogkey', FS_ROUTE);
+        $this->response->headers->clearCookie('fsCompany', FS_ROUTE);
         $this->toolBox()->i18nLog()->debug('logout-ok');
     }
 }
