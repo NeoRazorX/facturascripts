@@ -151,10 +151,11 @@ class Empresa extends Base\Contact
         new AttachedFile();
 
         $num = mt_rand(1, 9999);
+        $name = \defined('FS_INITIAL_EMPRESA') ? \FS_INITIAL_EMPRESA : 'E-' . $num;
+        $codpais = \defined('FS_INITIAL_CODPAIS') ? \FS_INITIAL_CODPAIS : 'ESP';
         return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,'
             . 'direccion,administrador,cifnif,nombre,nombrecorto,personafisica,regimeniva)'
-            . "VALUES (1,'','ESP','',"
-            . "'','00000014Z','Empresa " . $num . " S.L.','E-" . $num . "','0',"
+            . "VALUES (1,'','" . $codpais . "','','','00000014Z','" . $name . "','" . $name . "','0',"
             . "'" . RegimenIVA::defaultValue() . "');";
     }
 

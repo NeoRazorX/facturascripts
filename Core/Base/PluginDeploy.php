@@ -296,29 +296,41 @@ class PluginDeploy
     private function mergeXMLDocs(&$source, $extension)
     {
         foreach ($extension->children() as $extChild) {
+            /// we need $num to know wich dom element number to overwrite
+            $num = -1;
+
             $found = false;
             foreach ($source->children() as $child) {
-                if ($this->mergeXMLDocsCompare($child, $extChild)) {
-                    $found = true;
-                    $this->mergeXMLDocs($child, $extChild);
-                    break;
+                if ($child->getName() == $extChild->getName()) {
+                    $num++;
                 }
-            }
 
-            if (!$found) {
-                $toDom = dom_import_simplexml($source);
-                $fromDom = dom_import_simplexml($extChild);
-                $newElement = $toDom->ownerDocument->importNode($fromDom, true);
+                if (!$this->mergeXMLDocsCompare($child, $extChild)) {
+                    continue;
+                }
 
-                switch (mb_strtolower($fromDom->getAttribute('overwrite'))) {
+                /// element found. Overwrite or append children?
+                $found = true;
+                $extDom = dom_import_simplexml($extChild);
+                switch (mb_strtolower($extDom->getAttribute('overwrite'))) {
                     case 'true':
-                        $toDom->replaceChild($newElement, $toDom->getElementsByTagName('*')->item(0));
+                        $sourceDom = dom_import_simplexml($source);
+                        $newElement = $sourceDom->ownerDocument->importNode($extDom, true);
+                        $sourceDom->replaceChild($newElement, $sourceDom->getElementsByTagName($newElement->nodeName)->item($num));
                         break;
 
                     default:
-                        $toDom->appendChild($newElement);
-                        break;
+                        $this->mergeXMLDocs($child, $extChild);
                 }
+                break;
+            }
+
+            /// elemento not found. Append all.
+            if (!$found) {
+                $sourceDom = dom_import_simplexml($source);
+                $extDom = dom_import_simplexml($extChild);
+                $newElement = $sourceDom->ownerDocument->importNode($extDom, true);
+                $sourceDom->appendChild($newElement);
             }
         }
     }
