@@ -192,7 +192,7 @@ class PluginDeploy
             }
 
             $filePath = $path . DIRECTORY_SEPARATOR . $fileName;
-            $extension = $fileInfo["extension"] ?? '';
+            $extension = $fileInfo['extension'] ?? '';
             switch ($extension) {
                 case 'php':
                     $this->linkPHPFile($fileName, $folder, $place, $pluginName);
@@ -218,8 +218,8 @@ class PluginDeploy
      */
     private function linkPHPFile(string $fileName, string $folder, string $place, string $pluginName)
     {
-        $auxNamespace = empty($pluginName) ? $place : "Plugins\\" . $pluginName;
-        $namespace = "FacturaScripts\\" . $auxNamespace . '\\' . $folder;
+        $auxNamespace = empty($pluginName) ? $place : 'Plugins\\' . $pluginName;
+        $namespace = 'FacturaScripts\\' . $auxNamespace . '\\' . $folder;
         $newNamespace = "FacturaScripts\Dinamic\\" . $folder;
 
         $paths = explode(DIRECTORY_SEPARATOR, $fileName);
@@ -308,7 +308,17 @@ class PluginDeploy
             if (!$found) {
                 $toDom = dom_import_simplexml($source);
                 $fromDom = dom_import_simplexml($extChild);
-                $toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
+                $newElement = $toDom->ownerDocument->importNode($fromDom, true);
+
+                switch (mb_strtolower($fromDom->getAttribute('overwrite'))) {
+                    case 'true':
+                        $toDom->replaceChild($newElement, $toDom->getElementsByTagName('*')->item(0));
+                        break;
+
+                    default:
+                        $toDom->appendChild($newElement);
+                        break;
+                }
             }
         }
     }
