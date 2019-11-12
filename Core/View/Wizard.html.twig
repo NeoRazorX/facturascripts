@@ -108,28 +108,30 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col mt-3">
-                    <h3 class="h4 text-info">
-                        <i class="fas fa-key" aria-hidden="true"></i> {{ i18n.trans('password') }}
-                    </h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-4">
-                    {{ forms.simpleInput('user', 'user', fsc.user.nick, 'text', i18n.trans('user'), 'fas fa-user', {'readonly': ''}) }}
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key', {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
+            {% if fsc.user.verifyPassword('admin') %}
+                <div class="row">
+                    <div class="col mt-3">
+                        <h3 class="h4 text-info">
+                            <i class="fas fa-key" aria-hidden="true"></i> {{ i18n.trans('you-should-change-passwd') }}
+                        </h3>
                     </div>
                 </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'), 'fas fa-key', {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ forms.simpleInput('user', 'user', fsc.user.nick, 'text', i18n.trans('user'), 'fas fa-user', {'readonly': ''}) }}
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key', {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'), 'fas fa-key', {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
             <div class="row mb-3 mt-2">
                 {% set plugins = fsc.getAvaliablePlugins() %}
                 {% if plugins is not empty %}
