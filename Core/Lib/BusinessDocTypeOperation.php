@@ -22,11 +22,11 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\Translator;
 
 /**
- * This class centralizes all common method for Type Operation Document.
+ * This class centralizes all common method for Business Doc Type Operation.
  *
  * @author Frank Aguirre <faguirre@soenac.com>
  */
-class TipoOperaciónDocumento
+class BusinessDocTypeOperation
 {
     const TYPE_OPERATION_DOCUMENT_STAN = 'ESTANDAR';
 

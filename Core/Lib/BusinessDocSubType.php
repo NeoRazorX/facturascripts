@@ -22,11 +22,11 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\Translator;
 
 /**
- * This class centralizes all common method for Sub Type Document.
+ * This class centralizes all common method for Business Doc Sub Type.
  *
  * @author Frank Aguirre <faguirre@soenac.com>
  */
-class SubTipoDocumento
+class BusinessDocSubType
 {
     const SUB_TYPE_DOCUMENT_NSI = 'FACTURAVENTA';
     const SUB_TYPE_DOCUMENT_EB = 'FACTURAEXPORTACION';
