@@ -156,7 +156,11 @@ class EditUser extends EditController
         $roleUserModel = new RoleUser();
         foreach ($roleUserModel->all([new DataBaseWhere('nick', $user->nick)]) as $roleUser) {
             foreach ($roleUser->getRoleAccess() as $roleAccess) {
-                $pageList[] = ['value' => $roleAccess->pagename, 'title' => $roleAccess->pagename];
+                if (!$roleAccess->getPage()->showonmenu) {
+                    continue;
+                }
+
+                $pageList[$roleAccess->pagename] = ['value' => $roleAccess->pagename, 'title' => $roleAccess->pagename];
             }
         }
 
