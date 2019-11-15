@@ -40,6 +40,12 @@ class CommissionTools
 
     /**
      *
+     * @var SalesDocument
+     */
+    protected $document;
+
+    /**
+     *
      * @param SalesDocument       $doc
      * @param SalesDocumentLine[] $lines
      */
@@ -49,8 +55,10 @@ class CommissionTools
             return;
         }
 
+        $this->document = $doc;
+        $this->loadCommissions();
+
         $totalcommission = 0.0;
-        $this->loadCommissions($doc);
         foreach ($lines as $line) {
             $totalcommission += $this->recalculateLine($line);
         }
@@ -84,24 +92,22 @@ class CommissionTools
 
     /**
      * Charge applicable commissions.
-     *
-     * @param SalesDocument $doc
      */
-    protected function loadCommissions(&$doc)
+    protected function loadCommissions()
     {
         $this->commissions = [];
-        if (empty($doc->codagente)) {
+        if (empty($this->doc->codagente)) {
             return;
         }
 
         $commission = new Comision();
-        $where = [new DataBaseWhere('idempresa', $doc->idempresa)];
+        $where = [new DataBaseWhere('idempresa', $this->doc->idempresa)];
         foreach ($commission->all($where, ['prioridad' => 'DESC'], 0, 0) as $comm) {
-            if (!empty($comm->codagente) && $comm->codagente != $doc->codagente) {
+            if (!empty($comm->codagente) && $comm->codagente != $this->doc->codagente) {
                 continue;
             }
 
-            if (!empty($comm->codcliente) && $comm->codcliente != $doc->codcliente) {
+            if (!empty($comm->codcliente) && $comm->codcliente != $this->doc->codcliente) {
                 continue;
             }
 
