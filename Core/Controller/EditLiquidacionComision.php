@@ -312,6 +312,9 @@ class EditLiquidacionComision extends EditController
         /// Get master data
         $mainViewName = $this->getMainViewName();
         $idsettled = $this->getViewModelValue($mainViewName, 'idliquidacion');
+        if (empty($idsettled)) {
+            return;
+        }
 
         /// Set master values to insert modal view
         $view->model->codagente = $this->getViewModelValue($mainViewName, 'codagente');
