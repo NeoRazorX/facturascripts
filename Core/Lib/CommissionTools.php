@@ -39,7 +39,7 @@ class CommissionTools
     protected $commissions;
 
     /**
-     * 
+     *
      * @param SalesDocument       $doc
      * @param SalesDocumentLine[] $lines
      */
@@ -59,12 +59,12 @@ class CommissionTools
     }
 
     /**
-     * 
+     *
      * @param SalesDocumentLine $line
      *
      * @return float
      */
-    protected function getCommision(&$line)
+    protected function getCommission($line)
     {
         $codfamilia = $line->getProducto()->codfamilia;
         foreach ($this->commissions as $commission) {
@@ -84,7 +84,7 @@ class CommissionTools
 
     /**
      * Charge applicable commissions.
-     * 
+     *
      * @param SalesDocument $doc
      */
     protected function loadCommissions(&$doc)
@@ -118,7 +118,7 @@ class CommissionTools
      */
     protected function recalculateLine(&$line)
     {
-        $newValue = $this->getCommision($line);
+        $newValue = $this->getCommission($line);
         if ($newValue != $line->porcomision) {
             $line->porcomision = $newValue;
             $line->save();
