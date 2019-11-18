@@ -70,6 +70,10 @@
         {% endfor %}
         {{ _self.customSelect('doc_codpago', 'codpago', currentView.model.codpago, currentView.getSelectValues('FormaPago')) }}
         {{ _self.customSelect('doc_coddivisa', 'coddivisa', currentView.model.coddivisa, currentView.getSelectValues('Divisa')) }}
+        {% if currentView.model.subjectColumn() == 'codcliente' %}
+            {{ _self.customSelect('doc_codsubtipodoc', 'codsubtipodoc', currentView.model.codsubtipodoc, currentView.getSelectValues('BusinessDocSubType')) }}
+            {{ _self.customSelect('doc_codoperaciondoc', 'codoperaciondoc', currentView.model.codoperaciondoc, currentView.getSelectValues('BusinessDocTypeOperation'), false) }}
+        {% endif %}
         <div class="col-sm-3 col-md-2 col-lg mb-2">
             <div class="input-group">
                 <input type="text" id="doc_total" name="total" value="{{ currentView.model.total }}" class="form-control text-right" disabled="" />

@@ -37,6 +37,14 @@
         <null>NO</null>
     </column>
     <column>
+        <name>codsubtipodoc</name>
+        <type>character varying(20)</type>
+    </column>
+    <column>
+        <name>codoperaciondoc</name>
+        <type>character varying(20)</type>
+    </column>
+    <column>
         <name>codejercicio</name>
         <type>character varying(4)</type>
         <null>NO</null>
