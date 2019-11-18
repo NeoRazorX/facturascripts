@@ -96,8 +96,8 @@
     </ul>
     <div class="tab-content" id="mainTabsContent">
         {% for viewName, view in fsc.views %}
-            {% set active = (viewName == fsc.active) ? ' active' : '' %}
-            <div class="tab-pane{{ active }}" id="{{ viewName }}" role="tabpanel">
+            {% set active = (viewName == fsc.active) ? ' show active' : '' %}
+            <div class="tab-pane fade{{ active }}" id="{{ viewName }}" role="tabpanel">
                 {% do fsc.setCurrentView(viewName) %}
                 {{ include(view.template) }}
             </div>
