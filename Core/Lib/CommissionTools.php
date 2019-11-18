@@ -22,6 +22,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Dinamic\Model\Comision;
+use FacturaScripts\Dinamic\Model\Producto;
 
 /**
  * Class for the calculation of sales commissions
@@ -88,6 +89,7 @@ class CommissionTools
      * Check if the commission record is applicable to the document
      *
      * @param Comision $commission
+     *
      * @return bool
      */
     protected function isValidCommissionForDoc($commission): bool
@@ -99,6 +101,7 @@ class CommissionTools
         if (!empty($commission->codcliente) && $commission->codcliente != $this->document->codcliente) {
             return false;
         }
+
         return true;
     }
 
@@ -106,8 +109,9 @@ class CommissionTools
      * Check if the commission record is applicable to the line document
      *
      * @param SalesDocumentLine $line
-     * @param Producto $product
-     * @param Comision $commission
+     * @param Producto          $product
+     * @param Comision          $commission
+     *
      * @return bool
      */
     protected function isValidCommissionForLine(&$line, $product, $commission): bool
@@ -119,6 +123,7 @@ class CommissionTools
         if (!empty($commission->idproducto) && $commission->idproducto != $line->idproducto) {
             return false;
         }
+
         return true;
     }
 
