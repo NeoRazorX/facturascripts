@@ -44,7 +44,7 @@
                 }
             }
         });
-        
+
         return false;
     }
 </script>
@@ -70,10 +70,6 @@
         {% endfor %}
         {{ _self.customSelect('doc_codpago', 'codpago', currentView.model.codpago, currentView.getSelectValues('FormaPago')) }}
         {{ _self.customSelect('doc_coddivisa', 'coddivisa', currentView.model.coddivisa, currentView.getSelectValues('Divisa')) }}
-        {% if currentView.model.subjectColumn() == 'codcliente' %}
-            {{ _self.customSelect('doc_codsubtipodoc', 'codsubtipodoc', currentView.model.codsubtipodoc, currentView.getSelectValues('BusinessDocSubType')) }}
-            {{ _self.customSelect('doc_codoperaciondoc', 'codoperaciondoc', currentView.model.codoperaciondoc, currentView.getSelectValues('BusinessDocTypeOperation'), false) }}
-        {% endif %}
         <div class="col-sm-3 col-md-2 col-lg mb-2">
             <div class="input-group">
                 <input type="text" id="doc_total" name="total" value="{{ currentView.model.total }}" class="form-control text-right" disabled="" />
@@ -137,7 +133,15 @@
         </div>
     {% endif %}
     <div id="document-lines"></div>
-    <div class="form-row mt-2 mb-2">
+    <div class="form-row mt-2">
+        {% if fsc.showDocSubType %}
+            {{ _self.customSelect('doc_codsubtipodoc', 'codsubtipodoc', currentView.model.codsubtipodoc, currentView.getSelectValues('BusinessDocSubType')) }}
+        {% endif %}
+        {% if fsc.showDocOperation %}
+            {{ _self.customSelect('doc_codoperaciondoc', 'codoperaciondoc', currentView.model.codoperaciondoc, currentView.getSelectValues('BusinessDocTypeOperation')) }}
+        {% endif %}
+    </div>
+    <div class="form-row mb-2">
         <div class="col">
             <textarea name="observaciones" class="form-control" placeholder="{{ i18n.trans('observations') }}">{{ currentView.model.observaciones | raw }}</textarea>
         </div>
@@ -278,7 +282,7 @@
                             </a>
                         {% else %}
                             <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ status.idestado }}');
-                               businessDocViewSave();">
+                                    businessDocViewSave();">
                                 {% if status.generadoc %}
                                     {% set showDocumentStitcher = true %}
                                 {% endif %}

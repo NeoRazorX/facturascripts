@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Frank Aguirre <faguirre@soenac.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\Translator;
@@ -28,9 +27,14 @@ use FacturaScripts\Core\Base\Translator;
  */
 class BusinessDocSubType
 {
+
     const SUB_TYPE_DOCUMENT_NSI = 'FACTURAVENTA';
     const SUB_TYPE_DOCUMENT_EB = 'FACTURAEXPORTACION';
 
+    /**
+     *
+     * @var Translator
+     */
     public static $i18n;
 
     /**
@@ -40,7 +44,9 @@ class BusinessDocSubType
      */
     public static function all()
     {
-        self::$i18n = new Translator();
+        if (!isset(self::$i18n)) {
+            self::$i18n = new Translator();
+        }
 
         return [
             self::SUB_TYPE_DOCUMENT_NSI => self::$i18n->trans('sales-invoice'),

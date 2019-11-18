@@ -43,8 +43,21 @@ class Wizard extends Controller
      */
     public function getAvaliablePlugins()
     {
-        $pluginManager = new PluginManager;
-        return $pluginManager->installedPlugins();
+        $pluginManager = new PluginManager();
+        $installedPlugins = $pluginManager->installedPlugins();
+        if (!defined('FS_HIDDEN_PLUGINS')) {
+            return $installedPlugins;
+        }
+
+        /// exclude hidden plugins
+        $hiddenPlugins = \explode(',', \FS_HIDDEN_PLUGINS);
+        foreach ($installedPlugins as $key => $plugin) {
+            if (\in_array($plugin['name'], $hiddenPlugins, false)) {
+                unset($installedPlugins[$key]);
+            }
+        }
+
+        return $installedPlugins;
     }
 
     /**
@@ -199,6 +212,13 @@ class Wizard extends Controller
     {
         $pluginManager = new PluginManager();
         $pluginManager->deploy(true, true);
+
+        $hiddenPlugins = \explode(',', \FS_HIDDEN_PLUGINS);
+        if (is_array($hiddenPlugins)) {
+            foreach ($hiddenPlugins as $pluginName) {
+                $pluginManager->enable($pluginName);
+            }
+        }
 
         $plugins = $this->request->request->get('plugins', []);
         if (is_array($plugins)) {

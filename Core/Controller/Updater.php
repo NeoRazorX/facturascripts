@@ -163,7 +163,7 @@ class Updater extends Controller
      * 
      * @param string $action
      */
-    private function execAction(string $action)
+    protected function execAction(string $action)
     {
         switch ($action) {
             case 'cancel':

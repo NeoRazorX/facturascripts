@@ -102,6 +102,17 @@ class RoleAccess extends Base\ModelClass
 
     /**
      * 
+     * @return Page
+     */
+    public function getPage()
+    {
+        $page = new Page();
+        $page->loadFromCode($this->pagename);
+        return $page;
+    }
+
+    /**
+     * 
      * @return string
      */
     public function install()

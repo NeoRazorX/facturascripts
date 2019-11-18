@@ -70,7 +70,7 @@ class FileManager
             return true;
         }
 
-        $files = is_dir($folder) ? static::scanFolder($folder) : [];
+        $files = is_dir($folder) ? static::scanFolder($folder, false, ['.', '..']) : [];
         foreach ($files as $file) {
             $path = $folder . DIRECTORY_SEPARATOR . $file;
             is_dir($path) ? static::delTree($path) : unlink($path);
