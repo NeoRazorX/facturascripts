@@ -135,7 +135,7 @@ class CommissionTools
         $commission = new Comision();
         $where = [new DataBaseWhere('idempresa', $this->document->idempresa)];
         foreach ($commission->all($where, ['prioridad' => 'DESC'], 0, 0) as $comm) {
-            if ($this->isValidCommissionForDoc()) {
+            if ($this->isValidCommissionForDoc($comm)) {
                 $this->commissions[] = $comm;
             }
         }
