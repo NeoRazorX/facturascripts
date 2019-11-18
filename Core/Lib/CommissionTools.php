@@ -74,20 +74,52 @@ class CommissionTools
      */
     protected function getCommission($line)
     {
-        $codfamilia = $line->getProducto()->codfamilia;
+        $product = $line->getProducto();
         foreach ($this->commissions as $commission) {
-            if (!empty($commission->codfamilia) && $commission->codfamilia != $codfamilia) {
-                continue;
+            if ($this->isValidCommissionForLine($line, $product, $commission)) {
+                return $commission->porcentaje;
             }
-
-            if (!empty($commission->idproducto) && $commission->idproducto != $line->idproducto) {
-                continue;
-            }
-
-            return $commission->porcentaje;
         }
 
         return 0.0;
+    }
+
+    /**
+     * Check if the commission record is applicable to the document
+     *
+     * @param Comision $commission
+     * @return bool
+     */
+    protected function isValidCommissionForDoc($commission): bool
+    {
+        if (!empty($commission->codagente) && $commission->codagente != $this->doc->codagente) {
+            return false;
+        }
+
+        if (!empty($commission->codcliente) && $commission->codcliente != $this->doc->codcliente) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check if the commission record is applicable to the line document
+     *
+     * @param SalesDocumentLine $line
+     * @param Producto $product
+     * @param Comision $commission
+     * @return bool
+     */
+    protected function isValidCommissionForLine(&$line, $product, $commission): bool
+    {
+        if (!empty($commission->codfamilia) && $commission->codfamilia != $product->codfamilia) {
+            return false;
+        }
+
+        if (!empty($commission->idproducto) && $commission->idproducto != $line->idproducto) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -103,15 +135,9 @@ class CommissionTools
         $commission = new Comision();
         $where = [new DataBaseWhere('idempresa', $this->doc->idempresa)];
         foreach ($commission->all($where, ['prioridad' => 'DESC'], 0, 0) as $comm) {
-            if (!empty($comm->codagente) && $comm->codagente != $this->doc->codagente) {
-                continue;
+            if ($this->isValidCommissionForDoc()) {
+                $this->commissions[] = $comm;
             }
-
-            if (!empty($comm->codcliente) && $comm->codcliente != $this->doc->codcliente) {
-                continue;
-            }
-
-            $this->commissions[] = $comm;
         }
     }
 
