@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Lib\BusinessDocSubType;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\BusinessDocSubType;
 use FacturaScripts\Core\Lib\BusinessDocTypeOperation;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente as LineaFactura;
 
@@ -35,18 +35,18 @@ class FacturaCliente extends Base\SalesDocument
     use Base\InvoiceTrait;
 
     /**
-     * Code business Documen sub type
-     *
-     * @var string
-     */
-    public $codsubtipodoc;
-
-    /**
      * Code business documen type operation
      *
      * @var string
      */
     public $codoperaciondoc;
+
+    /**
+     * Code business Documen sub type
+     *
+     * @var string
+     */
+    public $codsubtipodoc;
 
     /**
      * This function is called when creating the model table. Returns the SQL
@@ -69,8 +69,8 @@ class FacturaCliente extends Base\SalesDocument
     public function clear()
     {
         parent::clear();
-        $this->codsubtipodoc = BusinessDocSubType::defaultValue();
         $this->codoperaciondoc = BusinessDocTypeOperation::defaultValue();
+        $this->codsubtipodoc = BusinessDocSubType::defaultValue();
     }
 
     /**

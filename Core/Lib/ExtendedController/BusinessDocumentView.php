@@ -155,7 +155,8 @@ class BusinessDocumentView extends BaseView
      */
     public function getSelectValues($modelName)
     {
-        if (class_exists($classModel = self::MODEL_NAMESPACE . $modelName)) {
+        $classModel = self::MODEL_NAMESPACE . $modelName;
+        if (class_exists($classModel)) {
             $values = [];
             $model = new $classModel();
 
@@ -167,9 +168,8 @@ class BusinessDocumentView extends BaseView
             return $values;
         }
 
-        if (class_exists($classLib = self::MODEL_NAMESPACE_LIB . $modelName)) return $classLib::all();
-
-        return [];
+        $classLib = self::MODEL_NAMESPACE_LIB . $modelName;
+        return class_exists($classLib) ? $classLib::all() : [];
     }
 
     /**
