@@ -92,11 +92,11 @@ class CommissionTools
      */
     protected function isValidCommissionForDoc($commission): bool
     {
-        if (!empty($commission->codagente) && $commission->codagente != $this->doc->codagente) {
+        if (!empty($commission->codagente) && $commission->codagente != $this->document->codagente) {
             return false;
         }
 
-        if (!empty($commission->codcliente) && $commission->codcliente != $this->doc->codcliente) {
+        if (!empty($commission->codcliente) && $commission->codcliente != $this->document->codcliente) {
             return false;
         }
         return true;
@@ -128,12 +128,12 @@ class CommissionTools
     protected function loadCommissions()
     {
         $this->commissions = [];
-        if (empty($this->doc->codagente)) {
+        if (empty($this->document->codagente)) {
             return;
         }
 
         $commission = new Comision();
-        $where = [new DataBaseWhere('idempresa', $this->doc->idempresa)];
+        $where = [new DataBaseWhere('idempresa', $this->document->idempresa)];
         foreach ($commission->all($where, ['prioridad' => 'DESC'], 0, 0) as $comm) {
             if ($this->isValidCommissionForDoc()) {
                 $this->commissions[] = $comm;
