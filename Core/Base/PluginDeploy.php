@@ -309,9 +309,10 @@ class PluginDeploy
                     continue;
                 }
 
-                /// element found. Overwrite or append children?
+                /// Element found. Overwrite or append children? Only for parents example group, etc.
                 $found = true;
                 $extDom = dom_import_simplexml($extChild);
+
                 switch (mb_strtolower($extDom->getAttribute('overwrite'))) {
                     case 'true':
                         $sourceDom = dom_import_simplexml($source);
@@ -325,12 +326,21 @@ class PluginDeploy
                 break;
             }
 
-            /// elemento not found. Append all.
+            /// Elemento not found. Append all or Replace child, Only for child example widget, etc.
             if (!$found) {
                 $sourceDom = dom_import_simplexml($source);
                 $extDom = dom_import_simplexml($extChild);
                 $newElement = $sourceDom->ownerDocument->importNode($extDom, true);
-                $sourceDom->appendChild($newElement);
+
+                switch (mb_strtolower($extDom->getAttribute('overwrite'))) {
+                    case 'true':
+                        $sourceDom->replaceChild($newElement, $sourceDom->getElementsByTagName('*')->item($num));
+                        break;
+
+                    default:
+                        $sourceDom->appendChild($newElement);
+                        break;
+                }
             }
         }
     }
