@@ -199,21 +199,24 @@ class DataBaseWhere
             $union = empty($result) ? '' : ' OR ';
             switch ($this->operator) {
                 case 'LIKE':
-                    $result .= $union . 'LOWER(' . $field . ') ' . $this->dataBase->getOperator($this->operator) . ' ' . $this->getValueFromOperatorLike($value);
+                    $result .= $union . 'LOWER(' . $this->dataBase->escapeColumn($field) . ') '
+                        . $this->dataBase->getOperator($this->operator) . ' ' . $this->getValueFromOperatorLike($value);
                     break;
 
                 case 'XLIKE':
                     $result .= $union . '(';
                     $union2 = '';
                     foreach (explode(' ', $value) as $query) {
-                        $result .= $union2 . 'LOWER(' . $field . ') ' . $this->dataBase->getOperator('LIKE') . ' ' . $this->getValueFromOperatorLike($query);
+                        $result .= $union2 . 'LOWER(' . $this->dataBase->escapeColumn($field) . ') '
+                            . $this->dataBase->getOperator('LIKE') . ' ' . $this->getValueFromOperatorLike($query);
                         $union2 = ' AND ';
                     }
                     $result .= ')';
                     break;
 
                 default:
-                    $result .= $union . $field . ' ' . $this->dataBase->getOperator($this->operator) . ' ' . $this->getValue($value);
+                    $result .= $union . $this->dataBase->escapeColumn($field) . ' '
+                        . $this->dataBase->getOperator($this->operator) . ' ' . $this->getValue($value);
                     break;
             }
         }
