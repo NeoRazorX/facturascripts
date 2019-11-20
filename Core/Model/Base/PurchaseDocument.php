@@ -106,6 +106,9 @@ abstract class PurchaseDocument extends TransformerDocument
         $this->codalmacen = $author->codalmacen ?? $this->codalmacen;
         $this->idempresa = $author->idempresa ?? $this->idempresa;
         $this->nick = $author->nick;
+
+        /// allow extensions
+        $this->pipe('setAuthor', $author);
         return true;
     }
 
@@ -132,6 +135,8 @@ abstract class PurchaseDocument extends TransformerDocument
         $this->codserie = $subject->codserie ?? $this->codserie;
         $this->irpf = $subject->irpf() ?? $this->irpf;
 
+        /// allow extensions
+        $this->pipe('setSubject', $subject);
         return true;
     }
 

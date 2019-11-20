@@ -199,7 +199,7 @@ class DataBaseWhere
             $union = empty($result) ? '' : ' OR ';
             switch ($this->operator) {
                 case 'LIKE':
-                    $result .= $union . 'LOWER(' . $this->dataBase->escapeColumn($field) . ') '
+                    $result .= $union . 'LOWER(' . $this->escapeColumn($field) . ') '
                         . $this->dataBase->getOperator($this->operator) . ' ' . $this->getValueFromOperatorLike($value);
                     break;
 
@@ -207,7 +207,7 @@ class DataBaseWhere
                     $result .= $union . '(';
                     $union2 = '';
                     foreach (explode(' ', $value) as $query) {
-                        $result .= $union2 . 'LOWER(' . $this->dataBase->escapeColumn($field) . ') '
+                        $result .= $union2 . 'LOWER(' . $this->escapeColumn($field) . ') '
                             . $this->dataBase->getOperator('LIKE') . ' ' . $this->getValueFromOperatorLike($query);
                         $union2 = ' AND ';
                     }
@@ -215,13 +215,31 @@ class DataBaseWhere
                     break;
 
                 default:
-                    $result .= $union . $this->dataBase->escapeColumn($field) . ' '
+                    $result .= $union . $this->escapeColumn($field) . ' '
                         . $this->dataBase->getOperator($this->operator) . ' ' . $this->getValue($value);
                     break;
             }
         }
 
         return $result;
+    }
+
+    /**
+     * 
+     * @param string $column
+     *
+     * @return string
+     */
+    private function escapeColumn($column)
+    {
+        $exclude = ['.'];
+        foreach ($exclude as $char) {
+            if (strpos($column, $char) !== false) {
+                return $column;
+            }
+        }
+
+        return $this->dataBase->escapeColumn($column);
     }
 
     /**
