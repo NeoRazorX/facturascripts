@@ -24,9 +24,14 @@
             <column name="code" display="none" order="100">
                 <widget type="text" fieldname="idcontacto" required="true" />
             </column>
-            <column name="customer" display="none" order="110">
+            <column name="customer" display="none" order="105">
                 <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente">
                     <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
+                </widget>
+            </column>
+            <column name="supplier" display="none" order="110">
+                <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor">
+                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
                 </widget>
             </column>
             <column name="description" numcolumns="3" order="120">

@@ -117,6 +117,7 @@ class EditProveedor extends ComercialContactController
     {
         $return = parent::editAction();
         if ($return && $this->active === $this->getMainViewName()) {
+            /// update contact emal and phones when supplier email or phones are updated
             $this->updateContact($this->views[$this->active]->model);
         }
 
@@ -130,6 +131,8 @@ class EditProveedor extends ComercialContactController
     protected function insertAction()
     {
         if (parent::insertAction()) {
+
+            /// redirect to returnUrl if return is defined
             $returnUrl = $this->request->query->get('return');
             if (!empty($returnUrl)) {
                 $model = $this->views[$this->active]->model;
@@ -157,8 +160,12 @@ class EditProveedor extends ComercialContactController
                 $view->loadData('', $where, ['codcuenta' => 'DESC']);
                 break;
 
-            case 'ListAlbaranProveedor':
             case 'EditDireccionContacto':
+                $where = [new DataBaseWhere('codproveedor', $codproveedor)];
+                $view->loadData('', $where, ['idcontacto' => 'DESC']);
+                break;
+
+            case 'ListAlbaranProveedor':
             case 'ListFacturaProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':

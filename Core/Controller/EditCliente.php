@@ -117,6 +117,7 @@ class EditCliente extends ComercialContactController
     {
         $return = parent::editAction();
         if ($return && $this->active === $this->getMainViewName()) {
+            /// update contact emal and phones when customer email or phones are updated
             $this->updateContact($this->views[$this->active]->model);
         }
 
@@ -130,6 +131,8 @@ class EditCliente extends ComercialContactController
     protected function insertAction()
     {
         if (parent::insertAction()) {
+
+            /// redirect to returnUrl if return is defined
             $returnUrl = $this->request->query->get('return');
             if (!empty($returnUrl)) {
                 $model = $this->views[$this->active]->model;
@@ -157,8 +160,12 @@ class EditCliente extends ComercialContactController
                 $view->loadData('', $where, ['codcuenta' => 'DESC']);
                 break;
 
-            case 'ListAlbaranCliente':
             case 'EditDireccionContacto':
+                $where = [new DataBaseWhere('codcliente', $codcliente)];
+                $view->loadData('', $where, ['idcontacto' => 'DESC']);
+                break;
+
+            case 'ListAlbaranCliente':
             case 'ListFacturaCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':

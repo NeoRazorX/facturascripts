@@ -398,6 +398,10 @@ class Contacto extends Base\Contact
             $this->descripcion = empty($this->codcliente) ? $this->fullName() : $this->direccion;
         }
 
+        if (empty($this->nombre)) {
+            $this->nombre = $this->descripcion;
+        }
+
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
         $this->apellidos = $utils->noHtml($this->apellidos);
