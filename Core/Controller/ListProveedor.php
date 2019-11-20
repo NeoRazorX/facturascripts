@@ -61,11 +61,10 @@ class ListProveedor extends ListController
     {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addSearchFields($viewName, ['nombre', 'apellidos', 'email']);
-        $this->addOrderBy($viewName, ['email'], 'email');
+        $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addOrderBy($viewName, ['direccion'], 'address');
         $this->addOrderBy($viewName, ['nombre'], 'name');
-        $this->addOrderBy($viewName, ['empresa'], 'company');
-        $this->addOrderBy($viewName, ['level'], 'level');
-        $this->addOrderBy($viewName, ['lastactivity'], 'last-activity', 2);
+        $this->addOrderBy($viewName, ['fechaalta'], 'creation-date', 2);
 
         /// filters
         $values = [
