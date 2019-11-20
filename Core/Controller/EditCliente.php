@@ -131,7 +131,6 @@ class EditCliente extends ComercialContactController
     protected function insertAction()
     {
         if (parent::insertAction()) {
-
             /// redirect to returnUrl if return is defined
             $returnUrl = $this->request->query->get('return');
             if (!empty($returnUrl)) {

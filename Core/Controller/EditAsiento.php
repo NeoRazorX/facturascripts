@@ -65,7 +65,7 @@ class EditAsiento extends EditController
      */
     public function showBalanceGraphic()
     {
-        return (bool)$this->toolBox()->appSettings()->get('default', 'balancegraphic');
+        return (bool) $this->toolBox()->appSettings()->get('default', 'balancegraphic');
     }
 
     /**
