@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Cuenta;
 
 /**
  * Controller to edit a single item from the SubCuenta model
@@ -90,6 +91,8 @@ class EditSubcuenta extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $mainViewName = $this->getMainViewName();
+
         switch ($viewName) {
             case 'ListPartidaAsiento':
                 $idsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'idsubcuenta');
@@ -97,9 +100,27 @@ class EditSubcuenta extends EditController
                 $view->loadData('', $where);
                 break;
 
-            default:
+            case $mainViewName:
                 parent::loadData($viewName, $view);
+                if (!$view->model->exists()) {
+                    $this->prepareSubcuenta($view);
+                }
                 break;
+        }
+    }
+
+    /**
+     * 
+     * @param BaseView $view
+     */
+    protected function prepareSubcuenta($view)
+    {
+        $cuenta = new Cuenta();
+        $idcuenta = $this->request->query->get('idcuenta', '');
+        if (!empty($idcuenta) && $cuenta->loadFromCode($idcuenta)) {
+            $view->model->codcuenta = $cuenta->codcuenta;
+            $view->model->codejercicio = $cuenta->codejercicio;
+            $view->model->idcuenta = $cuenta->idcuenta;
         }
     }
 }
