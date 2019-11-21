@@ -167,7 +167,7 @@ class AccountingPlanImport
 
         if (!empty($parentCode)) {
             $whereParent = [
-                new DatabaseWhere('codejercicio', $this->ejercicio->codejercicio),
+                new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
                 new DataBaseWhere('codcuenta', $parentCode)
             ];
             $parent = new Model\Cuenta();

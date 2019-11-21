@@ -222,44 +222,44 @@ class EditLiquidacionComision extends EditController
      *
      * @param array $data
      *
-     * @return DatabaseWhere[]
+     * @return DataBaseWhere[]
      */
     protected function getInvoicesWhere($data)
     {
         /// Basic data filter
         $where = [
-            new DatabaseWhere('facturascli.idempresa', $data['idempresa']),
-            new DatabaseWhere('facturascli.codserie', $data['codserie']),
-            new DatabaseWhere('facturascli.codagente', $data['codagente']),
+            new DataBaseWhere('facturascli.idempresa', $data['idempresa']),
+            new DataBaseWhere('facturascli.codserie', $data['codserie']),
+            new DataBaseWhere('facturascli.codagente', $data['codagente']),
         ];
 
         /// Date filter
         if (!empty($data['datefrom'])) {
-            $where[] = new DatabaseWhere('facturascli.fecha', $data['datefrom'], '>=');
+            $where[] = new DataBaseWhere('facturascli.fecha', $data['datefrom'], '>=');
         }
         if (!empty($data['dateto'])) {
-            $where[] = new DatabaseWhere('facturascli.fecha', $data['dateto'], '<=');
+            $where[] = new DataBaseWhere('facturascli.fecha', $data['dateto'], '<=');
         }
 
         /// Status payment filter
         if ($data['status'] == self::INSERT_STATUS_CHARGED) {
-            $where[] = new DatabaseWhere('facturascli.pagada', true);
+            $where[] = new DataBaseWhere('facturascli.pagada', true);
         }
 
         /// Payment source filter
         switch ($data['domiciled']) {
             case self::INSERT_DOMICILED_DOMICILED:
-                $where[] = new DatabaseWhere('formaspago.domiciliado', true);
+                $where[] = new DataBaseWhere('formaspago.domiciliado', true);
                 break;
 
             case self::INSERT_DOMICILED_WITHOUT:
-                $where[] = new DatabaseWhere('formaspago.domiciliado', false);
+                $where[] = new DataBaseWhere('formaspago.domiciliado', false);
                 break;
         }
 
         /// Customer filter
         if (!empty($data['codcliente'])) {
-            $where[] = new DatabaseWhere('facturascli.codcliente', $data['codcliente']);
+            $where[] = new DataBaseWhere('facturascli.codcliente', $data['codcliente']);
         }
 
         /// Return completed filter
