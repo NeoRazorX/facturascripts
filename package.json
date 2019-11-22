@@ -26,7 +26,7 @@
   "homepage": "https://www.facturascripts.com",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",
-    "bootbox": "^4.x",
+    "bootbox": "^5.x",
     "bootstrap": "^4.x",
     "chart.js": "^2.9.3",
     "handsontable": "^6.x",
