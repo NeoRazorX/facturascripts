@@ -22,6 +22,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Dinamic\Model\Comision;
+use FacturaScripts\Dinamic\Model\Producto;
 
 /**
  * Class for the calculation of sales commissions
@@ -39,7 +40,13 @@ class CommissionTools
     protected $commissions;
 
     /**
-     * 
+     *
+     * @var SalesDocument
+     */
+    protected $document;
+
+    /**
+     *
      * @param SalesDocument       $doc
      * @param SalesDocumentLine[] $lines
      */
@@ -49,8 +56,10 @@ class CommissionTools
             return;
         }
 
+        $this->document = $doc;
+        $this->loadCommissions();
+
         $totalcommission = 0.0;
-        $this->loadCommissions($doc);
         foreach ($lines as $line) {
             $totalcommission += $this->recalculateLine($line);
         }
@@ -59,53 +68,81 @@ class CommissionTools
     }
 
     /**
-     * 
+     *
      * @param SalesDocumentLine $line
      *
      * @return float
      */
-    protected function getCommision(&$line)
+    protected function getCommission($line)
     {
-        $codfamilia = $line->getProducto()->codfamilia;
+        $product = $line->getProducto();
         foreach ($this->commissions as $commission) {
-            if (!empty($commission->codfamilia) && $commission->codfamilia != $codfamilia) {
-                continue;
+            if ($this->isValidCommissionForLine($line, $product, $commission)) {
+                return $commission->porcentaje;
             }
-
-            if (!empty($commission->idproducto) && $commission->idproducto != $line->idproducto) {
-                continue;
-            }
-
-            return $commission->porcentaje;
         }
 
         return 0.0;
     }
 
     /**
-     * Charge applicable commissions.
-     * 
-     * @param SalesDocument $doc
+     * Check if the commission record is applicable to the document
+     *
+     * @param Comision $commission
+     *
+     * @return bool
      */
-    protected function loadCommissions(&$doc)
+    protected function isValidCommissionForDoc($commission): bool
+    {
+        if (!empty($commission->codagente) && $commission->codagente != $this->document->codagente) {
+            return false;
+        }
+
+        if (!empty($commission->codcliente) && $commission->codcliente != $this->document->codcliente) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if the commission record is applicable to the line document
+     *
+     * @param SalesDocumentLine $line
+     * @param Producto          $product
+     * @param Comision          $commission
+     *
+     * @return bool
+     */
+    protected function isValidCommissionForLine(&$line, $product, $commission): bool
+    {
+        if (!empty($commission->codfamilia) && $commission->codfamilia != $product->codfamilia) {
+            return false;
+        }
+
+        if (!empty($commission->idproducto) && $commission->idproducto != $line->idproducto) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Charge applicable commissions.
+     */
+    protected function loadCommissions()
     {
         $this->commissions = [];
-        if (empty($doc->codagente)) {
+        if (empty($this->document->codagente)) {
             return;
         }
 
         $commission = new Comision();
-        $where = [new DataBaseWhere('idempresa', $doc->idempresa)];
+        $where = [new DataBaseWhere('idempresa', $this->document->idempresa)];
         foreach ($commission->all($where, ['prioridad' => 'DESC'], 0, 0) as $comm) {
-            if (!empty($comm->codagente) && $comm->codagente != $doc->codagente) {
-                continue;
+            if ($this->isValidCommissionForDoc($comm)) {
+                $this->commissions[] = $comm;
             }
-
-            if (!empty($comm->codcliente) && $comm->codcliente != $doc->codcliente) {
-                continue;
-            }
-
-            $this->commissions[] = $comm;
         }
     }
 
@@ -118,7 +155,7 @@ class CommissionTools
      */
     protected function recalculateLine(&$line)
     {
-        $newValue = $this->getCommision($line);
+        $newValue = $this->getCommission($line);
         if ($newValue != $line->porcomision) {
             $line->porcomision = $newValue;
             $line->save();

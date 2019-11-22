@@ -108,7 +108,7 @@ class BusinessDocumentGenerator
      *
      * @return bool
      */
-    private function cloneLines(BusinessDocument $prototype, BusinessDocument $newDoc, $lines, $quantity)
+    protected function cloneLines(BusinessDocument $prototype, BusinessDocument $newDoc, $lines, $quantity)
     {
         $docTrans = new DocTransformation();
         foreach ($lines as $line) {

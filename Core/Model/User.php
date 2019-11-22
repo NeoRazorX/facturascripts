@@ -147,8 +147,10 @@ class User extends Base\ModelClass
 
         $this->toolBox()->i18nLog()->notice('created-default-admin-account');
 
+        $nick = \defined('FS_INITIAL_USER') ? \FS_INITIAL_USER : 'admin';
+        $pass = \defined('FS_INITIAL_PASS') ? \FS_INITIAL_PASS : 'admin';
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
-            . " VALUES ('admin','" . password_hash('admin', PASSWORD_DEFAULT)
+            . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT)
             . "',TRUE,TRUE,'1','1','" . \FS_LANG . "','Wizard','99');";
     }
 
@@ -204,7 +206,7 @@ class User extends Base\ModelClass
         }
 
         $this->nick = trim($this->nick);
-        if (!preg_match("/^[A-Z0-9_\+\.\-]{3,50}$/i", $this->nick)) {
+        if (!preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']

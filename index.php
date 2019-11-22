@@ -46,6 +46,7 @@ require_once __DIR__ . '/config.php';
 
 /// Disable 30 seconds PHP limit
 @set_time_limit(0);
+ignore_user_abort(true);
 
 /// Register error handler
 if (FS_DEBUG) {

@@ -94,12 +94,12 @@
             </column>
         </group>
         <group name="commission" title="commission" icon="fas fa-user-tie" numcolumns="4">
-            <column name="agent" titleurl="ListAgente" order="100">
+            <column name="agent" titleurl="ListAgente" numcolumns="6" order="100">
                 <widget type="select" fieldname="codagente" onclick="EditAgente">
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="commission" order="110">
+            <column name="commission" numcolumns="6" order="110">
                 <widget type="money" fieldname="totalcomision" icon="fas fa-coins" readonly="true" />
             </column>
         </group>

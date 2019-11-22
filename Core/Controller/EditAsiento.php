@@ -65,7 +65,7 @@ class EditAsiento extends EditController
      */
     public function showBalanceGraphic()
     {
-        return (bool)$this->toolBox()->appSettings()->get('default', 'balancegraphic');
+        return (bool) $this->toolBox()->appSettings()->get('default', 'balancegraphic');
     }
 
     /**
@@ -93,7 +93,7 @@ class EditAsiento extends EditController
         // prepare source document structure
         $accounting = new Asiento();
         if (!$accounting->loadFromCode($sourceCode)) {
-            return true;  // continue default view load
+            return true; // continue default view load
         }
 
         $entryModel = new Partida();
@@ -139,7 +139,7 @@ class EditAsiento extends EditController
             return false;
         }
 
-        return true;  // refresh view
+        return true; // refresh view
     }
 
     /**
@@ -198,7 +198,7 @@ class EditAsiento extends EditController
         $finalResults = [];
         $idasiento = $this->request->get('code');
         $accounting = new Asiento();
-        $where = [new DataBaseWhere('idasiento', $idasiento),];
+        $where = [new DataBaseWhere('idasiento', $idasiento)];
 
         if ($accounting->loadFromCode('', $where)) {
             $search = ['%document%', '%date%', '%date-entry%', '%month%'];

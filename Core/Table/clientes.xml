@@ -132,6 +132,10 @@
         <type>PRIMARY KEY (codcliente)</type>
     </constraint>
     <constraint>
+        <name>ca_clientes_agentes</name>
+        <type>FOREIGN KEY (codagente) REFERENCES agentes (codagente) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_clientes_formaspago</name>
         <type>FOREIGN KEY (codpago) REFERENCES formaspago (codpago) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>

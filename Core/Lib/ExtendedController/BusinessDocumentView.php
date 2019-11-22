@@ -36,6 +36,7 @@ class BusinessDocumentView extends BaseView
 
     const ITEM_SELECT_LIMIT = 500;
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
+    const MODEL_NAMESPACE_LIB = '\\FacturaScripts\\Dinamic\\Lib\\';
 
     /**
      *
@@ -106,7 +107,7 @@ class BusinessDocumentView extends BaseView
         $data = [
             'headers' => [],
             'columns' => [],
-            'rows' => []
+            'rows' => [],
         ];
 
         foreach ($this->getColumns() as $col) {
@@ -154,16 +155,21 @@ class BusinessDocumentView extends BaseView
      */
     public function getSelectValues($modelName)
     {
-        $values = [];
-        $modelName = self::MODEL_NAMESPACE . $modelName;
-        $model = new $modelName();
+        $classModel = self::MODEL_NAMESPACE . $modelName;
+        if (class_exists($classModel)) {
+            $values = [];
+            $model = new $classModel();
 
-        $order = [$model->primaryDescriptionColumn() => 'ASC'];
-        foreach ($model->all([], $order, 0, self::ITEM_SELECT_LIMIT) as $newModel) {
-            $values[$newModel->primaryColumnValue()] = $newModel->primaryDescription();
+            $order = [$model->primaryDescriptionColumn() => 'ASC'];
+            foreach ($model->all([], $order, 0, self::ITEM_SELECT_LIMIT) as $newModel) {
+                $values[$newModel->primaryColumnValue()] = $newModel->primaryDescription();
+            }
+
+            return $values;
         }
 
-        return $values;
+        $classLib = self::MODEL_NAMESPACE_LIB . $modelName;
+        return class_exists($classLib) ? $classLib::all() : [];
     }
 
     /**

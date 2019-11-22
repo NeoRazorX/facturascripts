@@ -63,9 +63,9 @@ class ListCliente extends ListController
     {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addSearchFields($viewName, ['nombre', 'apellidos', 'email', 'empresa', 'observaciones', 'telefono1', 'telefono2', 'lastip']);
-        $this->addOrderBy($viewName, ['email'], 'email');
+        $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addOrderBy($viewName, ['direccion'], 'address');
         $this->addOrderBy($viewName, ['nombre'], 'name');
-        $this->addOrderBy($viewName, ['empresa'], 'company');
         $this->addOrderBy($viewName, ['fechaalta'], 'creation-date', 2);
 
         /// filters

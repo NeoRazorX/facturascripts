@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
+use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\TotalModel;
 
 /**
@@ -100,6 +101,9 @@ class EditAgente extends ComercialContactController
         $this->views[$viewName]->disableColumn('fiscal-id', true);
         $this->views[$viewName]->disableColumn('fiscal-number', true);
         $this->views[$viewName]->disableColumn('position', true);
+
+        /// disable delete button
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
@@ -124,6 +128,27 @@ class EditAgente extends ComercialContactController
         $this->createCustomerListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
         $this->createCustomerListView('ListPedidoCliente', 'PedidoCliente', 'orders');
         $this->createCustomerListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function editAction()
+    {
+        $return = parent::editAction();
+        if ($return && $this->active == 'EditContacto') {
+            /// update agent data when contact data is updated
+            $agente = new Agente();
+            if ($agente->loadFromCode($this->views[$this->active]->model->codagente)) {
+                $agente->email = $this->views[$this->active]->model->email;
+                $agente->telefono1 = $this->views[$this->active]->model->telefono1;
+                $agente->telefono2 = $this->views[$this->active]->model->telefono2;
+                $agente->save();
+            }
+        }
+
+        return $return;
     }
 
     /**

@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\BusinessDocSubType;
+use FacturaScripts\Core\Lib\BusinessDocTypeOperation;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente as LineaFactura;
 
 /**
@@ -33,6 +35,20 @@ class FacturaCliente extends Base\SalesDocument
     use Base\InvoiceTrait;
 
     /**
+     * Code business documen type operation
+     *
+     * @var string
+     */
+    public $codoperaciondoc;
+
+    /**
+     * Code business Documen sub type
+     *
+     * @var string
+     */
+    public $codsubtipodoc;
+
+    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
@@ -45,6 +61,16 @@ class FacturaCliente extends Base\SalesDocument
         new LiquidacionComision();
 
         return parent::install();
+    }
+
+    /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->codoperaciondoc = BusinessDocTypeOperation::defaultValue();
+        $this->codsubtipodoc = BusinessDocSubType::defaultValue();
     }
 
     /**

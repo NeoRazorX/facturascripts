@@ -36,6 +36,20 @@ abstract class BusinessDocumentController extends PanelController
     protected $documentTools;
 
     /**
+     * Shows the document opertation type selector.
+     *
+     * @var bool
+     */
+    public $showDocOperation = false;
+
+    /**
+     * Shows the document sub-type selector.
+     *
+     * @var bool
+     */
+    public $showDocSubType = false;
+
+    /**
      * Returns an array of custom fields to add on the header.
      */
     abstract public function getCustomFields();
@@ -83,6 +97,9 @@ abstract class BusinessDocumentController extends PanelController
         /// edit tab
         $viewName = 'Edit' . $this->getModelClassName();
         $this->addEditView($viewName, $this->getModelClassName(), 'detail', 'fas fa-edit');
+
+        /// disable delete button
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**

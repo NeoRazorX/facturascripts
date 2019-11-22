@@ -97,6 +97,9 @@ class ListCuenta extends ListController
 
         /// filters
         $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $this->exerciseValues);
+
+        /// disable new button
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**

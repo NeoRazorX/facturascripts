@@ -192,7 +192,7 @@ class PluginDeploy
             }
 
             $filePath = $path . DIRECTORY_SEPARATOR . $fileName;
-            $extension = $fileInfo["extension"] ?? '';
+            $extension = $fileInfo['extension'] ?? '';
             switch ($extension) {
                 case 'php':
                     $this->linkPHPFile($fileName, $folder, $place, $pluginName);
@@ -218,8 +218,8 @@ class PluginDeploy
      */
     private function linkPHPFile(string $fileName, string $folder, string $place, string $pluginName)
     {
-        $auxNamespace = empty($pluginName) ? $place : "Plugins\\" . $pluginName;
-        $namespace = "FacturaScripts\\" . $auxNamespace . '\\' . $folder;
+        $auxNamespace = empty($pluginName) ? $place : 'Plugins\\' . $pluginName;
+        $namespace = 'FacturaScripts\\' . $auxNamespace . '\\' . $folder;
         $newNamespace = "FacturaScripts\Dinamic\\" . $folder;
 
         $paths = explode(DIRECTORY_SEPARATOR, $fileName);
@@ -296,19 +296,51 @@ class PluginDeploy
     private function mergeXMLDocs(&$source, $extension)
     {
         foreach ($extension->children() as $extChild) {
+            /// we need $num to know wich dom element number to overwrite
+            $num = -1;
+
             $found = false;
             foreach ($source->children() as $child) {
-                if ($this->mergeXMLDocsCompare($child, $extChild)) {
-                    $found = true;
-                    $this->mergeXMLDocs($child, $extChild);
-                    break;
+                if ($child->getName() == $extChild->getName()) {
+                    $num++;
                 }
+
+                if (!$this->mergeXMLDocsCompare($child, $extChild)) {
+                    continue;
+                }
+
+                /// Element found. Overwrite or append children? Only for parents example group, etc.
+                $found = true;
+                $extDom = dom_import_simplexml($extChild);
+
+                switch (mb_strtolower($extDom->getAttribute('overwrite'))) {
+                    case 'true':
+                        $sourceDom = dom_import_simplexml($source);
+                        $newElement = $sourceDom->ownerDocument->importNode($extDom, true);
+                        $sourceDom->replaceChild($newElement, $sourceDom->getElementsByTagName($newElement->nodeName)->item($num));
+                        break;
+
+                    default:
+                        $this->mergeXMLDocs($child, $extChild);
+                }
+                break;
             }
 
+            /// Elemento not found. Append all or Replace child, Only for child example widget, etc.
             if (!$found) {
-                $toDom = dom_import_simplexml($source);
-                $fromDom = dom_import_simplexml($extChild);
-                $toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
+                $sourceDom = dom_import_simplexml($source);
+                $extDom = dom_import_simplexml($extChild);
+                $newElement = $sourceDom->ownerDocument->importNode($extDom, true);
+
+                switch (mb_strtolower($extDom->getAttribute('overwrite'))) {
+                    case 'true':
+                        $sourceDom->replaceChild($newElement, $sourceDom->getElementsByTagName('*')->item($num));
+                        break;
+
+                    default:
+                        $sourceDom->appendChild($newElement);
+                        break;
+                }
             }
         }
     }

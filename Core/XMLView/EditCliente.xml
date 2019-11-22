@@ -44,8 +44,8 @@
             </column>
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
-            <column name="billing-address" titleurl="ListCliente?activetab=ListContacto" order="100">
-                <widget type="select" fieldname="idcontactofact" onclick="EditContacto">
+            <column name="billing-address" order="100">
+                <widget type="select" fieldname="idcontactofact">
                     <values></values>
                 </widget>
             </column>
@@ -61,8 +61,8 @@
             <column name="email" order="140">
                 <widget type="email" fieldname="email" maxlength="100" icon="fas fa-envelope" />
             </column>
-            <column name="shipping-address" titleurl="ListCliente?activetab=ListContacto" order="150">
-                <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
+            <column name="shipping-address" order="150">
+                <widget type="select" fieldname="idcontactoenv">
                     <values></values>
                 </widget>
             </column>
