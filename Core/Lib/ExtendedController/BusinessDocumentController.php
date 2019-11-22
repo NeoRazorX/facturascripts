@@ -97,6 +97,9 @@ abstract class BusinessDocumentController extends PanelController
         /// edit tab
         $viewName = 'Edit' . $this->getModelClassName();
         $this->addEditView($viewName, $this->getModelClassName(), 'detail', 'fas fa-edit');
+
+        /// disable delete button
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**

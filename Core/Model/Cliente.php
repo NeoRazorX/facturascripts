@@ -158,7 +158,8 @@ class Cliente extends Base\ComercialContact
     public function install()
     {
         /// we need exits Contacto before, but we can't check it because it would create a cyclic check
-        /// we need to check model GrupoClientes before
+        /// we need to check Agente and GrupoClientes models before
+        new Agente();
         new GrupoClientes();
 
         return parent::install();

@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
 use Skilla\ValidatorCifNifNie\Generator;
 use Skilla\ValidatorCifNifNie\Validator;
+use Tavo\ValidadorEc;
 
 /**
  * Verify numbers of fiscal identity
@@ -49,8 +50,12 @@ class FiscalNumberValitator
 
         $upperNumber = \strtoupper($number);
         $validator = new Validator(new Generator());
+        $validatorEC = new ValidadorEc();
 
         switch (\strtolower($type)) {
+            case 'ci':
+                return $validatorEC->validarCedula($upperNumber);
+
             case 'cif':
                 return $validator->isValidCIF($upperNumber);
 
@@ -68,6 +73,11 @@ class FiscalNumberValitator
 
             case 'rnc':
                 return static::isValidRNC($upperNumber);
+
+            case 'ruc':
+                return $validatorEC->validarRucPersonaNatural($upperNumber) ||
+                    $validatorEC->validarRucSociedadPrivada($upperNumber) ||
+                    $validatorEC->validarRucSociedadPublica($upperNumber);
         }
 
         return true;

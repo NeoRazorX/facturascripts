@@ -17,8 +17,9 @@
         "rospdf/pdf-php": "0.12.52",
         "symfony/http-foundation": "^3.4",
         "symfony/translation": "^3.4",
-        "twig/twig": "v2.*",
-        "skilla/validator-cif-nif-nie": "1.0.6"
+        "twig/twig": "v2.12.1",
+        "skilla/validator-cif-nif-nie": "1.0.6",
+        "tavo1987/ec-validador-cedula-ruc": "v1.0.2"
     },
     "require-dev": {
         "phpunit/phpunit": "6.*",

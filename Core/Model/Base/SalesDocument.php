@@ -213,6 +213,9 @@ abstract class SalesDocument extends TransformerDocument
         $this->codalmacen = $author->codalmacen ?? $this->codalmacen;
         $this->idempresa = $author->idempresa ?? $this->idempresa;
         $this->nick = $author->nick;
+
+        /// allow extensions
+        $this->pipe('setAuthor', $author);
         return true;
     }
 
@@ -225,15 +228,20 @@ abstract class SalesDocument extends TransformerDocument
      */
     public function setSubject($subject)
     {
+        $return = false;
         switch ($subject->modelClassName()) {
             case 'Cliente':
-                return $this->setCustomer($subject);
+                $return = $this->setCustomer($subject);
+                break;
 
             case 'Contacto':
-                return $this->setContact($subject);
+                $return = $this->setContact($subject);
+                break;
         }
 
-        return false;
+        /// allow extensions
+        $this->pipe('setSubject', $subject);
+        return $return;
     }
 
     /**

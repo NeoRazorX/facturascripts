@@ -40,6 +40,13 @@ trait InvoiceTrait
     public $codigorect;
 
     /**
+     * Indicates whether the document can be modified
+     *
+     * @var bool
+     */
+    public $editable;
+
+    /**
      * Date of the document.
      *
      * @var string
@@ -78,6 +85,8 @@ trait InvoiceTrait
     abstract public function getLines();
 
     abstract public function getReceipts();
+
+    abstract protected static function toolBox();
 
     /**
      * Returns all children documents of this one.
@@ -120,6 +129,11 @@ trait InvoiceTrait
      */
     public function delete()
     {
+        if (!$this->editable) {
+            $this->toolBox()->i18nLog()->warning('non-editable-document');
+            return false;
+        }
+
         $asiento = $this->getAccountingEntry();
         if ($asiento->exists()) {
             return $asiento->delete() ? parent::delete() : false;

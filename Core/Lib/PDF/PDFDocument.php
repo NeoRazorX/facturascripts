@@ -480,7 +480,7 @@ abstract class PDFDocument extends PDFCore
         if ($company->loadFromCode($code)) {
             $this->pdf->ezText($company->nombre, self::FONT_SIZE + 7, ['justification' => 'right']);
             $address = $company->direccion;
-            $address .= empty($company->codpostal) ? '' : "\n" . $company->codpostal . ', ';
+            $address .= empty($company->codpostal) ? "\n" : "\n" . $company->codpostal . ', ';
             $address .= empty($company->ciudad) ? '' : $company->ciudad;
             $address .= empty($company->provincia) ? '' : ' (' . $company->provincia . ') ' . $this->getCountryName($company->codpais);
 

@@ -101,6 +101,9 @@ class EditAgente extends ComercialContactController
         $this->views[$viewName]->disableColumn('fiscal-id', true);
         $this->views[$viewName]->disableColumn('fiscal-number', true);
         $this->views[$viewName]->disableColumn('position', true);
+
+        /// disable delete button
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**

@@ -104,9 +104,9 @@ class LiquidacionComision extends Base\ModelClass
             . ' SET total = COALESCE('
             . '(SELECT SUM(totalcomision)'
             . ' FROM ' . FacturaCliente::tableName()
-            . ' WHERE idliquidacion = ' . $code . ')'
+            . ' WHERE idliquidacion = ' . self::$dataBase->var2str($code) . ')'
             . ',0)'
-            . ' WHERE idliquidacion = ' . $code;
+            . ' WHERE idliquidacion = ' . self::$dataBase->var2str($code);
 
         return self::$dataBase->exec($sql);
     }

@@ -21,10 +21,10 @@
 -->
 <view>
     <columns>
-        <column name="code" display="none" order="100">
+        <column name="code" order="100">
             <widget type="text" fieldname="idliquidacion" />
         </column>
-        <column name="company" order="110">
+        <column name="company" display="none" order="110">
             <widget type="select" fieldname="idempresa" onclick="EditEmpresa">
                 <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
             </widget>
