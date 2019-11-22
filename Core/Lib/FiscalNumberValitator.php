@@ -49,7 +49,6 @@ class FiscalNumberValitator
 
         $upperNumber = \strtoupper($number);
         $validator = new Validator(new Generator());
-        $validatorEC = new EcuadorFiscalNumber();
 
 
         switch (\strtolower($type)) {
@@ -69,20 +68,23 @@ class FiscalNumberValitator
                 return static::isValidRFC($upperNumber);
 
             case 'rnc':
-            case 'ci':
                 return static::isValidRNC($upperNumber);
+            case 'ci':
+                $validatorEC = new EcuadorFiscalNumber();
                 return $validatorEC->validarCedula($upperNumber);
             case 'ruc':
-                return $validatorEC->validarRucPersonaNatural($upperNumber) or
-                       $validatorEC->validarRucSociedadPrivada($upperNumber) or
-                       $validatorEC->validarRucSociedadPublica($upperNumber);
+                $validatorEC = new EcuadorFiscalNumber();
+                return
+                    $validatorEC->validarRucPersonaNatural($upperNumber) or
+                    $validatorEC->validarRucSociedadPrivada($upperNumber) or
+                    $validatorEC->validarRucSociedadPublica($upperNumber);
         }
 
         return true;
     }
 
     /**
-     * 
+     *
      * @param string $number
      *
      * @return bool
@@ -94,9 +96,9 @@ class FiscalNumberValitator
     }
 
     /**
-     * Validate RNC Rep. Dominicana 
+     * Validate RNC Rep. Dominicana
      * Accept two format : only number: "000000000" or official format: "000-00000-0"
-     * 
+     *
      * @param string $number
      *
      * @return bool
