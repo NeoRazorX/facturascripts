@@ -79,7 +79,8 @@ class ListCuenta extends ListController
         $this->addOrderBy($viewName, ['descripcion'], 'description');
         $this->addSearchFields($viewName, ['descripcion', 'codcuentaesp']);
 
-        /// disable new button
+        /// disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
     }
 

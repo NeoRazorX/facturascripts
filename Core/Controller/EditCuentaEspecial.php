@@ -78,8 +78,12 @@ class EditCuentaEspecial extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->setTabsPosition('bottom');
+        /// disable buttons
+        $mainViewName = $this->getMainViewName();
+        $this->setSettings($mainViewName, 'btnDelete', false);
+        $this->setSettings($mainViewName, 'btnNew', false);
 
+        $this->setTabsPosition('bottom');
         $this->createAccountingView();
     }
 
