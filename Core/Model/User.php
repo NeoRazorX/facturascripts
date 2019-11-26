@@ -133,6 +133,20 @@ class User extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        if ($this->count() === 1) {
+            /// prevent delete all users
+            return false;
+        }
+
+        return parent::delete();
+    }
+
+    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.

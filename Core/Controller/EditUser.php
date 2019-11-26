@@ -188,11 +188,11 @@ class EditUser extends EditController
                 $this->loadLanguageValues();
                 if (!$this->allowUpdate()) {
                     $this->setTemplate('Error/AccessDenied');
+                } elseif ($view->model->nick == $this->user->nick) {
+                    /// prevent user self-destruction
+                    $this->setSettings($viewName, 'btnDelete', false);
                 }
                 break;
-
-            default:
-                parent::loadData($viewName, $view);
         }
     }
 
