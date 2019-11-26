@@ -29,13 +29,37 @@ class WidgetDate extends BaseWidget
 {
 
     /**
-     * 
+     * Indicate the desired date format
+     *
+     * @var string
+     */
+    protected $format;
+
+    /**
+     * Indicates the min value
+     *
+     * @var string
+     */
+    protected $min;
+
+    /**
+     * Indicates the max value
+     *
+     * @var string
+     */
+    protected $max;
+
+    /**
+     *
      * @param array $data
      */
     public function __construct($data)
     {
         $data['icon'] = $data['icon'] ?? 'fas fa-calendar-alt';
         parent::__construct($data);
+        $this->format = $data['format'] ?? 'd-m-Y';
+        $this->min = $data['min'] ?? '';
+        $this->max = $data['max'] ?? '';
     }
 
     /**
@@ -50,23 +74,35 @@ class WidgetDate extends BaseWidget
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $extraClass
      *
      * @return string
      */
-    protected function inputHtml($type = 'text', $extraClass = 'datepicker')
+    protected function inputHtml($type = 'date', $extraClass = '')
     {
-        if ($this->readonly()) {
-            $extraClass = '';
-        }
+        $cssFormControl = $this->css('form-control');
+        $class = empty($extraClass) ? $cssFormControl : $cssFormControl . ' ' . $extraClass;
+        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . date('Y-m-d', strtotime($this->value))
+            . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
+    }
 
-        return parent::inputHtml($type, $extraClass);
+
+    /**
+     * Add extra attributes to html input field
+     *
+     * @return string
+     */
+    protected function inputHtmlExtraParams()
+    {
+        $min = $this->min !== '' ? ' min="' . $this->min . '"' : '';
+        $max = $this->max !== '' ? ' max="' . $this->max . '"' : '';
+        return $min . $max . parent::inputHtmlExtraParams();
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function show()
@@ -76,14 +112,14 @@ class WidgetDate extends BaseWidget
         }
 
         if (is_numeric($this->value)) {
-            return date('d-m-Y', $this->value);
+            return date($this->format, $this->value);
         }
 
-        return date('d-m-Y', strtotime($this->value));
+        return date($this->format, strtotime($this->value));
     }
 
     /**
-     * 
+     *
      * @param string $initialClass
      * @param string $alternativeClass
      *

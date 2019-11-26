@@ -27,19 +27,24 @@ class WidgetDatetime extends WidgetDate
 {
 
     /**
-     * 
+     *
+     * @param array $data
+     */
+    public function __construct($data)
+    {
+        $data['format'] = $data['format'] ?? 'd-m-Y H:i:s';
+        parent::__construct($data);
+    }
+
+    /**
+     *
+     * @param string $type
+     * @param string $extraClass
+     *
      * @return string
      */
-    protected function show()
+    protected function inputHtml($type = 'datetime', $extraClass = '')
     {
-        if (is_null($this->value)) {
-            return '-';
-        }
-
-        if (is_numeric($this->value)) {
-            return date('d-m-Y H:i:s', $this->value);
-        }
-
-        return date('d-m-Y H:i:s', strtotime($this->value));
+        return parent::inputHtml($type, $extraClass);
     }
 }
