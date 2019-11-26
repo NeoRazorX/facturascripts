@@ -110,8 +110,8 @@ class WidgetTime extends BaseWidget
         parent::setValue($model);
         if (null === $this->value && $this->required) {
             $this->value = empty($this->min)
-                ? $this->getDateValue(0)
-                : $this->getDateValue($this->value);
+                ? $this->getTimeValue(0)
+                : $this->getTimeValue($this->value);
         }
     }
 
@@ -121,7 +121,7 @@ class WidgetTime extends BaseWidget
      */
     protected function show()
     {
-        return is_null($this->value) ? '-' : $this->getDateValue($this->value);
+        return is_null($this->value) ? '-' : $this->getTimeValue($this->value);
     }
 
     /**
@@ -129,7 +129,7 @@ class WidgetTime extends BaseWidget
      * @param string $value
      * @return string
      */
-    private function getDateValue($value)
+    private function getTimeValue($value)
     {
         $format = ($this->step < 60) ? 'H:i:s' : 'H:i';
         if (is_numeric($value)) {
