@@ -88,7 +88,6 @@ class WidgetDate extends BaseWidget
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
 
-
     /**
      * Add extra attributes to html input field
      *
@@ -103,11 +102,25 @@ class WidgetDate extends BaseWidget
 
     /**
      *
+     * @param object $model
+     */
+    protected function setValue($model)
+    {
+        parent::setValue($model);
+        if (null === $this->value && $this->required) {
+            $this->value = empty($this->min)
+                ? $this->getDateValue(date($this->format))
+                : $this->getDateValue($this->value);
+        }
+    }
+
+    /**
+     *
      * @return string
      */
     protected function show()
     {
-        return is_null($this->value) ? '-' : $this->getDateValue();
+        return is_null($this->value) ? '-' : $this->getDateValue($this->value);
     }
 
     /**
@@ -129,14 +142,15 @@ class WidgetDate extends BaseWidget
 
     /**
      *
+     * @param string $value
      * @return string
      */
-    private function getDateValue()
+    private function getDateValue($value)
     {
-        if (is_numeric($this->value)) {
-            return date($this->format, $this->value);
+        if (is_numeric($value)) {
+            return date($this->format, $value);
         }
 
-        return date($this->format, strtotime($this->value));
+        return date($this->format, strtotime($value));
     }
 }
