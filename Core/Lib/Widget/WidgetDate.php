@@ -107,15 +107,7 @@ class WidgetDate extends BaseWidget
      */
     protected function show()
     {
-        if (is_null($this->value)) {
-            return '-';
-        }
-
-        if (is_numeric($this->value)) {
-            return date($this->format, $this->value);
-        }
-
-        return date($this->format, strtotime($this->value));
+        return is_null($this->value) ? '-' : $this->getDateValue();
     }
 
     /**
@@ -133,5 +125,18 @@ class WidgetDate extends BaseWidget
         }
 
         return parent::tableCellClass($initialClass, $alternativeClass);
+    }
+
+    /**
+     *
+     * @return string
+     */
+    private function getDateValue()
+    {
+        if (is_numeric($this->value)) {
+            return date($this->format, $this->value);
+        }
+
+        return date($this->format, strtotime($this->value));
     }
 }
