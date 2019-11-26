@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,18 +30,18 @@ class WidgetTime extends BaseWidget
 {
 
     /**
-     * Indicates the min value
-     *
-     * @var string
-     */
-    protected $min;
-
-    /**
      * Indicates the max value
      *
      * @var string
      */
     protected $max;
+
+    /**
+     * Indicates the min value
+     *
+     * @var string
+     */
+    protected $min;
 
     /**
      * Indicates the step value
@@ -60,8 +60,8 @@ class WidgetTime extends BaseWidget
         $data['icon'] = $data['icon'] ?? 'fas fa-clock';
         parent::__construct($data);
 
-        $this->min = $data['min'] ?? '';
         $this->max = $data['max'] ?? '';
+        $this->min = $data['min'] ?? '';
         $this->step = $data['step'] ?? '1';
     }
 
@@ -109,9 +109,7 @@ class WidgetTime extends BaseWidget
     {
         parent::setValue($model);
         if (null === $this->value && $this->required) {
-            $this->value = empty($this->min)
-                ? $this->getTimeValue(0)
-                : $this->getTimeValue($this->value);
+            $this->value = empty($this->min) ? $this->getTimeValue(0) : $this->getTimeValue($this->value);
         }
     }
 
@@ -125,17 +123,14 @@ class WidgetTime extends BaseWidget
     }
 
     /**
+     * 
+     * @param string|int $value
      *
-     * @param string $value
      * @return string
      */
-    private function getTimeValue($value)
+    protected function getTimeValue($value)
     {
-        $format = ($this->step < 60) ? 'H:i:s' : 'H:i';
-        if (is_numeric($value)) {
-            return date($format, $value);
-        }
-
-        return date($format, strtotime($value));
+        $format = $this->step < 60 ? 'H:i:s' : 'H:i';
+        return is_numeric($value) ? date($format, $value) : date($format, strtotime($value));
     }
 }
