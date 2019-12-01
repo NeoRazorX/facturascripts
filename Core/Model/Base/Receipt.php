@@ -157,6 +157,17 @@ abstract class Receipt extends ModelOnChangeClass
 
     /**
      * 
+     * @return FormaPago
+     */
+    public function getPaymentMethod()
+    {
+        $paymentMethod = new FormaPago();
+        $paymentMethod->loadFromCode($this->codpago);
+        return $paymentMethod;
+    }
+
+    /**
+     * 
      * @return string
      */
     public static function primaryColumn()

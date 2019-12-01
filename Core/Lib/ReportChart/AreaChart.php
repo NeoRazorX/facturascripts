@@ -157,6 +157,17 @@ class AreaChart
             return '';
         }
 
+        return \strtolower(\FS_DB_TYPE) == 'postgresql' ? $this->getSqlPostgreSQL($report) : $this->getSqlMySQL($report);
+    }
+
+    /**
+     * 
+     * @param Report $report
+     *
+     * @return string
+     */
+    protected function getSqlMySQL($report): string
+    {
         $xcol = $report->xcolumn;
         switch ($report->xoperation) {
             case 'DAY':
@@ -200,6 +211,55 @@ class AreaChart
 
     /**
      * 
+     * @param Report $report
+     *
+     * @return string
+     */
+    protected function getSqlPostgreSQL($report): string
+    {
+        $xcol = $report->xcolumn;
+        switch ($report->xoperation) {
+            case 'DAY':
+                $xcol = "to_char(" . $report->xcolumn . ", 'YY-MM-DD')";
+                break;
+
+            case 'WEEK':
+                $xcol = "to_char(" . $report->xcolumn . ", 'YY-WW')";
+                break;
+
+            case 'MONTH':
+                $xcol = "to_char(" . $report->xcolumn . ", 'YY-MM')";
+                break;
+
+            case 'UNIXTIME_DAY':
+                $xcol = "to_char(FROM_UNIXTIME(" . $report->xcolumn . "), 'YY-MM-DD')";
+                break;
+
+            case 'UNIXTIME_WEEK':
+                $xcol = "to_char(FROM_UNIXTIME(" . $report->xcolumn . "), 'YY-WW')";
+                break;
+
+            case 'UNIXTIME_MONTH':
+                $xcol = "to_char(FROM_UNIXTIME(" . $report->xcolumn . "), 'YY-MM')";
+                break;
+
+            case 'UNIXTIME_YEAR':
+                $xcol = "to_char(FROM_UNIXTIME(" . $report->xcolumn . "), 'YY')";
+                break;
+
+            case 'YEAR':
+                $xcol = "to_char(" . $report->xcolumn . ", 'YY')";
+                break;
+        }
+
+        $ycol = empty($report->ycolumn) ? 'COUNT(*)' : 'SUM(' . $report->ycolumn . ')';
+
+        return 'SELECT ' . $xcol . ' as xcol, ' . $ycol . ' as ycol'
+            . ' FROM ' . $report->table . ' GROUP BY xcol ORDER BY xcol ASC;';
+    }
+
+    /**
+     * 
      * @param array $datasets
      *
      * @return string
@@ -215,16 +275,16 @@ class AreaChart
             $num++;
 
             $items[] = "{
-            label: '" . $dataset['label'] . "',
-            data: [" . implode(",", $dataset['data']) . "],
-            backgroundColor: [
-                'rgba(" . $color . ", 0.2)'
-            ],
-            borderColor: [
-                'rgba(" . $color . ", 1)'
-            ],
-            borderWidth: 1
-        }";
+                label: '" . $dataset['label'] . "',
+                data: [" . implode(",", $dataset['data']) . "],
+                backgroundColor: [
+                    'rgba(" . $color . ", 0.2)'
+                ],
+                borderColor: [
+                    'rgba(" . $color . ", 1)'
+                ],
+                borderWidth: 1
+            }";
         }
 
         return implode(',', $items);
