@@ -149,7 +149,7 @@ class PostgresqlEngine extends DataBaseEngine
      */
     public function escapeColumn($link, $name)
     {
-        return $name;
+        return '"' . $name . '"';
     }
 
     /**
