@@ -411,7 +411,7 @@ class Updater extends Controller
         $zip->close();
 
         /// use plugin manager to update
-        $return = $this->pluginManager->install($fileName);
+        $return = $this->pluginManager->install($fileName, 'plugin.zip', true);
 
         /// remove zip file
         unlink(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName);
