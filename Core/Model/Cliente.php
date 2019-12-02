@@ -248,7 +248,6 @@ class Cliente extends Base\ComercialContact
             $contact->telefono1 = $this->telefono1;
             $contact->telefono2 = $this->telefono2;
             if ($contact->save()) {
-                $this->idcontactoenv = $contact->idcontacto;
                 $this->idcontactofact = $contact->idcontacto;
                 return $this->save();
             }

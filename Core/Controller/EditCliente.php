@@ -218,7 +218,8 @@ class EditCliente extends ComercialContactController
         /// Load values option to default shipping address from client contacts list
         $columnShipping = $this->views[$viewName]->columnForName('shipping-address');
         if ($columnShipping) {
-            $columnShipping->widget->setValuesFromCodeModel($contacts);
+            $contacts2 = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', true, $where);
+            $columnShipping->widget->setValuesFromCodeModel($contacts2);
         }
     }
 }
