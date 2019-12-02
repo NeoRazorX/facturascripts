@@ -24,7 +24,7 @@
         <column name="id" order="100" display="none">
             <widget type="text" fieldname="idregiva" onclick="EditRegularizacionImpuesto" />
         </column>
-        <column name="company" order="100">
+        <column name="company" display="none" order="100">
             <widget type="select" fieldname="idempresa">
                 <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
             </widget>
