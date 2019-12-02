@@ -32,7 +32,7 @@
         <column name="description" order="110">
             <widget type="textarea" fieldname="descripcion" />
         </column>
-        <column name="expiration" order="120">
+        <column name="expiration" display="right" order="120">
             <widget type="number" fieldname="plazovencimiento" decimal="0" />
         </column>
         <column name="expiration-type" numcolumns="4" order="130">

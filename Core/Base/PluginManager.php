@@ -174,16 +174,17 @@ class PluginManager
     }
 
     /**
-     * Install a new plugin if is compatible.
+     * Installs a new plugin.
      *
      * @param string $zipPath
      * @param string $zipName
+     * @param bool   $force
      *
      * @return bool
      */
-    public function install(string $zipPath, string $zipName = 'plugin.zip'): bool
+    public function install(string $zipPath, string $zipName = 'plugin.zip', bool $force = false): bool
     {
-        if (FS_DISABLE_ADD_PLUGINS) {
+        if (FS_DISABLE_ADD_PLUGINS && !$force) {
             $this->toolBox()->i18nLog()->warning('plugin-installation-disabled');
             return false;
         }

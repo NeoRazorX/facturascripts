@@ -202,7 +202,7 @@ class PostgresqlQueries implements DataBaseQueries
         $serials = ['serial', 'bigserial'];
         $fields = '';
         foreach ($columns as $col) {
-            $fields .= ', ' . $col['name'] . ' ' . $col['type'];
+            $fields .= ', "' . $col['name'] . '" ' . $col['type'];
 
             if (isset($col['null']) && $col['null'] === 'NO') {
                 $fields .= ' NOT NULL';
