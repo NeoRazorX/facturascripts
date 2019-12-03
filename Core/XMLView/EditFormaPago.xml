@@ -42,21 +42,21 @@
             </column>
         </group>
         <group name="advanced" numcolumns="12" valign="bottom">
-            <column name="paid" order="100">
-                <widget type="checkbox" fieldname="pagado" />
+            <column name="company" titleurl="ListEmpresa" numcolumns="2" order="100">
+                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" readonly="dinamic" required="true">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                </widget>
             </column>
-            <column name="domiciled" order="110">
-                <widget type="checkbox" fieldname="domiciliado"></widget>
-            </column>
-            <column name="bank-account" titleurl="ListFormaPago?activetab=ListCuentaBanco" order="120">
+            <column name="bank-account" numcolumns="3" titleurl="ListFormaPago?activetab=ListCuentaBanco" order="110">
                 <widget type="select" fieldname="codcuentabanco" onclick="EditCuentaBanco">
                     <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="company" titleurl="ListEmpresa" numcolumns="2" order="130">
-                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" readonly="dinamic" required="true">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
-                </widget>
+            <column name="domiciled" numcolumns="2" order="120">
+                <widget type="checkbox" fieldname="domiciliado"></widget>
+            </column>
+            <column name="paid" numcolumns="2" order="130">
+                <widget type="checkbox" fieldname="pagado" />
             </column>
         </group>
     </columns>
