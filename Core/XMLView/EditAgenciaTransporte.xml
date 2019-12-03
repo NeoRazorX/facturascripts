@@ -28,7 +28,7 @@
             <column name="name" order="110">
                 <widget type="text" fieldname="nombre" maxlength="100" required="true" />
             </column>
-            <column name="phone" numcolumns="2" order="120">
+            <column name="phone" order="120">
                 <widget type="text" fieldname="telefono" maxlength="30" icon="fas fa-phone" />
             </column>
             <column name="url" order="130">
