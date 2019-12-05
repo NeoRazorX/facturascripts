@@ -42,6 +42,9 @@ class MiniLogSave
     {
         $miniLog = new MiniLog();
         foreach ($miniLog->readAll($this->getActiveSettingsLog()) as $value) {
+            // Maximum database length 500
+            if (mb_strlen($value['message']) > 500) $value['message'] = mb_substr($value['message'], 0, 480);
+
             $logMessage = new LogMessage();
             $logMessage->channel = $value['channel'];
             $logMessage->time = date('d-m-Y H:i:s', $value['time']);
