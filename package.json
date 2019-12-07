@@ -27,7 +27,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",
     "bootbox": "^5.x",
-    "bootstrap": "^4.x",
+    "bootstrap": "^4.4.1",
     "chart.js": "^2.9.3",
     "handsontable": "^6.x",
     "jquery": "^3.4.1",
