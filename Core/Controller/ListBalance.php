@@ -41,7 +41,7 @@ class ListBalance extends ListController
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
-        $data['title'] = 'balances';
+        $data['title'] = 'accounting-balances';
         $data['icon'] = 'fas fa-clipboard';
         return $data;
     }

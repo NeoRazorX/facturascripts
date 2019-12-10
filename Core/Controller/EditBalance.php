@@ -50,7 +50,7 @@ class EditBalance extends EditController
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
-        $data['title'] = 'balance';
+        $data['title'] = 'accounting-balance';
         $data['icon'] = 'fas fa-clipboard';
         return $data;
     }

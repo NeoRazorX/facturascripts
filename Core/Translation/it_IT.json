@@ -17,6 +17,8 @@
     "account-parent-error": "L'account principale non è corretto o non appartiene all'esercizio",
     "accounting": "Contabilità",
     "accounting-accounts": "Contabilità",
+    "accounting-balance": "accounting-balance",
+    "accounting-balances": "accounting-balances",
     "accounting-concept": "Concetto di contabilità",
     "accounting-data-missing": "accounting-data-missing",
     "accounting-date": "Data di contabilità",

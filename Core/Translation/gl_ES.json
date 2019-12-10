@@ -17,6 +17,8 @@
     "account-parent-error": "A conta Pai é incorrecta ou non pertence ao exercicio",
     "accounting": "Contabilidade",
     "accounting-accounts": "Contas contables",
+    "accounting-balance": "accounting-balance",
+    "accounting-balances": "accounting-balances",
     "accounting-concept": "Concepto de contabilidade",
     "accounting-data-missing": "Plan contable non atopado",
     "accounting-date": "Data de asento",

@@ -17,6 +17,8 @@
     "account-parent-error": "The parent account is incorrect or does not belong to the exercise",
     "accounting": "Accounting",
     "accounting-accounts": "Accounting accounts",
+    "accounting-balance": "Accounting balance",
+    "accounting-balances": "Accounting balances",
     "accounting-concept": "Accounting concept",
     "accounting-data-missing": "Accounting data missing",
     "accounting-date": "Accounting date",
