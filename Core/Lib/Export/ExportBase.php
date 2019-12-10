@@ -89,7 +89,7 @@ abstract class ExportBase
     {
         $alignments = [];
         foreach ($columns as $col) {
-            if (is_string($col)) {
+            if (\is_string($col)) {
                 $alignments[$col] = 'left';
                 continue;
             }
@@ -119,7 +119,7 @@ abstract class ExportBase
     {
         $titles = [];
         foreach ($columns as $col) {
-            if (is_string($col)) {
+            if (\is_string($col)) {
                 $titles[$col] = $col;
                 continue;
             }
@@ -149,7 +149,7 @@ abstract class ExportBase
     {
         $widgets = [];
         foreach ($columns as $col) {
-            if (is_string($col)) {
+            if (\is_string($col)) {
                 continue;
             }
 
@@ -248,7 +248,7 @@ abstract class ExportBase
     {
         $data = [];
         foreach ($columns as $col) {
-            if (is_string($col)) {
+            if (\is_string($col)) {
                 continue;
             }
 
@@ -279,7 +279,7 @@ abstract class ExportBase
     protected function getModelFields($model): array
     {
         $fields = [];
-        foreach (array_keys($model->getModelFields()) as $key) {
+        foreach (\array_keys($model->getModelFields()) as $key) {
             $fields[$key] = $key;
         }
 
@@ -292,7 +292,7 @@ abstract class ExportBase
      */
     protected function getFileName(): string
     {
-        return $this->fileName;
+        return empty($this->fileName) ? 'file_' . \mt_rand(1, 9999) : $this->fileName;
     }
 
     /**
@@ -302,7 +302,7 @@ abstract class ExportBase
     protected function setFileName(string $name)
     {
         if (empty($this->fileName)) {
-            $this->fileName = str_replace([' ', '"', "'"], ['_', '_', '_'], $name);
+            $this->fileName = \str_replace([' ', '"', "'"], ['_', '_', '_'], $name);
         }
     }
 

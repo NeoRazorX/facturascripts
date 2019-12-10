@@ -21,7 +21,7 @@
 -->
 <view>
     <columns>
-        <column name="company" order="90">
+        <column name="company" display="none" order="90">
             <widget type="select" fieldname="idempresa">
                 <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
             </widget>

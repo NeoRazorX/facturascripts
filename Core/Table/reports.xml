@@ -13,6 +13,7 @@
     <column>
         <name>id</name>
         <type>serial</type>
+        <null>NO</null>
     </column>
     <column>
         <name>name</name>

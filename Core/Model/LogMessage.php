@@ -121,9 +121,15 @@ class LogMessage extends Base\ModelClass
     {
         $utils = $this->toolBox()->utils();
         $this->channel = $utils->noHtml($this->channel);
-        $this->message = $utils->noHtml($this->message);
         $this->uri = $utils->noHtml($this->uri);
 
-        return empty($this->message) ? false : parent::test();
+        $this->message = $utils->noHtml($this->message);
+        if (empty($this->message)) {
+            return false;
+        } elseif (\mb_strlen($this->message) > 500) {
+            $this->message = \mb_substr($this->message, 0, 500);
+        }
+
+        return parent::test();
     }
 }

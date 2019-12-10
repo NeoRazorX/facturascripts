@@ -39,7 +39,7 @@
                 <values title="supplier-invoice">FacturaProveedor</values>
             </widget>
         </column>
-        <column name="company" order="130">
+        <column name="company" display="none" order="130">
             <widget type="select" fieldname="idempresa">
                 <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
             </widget>
