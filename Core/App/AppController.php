@@ -112,6 +112,8 @@ class AppController extends App
             $route = empty(\FS_ROUTE) ? 'index.php' : \FS_ROUTE;
             $this->response->headers->set('Refresh', '0; ' . $route);
             return false;
+        } elseif ($this->request->request->get('fsNewUserPasswd')) {
+            $this->newUserPassword();
         }
 
         $this->user = $this->userAuth();
@@ -210,6 +212,27 @@ class AppController extends App
         if ($template) {
             $this->renderHtml($template, $controllerName);
         }
+    }
+
+    private function newUserPassword()
+    {
+        $user = new User();
+        $nick = $this->request->request->get('fsNewUserPasswd');
+        $pass = $this->request->request->get('fsNewPasswd');
+        $pass2 = $this->request->request->get('fsNewPasswd2');
+
+        if ($pass != $pass2) {
+            $this->toolBox()->i18nLog()->warning('different-passwords', ['%userNick%' => $nick]);
+            return;
+        } elseif ($user->loadFromCode($nick) && $this->request->request->get('fsDbPasswd') == FS_DB_PASS) {
+            $user->setPassword($pass);
+            $user->save();
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            return;
+        }
+
+        $this->ipWarning();
+        $this->toolBox()->i18nLog()->warning('login-password-fail');
     }
 
     /**
