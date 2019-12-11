@@ -56,9 +56,9 @@ class RowFooter extends VisualItem
         }
 
         $group = $btnArray['row'];
-        $this->children[][$group] = $btnArray;
+        $this->children[$group]['children'][] = $btnArray;
     }
-    
+
     /**
      *
      * @param string $viewName
