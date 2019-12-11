@@ -17,6 +17,8 @@
     "account-parent-error": "'guraso' kontua ez da zuzena edo ez da ekitaldikoa",
     "accounting": "Kontabilitatea",
     "accounting-accounts": "Kontabilitate kontuak",
+    "accounting-balance": "accounting-balance",
+    "accounting-balances": "accounting-balances",
     "accounting-concept": "Kontabilitate kontzeptua",
     "accounting-data-missing": "Ez da aurkitu kontabilitate plana",
     "accounting-date": "Idazpen data",

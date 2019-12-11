@@ -17,6 +17,8 @@
     "account-parent-error": "The parent account is incorrect or does not belong to the exercise",
     "accounting": "Contabilidade",
     "accounting-accounts": "Contas contábeis",
+    "accounting-balance": "accounting-balance",
+    "accounting-balances": "accounting-balances",
     "accounting-concept": "Conceito de contabilidade",
     "accounting-data-missing": "accounting-data-missing",
     "accounting-date": "Accounting date",

@@ -17,6 +17,8 @@
     "account-parent-error": "Le compte parent est incorrect ou n'appartient pas à l'exercice",
     "accounting": "Comptabilité",
     "accounting-accounts": "Comptes comptables",
+    "accounting-balance": "accounting-balance",
+    "accounting-balances": "accounting-balances",
     "accounting-concept": "Concept de comptabilité",
     "accounting-data-missing": "accounting-data-missing",
     "accounting-date": "Date de comptabilisation",

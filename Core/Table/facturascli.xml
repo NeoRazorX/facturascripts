@@ -89,6 +89,14 @@
         <type>character varying(100)</type>
     </column>
     <column>
+        <name>dtopor1</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>dtopor2</name>
+        <type>double precision</type>
+    </column>
+    <column>
         <name>editable</name>
         <type>boolean</type>
     </column>

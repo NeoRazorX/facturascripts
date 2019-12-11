@@ -237,6 +237,8 @@ class Subcuenta extends Base\ModelClass
      */
     public function test()
     {
+        $this->saldo = $this->debe - $this->haber;
+
         $this->codcuenta = trim($this->codcuenta);
         $this->codsubcuenta = trim($this->codsubcuenta);
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);

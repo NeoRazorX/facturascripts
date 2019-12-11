@@ -30,6 +30,7 @@ use FacturaScripts\Dinamic\Model\DocTransformation;
  */
 class BusinessDocumentGenerator
 {
+
     /**
      * Exclude fields
      *
@@ -59,8 +60,9 @@ class BusinessDocumentGenerator
      */
     public function generate(BusinessDocument $prototype, string $newClass, $lines = [], $quantity = [], $properties = [])
     {
-        // Add primary column
+        // Add primary column to exclude fields
         $this->excludeFields[] = $prototype->primaryColumn();
+
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
         foreach (array_keys($prototype->getModelFields()) as $field) {

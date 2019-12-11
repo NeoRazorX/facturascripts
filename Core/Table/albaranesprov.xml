@@ -49,6 +49,14 @@
         <type>boolean</type>
     </column>
     <column>
+        <name>dtopor1</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>dtopor2</name>
+        <type>double precision</type>
+    </column>
+    <column>
         <name>fecha</name>
         <type>date</type>
         <null>NO</null>
