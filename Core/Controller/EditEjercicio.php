@@ -23,6 +23,7 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
+use FacturaScripts\Dinamic\Model\Ejercicio;
 
 /**
  * Controller to edit a single item from the Ejercicio model
@@ -59,7 +60,25 @@ class EditEjercicio extends EditController
     }
 
     /**
-     * 
+     *
+     */
+    protected function addButtonActions()
+    {
+        $status = $this->getViewModelValue('EditEjercicio', 'estado');
+        if ($status == Ejercicio::EXERCISE_STATUS_OPEN) {
+            $newButton = [
+                'action' => 'close',
+                'color' => 'danger',
+                'icon' => 'fas fa-calendar-check',
+                'label' => 'close-exercise',
+                'type' => 'modal',
+            ];
+            $this->addButton('EditEjercicio', $newButton);
+        }
+    }
+
+    /**
+     *
      * @param string $viewName
      */
     protected function createAccountingView($viewName = 'ListCuenta')
@@ -74,7 +93,7 @@ class EditEjercicio extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createSubAccountingView($viewName = 'ListSubcuenta')
@@ -106,25 +125,24 @@ class EditEjercicio extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
-        $where = [new DataBaseWhere('codejercicio', $codejercicio)];
-
         switch ($viewName) {
             case 'ListCuenta':
-                $view->loadData(false, $where, ['codcuenta' => 'ASC']);
+                $this->loadAccountData($view, 'codcuenta');
                 break;
 
             case 'ListSubcuenta':
-                $view->loadData(false, $where, ['codsubcuenta' => 'ASC']);
+                $this->loadAccountData($view, 'codsubcuenta');
                 break;
 
-            default:
+            case 'EditEjercicio':
                 parent::loadData($viewName, $view);
+                $this->addButtonActions();
+                break;
         }
     }
 
     /**
-     * 
+     *
      * @param string $action
      *
      * @return bool
@@ -145,7 +163,7 @@ class EditEjercicio extends EditController
 
     /**
      * Export AccountingPlan to CSV file.
-     * 
+     *
      * @return bool
      */
     protected function exportAccountingPlan()
@@ -212,7 +230,7 @@ class EditEjercicio extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $codejercicio
      *
      * @return bool
@@ -234,5 +252,17 @@ class EditEjercicio extends EditController
 
         $this->toolBox()->i18nLog()->error('record-save-error');
         return true;
+    }
+
+    /**
+     *
+     * @param BaseView $view
+     * @param string $fieldOrder
+     */
+    private function loadAccountData($view, $fieldOrder)
+    {
+        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+        $where = [new DataBaseWhere('codejercicio', $codejercicio)];
+        $view->loadData(false, $where, [$fieldOrder => 'ASC']);
     }
 }
