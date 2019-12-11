@@ -326,8 +326,8 @@ class Partida extends Base\ModelOnChangeClass
         switch ($field) {
             case 'codsubcuenta':
                 $this->idsubcuenta = $this->getSubcuenta($this->codsubcuenta)->idsubcuenta;
-                $this->updateBalance($this->previousData['idsubcuenta'], ($this->previousData['debe'] * -1), ($this->previousData['haber'] * -1));
-                $this->updateBalance($this->idsubcuenta, $this->debe, $this->haber);
+                $this->updateBalance($this->previousData['idsubcuenta']);
+                $this->updateBalance($this->idsubcuenta);
                 break;
 
             case 'debe':
@@ -347,7 +347,7 @@ class Partida extends Base\ModelOnChangeClass
     protected function onDelete()
     {
         /// update account balance
-        $this->updateBalance($this->idsubcuenta, ($this->debe * -1), ($this->haber * -1));
+        $this->updateBalance($this->idsubcuenta);
     }
 
     /**
@@ -356,7 +356,7 @@ class Partida extends Base\ModelOnChangeClass
     protected function onInsert()
     {
         /// update account balance
-        $this->updateBalance($this->idsubcuenta, $this->debe, $this->haber);
+        $this->updateBalance($this->idsubcuenta);
     }
 
     /**
@@ -395,17 +395,28 @@ class Partida extends Base\ModelOnChangeClass
      * @param float $debit
      * @param float $credit
      */
-    private function updateBalance($idsubaccount, $debit, $credit)
+    private function updateBalance($idsubaccount, $debit = 0.0, $credit = 0.0)
     {
-        if ($debit + $credit == 0.00) {
+        $subaccount = new Subcuenta();
+        if (!$subaccount->loadFromCode($idsubaccount)) {
             return;
         }
 
-        $subaccount = new Subcuenta();
-        $subaccount->loadFromCode($idsubaccount);
-        $subaccount->debe += $debit;
-        $subaccount->haber += $credit;
-        $subaccount->saldo += $debit - $credit;
-        $subaccount->save();
+        /// supplied debit and credit?
+        if ($debit + $credit != 0.0) {
+            $subaccount->debe += $debit;
+            $subaccount->haber += $credit;
+            $subaccount->save();
+            return;
+        }
+
+        /// calculate account balance
+        $sql = "SELECT COALESCE(SUM(debe), 0) as debe, COALESCE(SUM(haber), 0) as haber"
+            . " FROM partidas WHERE idsubcuenta = " . self::$dataBase->var2str($idsubaccount) . ";";
+        foreach (self::$dataBase->select($sql) as $row) {
+            $subaccount->debe = (float) $row['debe'];
+            $subaccount->haber = (float) $row['haber'];
+            $subaccount->save();
+        }
     }
 }
