@@ -116,8 +116,10 @@ class BusinessDocumentView extends BaseView
             }
 
             $item = [
+                'className' => $this->getCellAlign($col->display),
                 'data' => $col->widget->fieldname,
                 'type' => $col->widget->getType(),
+                'readOnly' => ($col->widget->readonly == 'true')
             ];
 
             if ($item['type'] === 'number' || $item['type'] === 'money') {
@@ -256,5 +258,25 @@ class BusinessDocumentView extends BaseView
         AssetManager::add('css', \FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css');
         AssetManager::add('js', \FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js');
         AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/BusinessDocumentView.js');
+    }
+
+    /**
+     * 
+     * @param string $code
+     *
+     * @return string
+     */
+    protected function getCellAlign($code): string
+    {
+        switch ($code) {
+            case 'center':
+                return 'htCenter';
+
+            case 'right':
+                return 'htRight';
+
+            default:
+                return 'htLeft';
+        }
     }
 }
