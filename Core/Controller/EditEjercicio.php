@@ -67,7 +67,8 @@ class EditEjercicio extends EditController
         $status = $this->getViewModelValue('EditEjercicio', 'estado');
         if ($status == Ejercicio::EXERCISE_STATUS_OPEN) {
             $newButton = [
-                'action' => 'close',
+                'row' => 'close-exercise',
+                'action' => 'close-exercise',
                 'color' => 'danger',
                 'icon' => 'fas fa-calendar-check',
                 'label' => 'close-exercise',
