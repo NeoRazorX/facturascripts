@@ -29,6 +29,11 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 class Asiento extends Base\ModelClass implements Base\GridModelInterface
 {
 
+    const OPERATION_GENERAL = null;
+    const OPERATION_OPENING = 'A';
+    const OPERATION_CLOSING = 'C';
+    const OPERATION_REGULARIZATION = 'R';
+
     use Base\ModelTrait;
 
     /**
@@ -105,6 +110,16 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
      * @var string
      */
     public $numero;
+
+    /**
+     * It establishes whether the accounting entry is of a special operation:
+     * - opening
+     * - regularization
+     * - closing
+     *
+     * @var string
+     */
+    public $operacion;
 
     /**
      * Accumulate the amounts of the detail in the document
@@ -240,7 +255,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
 
     /**
      * Re-number the accounting entries of the open exercises.
-     * 
+     *
      * @param string $codjercicio
      *
      * @return bool
@@ -376,7 +391,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
 
     /**
      * Update accounting entry number for
-     * 
+     *
      * @param Asiento[] $entries
      * @param int $number
      * @return bool
