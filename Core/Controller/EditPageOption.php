@@ -233,13 +233,14 @@ class EditPageOption extends Controller
         foreach ($data as $key => $value) {
             if (strpos($key, '+')) {
                 $path = explode('+', $key);
+                $item = &$this->model->columns[$path[0]]['children'][$path[1]];
                 switch ($path[2]) {
                     case 'readonly':
-                        $this->model->columns[$path[0]]['children'][$path[1]]['children'][0][$path[2]] = $value;
+                        $item['children'][0][$path[2]] = $value;
                         break;
 
                     default:
-                        $this->model->columns[$path[0]]['children'][$path[1]][$path[2]] = $value;
+                        $item[$path[2]] = $value;
                         break;
                 }
             }
