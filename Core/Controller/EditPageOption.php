@@ -137,6 +137,10 @@ class EditPageOption extends Controller
             if (!isset($child['level'])) {
                 $group['children'][$key]['level'] = 0;
             }
+
+            if (!isset($child['children'][0]['readonly'])) {
+                $group['children'][$key]['children'][0]['readonly'] = 'false';
+            }
         }
 
         return $group;
@@ -180,7 +184,7 @@ class EditPageOption extends Controller
     }
 
     /**
-     * 
+     *
      */
     protected function loadPageOptions()
     {
