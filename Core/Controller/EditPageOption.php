@@ -234,15 +234,11 @@ class EditPageOption extends Controller
             if (strpos($key, '+')) {
                 $path = explode('+', $key);
                 $item = &$this->model->columns[$path[0]]['children'][$path[1]];
-                switch ($path[2]) {
-                    case 'readonly':
-                        $item['children'][0][$path[2]] = $value;
-                        break;
-
-                    default:
-                        $item[$path[2]] = $value;
-                        break;
+                if (in_array('widget', $path)) {
+                    $item['children'][0][$path[2]] = $value;
+                    continue;
                 }
+                $item[$path[2]] = $value;
             }
         }
 
