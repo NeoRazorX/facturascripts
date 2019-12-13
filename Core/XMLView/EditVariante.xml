@@ -30,12 +30,10 @@
             </column>
             <column name="attribute-value-1" titleurl="ListAtributo" numcolumns="4" order="120">
                 <widget type="select" fieldname="idatributovalor1" onclick="EditAtributo">
-                    <values source="AtributoValor" fieldcode="id"></values>
                 </widget>
             </column>
             <column name="attribute-value-2" titleurl="ListAtributo" numcolumns="4" order="130">
                 <widget type="select" fieldname="idatributovalor2" onclick="EditAtributo">
-                    <values source="AtributoValor" fieldcode="id"></values>
                 </widget>
             </column>
             <column name="barcode" numcolumns="3" order="140">

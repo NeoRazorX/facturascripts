@@ -23,39 +23,34 @@
 <view>
     <columns>
         <group name="primary-data" numcolumns="12">
-            <column name="id" order="100" display="none">
-                <widget type="text" fieldname="idsubcuenta" />
-            </column>
-            <column name="subaccount" numcolumns="4" order="110">
+            <column name="subaccount" numcolumns="3" order="100">
                 <widget type="text" fieldname="codsubcuenta" icon="fas fa-hashtag" maxlength="15" readonly="dinamic" required="true"/>
             </column>
-            <column name="description" numcolumns="8" order="120">
+            <column name="description" numcolumns="6" order="110">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
-        </group>
-        <group name="seccondary-data" numcolumns="12">
-            <column name="account" numcolumns="4" order="100">
-                <widget type="text" fieldname="codcuenta" readonly="dinamic" required="true" />
-            </column>
-            <column name="fiscal-exercise" numcolumns="4" order="110">
+            <column name="fiscal-exercise" numcolumns="3" order="120">
                 <widget type="select" fieldname="codejercicio" onclick="EditEjercicio" readonly="dinamic" required="true">
                     <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
                 </widget>
             </column>
-            <column name="special-account" titleurl="ListCuenta?activetab=ListCuentaEspecial" numcolumns="4" order="130">
+        </group>
+        <group name="seccondary-data" numcolumns="12">
+            <column name="account" order="100">
+                <widget type="text" fieldname="codcuenta" readonly="dinamic" required="true" />
+            </column>
+            <column name="special-account" titleurl="ListCuenta?activetab=ListCuentaEspecial" order="110">
                 <widget type="select" fieldname="codcuentaesp" onclick="EditCuentaEspecial">
                     <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-        </group>
-        <group name="saldos-accounts" numcolumns="12">
-            <column name="debit" numcolumns="4" order="100">
+            <column name="debit" order="120">
                 <widget type="money" fieldname="debe" readonly="true" />
             </column>
-            <column name="credit" numcolumns="4" order="110">
+            <column name="credit" order="130">
                 <widget type="money" fieldname="haber" readonly="true" />
             </column>
-            <column name="balance" numcolumns="4" order="120">
+            <column name="balance" order="140">
                 <widget type="money" fieldname="saldo" readonly="true" />
             </column>
         </group>
