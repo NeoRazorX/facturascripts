@@ -54,6 +54,7 @@ class AccountingAccounts
     const SPECIAL_TAX_SUPPORTED_ACCOUNT = 'IVASOP';
     const SPECIAL_IRPF_SALES_ACCOUNT = 'IRPF';
     const SPECIAL_IRPF_PURCHASE_ACCOUNT = 'IRPFPR';
+    const SPECIAL_PROFIT_LOSS_ACCOUNT = 'PYG';
 
     /**
      *
