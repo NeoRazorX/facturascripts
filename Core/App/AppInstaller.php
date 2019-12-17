@@ -252,7 +252,7 @@ class AppInstaller
             $errors = true;
         }
 
-        foreach (['bcmath', 'curl', 'gd', 'mbstring', 'openssl', 'simplexml', 'zip'] as $extension) {
+        foreach (['bcmath', 'curl', 'fileinfo', 'gd', 'mbstring', 'openssl', 'simplexml', 'zip'] as $extension) {
             if (!extension_loaded($extension)) {
                 $this->toolBox()->i18nLog()->critical('php-extension-not-found', ['%extension%' => $extension]);
                 $errors = true;
