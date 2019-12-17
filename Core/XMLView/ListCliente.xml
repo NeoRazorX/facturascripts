@@ -78,7 +78,7 @@
         <column name="blocked" display="none" order="250">
             <widget type="checkbox" fieldname="debaja" />
         </column>
-        <column name="create-date" display="none" order="260">
+        <column name="creation-date" display="none" order="260">
             <widget type="text" fieldname="fechaalta" />
         </column>
         <column name="block-date" display="none" order="270">
