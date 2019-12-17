@@ -73,8 +73,14 @@
             </column>
         </group>
         <group name="observations" numcolumns="12">
-            <column name="observations" order="100">
+            <column name="observations" numcolumns="12" order="100">
                 <widget type="textarea" fieldname="observaciones" />
+            </column>
+            <column name="creation-date" display="none" numcolumns="3" order="110">
+                <widget type="date" fieldname="fechaalta" readonly="true" />
+            </column>
+            <column name="update-time" display="none" numcolumns="3" order="120">
+                <widget type="datetime" fieldname="actualizado" readonly="true" />
             </column>
         </group>
         <group name="accounts" numcolumns="12">
