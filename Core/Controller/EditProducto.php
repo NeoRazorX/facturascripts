@@ -82,7 +82,26 @@ class EditProducto extends EditController
         return false;
     }
 
-    protected function loadCustomStockWidget()
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function loadCustomAttributeWidgets(string $viewName)
+    {
+        $values = $this->codeModel->all('AtributoValor', 'id', '');
+        foreach (['attribute-value-1', 'attribute-value-2'] as $colName) {
+            $column = $this->views[$viewName]->columnForName($colName);
+            if ($column) {
+                $column->widget->setValuesFromCodeModel($values);
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function loadCustomStockWidget(string $viewName)
     {
         $references = [];
         $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
@@ -91,9 +110,9 @@ class EditProducto extends EditController
             $references[] = ['value' => $code->code, 'title' => $code->description];
         }
 
-        $columnReference = $this->views['EditStock']->columnForName('reference');
-        if ($columnReference) {
-            $columnReference->widget->setValuesFromArray($references, false);
+        $column = $this->views[$viewName]->columnForName('reference');
+        if ($column) {
+            $column->widget->setValuesFromArray($references, false);
         }
     }
 
@@ -114,12 +133,13 @@ class EditProducto extends EditController
                 if ($view->model->nostock) {
                     $this->setSettings('EditStock', 'active', false);
                 } else {
-                    $this->loadCustomStockWidget();
+                    $this->loadCustomStockWidget('EditStock');
                 }
                 break;
 
             case 'EditVariante':
                 $view->loadData('', $where, ['idvariante' => 'DESC']);
+                $this->loadCustomAttributeWidgets($viewName);
                 break;
 
             case 'EditStock':
