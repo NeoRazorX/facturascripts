@@ -103,7 +103,7 @@
             </column>
         </group>
         <group name="other" title="other-data" valign="bottom" numcolumns="12">
-            <column name="create-date" display="none" numcolumns="2" order="100">
+            <column name="creation-date" display="none" numcolumns="2" order="100">
                 <widget type="date" fieldname="fechaalta" readonly="true" />
             </column>
             <column name="last-activity" display="none" numcolumns="3" order="110">
