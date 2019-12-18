@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Accounting\ClosingToAcounting;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanExport;
@@ -65,16 +66,30 @@ class EditEjercicio extends EditController
     protected function addButtonActions()
     {
         $status = $this->getViewModelValue('EditEjercicio', 'estado');
-        if ($status == Ejercicio::EXERCISE_STATUS_OPEN) {
-            $newButton = [
-                'row' => 'close-exercise',
-                'action' => 'close-exercise',
-                'color' => 'danger',
-                'icon' => 'fas fa-calendar-check',
-                'label' => 'close-exercise',
-                'type' => 'modal',
-            ];
-            $this->addButton('EditEjercicio', $newButton);
+        switch ($status) {
+            case Ejercicio::EXERCISE_STATUS_OPEN:
+                $newButton = [
+                    'row' => 'footer-actions',
+                    'action' => 'close-exercise',
+                    'color' => 'danger',
+                    'icon' => 'fas fa-calendar-check',
+                    'label' => 'close-exercise',
+                    'type' => 'modal',
+                ];
+                $this->addButton('EditEjercicio', $newButton);
+                break;
+
+            case Ejercicio::EXERCISE_STATUS_CLOSED:
+                $newButton = [
+                    'row' => 'footer-actions',
+                    'action' => 'open-exercise',
+                    'color' => 'warning',
+                    'icon' => 'fas fa-calendar-plus',
+                    'label' => 'open-exercise',
+                    'type' => 'modal',
+                ];
+                $this->addButton('EditEjercicio', $newButton);
+                break;
         }
     }
 
@@ -119,6 +134,32 @@ class EditEjercicio extends EditController
     }
 
     /**
+     *
+     * @return bool
+     */
+    protected function closeExercise(): bool
+    {
+        $code = $this->request->request->get('codejercicio');
+        if (!$this->checkAndLoad($code)) {
+            return false;
+        }
+
+        $data = [
+            'journalClosing' => $this->request->request->get('iddiario-closing'),
+            'journalOpening' => $this->request->request->get('iddiario-opening')
+        ];
+
+        $model = $this->getModel();
+        $closing = new ClosingToAcounting();
+        if ($closing->exec($model, $data)) {
+            $model->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
+            return $model->save();
+        }
+
+        return false;
+    }
+
+    /**
      * Load view data procedure
      *
      * @param string   $viewName
@@ -156,6 +197,14 @@ class EditEjercicio extends EditController
 
             case 'import-accounting':
                 return $this->importAccountingPlan();
+
+            case 'open-exercise':
+                $this->openExercise();
+                return true;
+
+            case 'close-exercise':
+                $this->closeExercise();
+                return true;
 
             default:
                 return parent::execPreviousAction($action);
@@ -252,6 +301,47 @@ class EditEjercicio extends EditController
         }
 
         $this->toolBox()->i18nLog()->error('record-save-error');
+        return true;
+    }
+
+    /**
+     *
+     * @param string $code
+     */
+    protected function openExercise($code): bool
+    {
+        if (!$this->checkAndLoad($code)) {
+            return false;
+        }
+
+        $model = $this->getModel();
+        $model->estado = Ejercicio::EXERCISE_STATUS_OPEN;
+        return $model->save();
+    }
+
+    /**
+     * Check that user allowed modify and load exercise data
+     *
+     * @param string $code
+     * @return boolean
+     */
+    private function checkAndLoad($code): bool
+    {
+        if (!$this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return false;
+        }
+
+        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+            $this->toolBox()->i18nLog()->warning('duplicated-request');
+            return false;
+        }
+
+        if (!$this->getModel()->loadFromCode($code)) {
+            $this->toolBox()->i18nLog()->error('record-not-found');
+            return false;
+        }
+
         return true;
     }
 

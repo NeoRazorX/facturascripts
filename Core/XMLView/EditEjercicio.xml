@@ -68,6 +68,9 @@
             </column>
         </group>
         <group name="close-exercise" title="close-exercise" icon="fas fa-calendar-check">
+            <column name="code" display="none">
+                <widget type="text" fieldname="codejercicio" readonly="true" />
+            </column>
             <column name="journal-closing" numcolumns="6" order="100">
                 <widget type="select" fieldname="iddiario-closing">
                     <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
@@ -77,6 +80,20 @@
                 <widget type="select" fieldname="iddiario-opening">
                     <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
                 </widget>
+            </column>
+        </group>
+        <group name="open-exercise" title="open-exercise" icon="fas fa-calendar-plus">
+            <column name="code" display="none">
+                <widget type="text" fieldname="codejercicio" readonly="true" />
+            </column>
+            <column name="delete-opening" numcolumns="12">
+                <widget type="check" fieldname="delete-opening" />
+            </column>
+            <column name="delete-opening" numcolumns="12">
+                <widget type="check" fieldname="delete-closing" />
+            </column>
+            <column name="delete-regularization" numcolumns="12">
+                <widget type="check" fieldname="delete-regularization" />
             </column>
         </group>
     </modals>

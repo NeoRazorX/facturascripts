@@ -20,6 +20,9 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Core\Lib\Accounting\AccountingClosingClosing;
+use FacturaScripts\Core\Lib\Accounting\AccountingClosingOpening;
+use FacturaScripts\Core\Lib\Accounting\AccountingClosingRegularization;
 
 /**
  * Class that performs accounting closures
@@ -43,6 +46,18 @@ class ClosingToAcounting
     protected $exercise;
 
     /**
+     *
+     * @var int
+     */
+    protected $journalClosing;
+
+    /**
+     *
+     * @var int
+     */
+    protected $journalOpening;
+
+    /**
      * Class Constructor
      */
     public function __construct()
@@ -57,11 +72,15 @@ class ClosingToAcounting
      * of accounts.
      *
      * @param Ejercicio $exercise
+     * @param array     $data
      * @return bool
      */
-    public function exec($exercise): bool
+    public function exec($exercise, $data): bool
     {
         $this->exercise = $exercise;
+        $this->journalClosing = $data['journalClosing'] ?? 0;
+        $this->journalOpening = $data['journalOpening'] ?? 0;
+
         try {
             self::$dataBase->beginTransaction();
             if ($this->execRegularization() && $this->execClosing() && $this->execOpening()) {
@@ -96,7 +115,7 @@ class ClosingToAcounting
     protected function execOpening(): bool
     {
         $opening = new AccountingClosingOpening();
-        return $opening->exec($this->exercise);
+        return $opening->exec($this->exercise, $this->journalOpening);
     }
 
     /**
@@ -106,7 +125,7 @@ class ClosingToAcounting
      */
     protected function execRegularization(): bool
     {
-        $regularization = new AccountingClossingRegularization();
-        return $regularization->exec($this->exercise);
+        $regularization = new AccountingClosingRegularization();
+        return $regularization->exec($this->exercise, $this->journalClosing);
     }
 }

@@ -99,14 +99,15 @@ abstract class AccountingClosingBase
      * Create a new account entry for channel with a one line by account balance.
      *
      * @param Ejercicio $exercise
+     * @param int       $idjournal
      * @return boolean
      */
-    public function exec($exercise)
+    public function exec($exercise, $idjournal)
     {
         $this->exercise = $exercise;
         $accountEntry = null;
         foreach ($this->getBalance() as $channel => $balance) {
-            if (!$this->newAccountEntry($accountEntry, $channel)) {
+            if (!$this->newAccountEntry($accountEntry, $channel, $idjournal)) {
                 return false;
             }
 
@@ -169,13 +170,17 @@ abstract class AccountingClosingBase
      *
      * @param Asiento $accountEntry
      * @param int $channel
+     * @param int $idjournal
      * @return bool
      */
-    protected function newAccountEntry(&$accountEntry, $channel): bool
+    protected function newAccountEntry(&$accountEntry, $channel, $idjournal): bool
     {
         $accountEntry = new Asiento();
         $this->setData($accountEntry);
         $accountEntry->canal = $channel;
+        if (!empty($idjournal)) {
+            $accountEntry->iddiario = $idjournal;
+        }
         return $accountEntry->save();
     }
 
