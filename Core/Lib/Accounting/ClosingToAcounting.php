@@ -67,6 +67,29 @@ class ClosingToAcounting
         }
     }
 
+    public function delete($exercise, $closing = true, $opening = true): bool
+    {
+        $this->exercise = $exercise;
+        try {
+            self::$dataBase->beginTransaction();
+            if ($closing && !($this->deleteRegularization() && $this->deleteClosing())) {
+                return false;
+            }
+
+            if ($opening && !$this->deleteOpening()) {
+                return false;
+            }
+            self::$dataBase->commit();
+        } finally {
+            $result = !self::$dataBase->inTransaction();
+            if ($result == false) {
+                self::$dataBase->rollback();
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * Execute the main process of regularization, closing and opening
      * of accounts.
@@ -97,6 +120,39 @@ class ClosingToAcounting
     }
 
     /**
+     * Delete closing accounting entry
+     *
+     * @return bool
+     */
+    protected function deleteClosing(): bool
+    {
+        $closing = new AccountingClosingClosing();
+        return $closing->delete($this->exercise);
+    }
+
+    /**
+     * Delete opening accounting entry
+     *
+     * @return bool
+     */
+    protected function deleteOpening(): bool
+    {
+        $opening = new AccountingClosingOpening();
+        return $opening->delete($this->exercise);
+    }
+
+    /**
+     * Delete regularization accounting entry
+     *
+     * @return bool
+     */
+    protected function deleteRegularization(): bool
+    {
+        $regularization = new AccountingClosingRegularization();
+        return $regularization->delete($this->exercise);
+    }
+
+    /**
      * Execute account closing
      *
      * @return bool
@@ -104,7 +160,7 @@ class ClosingToAcounting
     protected function execClosing(): bool
     {
         $closing = new AccountingClosingClosing();
-        return $closing->exec($this->exercise);
+        return $closing->exec($this->exercise, $this->journalClosing);
     }
 
     /**
