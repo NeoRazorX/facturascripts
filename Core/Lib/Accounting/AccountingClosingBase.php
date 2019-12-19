@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -136,10 +137,16 @@ abstract class AccountingClosingBase
      */
     protected function delete($exercise, $type): bool
     {
-        $sql = "DELETE FROM asientos"
-            .  " WHERE codejercicio = '" . $exercise->codejercicio . "'"
-            .    " AND operacion = '" . $type . "'";
-        return self::$dataBase->exec($sql);
+        $where = [
+            new DataBaseWhere('codejercicio', $exercise->codejercicio),
+            new DataBaseWhere('operacion', $type),
+        ];
+
+        $accountEntry = new Asiento();
+        if (!$accountEntry->loadFromCode('', $where)) {
+            return false;
+        }
+        return $accountEntry->delete();
     }
 
     /**
