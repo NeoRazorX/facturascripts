@@ -178,9 +178,7 @@ abstract class AccountingClosingBase
         $accountEntry = new Asiento();
         $this->setData($accountEntry);
         $accountEntry->canal = $channel;
-        if (!empty($idjournal)) {
-            $accountEntry->iddiario = $idjournal;
-        }
+        $accountEntry->iddiario = empty($idjournal) ? null : $idjournal;
         return $accountEntry->save();
     }
 

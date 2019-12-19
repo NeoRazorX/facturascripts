@@ -42,14 +42,15 @@ class AccountingClosingRegularization extends AccountingClosingBase
      * Create a new account entry for channel with a one line by account balance.
      *
      * @param Ejercicio $exercise
+     * @param int       $idjournal
      * @return boolean
      */
-    public function exec($exercise)
+    public function exec($exercise, $idjournal)
     {
         if (!$this->loadSubAccount($exercise)) {
             return false;
         }
-        return parent::exec($exercise);
+        return parent::exec($exercise, $idjournal);
     }
 
     /**
