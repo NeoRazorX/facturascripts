@@ -44,12 +44,12 @@ class BusinessDocumentCode
         $vars = [
             '{EJE}' => $document->codejercicio,
             '{SERIE}' => $document->codserie,
-            '{0SERIE}' => str_pad($document->codserie, 2, '0', STR_PAD_LEFT),
+            '{0SERIE}' => \str_pad($document->codserie, 2, '0', \STR_PAD_LEFT),
             '{NUM}' => $document->numero,
-            '{0NUM}' => str_pad($document->numero, $sequence->longnumero, '0', STR_PAD_LEFT),
+            '{0NUM}' => \str_pad($document->numero, $sequence->longnumero, '0', \STR_PAD_LEFT),
         ];
 
-        $document->codigo = strtr($sequence->patron, $vars);
+        $document->codigo = \strtr($sequence->patron, $vars);
     }
 
     /**
@@ -61,26 +61,46 @@ class BusinessDocumentCode
      */
     protected static function getNewNumber(&$sequence, $document)
     {
+        $order = \strtolower(\FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
         $where = [
             new DataBaseWhere('codserie', $sequence->codserie),
             new DataBaseWhere('idempresa', $sequence->idempresa)
         ];
-
         if (!empty($sequence->codejercicio)) {
             $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
         }
 
         /// find maximum number for this sequence data
-        $order = strtolower(\FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
         foreach ($document->all($where, $order, 0, 1) as $lastDoc) {
             $lastNumber = (int) $lastDoc->numero;
             if ($lastNumber >= $sequence->numero) {
-                $sequence->numero = 1 + $lastNumber;
-                $sequence->save();
+                $sequence->numero = $lastNumber + 1;
             }
         }
 
-        return $sequence->numero;
+        /// use gaps?
+        if ($sequence->usarhuecos) {
+            $expectedNumber = (int) $sequence->numero - 1;
+            foreach ($document->all($where, $order) as $lastDoc) {
+                if ($expectedNumber != $lastDoc->numero) {
+                    break;
+                }
+
+                $expectedNumber--;
+            }
+
+            if ($expectedNumber > 0) {
+                return (string) $expectedNumber;
+            }
+        }
+
+        $newNumber = $sequence->numero;
+
+        /// update sequence
+        $sequence->numero++;
+        $sequence->save();
+
+        return (string) $newNumber;
     }
 
     /**
@@ -117,6 +137,7 @@ class BusinessDocumentCode
             $selectedSequence->codserie = $document->codserie;
             $selectedSequence->idempresa = $document->idempresa;
             $selectedSequence->tipodoc = $document->modelClassName();
+            $selectedSequence->usarhuecos = ('FacturaCliente' === $document->modelClassName());
             $selectedSequence->save();
         }
 

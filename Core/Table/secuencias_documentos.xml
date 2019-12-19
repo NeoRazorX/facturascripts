@@ -46,6 +46,12 @@
         <type>character varying(30)</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>usarhuecos</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
     <constraint>
         <name>secuencias_documentos_pkey</name>
         <type>PRIMARY KEY (idsecuencia)</type>
