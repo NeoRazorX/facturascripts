@@ -305,18 +305,26 @@ class EditEjercicio extends EditController
     }
 
     /**
-     *
-     * @param string $code
+     * Re-open closed exercise
      */
-    protected function openExercise($code): bool
+    protected function openExercise(): bool
     {
+        $code = $this->request->request->get('codejercicio');
         if (!$this->checkAndLoad($code)) {
             return false;
         }
 
+        $deleteOpening = $this->request->request->get('delete-opening', false);
+        $deleteClosing = $this->request->request->get('delete-closing', false);
         $model = $this->getModel();
-        $model->estado = Ejercicio::EXERCISE_STATUS_OPEN;
-        return $model->save();
+
+        $closing = new ClosingToAcounting();
+        if ($closing->delete($model, $deleteClosing, $deleteOpening)) {
+            $model->estado = Ejercicio::EXERCISE_STATUS_OPEN;
+            return $model->save();
+        }
+
+        return false;
     }
 
     /**

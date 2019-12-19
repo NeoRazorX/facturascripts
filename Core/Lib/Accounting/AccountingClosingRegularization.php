@@ -63,7 +63,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
         if (!$this->loadSubAccount($exercise)) {
             return false;
         }
-        return parent::exec($exercise, $idjournal);
+        return $this->delete($exercise) && parent::exec($exercise, $idjournal);
     }
 
     /**

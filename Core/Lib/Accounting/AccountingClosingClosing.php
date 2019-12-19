@@ -41,6 +41,19 @@ class AccountingClosingClosing extends AccountingClosingBase
     }
 
     /**
+     * Execute main process.
+     * Create a new account entry for channel with a one line by account balance.
+     *
+     * @param Ejercicio $exercise
+     * @param int       $idjournal
+     * @return boolean
+     */
+    public function exec($exercise, $idjournal): bool
+    {
+        return $this->delete($exercise) && parent::exec($exercise, $idjournal);
+    }
+
+    /**
      * Get the concept for the accounting entry and its lines.
      *
      * @return string

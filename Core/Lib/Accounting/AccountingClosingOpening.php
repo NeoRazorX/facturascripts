@@ -44,7 +44,8 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     public function delete($exercise): bool
     {
-        return parent::delete($exercise, Asiento::OPERATION_OPENING);
+        $this->loadNewExercise($exercise);
+        return parent::delete($this->newExercise, Asiento::OPERATION_OPENING);
     }
 
     /**
@@ -57,8 +58,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     public function exec($exercise): boolean
     {
-        $this->loadNewExercise($exercise);
-        return parent::exec($exercise);
+        return $this->delete($exercise) && parent::exec($exercise);
     }
 
     /**

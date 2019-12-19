@@ -89,11 +89,8 @@
             <column name="delete-opening" numcolumns="12">
                 <widget type="check" fieldname="delete-opening" />
             </column>
-            <column name="delete-opening" numcolumns="12">
+            <column name="delete-closing" numcolumns="12">
                 <widget type="check" fieldname="delete-closing" />
-            </column>
-            <column name="delete-regularization" numcolumns="12">
-                <widget type="check" fieldname="delete-regularization" />
             </column>
         </group>
     </modals>
