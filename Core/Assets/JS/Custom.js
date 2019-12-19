@@ -40,6 +40,8 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
 }
 
 $(document).ready(function () {
+    Pace.restart();
+    
     $(".datepicker").datepicker({
         dateFormat: "dd-mm-yy",
         firstDay: 1,
@@ -77,4 +79,8 @@ $(document).ready(function () {
     $(document).on("click", "nav .dropdown-submenu", function (e) {
         e.stopPropagation();
     });
+});
+
+$(document).ajaxStart(function() {
+    Pace.restart();
 });
