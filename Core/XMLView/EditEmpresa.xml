@@ -83,7 +83,7 @@
             </column>
         </group>
         <group name="management" numcolumns="12" icon="fas fa-cog" title="advanced">
-            <column name="startdate" numcolumns="3" order="100">
+            <column name="start-date" numcolumns="3" order="100">
                 <widget type="date" fieldname="fechaalta"/>
             </column>
             <column name="vat-regime" numcolumns="3" order="110">
