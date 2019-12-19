@@ -29,6 +29,18 @@ class AccountingClosingClosing extends AccountingClosingBase
 {
 
     /**
+     * Delete main process.
+     * Delete closing accounting entry from exercise.
+     *
+     * @param Ejercicio $exercise
+     * @return boolean
+     */
+    public function delete($exercise): bool
+    {
+        return parent::delete($exercise, Asiento::OPERATION_CLOSING);
+    }
+
+    /**
      * Get the concept for the accounting entry and its lines.
      *
      * @return string

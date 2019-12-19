@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
@@ -38,6 +39,18 @@ class AccountingClosingRegularization extends AccountingClosingBase
     protected $subAccount;
 
     /**
+     * Delete main process.
+     * Delete closing regularization accounting entry from exercise.
+     *
+     * @param Ejercicio $exercise
+     * @return boolean
+     */
+    public function delete($exercise): bool
+    {
+        return parent::delete($exercise, Asiento::OPERATION_REGULARIZATION);
+    }
+
+    /**
      * Execute main process.
      * Create a new account entry for channel with a one line by account balance.
      *
@@ -45,7 +58,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
      * @param int       $idjournal
      * @return boolean
      */
-    public function exec($exercise, $idjournal)
+    public function exec($exercise, $idjournal): bool
     {
         if (!$this->loadSubAccount($exercise)) {
             return false;

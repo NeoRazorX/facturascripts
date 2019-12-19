@@ -36,6 +36,18 @@ class AccountingClosingOpening extends AccountingClosingBase
     protected $newExercise;
 
     /**
+     * Delete main process.
+     * Delete opening accounting entry from exercise.
+     *
+     * @param Ejercicio $exercise
+     * @return boolean
+     */
+    public function delete($exercise): bool
+    {
+        return parent::delete($exercise, Asiento::OPERATION_OPENING);
+    }
+
+    /**
      * Execute main process.
      * Create a new account entry for channel with a one line by account balance.
      * The informed exercise must be the closed exercise.

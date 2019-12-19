@@ -128,6 +128,21 @@ abstract class AccountingClosingBase
     }
 
     /**
+     * Delete main process.
+     * Delete closing regularization accounting entry from exercise.
+     *
+     * @param Ejercicio $exercise
+     * @param string    $type
+     */
+    protected function delete($exercise, $type): bool
+    {
+        $sql = "DELETE FROM asientos"
+            .  " WHERE codejercicio = '" . $exercise->codejercicio . "'"
+            .    " AND operacion = '" . $type . "'";
+        return self::$dataBase->exec($sql);
+    }
+
+    /**
      * Returns an array with the balances of the accounting
      * sub-accounts for each channel.
      *
