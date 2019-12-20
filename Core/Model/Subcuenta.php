@@ -154,7 +154,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return int
      */
-    public function getIdAccount(): int
+    public function getIdAccount()
     {
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
@@ -162,7 +162,6 @@ class Subcuenta extends Base\ModelClass
         ];
         $account = new Cuenta();
         $account->loadFromCode('', $where);
-
         return $account->idcuenta;
     }
 
@@ -171,7 +170,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return int
      */
-    public function getIdSubaccount(): int
+    public function getIdSubaccount()
     {
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
