@@ -168,6 +168,7 @@ abstract class AccountingClosingBase
             unset($data['channel']);
             $result[$channel][] = $data;
         }
+        return $result;
     }
 
     protected function getSQL(): string
