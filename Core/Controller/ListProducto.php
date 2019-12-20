@@ -54,74 +54,75 @@ class ListProducto extends ListController
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    protected function createViewProducto($name = 'ListProducto')
+    protected function createViewProducto(string $viewName = 'ListProducto')
     {
-        $this->addView($name, 'Producto', 'products', 'fas fa-cubes');
-        $this->addSearchFields($name, ['referencia', 'descripcion', 'observaciones']);
-        $this->addOrderBy($name, ['referencia'], 'reference');
-        $this->addOrderBy($name, ['descripcion'], 'description');
-        $this->addOrderBy($name, ['precio'], 'price');
-        $this->addOrderBy($name, ['stockfis'], 'stock');
-        $this->addOrderBy($name, ['actualizado'], 'update-time');
+        $this->addView($viewName, 'Producto', 'products', 'fas fa-cubes');
+        $this->addSearchFields($viewName, ['referencia', 'descripcion', 'observaciones']);
+        $this->addOrderBy($viewName, ['referencia'], 'reference');
+        $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addOrderBy($viewName, ['fechaalta'], 'creation-date');
+        $this->addOrderBy($viewName, ['precio'], 'price');
+        $this->addOrderBy($viewName, ['stockfis'], 'stock');
+        $this->addOrderBy($viewName, ['actualizado'], 'update-time');
 
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
-        $this->addFilterSelect($name, 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
+        $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
 
         $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
-        $this->addFilterSelect($name, 'codfamilia', 'family', 'codfamilia', $families);
+        $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
 
         $taxes = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
-        $this->addFilterSelect($name, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
+        $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
 
-        $this->addFilterCheckbox($name, 'nostock', 'no-stock', 'nostock');
-        $this->addFilterCheckbox($name, 'bloqueado', 'locked', 'bloqueado');
-        $this->addFilterCheckbox($name, 'secompra', 'for-purchase', 'secompra');
-        $this->addFilterCheckbox($name, 'sevende', 'for-sale', 'sevende');
-        $this->addFilterCheckbox($name, 'publico', 'public', 'publico');
+        $this->addFilterCheckbox($viewName, 'nostock', 'no-stock', 'nostock');
+        $this->addFilterCheckbox($viewName, 'bloqueado', 'locked', 'bloqueado');
+        $this->addFilterCheckbox($viewName, 'secompra', 'for-purchase', 'secompra');
+        $this->addFilterCheckbox($viewName, 'sevende', 'for-sale', 'sevende');
+        $this->addFilterCheckbox($viewName, 'publico', 'public', 'publico');
     }
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    protected function createViewVariante($name = 'ListVariante')
+    protected function createViewVariante(string $viewName = 'ListVariante')
     {
-        $this->addView($name, 'Variante', 'variants', 'fas fa-project-diagram');
-        $this->addSearchFields($name, ['referencia', 'codbarras']);
-        $this->addOrderBy($name, ['referencia'], 'reference');
-        $this->addOrderBy($name, ['codbarras'], 'barcode');
-        $this->addOrderBy($name, ['precio'], 'price');
-        $this->addOrderBy($name, ['coste'], 'cost-price');
-        $this->addOrderBy($name, ['stockfis'], 'stock');
+        $this->addView($viewName, 'Variante', 'variants', 'fas fa-project-diagram');
+        $this->addSearchFields($viewName, ['referencia', 'codbarras']);
+        $this->addOrderBy($viewName, ['referencia'], 'reference');
+        $this->addOrderBy($viewName, ['codbarras'], 'barcode');
+        $this->addOrderBy($viewName, ['precio'], 'price');
+        $this->addOrderBy($viewName, ['coste'], 'cost-price');
+        $this->addOrderBy($viewName, ['stockfis'], 'stock');
 
         $attributeValues = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
-        $this->addFilterSelect($name, 'idatributovalor1', 'attribute-value-1', 'idatributovalor1', $attributeValues);
-        $this->addFilterSelect($name, 'idatributovalor2', 'attribute-value-2', 'idatributovalor2', $attributeValues);
+        $this->addFilterSelect($viewName, 'idatributovalor1', 'attribute-value-1', 'idatributovalor1', $attributeValues);
+        $this->addFilterSelect($viewName, 'idatributovalor2', 'attribute-value-2', 'idatributovalor2', $attributeValues);
 
         /// disable new button
-        $this->setSettings($name, 'btnNew', false);
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    protected function createViewStock($name = 'ListStock')
+    protected function createViewStock(string $viewName = 'ListStock')
     {
-        $this->addView($name, 'Stock', 'stock', 'fas fa-dolly');
-        $this->addSearchFields($name, ['referencia']);
-        $this->addOrderBy($name, ['referencia'], 'reference');
-        $this->addOrderBy($name, ['cantidad'], 'quantity');
-        $this->addOrderBy($name, ['disponible'], 'available');
-        $this->addOrderBy($name, ['reservada'], 'reserved');
-        $this->addOrderBy($name, ['pterecibir'], 'pending-reception');
+        $this->addView($viewName, 'Stock', 'stock', 'fas fa-dolly');
+        $this->addSearchFields($viewName, ['referencia']);
+        $this->addOrderBy($viewName, ['referencia'], 'reference');
+        $this->addOrderBy($viewName, ['cantidad'], 'quantity');
+        $this->addOrderBy($viewName, ['disponible'], 'available');
+        $this->addOrderBy($viewName, ['reservada'], 'reserved');
+        $this->addOrderBy($viewName, ['pterecibir'], 'pending-reception');
 
         $selectValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect($name, 'codalmacen', 'warehouse', 'codalmacen', $selectValues);
+        $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $selectValues);
 
         /// disable new button
-        $this->setSettings($name, 'btnNew', false);
+        $this->setSettings($viewName, 'btnNew', false);
     }
 }
