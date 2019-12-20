@@ -85,6 +85,18 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public $codserie;
 
     /**
+     *
+     * @var float
+     */
+    public $dtopor1;
+
+    /**
+     *
+     * @var float
+     */
+    public $dtopor2;
+
+    /**
      * Date of the document.
      *
      * @var string
