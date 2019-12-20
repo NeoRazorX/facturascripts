@@ -31,6 +31,8 @@ use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 class BusinessDocumentCode
 {
 
+    const GAP_LIMIT = 100;
+
     /**
      * Generates a new identifier for humans from a document.
      *
@@ -39,7 +41,6 @@ class BusinessDocumentCode
     public static function getNewCode(&$document)
     {
         $sequence = static::getSequence($document);
-
         $document->numero = static::getNewNumber($sequence, $document);
         $vars = [
             '{EJE}' => $document->codejercicio,
@@ -59,7 +60,7 @@ class BusinessDocumentCode
      *
      * @return string
      */
-    protected static function getNewNumber(&$sequence, $document)
+    protected static function getNewNumber(&$sequence, &$document)
     {
         $order = \strtolower(\FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
         $where = [
@@ -81,15 +82,17 @@ class BusinessDocumentCode
         /// use gaps?
         if ($sequence->usarhuecos) {
             $expectedNumber = (int) $sequence->numero - 1;
-            foreach ($document->all($where, $order) as $lastDoc) {
+            foreach ($document->all($where, $order, 0, self::GAP_LIMIT) as $lastDoc) {
                 if ($expectedNumber != $lastDoc->numero) {
+                    $document->fecha = $lastDoc->fecha;
+                    $document->hora = $lastDoc->hora;
                     break;
                 }
 
                 $expectedNumber--;
             }
 
-            if ($expectedNumber > 0) {
+            if ($expectedNumber > 0 && $expectedNumber > (int) $sequence->numero - self::GAP_LIMIT - 1) {
                 return (string) $expectedNumber;
             }
         }
