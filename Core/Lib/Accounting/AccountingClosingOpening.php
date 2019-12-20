@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Perform opening of account balances for the exercise.
@@ -56,9 +57,29 @@ class AccountingClosingOpening extends AccountingClosingBase
      * @param Ejercicio $exercise
      * @return boolean
      */
-    public function exec($exercise): boolean
+    public function exec($exercise): bool
     {
-        return $this->delete($exercise) && parent::exec($exercise);
+        return $this->delete($exercise) && $this->copyAccounts() && parent::exec($exercise);
+    }
+
+    /**
+     * Copy accounts and subaccounts from exercise to new exercise
+     *
+     * @return bool
+     */
+    protected function copyAccounts(): bool
+    {
+        $subaccount = new Subcuenta();
+        foreach (self::$dataBase->selectLimit($this->getSQLCopyAccounts(), 0) as $value) {
+            if ($subaccount->loadFromCode($value['idsubcuenta'])) {
+                $subaccount->idcuenta = null;
+                $subaccount->idsubcuenta = null;
+                $subaccount->debe = 0.00;
+                $subaccount->haber = 0.00;
+                $subaccount->codejercicio = $this->newExercise->codejercicio;
+                $subaccount->save();
+            }
+        }
     }
 
     /**
@@ -146,6 +167,29 @@ class AccountingClosingOpening extends AccountingClosingBase
     }
 
     /**
+     * Return sql sentence for subaccounts with balance
+     * that don't exists into next exercise.
+     *
+     * @return string
+     */
+    private function getSQLCopyAccounts(): string
+    {
+        return "SELECT t2.idsubcuenta, t2.codsubcuenta, SUM(t2.debe - t2.haber) AS saldo"
+            . " FROM asientos t1"
+            . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento"
+            . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
+            . " AND NOT EXISTS("
+            .       "SELECT 1"
+            .         "FROM subcuentas t3"
+            .        "WHERE t3.codsubcuenta = t2.codsubcuenta"
+            .         " AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
+            .        ")"
+            . " GROUP BY 1, 2"
+            . "HAVING SUM(t2.debe - t2.haber) <> 0.00";
+    }
+
+    /**
+     * Search and load next exercise of indicated exercise.
      *
      * @param Ejercicio $exercise
      */
