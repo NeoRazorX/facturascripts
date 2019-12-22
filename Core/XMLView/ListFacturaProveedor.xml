@@ -41,7 +41,7 @@
                 <values source="estados_documentos" fieldcode="idestado" fieldtitle="nombre"></values>
             </widget>
         </column>
-        <column name="email-sent" display="center" order="160">
+        <column name="email-sent" display="none" order="160">
             <widget type="checkbox" fieldname="femail" />
         </column>
         <column name="paid" display="center" order="170">

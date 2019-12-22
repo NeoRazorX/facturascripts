@@ -231,13 +231,14 @@ class EditPageOption extends Controller
         $this->checkNickAndID();
         $data = $this->request->request->all();
         foreach ($data as $key => $value) {
-            if (strpos($key, '+')) {
-                $path = explode('+', $key);
+            if (\strpos($key, '+')) {
+                $path = \explode('+', $key);
                 $item = &$this->model->columns[$path[0]]['children'][$path[1]];
-                if (in_array('widget', $path)) {
-                    $item['children'][0][$path[2]] = $value;
+                if (\in_array('widget', $path)) {
+                    $item['children'][0][$path[3]] = $value;
                     continue;
                 }
+
                 $item[$path[2]] = $value;
             }
         }
