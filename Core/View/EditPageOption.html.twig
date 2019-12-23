@@ -207,8 +207,8 @@
             </td>
             <td class="d-inline-block col-1">
                 {{ simpleSelect(
-                    masterName ~ '+' ~ 'widget' ~ 'readonly',
-                    masterName ~ '+' ~ 'widget' ~ 'readonly',
+                    masterName ~ 'widget' ~ '+' ~ 'readonly',
+                    masterName ~ 'widget' ~ '+' ~ 'readonly',
                     field['children'][0].readonly,
                     {'true':i18n.trans('yes'), 'false':i18n.trans('no'), 'dinamic':i18n.trans('auto')},
                     FALSE,

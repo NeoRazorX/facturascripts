@@ -108,7 +108,7 @@ class ListSecuenciaDocumento extends ListController
     {
         $this->addView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code');
         $this->addSearchFields($viewName, ['patron', 'tipodoc']);
-        $this->addOrderBy($viewName, ['codejercicio'], 'exercise');
+        $this->addOrderBy($viewName, ['codejercicio', 'codserie', 'tipodoc'], 'exercise', 2);
         $this->addOrderBy($viewName, ['codserie'], 'serie');
         $this->addOrderBy($viewName, ['numero'], 'number');
 
