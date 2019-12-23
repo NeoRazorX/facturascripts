@@ -64,6 +64,21 @@ class EditUser extends EditController
      */
     private function allowUpdate()
     {
+        if ($this->request->request->get('nick') === $this->user->nick) {
+            if ($this->user->admin && !$this->request->request->get('admin')) {
+                $this->request->request->set('admin',true);
+                $this->toolBox()->i18nLog()->warning('you-cant-revoke-admin-to-yourself');
+            }
+            if (!$this->user->admin && $this->request->request->get('admin')) {
+                $this->request->request->remove('admin');
+                $this->toolBox()->i18nLog()->warning('you-cant-grant-admin-to-yourself');
+            }
+            if ($this->user->enabled && !$this->request->request->get('enabled')) {
+                $this->request->request->set('enabled',true);
+                $this->toolBox()->i18nLog()->warning('you-cant-disable-yourself');
+            }
+        }
+
         if ($this->user->admin) {
             return true;
         }
@@ -107,7 +122,7 @@ class EditUser extends EditController
     {
         $this->permissions->allowUpdate = $this->allowUpdate();
         $result = parent::editAction();
-
+        
         // Are we changing user language?
         if ($result && $this->views['EditUser']->model->nick === $this->user->nick) {
             $this->toolBox()->i18n()->setLang($this->views['EditUser']->model->langcode);

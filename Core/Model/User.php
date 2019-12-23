@@ -140,6 +140,7 @@ class User extends Base\ModelClass
     {
         if ($this->count() === 1) {
             /// prevent delete all users
+            $this->toolBox()->i18nLog()->error('cant-delete-last-user');
             return false;
         }
 

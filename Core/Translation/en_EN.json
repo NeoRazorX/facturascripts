@@ -1035,6 +1035,9 @@
     "yes": "Yes",
     "yesterday": "Yesterday",
     "you-should-change-passwd": "You should change your password",
+    "you-cant-disable-yourself": "You can't disable yourself",
+    "you-cant-grant-admin-to-yourself": "You cannot grant the administrator privilege to yourself",
+    "you-cant-revoke-admin-to-yourself": "You cannot revoke the administrator privilege to yourself",
     "your": "Your",
     "zip-code": "Zip code",
     "zip-error-wrong-structure": "The zip structure is incorrect. It must contain the plugin folder and only one plugin."
