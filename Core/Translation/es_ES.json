@@ -1038,7 +1038,7 @@
     "you-should-change-passwd": "Debería cambiar su contraseña",
     "you-cant-disable-yourself": "No puedes desactivarte a ti mismo",
     "you-cant-grant-admin-to-yourself": "No puedes concederte el privilegio de administrador a ti mismo",
-    "you-cant-revoke-admin-to-yourself": "No puedes quitarse el privilegio de administrador a ti mismo",
+    "you-cant-revoke-admin-to-yourself": "No puedes quitarte el privilegio de administrador a ti mismo",
     "your": "Suyo",
     "zip-code": "Código Postal",
     "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin."
