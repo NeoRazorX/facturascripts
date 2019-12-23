@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Usuario de FacturaScripts.
  *
@@ -132,7 +134,7 @@ class User extends Base\ModelClass
         $this->level = self::DEFAULT_LEVEL;
     }
 
-    /**
+   /**
      * 
      * @return bool
      */
@@ -140,10 +142,28 @@ class User extends Base\ModelClass
     {
         if ($this->count() === 1) {
             /// prevent delete all users
+            $this->toolBox()->i18nLog()->error('cant-delete-last-user');
             return false;
         }
 
         return parent::delete();
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function save()
+    {
+        $admins = count(User::all([new DataBaseWhere('admin', true)]));
+        if (!$this->admin && $admins <= 1) {
+            /// prevent lost admin
+            $this->toolBox()->i18nLog()->error('at-least-one-administrator');
+            return false;
+            
+        }
+
+        return parent::save();
     }
 
     /**
