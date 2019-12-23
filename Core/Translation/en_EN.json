@@ -144,6 +144,7 @@
     "cant-delete-default-serie": "Can't delete default serie",
     "cant-delete-default-tax": "Can't delete default tax",
     "cant-delete-default-warehouse": "Can't delete default warehouse",
+    "cant-delete-last-user": "Can't delete the last user",
     "cant-load-controller": "Can't load controller '%controllerName%'.",
     "cant-modify-reference": "Cann't edit reference.",
     "card": "Card",
