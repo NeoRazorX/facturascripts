@@ -49,9 +49,7 @@
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
             <column name="contact" titleurl="ListProveedor?activetab=ListContacto" order="100">
-                <widget type="select" fieldname="idcontacto" onclick="EditContacto">
-                    <values></values>
-                </widget>
+                <widget type="select" fieldname="idcontacto" onclick="EditContacto" />
             </column>
             <column name="phone" order="110">
                 <widget type="tel" fieldname="telefono1" maxlength="30" icon="fas fa-phone" />
@@ -89,9 +87,7 @@
                 <widget type="text" fieldname="codsubcuenta" maxlength="15" icon="fas fa-balance-scale" />
             </column>
             <column name="vat-regime" numcolumns="3" order="140">
-                <widget type="select" fieldname="regimeniva" required="true">
-                    <values></values>
-                </widget>
+                <widget type="select" fieldname="regimeniva" required="true" />
             </column>
             <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="150">
                 <widget type="select" fieldname="codretencion" onclick="EditRetencion">
@@ -100,7 +96,7 @@
             </column>
         </group>
         <group name="other" title="other-data" numcolumns="12">
-            <column name="create-date" numcolumns="3" order="100">
+            <column name="creation-date" numcolumns="3" order="100">
                 <widget type="date" fieldname="fechaalta" icon="fas fa-calendar-alt" readonly="true" />
             </column>
             <column name="date-of-suspension" numcolumns="3" order="110">

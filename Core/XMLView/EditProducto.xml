@@ -21,7 +21,7 @@
 -->
 <view>
     <columns>
-        <group name="data" numcolumns="12">
+        <group name="main" numcolumns="12">
             <column name="idproducto" display="none" order="90">
                 <widget type="text" fieldname="idproducto" />
             </column>
@@ -30,17 +30,17 @@
             </column>
             <column name="manufacturer" titleurl="ListFabricante" numcolumns="3" order="110">
                 <widget type="select" fieldname="codfabricante" onclick="EditFabricante">
-                    <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
+                    <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="family" titleurl="ListFamilia" numcolumns="3" order="120">
                 <widget type="select" fieldname="codfamilia" onclick="EditFamilia">
-                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="tax" numcolumns="3" order="130">
                 <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
-                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion" />
                 </widget>
             </column>
         </group>
@@ -50,7 +50,7 @@
             </column>
         </group>
         <group name="options" numcolumns="12" valign="bottom">
-            <column name="stock" order="100">
+            <column name="stock" numcolumns="2" order="100">
                 <widget type="number" fieldname="stockfis" readonly="true"/>
             </column>
             <column name="nostock" title="no-stock" order="110">
@@ -72,26 +72,34 @@
                 <widget type="checkbox" fieldname="publico" />
             </column>
         </group>
-        <group name="observations" numcolumns="12">
-            <column name="observations" order="100">
-                <widget type="textarea" fieldname="observaciones" />
+        <group name="accounts" numcolumns="12">
+            <column name="codsubcuentacom" title="subaccount-purchases" display="none" order="100">
+                <widget type="autocomplete" fieldname="codsubcuentacom">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                </widget>
+            </column>
+            <column name="codsubcuentaven" title="subaccount-sales" display="none" order="110">
+                <widget type="autocomplete" fieldname="codsubcuentaven">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                </widget>
+            </column>
+            <column name="codsubcuentairpfcom" title="subaccount-irpf" display="none" order="120">
+                <widget type="autocomplete" fieldname="codsubcuentairpfcom">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                </widget>
             </column>
         </group>
-        <group name="accounts" numcolumns="12">
-            <column name="codsubcuentacom" title="subaccount-purchases" display="none" numcolumns="4" order="100">
-                <widget type="autocomplete" fieldname="codsubcuentacom">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
-                </widget>
+        <group name="observations" numcolumns="9">
+            <column name="observations" numcolumns="12" order="100">
+                <widget type="textarea" fieldname="observaciones" rows="5" />
             </column>
-            <column name="codsubcuentaven" title="subaccount-sales" display="none" numcolumns="4" order="110">
-                <widget type="autocomplete" fieldname="codsubcuentaven">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
-                </widget>
+        </group>
+        <group name="advanced" numcolumns="3" valign="bottom">
+            <column name="creation-date" numcolumns="12" order="100">
+                <widget type="date" fieldname="fechaalta" readonly="true" />
             </column>
-            <column name="codsubcuentairpfcom" title="subaccount-irpf" display="none" numcolumns="4" order="120">
-                <widget type="autocomplete" fieldname="codsubcuentairpfcom">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
-                </widget>
+            <column name="update-time" numcolumns="12" order="110">
+                <widget type="datetime" fieldname="actualizado" readonly="true" />
             </column>
         </group>
     </columns>

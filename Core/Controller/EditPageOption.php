@@ -137,6 +137,10 @@ class EditPageOption extends Controller
             if (!isset($child['level'])) {
                 $group['children'][$key]['level'] = 0;
             }
+
+            if (!isset($child['children'][0]['readonly'])) {
+                $group['children'][$key]['children'][0]['readonly'] = 'false';
+            }
         }
 
         return $group;
@@ -180,7 +184,7 @@ class EditPageOption extends Controller
     }
 
     /**
-     * 
+     *
      */
     protected function loadPageOptions()
     {
@@ -227,9 +231,15 @@ class EditPageOption extends Controller
         $this->checkNickAndID();
         $data = $this->request->request->all();
         foreach ($data as $key => $value) {
-            if (strpos($key, '+')) {
-                $path = explode('+', $key);
-                $this->model->columns[$path[0]]['children'][$path[1]][$path[2]] = $value;
+            if (\strpos($key, '+')) {
+                $path = \explode('+', $key);
+                $item = &$this->model->columns[$path[0]]['children'][$path[1]];
+                if (\in_array('widget', $path)) {
+                    $item['children'][0][$path[3]] = $value;
+                    continue;
+                }
+
+                $item[$path[2]] = $value;
             }
         }
 

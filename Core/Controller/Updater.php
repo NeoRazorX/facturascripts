@@ -181,9 +181,9 @@ class Updater extends Controller
                 break;
 
             case 'post-update':
-                $this->toolBox()->cache()->clear();
                 $this->updaterItems = $this->getUpdateItems();
                 $this->initNewModels();
+                $this->pluginManager->deploy(true, true);
                 break;
 
             case 'register':
@@ -197,7 +197,8 @@ class Updater extends Controller
 
             case 'update':
                 if ($this->updateAction()) {
-                    $this->pluginManager->deploy(true, true);
+                    $this->pluginManager->deploy(true, false);
+                    $this->toolBox()->cache()->clear();
                     $this->toolBox()->i18nLog()->notice('reloading');
                     $this->redirect($this->getClassName() . '?action=post-update', 3);
                 }

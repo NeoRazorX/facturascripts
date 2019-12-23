@@ -78,12 +78,19 @@ class SecuenciaDocumento extends Base\ModelClass
      */
     public $tipodoc;
 
+    /**
+     *
+     * @var bool
+     */
+    public $usarhuecos;
+
     public function clear()
     {
         parent::clear();
         $this->longnumero = 6;
         $this->numero = 1;
         $this->patron = '{EJE}{SERIE}{0NUM}';
+        $this->usarhuecos = false;
     }
 
     /**

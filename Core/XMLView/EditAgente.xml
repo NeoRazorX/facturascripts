@@ -51,7 +51,7 @@
                     <values source="productos" fieldcode="idproducto" fieldtitle="referencia"></values>
                 </widget>
             </column>
-            <column name="create-date" numcolumns="3" order="120">
+            <column name="creation-date" numcolumns="3" order="120">
                 <widget type="date" fieldname="fechaalta" readonly="true" />
             </column>
             <column name="date-of-suspension" numcolumns="3" order="130">

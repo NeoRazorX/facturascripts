@@ -31,6 +31,8 @@ use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 class BusinessDocumentCode
 {
 
+    const GAP_LIMIT = 100;
+
     /**
      * Generates a new identifier for humans from a document.
      *
@@ -39,17 +41,16 @@ class BusinessDocumentCode
     public static function getNewCode(&$document)
     {
         $sequence = static::getSequence($document);
-
         $document->numero = static::getNewNumber($sequence, $document);
         $vars = [
             '{EJE}' => $document->codejercicio,
             '{SERIE}' => $document->codserie,
-            '{0SERIE}' => str_pad($document->codserie, 2, '0', STR_PAD_LEFT),
+            '{0SERIE}' => \str_pad($document->codserie, 2, '0', \STR_PAD_LEFT),
             '{NUM}' => $document->numero,
-            '{0NUM}' => str_pad($document->numero, $sequence->longnumero, '0', STR_PAD_LEFT),
+            '{0NUM}' => \str_pad($document->numero, $sequence->longnumero, '0', \STR_PAD_LEFT),
         ];
 
-        $document->codigo = strtr($sequence->patron, $vars);
+        $document->codigo = \strtr($sequence->patron, $vars);
     }
 
     /**
@@ -59,28 +60,50 @@ class BusinessDocumentCode
      *
      * @return string
      */
-    protected static function getNewNumber(&$sequence, $document)
+    protected static function getNewNumber(&$sequence, &$document)
     {
+        $order = \strtolower(\FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
         $where = [
             new DataBaseWhere('codserie', $sequence->codserie),
             new DataBaseWhere('idempresa', $sequence->idempresa)
         ];
-
         if (!empty($sequence->codejercicio)) {
             $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
         }
 
         /// find maximum number for this sequence data
-        $order = strtolower(\FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
         foreach ($document->all($where, $order, 0, 1) as $lastDoc) {
             $lastNumber = (int) $lastDoc->numero;
             if ($lastNumber >= $sequence->numero) {
-                $sequence->numero = 1 + $lastNumber;
-                $sequence->save();
+                $sequence->numero = $lastNumber + 1;
             }
         }
 
-        return $sequence->numero;
+        /// use gaps?
+        if ($sequence->usarhuecos) {
+            $expectedNumber = (int) $sequence->numero - 1;
+            foreach ($document->all($where, $order, 0, self::GAP_LIMIT) as $lastDoc) {
+                if ($expectedNumber != $lastDoc->numero) {
+                    $document->fecha = $lastDoc->fecha;
+                    $document->hora = $lastDoc->hora;
+                    break;
+                }
+
+                $expectedNumber--;
+            }
+
+            if ($expectedNumber > 0 && $expectedNumber > (int) $sequence->numero - self::GAP_LIMIT - 1) {
+                return (string) $expectedNumber;
+            }
+        }
+
+        $newNumber = $sequence->numero;
+
+        /// update sequence
+        $sequence->numero++;
+        $sequence->save();
+
+        return (string) $newNumber;
     }
 
     /**
@@ -117,6 +140,7 @@ class BusinessDocumentCode
             $selectedSequence->codserie = $document->codserie;
             $selectedSequence->idempresa = $document->idempresa;
             $selectedSequence->tipodoc = $document->modelClassName();
+            $selectedSequence->usarhuecos = ('FacturaCliente' === $document->modelClassName());
             $selectedSequence->save();
         }
 

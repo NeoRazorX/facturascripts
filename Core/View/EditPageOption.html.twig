@@ -143,7 +143,7 @@
     {% if group.title is not empty %}
         <h4 class="text-info">{{ i18n.trans(group.title) }}</h4>
     {% endif %}
-    {% set titleUrlColumn = 4 %}
+    {% set titleUrlColumn = 5 %}
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
@@ -159,9 +159,12 @@
                         <th class="d-inline-block col-1">
                             {{ i18n.trans('level') }}
                         </th>
+                        <th class="d-inline-block col-1">
+                            {{ i18n.trans('readonly') }}
+                        </th>
                     {% endif %}
-                    <th class="d-inline-block col-2">
-                        {{ i18n.trans('columns') }}
+                    <th class="d-inline-block col-1">
+                        {{ i18n.trans('width') }}
                     </th>
                     <th class="d-inline-block col-{{ titleUrlColumn }}">
                         {{ i18n.trans('title-url') }}
@@ -202,8 +205,19 @@
             <td class="d-inline-block col-1">
                 <input type="number" class="form-control" name="{{ masterName ~ 'level' }}" min="0" max="99" step="1" value="{{ field.level }}"/>
             </td>
+            <td class="d-inline-block col-1">
+                {{ simpleSelect(
+                    masterName ~ 'widget' ~ '+' ~ 'readonly',
+                    masterName ~ 'widget' ~ '+' ~ 'readonly',
+                    field['children'][0].readonly,
+                    {'true':i18n.trans('yes'), 'false':i18n.trans('no'), 'dinamic':i18n.trans('auto')},
+                    FALSE,
+                    FALSE,
+                    {})
+                }}
+            </td>
         {% endif %}
-        <td class="d-inline-block col-2">
+        <td class="d-inline-block col-1">
             {{ simpleSelect(
                 masterName ~ 'numcolumns',
                 masterName ~ 'numcolumns',

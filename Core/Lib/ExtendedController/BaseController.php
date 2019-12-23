@@ -105,7 +105,8 @@ abstract class BaseController extends Base\Controller
      */
     public function addButton($viewName, $btnArray)
     {
-        $row = $this->views[$viewName]->getRow('actions');
+        $rowType = isset($btnArray['row']) ? 'footer' : 'actions';
+        $row = $this->views[$viewName]->getRow($rowType);
         if ($row) {
             $row->addButton($btnArray);
         }

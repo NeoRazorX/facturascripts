@@ -71,7 +71,10 @@
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="update-time" display="none" order="240">
+        <column name="creation-date" display="none" order="240">
+            <widget type="text" fieldname="fechaalta" />
+        </column>
+        <column name="update-time" display="none" order="250">
             <widget type="datetime" fieldname="actualizado" />
         </column>
     </columns>

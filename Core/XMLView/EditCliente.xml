@@ -45,9 +45,7 @@
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
             <column name="billing-address" order="100">
-                <widget type="select" fieldname="idcontactofact">
-                    <values></values>
-                </widget>
+                <widget type="select" fieldname="idcontactofact" onclick="EditContacto" />
             </column>
             <column name="phone" order="110">
                 <widget type="text" fieldname="telefono1" maxlength="30" icon="fas fa-phone" />
@@ -62,9 +60,7 @@
                 <widget type="email" fieldname="email" maxlength="100" icon="fas fa-envelope" />
             </column>
             <column name="shipping-address" order="150">
-                <widget type="select" fieldname="idcontactoenv">
-                    <values></values>
-                </widget>
+                <widget type="select" fieldname="idcontactoenv" onclick="EditContacto" />
             </column>
             <column name="website" display="none" order="160">
                 <widget type="link" fieldname="web" maxlength="100" />
@@ -106,9 +102,7 @@
                 <widget type="number" fieldname="riesgomax" icon="fas fa-funnel-dollar" />
             </column>
             <column name="vat-regime" numcolumns="3" order="180">
-                <widget type="select" fieldname="regimeniva" required="true">
-                    <values></values>
-                </widget>
+                <widget type="select" fieldname="regimeniva" required="true" />
             </column>
             <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="180">
                 <widget type="select" fieldname="codretencion" onclick="EditRetencion">
@@ -117,7 +111,7 @@
             </column>
         </group>
         <group name="other" title="other-data" numcolumns="12">
-            <column name="create-date" numcolumns="3" order="100">
+            <column name="creation-date" numcolumns="3" order="100">
                 <widget type="date" fieldname="fechaalta" icon="fas fa-calendar-alt" readonly="true" />
             </column>
             <column name="date-of-suspension" numcolumns="3" order="110">
