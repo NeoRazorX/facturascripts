@@ -175,7 +175,7 @@ class BaseWidget extends VisualItem
 
     /**
      * Set custom fixed value to widget
-     *
+     * 
      * @param mixed $value
      */
     public function setCustomValue($value)
@@ -190,10 +190,10 @@ class BaseWidget extends VisualItem
      *
      * @return string
      */
-    public function tableCell($model, $display = 'left', $class = '')
+    public function tableCell($model, $display = 'left')
     {
         $this->setValue($model);
-        $class = 'text-' . $display . rtrim(' ' . $class);
+        $class = 'text-' . $display;
         return '<td class="' . $this->tableCellClass($class) . '">' . $this->onclickHtml($this->show()) . '</td>';
     }
 
@@ -264,7 +264,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     *
+     * 
      * @return bool
      */
     protected function readonly()
