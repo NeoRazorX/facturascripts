@@ -19,7 +19,6 @@
 #}
 {% set currentView = fsc.getCurrentView() %}
 {% set formName = 'form' ~ currentView.getViewName() %}
-{% set tableClass = fsc.toolBox().appSettings().get('default', 'item_height') %}
 
 <script type="text/javascript">
     var listViewDeleteCancel = "{{ i18n.trans('cancel') }}";
@@ -93,7 +92,8 @@
     </div>
     {# -- Table -- #}
     <div class="table-responsive">
-        <table class="table table-hover{% if tableClass == 'small' %} table-sm{% endif %}">
+        {% set tableClass = fsc.toolBox().appSettings().get('default', 'tablesize') == 'small' ? 'table-sm' : '' %}
+        <table class="table table-hover {{ tableClass }}">
             <thead>
                 <tr>
                     {% if currentView.cursor | length > 0 %}
