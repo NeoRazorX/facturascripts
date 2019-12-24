@@ -120,7 +120,7 @@ class ColumnItem extends VisualItem
 
     /**
      * Returns CSS percentage width
-     * 
+     *
      * @return string
      */
     public function htmlWidth()
@@ -158,12 +158,13 @@ class ColumnItem extends VisualItem
     /**
      *
      * @param object $model
+     * @param string $class
      *
      * @return string
      */
-    public function tableCell($model)
+    public function tableCell($model, $class)
     {
-        return $this->hidden() ? '' : $this->widget->tableCell($model, $this->display);
+        return $this->hidden() ? '' : $this->widget->tableCell($model, $this->display, $class);
     }
 
     /**

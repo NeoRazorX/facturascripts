@@ -45,7 +45,7 @@ class WidgetTextarea extends WidgetText
     }
 
     /**
-     * 
+     *
      * @param object $model
      * @param string $title
      * @param string $description
@@ -68,16 +68,17 @@ class WidgetTextarea extends WidgetText
     }
 
     /**
-     * 
+     *
      * @param object $model
      * @param string $display
+     * @param string $class
      *
      * @return string
      */
-    public function tableCell($model, $display = 'left')
+    public function tableCell($model, $display = 'left', $class = '')
     {
         $this->setValue($model);
-        $class = 'text-' . $display;
+        $class = 'text-' . $display . rtrim(' ' . $class);
         $value = $this->show();
         $final = mb_strlen($value) > 60 ? mb_substr($value, 0, 60) . '...' : $value;
 
@@ -85,7 +86,7 @@ class WidgetTextarea extends WidgetText
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $extraClass
      *
