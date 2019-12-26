@@ -37,7 +37,7 @@ class BusinessDocumentGenerator
      * @var array
      */
     public $excludeFields = [
-        'codejercicio', 'codigo', 'dtopor1', 'dtopor2', 'fecha', 'femail',
+        'codejercicio', 'codigo', 'fecha', 'femail',
         'hora', 'idestado', 'neto', 'netosindto', 'numero', 'total',
         'totalirpf', 'totaliva', 'totalrecargo',
     ];
