@@ -45,8 +45,9 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     public function delete($exercise): bool
     {
-        $this->loadNewExercise($exercise);
-        return parent::delete($this->newExercise, Asiento::OPERATION_OPENING);
+        $this->exercise = $exercise;
+        $this->loadNewExercise();
+        return $this->deleteAccountEntry($this->newExercise, Asiento::OPERATION_OPENING);
     }
 
     /**
@@ -55,11 +56,12 @@ class AccountingClosingOpening extends AccountingClosingBase
      * The informed exercise must be the closed exercise.
      *
      * @param Ejercicio $exercise
+     * @param int       $idjournal
      * @return boolean
      */
-    public function exec($exercise): bool
+    public function exec($exercise, $idjournal): bool
     {
-        return $this->delete($exercise) && $this->copyAccounts() && parent::exec($exercise);
+        return $this->delete($exercise) && $this->copyAccounts() && parent::exec($exercise, $idjournal);
     }
 
     /**
@@ -77,9 +79,12 @@ class AccountingClosingOpening extends AccountingClosingBase
                 $subaccount->debe = 0.00;
                 $subaccount->haber = 0.00;
                 $subaccount->codejercicio = $this->newExercise->codejercicio;
-                $subaccount->save();
+                if (!$subaccount->save()) {
+                    return false;
+                }
             }
         }
+        return true;
     }
 
     /**
@@ -122,7 +127,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     protected function getSubAccountsFilter(): string
     {
-        return "AND t2.codsubcuenta BETWEEN ‘1' AND ‘599999999999999'";
+        return "AND t2.codsubcuenta BETWEEN '1' AND '599999999999999'";
     }
 
     /**
@@ -174,31 +179,29 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     private function getSQLCopyAccounts(): string
     {
-        return "SELECT t2.idsubcuenta, t2.codsubcuenta, SUM(t2.debe - t2.haber) AS saldo"
+        return "SELECT t2.idsubcuenta, t2.codsubcuenta, ROUND(SUM(t2.debe - t2.haber), 4) AS saldo"
             . " FROM asientos t1"
             . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento"
             . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
             . " AND NOT EXISTS("
             .       "SELECT 1"
             .         "FROM subcuentas t3"
-            .        "WHERE t3.codsubcuenta = t2.codsubcuenta"
+            .       " WHERE t3.codsubcuenta = t2.codsubcuenta"
             .         " AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
             .        ")"
             . " GROUP BY 1, 2"
-            . "HAVING SUM(t2.debe - t2.haber) <> 0.00";
+            . "HAVING ROUND(SUM(t2.debe - t2.haber), 4) <> 0.0000";
     }
 
     /**
      * Search and load next exercise of indicated exercise.
-     *
-     * @param Ejercicio $exercise
      */
-    private function loadNewExercise($exercise)
+    private function loadNewExercise()
     {
-        $date = date('d-m-Y', strtotime($exercise->fechainicio, '+1 year'));
+        $date = date('d-m-Y', strtotime($this->exercise->fechainicio . ' +1 year'));
 
         $this->newExercise = new Ejercicio();
-        $this->newExercise->idempresa = $exercise->idempresa;
+        $this->newExercise->idempresa = $this->exercise->idempresa;
         $this->newExercise->loadFromDate($date, true, true);
     }
 }

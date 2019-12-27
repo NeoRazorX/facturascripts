@@ -47,7 +47,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
      */
     public function delete($exercise): bool
     {
-        return parent::delete($exercise, Asiento::OPERATION_REGULARIZATION);
+        return $this->deleteAccountEntry($exercise, Asiento::OPERATION_REGULARIZATION);
     }
 
     /**

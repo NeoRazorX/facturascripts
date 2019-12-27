@@ -129,13 +129,12 @@ abstract class AccountingClosingBase
     }
 
     /**
-     * Delete main process.
-     * Delete closing regularization accounting entry from exercise.
+     * Delete accounting entry of type indicated.
      *
      * @param Ejercicio $exercise
      * @param string    $type
      */
-    protected function delete($exercise, $type): bool
+    protected function deleteAccountEntry($exercise, $type): bool
     {
         $where = [
             new DataBaseWhere('codejercicio', $exercise->codejercicio),
@@ -143,10 +142,10 @@ abstract class AccountingClosingBase
         ];
 
         $accountEntry = new Asiento();
-        if (!$accountEntry->loadFromCode('', $where)) {
-            return false;
+        if ($accountEntry->loadFromCode('', $where)) {
+            return $accountEntry->delete();
         }
-        return $accountEntry->delete();
+        return true;
     }
 
     /**
@@ -174,18 +173,18 @@ abstract class AccountingClosingBase
     protected function getSQL(): string
     {
         $fields = 'COALESCE(t1.canal, 0) AS channel,'
-            . "t2.idsubcuenta AS id"
-            . "t2.codsubcuenta AS code"
-            . "SUM(t2.debe) AS debit,"
-            . "SUM(t2.haber) AS credit";
+            . "t2.idsubcuenta AS id,"
+            . "t2.codsubcuenta AS code,"
+            . "ROUND(SUM(t2.debe), 4) AS debit,"
+            . "ROUND(SUM(t2.haber), 4) AS credit";
 
         return "SELECT " . $fields
             . " FROM asientos t1"
             . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento " . $this->getSubAccountsFilter()
             . " WHERE t1.codejercicio = '". $this->exercise->codejercicio . "'"
-            . " AND t1.operacion <> '" . $this->getOperation() . "'"
+            . " AND (t1.operacion IS NULL OR t1.operacion <> '" . $this->getOperation() . "')"
             . " GROUP BY 1, 2, 3"
-            . " HAVING SUM(t2.debe) - SUM(t2.haber) <> 0.00"
+            . " HAVING ROUND(SUM(t2.debe) - SUM(t2.haber), 4) <> 0.0000"
             . " ORDER BY 1, 2, 3";
     }
 

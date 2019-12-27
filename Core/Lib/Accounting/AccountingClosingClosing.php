@@ -37,7 +37,7 @@ class AccountingClosingClosing extends AccountingClosingBase
      */
     public function delete($exercise): bool
     {
-        return parent::delete($exercise, Asiento::OPERATION_CLOSING);
+        return $this->deleteAccountEntry($exercise, Asiento::OPERATION_CLOSING);
     }
 
     /**
@@ -93,7 +93,7 @@ class AccountingClosingClosing extends AccountingClosingBase
      */
     protected function getSubAccountsFilter(): string
     {
-        return "AND t2.codsubcuenta BETWEEN ‘1' AND ‘599999999999999'";
+        return "AND t2.codsubcuenta BETWEEN '1' AND '599999999999999'";
     }
 
     /**
