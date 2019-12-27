@@ -508,7 +508,7 @@
     "invalid-column-lenght": "%column% must have between %min% and %max% characters.",
     "invalid-date": "Invalid date %date%.",
     "invalid-hash-file": "Invalid hash file",
-    "invalid-iban": "Invalid IBAN",
+    "invalid-iban": "Invalid IBAN: %iban%",
     "invoice": "Invoice",
     "invoice-have-rectifying-cant-delete": "The invoice already has a rectifying. Cann't be deleted.",
     "invoice-new-assigned-date": "There are invocies with bigger date (%oldDate%). New assigned date: %newDate%",

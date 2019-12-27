@@ -508,7 +508,7 @@
     "invalid-column-lenght": "%column% ha de tener entre %min% y %max% caracteres.",
     "invalid-date": "Fecha %date% no válida.",
     "invalid-hash-file": "Archivo hash no válido",
-    "invalid-iban": "IBAN no válido",
+    "invalid-iban": "IBAN no válido: %iban%",
     "invoice": "Factura",
     "invoice-have-rectifying-cant-delete": "La factura ya tiene una nota de crédito o débito. No se puede eliminar.",
     "invoice-new-assigned-date": "Ya hay facturas posteriores a la fecha seleccionada (%oldDate%). Nueva fecha asignada: %newDate%",
