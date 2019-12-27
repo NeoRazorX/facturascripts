@@ -89,7 +89,13 @@ function businessDocViewRecalculate() {
         dataType: "json",
         data: data,
         success: function (results) {
-            $("#doc_total").val(results.total);
+            $("#doc_neto").val(results.doc.neto);
+            $("#doc_netosindto").val(results.doc.netosindto);
+            $("#doc_total").val(results.doc.total);
+            $("#doc_total2").val(results.doc.total);
+            $("#doc_totaliva").val(results.doc.totaliva);
+            $("#doc_totalrecargo").val(results.doc.totalrecargo);
+            $("#doc_totalirpf").val(results.doc.totalirpf);
 
             var rowPos = 0;
             results.lines.forEach(function (element) {
@@ -235,7 +241,7 @@ $(document).ready(function () {
         hsTable.render();
     });
 
-    $("#doc_codserie").change(function () {
+    $("#doc_codserie, #doc_dtopor1, #doc_dtopor2").change(function () {
         businessDocViewRecalculate();
     });
 

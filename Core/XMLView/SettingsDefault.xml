@@ -109,7 +109,13 @@
             <column name="item_limit" numcolumns="3" order="110">
                 <widget type="number" fieldname="item_limit" icon="fas fa-list" required="true" />
             </column>
-            <column name="balancegraphic" title="show-balance-graphic" order="120">
+            <column name="table-size" numcolumns="3" order="120">
+                <widget type="select" fieldname="tablesize" icon="fas fa-table" required="true" translate="true">
+                    <values title="big">big</values>
+                    <values title="small">small</values>
+                </widget>
+            </column>
+            <column name="balancegraphic" title="show-balance-graphic" order="130">
                 <widget type="checkbox" fieldname="balancegraphic" />
             </column>
         </group>
