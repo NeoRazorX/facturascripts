@@ -340,11 +340,6 @@ class EditEjercicio extends EditController
             return false;
         }
 
-        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
-            $this->toolBox()->i18nLog()->warning('duplicated-request');
-            return false;
-        }
-
         if (!$this->getModel()->loadFromCode($code)) {
             $this->toolBox()->i18nLog()->error('record-not-found');
             return false;
