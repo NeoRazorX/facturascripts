@@ -87,10 +87,10 @@
                 <widget type="text" fieldname="codejercicio" readonly="true" />
             </column>
             <column name="delete-opening" numcolumns="12">
-                <widget type="check" fieldname="delete-opening" />
+                <widget type="checkbox" fieldname="delete-opening" />
             </column>
             <column name="delete-closing" numcolumns="12">
-                <widget type="check" fieldname="delete-closing" />
+                <widget type="checkbox" fieldname="delete-closing" />
             </column>
         </group>
     </modals>
