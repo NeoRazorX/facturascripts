@@ -23,19 +23,22 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="date" order="100">
+            <column name="user" order="100">
+                <widget type="text" fieldname="nick" icon="fas fa-user-circle" readonly="true" />
+            </column>
+            <column name="date" order="110">
                 <widget type="date" fieldname="fecha" required="true" />
             </column>
-            <column name="hour" order="110">
+            <column name="hour" order="120">
                 <widget type="text" fieldname="hora" icon="fas fa-clock" required="true" />
             </column>
-            <column name="number" order="120">
+            <column name="number" order="130">
                 <widget type="text" fieldname="numero" icon="fas fa-hashtag" readonly="true" />
             </column>
-            <column name="numsupplier" order="130">
+            <column name="numsupplier" order="140">
                 <widget type="text" fieldname="numproveedor" icon="fas fa-hashtag" />
             </column>
-            <column name="email-sent" order="140">
+            <column name="email-sent" order="150">
                 <widget type="date" fieldname="femail" />
             </column>
         </group>
