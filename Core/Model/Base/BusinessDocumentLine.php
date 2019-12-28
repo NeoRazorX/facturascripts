@@ -61,11 +61,18 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public $descripcion;
 
     /**
-     * % off discount.
+     * Percentage of discount.
      *
      * @var float|int
      */
     public $dtopor;
+
+    /**
+     * Percentage of seccond discount.
+     *
+     * @var float|int
+     */
+    public $dtopor2;
 
     /**
      * Primary key.
@@ -170,6 +177,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $this->cantidad = 1.0;
         $this->descripcion = '';
         $this->dtopor = 0.0;
+        $this->dtopor2 = 0.0;
         $this->irpf = 0.0;
         $this->orden = 0;
         $this->pvpsindto = 0.0;
@@ -253,11 +261,17 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         if ('' === $this->codimpuesto) {
             $this->codimpuesto = null;
         }
+        
+        /// calculate total discount
+        $totalDto = 1.0;
+        foreach([$this->dtopor, $this->dtopor2] as $dto) {
+            $totalDto *= 1 - $dto / 100;
+        }
 
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
         $this->pvpsindto = $this->pvpunitario * $this->cantidad;
-        $this->pvptotal = $this->pvpsindto * (100 - $this->dtopor) / 100;
+        $this->pvptotal = $this->pvpsindto * $totalDto;
         $this->referencia = $utils->noHtml($this->referencia);
         return parent::test();
     }

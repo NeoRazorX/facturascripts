@@ -193,7 +193,7 @@ abstract class BankAccount extends ModelClass
             return true;
         }
 
-        $this->toolBox()->i18nLog()->error('invalid-iban');
+        $this->toolBox()->i18nLog()->error('invalid-iban', ['%iban%' => $this->iban]);
         return false;
     }
 }

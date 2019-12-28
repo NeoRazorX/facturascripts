@@ -69,31 +69,42 @@ class BusinessDocumentTools
      * Returns subtotals by tax.
      *
      * @param BusinessDocumentLine[] $lines
+     * @param array                  $discounts
      *
      * @return array
      */
-    public function getSubtotals($lines)
+    public function getSubtotals(array $lines, array $discounts): array
     {
+        /// calculate total discount
+        $totalDto = 1.0;
+        foreach ($discounts as $dto) {
+            $totalDto *= 1 - $dto / 100;
+        }
+
         $irpf = 0.0;
         $subtotals = [];
         $totalIrpf = 0.0;
         foreach ($lines as $line) {
             $codimpuesto = empty($line->codimpuesto) ? $line->iva . '-' . $line->recargo : $line->codimpuesto;
-            if (!array_key_exists($codimpuesto, $subtotals)) {
+            if (!\array_key_exists($codimpuesto, $subtotals)) {
                 $subtotals[$codimpuesto] = [
                     'iva' => $line->iva,
-                    'recargo' => $line->recargo,
                     'irpf' => 0.0,
                     'neto' => 0.0,
+                    'netosindto' => 0.0,
+                    'recargo' => $line->recargo,
                     'totaliva' => 0.0,
-                    'totalrecargo' => 0.0,
                     'totalirpf' => 0.0,
+                    'totalrecargo' => 0.0,
                 ];
             }
 
-            $irpf = max([$irpf, $line->irpf]);
-            $subtotals[$codimpuesto]['neto'] += $line->pvptotal;
-            $totalIrpf += $line->pvptotal * $line->irpf / 100;
+            $pvpTotal = $line->pvptotal * $totalDto;
+            $subtotals[$codimpuesto]['neto'] += $pvpTotal;
+            $subtotals[$codimpuesto]['netosindto'] += $line->pvptotal;
+
+            $irpf = \max([$irpf, $line->irpf]);
+            $totalIrpf += $pvpTotal * $line->irpf / 100;
 
             switch ($line->getTax()->tipo) {
                 case Impuesto::TYPE_FIXED_VALUE:
@@ -102,8 +113,8 @@ class BusinessDocumentTools
                     break;
 
                 default:
-                    $subtotals[$codimpuesto]['totaliva'] += $line->pvptotal * $line->iva / 100;
-                    $subtotals[$codimpuesto]['totalrecargo'] += $line->pvptotal * $line->recargo / 100;
+                    $subtotals[$codimpuesto]['totaliva'] += $pvpTotal * $line->iva / 100;
+                    $subtotals[$codimpuesto]['totalrecargo'] += $pvpTotal * $line->recargo / 100;
                     break;
             }
         }
@@ -117,10 +128,11 @@ class BusinessDocumentTools
 
         /// rounding totals
         foreach ($subtotals as $key => $value) {
-            $subtotals[$key]['neto'] = round($value['neto'], (int) FS_NF0);
-            $subtotals[$key]['totaliva'] = round($value['totaliva'], (int) FS_NF0);
-            $subtotals[$key]['totalrecargo'] = round($value['totalrecargo'], (int) FS_NF0);
-            $subtotals[$key]['totalirpf'] = round($value['totalirpf'], (int) FS_NF0);
+            $subtotals[$key]['neto'] = \round($value['neto'], (int) \FS_NF0);
+            $subtotals[$key]['netosindto'] = \round($value['netosindto'], (int) \FS_NF0);
+            $subtotals[$key]['totaliva'] = \round($value['totaliva'], (int) \FS_NF0);
+            $subtotals[$key]['totalrecargo'] = \round($value['totalrecargo'], (int) \FS_NF0);
+            $subtotals[$key]['totalirpf'] = \round($value['totalirpf'], (int) \FS_NF0);
         }
 
         return $subtotals;
@@ -136,18 +148,19 @@ class BusinessDocumentTools
         $this->clearTotals($doc);
 
         $lines = $doc->getLines();
-        foreach (array_keys($lines) as $key) {
+        foreach (\array_keys($lines) as $key) {
             $this->recalculateLine($lines[$key]);
         }
 
-        foreach ($this->getSubtotals($lines) as $subt) {
+        foreach ($this->getSubtotals($lines, [$doc->dtopor1, $doc->dtopor2]) as $subt) {
             $doc->neto += $subt['neto'];
+            $doc->netosindto += $subt['netosindto'];
             $doc->totaliva += $subt['totaliva'];
             $doc->totalirpf += $subt['totalirpf'];
             $doc->totalrecargo += $subt['totalrecargo'];
         }
 
-        $doc->total = round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0);
+        $doc->total = \round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) \FS_NF0);
 
         /// recalculate commissions
         $this->commissionTools->recalculate($doc, $lines);
@@ -170,20 +183,19 @@ class BusinessDocumentTools
             $lines[] = $this->recalculateFormLine($fLine, $doc);
         }
 
-        foreach ($this->getSubtotals($lines) as $subt) {
+        foreach ($this->getSubtotals($lines, [$doc->dtopor1, $doc->dtopor2]) as $subt) {
             $doc->neto += $subt['neto'];
+            $doc->netosindto += $subt['netosindto'];
             $doc->totaliva += $subt['totaliva'];
             $doc->totalirpf += $subt['totalirpf'];
             $doc->totalrecargo += $subt['totalrecargo'];
         }
 
-        $doc->total = round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) FS_NF0);
-        $json = [
-            'total' => $doc->total,
+        $doc->total = \round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) \FS_NF0);
+        return \json_encode([
+            'doc' => $doc,
             'lines' => $lines,
-        ];
-
-        return json_encode($json);
+        ]);
     }
 
     /**
@@ -197,6 +209,7 @@ class BusinessDocumentTools
         $this->siniva = false;
 
         $doc->neto = 0.0;
+        $doc->netosindto = 0.0;
         $doc->total = 0.0;
         $doc->totaleuros = 0.0;
         $doc->totaliva = 0.0;

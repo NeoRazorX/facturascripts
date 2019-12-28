@@ -142,6 +142,8 @@ abstract class BusinessDocumentController extends PanelController
                     $data['custom'][$field] = $value;
                     break;
 
+                case 'dtopor1':
+                case 'dtopor2':
                 case 'idestado':
                     $data['final'][$field] = $value;
                     break;

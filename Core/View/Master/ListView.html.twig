@@ -93,7 +93,8 @@
         </div>
         {# -- Table -- #}
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            {% set tableClass = fsc.toolBox().appSettings().get('default', 'tablesize') == 'small' ? 'table-sm' : '' %}
+            <table class="table table-hover mb-0 {{ tableClass }}">
                 <thead>
                     <tr>
                         {% if currentView.cursor | length > 0 %}
