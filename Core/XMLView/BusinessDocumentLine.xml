@@ -46,16 +46,19 @@
         <column name="dto" display="right" order="150">
             <widget type="number" fieldname="dtopor" />
         </column>
-        <column name="net" display="right" order="160">
+        <column name="dto-2" display="right" order="160">
+            <widget type="number" fieldname="dtopor2" />
+        </column>
+        <column name="net" display="right" order="170">
             <widget type="money" fieldname="pvptotal" />
         </column>
-        <column name="vat" display="right" order="170">
+        <column name="vat" display="right" order="180">
             <widget type="number" fieldname="iva" />
         </column>
-        <column name="re" display="right" order="180">
+        <column name="re" display="right" order="190">
             <widget type="number" fieldname="recargo" />
         </column>
-        <column name="irpf" display="right" order="190">
+        <column name="irpf" display="right" order="200">
             <widget type="number" fieldname="irpf" />
         </column>
     </columns>

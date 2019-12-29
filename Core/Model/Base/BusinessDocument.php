@@ -85,12 +85,14 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public $codserie;
 
     /**
+     * Percentage of discount.
      *
      * @var float
      */
     public $dtopor1;
 
     /**
+     * Percentage of discount.
      *
      * @var float
      */
@@ -137,6 +139,13 @@ abstract class BusinessDocument extends ModelOnChangeClass
      * @var float|int
      */
     public $neto;
+
+    /**
+     * Sum of the pvptotal of lines. Total of the document before taxes and global discounts.
+     *
+     * @var float|int
+     */
+    public $netosindto;
 
     /**
      * User who created this document. User model.
@@ -255,11 +264,14 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->codalmacen = $appSettings->get('default', 'codalmacen');
         $this->codpago = $appSettings->get('default', 'codpago');
         $this->codserie = $appSettings->get('default', 'codserie');
+        $this->dtopor1 = 0.0;
+        $this->dtopor2 = 0.0;
         $this->fecha = date(self::DATE_STYLE);
         $this->hora = date(self::HOUR_STYLE);
         $this->idempresa = $appSettings->get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
+        $this->netosindto = 0.0;
         $this->total = 0.0;
         $this->totaleuros = 0.0;
         $this->totalirpf = 0.0;
@@ -279,6 +291,8 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
+     * Returns a new document line with the data of the product. Finds product
+     * by reference or barcode.
      *
      * @param string $reference
      *
@@ -289,8 +303,9 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $newLine = $this->getNewLine();
 
         $variant = new Variante();
-        $where = [new DataBaseWhere('referencia', $this->toolBox()->utils()->noHtml($reference))];
-        if ($variant->loadFromCode('', $where)) {
+        $where1 = [new DataBaseWhere('referencia', $this->toolBox()->utils()->noHtml($reference))];
+        $where2 = [new DataBaseWhere('codbarras', $this->toolBox()->utils()->noHtml($reference))];
+        if ($variant->loadFromCode('', $where1) || $variant->loadFromCode('', $where2)) {
             $product = $variant->getProducto();
             $impuesto = $product->getImpuesto();
 
@@ -412,18 +427,30 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $utils = $this->toolBox()->utils();
         $this->observaciones = $utils->noHtml($this->observaciones);
 
-        /**
-         * We use the euro as a bridge currency when adding, compare
-         * or convert amounts in several currencies. For this reason we need
-         * many decimals.
-         */
-        $this->totaleuros = empty($this->tasaconv) ? 0 : round($this->total / $this->tasaconv, 5);
+        /// calculate total discount
+        $totalDto = 1.0;
+        foreach ([$this->dtopor1, $this->dtopor2] as $dto) {
+            $totalDto *= 1 - $dto / 100;
+        }
+
+        /// check net amount
+        if (!$utils->floatcmp($this->neto, $this->netosindto * $totalDto, FS_NF0, true)) {
+            $this->toolBox()->i18nLog()->error('bad-net-amount-error');
+            return false;
+        }
 
         /// check total
         if (!$utils->floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
             $this->toolBox()->i18nLog()->error('bad-total-error');
             return false;
         }
+
+        /**
+         * We use the euro as a bridge currency when adding, compare
+         * or convert amounts in several currencies. For this reason we need
+         * many decimals.
+         */
+        $this->totaleuros = empty($this->tasaconv) ? 0 : round($this->total / $this->tasaconv, 5);
 
         return parent::test();
     }

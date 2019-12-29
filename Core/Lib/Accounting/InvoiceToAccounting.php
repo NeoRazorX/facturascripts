@@ -312,7 +312,7 @@ class InvoiceToAccounting extends AccountingClass
     protected function loadSubtotals(): bool
     {
         $tools = new BusinessDocumentTools();
-        $this->subtotals = $tools->getSubtotals($this->document->getLines());
+        $this->subtotals = $tools->getSubtotals($this->document->getLines(), [$this->document->dtopor1, $this->document->dtopor2]);
         return !empty($this->document->total);
     }
 
