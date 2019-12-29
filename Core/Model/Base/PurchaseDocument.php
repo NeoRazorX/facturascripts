@@ -128,7 +128,7 @@ abstract class PurchaseDocument extends TransformerDocument
         /// supplier model
         $this->codproveedor = $subject->codproveedor;
         $this->nombre = $subject->razonsocial;
-        $this->cifnif = $subject->cifnif;
+        $this->cifnif = $subject->cifnif ?? '';
 
         /// commercial data
         $this->codpago = $subject->codpago ?? $this->codpago;
