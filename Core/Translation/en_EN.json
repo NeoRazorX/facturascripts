@@ -222,7 +222,7 @@
     "create-accounting-entry": "Create Accounting Entry",
     "create-new-record": "Create new record",
     "created": "Created",
-    "created-default-admin-account": "The %nick% user was created with the %pass% password.",
+    "created-default-admin-account": "The %nick% user was created with the %pass% password",
     "creation-date": "Creation date",
     "credit": "Credit",
     "cron-job": "Scheduled Task",
