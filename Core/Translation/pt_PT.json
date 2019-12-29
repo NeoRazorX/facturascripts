@@ -220,7 +220,7 @@
     "create-accounting-entry": "Create Accounting Entry",
     "create-new-record": "Criar novo registro",
     "created": "Created",
-    "created-default-admin-account": "O usuário <b> admin <\/ b> foi criado com a senha <b> admin <\/ b>.",
+    "created-default-admin-account": "O usuário <b> %nick% <\/ b> foi criado com a senha <b> %pass% <\/ b>.",
     "creation-date": "Data de criação",
     "credit": "Credit",
     "cron-job": "cron-job",

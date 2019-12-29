@@ -220,7 +220,7 @@
     "create-accounting-entry": "Crear Asiento Contable",
     "create-new-record": "Crear nuevo registro",
     "created": "Creado",
-    "created-default-admin-account": "Cuenta creada de administrador predeterminado",
+    "created-default-admin-account": "Se ha creado el usuario %nick% con la contraseña %pass%.",
     "creation-date": "Fecha de creación",
     "credit": "abonar",
     "cron-job": "Tarea programada",
