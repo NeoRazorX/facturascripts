@@ -152,35 +152,10 @@ class EditEjercicio extends EditController
         $model = $this->getModel();
         $closing = new ClosingToAcounting();
         if ($closing->exec($model, $data)) {
-            $model->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
-            return $model->save();
+            $this->toolBox()->i18nLog()->notice('closing-acounting-completed');
+            return true;
         }
-
         return false;
-    }
-
-    /**
-     * Load view data procedure
-     *
-     * @param string   $viewName
-     * @param BaseView $view
-     */
-    protected function loadData($viewName, $view)
-    {
-        switch ($viewName) {
-            case 'ListCuenta':
-                $this->loadAccountData($view, 'codcuenta');
-                break;
-
-            case 'ListSubcuenta':
-                $this->loadAccountData($view, 'codsubcuenta');
-                break;
-
-            case 'EditEjercicio':
-                parent::loadData($viewName, $view);
-                $this->addButtonActions();
-                break;
-        }
     }
 
     /**
@@ -305,6 +280,30 @@ class EditEjercicio extends EditController
     }
 
     /**
+     * Load view data procedure
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListCuenta':
+                $this->loadAccountData($view, 'codcuenta');
+                break;
+
+            case 'ListSubcuenta':
+                $this->loadAccountData($view, 'codsubcuenta');
+                break;
+
+            case 'EditEjercicio':
+                parent::loadData($viewName, $view);
+                $this->addButtonActions();
+                break;
+        }
+    }
+
+    /**
      * Re-open closed exercise
      */
     protected function openExercise(): bool
@@ -320,10 +319,9 @@ class EditEjercicio extends EditController
 
         $closing = new ClosingToAcounting();
         if ($closing->delete($model, $deleteClosing, $deleteOpening)) {
-            $model->estado = Ejercicio::EXERCISE_STATUS_OPEN;
-            return $model->save();
+            $this->toolBox()->i18nLog()->notice('opening-acounting-completed');
+            return true;
         }
-
         return false;
     }
 
