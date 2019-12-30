@@ -173,6 +173,21 @@ abstract class AccountingClosingBase
         return $result;
     }
 
+    /**
+     * Get the special operation filter for obtain balance.
+     *
+     * @return string
+     */
+    protected function getOperationFilter(): string
+    {
+        return $this->getOperation();
+    }
+
+    /**
+     * Get Balance SQL sentence
+     *
+     * @return string
+     */
     protected function getSQL(): string
     {
         $fields = 'COALESCE(t1.canal, 0) AS channel,'
@@ -185,7 +200,7 @@ abstract class AccountingClosingBase
             . " FROM asientos t1"
             . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento " . $this->getSubAccountsFilter()
             . " WHERE t1.codejercicio = '". $this->exercise->codejercicio . "'"
-            . " AND (t1.operacion IS NULL OR t1.operacion <> '" . $this->getOperation() . "')"
+            . " AND (t1.operacion IS NULL OR t1.operacion <> '" . $this->getOperationFilter() . "')"
             . " GROUP BY 1, 2, 3"
             . " HAVING ROUND(SUM(t2.debe) - SUM(t2.haber), 4) <> 0.0000"
             . " ORDER BY 1, 2, 3";

@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Dinamic\Lib\Accounting\AccountingCreation;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Subcuenta;
@@ -71,17 +72,11 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     protected function copyAccounts(): bool
     {
+        $accounting = new AccountingCreation();
         $subaccount = new Subcuenta();
         foreach (self::$dataBase->selectLimit($this->getSQLCopyAccounts(), 0) as $value) {
             if ($subaccount->loadFromCode($value['idsubcuenta'])) {
-                $subaccount->idcuenta = null;
-                $subaccount->idsubcuenta = null;
-                $subaccount->debe = 0.00;
-                $subaccount->haber = 0.00;
-                $subaccount->codejercicio = $this->newExercise->codejercicio;
-                if (!$subaccount->save()) {
-                    return false;
-                }
+                $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
             }
         }
         return true;
@@ -116,6 +111,16 @@ class AccountingClosingOpening extends AccountingClosingBase
      * @return string
      */
     protected function getOperation(): string
+    {
+        return Asiento::OPERATION_OPENING;
+    }
+
+    /**
+     * Get the special operation filter for obtain balance.
+     *
+     * @return string
+     */
+    protected function getOperationFilter(): string
     {
         return Asiento::OPERATION_CLOSING;
     }
@@ -179,7 +184,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     private function getSQLCopyAccounts(): string
     {
-        return "SELECT t2.idsubcuenta, t2.codsubcuenta, t2.haber AS debe, t2.debe AS haber"
+        return "SELECT t2.idsubcuenta, t2.codsubcuenta"
             . " FROM asientos t1"
             . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento"
             . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
