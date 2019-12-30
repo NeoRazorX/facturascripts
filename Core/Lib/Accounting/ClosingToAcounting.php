@@ -72,13 +72,19 @@ class ClosingToAcounting
         $this->exercise = $exercise;
         try {
             self::$dataBase->beginTransaction();
-            if ($closing && !($this->deleteRegularization() && $this->deleteClosing())) {
-                return false;
-            }
 
             if ($opening && !$this->deleteOpening()) {
                 return false;
             }
+
+            if ($closing) {
+                if (!$this->deleteClosing() || !$this->deleteRegularization()) {
+                    return false;
+                }
+                $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
+                $exercise->save();
+            }
+
             self::$dataBase->commit();
         } finally {
             $result = !self::$dataBase->inTransaction();
@@ -107,6 +113,8 @@ class ClosingToAcounting
         try {
             self::$dataBase->beginTransaction();
             if ($this->execRegularization() && $this->execClosing() && $this->execOpening()) {
+                $exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
+                $exercise->save();
                 self::$dataBase->commit();
             }
         } finally {
