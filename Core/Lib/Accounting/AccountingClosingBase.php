@@ -142,8 +142,11 @@ abstract class AccountingClosingBase
         ];
 
         $accountEntry = new Asiento();
-        if ($accountEntry->loadFromCode('', $where)) {
-            return $accountEntry->delete();
+        foreach ($accountEntry->all($where) as $row) {
+            $row->setDeleteTest(false);
+            if (!$row->delete()) {
+                return false;
+            }
         }
         return true;
     }
