@@ -117,6 +117,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     protected function getOperation(): string
     {
+        return Asiento::OPERATION_CLOSING;
     }
 
     /**
