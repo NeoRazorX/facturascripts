@@ -179,18 +179,16 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     private function getSQLCopyAccounts(): string
     {
-        return "SELECT t2.idsubcuenta, t2.codsubcuenta, ROUND(SUM(t2.debe - t2.haber), 4) AS saldo"
+        return "SELECT t2.idsubcuenta, t2.codsubcuenta, t2.haber AS debe, t2.debe AS haber"
             . " FROM asientos t1"
             . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento"
             . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
+            .   " AND t1.operacion = '" . Asiento::OPERATION_CLOSING . "'"
             . " AND NOT EXISTS("
-            .       "SELECT 1"
-            .         "FROM subcuentas t3"
+            .       "SELECT 1 FROM subcuentas t3"
             .       " WHERE t3.codsubcuenta = t2.codsubcuenta"
             .         " AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
-            .        ")"
-            . " GROUP BY 1, 2"
-            . "HAVING ROUND(SUM(t2.debe - t2.haber), 4) <> 0.0000";
+            .        ")";
     }
 
     /**
