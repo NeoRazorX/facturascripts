@@ -238,8 +238,7 @@ class Variante extends Base\ModelClass
     public function save()
     {
         if (parent::save()) {
-            $product = $this->getProducto();
-            $product->update();
+            $this->getProducto()->update();
             return true;
         }
 
@@ -298,5 +297,30 @@ class Variante extends Base\ModelClass
 
         /// default
         return empty($this->idproducto) ? $list . 'Producto' : 'EditProducto?code=' . $this->idproducto;
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (parent::saveInsert($values)) {
+            /// set new stock?
+            if ($this->stockfis != 0.0) {
+                $stock = new Stock();
+                $stock->cantidad = $this->stockfis;
+                $stock->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
+                $stock->idproducto = $this->idproducto;
+                $stock->referencia = $this->referencia;
+                $stock->save();
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }
