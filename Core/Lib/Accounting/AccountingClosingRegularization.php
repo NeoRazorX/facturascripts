@@ -121,7 +121,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
         $accounting->exercise = $exercise;
         $this->subAccount = $accounting->getSpecialSubAccount(AccountingAccounts::SPECIAL_PROFIT_LOSS_ACCOUNT);
         if (empty($this->subAccount->idsubcuenta)) {
-            $this->toolBox()->log()->error('subaccount-pyg-not-found');
+            $this->toolBox()->i18nLog()->error('subaccount-pyg-not-found');
             return false;
         }
         return true;
