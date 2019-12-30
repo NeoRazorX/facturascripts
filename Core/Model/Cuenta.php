@@ -89,7 +89,7 @@ class Cuenta extends Base\ModelClass
     public $parent_idcuenta;
 
     /**
-     * 
+     *
      * @return Cuenta[]
      */
     public function getChildren()
@@ -99,7 +99,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return Cuenta
      */
     public function getParent()
@@ -110,7 +110,22 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
+     * @return Cuenta
+     */
+    public function getParentFromCode()
+    {
+        $where = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('codcuenta', $this->parent_codcuenta)
+        ];
+        $parent = new Cuenta();
+        $parent->loadFromCode('', $where);
+        return $parent;
+    }
+
+    /**
+     *
      * @return Subcuenta[]
      */
     public function getSubcuentas()
@@ -152,7 +167,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function primaryDescriptionColumn()
@@ -213,7 +228,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     private function completeParentData()
