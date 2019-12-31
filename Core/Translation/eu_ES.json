@@ -221,7 +221,7 @@
     "create-accounting-entry": "Sortu kontabilitate idazpena",
     "create-new-record": "Sortu erregistro berria",
     "created": "Sortua",
-    "created-default-admin-account": "admin erabiltzailea admin pasahitzaz sortu da.",
+    "created-default-admin-account": "%nick% erabiltzailea %pass% pasahitzaz sortu da",
     "creation-date": "Sortze data",
     "credit": "Hartzeko",
     "cron-job": "cron-job",

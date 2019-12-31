@@ -221,7 +221,7 @@
     "create-accounting-entry": "Create Accounting Entry",
     "create-new-record": "Créer un nouvel enregistrement",
     "created": "Créé",
-    "created-default-admin-account": "L'utilisateur admin a été crée avec le mot de passe admin.",
+    "created-default-admin-account": "L'utilisateur %nick% a été crée avec le mot de passe %pass%",
     "creation-date": "Date de création",
     "credit": "Crédit",
     "cron-job": "cron-job",

@@ -221,7 +221,7 @@
     "create-accounting-entry": "Crear assentament contable",
     "create-new-record": "Crear un nou registre",
     "created": "Creat",
-    "created-default-admin-account": "S'ha creat l'usuari admin en la contrasenya admin.",
+    "created-default-admin-account": "S'ha creat l'usuari %nick% en la contrasenya %pass%",
     "creation-date": "Data de creació",
     "credit": "Crèdit",
     "cron-job": "Tasca programada",
