@@ -60,15 +60,24 @@ class EditUser extends EditController
 
     /**
      * 
-     * @return boolean
+     * @return bool
      */
     private function allowUpdate()
     {
-        if ($this->user->admin) {
+        if ($this->request->request->get('code', '') === $this->user->nick) {
+            /**
+             * Prevent the user from deactivating or becoming an administrator.
+             */
+            if ($this->user->admin != (bool) $this->request->request->get('admin')) {
+                return false;
+            } elseif ($this->user->enabled != (bool) $this->request->request->get('enabled')) {
+                return false;
+            }
+
             return true;
         }
 
-        return $this->user->nick === $this->request->get('code', '');
+        return $this->user->admin || $this->user->nick === $this->request->get('code', '');
     }
 
     /**

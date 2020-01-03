@@ -291,6 +291,8 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
+     * Returns a new document line with the data of the product. Finds product
+     * by reference or barcode.
      *
      * @param string $reference
      *
@@ -301,8 +303,9 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $newLine = $this->getNewLine();
 
         $variant = new Variante();
-        $where = [new DataBaseWhere('referencia', $this->toolBox()->utils()->noHtml($reference))];
-        if ($variant->loadFromCode('', $where)) {
+        $where1 = [new DataBaseWhere('referencia', $this->toolBox()->utils()->noHtml($reference))];
+        $where2 = [new DataBaseWhere('codbarras', $this->toolBox()->utils()->noHtml($reference))];
+        if ($variant->loadFromCode('', $where1) || $variant->loadFromCode('', $where2)) {
             $product = $variant->getProducto();
             $impuesto = $product->getImpuesto();
 

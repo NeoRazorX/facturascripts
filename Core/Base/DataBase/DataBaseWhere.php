@@ -232,7 +232,7 @@ class DataBaseWhere
      */
     private function escapeColumn($column)
     {
-        $exclude = ['.'];
+        $exclude = ['.', 'CAST('];
         foreach ($exclude as $char) {
             if (strpos($column, $char) !== false) {
                 return $column;

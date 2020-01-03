@@ -343,7 +343,7 @@ class BusinessDocumentTools
 
         $newLine->descripcion = Utils::fixHtml($newLine->descripcion);
         $newLine->pvpsindto = $newLine->pvpunitario * $newLine->cantidad;
-        $newLine->pvptotal = $newLine->pvpsindto * (100 - $newLine->dtopor) / 100;
+        $newLine->pvptotal = $newLine->pvpsindto * (100 - $newLine->dtopor) / 100 * (100 - $newLine->dtopor2) / 100;
         $newLine->referencia = Utils::fixHtml($newLine->referencia);
 
         if ($this->siniva) {

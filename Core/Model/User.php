@@ -140,6 +140,7 @@ class User extends Base\ModelClass
     {
         if ($this->count() === 1) {
             /// prevent delete all users
+            $this->toolBox()->i18nLog()->error('cant-delete-last-user');
             return false;
         }
 
@@ -159,10 +160,9 @@ class User extends Base\ModelClass
         new Page();
         new Empresa();
 
-        $this->toolBox()->i18nLog()->notice('created-default-admin-account');
-
         $nick = \defined('FS_INITIAL_USER') ? \FS_INITIAL_USER : 'admin';
         $pass = \defined('FS_INITIAL_PASS') ? \FS_INITIAL_PASS : 'admin';
+        $this->toolBox()->i18nLog()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
             . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT)
             . "',TRUE,TRUE,'1','1','" . \FS_LANG . "','Wizard','99');";
