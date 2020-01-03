@@ -305,7 +305,7 @@ abstract class SalesDocument extends TransformerDocument
     protected function setContact($subject)
     {
         $this->apartado = $subject->apartado;
-        $this->cifnif = $subject->cifnif;
+        $this->cifnif = $subject->cifnif ?? '';
         $this->ciudad = $subject->ciudad;
         $this->codcliente = $subject->codcliente;
         $this->codpais = $subject->codpais;
@@ -326,7 +326,7 @@ abstract class SalesDocument extends TransformerDocument
      */
     protected function setCustomer($subject)
     {
-        $this->cifnif = $subject->cifnif;
+        $this->cifnif = $subject->cifnif ?? '';
         $this->codcliente = $subject->codcliente;
         $this->nombrecliente = $subject->razonsocial;
 

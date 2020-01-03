@@ -37,6 +37,12 @@ abstract class Payment extends ModelClass
 
     /**
      *
+     * @var bool
+     */
+    protected $disableAccountingGeneration = false;
+
+    /**
+     *
      * @var string
      */
     public $fecha;
@@ -89,6 +95,15 @@ abstract class Payment extends ModelClass
 
     /**
      * 
+     * @param bool $value
+     */
+    public function disableAccountingGeneration(bool $value = true)
+    {
+        $this->disableAccountingGeneration = $value;
+    }
+
+    /**
+     * 
      * @return Asiento
      */
     public function getAccountingEntry()
@@ -126,7 +141,7 @@ abstract class Payment extends ModelClass
     public function test()
     {
         if (parent::test()) {
-            if (empty($this->idasiento)) {
+            if (empty($this->idasiento) && !$this->disableAccountingGeneration) {
                 $tool = new PaymentToAccounting();
                 $tool->generate($this);
             }

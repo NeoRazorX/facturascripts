@@ -94,7 +94,7 @@ class Producto extends Base\ModelClass
      * @var string
      */
     public $descripcion;
-    
+
     /**
      * Date on which the product was registered.
      *
@@ -375,6 +375,7 @@ class Producto extends Base\ModelClass
             $variant->idproducto = $this->idproducto;
             $variant->precio = $this->precio;
             $variant->referencia = $this->referencia;
+            $variant->stockfis = $this->stockfis;
             if ($variant->save()) {
                 return true;
             }
