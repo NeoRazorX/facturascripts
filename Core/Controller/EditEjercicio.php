@@ -313,12 +313,14 @@ class EditEjercicio extends EditController
             return false;
         }
 
-        $deleteOpening = $this->request->request->get('delete-opening', false);
-        $deleteClosing = $this->request->request->get('delete-closing', false);
+        $data = [
+            'deleteClosing' => $this->request->request->get('delete-closing', true),
+            'deleteOpening' => $this->request->request->get('delete-opening', false)
+        ];
         $model = $this->getModel();
 
         $closing = new ClosingToAcounting();
-        if ($closing->delete($model, $deleteClosing, $deleteOpening)) {
+        if ($closing->delete($model, $data)) {
             $this->toolBox()->i18nLog()->notice('opening-acounting-completed');
             return true;
         }

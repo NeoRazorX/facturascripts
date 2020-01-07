@@ -67,9 +67,20 @@ class ClosingToAcounting
         }
     }
 
-    public function delete($exercise, $closing = true, $opening = true): bool
+    /**
+     * Execute the delete process, deleting selected entry accounts
+     * and reopening exercise.
+     *
+     * @param Ejercicio $exercise
+     * @param array $data
+     * @return bool
+     */
+    public function delete($exercise, $data): bool
     {
         $this->exercise = $exercise;
+        $closing = $data['deleteClosing'] ?? true;
+        $opening = $data['deleteOpening'] ?? true;
+
         try {
             self::$dataBase->beginTransaction();
 
