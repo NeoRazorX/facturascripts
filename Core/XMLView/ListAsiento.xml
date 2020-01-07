@@ -40,15 +40,18 @@
                 <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
             </widget>
         </column>
-        <column name="accounting-concept" order="140">
+        <column name="channel" order="140">
+            <widget type="number" decimal="0" fieldname="canal" />
+        </column>
+        <column name="accounting-concept" order="150">
             <widget type="text" fieldname="concepto" />
         </column>
-        <column name="amount" display="right" order="150">
+        <column name="amount" display="right" order="160">
             <widget type="money" fieldname="importe">
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="date" display="right" order="160">
+        <column name="date" display="right" order="170">
             <widget type="date" fieldname="fecha" />
         </column>
     </columns>
