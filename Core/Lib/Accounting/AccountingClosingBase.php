@@ -190,13 +190,7 @@ abstract class AccountingClosingBase
      */
     protected function getSQL(): string
     {
-        $fields = 'COALESCE(t1.canal, 0) AS channel,'
-            . "t2.idsubcuenta AS id,"
-            . "t2.codsubcuenta AS code,"
-            . "ROUND(SUM(t2.debe), 4) AS debit,"
-            . "ROUND(SUM(t2.haber), 4) AS credit";
-
-        return "SELECT " . $fields
+        return "SELECT " . $this->getSQLFields()
             . " FROM asientos t1"
             . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento " . $this->getSubAccountsFilter()
             . " WHERE t1.codejercicio = '". $this->exercise->codejercicio . "'"
@@ -204,6 +198,25 @@ abstract class AccountingClosingBase
             . " GROUP BY 1, 2, 3"
             . " HAVING ROUND(SUM(t2.debe) - SUM(t2.haber), 4) <> 0.0000"
             . " ORDER BY 1, 2, 3";
+    }
+
+    /**
+     * Get column fields of balance:
+     * - channel: (int)
+     * - id     : (string) sub-account id
+     * - code   : (string) sub-account code
+     * - debit  : (float)  total debit balance
+     * - credit : (float)  total credit balance
+     *
+     * @return string
+     */
+    protected function getSQLFields(): string
+    {
+        return "COALESCE(t1.canal, 0) AS channel,"
+            . "t2.idsubcuenta AS id,"
+            . "t2.codsubcuenta AS code,"
+            . "ROUND(SUM(t2.debe), 4) AS debit,"
+            . "ROUND(SUM(t2.haber), 4) AS credit";
     }
 
     /**
