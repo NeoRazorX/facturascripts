@@ -126,6 +126,24 @@ class AccountingClosingOpening extends AccountingClosingBase
     }
 
     /**
+     * Get Balance SQL sentence
+     *
+     * @return string
+     */
+    protected function getSQL(): string
+    {
+        return "SELECT " . $this->getSQLFields() . ", t3.idsubcuenta AS id_new"
+            . " FROM asientos t1"
+            . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento " . $this->getSubAccountsFilter()
+            . " INNER JOIN subcuentas t3 ON t3.codsubcuenta = t2.codsubcuenta AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
+            . " WHERE t1.codejercicio = '". $this->exercise->codejercicio . "'"
+            . " AND (t1.operacion IS NULL OR t1.operacion <> '" . $this->getOperationFilter() . "')"
+            . " GROUP BY 1, 2, 3, t3.idsubcuenta"
+            . " HAVING ROUND(SUM(t2.debe) - SUM(t2.haber), 4) <> 0.0000"
+            . " ORDER BY 1, 2, 3";
+    }
+
+    /**
      * Get the sub accounts filter for obtain balance.
      *
      * @return string
@@ -161,7 +179,8 @@ class AccountingClosingOpening extends AccountingClosingBase
     }
 
     /**
-     * Establishes the common data of the entries of the accounting entry
+     * Establishes the common data of the entries of the accounting entry.
+     * Set new exercise data values.
      *
      * @param Partida $line
      * @param array   $data
@@ -169,6 +188,7 @@ class AccountingClosingOpening extends AccountingClosingBase
     protected function setDataLine(&$line, $data)
     {
         parent::setDataLine($line, $data);
+        $line->idsubcuenta = $data['id_new'];
         if ($data['debit'] > $data['credit']) {
             $line->debe = $data['debit'] - $data['credit'];
             return;
