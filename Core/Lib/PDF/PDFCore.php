@@ -343,7 +343,7 @@ abstract class PDFCore extends ExportBase
      */
     protected function removeEmptyCols(&$tableData, &$tableColsTitle, $customEmptyValue = '0')
     {
-        $emptyValues = ['-', $customEmptyValue];
+        $emptyValues = ['-', $customEmptyValue, $customEmptyValue . '%'];
         foreach (array_keys($tableColsTitle) as $key) {
             $remove = true;
             foreach ($tableData as $row) {
