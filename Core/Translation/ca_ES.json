@@ -459,6 +459,8 @@
     "generated-supplier-delivery-notes": "%quantity% albarans de compra generats.",
     "generated-supplier-estimations": "%quantity% estimacions de proveïdors generats.",
     "generated-supplier-orders": "%quantity% comandes de proveïdor generats.",
+    "global-dto": "global-dto",
+    "global-dto-2": "global-dto-2",
     "greater-than": "Més gran que",
     "group": "Grup",
     "group-by-day": "Agrupar per dia",

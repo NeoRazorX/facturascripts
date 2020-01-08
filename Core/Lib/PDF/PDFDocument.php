@@ -273,8 +273,8 @@ abstract class PDFDocument extends PDFCore
         $headers = [
             'currency' => $this->i18n->trans('currency'),
             'subtotal' => $this->i18n->trans('subtotal'),
-            'dto' => $this->i18n->trans('dto'),
-            'dto-2' => $this->i18n->trans('dto-2'),
+            'dto' => $this->i18n->trans('global-dto'),
+            'dto-2' => $this->i18n->trans('global-dto-2'),
             'net' => $this->i18n->trans('net'),
             'taxes' => $this->i18n->trans('taxes'),
             'totalSurcharge' => $this->i18n->trans('surcharge'),
@@ -323,7 +323,7 @@ abstract class PDFDocument extends PDFCore
             'taxbase' => $this->i18n->trans('tax-base'),
             'taxp' => $this->i18n->trans('vat'),
             'taxamount' => $this->i18n->trans('amount'),
-            'taxsurchargep' => $this->i18n->trans('surcharge'),
+            'taxsurchargep' => $this->i18n->trans('re'),
             'taxsurcharge' => $this->i18n->trans('amount'),
         ];
         $taxRows = $this->getTaxesRows($model);

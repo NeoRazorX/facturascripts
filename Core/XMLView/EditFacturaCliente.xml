@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,9 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="user" order="100">
-                <widget type="text" fieldname="nick" icon="fas fa-user-circle" readonly="true" />
+                <widget type="select" fieldname="nick" readonly="true">
+                    <values source="users" fieldcode="nick" />
+                </widget>
             </column>
             <column name="date" order="110">
                 <widget type="date" fieldname="fecha" required="true" />
@@ -42,9 +44,7 @@
         </group>
         <group name="billingaddr" title="billing-address" icon="fas fa-file-invoice" numcolumns="12">
             <column name="billingaddr" title="billing-address" numcolumns="2" order="100">
-                <widget type="select" fieldname="idcontactofact" onclick="EditContacto" required="true">
-                    <values></values>
-                </widget>
+                <widget type="select" fieldname="idcontactofact" onclick="EditContacto" required="true"/>
             </column>
             <column name="customer" title="name-or-business-name" numcolumns="3" order="110">
                 <widget type="text" fieldname="nombrecliente" maxlength="100" required="true" />
@@ -69,26 +69,24 @@
             </column>
             <column name="country" titleurl="ListPais" numcolumns="2" order="170">
                 <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
-                    <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
+                    <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
                 </widget>
             </column>
         </group>
         <group name="shipaddresses" title="shipping-address" icon="fas fa-truck" numcolumns="4">
             <column name="shippingaddr" title="shipping-address" order="100">
-                <widget type="select" fieldname="idcontactoenv" onclick="EditContacto">
-                    <values></values>
-                </widget>
+                <widget type="select" fieldname="idcontactoenv" onclick="EditContacto" />
             </column>
         </group>
         <group name="payment-method" title="payment-method" icon="fas fa-dollar-sign" numcolumns="8">
             <column name="payment" title="method-payment" order="100">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago" required="true">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="currency" order="110">
                 <widget type="select" fieldname="coddivisa" onclick="EditDivisa" required="true">
-                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
+                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="conversion-rate" order="120">
@@ -98,7 +96,7 @@
         <group name="commission" title="commission" icon="fas fa-user-tie" numcolumns="4">
             <column name="agent" titleurl="ListAgente" numcolumns="6" order="100">
                 <widget type="select" fieldname="codagente" onclick="EditAgente">
-                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="commission" numcolumns="6" order="110">
@@ -108,17 +106,17 @@
         <group name="attributes" title="attributes" icon="fas fa-database" numcolumns="8">
             <column name="company" order="100">
                 <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true" readonly="dinamic">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
             <column name="warehouse" order="110">
                 <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true" readonly="dinamic">
-                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="serie" order="120">
                 <widget type="select" fieldname="codserie" onclick="EditSerie" required="true">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
                 </widget>
             </column>
         </group>

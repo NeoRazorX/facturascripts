@@ -459,6 +459,8 @@
     "generated-supplier-delivery-notes": "%quantity% generated supplier delivery notes.",
     "generated-supplier-estimations": "%quantity% generated supplier estimations.",
     "generated-supplier-orders": "%quantity% generated supplier orders.",
+    "global-dto": "Global discount",
+    "global-dto-2": "Global discount 2",
     "greater-than": "Greater than",
     "group": "Group",
     "group-by-day": "Group by day",
