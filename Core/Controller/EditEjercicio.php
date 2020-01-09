@@ -156,7 +156,7 @@ class EditEjercicio extends EditController
         $model = $this->getModel();
         $closing = new ClosingToAcounting();
         if ($closing->exec($model, $data)) {
-            $this->toolBox()->i18nLog()->notice('closing-acounting-completed');
+            $this->toolBox()->i18nLog()->notice('closing-accounting-completed');
             return true;
         }
         return false;
