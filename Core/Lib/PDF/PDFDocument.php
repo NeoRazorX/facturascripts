@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,6 +33,7 @@ use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Pais;
+use FacturaScripts\Dinamic\Model\ReciboCliente;
 
 /**
  * PDF document data.
@@ -69,30 +70,29 @@ abstract class PDFDocument extends PDFCore
 
     /**
      * 
-     * @param string $codpago
-     * @param string $codcliente
+     * @param ReciboCliente $receipt
      *
      * @return string
      */
-    protected function getBankData($codpago, $codcliente): string
+    protected function getBankData($receipt): string
     {
         $paymentMethod = new FormaPago();
-        if (!$paymentMethod->loadFromCode($codpago)) {
+        if (!$paymentMethod->loadFromCode($receipt->codpago)) {
             return '-';
         }
 
         $cuentaBancoCli = new CuentaBancoCliente();
-        $where = [new DataBaseWhere('codcliente', $codcliente)];
+        $where = [new DataBaseWhere('codcliente', $receipt->codcliente)];
         if ($paymentMethod->domiciliado && $cuentaBancoCli->loadFromCode('', $where)) {
-            return $cuentaBancoCli->getIban(true);
+            return $paymentMethod->descripcion . ' : ' . $cuentaBancoCli->getIban(true);
         }
 
         $cuentaBanco = new CuentaBanco();
         if (!empty($paymentMethod->codcuentabanco) && $cuentaBanco->loadFromCode($paymentMethod->codcuentabanco)) {
-            return $cuentaBanco->getIban(true);
+            return $paymentMethod->descripcion . ' : ' . $cuentaBanco->getIban(true);
         }
 
-        return '-';
+        return $paymentMethod->descripcion;
     }
 
     /**
@@ -135,9 +135,15 @@ abstract class PDFDocument extends PDFCore
      */
     protected function getTaxesRows($model)
     {
+        /// calculate total discount
+        $totalDto = 1.0;
+        foreach ([$model->dtopor1, $model->dtopor2] as $dto) {
+            $totalDto *= 1 - $dto / 100;
+        }
+
         $subtotals = [];
         foreach ($model->getLines() as $line) {
-            if (empty($line->iva) && empty($line->recargo)) {
+            if (empty($line->pvptotal)) {
                 continue;
             }
 
@@ -146,9 +152,9 @@ abstract class PDFDocument extends PDFCore
                 $subtotals[$key] = [
                     'tax' => $key,
                     'taxbase' => 0,
-                    'taxp' => $line->iva,
+                    'taxp' => $line->iva . '%',
                     'taxamount' => 0,
-                    'taxsurchargep' => $line->recargo,
+                    'taxsurchargep' => $line->recargo . '%',
                     'taxsurcharge' => 0,
                 ];
 
@@ -158,9 +164,9 @@ abstract class PDFDocument extends PDFCore
                 }
             }
 
-            $subtotals[$key]['taxbase'] += $line->pvptotal;
-            $subtotals[$key]['taxamount'] += $line->pvptotal * $line->iva / 100;
-            $subtotals[$key]['taxsurcharge'] += $line->pvptotal * $line->recargo / 100;
+            $subtotals[$key]['taxbase'] += $line->pvptotal * $totalDto;
+            $subtotals[$key]['taxamount'] += $line->pvptotal * $totalDto * $line->iva / 100;
+            $subtotals[$key]['taxsurcharge'] += $line->pvptotal * $totalDto * $line->recargo / 100;
         }
 
         /// irpf
@@ -181,8 +187,8 @@ abstract class PDFDocument extends PDFCore
                 ];
             }
 
-            $subtotals[$key]['taxbase'] += $line->pvptotal;
-            $subtotals[$key]['taxamount'] -= $line->pvptotal * $line->irpf / 100;
+            $subtotals[$key]['taxbase'] += $line->pvptotal * $totalDto;
+            $subtotals[$key]['taxamount'] -= $line->pvptotal * $totalDto * $line->irpf / 100;
         }
 
         /// round
@@ -206,9 +212,10 @@ abstract class PDFDocument extends PDFCore
             'reference' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description'),
             'quantity' => $this->i18n->trans('quantity'),
             'price' => $this->i18n->trans('price'),
-            'discount' => $this->i18n->trans('discount'),
-            'tax' => $this->i18n->trans('tax'),
-            'surcharge' => $this->i18n->trans('surcharge'),
+            'dto' => $this->i18n->trans('dto'),
+            'dto-2' => $this->i18n->trans('dto-2'),
+            'tax' => $this->i18n->trans('vat'),
+            'surcharge' => $this->i18n->trans('re'),
             'irpf' => $this->i18n->trans('irpf'),
             'total' => $this->i18n->trans('total'),
         ];
@@ -218,10 +225,11 @@ abstract class PDFDocument extends PDFCore
                 'reference' => empty($line->referencia) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->referencia . " - " . $line->descripcion),
                 'quantity' => $this->numberTools->format($line->cantidad),
                 'price' => $this->numberTools->format($line->pvpunitario),
-                'discount' => $this->numberTools->format($line->dtopor),
-                'tax' => $this->numberTools->format($line->iva),
-                'surcharge' => $this->numberTools->format($line->recargo),
-                'irpf' => $this->numberTools->format($line->irpf),
+                'dto' => $this->numberTools->format($line->dtopor) . '%',
+                'dto-2' => $this->numberTools->format($line->dtopor2) . '%',
+                'tax' => $this->numberTools->format($line->iva) . '%',
+                'surcharge' => $this->numberTools->format($line->recargo) . '%',
+                'irpf' => $this->numberTools->format($line->irpf) . '%',
                 'total' => $this->numberTools->format($line->pvptotal),
             ];
         }
@@ -231,7 +239,8 @@ abstract class PDFDocument extends PDFCore
             'cols' => [
                 'quantity' => ['justification' => 'right'],
                 'price' => ['justification' => 'right'],
-                'discount' => ['justification' => 'right'],
+                'dto' => ['justification' => 'right'],
+                'dto-2' => ['justification' => 'right'],
                 'tax' => ['justification' => 'right'],
                 'surcharge' => ['justification' => 'right'],
                 'irpf' => ['justification' => 'right'],
@@ -260,13 +269,61 @@ abstract class PDFDocument extends PDFCore
 
         $this->newPage();
 
+        /// subtotals
+        $headers = [
+            'currency' => $this->i18n->trans('currency'),
+            'subtotal' => $this->i18n->trans('subtotal'),
+            'dto' => $this->i18n->trans('global-dto'),
+            'dto-2' => $this->i18n->trans('global-dto-2'),
+            'net' => $this->i18n->trans('net'),
+            'taxes' => $this->i18n->trans('taxes'),
+            'totalSurcharge' => $this->i18n->trans('surcharge'),
+            'totalIrpf' => $this->i18n->trans('irpf'),
+            'total' => $this->i18n->trans('total'),
+        ];
+        $rows = [
+            [
+                'currency' => $this->getDivisaName($model->coddivisa),
+                'subtotal' => $this->numberTools->format($model->netosindto != $model->neto ? $model->netosindto : 0),
+                'dto' => $this->numberTools->format($model->dtopor1) . '%',
+                'dto-2' => $this->numberTools->format($model->dtopor2) . '%',
+                'net' => $this->numberTools->format($model->neto),
+                'taxes' => $this->numberTools->format($model->totaliva),
+                'totalSurcharge' => $this->numberTools->format($model->totalrecargo),
+                'totalIrpf' => $this->numberTools->format(0 - $model->totalirpf),
+                'total' => $this->numberTools->format($model->total),
+            ]
+        ];
+        $this->removeEmptyCols($rows, $headers, $this->numberTools->format(0));
+        $tableOptions = [
+            'cols' => [
+                'subtotal' => ['justification' => 'right'],
+                'dto' => ['justification' => 'right'],
+                'dto-2' => ['justification' => 'right'],
+                'net' => ['justification' => 'right'],
+                'taxes' => ['justification' => 'right'],
+                'totalSurcharge' => ['justification' => 'right'],
+                'totalIrpf' => ['justification' => 'right'],
+                'total' => ['justification' => 'right'],
+            ],
+            'shadeCol' => [0.95, 0.95, 0.95],
+            'shadeHeadingCol' => [0.95, 0.95, 0.95],
+            'width' => $this->tableWidth
+        ];
+        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+
+        /// receipts
+        if ($model->modelClassName() === 'FacturaCliente') {
+            $this->insertInvoiceReceipts($model);
+        }
+
         /// taxes
         $taxHeaders = [
             'tax' => $this->i18n->trans('tax'),
             'taxbase' => $this->i18n->trans('tax-base'),
             'taxp' => $this->i18n->trans('vat'),
             'taxamount' => $this->i18n->trans('amount'),
-            'taxsurchargep' => $this->i18n->trans('surcharge'),
+            'taxsurchargep' => $this->i18n->trans('re'),
             'taxsurcharge' => $this->i18n->trans('amount'),
         ];
         $taxRows = $this->getTaxesRows($model);
@@ -285,47 +342,8 @@ abstract class PDFDocument extends PDFCore
         ];
         if (count($taxRows) > 1) {
             $this->removeEmptyCols($taxRows, $taxHeaders, $this->numberTools->format(0));
-            $this->pdf->ezTable($taxRows, $taxHeaders, '', $taxTableOptions);
             $this->pdf->ezText("\n");
-        }
-
-        /// subtotals
-        $headers = [
-            'currency' => $this->i18n->trans('currency'),
-            'net' => $this->i18n->trans('net'),
-            'taxes' => $this->i18n->trans('taxes'),
-            'totalSurcharge' => $this->i18n->trans('surcharge'),
-            'totalIrpf' => $this->i18n->trans('irpf'),
-            'total' => $this->i18n->trans('total'),
-        ];
-        $rows = [
-            [
-                'currency' => $this->getDivisaName($model->coddivisa),
-                'net' => $this->numberTools->format($model->neto),
-                'taxes' => $this->numberTools->format($model->totaliva),
-                'totalSurcharge' => $this->numberTools->format($model->totalrecargo),
-                'totalIrpf' => $this->numberTools->format(0 - $model->totalirpf),
-                'total' => $this->numberTools->format($model->total),
-            ]
-        ];
-        $this->removeEmptyCols($rows, $headers, $this->numberTools->format(0));
-        $tableOptions = [
-            'cols' => [
-                'net' => ['justification' => 'right'],
-                'taxes' => ['justification' => 'right'],
-                'totalSurcharge' => ['justification' => 'right'],
-                'totalIrpf' => ['justification' => 'right'],
-                'total' => ['justification' => 'right'],
-            ],
-            'shadeCol' => [0.95, 0.95, 0.95],
-            'shadeHeadingCol' => [0.95, 0.95, 0.95],
-            'width' => $this->tableWidth
-        ];
-        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
-
-        /// receipts
-        if ($model->modelClassName() === 'FacturaCliente') {
-            $this->insertInvoiceReceipts($model);
+            $this->pdf->ezTable($taxRows, $taxHeaders, $this->i18n->trans('taxes'), $taxTableOptions);
         }
 
         if (!empty($this->format->texto)) {
@@ -511,7 +529,7 @@ abstract class PDFDocument extends PDFCore
 
             $headers = [
                 'numero' => $this->i18n->trans('receipt'),
-                'bank' => $this->i18n->trans('bank-account'),
+                'bank' => $this->i18n->trans('payment-method'),
                 'importe' => $this->i18n->trans('amount'),
                 'vencimiento' => $this->i18n->trans('expiration')
             ];
@@ -519,7 +537,7 @@ abstract class PDFDocument extends PDFCore
             foreach ($receipts as $receipt) {
                 $rows[] = [
                     'numero' => $receipt->numero,
-                    'bank' => $this->getBankData($receipt->codpago, $receipt->codcliente),
+                    'bank' => $this->getBankData($receipt),
                     'importe' => $this->numberTools->format($receipt->importe),
                     'vencimiento' => $receipt->pagado ? $this->i18n->trans('paid') : $receipt->vencimiento
                 ];
@@ -535,7 +553,7 @@ abstract class PDFDocument extends PDFCore
                 'shadeHeadingCol' => [0.95, 0.95, 0.95],
                 'width' => $this->tableWidth
             ];
-            $this->pdf->ezTable($rows, $headers, $this->i18n->trans('payment-method'), $tableOptions);
+            $this->pdf->ezTable($rows, $headers, '', $tableOptions);
         }
     }
 }

@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -134,12 +134,16 @@
             {{ _self.customSelect('doc_codoperaciondoc', 'codoperaciondoc', currentView.model.codoperaciondoc, currentView.getSelectValues('BusinessDocTypeOperation'), true, i18n.trans('doc-operation')) }}
         {% endif %}
         {{ _self.customInput('doc_netosindto', 'netosindto', currentView.model.netosindto, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('subtotal')) }}
-        {{ _self.customInput('doc_dtopor1', 'dtopor1', currentView.model.dtopor1, 'number', '', {class: 'form-control'}, i18n.trans('dto')) }}
-        {{ _self.customInput('doc_dtopor2', 'dtopor2', currentView.model.dtopor2, 'number', '', {class: 'form-control'}, i18n.trans('dto-2')) }}
+        {{ _self.customInput('doc_dtopor1', 'dtopor1', currentView.model.dtopor1, 'number', '', {class: 'form-control'}, i18n.trans('global-dto')) }}
+        {{ _self.customInput('doc_dtopor2', 'dtopor2', currentView.model.dtopor2, 'number', '', {class: 'form-control'}, i18n.trans('global-dto-2')) }}
         {{ _self.customInput('doc_neto', 'neto', currentView.model.neto, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('net')) }}
         {{ _self.customInput('doc_totaliva', 'totaliva', currentView.model.totaliva, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('vat')) }}
-        {{ _self.customInput('doc_totalrecargo', 'totalrecargo', currentView.model.totalrecargo, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('surcharge')) }}
-        {{ _self.customInput('doc_totalirpf', 'totalirpf', currentView.model.totalirpf, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('irpf')) }}
+        {% if currentView.model.totalrecargo != 0 %}
+            {{ _self.customInput('doc_totalrecargo', 'totalrecargo', currentView.model.totalrecargo, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('re')) }}
+        {% endif %}
+        {% if currentView.model.totalirpf != 0 %}
+            {{ _self.customInput('doc_totalirpf', 'totalirpf', currentView.model.totalirpf, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('irpf')) }}
+        {% endif %}
         {{ _self.customInput('doc_total2', 'total', currentView.model.total, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('total')) }}
     </div>
     <div class="form-row mb-2">
