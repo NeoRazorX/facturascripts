@@ -59,6 +59,7 @@
         <row type="status">
             <option color="info" fieldname="documento">neq:</option>
             <option color="warning" fieldname="editable">0</option>
+            <option color="success" fieldname="operacion">notnull:</option>
         </row>
     </rows>
     <modals>

@@ -134,6 +134,22 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
+     * Get account from subaccount data
+     *
+     * @return Cuenta
+     */
+    public function getAccount()
+    {
+        $where = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('codcuenta', $this->codcuenta),
+        ];
+        $account = new Cuenta();
+        $account->loadFromCode('', $where);
+        return $account;
+    }
+
+    /**
      *
      * @return string
      */
@@ -150,23 +166,17 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     * Load de ID for account
+     * Get ID for account of subaccount
      *
      * @return int
      */
     public function getIdAccount()
     {
-        $where = [
-            new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('codcuenta', $this->codcuenta),
-        ];
-        $account = new Cuenta();
-        $account->loadFromCode('', $where);
-        return $account->idcuenta;
+        return $this->getAccount()->idcuenta;
     }
 
     /**
-     * Load de ID for subAccount
+     * Get ID for subAccount
      *
      * @return int
      */
