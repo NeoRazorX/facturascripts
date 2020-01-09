@@ -19,10 +19,12 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Accounting\ClosingToAcounting;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanExport;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
+use FacturaScripts\Dinamic\Model\Ejercicio;
 
 /**
  * Controller to edit a single item from the Ejercicio model
@@ -59,7 +61,43 @@ class EditEjercicio extends EditController
     }
 
     /**
-     * 
+     *
+     */
+    protected function addButtonActions()
+    {
+        $status = $this->getViewModelValue('EditEjercicio', 'estado');
+        switch ($status) {
+            case Ejercicio::EXERCISE_STATUS_OPEN:
+                $newButton = [
+                    'row' => 'footer-actions',
+                    'action' => 'close-exercise',
+                    'color' => 'danger',
+                    'icon' => 'fas fa-calendar-check',
+                    'label' => 'close-exercise',
+                    'type' => 'modal',
+                ];
+                $this->addButton('EditEjercicio', $newButton);
+
+                $model = $this->views['EditEjercicio']->model;
+                $model->copysubaccounts = true;
+                break;
+
+            case Ejercicio::EXERCISE_STATUS_CLOSED:
+                $newButton = [
+                    'row' => 'footer-actions',
+                    'action' => 'open-exercise',
+                    'color' => 'warning',
+                    'icon' => 'fas fa-calendar-plus',
+                    'label' => 'open-exercise',
+                    'type' => 'modal',
+                ];
+                $this->addButton('EditEjercicio', $newButton);
+                break;
+        }
+    }
+
+    /**
+     *
      * @param string $viewName
      */
     protected function createAccountingView($viewName = 'ListCuenta')
@@ -74,7 +112,7 @@ class EditEjercicio extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createSubAccountingView($viewName = 'ListSubcuenta')
@@ -99,32 +137,33 @@ class EditEjercicio extends EditController
     }
 
     /**
-     * Load view data procedure
      *
-     * @param string   $viewName
-     * @param BaseView $view
+     * @return bool
      */
-    protected function loadData($viewName, $view)
+    protected function closeExercise(): bool
     {
-        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
-        $where = [new DataBaseWhere('codejercicio', $codejercicio)];
-
-        switch ($viewName) {
-            case 'ListCuenta':
-                $view->loadData(false, $where, ['codcuenta' => 'ASC']);
-                break;
-
-            case 'ListSubcuenta':
-                $view->loadData(false, $where, ['codsubcuenta' => 'ASC']);
-                break;
-
-            default:
-                parent::loadData($viewName, $view);
+        $code = $this->request->request->get('codejercicio');
+        if (!$this->checkAndLoad($code)) {
+            return false;
         }
+
+        $data = [
+            'journalClosing' => $this->request->request->get('iddiario-closing'),
+            'journalOpening' => $this->request->request->get('iddiario-opening'),
+            'copySubAccounts' => $this->request->request->get('copysubaccounts')
+        ];
+
+        $model = $this->getModel();
+        $closing = new ClosingToAcounting();
+        if ($closing->exec($model, $data)) {
+            $this->toolBox()->i18nLog()->notice('closing-accounting-completed');
+            return true;
+        }
+        return false;
     }
 
     /**
-     * 
+     *
      * @param string $action
      *
      * @return bool
@@ -138,6 +177,14 @@ class EditEjercicio extends EditController
             case 'import-accounting':
                 return $this->importAccountingPlan();
 
+            case 'open-exercise':
+                $this->openExercise();
+                return true;
+
+            case 'close-exercise':
+                $this->closeExercise();
+                return true;
+
             default:
                 return parent::execPreviousAction($action);
         }
@@ -145,7 +192,7 @@ class EditEjercicio extends EditController
 
     /**
      * Export AccountingPlan to CSV file.
-     * 
+     *
      * @return bool
      */
     protected function exportAccountingPlan()
@@ -212,7 +259,7 @@ class EditEjercicio extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $codejercicio
      *
      * @return bool
@@ -234,5 +281,86 @@ class EditEjercicio extends EditController
 
         $this->toolBox()->i18nLog()->error('record-save-error');
         return true;
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListCuenta':
+                $this->loadAccountData($view, 'codcuenta');
+                break;
+
+            case 'ListSubcuenta':
+                $this->loadAccountData($view, 'codsubcuenta');
+                break;
+
+            case 'EditEjercicio':
+                parent::loadData($viewName, $view);
+                $this->addButtonActions();
+                break;
+        }
+    }
+
+    /**
+     * Re-open closed exercise
+     */
+    protected function openExercise(): bool
+    {
+        $code = $this->request->request->get('codejercicio');
+        if (!$this->checkAndLoad($code)) {
+            return false;
+        }
+
+        $data = [
+            'deleteClosing' => $this->request->request->get('delete-closing', true),
+            'deleteOpening' => $this->request->request->get('delete-opening', false)
+        ];
+        $model = $this->getModel();
+
+        $closing = new ClosingToAcounting();
+        if ($closing->delete($model, $data)) {
+            $this->toolBox()->i18nLog()->notice('opening-acounting-completed');
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check that user allowed modify and load exercise data
+     *
+     * @param string $code
+     * @return boolean
+     */
+    private function checkAndLoad($code): bool
+    {
+        if (!$this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return false;
+        }
+
+        if (!$this->getModel()->loadFromCode($code)) {
+            $this->toolBox()->i18nLog()->error('record-not-found');
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     *
+     * @param BaseView $view
+     * @param string $fieldOrder
+     */
+    private function loadAccountData($view, $fieldOrder)
+    {
+        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+        $where = [new DataBaseWhere('codejercicio', $codejercicio)];
+        $view->loadData(false, $where, [$fieldOrder => 'ASC']);
     }
 }

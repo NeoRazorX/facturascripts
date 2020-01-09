@@ -79,6 +79,65 @@ class AccountingCreation
     }
 
     /**
+     * Create an account into informed exercise.
+     *
+     * @param Cuenta $account
+     * @param string $exercise
+     * @return Cuenta
+     */
+    public function copyAccountToExercise($account, $exercise)
+    {
+        if (!$this->checkExercise($exercise)) {
+            return new Cuenta();
+        }
+
+        $newAccount = new Cuenta();
+        $newAccount->codcuenta = $account->codcuenta;
+        $newAccount->codcuentaesp = $account->codcuentaesp;
+        $newAccount->codejercicio = $this->exercise->codejercicio;
+        $newAccount->descripcion = $account->descripcion;
+
+        if (!empty($account->parent_codcuenta)) {
+            $newAccount->parent_codcuenta = $account->parent_codcuenta;
+            $parent = $newAccount->getParentFromCode();
+            if (empty($parent->idcuenta)) {
+                $parent = $this->copyAccountToExercise($account->getParent(), $exercise);
+            }
+            $newAccount->parent_idcuenta = $parent->idcuenta;
+        }
+        $newAccount->save();
+        return $newAccount;
+    }
+
+    /**
+     * Create a subaccount into informed exercise.
+     *
+     * @param Subcuenta $subAccount
+     * @param string    $exercise
+     * @return Subcuenta
+     */
+    public function copySubAccountToExercise($subAccount, $exercise)
+    {
+        if (!$this->checkExercise($exercise)) {
+            return new Subcuenta();
+        }
+
+        $newSubaccount = new Subcuenta();
+        $newSubaccount->codcuenta = $subAccount->codcuenta;
+        $newSubaccount->codejercicio = $this->exercise->codejercicio;
+        $newSubaccount->codsubcuenta = $subAccount->codsubcuenta;
+        $newSubaccount->descripcion = $subAccount->descripcion;
+
+        $account = $newSubaccount->getAccount();
+        if (empty($account->idcuenta)) {
+            $account = $this->copyAccountToExercise($subAccount->getAccount(), $exercise);
+        }
+        $newSubaccount->idcuenta = $account->idcuenta;
+        $newSubaccount->save();
+        return $newSubaccount;
+    }
+
+    /**
      * Create the accounting sub-account for the informed customer or supplier.
      * If the customer or supplier does not have an associated accounting subaccount,
      * one is calculated automatically.
