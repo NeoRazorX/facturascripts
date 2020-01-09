@@ -35,6 +35,12 @@ class XLSExport extends ExportBase
     const LIST_LIMIT = 1000;
 
     /**
+     *
+     * @var int
+     */
+    protected $numSheets = 0;
+
+    /**
      * XLSX object.
      *
      * @var XLSXWriter
@@ -133,9 +139,12 @@ class XLSExport extends ExportBase
      */
     public function addTablePage($headers, $rows): bool
     {
-        $this->writer->writeSheetRow('sheet1', $headers);
+        $this->numSheets++;
+        $sheetName = 'sheet' . $this->numSheets;
+
+        $this->writer->writeSheetRow($sheetName, $headers);
         foreach ($rows as $row) {
-            $this->writer->writeSheetRow('sheet1', $row);
+            $this->writer->writeSheetRow($sheetName, $row);
         }
 
         return true;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,7 +46,7 @@
         <column name="dto" display="right" order="150">
             <widget type="number" fieldname="dtopor" />
         </column>
-        <column name="dto-2" display="right" order="160">
+        <column name="dto-2" display="none" order="160">
             <widget type="number" fieldname="dtopor2" />
         </column>
         <column name="net" display="right" order="170">
@@ -55,10 +55,10 @@
         <column name="vat" display="right" order="180">
             <widget type="number" fieldname="iva" />
         </column>
-        <column name="re" display="right" order="190">
+        <column name="re" display="none" order="190">
             <widget type="number" fieldname="recargo" />
         </column>
-        <column name="irpf" display="right" order="200">
+        <column name="irpf" display="none" order="200">
             <widget type="number" fieldname="irpf" />
         </column>
     </columns>

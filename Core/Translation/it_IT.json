@@ -459,6 +459,8 @@
     "generated-supplier-delivery-notes": "0 ha generato le bolle di consegna del fornitore.",
     "generated-supplier-estimations": "%quantity% generated supplier estimations.",
     "generated-supplier-orders": "0 ordini fornitore generati.",
+    "global-dto": "global-dto",
+    "global-dto-2": "global-dto-2",
     "greater-than": "Più grande di",
     "group": "Gruppo",
     "group-by-day": "group-by-day",
