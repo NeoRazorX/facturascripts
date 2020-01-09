@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,6 +62,7 @@ class BusinessDocumentCode
      */
     protected static function getNewNumber(&$sequence, &$document)
     {
+        // get previous
         $order = \strtolower(\FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
         $where = [
             new DataBaseWhere('codserie', $sequence->codserie),
@@ -70,19 +71,22 @@ class BusinessDocumentCode
         if (!empty($sequence->codejercicio)) {
             $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
         }
+        $previous = $document->all($where, $order, 0, self::GAP_LIMIT);
 
         /// find maximum number for this sequence data
-        foreach ($document->all($where, $order, 0, 1) as $lastDoc) {
+        foreach ($previous as $lastDoc) {
             $lastNumber = (int) $lastDoc->numero;
             if ($lastNumber >= $sequence->numero) {
                 $sequence->numero = $lastNumber + 1;
+                break;
             }
         }
 
         /// use gaps?
         if ($sequence->usarhuecos) {
+            /// we look for holes back
             $expectedNumber = (int) $sequence->numero - 1;
-            foreach ($document->all($where, $order, 0, self::GAP_LIMIT) as $lastDoc) {
+            foreach ($previous as $lastDoc) {
                 if ($expectedNumber != $lastDoc->numero) {
                     $document->fecha = $lastDoc->fecha;
                     $document->hora = $lastDoc->hora;
@@ -92,7 +96,10 @@ class BusinessDocumentCode
                 $expectedNumber--;
             }
 
-            if ($expectedNumber > 0 && $expectedNumber > (int) $sequence->numero - self::GAP_LIMIT - 1) {
+            if (empty($previous)) {
+                /// no previous document, then use initial number
+                $sequence->numero = empty($sequence->inicio) ? 1 : $sequence->inicio;
+            } elseif ($expectedNumber >= $sequence->inicio && $expectedNumber > (int) $sequence->numero - self::GAP_LIMIT - 1) {
                 return (string) $expectedNumber;
             }
         }

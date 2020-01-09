@@ -27,6 +27,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>inicio</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>longnumero</name>
         <type>integer</type>
         <null>NO</null>

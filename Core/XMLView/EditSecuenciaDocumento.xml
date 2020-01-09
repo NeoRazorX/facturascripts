@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,17 +52,20 @@
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="number" numcolumns="2" order="150" required="true">
-                <widget type="number" fieldname="numero" decimal="0" min="1" />
+            <column name="number" numcolumns="2" order="150">
+                <widget type="number" fieldname="numero" decimal="0" min="1" required="true" />
             </column>
-            <column name="use-gaps" numcolumns="2" order="160">
+            <column name="number-length" numcolumns="2" order="160">
+                <widget type="number" fieldname="longnumero" decimal="0" min="1" required="true" />
+            </column>
+            <column name="initial-number" numcolumns="2" order="170">
+                <widget type="number" fieldname="inicio" decimal="0" min="1" required="true" />
+            </column>
+            <column name="use-gaps" numcolumns="2" order="180">
                 <widget type="checkbox" fieldname="usarhuecos" />
             </column>
-            <column name="number-length" numcolumns="2" order="170" required="true">
-                <widget type="number" fieldname="longnumero" decimal="0" min="1" />
-            </column>
-            <column name="pattern" order="180" required="true">
-                <widget type="text" fieldname="patron" maxlength="30" />
+            <column name="pattern" order="190">
+                <widget type="text" fieldname="patron" maxlength="30" required="true" />
             </column>
         </group>
     </columns>
