@@ -170,6 +170,7 @@ class EditEjercicio extends EditController
     {
         $this->addListView($viewName, 'Cuenta', 'accounts', 'fas fa-book');
         $this->views[$viewName]->addOrderBy(['codcuenta'], 'code', 1);
+        $this->views[$viewName]->searchFields[] = 'codcuenta';
         $this->views[$viewName]->searchFields[] = 'descripcion';
 
         /// disable columns
@@ -186,6 +187,7 @@ class EditEjercicio extends EditController
         $this->addListView($viewName, 'Subcuenta', 'subaccounts');
         $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code', 1);
         $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
+        $this->views[$viewName]->searchFields[] = 'codsubcuenta';
         $this->views[$viewName]->searchFields[] = 'descripcion';
 
         /// disable columns
