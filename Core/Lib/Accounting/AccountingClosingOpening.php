@@ -103,11 +103,12 @@ class AccountingClosingOpening extends AccountingClosingBase
     {
         $accounting = new AccountingCreation();
         $subaccount = new Subcuenta();
-        foreach (self::$dataBase->selectLimit($this->getSQLCopyAccounts(), 0) as $value) {
+        foreach (self::$dataBase->select($this->getSQLCopyAccounts()) as $value) {
             if ($subaccount->loadFromCode($value['idsubcuenta'])) {
                 $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
             }
         }
+
         return true;
     }
 

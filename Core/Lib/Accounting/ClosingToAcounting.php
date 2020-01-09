@@ -80,7 +80,8 @@ class ClosingToAcounting
      * and reopening exercise.
      *
      * @param Ejercicio $exercise
-     * @param array $data
+     * @param array     $data
+     *
      * @return bool
      */
     public function delete($exercise, $data): bool
@@ -121,6 +122,7 @@ class ClosingToAcounting
      *
      * @param Ejercicio $exercise
      * @param array     $data
+     *
      * @return bool
      */
     public function exec($exercise, $data): bool
@@ -130,8 +132,9 @@ class ClosingToAcounting
         $this->journalOpening = $data['journalOpening'] ?? 0;
         $this->copySubAccounts = $data['copySubAccounts'] ?? true;
 
+        self::$dataBase->beginTransaction();
+
         try {
-            self::$dataBase->beginTransaction();
             if ($this->execRegularization() && $this->execClosing() && $this->execOpening()) {
                 $exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
                 $exercise->save();

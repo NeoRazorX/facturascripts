@@ -70,7 +70,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @var Ejercicio[]
      */
-    private static $ejercicios;
+    protected static $ejercicios;
 
     /**
      * Description of the subaccount.
@@ -150,22 +150,6 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     *
-     * @return string
-     */
-    public function getSpecialAccountCode()
-    {
-        if (empty($this->codcuentaesp)) {
-            $account = new Cuenta();
-            if ($account->loadFromCode($this->idcuenta)) {
-                return $account->codcuentaesp;
-            }
-        }
-
-        return $this->codcuentaesp;
-    }
-
-    /**
      * Get ID for account of subaccount
      *
      * @return int
@@ -186,12 +170,27 @@ class Subcuenta extends Base\ModelClass
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
         ];
-        $subaccount = new Subcuenta();
-        foreach ($subaccount->all($where) as $subc) {
+        foreach ($this->all($where) as $subc) {
             return $subc->idsubcuenta;
         }
 
         return 0;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getSpecialAccountCode()
+    {
+        if (empty($this->codcuentaesp)) {
+            $account = new Cuenta();
+            if ($account->loadFromCode($this->idcuenta)) {
+                return $account->codcuentaesp;
+            }
+        }
+
+        return $this->codcuentaesp;
     }
 
     /**
@@ -261,7 +260,7 @@ class Subcuenta extends Base\ModelClass
 
         if (!self::$disableAditionTest) {
             if (!$this->testErrorInLengthSubAccount()) {
-                $this->toolBox()->i18nLog()->warning('account-length-error');
+                $this->toolBox()->i18nLog()->warning('account-length-error', ['%code%' => $this->codsubcuenta]);
                 return false;
             }
 
@@ -300,7 +299,9 @@ class Subcuenta extends Base\ModelClass
         }
 
         foreach (self::$ejercicios as $eje) {
-            return $eje->codejercicio;
+            if ($eje->isOpened()) {
+                return $eje->codejercicio;
+            }
         }
 
         return '';
@@ -315,8 +316,14 @@ class Subcuenta extends Base\ModelClass
     {
         foreach (self::$ejercicios as $eje) {
             if ($eje->codejercicio === $this->codejercicio) {
-                return strlen($this->codsubcuenta) == $eje->longsubcuenta;
+                return \strlen($this->codsubcuenta) === $eje->longsubcuenta;
             }
+        }
+
+        /// new exercise?
+        $exerciseModel = new Ejercicio();
+        if ($exerciseModel->loadFromCode($this->codejercicio)) {
+            return \strlen($this->codsubcuenta) === $exerciseModel->longsubcuenta;
         }
 
         return false;

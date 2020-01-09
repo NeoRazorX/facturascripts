@@ -68,30 +68,37 @@ class EditEjercicio extends EditController
         $status = $this->getViewModelValue('EditEjercicio', 'estado');
         switch ($status) {
             case Ejercicio::EXERCISE_STATUS_OPEN:
-                $newButton = [
+                $this->addButton('EditEjercicio', [
+                    'row' => 'footer-actions',
+                    'action' => 'import-accounting',
+                    'color' => 'warning',
+                    'icon' => 'fas fa-file-import',
+                    'label' => 'import-accounting-plan',
+                    'type' => 'modal',
+                ]);
+
+                $this->addButton('EditEjercicio', [
                     'row' => 'footer-actions',
                     'action' => 'close-exercise',
                     'color' => 'danger',
                     'icon' => 'fas fa-calendar-check',
                     'label' => 'close-exercise',
                     'type' => 'modal',
-                ];
-                $this->addButton('EditEjercicio', $newButton);
+                ]);
 
                 $model = $this->views['EditEjercicio']->model;
                 $model->copysubaccounts = true;
                 break;
 
             case Ejercicio::EXERCISE_STATUS_CLOSED:
-                $newButton = [
+                $this->addButton('EditEjercicio', [
                     'row' => 'footer-actions',
                     'action' => 'open-exercise',
                     'color' => 'warning',
                     'icon' => 'fas fa-calendar-plus',
                     'label' => 'open-exercise',
                     'type' => 'modal',
-                ];
-                $this->addButton('EditEjercicio', $newButton);
+                ]);
                 break;
         }
     }
@@ -194,6 +201,10 @@ class EditEjercicio extends EditController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'close-exercise':
+                $this->closeExercise();
+                return true;
+
             case 'export-accounting':
                 return $this->exportAccountingPlan();
 
@@ -202,10 +213,6 @@ class EditEjercicio extends EditController
 
             case 'open-exercise':
                 $this->openExercise();
-                return true;
-
-            case 'close-exercise':
-                $this->closeExercise();
                 return true;
 
             default:
