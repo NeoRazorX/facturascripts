@@ -32,7 +32,7 @@ use FacturaScripts\Core\Lib\Accounting\AccountingClosingRegularization;
 class ClosingToAcounting
 {
     /**
-     * indicates whether the accounting account plan should be copied
+     * Indicates whether the accounting account plan should be copied
      * to the new fiscal year.
      *
      * @var bool
@@ -201,7 +201,8 @@ class ClosingToAcounting
     protected function execOpening(): bool
     {
         $opening = new AccountingClosingOpening();
-        return $opening->exec($this->exercise, $this->journalOpening, $this->copySubAccounts);
+        $opening->setCopySubAccounts($this->copySubAccounts);
+        return $opening->exec($this->exercise, $this->journalOpening);
     }
 
     /**

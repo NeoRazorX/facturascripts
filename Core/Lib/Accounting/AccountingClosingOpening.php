@@ -32,6 +32,14 @@ class AccountingClosingOpening extends AccountingClosingBase
 {
 
     /**
+     * indicates whether the accounting account plan should be copied
+     * to the new fiscal year.
+     *
+     * @var bool
+     */
+    protected $copySubAccounts = true;
+
+    /**
      *
      * @var Ejercicio
      */
@@ -58,22 +66,32 @@ class AccountingClosingOpening extends AccountingClosingBase
      *
      * @param Ejercicio $exercise
      * @param int       $idjournal
-     * @param bool      $copySubAccounts
      * @return bool
      */
-    public function exec($exercise, $idjournal, $copySubAccounts): bool
+    public function exec($exercise, $idjournal): bool
     {
         if (!$this->delete($exercise)) {
             return false;
         }
 
-        if ($copySubAccounts && !$this->copyAccounts()) {
+        if ($this->copySubAccounts && !$this->copyAccounts()) {
             return false;
         }
 
         return parent::exec($exercise, $idjournal);
     }
 
+    /**
+     * Establish whether the accounting account plan should be copied
+     * to the new fiscal year.
+     *
+     * @param bool $value
+     */
+    public function setCopySubAccounts($value)
+    {
+        $this->copySubAccounts = $value;
+    }
+    
     /**
      * Copy accounts and subaccounts from exercise to new exercise
      *
