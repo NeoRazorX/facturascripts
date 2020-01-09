@@ -42,7 +42,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      * Delete opening accounting entry from exercise.
      *
      * @param Ejercicio $exercise
-     * @return boolean
+     * @return bool
      */
     public function delete($exercise): bool
     {
@@ -58,11 +58,20 @@ class AccountingClosingOpening extends AccountingClosingBase
      *
      * @param Ejercicio $exercise
      * @param int       $idjournal
-     * @return boolean
+     * @param bool      $copySubAccounts
+     * @return bool
      */
-    public function exec($exercise, $idjournal): bool
+    public function exec($exercise, $idjournal, $copySubAccounts): bool
     {
-        return $this->delete($exercise) && $this->copyAccounts() && parent::exec($exercise, $idjournal);
+        if (!$this->delete($exercise)) {
+            return false;
+        }
+
+        if ($copySubAccounts && !$this->copyAccounts()) {
+            return false;
+        }
+
+        return parent::exec($exercise, $idjournal);
     }
 
     /**

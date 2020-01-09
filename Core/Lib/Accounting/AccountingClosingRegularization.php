@@ -43,7 +43,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
      * Delete closing regularization accounting entry from exercise.
      *
      * @param Ejercicio $exercise
-     * @return boolean
+     * @return bool
      */
     public function delete($exercise): bool
     {
@@ -56,7 +56,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
      *
      * @param Ejercicio $exercise
      * @param int       $idjournal
-     * @return boolean
+     * @return bool
      */
     public function exec($exercise, $idjournal): bool
     {
