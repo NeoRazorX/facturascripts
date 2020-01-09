@@ -81,6 +81,9 @@
                     <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
                 </widget>
             </column>
+            <column name="copy-subaccounts" numcolumns="12" order="200">
+                <widget type="checkbox" fieldname="copysubaccounts" />
+            </column>
         </group>
         <group name="open-exercise" title="open-exercise" icon="fas fa-calendar-plus">
             <column name="code" display="none">

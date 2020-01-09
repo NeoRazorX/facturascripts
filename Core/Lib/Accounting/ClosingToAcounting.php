@@ -31,6 +31,13 @@ use FacturaScripts\Core\Lib\Accounting\AccountingClosingRegularization;
  */
 class ClosingToAcounting
 {
+    /**
+     * indicates whether the accounting account plan should be copied
+     * to the new fiscal year.
+     *
+     * @var bool
+     */
+    protected $copySubAccounts;
 
     /**
      * It provides direct access to the database.
@@ -40,18 +47,21 @@ class ClosingToAcounting
     protected static $dataBase;
 
     /**
+     * Exercise where the accounting process is performed.
      *
      * @var Ejercicio
      */
     protected $exercise;
 
     /**
+     * Journal Id for closing accounting entry.
      *
      * @var int
      */
     protected $journalClosing;
 
     /**
+     * Journal Id for opening accounting entry.
      *
      * @var int
      */
@@ -120,6 +130,7 @@ class ClosingToAcounting
         $this->exercise = $exercise;
         $this->journalClosing = $data['journalClosing'] ?? 0;
         $this->journalOpening = $data['journalOpening'] ?? 0;
+        $this->copySubAccounts = $data['copySubAccounts'] ?? true;
 
         try {
             self::$dataBase->beginTransaction();
@@ -190,7 +201,7 @@ class ClosingToAcounting
     protected function execOpening(): bool
     {
         $opening = new AccountingClosingOpening();
-        return $opening->exec($this->exercise, $this->journalOpening);
+        return $opening->exec($this->exercise, $this->journalOpening, $this->copySubAccounts);
     }
 
     /**

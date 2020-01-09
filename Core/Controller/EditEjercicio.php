@@ -77,6 +77,9 @@ class EditEjercicio extends EditController
                     'type' => 'modal',
                 ];
                 $this->addButton('EditEjercicio', $newButton);
+
+                $model = $this->views['EditEjercicio']->model;
+                $model->copysubaccounts = true;
                 break;
 
             case Ejercicio::EXERCISE_STATUS_CLOSED:
@@ -146,7 +149,8 @@ class EditEjercicio extends EditController
 
         $data = [
             'journalClosing' => $this->request->request->get('iddiario-closing'),
-            'journalOpening' => $this->request->request->get('iddiario-opening')
+            'journalOpening' => $this->request->request->get('iddiario-opening'),
+            'copySubAccounts' => $this->request->request->get('copysubaccounts')
         ];
 
         $model = $this->getModel();
