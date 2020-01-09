@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,6 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Dinamic\Model\Ejercicio;
-use FacturaScripts\Core\Lib\Accounting\AccountingClosingClosing;
-use FacturaScripts\Core\Lib\Accounting\AccountingClosingOpening;
-use FacturaScripts\Core\Lib\Accounting\AccountingClosingRegularization;
 
 /**
  * Class that performs accounting closures
@@ -31,6 +28,7 @@ use FacturaScripts\Core\Lib\Accounting\AccountingClosingRegularization;
  */
 class ClosingToAcounting
 {
+
     /**
      * Indicates whether the accounting account plan should be copied
      * to the new fiscal year.

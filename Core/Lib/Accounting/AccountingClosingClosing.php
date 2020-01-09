@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Partida;
 
 /**
  * Perform closing of account balances for the exercise.
@@ -33,6 +35,7 @@ class AccountingClosingClosing extends AccountingClosingBase
      * Delete closing accounting entry from exercise.
      *
      * @param Ejercicio $exercise
+     *
      * @return bool
      */
     public function delete($exercise): bool
@@ -46,6 +49,7 @@ class AccountingClosingClosing extends AccountingClosingBase
      *
      * @param Ejercicio $exercise
      * @param int       $idjournal
+     *
      * @return bool
      */
     public function exec($exercise, $idjournal): bool
@@ -61,15 +65,15 @@ class AccountingClosingClosing extends AccountingClosingBase
     protected function getConcept(): string
     {
         return $this->toolBox()->i18n()->trans(
-            'closing-closing-concept',
-            ['%exercise%' => $this->exercise->nombre]
+                'closing-closing-concept',
+                ['%exercise%' => $this->exercise->nombre]
         );
     }
 
     /**
      * Get the date for the accounting entry.
      *
-     * @return date
+     * @return string
      */
     protected function getDate()
     {
@@ -103,6 +107,7 @@ class AccountingClosingClosing extends AccountingClosingBase
      * @param Asiento $accountEntry
      * @param float   $debit
      * @param float   $credit
+     *
      * @return bool
      */
     protected function saveBalanceLine($accountEntry, $debit, $credit): bool

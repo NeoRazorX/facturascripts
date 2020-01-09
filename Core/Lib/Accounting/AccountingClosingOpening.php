@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,9 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Dinamic\Lib\Accounting\AccountingCreation;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
@@ -50,6 +50,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      * Delete opening accounting entry from exercise.
      *
      * @param Ejercicio $exercise
+     *
      * @return bool
      */
     public function delete($exercise): bool
@@ -66,6 +67,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      *
      * @param Ejercicio $exercise
      * @param int       $idjournal
+     *
      * @return bool
      */
     public function exec($exercise, $idjournal): bool
@@ -91,7 +93,7 @@ class AccountingClosingOpening extends AccountingClosingBase
     {
         $this->copySubAccounts = $value;
     }
-    
+
     /**
      * Copy accounts and subaccounts from exercise to new exercise
      *
@@ -117,15 +119,15 @@ class AccountingClosingOpening extends AccountingClosingBase
     protected function getConcept(): string
     {
         return $this->toolBox()->i18n()->trans(
-            'closing-opening-concept',
-            ['%exercise%' => $this->newExercise->nombre]
+                'closing-opening-concept',
+                ['%exercise%' => $this->newExercise->nombre]
         );
     }
 
     /**
      * Get the date for the accounting entry.
      *
-     * @return date
+     * @return string
      */
     protected function getDate()
     {
@@ -163,7 +165,7 @@ class AccountingClosingOpening extends AccountingClosingBase
             . " FROM asientos t1"
             . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento " . $this->getSubAccountsFilter()
             . " INNER JOIN subcuentas t3 ON t3.codsubcuenta = t2.codsubcuenta AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
-            . " WHERE t1.codejercicio = '". $this->exercise->codejercicio . "'"
+            . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
             . " AND (t1.operacion IS NULL OR t1.operacion <> '" . $this->getOperationFilter() . "')"
             . " GROUP BY 1, 2, 3, t3.idsubcuenta"
             . " HAVING ROUND(SUM(t2.debe) - SUM(t2.haber), 4) <> 0.0000"
@@ -187,6 +189,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      * @param Asiento $accountEntry
      * @param float   $debit
      * @param float   $credit
+     *
      * @return bool
      */
     protected function saveBalanceLine($accountEntry, $debit, $credit): bool
@@ -235,12 +238,12 @@ class AccountingClosingOpening extends AccountingClosingBase
             . " FROM asientos t1"
             . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento"
             . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
-            .   " AND t1.operacion = '" . Asiento::OPERATION_CLOSING . "'"
+            . " AND t1.operacion = '" . Asiento::OPERATION_CLOSING . "'"
             . " AND NOT EXISTS("
-            .       "SELECT 1 FROM subcuentas t3"
-            .       " WHERE t3.codsubcuenta = t2.codsubcuenta"
-            .         " AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
-            .        ")";
+            . "SELECT 1 FROM subcuentas t3"
+            . " WHERE t3.codsubcuenta = t2.codsubcuenta"
+            . " AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
+            . ")";
     }
 
     /**

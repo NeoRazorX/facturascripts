@@ -29,12 +29,12 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 class Asiento extends Base\ModelClass implements Base\GridModelInterface
 {
 
+    use Base\ModelTrait;
+
     const OPERATION_GENERAL = null;
     const OPERATION_OPENING = 'A';
     const OPERATION_CLOSING = 'C';
     const OPERATION_REGULARIZATION = 'R';
-
-    use Base\ModelTrait;
 
     /**
      *

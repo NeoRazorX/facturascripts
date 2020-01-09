@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,9 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
@@ -43,6 +43,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
      * Delete closing regularization accounting entry from exercise.
      *
      * @param Ejercicio $exercise
+     *
      * @return bool
      */
     public function delete($exercise): bool
@@ -56,6 +57,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
      *
      * @param Ejercicio $exercise
      * @param int       $idjournal
+     *
      * @return bool
      */
     public function exec($exercise, $idjournal): bool
@@ -63,6 +65,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
         if (!$this->loadSubAccount($exercise)) {
             return false;
         }
+
         return $this->delete($exercise) && parent::exec($exercise, $idjournal);
     }
 
@@ -74,15 +77,15 @@ class AccountingClosingRegularization extends AccountingClosingBase
     protected function getConcept(): string
     {
         return $this->toolBox()->i18n()->trans(
-            'closing-regularization-concept',
-            ['%exercise%' => $this->exercise->nombre]
+                'closing-regularization-concept',
+                ['%exercise%' => $this->exercise->nombre]
         );
     }
 
     /**
      * Get the date for the accounting entry.
      *
-     * @return date
+     * @return string
      */
     protected function getDate()
     {
@@ -113,6 +116,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
      * Load profit and loss subaccount
      *
      * @param Ejercicio $exercise
+     *
      * @return bool
      */
     protected function loadSubAccount($exercise): bool
@@ -124,6 +128,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
             $this->toolBox()->i18nLog()->error('subaccount-pyg-not-found');
             return false;
         }
+
         return true;
     }
 
@@ -133,12 +138,13 @@ class AccountingClosingRegularization extends AccountingClosingBase
      * @param Asiento $accountEntry
      * @param float   $debit
      * @param float   $credit
+     *
      * @return bool
      */
     protected function saveBalanceLine($accountEntry, $debit, $credit): bool
     {
         if ($debit > $credit) {
-           return $this->addLine($accountEntry, 0.00, $debit - $credit);
+            return $this->addLine($accountEntry, 0.00, $debit - $credit);
         }
 
         return $this->addLine($accountEntry, $credit - $debit, 0.00);
@@ -165,6 +171,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
      * @param Asiento $accountEntry
      * @param float   $debit
      * @param float   $credit
+     *
      * @return bool
      */
     private function addLine($accountEntry, $debit, $credit): bool

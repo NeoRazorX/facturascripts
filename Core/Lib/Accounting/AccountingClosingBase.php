@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,28 +51,28 @@ abstract class AccountingClosingBase
      *
      * @return string
      */
-    protected abstract function getConcept(): string;
+    abstract protected function getConcept(): string;
 
     /**
      * Get the date for the accounting entry.
      *
      * @return string
      */
-    protected abstract function getDate();
+    abstract protected function getDate();
 
     /**
      * Get the special operation identifier for the accounting entry.
      *
      * @return string
      */
-    protected abstract function getOperation(): string;
+    abstract protected function getOperation(): string;
 
     /**
      * Get the sub accounts filter for obtain balance.
      *
      * @return string
      */
-    protected abstract function getSubAccountsFilter(): string;
+    abstract protected function getSubAccountsFilter(): string;
 
     /**
      * Add accounting entry line with balance override.
@@ -83,7 +83,7 @@ abstract class AccountingClosingBase
      * @param float   $credit
      * @return bool
      */
-    protected abstract function saveBalanceLine($accountEntry, $debit, $credit): bool;
+    abstract protected function saveBalanceLine($accountEntry, $debit, $credit): bool;
 
     /**
      * Class Constructor
@@ -193,7 +193,7 @@ abstract class AccountingClosingBase
         return "SELECT " . $this->getSQLFields()
             . " FROM asientos t1"
             . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento " . $this->getSubAccountsFilter()
-            . " WHERE t1.codejercicio = '". $this->exercise->codejercicio . "'"
+            . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
             . " AND (t1.operacion IS NULL OR t1.operacion <> '" . $this->getOperationFilter() . "')"
             . " GROUP BY 1, 2, 3"
             . " HAVING ROUND(SUM(t2.debe) - SUM(t2.haber), 4) <> 0.0000"

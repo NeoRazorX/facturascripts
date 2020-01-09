@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -97,43 +97,25 @@ class EditEjercicio extends EditController
     }
 
     /**
+     * Check that user allowed modify and load exercise data
      *
-     * @param string $viewName
-     */
-    protected function createAccountingView($viewName = 'ListCuenta')
-    {
-        $this->addListView($viewName, 'Cuenta', 'accounts', 'fas fa-book');
-        $this->views[$viewName]->addOrderBy(['codcuenta'], 'code', 1);
-        $this->views[$viewName]->searchFields[] = 'descripcion';
-
-        /// disable columns
-        $this->views[$viewName]->disableColumn('fiscal-exercise');
-        $this->views[$viewName]->disableColumn('parent-account');
-    }
-
-    /**
+     * @param string $code
      *
-     * @param string $viewName
+     * @return bool
      */
-    protected function createSubAccountingView($viewName = 'ListSubcuenta')
+    private function checkAndLoad($code): bool
     {
-        $this->addListView($viewName, 'Subcuenta', 'subaccounts');
-        $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code', 1);
-        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
-        $this->views[$viewName]->searchFields[] = 'descripcion';
+        if (!$this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return false;
+        }
 
-        /// disable columns
-        $this->views[$viewName]->disableColumn('fiscal-exercise');
-    }
+        if (!$this->getModel()->loadFromCode($code)) {
+            $this->toolBox()->i18nLog()->error('record-not-found');
+            return false;
+        }
 
-    /**
-     * Load views.
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-        $this->createAccountingView();
-        $this->createSubAccountingView();
+        return true;
     }
 
     /**
@@ -159,7 +141,48 @@ class EditEjercicio extends EditController
             $this->toolBox()->i18nLog()->notice('closing-accounting-completed');
             return true;
         }
+
         return false;
+    }
+
+    /**
+     * Load views.
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->createViewsAccounting();
+        $this->createViewsSubaccounting();
+    }
+
+    /**
+     *
+     * @param string $viewName
+     */
+    protected function createViewsAccounting(string $viewName = 'ListCuenta')
+    {
+        $this->addListView($viewName, 'Cuenta', 'accounts', 'fas fa-book');
+        $this->views[$viewName]->addOrderBy(['codcuenta'], 'code', 1);
+        $this->views[$viewName]->searchFields[] = 'descripcion';
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('fiscal-exercise');
+        $this->views[$viewName]->disableColumn('parent-account');
+    }
+
+    /**
+     *
+     * @param string $viewName
+     */
+    protected function createViewsSubaccounting(string $viewName = 'ListSubcuenta')
+    {
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts');
+        $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code', 1);
+        $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
+        $this->views[$viewName]->searchFields[] = 'descripcion';
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('fiscal-exercise');
     }
 
     /**
@@ -284,6 +307,18 @@ class EditEjercicio extends EditController
     }
 
     /**
+     *
+     * @param BaseView $view
+     * @param string   $fieldOrder
+     */
+    private function loadAccountData($view, $fieldOrder)
+    {
+        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+        $where = [new DataBaseWhere('codejercicio', $codejercicio)];
+        $view->loadData(false, $where, [$fieldOrder => 'ASC']);
+    }
+
+    /**
      * Load view data procedure
      *
      * @param string   $viewName
@@ -328,39 +363,7 @@ class EditEjercicio extends EditController
             $this->toolBox()->i18nLog()->notice('opening-acounting-completed');
             return true;
         }
+
         return false;
-    }
-
-    /**
-     * Check that user allowed modify and load exercise data
-     *
-     * @param string $code
-     * @return boolean
-     */
-    private function checkAndLoad($code): bool
-    {
-        if (!$this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return false;
-        }
-
-        if (!$this->getModel()->loadFromCode($code)) {
-            $this->toolBox()->i18nLog()->error('record-not-found');
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     *
-     * @param BaseView $view
-     * @param string $fieldOrder
-     */
-    private function loadAccountData($view, $fieldOrder)
-    {
-        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
-        $where = [new DataBaseWhere('codejercicio', $codejercicio)];
-        $view->loadData(false, $where, [$fieldOrder => 'ASC']);
     }
 }
