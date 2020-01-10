@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -88,13 +88,13 @@ class BusinessDocumentTools
             $codimpuesto = empty($line->codimpuesto) ? $line->iva . '-' . $line->recargo : $line->codimpuesto;
             if (!\array_key_exists($codimpuesto, $subtotals)) {
                 $subtotals[$codimpuesto] = [
-                    'iva' => $line->iva,
                     'irpf' => 0.0,
+                    'iva' => $line->iva,
                     'neto' => 0.0,
                     'netosindto' => 0.0,
                     'recargo' => $line->recargo,
-                    'totaliva' => 0.0,
                     'totalirpf' => 0.0,
+                    'totaliva' => 0.0,
                     'totalrecargo' => 0.0,
                 ];
             }
@@ -130,9 +130,9 @@ class BusinessDocumentTools
         foreach ($subtotals as $key => $value) {
             $subtotals[$key]['neto'] = \round($value['neto'], (int) \FS_NF0);
             $subtotals[$key]['netosindto'] = \round($value['netosindto'], (int) \FS_NF0);
+            $subtotals[$key]['totalirpf'] = \round($value['totalirpf'], (int) \FS_NF0);
             $subtotals[$key]['totaliva'] = \round($value['totaliva'], (int) \FS_NF0);
             $subtotals[$key]['totalrecargo'] = \round($value['totalrecargo'], (int) \FS_NF0);
-            $subtotals[$key]['totalirpf'] = \round($value['totalirpf'], (int) \FS_NF0);
         }
 
         return $subtotals;
@@ -155,11 +155,17 @@ class BusinessDocumentTools
         foreach ($this->getSubtotals($lines, [$doc->dtopor1, $doc->dtopor2]) as $subt) {
             $doc->neto += $subt['neto'];
             $doc->netosindto += $subt['netosindto'];
-            $doc->totaliva += $subt['totaliva'];
             $doc->totalirpf += $subt['totalirpf'];
+            $doc->totaliva += $subt['totaliva'];
             $doc->totalrecargo += $subt['totalrecargo'];
         }
 
+        /// rounding totals again
+        $doc->neto = \round($doc->neto, (int) \FS_NF0);
+        $doc->netosindto = \round($doc->netosindto, (int) \FS_NF0);
+        $doc->totalirpf = \round($doc->totalirpf, (int) \FS_NF0);
+        $doc->totaliva = \round($doc->totaliva, (int) \FS_NF0);
+        $doc->totalrecargo = \round($doc->totalrecargo, (int) \FS_NF0);
         $doc->total = \round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) \FS_NF0);
 
         /// recalculate commissions
@@ -191,6 +197,12 @@ class BusinessDocumentTools
             $doc->totalrecargo += $subt['totalrecargo'];
         }
 
+        /// rounding totals again
+        $doc->neto = \round($doc->neto, (int) \FS_NF0);
+        $doc->netosindto = \round($doc->netosindto, (int) \FS_NF0);
+        $doc->totalirpf = \round($doc->totalirpf, (int) \FS_NF0);
+        $doc->totaliva = \round($doc->totaliva, (int) \FS_NF0);
+        $doc->totalrecargo = \round($doc->totalrecargo, (int) \FS_NF0);
         $doc->total = \round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) \FS_NF0);
         return \json_encode([
             'doc' => $doc,
@@ -212,8 +224,8 @@ class BusinessDocumentTools
         $doc->netosindto = 0.0;
         $doc->total = 0.0;
         $doc->totaleuros = 0.0;
-        $doc->totaliva = 0.0;
         $doc->totalirpf = 0.0;
+        $doc->totaliva = 0.0;
         $doc->totalrecargo = 0.0;
 
         $serie = new Serie();
