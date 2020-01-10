@@ -82,13 +82,13 @@ class AccountingCreation
      * Create an account into informed exercise.
      *
      * @param Cuenta $account
-     * @param string $exercise
+     * @param string $codejercicio
      *
      * @return Cuenta
      */
-    public function copyAccountToExercise($account, $exercise)
+    public function copyAccountToExercise($account, $codejercicio)
     {
-        if (!$this->checkExercise($exercise)) {
+        if (!$this->checkExercise($codejercicio)) {
             return new Cuenta();
         }
 
@@ -102,10 +102,11 @@ class AccountingCreation
             $newAccount->parent_codcuenta = $account->parent_codcuenta;
             $parent = $newAccount->getParentFromCode();
             if (empty($parent->idcuenta)) {
-                $parent = $this->copyAccountToExercise($account->getParent(), $exercise);
+                $parent = $this->copyAccountToExercise($account->getParent(), $codejercicio);
             }
             $newAccount->parent_idcuenta = $parent->idcuenta;
         }
+
         $newAccount->save();
         return $newAccount;
     }
@@ -114,13 +115,13 @@ class AccountingCreation
      * Create a subaccount into informed exercise.
      *
      * @param Subcuenta $subAccount
-     * @param string    $exercise
+     * @param string    $codejercicio
      *
      * @return Subcuenta
      */
-    public function copySubAccountToExercise($subAccount, $exercise)
+    public function copySubAccountToExercise($subAccount, $codejercicio)
     {
-        if (!$this->checkExercise($exercise)) {
+        if (!$this->checkExercise($codejercicio)) {
             return new Subcuenta();
         }
 
@@ -132,8 +133,9 @@ class AccountingCreation
 
         $account = $newSubaccount->getAccount();
         if (empty($account->idcuenta)) {
-            $account = $this->copyAccountToExercise($subAccount->getAccount(), $exercise);
+            $account = $this->copyAccountToExercise($subAccount->getAccount(), $codejercicio);
         }
+
         $newSubaccount->idcuenta = $account->idcuenta;
         $newSubaccount->save();
         return $newSubaccount;
@@ -168,6 +170,7 @@ class AccountingCreation
         if ($subaccount->save()) {
             $subject->save();
         }
+
         return $subaccount;
     }
 

@@ -28,6 +28,7 @@ use FacturaScripts\Dinamic\Model\Partida;
 /**
  * Description of AccountingClossing
  *
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 abstract class AccountingClosingBase
@@ -48,40 +49,27 @@ abstract class AccountingClosingBase
 
     /**
      * Get the concept for the accounting entry and its lines.
-     *
-     * @return string
      */
     abstract protected function getConcept(): string;
 
     /**
      * Get the date for the accounting entry.
-     *
-     * @return string
      */
     abstract protected function getDate();
 
     /**
      * Get the special operation identifier for the accounting entry.
-     *
-     * @return string
      */
     abstract protected function getOperation(): string;
 
     /**
      * Get the sub accounts filter for obtain balance.
-     *
-     * @return string
      */
     abstract protected function getSubAccountsFilter(): string;
 
     /**
      * Add accounting entry line with balance override.
      * Return true without doing anything, if you do not need balance override.
-     *
-     * @param Asiento $accountEntry
-     * @param float   $debit
-     * @param float   $credit
-     * @return bool
      */
     abstract protected function saveBalanceLine($accountEntry, $debit, $credit): bool;
 
@@ -101,7 +89,8 @@ abstract class AccountingClosingBase
      *
      * @param Ejercicio $exercise
      * @param int       $idjournal
-     * @return boolean
+     *
+     * @return bool
      */
     public function exec($exercise, $idjournal)
     {
@@ -125,6 +114,7 @@ abstract class AccountingClosingBase
             $accountEntry->importe = ($debit > $credit) ? $debit : $credit;
             $accountEntry->save();
         }
+
         return true;
     }
 
@@ -148,6 +138,7 @@ abstract class AccountingClosingBase
                 return false;
             }
         }
+
         return true;
     }
 
@@ -170,6 +161,7 @@ abstract class AccountingClosingBase
             unset($data['channel']);
             $result[$channel][] = $data;
         }
+
         return $result;
     }
 
@@ -222,15 +214,16 @@ abstract class AccountingClosingBase
     /**
      *
      * @param Asiento $accountEntry
-     * @param int $channel
-     * @param int $idjournal
+     * @param int     $channel
+     * @param int     $idjournal
+     *
      * @return bool
      */
     protected function newAccountEntry(&$accountEntry, $channel, $idjournal): bool
     {
         $accountEntry = new Asiento();
         $this->setData($accountEntry);
-        $accountEntry->canal = $channel;
+        $accountEntry->canal = empty($channel) ? null : $channel;
         $accountEntry->iddiario = empty($idjournal) ? null : $idjournal;
         return $accountEntry->save();
     }
@@ -278,6 +271,7 @@ abstract class AccountingClosingBase
      * @param array   $balance
      * @param float   $debit
      * @param float   $credit
+     *
      * @return bool
      */
     protected function saveLines($accountEntry, $balance, &$debit, &$credit): bool

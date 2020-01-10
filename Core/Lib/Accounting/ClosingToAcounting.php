@@ -24,6 +24,7 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
 /**
  * Class that performs accounting closures
  *
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class ClosingToAcounting

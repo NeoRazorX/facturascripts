@@ -26,6 +26,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Perform regularization of account balances for the exercise.
  *
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class AccountingClosingRegularization extends AccountingClosingBase
@@ -67,6 +68,28 @@ class AccountingClosingRegularization extends AccountingClosingBase
         }
 
         return $this->delete($exercise) && parent::exec($exercise, $idjournal);
+    }
+
+    /**
+     *
+     * @param Asiento $accountEntry
+     * @param float   $debit
+     * @param float   $credit
+     *
+     * @return bool
+     */
+    private function addLine($accountEntry, $debit, $credit): bool
+    {
+        $data = [
+            'id' => $this->subAccount->idsubcuenta,
+            'code' => $this->subAccount->codsubcuenta,
+            'debit' => $debit,
+            'credit' => $credit
+        ];
+
+        $line = $accountEntry->getNewLine();
+        $this->setDataLine($line, $data);
+        return $line->save();
     }
 
     /**
@@ -163,28 +186,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
             $line->haber = $data['debit'] - $data['credit'];
             return;
         }
+
         $line->debe = $data['credit'] - $data['debit'];
-    }
-
-    /**
-     *
-     * @param Asiento $accountEntry
-     * @param float   $debit
-     * @param float   $credit
-     *
-     * @return bool
-     */
-    private function addLine($accountEntry, $debit, $credit): bool
-    {
-        $data = [
-            'id' => $this->subAccount->idsubcuenta,
-            'code' => $this->subAccount->codsubcuenta,
-            'debit' => $debit,
-            'credit' => $credit
-        ];
-
-        $line = $accountEntry->getNewLine();
-        $this->setDataLine($line, $data);
-        return $line->save();
     }
 }

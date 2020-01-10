@@ -18,7 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
@@ -26,6 +28,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Perform opening of account balances for the exercise.
  *
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class AccountingClosingOpening extends AccountingClosingBase
@@ -102,11 +105,18 @@ class AccountingClosingOpening extends AccountingClosingBase
     protected function copyAccounts(): bool
     {
         $accounting = new AccountingCreation();
-        $subaccount = new Subcuenta();
-        foreach (self::$dataBase->select($this->getSQLCopyAccounts()) as $value) {
-            if ($subaccount->loadFromCode($value['idsubcuenta'])) {
-                $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
-            }
+
+        /// copy accounts
+        $accountModel = new Cuenta();
+        $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
+        foreach ($accountModel->all($where, ['codcuenta' => 'ASC'], 0, 0) as $account) {
+            $accounting->copyAccountToExercise($account, $this->newExercise->codejercicio);
+        }
+
+        /// copy subaccounts
+        $subaccountModel = new Subcuenta();
+        foreach ($subaccountModel->all($where, ['codsubcuenta' => 'ASC'], 0, 0) as $subaccount) {
+            $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
         }
 
         return true;
@@ -184,6 +194,18 @@ class AccountingClosingOpening extends AccountingClosingBase
     }
 
     /**
+     * Search and load next exercise of indicated exercise.
+     */
+    private function loadNewExercise()
+    {
+        $date = \date('d-m-Y', \strtotime($this->exercise->fechainicio . ' +1 year'));
+
+        $this->newExercise = new Ejercicio();
+        $this->newExercise->idempresa = $this->exercise->idempresa;
+        $this->newExercise->loadFromDate($date, true, true);
+    }
+
+    /**
      * Add accounting entry line with balance override.
      * Return true without doing anything, if you do not need balance override.
      *
@@ -225,37 +247,5 @@ class AccountingClosingOpening extends AccountingClosingBase
             return;
         }
         $line->haber = $data['credit'] - $data['debit'];
-    }
-
-    /**
-     * Return sql sentence for subaccounts with balance
-     * that don't exists into next exercise.
-     *
-     * @return string
-     */
-    private function getSQLCopyAccounts(): string
-    {
-        return "SELECT t2.idsubcuenta, t2.codsubcuenta"
-            . " FROM asientos t1"
-            . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento"
-            . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
-            . " AND t1.operacion = '" . Asiento::OPERATION_CLOSING . "'"
-            . " AND NOT EXISTS("
-            . "SELECT 1 FROM subcuentas t3"
-            . " WHERE t3.codsubcuenta = t2.codsubcuenta"
-            . " AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
-            . ")";
-    }
-
-    /**
-     * Search and load next exercise of indicated exercise.
-     */
-    private function loadNewExercise()
-    {
-        $date = date('d-m-Y', strtotime($this->exercise->fechainicio . ' +1 year'));
-
-        $this->newExercise = new Ejercicio();
-        $this->newExercise->idempresa = $this->exercise->idempresa;
-        $this->newExercise->loadFromDate($date, true, true);
     }
 }
