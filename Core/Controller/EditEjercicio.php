@@ -139,7 +139,7 @@ class EditEjercicio extends EditController
         $data = [
             'journalClosing' => $this->request->request->get('iddiario-closing'),
             'journalOpening' => $this->request->request->get('iddiario-opening'),
-            'copySubAccounts' => $this->request->request->get('copysubaccounts')
+            'copySubAccounts' => (bool) $this->request->request->get('copysubaccounts', false)
         ];
 
         $model = $this->getModel();
@@ -186,7 +186,7 @@ class EditEjercicio extends EditController
     protected function createViewsAccountingEntries(string $viewName = 'ListAsiento')
     {
         $this->addListView($viewName, 'Asiento', 'special-accounting-entries', 'fas fa-balance-scale');
-        $this->views[$viewName]->addOrderBy(['fecha'], 'date');
+        $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date');
         $this->views[$viewName]->searchFields[] = 'numero';
         $this->views[$viewName]->searchFields[] = 'concepto';
 

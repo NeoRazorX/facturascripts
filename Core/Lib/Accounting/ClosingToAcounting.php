@@ -131,7 +131,7 @@ class ClosingToAcounting
         $this->exercise = $exercise;
         $this->journalClosing = $data['journalClosing'] ?? 0;
         $this->journalOpening = $data['journalOpening'] ?? 0;
-        $this->copySubAccounts = $data['copySubAccounts'] ?? true;
+        $this->copySubAccounts = $data['copySubAccounts'] ?? false;
 
         self::$dataBase->beginTransaction();
 
