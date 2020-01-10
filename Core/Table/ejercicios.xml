@@ -27,18 +27,6 @@
         <null>NO</null>
     </column>
     <column>
-        <name>idasientoapertura</name>
-        <type>integer</type>
-    </column>
-    <column>
-        <name>idasientocierre</name>
-        <type>integer</type>
-    </column>
-    <column>
-        <name>idasientopyg</name>
-        <type>integer</type>
-    </column>
-    <column>
         <name>idempresa</name>
         <type>integer</type>
     </column>

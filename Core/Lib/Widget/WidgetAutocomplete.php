@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,7 +43,7 @@ class WidgetAutocomplete extends WidgetSelect
      * @var string 
      */
     protected $selected = null;
-            
+
     /**
      *
      * @param object $model
@@ -92,9 +92,9 @@ class WidgetAutocomplete extends WidgetSelect
      */
     public function setSelected($text)
     {
-        $this->selected = $text;            
+        $this->selected = $text;
     }
-    
+
     /**
      * Get the descriptive text of the selected value
      * 
@@ -102,11 +102,9 @@ class WidgetAutocomplete extends WidgetSelect
      */
     protected function getSelected()
     {
-        return empty($this->selected)
-            ? static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
-            : $this->selected;
+        return empty($this->selected) ? static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle) : $this->selected;
     }
-        
+
     /**
      * Adds assets to the asset manager.
      */

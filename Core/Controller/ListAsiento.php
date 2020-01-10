@@ -54,13 +54,13 @@ class ListAsiento extends ListController
 
     /**
      * Add accounting entries tab
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewAccountEntries($viewName = 'ListAsiento')
     {
         $this->addView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->addSearchFields($viewName, ['CAST(numero AS CHAR(10))', 'concepto']);
+        $this->addSearchFields($viewName, ['numero', 'concepto']);
         $this->addOrderBy($viewName, ['fecha', 'idasiento'], 'date', 2);
         $this->addOrderBy($viewName, ['numero', 'idasiento'], 'number');
         $this->addOrderBy($viewName, ['importe', 'idasiento'], 'amount');
@@ -93,7 +93,7 @@ class ListAsiento extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewConcepts($viewName = 'ListConceptoPartida')
@@ -105,7 +105,7 @@ class ListAsiento extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewJournals($viewName = 'ListDiario')

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,7 +43,7 @@
                 <widget type="number" fieldname="longsubcuenta" decimal="0" max="15" min="4" required="true" />
             </column>
             <column name="status" numcolumns="3" order="160">
-                <widget type="select" fieldname="estado" translate="true" required="true">
+                <widget type="select" fieldname="estado" translate="true" readonly="true" required="true">
                     <values title="opened">ABIERTO</values>
                     <values title="closed">CERRADO</values>
                 </widget>
@@ -53,7 +53,6 @@
     <rows>
         <row type="footer">
             <group name="footer-actions" footer="specials-actions">
-                <button type="modal" label="import-accounting-plan" color="warning" action="import-accounting" icon="fas fa-file-import" />
                 <button type="action" label="export" color="info" action="export-accounting" icon="fas fa-file-export" />
             </group>
         </row>
@@ -65,6 +64,35 @@
             </column>
             <column name="accounting-plan" titleurl="https://www.facturascripts.com/doc/1/configuracion/plan-contable" description="import-accounting-plan-p" numcolumns="12" order="110">
                 <widget type="file" fieldname="accountingfile" />
+            </column>
+        </group>
+        <group name="close-exercise" title="close-exercise" icon="fas fa-calendar-check">
+            <column name="code" display="none">
+                <widget type="text" fieldname="codejercicio" readonly="true" />
+            </column>
+            <column name="journal-closing" numcolumns="6" order="100">
+                <widget type="select" fieldname="iddiario-closing">
+                    <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="journal-opening" numcolumns="6" order="100">
+                <widget type="select" fieldname="iddiario-opening">
+                    <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="copy-subaccounts" numcolumns="12" order="200">
+                <widget type="checkbox" fieldname="copysubaccounts" />
+            </column>
+        </group>
+        <group name="open-exercise" title="open-exercise" icon="fas fa-calendar-plus">
+            <column name="code" display="none">
+                <widget type="text" fieldname="codejercicio" readonly="true" />
+            </column>
+            <column name="delete-opening" numcolumns="12">
+                <widget type="checkbox" fieldname="delete-opening" />
+            </column>
+            <column name="delete-closing" numcolumns="12">
+                <widget type="checkbox" fieldname="delete-closing" />
             </column>
         </group>
     </modals>

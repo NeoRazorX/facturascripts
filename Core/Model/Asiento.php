@@ -31,6 +31,11 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
 
     use Base\ModelTrait;
 
+    const OPERATION_GENERAL = null;
+    const OPERATION_OPENING = 'A';
+    const OPERATION_CLOSING = 'C';
+    const OPERATION_REGULARIZATION = 'R';
+
     /**
      *
      * @var int
@@ -50,6 +55,12 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
      * @var string
      */
     public $concepto;
+
+    /**
+     *
+     * @var bool
+     */
+    private $deleteTest = true;
 
     /**
      * Document associated with the accounting entry.
@@ -107,6 +118,16 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     public $numero;
 
     /**
+     * It establishes whether the accounting entry is of a special operation:
+     * - opening
+     * - regularization
+     * - closing
+     *
+     * @var string
+     */
+    public $operacion;
+
+    /**
      * Accumulate the amounts of the detail in the document
      *
      * @param array $detail
@@ -137,15 +158,17 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
      */
     public function delete()
     {
-        if ($this->deleteErrorDataExercise()) {
-            return false;
-        }
+        if ($this->deleteTest) {
+            if ($this->deleteErrorDataExercise()) {
+                return false;
+            }
 
-        /// TODO: Check if accounting entry have VAT Accounts
-        $regularization = new RegularizacionImpuesto();
-        if ($regularization->getFechaInside($this->fecha)) {
-            $this->toolBox()->i18nLog()->warning('acounting-within-regularization');
-            return false;
+            /// TODO: Check if accounting entry have VAT Accounts
+            $regularization = new RegularizacionImpuesto();
+            if ($regularization->getFechaInside($this->fecha)) {
+                $this->toolBox()->i18nLog()->warning('acounting-within-regularization');
+                return false;
+            }
         }
 
         /// forze delete lines to update subaccounts
@@ -154,6 +177,16 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         }
 
         return parent::delete();
+    }
+
+    /**
+     * Change delete test status
+     *
+     * @param bool $value
+     */
+    public function setDeleteTest($value)
+    {
+        $this->deleteTest = $value;
     }
 
     /**
@@ -177,6 +210,38 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         $partida->concepto = $this->concepto;
 
         return $partida;
+    }
+
+    /**
+     * Indicates whether the exercise of the accounting entry has
+     * a closing entry.
+     *
+     * @return bool
+     */
+    public function hasClosing(): bool
+    {
+        $entry = new self();
+        $where = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('operacion', self::OPERATION_CLOSING)
+        ];
+        return $entry->loadFromCode('', $where);
+    }
+
+    /**
+     * Indicates whether the exercise of the accounting entry has
+     * a regularization entry.
+     *
+     * @return bool
+     */
+    public function hasRegularization(): bool
+    {
+        $entry = new self();
+        $where = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('operacion', self::OPERATION_REGULARIZATION)
+        ];
+        return $entry->loadFromCode('', $where);
     }
 
     /**
@@ -240,7 +305,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
 
     /**
      * Re-number the accounting entries of the open exercises.
-     * 
+     *
      * @param string $codjercicio
      *
      * @return bool
@@ -351,12 +416,12 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
             return true;
         }
 
-        if ($this->idasiento === $exercise->idasientoapertura && !empty($exercise->idasientopyg)) {
+        if ($this->operacion === self::OPERATION_OPENING && $this->hasRegularization()) {
             $this->toolBox()->i18nLog()->warning('delete-aperture-error');
             return true;
         }
 
-        if ($this->idasiento === $exercise->idasientopyg && !empty($exercise->idasientocierre)) {
+        if ($this->operacion === self::OPERATION_REGULARIZATION && $this->hasClosing()) {
             $this->toolBox()->i18nLog()->warning('delete-pyg-error');
             return true;
         }
@@ -376,7 +441,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
 
     /**
      * Update accounting entry number for
-     * 
+     *
      * @param Asiento[] $entries
      * @param int $number
      * @return bool

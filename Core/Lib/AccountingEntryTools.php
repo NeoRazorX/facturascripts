@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -184,9 +184,7 @@ class AccountingEntryTools
 
             if (empty($line['codcontrapartida']) && !empty($line['codsubcuenta'])) {
                 // TODO: [Fix] Go through previous lines in search of the offsetting. The sub-account that uses the offsetting for the first time is needed
-                $line['codcontrapartida'] = ($line['codsubcuenta'] === $previousLine['codcontrapartida'])
-                    ? $previousLine['codsubcuenta']
-                    : $previousLine['codcontrapartida'];
+                $line['codcontrapartida'] = ($line['codsubcuenta'] === $previousLine['codcontrapartida']) ? $previousLine['codsubcuenta'] : $previousLine['codcontrapartida'];
             }
         }
     }
@@ -321,9 +319,7 @@ class AccountingEntryTools
         }
 
         $vatModel = new Impuesto();
-        $vat = $typeVat == self::TYPE_TAX_INPUT
-            ? $vatModel->inputVatFromSubAccount($line['codsubcuenta'])
-            : $vatModel->outputVatFromSubAccount($line['codsubcuenta']);
+        $vat = $typeVat == self::TYPE_TAX_INPUT ? $vatModel->inputVatFromSubAccount($line['codsubcuenta']) : $vatModel->outputVatFromSubAccount($line['codsubcuenta']);
 
         $result = $this->getAccountVatID($document['codejercicio'], $line['codcontrapartida']);
 

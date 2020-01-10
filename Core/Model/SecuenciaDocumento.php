@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -58,6 +58,12 @@ class SecuenciaDocumento extends Base\ModelClass
      *
      * @var int
      */
+    public $inicio;
+
+    /**
+     *
+     * @var int
+     */
     public $longnumero;
 
     /**
@@ -87,6 +93,7 @@ class SecuenciaDocumento extends Base\ModelClass
     public function clear()
     {
         parent::clear();
+        $this->inicio = 1;
         $this->longnumero = 6;
         $this->numero = 1;
         $this->patron = '{EJE}{SERIE}{0NUM}';
@@ -133,6 +140,15 @@ class SecuenciaDocumento extends Base\ModelClass
     public function test()
     {
         $this->patron = $this->toolBox()->utils()->noHtml($this->patron);
+
+        if (empty($this->inicio) || $this->inicio < 1) {
+            $this->inicio = 1;
+        }
+
+        if ($this->inicio > $this->numero) {
+            $this->numero = $this->inicio;
+        }
+
         return parent::test();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -89,7 +89,7 @@ class SubAccountTools
         // return subaccount list
         return $results;
     }
-    
+
     /**
      * Indicates whether the subaccount has associated taxes.
      * 
@@ -97,12 +97,10 @@ class SubAccountTools
      * @return bool
      */
     public function hasTax($subAccount)
-    {        
-        $specialAccount = $subAccount instanceof Subcuenta 
-            ? $subAccount->getSpecialAccountCode()
-            : $subAccount;
+    {
+        $specialAccount = $subAccount instanceof Subcuenta ? $subAccount->getSpecialAccountCode() : $subAccount;
         return $this->isInputTax($specialAccount) || $this->isOutputTax($specialAccount);
-    }    
+    }
 
     /**
      * Indicates whether the special account type belongs to the group of input tax accounts.
@@ -127,7 +125,7 @@ class SubAccountTools
     {
         return in_array($specialAccount, $this->specialAccountsForGroup(self::SPECIAL_GROUP_TAX_OUTPUT));
     }
-    
+
     /**
      * Get array of specials Tax code accounts for selected group.
      *
