@@ -61,7 +61,7 @@ class EditEjercicio extends EditController
     }
 
     /**
-     *
+     * Add action buttons.
      */
     protected function addButtonActions()
     {
