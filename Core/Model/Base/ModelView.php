@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -117,7 +117,7 @@ abstract class ModelView
      */
     public function __isset($name)
     {
-        return array_key_exists($name, $this->values);
+        return \array_key_exists($name, $this->values);
     }
 
     /**
@@ -160,7 +160,7 @@ abstract class ModelView
      */
     public function clear()
     {
-        foreach (array_keys($this->getFields()) as $field) {
+        foreach (\array_keys($this->getFields()) as $field) {
             $this->values[$field] = null;
         }
     }
@@ -212,13 +212,26 @@ abstract class ModelView
      */
     public function exists()
     {
-        if (isset($this->masterModel)) {
-            return $this->masterModel->exists();
-        }
-        
-        return ($this->count() > 0);
+        return isset($this->masterModel) ? $this->masterModel->exists() : $this->count() > 0;
     }
-    
+
+    /**
+     * 
+     * @return array
+     */
+    public function getModelFields()
+    {
+        $fields = [];
+        foreach ($this->getFields() as $key => $field) {
+            $fields[$key] = [
+                'name' => $field,
+                'type' => ''
+            ];
+        }
+
+        return $fields;
+    }
+
     /**
      * Fill the class with the registry values
      * whose primary column corresponds to the value $cod, or according to the condition
