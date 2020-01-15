@@ -27,6 +27,7 @@ use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Core\Model\ModelView\SalesDocLineAccount;
 
 /**
  * Class for the generation of accounting entries of a sale/purchase document
@@ -93,6 +94,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Add the goods purchase line to the accounting entry.
+     * Make one line for each product/family purchase subaccount.
      *
      * @param Asiento $accountEntry
      *
@@ -100,25 +103,33 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addGoodsPurchaseLine($accountEntry)
     {
-        $cuenta = $this->getSpecialAccount('COMPRA');
-        if (!$cuenta->exists()) {
-            $this->toolBox()->i18nLog()->warning('purchases-account-not-found');
-            return false;
-        }
+        $document = $this->document->primaryColumnValue();
+        $accountPurchases = new PurchasesDocLineAccount();
+        foreach ($accountPurchases->getTotalsForDocument($document) as $code => $total) {
+            $subaccount = (empty($code))
+                ? $this->getSpecialSubAccount('COMPRA')
+                : $this->getSubAccount($code);
 
-        foreach ($cuenta->getSubcuentas() as $subcuenta) {
+            if (empty($subaccount->codsubcuenta)) {
+                $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
+                return false;
+            }
+
             $line = $accountEntry->getNewLine();
-            $line->codsubcuenta = $subcuenta->codsubcuenta;
-            $line->debe = $this->document->neto;
-            $line->idsubcuenta = $subcuenta->idsubcuenta;
-            return $line->save();
+            $line->codsubcuenta = $subaccount->codsubcuenta;
+            $line->debe = $total;
+            $line->idsubcuenta = $subaccount->idsubcuenta;
+            if (!$line->save()) {
+                $this->toolBox()->i18nLog()->warning('good-purchases-line-error');
+                return false;
+            }
         }
-
-        $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
-        return false;
+        return true;
     }
 
     /**
+     * Add the goods sales line to the accounting entry.
+     * Make one line for each product/family sale subaccount.
      *
      * @param Asiento $accountEntry
      *
@@ -126,22 +137,28 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addGoodsSalesLine($accountEntry)
     {
-        $cuenta = $this->getSpecialAccount('VENTAS');
-        if (!$cuenta->exists()) {
-            $this->toolBox()->i18nLog()->warning('sales-account-not-found');
-            return false;
-        }
+        $document = $this->document->primaryColumnValue();
+        $accountSales = new SalesDocLineAccount();
+        foreach ($accountSales->getTotalsForDocument($document) as $code => $total) {
+            $subaccount = (empty($code))
+                ? $this->getSpecialSubAccount('VENTAS')
+                : $this->getSubAccount($code);
 
-        foreach ($cuenta->getSubcuentas() as $subcuenta) {
+            if (empty($subaccount->codsubcuenta)) {
+                $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');
+                return false;
+            }
+
             $line = $accountEntry->getNewLine();
-            $line->codsubcuenta = $subcuenta->codsubcuenta;
-            $line->haber = $this->document->neto;
-            $line->idsubcuenta = $subcuenta->idsubcuenta;
-            return $line->save();
+            $line->codsubcuenta = $subaccount->codsubcuenta;
+            $line->haber = $total;
+            $line->idsubcuenta = $subaccount->idsubcuenta;
+            if (!$line->save()) {
+                $this->toolBox()->i18nLog()->warning('good-sales-line-error');
+                return false;
+            }
         }
-
-        $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');
-        return false;
+        return true;
     }
 
     /**
