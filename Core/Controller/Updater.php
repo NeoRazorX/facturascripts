@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -121,7 +121,7 @@ class Updater extends Controller
     {
         $idItem = $this->request->get('item', '');
         $fileName = 'update-' . $idItem . '.zip';
-        if (file_exists($fileName)) {
+        if (file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName)) {
             unlink(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName);
             $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
         }
