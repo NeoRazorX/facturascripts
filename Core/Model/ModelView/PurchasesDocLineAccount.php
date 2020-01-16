@@ -34,14 +34,15 @@ class PurchasesDocLineAccount extends ModelView
      * Get totals for subaccount of sale document
      *
      * @param int $document
+     * @param string $subaccount
      * @return array
      */
-    public function getTotalsForDocument($document)
+    public function getTotalsForDocument($document, $subaccount)
     {
         $where = [ new DataBaseWhere('lineasfacturasprov.idfactura', $document) ];
         $order = [
             'lineasfacturasprov.idfactura' => 'ASC',
-            'productos.codsubcuentacom' => 'ASC',
+            "COALESCE(productos.codsubcuentacom, '')" => 'ASC',
             "COALESCE(productos.codfamilia, '')" => 'ASC'
         ];
 
@@ -50,6 +51,10 @@ class PurchasesDocLineAccount extends ModelView
             $codSubAccount = (empty($row->codsubcuenta))
                 ? Familia::purchaseSubAccount($row->codfamilia)
                 : $row->codsubcuenta;
+
+            if (empty($codSubAccount)) {
+                $codSubAccount = $subaccount;
+            }
 
             $amount = $totals[$codSubAccount] ?? 0.00;
             $totals[$codSubAccount] = $amount + $row->total;
@@ -64,7 +69,7 @@ class PurchasesDocLineAccount extends ModelView
     {
         return [
             'idfactura' => 'lineasfacturasprov.idfactura',
-            'codsubcuenta' => 'productos.codsubcuentacom',
+            'codsubcuenta' => "COALESCE(productos.codsubcuentacom, '')",
             'codfamilia' => "COALESCE(productos.codfamilia, '')",
             'total' => 'SUM(lineasfacturasprov.pvptotal)',
         ];
@@ -78,7 +83,7 @@ class PurchasesDocLineAccount extends ModelView
     protected function getGroupFields(): string
     {
         return 'lineasfacturasprov.idfactura,'
-            . 'productos.codsubcuentacom,'
+            . "COALESCE(productos.codsubcuentacom, ''),"
             . "COALESCE(productos.codfamilia, '')";
     }
 
@@ -88,7 +93,7 @@ class PurchasesDocLineAccount extends ModelView
     protected function getSQLFrom(): string
     {
         return 'lineasfacturasprov'
-            . ' INNER JOIN productos ON productos.idproducto = lineasfacturasprov.idproducto';
+            . ' LEFT JOIN productos ON productos.idproducto = lineasfacturasprov.idproducto';
     }
 
     /**
