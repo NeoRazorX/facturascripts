@@ -118,25 +118,48 @@ abstract class ListBusinessDocument extends ListController
             $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }
-
-        foreach ($codes as $code) {
-            if (!$model->loadFromCode($code)) {
-                $this->toolBox()->i18nLog()->error('record-not-found');
-                continue;
+        
+        $inTransaction= $this->dataBase->inTransaction();
+        
+        // main save process
+        try{
+            if ($inTransaction === false) {
+            $this->dataBase->beginTransaction();
             }
-
-            foreach ($model->getAvaliableStatus() as $status) {
-                if (empty($status->generadoc)) {
+            
+            // main process
+            foreach ($codes as $code) {
+                if (!$model->loadFromCode($code)) {
+                    $this->toolBox()->i18nLog()->error('record-not-found');
                     continue;
                 }
 
-                $model->idestado = $status->idestado;
-                if (!$model->save()) {
-                    $this->toolBox()->i18nLog()->error('record-save-error');
-                    return true;
+                foreach ($model->getAvaliableStatus() as $status) {
+                    if (empty($status->generadoc)) {
+                        continue;
+                    }
+
+                    $model->idestado = $status->idestado;
+                    if (!$model->save()) {
+                        $this->toolBox()->i18nLog()->error('record-save-error');
+                        return false;
+                    }
                 }
             }
-        }
+            
+            /// save transaction
+            if ($inTransaction === false) {
+                $this->dataBase->commit();
+            }
+        } catch (\Exception $ex) {
+            $this->toolBox()->i18nLog()->error($e->getMessage());
+            return false;
+        } finally {
+            if (!$inTransaction && $this->dataBase->inTransaction()) {
+            $this->dataBase->rollback();
+            return false;
+            }
+        }       
 
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         $model->clear();
