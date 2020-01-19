@@ -214,7 +214,7 @@ abstract class PDFDocument extends PDFCore
             'price' => $this->i18n->trans('price'),
             'dto' => $this->i18n->trans('dto'),
             'dto-2' => $this->i18n->trans('dto-2'),
-            'tax' => $this->i18n->trans('vat'),
+            'tax' => $this->i18n->trans('tax'),
             'surcharge' => $this->i18n->trans('re'),
             'irpf' => $this->i18n->trans('irpf'),
             'total' => $this->i18n->trans('total'),
@@ -321,7 +321,7 @@ abstract class PDFDocument extends PDFCore
         $taxHeaders = [
             'tax' => $this->i18n->trans('tax'),
             'taxbase' => $this->i18n->trans('tax-base'),
-            'taxp' => $this->i18n->trans('vat'),
+            'taxp' => $this->i18n->trans('percentage'),
             'taxamount' => $this->i18n->trans('amount'),
             'taxsurchargep' => $this->i18n->trans('re'),
             'taxsurcharge' => $this->i18n->trans('amount'),
