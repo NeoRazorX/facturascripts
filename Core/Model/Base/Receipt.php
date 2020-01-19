@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -120,6 +120,8 @@ abstract class Receipt extends ModelOnChangeClass
 
     abstract public function getInvoice();
 
+    abstract public function getPayments();
+
     abstract protected function newPayment();
 
     public function clear()
@@ -135,6 +137,22 @@ abstract class Receipt extends ModelOnChangeClass
         $this->liquidado = 0.0;
         $this->numero = 1;
         $this->pagado = false;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        foreach ($this->getPayments() as $pay) {
+            if (!$pay->delete()) {
+                $this->toolBox()->i18nLog()->warning('cant-remove-payment');
+                return false;
+            }
+        }
+
+        return parent::delete();
     }
 
     /**
