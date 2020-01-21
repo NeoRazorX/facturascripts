@@ -174,7 +174,7 @@ class MysqlEngine extends DataBaseEngine
             return null;
         }
 
-        $result->set_charset('utf8');
+        $result->set_charset(\FS_MYSQL_CHARSET);
         $result->autocommit(false);
 
         /// disable foreign keys
