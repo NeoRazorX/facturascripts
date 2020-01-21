@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -118,50 +118,30 @@ abstract class ListBusinessDocument extends ListController
             $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }
-        
-        $inTransaction= $this->dataBase->inTransaction();
-        
-        // main save process
-        try{
-            if ($inTransaction === false) {
-            $this->dataBase->beginTransaction();
+
+        $this->dataBase->beginTransaction();
+        foreach ($codes as $code) {
+            if (!$model->loadFromCode($code)) {
+                $this->toolBox()->i18nLog()->error('record-not-found');
+                continue;
             }
-            
-            // main process
-            foreach ($codes as $code) {
-                if (!$model->loadFromCode($code)) {
-                    $this->toolBox()->i18nLog()->error('record-not-found');
+
+            foreach ($model->getAvaliableStatus() as $status) {
+                if (empty($status->generadoc)) {
                     continue;
                 }
 
-                foreach ($model->getAvaliableStatus() as $status) {
-                    if (empty($status->generadoc)) {
-                        continue;
-                    }
-
-                    $model->idestado = $status->idestado;
-                    if (!$model->save()) {
-                        $this->toolBox()->i18nLog()->error('record-save-error');
-                        return false;
-                    }
+                $model->idestado = $status->idestado;
+                if (!$model->save()) {
+                    $this->toolBox()->i18nLog()->error('record-save-error');
+                    $this->dataBase->rollback();
+                    return true;
                 }
             }
-            
-            /// save transaction
-            if ($inTransaction === false) {
-                $this->dataBase->commit();
-            }
-        } catch (\Exception $ex) {
-            $this->toolBox()->i18nLog()->error($e->getMessage());
-            return false;
-        } finally {
-            if (!$inTransaction && $this->dataBase->inTransaction()) {
-            $this->dataBase->rollback();
-            return false;
-            }
-        }       
+        }
 
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        $this->dataBase->commit();
         $model->clear();
         return true;
     }
@@ -312,6 +292,7 @@ abstract class ListBusinessDocument extends ListController
             return true;
         }
 
+        $this->dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (!$model->loadFromCode($code)) {
                 $this->toolBox()->i18nLog()->error('record-not-found');
@@ -322,11 +303,13 @@ abstract class ListBusinessDocument extends ListController
             $model->pagado = true;
             if (!$model->save()) {
                 $this->toolBox()->i18nLog()->error('record-save-error');
+                $this->dataBase->rollback();
                 return true;
             }
         }
 
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        $this->dataBase->commit();
         $model->clear();
         return true;
     }
