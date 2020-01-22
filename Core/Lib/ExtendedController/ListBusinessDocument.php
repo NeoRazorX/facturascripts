@@ -192,7 +192,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['fecha', 'hora', 'codigo'], 'date', 2);
         $this->addOrderBy($viewName, ['numero'], 'number');
         $this->addOrderBy($viewName, ['numproveedor'], 'numsupplier');
-        $this->addOrderBy($viewName, ['total'], 'amount');
+        $this->addOrderBy($viewName, ['total'], 'total');
 
         /// filters
         $this->addCommonViewFilters($viewName, $model);
@@ -214,7 +214,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['fecha', 'codigo'], 'date', 2);
         $this->addOrderBy($viewName, ['numero'], 'number');
         $this->addOrderBy($viewName, ['numero2'], 'number2');
-        $this->addOrderBy($viewName, ['total'], 'amount');
+        $this->addOrderBy($viewName, ['total'], 'total');
 
         /// filters
         $this->addCommonViewFilters($viewName, $model);
