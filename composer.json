@@ -1,7 +1,7 @@
 {
     "name": "facturascripts/facturascripts",
     "description": "Open source ERP software. Built on PHP, symfony componentes and bootstrap 4. Easy and powerful.",
-    "homepage": "https://www.facturascripts.com",
+    "homepage": "https://facturascripts.com",
     "license": "LGPL-3.0-or-later",
     "authors": [
         {

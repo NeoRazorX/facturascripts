@@ -43,7 +43,7 @@ class Updater extends Controller
 
     const CORE_PROJECT_ID = 1;
     const CORE_ZIP_FOLDER = 'facturascripts';
-    const UPDATE_CORE_URL = 'https://www.facturascripts.com/DownloadBuild';
+    const UPDATE_CORE_URL = 'https://facturascripts.com/DownloadBuild';
 
     /**
      *
