@@ -294,6 +294,7 @@ trait InvoiceTrait
         /// check receipts
         $generator = new ReceiptGenerator();
         $generator->generate($this);
+        $generator->update($this);
 
         return true;
     }

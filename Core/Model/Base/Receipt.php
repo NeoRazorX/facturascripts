@@ -44,6 +44,12 @@ abstract class Receipt extends ModelOnChangeClass
      *
      * @var bool
      */
+    protected $disableInvoiceUpdate = false;
+
+    /**
+     *
+     * @var bool
+     */
     protected $disablePaymentGeneration = false;
 
     /**
@@ -153,6 +159,15 @@ abstract class Receipt extends ModelOnChangeClass
         }
 
         return parent::delete();
+    }
+
+    /**
+     * 
+     * @param bool $disable
+     */
+    public function disableInvoiceUpdate($disable = true)
+    {
+        $this->disableInvoiceUpdate = $disable;
     }
 
     /**
@@ -312,6 +327,10 @@ abstract class Receipt extends ModelOnChangeClass
 
     protected function updateInvoice()
     {
+        if ($this->disableInvoiceUpdate) {
+            return;
+        }
+
         $paidAmount = 0.0;
         $invoice = $this->getInvoice();
         foreach ($invoice->getReceipts() as $receipt) {

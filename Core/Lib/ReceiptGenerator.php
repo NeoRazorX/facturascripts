@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,6 +53,25 @@ class ReceiptGenerator
         }
 
         return false;
+    }
+
+    /**
+     * 
+     * @param FacturaCliente|FacturaProveedor $invoice
+     */
+    public function update(&$invoice)
+    {
+        /// check current invoice receipts
+        $receipts = $invoice->getReceipts();
+
+        $paidAmount = 0.0;
+        foreach ($receipts as $receipt) {
+            if ($receipt->pagado) {
+                $paidAmount += $receipt->importe;
+            }
+        }
+
+        $invoice->pagada = $paidAmount == $invoice->total;
     }
 
     /**
@@ -175,6 +194,7 @@ class ReceiptGenerator
         $newReceipt->nick = $invoice->nick;
         $newReceipt->numero = $number;
         $newReceipt->setPaymentMethod($invoice->codpago);
+        $newReceipt->disableInvoiceUpdate(true);
         return $newReceipt->save();
     }
 
@@ -197,6 +217,7 @@ class ReceiptGenerator
         $newReceipt->nick = $invoice->nick;
         $newReceipt->numero = $number;
         $newReceipt->setPaymentMethod($invoice->codpago);
+        $newReceipt->disableInvoiceUpdate(true);
         return $newReceipt->save();
     }
 
