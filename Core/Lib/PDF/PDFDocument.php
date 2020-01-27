@@ -496,7 +496,7 @@ abstract class PDFDocument extends PDFCore
         $code = $idempresa ?? AppSettings::get('default', 'idempresa', '');
         $company = new Empresa();
         if ($company->loadFromCode($code)) {
-            $this->pdf->ezText($company->nombre, self::FONT_SIZE + 7, ['justification' => 'right']);
+            $this->pdf->ezText(Utils::fixHtml($company->nombre), self::FONT_SIZE + 7, ['justification' => 'right']);
             $address = $company->direccion;
             $address .= empty($company->codpostal) ? "\n" : "\n" . $company->codpostal . ', ';
             $address .= empty($company->ciudad) ? '' : $company->ciudad;
@@ -509,7 +509,7 @@ abstract class PDFDocument extends PDFCore
                 }
             }
 
-            $lineText = $company->cifnif . ' - ' . $address . "\n\n" . implode(' · ', $contactData);
+            $lineText = $company->cifnif . ' - ' . Utils::fixHtml($address) . "\n\n" . implode(' · ', $contactData);
             $this->pdf->ezText($lineText, self::FONT_SIZE, ['justification' => 'right']);
 
             $idlogo = $this->format->idlogo ?? $company->idlogo;
