@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -46,7 +46,7 @@
                 </widget>
             </column>
             <column name="priority" order="150">
-                <widget type="number" fieldname="prioridad" required="true" />
+                <widget type="number" fieldname="prioridad" icon="fas fa-sort-numeric-down-alt" required="true" />
             </column>
         </group>
     </columns>

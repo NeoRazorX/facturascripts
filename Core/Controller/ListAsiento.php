@@ -79,7 +79,10 @@ class ListAsiento extends ListController
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
         $this->addFilterSelect($viewName, 'iddiario', 'journals', 'iddiario', $selectJournals);
 
-        $this->addFilterNumber($viewName, 'canal', 'channel', 'canal', '=');
+        $selectChannel = $this->codeModel->all('asientos', 'canal', 'canal');
+        $this->addFilterSelect($viewName, 'canal', 'channel', 'canal', $selectChannel);
+        
+        $this->addFilterCheckbox($viewName, 'editable');
 
         /// buttons
         $newButton = [

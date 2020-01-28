@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,9 +57,9 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="info" fieldname="documento">neq:</option>
-            <option color="warning" fieldname="editable">0</option>
-            <option color="success" fieldname="operacion">notnull:</option>
+            <option color="info" fieldname="editable">1</option>
+            <option color="warning" fieldname="operacion">notnull:</option>
+            <option color="success" fieldname="documento">neq:</option>
         </row>
     </rows>
     <modals>

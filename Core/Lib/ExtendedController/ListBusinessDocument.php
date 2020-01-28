@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -119,6 +119,7 @@ abstract class ListBusinessDocument extends ListController
             return true;
         }
 
+        $this->dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (!$model->loadFromCode($code)) {
                 $this->toolBox()->i18nLog()->error('record-not-found');
@@ -133,12 +134,14 @@ abstract class ListBusinessDocument extends ListController
                 $model->idestado = $status->idestado;
                 if (!$model->save()) {
                     $this->toolBox()->i18nLog()->error('record-save-error');
+                    $this->dataBase->rollback();
                     return true;
                 }
             }
         }
 
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        $this->dataBase->commit();
         $model->clear();
         return true;
     }
@@ -189,7 +192,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['fecha', 'hora', 'codigo'], 'date', 2);
         $this->addOrderBy($viewName, ['numero'], 'number');
         $this->addOrderBy($viewName, ['numproveedor'], 'numsupplier');
-        $this->addOrderBy($viewName, ['total'], 'amount');
+        $this->addOrderBy($viewName, ['total'], 'total');
 
         /// filters
         $this->addCommonViewFilters($viewName, $model);
@@ -211,7 +214,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['fecha', 'codigo'], 'date', 2);
         $this->addOrderBy($viewName, ['numero'], 'number');
         $this->addOrderBy($viewName, ['numero2'], 'number2');
-        $this->addOrderBy($viewName, ['total'], 'amount');
+        $this->addOrderBy($viewName, ['total'], 'total');
 
         /// filters
         $this->addCommonViewFilters($viewName, $model);
@@ -289,6 +292,7 @@ abstract class ListBusinessDocument extends ListController
             return true;
         }
 
+        $this->dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (!$model->loadFromCode($code)) {
                 $this->toolBox()->i18nLog()->error('record-not-found');
@@ -299,11 +303,13 @@ abstract class ListBusinessDocument extends ListController
             $model->pagado = true;
             if (!$model->save()) {
                 $this->toolBox()->i18nLog()->error('record-save-error');
+                $this->dataBase->rollback();
                 return true;
             }
         }
 
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        $this->dataBase->commit();
         $model->clear();
         return true;
     }

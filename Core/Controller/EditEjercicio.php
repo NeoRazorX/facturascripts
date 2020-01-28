@@ -61,7 +61,7 @@ class EditEjercicio extends EditController
     }
 
     /**
-     *
+     * Add action buttons.
      */
     protected function addButtonActions()
     {
@@ -139,7 +139,7 @@ class EditEjercicio extends EditController
         $data = [
             'journalClosing' => $this->request->request->get('iddiario-closing'),
             'journalOpening' => $this->request->request->get('iddiario-opening'),
-            'copySubAccounts' => $this->request->request->get('copysubaccounts')
+            'copySubAccounts' => (bool) $this->request->request->get('copysubaccounts', false)
         ];
 
         $model = $this->getModel();
@@ -160,6 +160,7 @@ class EditEjercicio extends EditController
         parent::createViews();
         $this->createViewsAccounting();
         $this->createViewsSubaccounting();
+        $this->createViewsAccountingEntries();
     }
 
     /**
@@ -176,6 +177,24 @@ class EditEjercicio extends EditController
         /// disable columns
         $this->views[$viewName]->disableColumn('fiscal-exercise');
         $this->views[$viewName]->disableColumn('parent-account');
+    }
+
+    /**
+     *
+     * @param string $viewName
+     */
+    protected function createViewsAccountingEntries(string $viewName = 'ListAsiento')
+    {
+        $this->addListView($viewName, 'Asiento', 'special-accounting-entries', 'fas fa-balance-scale');
+        $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date');
+        $this->views[$viewName]->searchFields[] = 'numero';
+        $this->views[$viewName]->searchFields[] = 'concepto';
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('exercise');
+
+        /// disable button
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
@@ -316,18 +335,6 @@ class EditEjercicio extends EditController
     }
 
     /**
-     *
-     * @param BaseView $view
-     * @param string   $fieldOrder
-     */
-    private function loadAccountData($view, $fieldOrder)
-    {
-        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
-        $where = [new DataBaseWhere('codejercicio', $codejercicio)];
-        $view->loadData(false, $where, [$fieldOrder => 'ASC']);
-    }
-
-    /**
      * Load view data procedure
      *
      * @param string   $viewName
@@ -335,18 +342,26 @@ class EditEjercicio extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+
         switch ($viewName) {
-            case 'ListCuenta':
-                $this->loadAccountData($view, 'codcuenta');
-                break;
-
-            case 'ListSubcuenta':
-                $this->loadAccountData($view, 'codsubcuenta');
-                break;
-
             case 'EditEjercicio':
                 parent::loadData($viewName, $view);
                 $this->addButtonActions();
+                break;
+
+            case 'ListAsiento':
+                $where = [
+                    new DataBaseWhere('codejercicio', $codejercicio),
+                    new DataBaseWhere('operacion', null, 'IS NOT')
+                ];
+                $view->loadData('', $where);
+                break;
+
+            case 'ListCuenta':
+            case 'ListSubcuenta':
+                $where = [new DataBaseWhere('codejercicio', $codejercicio)];
+                $view->loadData('', $where);
                 break;
         }
     }

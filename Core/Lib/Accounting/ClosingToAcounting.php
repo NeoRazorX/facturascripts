@@ -19,7 +19,10 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
 /**
  * Class that performs accounting closures
@@ -131,12 +134,12 @@ class ClosingToAcounting
         $this->exercise = $exercise;
         $this->journalClosing = $data['journalClosing'] ?? 0;
         $this->journalOpening = $data['journalOpening'] ?? 0;
-        $this->copySubAccounts = $data['copySubAccounts'] ?? true;
+        $this->copySubAccounts = $data['copySubAccounts'] ?? false;
 
         self::$dataBase->beginTransaction();
 
         try {
-            if ($this->execRegularization() && $this->execClosing() && $this->execOpening()) {
+            if ($this->execCloseInvoices() && $this->execRegularization() && $this->execClosing() && $this->execOpening()) {
                 $exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
                 $exercise->save();
                 self::$dataBase->commit();
@@ -182,6 +185,52 @@ class ClosingToAcounting
     {
         $regularization = new AccountingClosingRegularization();
         return $regularization->delete($this->exercise);
+    }
+
+    /**
+     * Lock all invoices from this exercise.
+     * 
+     * @return bool
+     */
+    protected function execCloseInvoices(): bool
+    {
+        /// apply to customer invoices
+        $customerInvoice = new FacturaCliente();
+        $status1 = $customerInvoice->getAvaliableStatus();
+        $where = [
+            new DataBaseWhere('editable', true),
+            new DataBaseWhere('codejercicio', $this->exercise->codejercicio)
+        ];
+        foreach ($customerInvoice->all($where, [], 0, 0) as $invoice) {
+            foreach ($status1 as $stat) {
+                if ($stat->bloquear !== true) {
+                    continue;
+                }
+
+                $invoice->idestado = $stat->idestado;
+                if (!$invoice->save()) {
+                    return false;
+                }
+            }
+        }
+
+        /// apply to supplier invoices
+        $supplierInvoice = new FacturaProveedor();
+        $status2 = $supplierInvoice->getAvaliableStatus();
+        foreach ($supplierInvoice->all($where, [], 0, 0) as $invoice) {
+            foreach ($status2 as $stat) {
+                if ($stat->bloquear !== true) {
+                    continue;
+                }
+
+                $invoice->idestado = $stat->idestado;
+                if (!$invoice->save()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**

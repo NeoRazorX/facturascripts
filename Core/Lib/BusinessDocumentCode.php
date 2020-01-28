@@ -41,6 +41,15 @@ class BusinessDocumentCode
     public static function getNewCode(&$document)
     {
         $sequence = static::getSequence($document);
+
+        /**
+         * Fix sequence start number.
+         * TODO: remove after version 2020.5
+         */
+        if (empty($sequence->inicio)) {
+            $sequence->inicio = 1;
+        }
+
         $document->numero = static::getNewNumber($sequence, $document);
         $vars = [
             '{EJE}' => $document->codejercicio,
@@ -98,7 +107,7 @@ class BusinessDocumentCode
 
             if (empty($previous)) {
                 /// no previous document, then use initial number
-                $sequence->numero = empty($sequence->inicio) ? 1 : $sequence->inicio;
+                $sequence->numero = $sequence->inicio;
             } elseif ($expectedNumber >= $sequence->inicio && $expectedNumber > (int) $sequence->numero - self::GAP_LIMIT - 1) {
                 return (string) $expectedNumber;
             }

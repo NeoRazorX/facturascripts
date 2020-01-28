@@ -427,18 +427,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $utils = $this->toolBox()->utils();
         $this->observaciones = $utils->noHtml($this->observaciones);
 
-        /// calculate total discount
-        $totalDto = 1.0;
-        foreach ([$this->dtopor1, $this->dtopor2] as $dto) {
-            $totalDto *= 1 - $dto / 100;
-        }
-
-        /// check net amount
-        if (!$utils->floatcmp($this->neto, $this->netosindto * $totalDto, FS_NF0, true)) {
-            $this->toolBox()->i18nLog()->error('bad-net-amount-error');
-            return false;
-        }
-
         /// check total
         if (!$utils->floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
             $this->toolBox()->i18nLog()->error('bad-total-error');

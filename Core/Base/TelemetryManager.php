@@ -35,7 +35,7 @@ use FacturaScripts\Dinamic\Model\Variante;
 class TelemetryManager
 {
 
-    const TELEMETRY_URL = 'https://www.facturascripts.com/Telemetry';
+    const TELEMETRY_URL = 'https://facturascripts.com/Telemetry';
     const UPDATE_INTERVAL = 86400;
 
     /**
