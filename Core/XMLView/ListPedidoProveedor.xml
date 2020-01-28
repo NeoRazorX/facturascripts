@@ -21,8 +21,13 @@
 -->
 <view>
     <columns>
-        <column name="id" display="none" order="100">
+        <column name="id" display="none" order="90">
             <widget type="text" fieldname="idpedido" />
+        </column>
+        <column name="company" display="none" order="100">
+            <widget type="select" fieldname="idempresa">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+            </widget>
         </column>
         <column name="code" order="110">
             <widget type="text" fieldname="codigo" />
