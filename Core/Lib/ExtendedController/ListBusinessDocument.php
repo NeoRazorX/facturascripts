@@ -58,6 +58,22 @@ abstract class ListBusinessDocument extends ListController
         ];
         $this->addButton($viewName, $newButton);
     }
+    
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function addButtonCompleteDocument($viewName)
+    {
+        $newButton = [
+            'action' => 'complete-document',
+            'confirm' => 'true',
+            'icon' => 'fas fa-lock fa-fw',
+            'label' => 'complete-document',
+            'type' => 'action',
+        ];
+        $this->addButton($viewName, $newButton);
+    }
 
     /**
      *
@@ -105,6 +121,51 @@ abstract class ListBusinessDocument extends ListController
      * 
      * @return bool
      */
+    protected function completeDocumentAction()
+    {
+        if (!$this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $codes = $this->request->request->get('code');
+        $model = $this->views[$this->active]->model;
+        if (!is_array($codes) || empty($model)) {
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            return true;
+        }
+
+        $this->dataBase->beginTransaction();
+        foreach ($codes as $code) {
+            if (!$model->loadFromCode($code)) {
+                $this->toolBox()->i18nLog()->error('record-not-found');
+                continue;
+            }
+                        
+            foreach ($model->getAvaliableStatus() as $status) {
+//                               
+                if (!$status->editable){                    
+                    $model->idestado = $status->idestado;
+                }                               
+                
+                if (!$model->save()) {
+                    $this->toolBox()->i18nLog()->error('record-save-error');
+                    $this->dataBase->rollback();
+                    return true;
+                }
+            }
+        }
+
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        $this->dataBase->commit();
+        $model->clear();
+        return true;        
+    }
+    
+    /**
+     * 
+     * @return bool
+     */
     protected function approveDocumentAction()
     {
         if (!$this->permissions->allowUpdate) {
@@ -125,8 +186,8 @@ abstract class ListBusinessDocument extends ListController
                 $this->toolBox()->i18nLog()->error('record-not-found');
                 continue;
             }
-
-            foreach ($model->getAvaliableStatus() as $status) {
+            
+            foreach ($model->getAvaliableStatus() as $status) {                
                 if (empty($status->generadoc)) {
                     continue;
                 }
@@ -245,7 +306,10 @@ abstract class ListBusinessDocument extends ListController
 
             case 'group-document':
                 return $this->groupDocumentAction();
-
+                
+            case 'complete-document':
+                return $this->completeDocumentAction();
+                
             case 'paid':
                 return $this->paidAction();
         }
