@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,12 +26,12 @@
             </column>
             <column name="customer" order="110">
                 <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente" required="true" readonly="dinamic">
-                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
+                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="invoice" order="120">
                 <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaCliente" readonly="dinamic">
-                    <values source="facturascli" fieldcode="idfactura" fieldtitle="codigo"></values>
+                    <values source="facturascli" fieldcode="idfactura" fieldtitle="codigo" />
                 </widget>
             </column>
             <column name="number" order="130">
@@ -41,7 +41,7 @@
                 <widget type="date" fieldname="fecha" />
             </column>
             <column name="expiration" order="150">
-                <widget type="date" fieldname="fecha" />
+                <widget type="date" fieldname="vencimiento" />
             </column>
             <column name="user" display="none" order="160">
                 <widget type="select" fieldname="nick" readonly="true">
@@ -50,7 +50,7 @@
             </column>
             <column name="company" order="170">
                 <widget type="select" fieldname="idempresa" onclick="EditEmpresa" readonly="dinamic" required="true">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
         </group>
@@ -63,12 +63,12 @@
             </column>
             <column name="currency" order="120">
                 <widget type="select" fieldname="coddivisa" onclick="EditDivisa" required="true" readonly="dinamic">
-                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"></values>
+                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="payment" title="method-payment" order="130">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago" required="true">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="payment-date" order="140">

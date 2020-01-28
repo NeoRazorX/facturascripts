@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class AdminPlugins extends Base\Controller
 {
 
-    const PLUGIN_LIST_URL = 'https://www.facturascripts.com/PluginInfoList';
+    const PLUGIN_LIST_URL = 'https://facturascripts.com/PluginInfoList';
 
     /**
      * Plugin Manager.

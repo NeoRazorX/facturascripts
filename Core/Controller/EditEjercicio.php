@@ -335,18 +335,6 @@ class EditEjercicio extends EditController
     }
 
     /**
-     *
-     * @param BaseView $view
-     * @param string   $fieldOrder
-     */
-    private function loadAccountData($view, $fieldOrder)
-    {
-        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
-        $where = [new DataBaseWhere('codejercicio', $codejercicio)];
-        $view->loadData(false, $where, [$fieldOrder => 'ASC']);
-    }
-
-    /**
      * Load view data procedure
      *
      * @param string   $viewName
@@ -354,9 +342,15 @@ class EditEjercicio extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
+
         switch ($viewName) {
+            case 'EditEjercicio':
+                parent::loadData($viewName, $view);
+                $this->addButtonActions();
+                break;
+
             case 'ListAsiento':
-                $codejercicio = $this->getViewModelValue('EditEjercicio', 'codejercicio');
                 $where = [
                     new DataBaseWhere('codejercicio', $codejercicio),
                     new DataBaseWhere('operacion', null, 'IS NOT')
@@ -365,16 +359,9 @@ class EditEjercicio extends EditController
                 break;
 
             case 'ListCuenta':
-                $this->loadAccountData($view, 'codcuenta');
-                break;
-
             case 'ListSubcuenta':
-                $this->loadAccountData($view, 'codsubcuenta');
-                break;
-
-            case 'EditEjercicio':
-                parent::loadData($viewName, $view);
-                $this->addButtonActions();
+                $where = [new DataBaseWhere('codejercicio', $codejercicio)];
+                $view->loadData('', $where);
                 break;
         }
     }

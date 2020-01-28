@@ -15,10 +15,10 @@ npm install
 ```
 
 ## Documentation
-https://www.facturascripts.com/doc
+https://facturascripts.com/doc
 
 ## Issues / Feedback
-https://www.facturascripts.com/contacto
+https://facturascripts.com/contacto
 
 ## Translations
-https://www.facturascripts.com/traducciones
+https://facturascripts.com/traducciones
