@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,6 +35,7 @@ define('FS_DISABLE_RM_PLUGINS', false);
 define('FS_HIDDEN_PLUGINS', '');
 define('FS_ITEM_LIMIT', 50);
 define('FS_LANG', 'es_ES');
+define('FS_MYSQL_CHARSET', 'utf8');
 define('FS_NF0', 2);
 define('FS_ROUTE', '/');
 define('FS_TIMEZONE', 'Europe/Madrid');

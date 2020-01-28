@@ -84,7 +84,7 @@ class ProductionErrorHandler
             . "<li><b>PHP:</b> " . PHP_VERSION . "</li>"
             . "</ul>"
             . "<div class='text-center'>"
-            . "<a href='https://www.facturascripts.com/contacto' target='_blank' class='btn'>REPORT / INFORMAR</a>"
+            . "<a href='https://facturascripts.com/contacto' target='_blank' class='btn'>REPORT / INFORMAR</a>"
             . "</div>"
             . "</div>"
             . "</body>"

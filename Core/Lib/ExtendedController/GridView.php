@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -234,6 +234,10 @@ class GridView extends EditView
             'url' => ''
         ];
 
+        if (empty($data['lines'])) {
+            $data['lines'] = [];
+        }
+
         try {
             // load master document data and test it's ok
             if (!$this->loadDocumentDataFromArray('code', $data['document'])) {
@@ -255,12 +259,14 @@ class GridView extends EditView
             }
 
             // Proccess detail document data (new)
-            $this->model->initTotals(); // Master Model must implement GridModelInterface
+            // Master Model must implement GridModelInterface
+            $this->model->initTotals();
             foreach ($data['lines'] as $newLine) {
                 if (!$this->saveLines($documentFieldKey, $documentFieldValue, $newLine)) {
                     throw new Exception($this->toolBox()->i18n()->trans('error-saving-lines'));
                 }
-                $this->model->accumulateAmounts($newLine); // Master Model must implement GridModelInterface
+                // Master Model must implement GridModelInterface
+                $this->model->accumulateAmounts($newLine);
             }
 
             // save master document
@@ -452,7 +458,8 @@ class GridView extends EditView
     {
         foreach ($this->getDetailColumns('detail') as $col) {
             if (!isset($data[$col->widget->fieldname])) {
-                $data[$col->widget->fieldname] = null; // TODO: maybe the widget can have a default value method instead of null
+                // TODO: maybe the widget can have a default value method instead of null
+                $data[$col->widget->fieldname] = null;
             }
         }
     }
@@ -467,10 +474,13 @@ class GridView extends EditView
      */
     private function loadDocumentDataFromArray($field, &$data): bool
     {
-        if ($this->model->loadFromCode($data[$field])) {    // old data
-            $this->model->loadFromData($data, ['action', 'activetab', 'code']);  // new data (the web form may be not have all the fields)
+        // old data
+        if ($this->model->loadFromCode($data[$field])) {
+            // new data (the web form may be not have all the fields)
+            $this->model->loadFromData($data, ['action', 'activetab', 'code']);
             return $this->model->test();
         }
+
         return false;
     }
 
@@ -486,7 +496,9 @@ class GridView extends EditView
     {
         // load old data, if exits
         $field = $this->detailModel->primaryColumn();
-        $this->detailModel->loadFromCode($data[$field]);
+        if (!empty($data[$field])) {
+            $this->detailModel->loadFromCode($data[$field]);
+        }
 
         // set new data from user form
         $this->detailModel->loadFromData($data);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -134,9 +134,19 @@ trait InvoiceTrait
             return false;
         }
 
-        $asiento = $this->getAccountingEntry();
-        if ($asiento->exists()) {
-            return $asiento->delete() ? parent::delete() : false;
+        /// remove accounting
+        $acEntry = $this->getAccountingEntry();
+        if ($acEntry->exists() && !$acEntry->delete()) {
+            $this->toolBox()->i18nLog()->warning('cant-remove-accounting-entry');
+            return false;
+        }
+
+        /// remove receipts
+        foreach ($this->getReceipts() as $receipt) {
+            if (!$receipt->delete()) {
+                $this->toolBox()->i18nLog()->warning('cant-remove-receipt');
+                return false;
+            }
         }
 
         return parent::delete();
@@ -284,6 +294,7 @@ trait InvoiceTrait
         /// check receipts
         $generator = new ReceiptGenerator();
         $generator->generate($this);
+        $generator->update($this);
 
         return true;
     }

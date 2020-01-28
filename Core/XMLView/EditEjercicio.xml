@@ -62,7 +62,7 @@
             <column name="exercise" display="none" order="100">
                 <widget type="text" fieldname="codejercicio" readonly="true" />
             </column>
-            <column name="accounting-plan" titleurl="https://www.facturascripts.com/doc/1/configuracion/plan-contable" description="import-accounting-plan-p" numcolumns="12" order="110">
+            <column name="accounting-plan" titleurl="https://facturascripts.com/doc/1/configuracion/plan-contable" description="import-accounting-plan-p" numcolumns="12" order="110">
                 <widget type="file" fieldname="accountingfile" />
             </column>
         </group>

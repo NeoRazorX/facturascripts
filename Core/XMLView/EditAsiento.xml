@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,8 +27,8 @@
                 <widget type="number" fieldname="idasiento" />
             </column>
             <column name="exercise" numcolumns="4" order="110">
-                <widget type="select" fieldname="codejercicio" readonly="dinamic">
-                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+                <widget type="select" fieldname="codejercicio" onclick="EditEjercicio" readonly="dinamic">
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="date" numcolumns="4" order="120">
@@ -40,8 +40,8 @@
         </group>
         <group name="advanced" title="advanced" numcolumns="6" icon="fas fa-chart-line">
             <column name="journal" numcolumns="5" order="210">
-                <widget type="select" fieldname="iddiario">
-                    <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
+                <widget type="select" fieldname="iddiario" onclick="EditDiario">
+                    <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="channel" numcolumns="3" order="220">
