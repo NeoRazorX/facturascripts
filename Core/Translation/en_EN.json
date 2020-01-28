@@ -588,6 +588,7 @@
     "linux": "Linux",
     "loading-controller": "Loading controller: '%controllerName%'",
     "location": "Location",
+    "lock-invoice": "Lock invoice",
     "lock-unlock": "Lock-Unlock",
     "lock-unlock-account-entry": "Block\/Unlock the accounting entry",
     "locked": "Locked",
