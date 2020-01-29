@@ -158,17 +158,8 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
      */
     public function delete()
     {
-        if ($this->deleteTest) {
-            if ($this->deleteErrorDataExercise()) {
-                return false;
-            }
-
-            /// TODO: Check if accounting entry have VAT Accounts
-            $regularization = new RegularizacionImpuesto();
-            if ($regularization->getFechaInside($this->fecha)) {
-                $this->toolBox()->i18nLog()->warning('acounting-within-regularization');
-                return false;
-            }
+        if (!$this->canDelete()) {
+            return false;
         }
 
         /// forze delete lines to update subaccounts
@@ -399,44 +390,32 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     }
 
     /**
-     * Checks if accounty entry is a special entry or is in a closed fiscal year.
-     * Returns TRUE on error.
+     * Checks if accounty entry can be delete
+     * Returns FALSE on error.
      *
      * @return bool
      */
-    private function deleteErrorDataExercise(): bool
+    protected function canDelete(): bool
     {
-        $exercise = new Ejercicio();
-        if (!$exercise->loadFromCode($this->codejercicio)) {
+        if (!$this->deleteTest) {
             return true;
         }
 
-        if (!$exercise->isOpened()) {
-            $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
-            return true;
-        }
-
-        if ($this->operacion === self::OPERATION_OPENING && $this->hasRegularization()) {
-            $this->toolBox()->i18nLog()->warning('delete-aperture-error');
-            return true;
-        }
-
-        if ($this->operacion === self::OPERATION_REGULARIZATION && $this->hasClosing()) {
-            $this->toolBox()->i18nLog()->warning('delete-pyg-error');
-            return true;
-        }
-
-        return false;
+        return $this->canUpdate();
     }
 
     /**
-     * Check if exists error in accounting entry
+     * Checks if accounty entry can be modify
+     * Returns FALSE on error.
      *
      * @return bool
      */
-    private function testErrorInData(): bool
+    protected function canUpdate(): bool
     {
-        return empty($this->codejercicio) || empty($this->concepto) || empty($this->fecha);
+        return $this->checkIsEditable()
+            && $this->checkIsOpened()
+            && !$this->checkIsOperation()
+            && !$this->checkInRegularization();
     }
 
     /**
@@ -472,5 +451,103 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     {
         $this->numero = $this->newCode('numero');
         return parent::saveInsert($values);
+    }
+
+    /**
+     * Update the model data in the database.
+     *
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveUpdate(array $values = array())
+    {
+        /*
+        if (!this->canUpdate()) {
+            return false;
+        }
+         */
+        return parent::saveUpdate($values);
+    }
+
+    /**
+     * Check if the accounting entry is into VAT Regularization.
+     * If yes, it shows the error message.
+     *
+     * @return bool
+     */
+    private function checkInRegularization(): bool
+    {
+        /// TODO: Check if accounting entry have VAT Accounts
+        $regularization = new RegularizacionImpuesto();
+        if ($regularization->getFechaInside($this->fecha)) {
+            $this->toolBox()->i18nLog()->warning('acounting-within-regularization');
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check if the accounting entry is editable.
+     * If not, it shows the error message.
+     *
+     * @return bool
+     */
+    private function checkIsEditable(): bool
+    {
+        if ($this->editable) {
+            return true;
+        }
+
+        $this->toolBox()->i18nLog()->warning('non-editable-record');
+        return false;
+    }
+
+    /**
+     * Check if the accounting entry belongs to an open fiscal year.
+     * If not, it shows the error message.
+     *
+     * @return bool
+     */
+    private function checkIsOpened(): bool
+    {
+        $exercise = new Ejercicio();
+        $exercise->loadFromCode($this->codejercicio);
+        if ($exercise->isOpened()) {
+            return true;
+        }
+
+        $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
+        return false;
+    }
+
+    /**
+     * Check if the accounting entry belongs to the closing or opening
+     * of the fiscal year. If yes, it shows the error message.
+     * @return bool
+     */
+    private function checkIsOperation(): bool
+    {
+        if ($this->operacion === self::OPERATION_OPENING && $this->hasRegularization()) {
+            $this->toolBox()->i18nLog()->warning('delete-aperture-error');
+            return true;
+        }
+
+        if ($this->operacion === self::OPERATION_REGULARIZATION && $this->hasClosing()) {
+            $this->toolBox()->i18nLog()->warning('delete-pyg-error');
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if exists error in accounting entry
+     *
+     * @return bool
+     */
+    private function testErrorInData(): bool
+    {
+        return empty($this->codejercicio) || empty($this->concepto) || empty($this->fecha);
     }
 }
