@@ -81,6 +81,19 @@ class EditAsiento extends EditController
     }
 
     /**
+     * Block/Unblock edit data of accounting entry
+     */
+    protected function changeLockStatus()
+    {
+        $code = $this->request->get('code');
+        $accounting = new Asiento();
+        if ($accounting->loadFromCode($code)) {
+            $accounting->setEditable(!$accounting->editable);
+            $accounting->save();
+        }
+    }
+
+    /**
      * Clone source document
      *
      * @return bool
@@ -172,7 +185,8 @@ class EditAsiento extends EditController
                 return $this->cloneDocument();
 
             case 'lock':
-                return true; // TODO: Block/Unblock edit data of accounting entry
+                $this->changeLockStatus();
+                return true;
 
             case 'recalculate-document':
                 $this->recalculateDocument();

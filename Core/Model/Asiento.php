@@ -128,6 +128,14 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     public $operacion;
 
     /**
+     * Initial status of editable property.
+     * True if it is editable, but false.
+     *
+     * @var bool
+     */
+    private $previousEditable;
+
+    /**
      * Accumulate the amounts of the detail in the document
      *
      * @param array $detail
@@ -149,6 +157,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         $this->editable = true;
         $this->importe = 0.0;
         $this->numero = '';
+        $this->previousEditable = true;
     }
 
     /**
@@ -259,6 +268,18 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
     }
 
     /**
+     * Assign the values of the $data array to the model properties.
+     *
+     * @param array $data
+     * @param array $exclude
+     */
+    public function loadFromData(array $data = array(), array $exclude = array())
+    {
+        parent::loadFromData($data, $exclude);
+        $this->previousEditable = $this->editable;
+    }
+
+    /**
      * Returns the following code for the reported field or the primary key of the model.
      *
      * @param string $field
@@ -349,6 +370,17 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
         }
 
         return false;
+    }
+
+    /**
+     * Set editable status
+     *
+     * @param bool $newValue
+     */
+    public function setEditable($newValue)
+    {
+        $this->previousEditable = true;
+        $this->editable = $newValue;
     }
 
     /**
@@ -495,7 +527,7 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
      */
     private function checkIsEditable(): bool
     {
-        if ($this->editable) {
+        if ($this->previousEditable) {
             return true;
         }
 
