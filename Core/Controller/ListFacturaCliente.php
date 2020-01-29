@@ -52,6 +52,7 @@ class ListFacturaCliente extends ListBusinessDocument
     {
         $this->createViewSales('ListFacturaCliente', 'FacturaCliente', 'invoices');
         $this->addFilterCheckbox('ListFacturaCliente', 'pagada', 'unpaid', '', '!=');
+        $this->addButtonCompleteDocument('ListFacturaCliente');
 
         $this->createViewLines('ListLineaFacturaCliente', 'LineaFacturaCliente');
         $this->createViewReceipts();
