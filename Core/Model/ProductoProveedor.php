@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
  * Description of ProductoProveedor
  *
@@ -87,6 +89,18 @@ class ProductoProveedor extends Base\ModelClass
 
     /**
      * 
+     * @return Variante
+     */
+    public function getVariant()
+    {
+        $variant = new Variante();
+        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        $variant->loadFromCode('', $where);
+        return $variant;
+    }
+
+    /**
+     * 
      * @return Proveedor
      */
     public function getSupplier()
@@ -136,6 +150,6 @@ class ProductoProveedor extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
-        return $this->getSupplier()->url();
+        return $this->getVariant()->url();
     }
 }
