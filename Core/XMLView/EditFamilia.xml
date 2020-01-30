@@ -35,17 +35,17 @@
             </column>
         </group>
         <group name="accounts" numcolumns="12">
-            <column name="codsubcuentacom" title="subaccount-purchases" display="none" order="100">
+            <column name="codsubcuentacom" title="subaccount-purchases" order="100">
                 <widget type="autocomplete" fieldname="codsubcuentacom">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="codsubcuentaven" title="subaccount-sales" display="none" order="110">
+            <column name="codsubcuentaven" title="subaccount-sales" order="110">
                 <widget type="autocomplete" fieldname="codsubcuentaven">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
-            <column name="codsubcuentairpcomf" title="subaccount-irpf" display="none" order="120">
+            <column name="codsubcuentairpcomf" title="subaccount-irpf" order="120">
                 <widget type="autocomplete" fieldname="codsubcuentairpfcom">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>

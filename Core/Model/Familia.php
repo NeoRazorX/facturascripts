@@ -72,6 +72,17 @@ class Familia extends Base\ModelClass
     public $madre;
 
     /**
+     * Get the accounting sub-account for purchases.
+     *
+     * @param string $code
+     * @return string
+     */
+    public static function purchaseSubAccount($code)
+    {
+        return self::getSubaccountFromFamily($code, 'codsubcuentacom');
+    }
+
+    /**
      * Returns the name of the column that is the primary key of the model.
      *
      * @return string
@@ -119,5 +130,41 @@ class Familia extends Base\ModelClass
         }
 
         return false;
+    }
+
+    /**
+     * Get the accounting sub-account for sales.
+     *
+     * @param string $code
+     * @return string
+     */
+    public static function saleSubAccount($code)
+    {
+        return self::getSubaccountFromFamily($code, 'codsubcuentaven');
+    }
+
+    /**
+     *
+     * @param string $code
+     * @param string $field
+     * @param Familia $model
+     * @return string
+     */
+    private static function getSubaccountFromFamily($code, $field, $model = null)
+    {
+        if (empty($code)) {
+            return '';
+        }
+
+        if (!isset($model)) {
+            $model = new Familia();
+        }
+
+        if (!$model->loadFromCode($code)) {
+            return '';
+        }
+        return empty($model->{$field})
+            ? self::getSubaccountFromFamily($model->madre, $field, $model)
+            : $model->{$field};
     }
 }

@@ -24,6 +24,8 @@ use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\ModelView\SalesDocLineAccount;
+use FacturaScripts\Dinamic\Model\ModelView\PurchasesDocLineAccount;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Serie;
@@ -93,6 +95,8 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     * Add the goods purchase line to the accounting entry.
+     * Make one line for each product/family purchase subaccount.
      *
      * @param Asiento $accountEntry
      *
@@ -100,25 +104,32 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addGoodsPurchaseLine($accountEntry)
     {
-        $cuenta = $this->getSpecialAccount('COMPRA');
-        if (!$cuenta->exists()) {
-            $this->toolBox()->i18nLog()->warning('purchases-account-not-found');
-            return false;
-        }
+        $document = $this->document->primaryColumnValue();
+        $purchaseAccount = $this->getSpecialSubAccount('COMPRA')->codsubcuenta;
 
-        foreach ($cuenta->getSubcuentas() as $subcuenta) {
+        $accountPurchases = new PurchasesDocLineAccount();
+        foreach ($accountPurchases->getTotalsForDocument($document, $purchaseAccount) as $code => $total) {
+            $subaccount = $this->getSubAccount($code);
+            if (empty($subaccount->codsubcuenta)) {
+                $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
+                return false;
+            }
+
             $line = $accountEntry->getNewLine();
-            $line->codsubcuenta = $subcuenta->codsubcuenta;
-            $line->debe = $this->document->neto;
-            $line->idsubcuenta = $subcuenta->idsubcuenta;
-            return $line->save();
+            $line->codsubcuenta = $subaccount->codsubcuenta;
+            $line->debe = $total;
+            $line->idsubcuenta = $subaccount->idsubcuenta;
+            if (!$line->save()) {
+                $this->toolBox()->i18nLog()->warning('good-purchases-line-error');
+                return false;
+            }
         }
-
-        $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
-        return false;
+        return true;
     }
 
     /**
+     * Add the goods sales line to the accounting entry.
+     * Make one line for each product/family sale subaccount.
      *
      * @param Asiento $accountEntry
      *
@@ -126,22 +137,27 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addGoodsSalesLine($accountEntry)
     {
-        $cuenta = $this->getSpecialAccount('VENTAS');
-        if (!$cuenta->exists()) {
-            $this->toolBox()->i18nLog()->warning('sales-account-not-found');
-            return false;
-        }
+        $document = $this->document->primaryColumnValue();
+        $salesAccount = $this->getSpecialSubAccount('VENTAS')->codsubcuenta;
 
-        foreach ($cuenta->getSubcuentas() as $subcuenta) {
+        $accountSales = new SalesDocLineAccount();
+        foreach ($accountSales->getTotalsForDocument($document, $salesAccount) as $code => $total) {
+            $subaccount = $this->getSubAccount($code);
+            if (empty($subaccount->codsubcuenta)) {
+                $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');
+                return false;
+            }
+
             $line = $accountEntry->getNewLine();
-            $line->codsubcuenta = $subcuenta->codsubcuenta;
-            $line->haber = $this->document->neto;
-            $line->idsubcuenta = $subcuenta->idsubcuenta;
-            return $line->save();
+            $line->codsubcuenta = $subaccount->codsubcuenta;
+            $line->haber = $total;
+            $line->idsubcuenta = $subaccount->idsubcuenta;
+            if (!$line->save()) {
+                $this->toolBox()->i18nLog()->warning('good-sales-line-error');
+                return false;
+            }
         }
-
-        $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');
-        return false;
+        return true;
     }
 
     /**
@@ -347,6 +363,7 @@ class InvoiceToAccounting extends AccountingClass
     {
         $accountEntry = new Asiento();
         $this->setAccountingData($accountEntry, $this->toolBox()->i18n()->trans('customer-invoice') . ' ' . $this->document->codigo);
+
         if (!$accountEntry->save()) {
             $this->toolBox()->i18nLog()->warning('accounting-entry-error');
             return;
