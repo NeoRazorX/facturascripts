@@ -27,6 +27,9 @@ use FacturaScripts\Dinamic\Model\Familia;
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * 
+ * @property string $codfamilia
+ * @property string $codsubcuenta
  */
 class PurchasesDocLineAccount extends ModelView
 {

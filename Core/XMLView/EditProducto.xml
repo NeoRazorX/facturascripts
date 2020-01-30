@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -72,23 +72,6 @@
                 <widget type="checkbox" fieldname="publico" />
             </column>
         </group>
-        <group name="accounts" numcolumns="12">
-            <column name="codsubcuentacom" title="subaccount-purchases" order="100">
-                <widget type="autocomplete" fieldname="codsubcuentacom">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
-                </widget>
-            </column>
-            <column name="codsubcuentaven" title="subaccount-sales" order="110">
-                <widget type="autocomplete" fieldname="codsubcuentaven">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
-                </widget>
-            </column>
-            <column name="codsubcuentairpfcom" title="subaccount-irpf" order="120">
-                <widget type="autocomplete" fieldname="codsubcuentairpfcom">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
-                </widget>
-            </column>
-        </group>
         <group name="observations" numcolumns="9">
             <column name="observations" numcolumns="12" order="100">
                 <widget type="textarea" fieldname="observaciones" rows="5" />
@@ -100,6 +83,23 @@
             </column>
             <column name="update-time" numcolumns="12" order="110">
                 <widget type="datetime" fieldname="actualizado" readonly="true" />
+            </column>
+        </group>
+        <group name="accounts" title="accounting" icon="fas fa-balance-scale" numcolumns="12">
+            <column name="codsubcuentacom" title="subaccount-purchases" description="optional" order="100">
+                <widget type="autocomplete" fieldname="codsubcuentacom">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                </widget>
+            </column>
+            <column name="codsubcuentaven" title="subaccount-sales" description="optional" order="110">
+                <widget type="autocomplete" fieldname="codsubcuentaven">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                </widget>
+            </column>
+            <column name="codsubcuentairpfcom" title="subaccount-irpf" description="optional" order="120">
+                <widget type="autocomplete" fieldname="codsubcuentairpfcom">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                </widget>
             </column>
         </group>
     </columns>
