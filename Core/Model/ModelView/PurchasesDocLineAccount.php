@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,7 @@ use FacturaScripts\Dinamic\Model\Familia;
 /**
  * Auxiliary model to get sub-accounts of purchases document lines
  *
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 class PurchasesDocLineAccount extends ModelView
@@ -33,13 +34,14 @@ class PurchasesDocLineAccount extends ModelView
     /**
      * Get totals for subaccount of sale document
      *
-     * @param int $document
+     * @param int    $document
      * @param string $subaccount
+     *
      * @return array
      */
     public function getTotalsForDocument($document, $subaccount)
     {
-        $where = [ new DataBaseWhere('lineasfacturasprov.idfactura', $document) ];
+        $where = [new DataBaseWhere('lineasfacturasprov.idfactura', $document)];
         $order = [
             'lineasfacturasprov.idfactura' => 'ASC',
             "COALESCE(productos.codsubcuentacom, '')" => 'ASC',
@@ -48,10 +50,7 @@ class PurchasesDocLineAccount extends ModelView
 
         $totals = [];
         foreach ($this->all($where, $order) as $row) {
-            $codSubAccount = (empty($row->codsubcuenta))
-                ? Familia::purchaseSubAccount($row->codfamilia)
-                : $row->codsubcuenta;
-
+            $codSubAccount = empty($row->codsubcuenta) ? Familia::purchaseSubAccount($row->codfamilia) : $row->codsubcuenta;
             if (empty($codSubAccount)) {
                 $codSubAccount = $subaccount;
             }
@@ -59,6 +58,7 @@ class PurchasesDocLineAccount extends ModelView
             $amount = $totals[$codSubAccount] ?? 0.00;
             $totals[$codSubAccount] = $amount + $row->total;
         }
+
         return $totals;
     }
 
