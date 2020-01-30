@@ -494,11 +494,9 @@ class Asiento extends Base\ModelClass implements Base\GridModelInterface
      */
     protected function saveUpdate(array $values = array())
     {
-        /*
-        if (!this->canUpdate()) {
+        if (!$this->canUpdate()) {
             return false;
         }
-         */
         return parent::saveUpdate($values);
     }
 
