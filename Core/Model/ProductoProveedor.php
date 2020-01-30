@@ -40,6 +40,12 @@ class ProductoProveedor extends Base\ModelClass
      *
      * @var string
      */
+    public $coddivisa;
+
+    /**
+     *
+     * @var string
+     */
     public $codproveedor;
 
     /**

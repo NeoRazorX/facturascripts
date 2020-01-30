@@ -78,9 +78,6 @@ class EditProducto extends EditController
         $this->views[$viewName]->addOrderBy(['dtopor'], 'dto');
         $this->views[$viewName]->addOrderBy(['dtopor2'], 'dto-2');
 
-        /// disable columns
-        $this->views[$viewName]->disableColumn('reference');
-
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }

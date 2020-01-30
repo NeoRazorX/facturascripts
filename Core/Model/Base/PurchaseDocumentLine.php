@@ -58,6 +58,7 @@ abstract class PurchaseDocumentLine extends BusinessDocumentLine
         ];
         if (!$product->loadFromCode('', $where) || \strtotime($product->actualizado) <= \strtotime($doc->fecha . ' ' . $doc->hora)) {
             $product->actualizado = \date(self::DATETIME_STYLE, \strtotime($doc->fecha . ' ' . $doc->hora));
+            $product->coddivisa = $doc->coddivisa;
             $product->codproveedor = $doc->codproveedor;
             $product->dtopor = $this->dtopor;
             $product->dtopor2 = $this->dtopor2;
