@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -253,6 +252,7 @@ class AccountingClosingOpening extends AccountingClosingBase
             $line->debe = $data['debit'] - $data['credit'];
             return;
         }
+
         $line->haber = $data['credit'] - $data['debit'];
     }
 
@@ -264,8 +264,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     private function isProfitLossAccount(string $subaccount): bool
     {
-        return isset($this->subAccount)
-            && $this->subAccount->codsubcuenta == $subaccount;
+        return isset($this->subAccount) && $this->subAccount->codsubcuenta == $subaccount;
     }
 
     /**
@@ -275,9 +274,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     private function setResultAccountData(&$data)
     {
-        $specialAccount = ($data['debit'] > $data['credit'])
-            ? AccountingAccounts::SPECIAL_NEGATIVE_PREV_ACCOUNT
-            : AccountingAccounts::SPECIAL_POSITIVE_PREV_ACCOUNT;
+        $specialAccount = ($data['debit'] > $data['credit']) ? AccountingAccounts::SPECIAL_NEGATIVE_PREV_ACCOUNT : AccountingAccounts::SPECIAL_POSITIVE_PREV_ACCOUNT;
 
         $accounting = new AccountingAccounts();
         $accounting->exercise = $this->newExercise;
