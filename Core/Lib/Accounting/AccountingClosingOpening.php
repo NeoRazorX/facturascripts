@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -83,6 +84,7 @@ class AccountingClosingOpening extends AccountingClosingBase
             return false;
         }
 
+        $this->loadSubAccount($this->newExercise, AccountingAccounts::SPECIAL_PROFIT_LOSS_ACCOUNT);
         return parent::exec($exercise, $idjournal);
     }
 
@@ -180,7 +182,7 @@ class AccountingClosingOpening extends AccountingClosingBase
             . " AND (t1.operacion IS NULL OR t1.operacion <> '" . $this->getOperationFilter() . "')"
             . " GROUP BY 1, 2, 3, t3.idsubcuenta"
             . " HAVING ROUND(SUM(t2.debe) - SUM(t2.haber), 4) <> 0.0000"
-            . " ORDER BY 1, 2, 3";
+            . " ORDER BY 1, 3, 2";
     }
 
     /**
@@ -240,12 +242,50 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     protected function setDataLine(&$line, $data)
     {
+        if ($this->isProfitLossAccount($data['code'])) {
+            $this->setResultAccountData($data);
+        }
+
         parent::setDataLine($line, $data);
+
         $line->idsubcuenta = $data['id_new'];
         if ($data['debit'] > $data['credit']) {
             $line->debe = $data['debit'] - $data['credit'];
             return;
         }
         $line->haber = $data['credit'] - $data['debit'];
+    }
+
+    /**
+     * Check if subaccount is a special profit and loss account
+     *
+     * @param string $subaccount
+     * @return bool
+     */
+    private function isProfitLossAccount(string $subaccount): bool
+    {
+        return isset($this->subAccount)
+            && $this->subAccount->codsubcuenta == $subaccount;
+    }
+
+    /**
+     * Set the sub-account data based on the result of the previous exercise
+     *
+     * @param array $data
+     */
+    private function setResultAccountData(&$data)
+    {
+        $specialAccount = ($data['debit'] > $data['credit'])
+            ? AccountingAccounts::SPECIAL_NEGATIVE_PREV_ACCOUNT
+            : AccountingAccounts::SPECIAL_POSITIVE_PREV_ACCOUNT;
+
+        $accounting = new AccountingAccounts();
+        $accounting->exercise = $this->newExercise;
+
+        $subAccount = $accounting->getSpecialSubAccount($specialAccount);
+        if (!empty($subAccount->codsubcuenta)) {
+            $data['code'] = $subAccount->codsubcuenta;
+            $data['id_new'] = $subAccount->idsubcuenta;
+        }
     }
 }

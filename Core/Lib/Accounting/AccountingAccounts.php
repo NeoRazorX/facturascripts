@@ -55,6 +55,8 @@ class AccountingAccounts
     const SPECIAL_IRPF_SALES_ACCOUNT = 'IRPF';
     const SPECIAL_IRPF_PURCHASE_ACCOUNT = 'IRPFPR';
     const SPECIAL_PROFIT_LOSS_ACCOUNT = 'PYG';
+    const SPECIAL_POSITIVE_PREV_ACCOUNT = 'PREVIO';
+    const SPECIAL_NEGATIVE_PREV_ACCOUNT = 'PRENEG';
 
     /**
      *
