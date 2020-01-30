@@ -588,6 +588,7 @@
     "linux": "Linux",
     "loading-controller": "Chargement du contrôleur: '%controllerName%'",
     "location": "Localisation",
+    "lock-invoice": "lock-invoice",
     "lock-unlock": "Verrouiller-Déverrouiller",
     "lock-unlock-account-entry": "Bloquer\/Débloquer l'entrée comptable",
     "locked": "Fermé à clef",

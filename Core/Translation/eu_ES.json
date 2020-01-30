@@ -588,6 +588,7 @@
     "linux": "Linux",
     "loading-controller": "'%controllerName%' kontrolatzailea kargatzen",
     "location": "Kokapena",
+    "lock-invoice": "lock-invoice",
     "lock-unlock": "(Des)Blokeatu",
     "lock-unlock-account-entry": "Blokeatu\/desblokeatu kontabilitate idazpena",
     "locked": "Blokeatuta",
