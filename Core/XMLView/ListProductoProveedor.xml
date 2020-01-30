@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Carlos García Gómez <carlos@facturascripts.com>
+-->
+<view>
+    <columns>
+        <column name="code" display="none" order="100">
+            <widget type="text" fieldname="id" />
+        </column>
+        <column name="supplier" order="110">
+            <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor">
+                <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre" />
+            </widget>
+        </column>
+        <column name="reference" order="120">
+            <widget type="text" fieldname="referencia" />
+        </column>
+        <column name="supplier-reference" order="130">
+            <widget type="text" fieldname="refproveedor" />
+        </column>
+        <column name="price" display="right" order="140">
+            <widget type="money" fieldname="precio" />
+        </column>
+        <column name="dto" display="right" order="150">
+            <widget type="number" fieldname="dtopor" />
+        </column>
+        <column name="dto-2" display="none" order="160">
+            <widget type="number" fieldname="dtopor2" />
+        </column>
+        <column name="update-time" display="right" order="170">
+            <widget type="datetime" fieldname="actualizado" />
+        </column>
+    </columns>
+</view>

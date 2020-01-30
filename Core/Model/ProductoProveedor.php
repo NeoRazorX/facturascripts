@@ -87,6 +87,17 @@ class ProductoProveedor extends Base\ModelClass
 
     /**
      * 
+     * @return Proveedor
+     */
+    public function getSupplier()
+    {
+        $supplier = new Proveedor();
+        $supplier->loadFromCode($this->codproveedor);
+        return $supplier;
+    }
+
+    /**
+     * 
      * @return string
      */
     public static function primaryColumn(): string
@@ -114,5 +125,17 @@ class ProductoProveedor extends Base\ModelClass
         }
 
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List'): string
+    {
+        return $this->getSupplier()->url();
     }
 }

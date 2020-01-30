@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\ProductoProveedor;
+use FacturaScripts\Dinamic\Model\ProductoProveedor;
 
 /**
  * Description of PurchaseDocumentLine

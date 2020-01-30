@@ -63,6 +63,26 @@ class EditProducto extends EditController
         parent::createViews();
         $this->addEditListView('EditVariante', 'Variante', 'variants', 'fas fa-project-diagram');
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fas fa-dolly');
+        $this->createViewsSuppliers();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsSuppliers(string $viewName = 'ListProductoProveedor')
+    {
+        $this->addListView($viewName, 'ProductoProveedor', 'suppliers', 'fas fa-users');
+        $this->views[$viewName]->addOrderBy(['actualizado'], 'update-time', 2);
+        $this->views[$viewName]->addOrderBy(['precio'], 'price');
+        $this->views[$viewName]->addOrderBy(['dtopor'], 'dto');
+        $this->views[$viewName]->addOrderBy(['dtopor2'], 'dto-2');
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('reference');
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
@@ -144,6 +164,11 @@ class EditProducto extends EditController
 
             case 'EditStock':
                 $view->loadData('', $where, ['idstock' => 'DESC']);
+                break;
+
+            case 'ListProductoProveedor':
+                $where2 = [new DataBaseWhere('referencia', $this->getViewModelValue('EditProducto', 'referencia'))];
+                $view->loadData('', $where2);
                 break;
         }
     }
