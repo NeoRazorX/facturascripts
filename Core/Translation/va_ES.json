@@ -588,7 +588,7 @@
     "linux": "Linux",
     "loading-controller": "Carregant el controlador: '%controllerName%'",
     "location": "Localisació",
-    "lock-invoice": "lock-invoice",
+    "lock-invoice": "Bloquejar factura",
     "lock-unlock": "Bloquejar-Desbloquejar",
     "lock-unlock-account-entry": "Bloquejar\/Desbloquejar l'assentament contable",
     "locked": "Bloquejat",
