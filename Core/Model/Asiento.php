@@ -449,10 +449,12 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      */
     protected function saveInsert(array $values = []): bool
     {
+        if (!$this->canUpdate()) {
+            return false;
+        }
+
         $this->numero = $this->newCode('numero');
         return parent::saveInsert($values);
-
-        // TODO: mirar si esta cerrado
     }
 
     /**
