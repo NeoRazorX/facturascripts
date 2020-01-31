@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : productosprov.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the productosprov table.
+-->
+<table>
+    <column>
+        <name>actualizado</name>
+        <type>timestamp</type>
+    </column>
+    <column>
+        <name>coddivisa</name>
+        <type>character varying(3)</type>
+    </column>
+    <column>
+        <name>codproveedor</name>
+        <type>character varying(10)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>dtopor</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>dtopor2</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>precio</name>
+        <type>double precision</type>
+    </column>
+    <column>
+        <name>referencia</name>
+        <type>character varying(30)</type>
+    </column>
+    <column>
+        <name>refproveedor</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>productosprov_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_productosprov_proveedores</name>
+        <type>FOREIGN KEY (codproveedor) REFERENCES proveedores (codproveedor) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_productosprov</name>
+        <type>UNIQUE (codproveedor, refproveedor)</type>
+    </constraint>
+</table>

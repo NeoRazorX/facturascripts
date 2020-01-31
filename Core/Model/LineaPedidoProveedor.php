@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2019  Carlos Garcia Gomez       <carlos@facturascripts.com>
+ * Copyright (C) 2014-2020  Carlos Garcia Gomez       <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ namespace FacturaScripts\Core\Model;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaPedidoProveedor extends Base\BusinessDocumentLine
+class LineaPedidoProveedor extends Base\PurchaseDocumentLine
 {
 
     use Base\ModelTrait;
