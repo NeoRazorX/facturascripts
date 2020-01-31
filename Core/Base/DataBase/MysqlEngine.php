@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -174,11 +174,12 @@ class MysqlEngine extends DataBaseEngine
             return null;
         }
 
-        $result->set_charset(\FS_MYSQL_CHARSET);
+        $charset = \defined('FS_MYSQL_CHARSET') ? \FS_MYSQL_CHARSET : 'utf8';
+        $result->set_charset($charset);
         $result->autocommit(false);
 
         /// disable foreign keys
-        if (!\FS_DB_FOREIGN_KEYS) {
+        if (\defined('FS_DB_FOREIGN_KEYS') && !\FS_DB_FOREIGN_KEYS) {
             $this->exec($result, 'SET foreign_key_checks = 0;');
         }
 
