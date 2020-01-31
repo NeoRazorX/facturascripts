@@ -88,7 +88,7 @@ class EditAsiento extends EditController
         $code = $this->request->get('code');
         $accounting = new Asiento();
         if ($accounting->loadFromCode($code)) {
-            $accounting->setEditable(!$accounting->editable);
+            $accounting->editable = !$accounting->editable;
             if ($accounting->save()) {
                 $this->toolBox()->i18nLog()->notice('record-updated-correctly');
             }
