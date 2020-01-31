@@ -119,7 +119,7 @@ class BusinessDocumentView extends BaseView
                 'className' => $this->getCellAlign($col->display),
                 'data' => $col->widget->fieldname,
                 'type' => $col->widget->getType(),
-                'readOnly' => ($col->widget->readonly == 'true')
+                'readOnly' => ($col->widget->readonly == 'true' || !$this->model->editable)
             ];
 
             if ($item['type'] === 'number' || $item['type'] === 'money') {
