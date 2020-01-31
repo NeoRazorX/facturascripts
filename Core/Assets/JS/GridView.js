@@ -115,7 +115,6 @@ function getGridData(fieldOrder = null, onlyWithData = false) {
 /* Return column value */
 function getGridFieldData(row, fieldName) {
     var physicalRow = gridObject.toPhysicalRow(row);
-    console.log('physicalRow: ' + physicalRow);
     return documentLineData["rows"][physicalRow][fieldName];
 }
 
