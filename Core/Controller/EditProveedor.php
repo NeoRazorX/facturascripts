@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -91,6 +91,28 @@ class EditProveedor extends ComercialContactController
     }
 
     /**
+     * 
+     * @param string $viewName
+     */
+    protected function createProductView(string $viewName = 'ListProductoProveedor')
+    {
+        $this->addListView($viewName, 'ProductoProveedor', 'products', 'fas fa-cubes');
+        $this->views[$viewName]->addOrderBy(['actualizado'], 'update-time', 2);
+        $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
+        $this->views[$viewName]->addOrderBy(['refproveedor'], 'supplier-reference');
+        $this->views[$viewName]->addOrderBy(['precio'], 'price');
+        $this->views[$viewName]->addOrderBy(['dtopor'], 'dto');
+        $this->views[$viewName]->addOrderBy(['dtopor2'], 'dto-2');
+        $this->views[$viewName]->searchFields = ['referencia', 'refproveedor'];
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('supplier');
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    /**
      * Create views
      */
     protected function createViews()
@@ -101,8 +123,8 @@ class EditProveedor extends ComercialContactController
         $this->createSubaccountsView();
         $this->createEmailsView();
 
+        $this->createProductView();
         $this->createSupplierListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
-        $this->createLineView('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
         $this->createSupplierListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
         $this->createSupplierListView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
         $this->createSupplierListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
@@ -168,6 +190,7 @@ class EditProveedor extends ComercialContactController
             case 'ListFacturaProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
+            case 'ListProductoProveedor':
             case 'ListReciboProveedor':
                 $where = [new DataBaseWhere('codproveedor', $codproveedor)];
                 $view->loadData('', $where);

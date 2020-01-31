@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Lib\Accounting;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Partida;
-use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Perform regularization of account balances for the exercise.
@@ -31,13 +30,6 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  */
 class AccountingClosingRegularization extends AccountingClosingBase
 {
-
-    /**
-     * Profit and Loss sub-account
-     *
-     * @var Subcuenta
-     */
-    protected $subAccount;
 
     /**
      * Delete main process.
@@ -63,7 +55,8 @@ class AccountingClosingRegularization extends AccountingClosingBase
      */
     public function exec($exercise, $idjournal): bool
     {
-        if (!$this->loadSubAccount($exercise)) {
+        if (!$this->loadSubAccount($exercise, AccountingAccounts::SPECIAL_PROFIT_LOSS_ACCOUNT)) {
+            $this->toolBox()->i18nLog()->error('subaccount-pyg-not-found');
             return false;
         }
 
@@ -133,26 +126,6 @@ class AccountingClosingRegularization extends AccountingClosingBase
     protected function getSubAccountsFilter(): string
     {
         return "AND t2.codsubcuenta BETWEEN '6' AND '799999999999999'";
-    }
-
-    /**
-     * Load profit and loss subaccount
-     *
-     * @param Ejercicio $exercise
-     *
-     * @return bool
-     */
-    protected function loadSubAccount($exercise): bool
-    {
-        $accounting = new AccountingAccounts();
-        $accounting->exercise = $exercise;
-        $this->subAccount = $accounting->getSpecialSubAccount(AccountingAccounts::SPECIAL_PROFIT_LOSS_ACCOUNT);
-        if (empty($this->subAccount->idsubcuenta)) {
-            $this->toolBox()->i18nLog()->error('subaccount-pyg-not-found');
-            return false;
-        }
-
-        return true;
     }
 
     /**

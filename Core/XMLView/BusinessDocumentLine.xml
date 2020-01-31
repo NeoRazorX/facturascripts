@@ -58,7 +58,7 @@
         <column name="re" display="none" order="190">
             <widget type="number" fieldname="recargo" />
         </column>
-        <column name="irpf" display="none" order="200">
+        <column name="irpf" display="right" order="200">
             <widget type="number" fieldname="irpf" />
         </column>
     </columns>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\Divisa;
@@ -25,6 +26,7 @@ use FacturaScripts\Dinamic\Model\GrupoClientes;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Tarifa;
 use FacturaScripts\Dinamic\Model\User;
+use FacturaScripts\Dinamic\Model\Variante;
 
 /**
  * Description of SalesDocument
@@ -133,6 +135,12 @@ abstract class SalesDocument extends TransformerDocument
     public $provincia;
 
     /**
+     *
+     * @var Tarifa
+     */
+    protected $tarifa;
+
+    /**
      * % commission of the agent.
      *
      * @var float|int
@@ -168,6 +176,40 @@ abstract class SalesDocument extends TransformerDocument
         }
 
         return $this->codpais;
+    }
+
+    /**
+     * Returns a new document line with the data of the product. Finds product
+     * by reference or barcode.
+     *
+     * @param string $reference
+     *
+     * @return BusinessDocumentLine
+     */
+    public function getNewProductLine($reference)
+    {
+        $newLine = $this->getNewLine();
+
+        $variant = new Variante();
+        $where1 = [new DataBaseWhere('referencia', $this->toolBox()->utils()->noHtml($reference))];
+        $where2 = [new DataBaseWhere('codbarras', $this->toolBox()->utils()->noHtml($reference))];
+        if ($variant->loadFromCode('', $where1) || $variant->loadFromCode('', $where2)) {
+            $product = $variant->getProducto();
+            $impuesto = $product->getImpuesto();
+
+            $newLine->codimpuesto = $impuesto->codimpuesto;
+            $newLine->descripcion = $variant->description();
+            $newLine->idproducto = $product->idproducto;
+            $newLine->iva = $impuesto->iva;
+            $newLine->pvpunitario = isset($this->tarifa) ? $this->tarifa->apply($variant->coste, $variant->precio) : $variant->precio;
+            $newLine->recargo = $impuesto->recargo;
+            $newLine->referencia = $variant->referencia;
+
+            /// allow extensions
+            $this->pipe('getNewProductLine', $newLine, $variant, $product);
+        }
+
+        return $newLine;
     }
 
     /**

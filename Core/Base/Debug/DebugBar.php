@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -179,13 +179,13 @@ class DebugBar extends DumbBar
      */
     private function addItemMemory(array &$items)
     {
-        $usage = $this->getSize(memory_get_usage());
-        $peak = $this->getSize(memory_get_peak_usage());
+        $usage = memory_get_usage();
+        $peak = memory_get_peak_usage();
 
-        $label = '<i class="fas fa-memory"></i> ' . $usage;
+        $label = '<i class="fas fa-memory"></i> ' . $this->getSize(max([$usage, $peak]));
         $data = [
-            ['Memory usage', $usage],
-            ['Memory peak', $peak]
+            ['Memory usage', $this->getSize($usage)],
+            ['Memory peak', $this->getSize($peak)]
         ];
 
         $this->addItem($items, $label, $data);
