@@ -70,6 +70,12 @@ class ProductoProveedor extends Base\ModelClass
      *
      * @var float
      */
+    public $neto;
+
+    /**
+     *
+     * @var float
+     */
     public $precio;
 
     /**
@@ -90,6 +96,7 @@ class ProductoProveedor extends Base\ModelClass
         $this->actualizado = \date(self::DATETIME_STYLE);
         $this->dtopor = 0.0;
         $this->dtopor2 = 0.0;
+        $this->neto = 0.0;
         $this->precio = 0.0;
     }
 
@@ -143,6 +150,13 @@ class ProductoProveedor extends Base\ModelClass
         if (empty($this->refproveedor) && !empty($this->referencia)) {
             $this->refproveedor = $this->referencia;
         }
+
+        /// calculate total discount
+        $totalDto = 1.0;
+        foreach ([$this->dtopor, $this->dtopor2] as $dto) {
+            $totalDto *= 1 - $dto / 100;
+        }
+        $this->neto = $this->precio * $totalDto;
 
         return parent::test();
     }

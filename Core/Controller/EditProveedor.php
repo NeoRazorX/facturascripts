@@ -100,9 +100,7 @@ class EditProveedor extends ComercialContactController
         $this->views[$viewName]->addOrderBy(['actualizado'], 'update-time', 2);
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
         $this->views[$viewName]->addOrderBy(['refproveedor'], 'supplier-reference');
-        $this->views[$viewName]->addOrderBy(['precio'], 'price');
-        $this->views[$viewName]->addOrderBy(['dtopor'], 'dto');
-        $this->views[$viewName]->addOrderBy(['dtopor2'], 'dto-2');
+        $this->views[$viewName]->addOrderBy(['neto'], 'net');
         $this->views[$viewName]->searchFields = ['referencia', 'refproveedor'];
 
         /// disable columns

@@ -33,6 +33,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>neto</name>
+        <type>double precision</type>
+    </column>
+    <column>
         <name>precio</name>
         <type>double precision</type>
     </column>

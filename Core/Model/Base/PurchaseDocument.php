@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Divisa;
+use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\User;
 use FacturaScripts\Dinamic\Model\Variante;
@@ -92,6 +93,8 @@ abstract class PurchaseDocument extends TransformerDocument
             $newLine->pvpunitario = $variant->coste;
             $newLine->recargo = $impuesto->recargo;
             $newLine->referencia = $variant->referencia;
+
+            $this->setLastSupplierPrice($newLine);
 
             /// allow extensions
             $this->pipe('getNewProductLine', $newLine, $variant, $product);
@@ -216,6 +219,25 @@ abstract class PurchaseDocument extends TransformerDocument
         }
 
         return $this->setSubject($proveedor);
+    }
+
+    /**
+     * Sets the last price and discounts from this supplier.
+     * 
+     * @param BusinessDocumentLine $newLine
+     */
+    protected function setLastSupplierPrice(&$newLine)
+    {
+        $supplierProd = new ProductoProveedor();
+        $where = [
+            new DataBaseWhere('codproveedor', $this->codproveedor),
+            new DataBaseWhere('referencia', $newLine->referencia)
+        ];
+        if ($supplierProd->loadFromCode('', $where)) {
+            $newLine->dtopor = $supplierProd->dtopor;
+            $newLine->dtopor2 = $supplierProd->dtopor2;
+            $newLine->pvpunitario = $supplierProd->precio;
+        }
     }
 
     /**

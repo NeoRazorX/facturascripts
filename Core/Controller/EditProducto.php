@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -74,9 +74,7 @@ class EditProducto extends EditController
     {
         $this->addListView($viewName, 'ProductoProveedor', 'suppliers', 'fas fa-users');
         $this->views[$viewName]->addOrderBy(['actualizado'], 'update-time', 2);
-        $this->views[$viewName]->addOrderBy(['precio'], 'price');
-        $this->views[$viewName]->addOrderBy(['dtopor'], 'dto');
-        $this->views[$viewName]->addOrderBy(['dtopor2'], 'dto-2');
+        $this->views[$viewName]->addOrderBy(['neto'], 'net');
 
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
