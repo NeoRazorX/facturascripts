@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -120,7 +120,7 @@ class AppRouter
         }
 
         /// Allowed folder?
-        $allowedFolders = ['node_modules', 'vendor', 'Dinamic', 'Core', 'Plugins'];
+        $allowedFolders = ['node_modules', 'vendor', 'Dinamic', 'Core', 'Plugins', 'MyFiles/Public'];
         foreach ($allowedFolders as $folder) {
             if ('/' . $folder === substr($uri, 0, 1 + strlen($folder))) {
                 header('Content-Type: ' . $this->getMime($filePath));
