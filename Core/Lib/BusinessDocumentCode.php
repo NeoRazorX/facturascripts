@@ -53,6 +53,7 @@ class BusinessDocumentCode
         $document->numero = static::getNewNumber($sequence, $document);
         $vars = [
             '{EJE}' => $document->codejercicio,
+            '{EJE2}' => \substr($document->codejercicio, -2),
             '{SERIE}' => $document->codserie,
             '{0SERIE}' => \str_pad($document->codserie, 2, '0', \STR_PAD_LEFT),
             '{NUM}' => $document->numero,

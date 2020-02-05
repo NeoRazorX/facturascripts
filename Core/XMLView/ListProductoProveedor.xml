@@ -34,16 +34,19 @@
         <column name="supplier-reference" order="130">
             <widget type="text" fieldname="refproveedor" />
         </column>
-        <column name="price" display="right" order="140">
+        <column name="price" display="none" order="140">
             <widget type="money" fieldname="precio" />
         </column>
-        <column name="dto" display="right" order="150">
+        <column name="dto" display="none" order="150">
             <widget type="number" fieldname="dtopor" />
         </column>
         <column name="dto-2" display="none" order="160">
             <widget type="number" fieldname="dtopor2" />
         </column>
-        <column name="update-time" display="right" order="170">
+        <column name="net" display="right" order="170">
+            <widget type="money" fieldname="neto" />
+        </column>
+        <column name="update-time" display="right" order="180">
             <widget type="datetime" fieldname="actualizado" />
         </column>
     </columns>
