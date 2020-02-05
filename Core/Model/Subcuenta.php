@@ -257,7 +257,8 @@ class Subcuenta extends Base\ModelClass
 
         if (!self::$disableAditionTest) {
             if (empty($this->idsubcuenta)) {
-                $this->codsubcuenta = SubAccountTools::subaccountToLen($this->codsubcuenta, 10);
+                $exercise = $this->getExerciseFromCode();
+                $this->codsubcuenta = SubAccountTools::subaccountToLen($this->codsubcuenta, $exercise->longsubcuenta);
             }
 
             if (!$this->testErrorInLengthSubAccount()) {
@@ -309,7 +310,7 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      */
     private function defaultValidationValues()
     {
@@ -321,24 +322,34 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
+     *
+     * @return Ejercicio
+     */
+    private function getExerciseFromCode()
+    {
+        foreach (self::$ejercicios as $eje) {
+            if ($eje->codejercicio === $this->codejercicio) {
+                return $eje;
+            }
+        }
+
+        /// new exercise?
+        $exercise = new Ejercicio();
+        $exercise->loadFromCode($this->codejercicio);
+        return $exercise;
+    }
+
+    /**
      * Check if exists error in long of subaccount. Returns FALSE if error.
      *
      * @return bool
      */
     private function testErrorInLengthSubAccount(): bool
     {
-        foreach (self::$ejercicios as $eje) {
-            if ($eje->codejercicio === $this->codejercicio) {
-                return \strlen($this->codsubcuenta) === $eje->longsubcuenta;
-            }
+        $exercise = $this->getExerciseFromCode();
+        if (empty($exercise->codejercicio)) {
+            return false;
         }
-
-        /// new exercise?
-        $exerciseModel = new Ejercicio();
-        if ($exerciseModel->loadFromCode($this->codejercicio)) {
-            return \strlen($this->codsubcuenta) === $exerciseModel->longsubcuenta;
-        }
-
-        return false;
+        return \strlen($this->codsubcuenta) === $exercise->longsubcuenta;
     }
 }
