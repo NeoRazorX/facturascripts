@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -79,15 +79,17 @@ class Fabricante extends Base\ModelClass
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codfabricante, '%column%' => 'codfabricante', '%min%' => '1', '%max%' => '8']
             );
-        } elseif (empty($this->nombre) || strlen($this->nombre) > 100) {
+            return false;
+        }
+
+        if (empty($this->nombre) || strlen($this->nombre) > 100) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']
             );
-        } else {
-            return parent::test();
+            return false;
         }
 
-        return false;
+        return parent::test();
     }
 }

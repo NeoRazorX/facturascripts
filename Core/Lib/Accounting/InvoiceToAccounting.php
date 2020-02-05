@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,8 +24,8 @@ use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Impuesto;
-use FacturaScripts\Dinamic\Model\ModelView\SalesDocLineAccount;
 use FacturaScripts\Dinamic\Model\ModelView\PurchasesDocLineAccount;
+use FacturaScripts\Dinamic\Model\ModelView\SalesDocLineAccount;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Serie;
@@ -124,6 +124,7 @@ class InvoiceToAccounting extends AccountingClass
                 return false;
             }
         }
+
         return true;
     }
 
@@ -157,6 +158,7 @@ class InvoiceToAccounting extends AccountingClass
                 return false;
             }
         }
+
         return true;
     }
 

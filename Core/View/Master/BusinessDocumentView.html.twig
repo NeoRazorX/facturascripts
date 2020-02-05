@@ -134,8 +134,13 @@
             {{ _self.customSelect('doc_codoperaciondoc', 'codoperaciondoc', currentView.model.codoperaciondoc, currentView.getSelectValues('BusinessDocTypeOperation'), true, i18n.trans('doc-operation')) }}
         {% endif %}
         {{ _self.customInput('doc_netosindto', 'netosindto', currentView.model.netosindto, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('subtotal')) }}
-        {{ _self.customInput('doc_dtopor1', 'dtopor1', currentView.model.dtopor1, 'number', 'fas fa-percentage', {class: 'form-control'}, i18n.trans('global-dto')) }}
-        {{ _self.customInput('doc_dtopor2', 'dtopor2', currentView.model.dtopor2, 'number', 'fas fa-percentage', {class: 'form-control'}, i18n.trans('global-dto-2')) }}
+        {% if currentView.model.editable %}
+            {{ _self.customInput('doc_dtopor1', 'dtopor1', currentView.model.dtopor1, 'number', 'fas fa-percentage', {class: 'form-control'}, i18n.trans('global-dto')) }}
+            {{ _self.customInput('doc_dtopor2', 'dtopor2', currentView.model.dtopor2, 'number', 'fas fa-percentage', {class: 'form-control'}, i18n.trans('global-dto-2')) }}
+        {% else %}
+            {{ _self.customInput('doc_dtopor1', 'dtopor1', currentView.model.dtopor1, 'number', 'fas fa-percentage', {class: 'form-control', disabled: ''}, i18n.trans('global-dto')) }}
+            {{ _self.customInput('doc_dtopor2', 'dtopor2', currentView.model.dtopor2, 'number', 'fas fa-percentage', {class: 'form-control', disabled: ''}, i18n.trans('global-dto-2')) }}
+        {% endif %}
         {{ _self.customInput('doc_neto', 'neto', currentView.model.neto, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('net')) }}
         {{ _self.customInput('doc_totaliva', 'totaliva', currentView.model.totaliva, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('taxes')) }}
         {% if currentView.model.totalrecargo != 0 %}

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -63,6 +63,21 @@ class EditProducto extends EditController
         parent::createViews();
         $this->addEditListView('EditVariante', 'Variante', 'variants', 'fas fa-project-diagram');
         $this->addEditListView('EditStock', 'Stock', 'stock', 'fas fa-dolly');
+        $this->createViewsSuppliers();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsSuppliers(string $viewName = 'ListProductoProveedor')
+    {
+        $this->addListView($viewName, 'ProductoProveedor', 'suppliers', 'fas fa-users');
+        $this->views[$viewName]->addOrderBy(['actualizado'], 'update-time', 2);
+        $this->views[$viewName]->addOrderBy(['neto'], 'net');
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
@@ -144,6 +159,11 @@ class EditProducto extends EditController
 
             case 'EditStock':
                 $view->loadData('', $where, ['idstock' => 'DESC']);
+                break;
+
+            case 'ListProductoProveedor':
+                $where2 = [new DataBaseWhere('referencia', $this->getViewModelValue('EditProducto', 'referencia'))];
+                $view->loadData('', $where2);
                 break;
         }
     }

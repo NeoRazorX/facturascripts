@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,7 +32,7 @@ class BusinessDocumentGenerator
 {
 
     /**
-     * Exclude fields
+     * Dcoument fields to exclude.
      *
      * @var array
      */
@@ -41,6 +41,13 @@ class BusinessDocumentGenerator
         'hora', 'idestado', 'neto', 'netosindto', 'numero', 'total',
         'totalirpf', 'totaliva', 'totalrecargo',
     ];
+
+    /**
+     * Line fields to exclude.
+     *
+     * @var array
+     */
+    public $excludeLineFields = ['idlinea', 'orden'];
 
     /**
      *
@@ -66,9 +73,9 @@ class BusinessDocumentGenerator
 
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
-        foreach (array_keys($prototype->getModelFields()) as $field) {
+        foreach (\array_keys($prototype->getModelFields()) as $field) {
             /// exclude some properties
-            if (in_array($field, $this->excludeFields)) {
+            if (\in_array($field, $this->excludeFields)) {
                 continue;
             }
 
@@ -124,8 +131,8 @@ class BusinessDocumentGenerator
         foreach ($lines as $line) {
             /// copy line properties to new line
             $arrayLine = [];
-            foreach (array_keys($line->getModelFields()) as $field) {
-                if ($field !== 'idlinea') {
+            foreach (\array_keys($line->getModelFields()) as $field) {
+                if (\in_array($field, $this->excludeLineFields) === false) {
                     $arrayLine[$field] = $line->{$field};
                 }
             }

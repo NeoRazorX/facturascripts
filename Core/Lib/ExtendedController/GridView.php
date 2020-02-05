@@ -271,7 +271,7 @@ class GridView extends EditView
 
             // save master document
             if (!$this->model->save()) {
-                throw new Exception($this->toolBox()->i18n()->trans('parent-document-save-error'));
+                throw new Exception($this->toolBox()->i18n()->trans('record-save-error'));
             }
 
             // confirm save data into database

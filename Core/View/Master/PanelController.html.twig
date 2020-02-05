@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -161,9 +161,11 @@
             </button>
             <div class="dropdown-menu">
                 {% for viewName, view in fsc.views %}
-                    <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
-                        <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
-                    </a>
+                    {% if view.columns is not empty %}
+                        <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
+                            <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
+                        </a>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

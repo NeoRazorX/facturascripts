@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -75,11 +75,12 @@ class Familia extends Base\ModelClass
      * Get the accounting sub-account for purchases.
      *
      * @param string $code
+     *
      * @return string
      */
     public static function purchaseSubAccount($code)
     {
-        return self::getSubaccountFromFamily($code, 'codsubcuentacom');
+        return static::getSubaccountFromFamily($code, 'codsubcuentacom');
     }
 
     /**
@@ -118,24 +119,30 @@ class Familia extends Base\ModelClass
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codfamilia, '%column%' => 'codfamilia', '%min%' => '1', '%max%' => '8']
             );
-        } elseif (empty($this->descripcion) || strlen($this->descripcion) > 100) {
+            return false;
+        }
+
+        if (empty($this->descripcion) || strlen($this->descripcion) > 100) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '100']
             );
-        } elseif ($this->madre === $this->codfamilia) {
-            $this->toolBox()->i18nLog()->warning('parent-family-cant-be-child');
-        } else {
-            return parent::test();
+            return false;
         }
 
-        return false;
+        if ($this->madre === $this->codfamilia) {
+            $this->toolBox()->i18nLog()->warning('parent-family-cant-be-child');
+            return false;
+        }
+
+        return parent::test();
     }
 
     /**
      * Get the accounting sub-account for sales.
      *
      * @param string $code
+     *
      * @return string
      */
     public static function saleSubAccount($code)
@@ -145,9 +152,10 @@ class Familia extends Base\ModelClass
 
     /**
      *
-     * @param string $code
-     * @param string $field
+     * @param string  $code
+     * @param string  $field
      * @param Familia $model
+     *
      * @return string
      */
     private static function getSubaccountFromFamily($code, $field, $model = null)
@@ -163,8 +171,7 @@ class Familia extends Base\ModelClass
         if (!$model->loadFromCode($code)) {
             return '';
         }
-        return empty($model->{$field})
-            ? self::getSubaccountFromFamily($model->madre, $field, $model)
-            : $model->{$field};
+
+        return empty($model->{$field}) ? self::getSubaccountFromFamily($model->madre, $field, $model) : $model->{$field};
     }
 }
