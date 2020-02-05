@@ -49,7 +49,7 @@ class SubAccountTools
 
     /**
      * Returns a list of sub-accounts for the exercise and search term informed.
-     * 
+     *
      * @param array $keys
      *      source: source table name. default 'subcuentas'.
      *      fieldcode: source field name. default 'codsubcuenta'.
@@ -92,7 +92,7 @@ class SubAccountTools
 
     /**
      * Indicates whether the subaccount has associated taxes.
-     * 
+     *
      * @param Subcuenta|string $subAccount
      * @return bool
      */
@@ -147,6 +147,29 @@ class SubAccountTools
         }
 
         return [];
+    }
+
+    /**
+     * Fill a zero account with zeros based on the wildcard character.
+     * Default wildcard is '.'
+     *
+     * @param string $subaccount
+     * @param int    $length
+     * @param string $wildcard
+     * @return string
+     */
+    public static function subaccountToLen($subaccount, int $length, string $wildcard = '.'): string
+    {
+        $pos = strpos($subaccount, $wildcard);
+        if ($pos === false) {
+            return $subaccount;
+        }
+
+        $subaccountL = substr($subaccount, 0, $pos);
+        $subaccountR = substr($subaccount, $pos + 1);
+        $length -= strlen($subaccountR);
+        $subaccount = str_pad($subaccountL, $length, '0', STR_PAD_RIGHT) . $subaccountR;
+        return $subaccount;
     }
 
     /**

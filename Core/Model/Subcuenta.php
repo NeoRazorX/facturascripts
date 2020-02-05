@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\SubAccountTools;
 
 /**
  * Detail level of an accounting plan. It is related to a single account.
@@ -245,11 +246,7 @@ class Subcuenta extends Base\ModelClass
      */
     public function test()
     {
-        $this->saldo = $this->debe - $this->haber;
-
-        $this->codcuenta = trim($this->codcuenta);
-        $this->codsubcuenta = trim($this->codsubcuenta);
-        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
+        $this->defaultValidationValues();
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
@@ -259,6 +256,10 @@ class Subcuenta extends Base\ModelClass
         }
 
         if (!self::$disableAditionTest) {
+            if (empty($this->idsubcuenta)) {
+                $this->codsubcuenta = SubAccountTools::subaccountToLen($this->codsubcuenta, 10);
+            }
+
             if (!$this->testErrorInLengthSubAccount()) {
                 $this->toolBox()->i18nLog()->warning('account-length-error', ['%code%' => $this->codsubcuenta]);
                 return false;
@@ -305,6 +306,18 @@ class Subcuenta extends Base\ModelClass
         }
 
         return '';
+    }
+
+    /**
+     * 
+     */
+    private function defaultValidationValues()
+    {
+        $this->saldo = $this->debe - $this->haber;
+
+        $this->codcuenta = trim($this->codcuenta);
+        $this->codsubcuenta = trim($this->codsubcuenta);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
     }
 
     /**
