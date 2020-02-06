@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,7 +59,7 @@ class ListCliente extends ListController
      * 
      * @param string $viewName
      */
-    protected function createViewContacts($viewName = 'ListContacto')
+    protected function createViewContacts(string $viewName = 'ListContacto')
     {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addSearchFields($viewName, ['nombre', 'apellidos', 'email', 'empresa', 'observaciones', 'telefono1', 'telefono2', 'lastip']);
@@ -93,12 +93,13 @@ class ListCliente extends ListController
      * 
      * @param string $viewName
      */
-    protected function createViewCustomers($viewName = 'ListCliente')
+    protected function createViewCustomers(string $viewName = 'ListCliente')
     {
         $this->addView($viewName, 'Cliente', 'customers', 'fas fa-users');
         $this->addSearchFields($viewName, ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->addOrderBy($viewName, ['codcliente'], 'code');
         $this->addOrderBy($viewName, ['nombre'], 'name', 1);
+        $this->addOrderBy($viewName, ['cifnif'], 'fiscal-number');
         $this->addOrderBy($viewName, ['fechaalta', 'codcliente'], 'date');
 
         /// filters
@@ -127,7 +128,7 @@ class ListCliente extends ListController
      * 
      * @param string $viewName
      */
-    protected function createViewGroups($viewName = 'ListGrupoClientes')
+    protected function createViewGroups(string $viewName = 'ListGrupoClientes')
     {
         $this->addView($viewName, 'GrupoClientes', 'groups', 'fas fa-users-cog');
         $this->addSearchFields($viewName, ['nombre', 'codgrupo']);

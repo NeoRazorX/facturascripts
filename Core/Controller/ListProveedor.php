@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,7 +57,7 @@ class ListProveedor extends ListController
      * 
      * @param string $viewName
      */
-    protected function createViewAdresses($viewName = 'ListContacto')
+    protected function createViewAdresses(string $viewName = 'ListContacto')
     {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addSearchFields($viewName, ['nombre', 'apellidos', 'email']);
@@ -98,11 +98,12 @@ class ListProveedor extends ListController
      * 
      * @param string $viewName
      */
-    protected function createViewSuppliers($viewName = 'ListProveedor')
+    protected function createViewSuppliers(string $viewName = 'ListProveedor')
     {
         $this->addView($viewName, 'Proveedor', 'suppliers', 'fas fa-users');
         $this->addSearchFields($viewName, ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->addOrderBy($viewName, ['codproveedor'], 'code');
+        $this->addOrderBy($viewName, ['cifnif'], 'fiscal-number');
         $this->addOrderBy($viewName, ['nombre'], 'name', 1);
         $this->addOrderBy($viewName, ['fecha'], 'date');
 

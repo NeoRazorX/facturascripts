@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -114,7 +114,7 @@ class NewMail
         $this->mail->WordWrap = 50;
         $this->mail->Mailer = $appSettings->get('email', 'mailer');
         $this->mail->SMTPAuth = true;
-        $this->mail->SMTPSecure = $appSettings->get('email', 'enc');
+        $this->mail->SMTPSecure = $appSettings->get('email', 'enc', '');
         $this->mail->Host = $appSettings->get('email', 'host');
         $this->mail->Port = $appSettings->get('email', 'port');
         $this->mail->Username = $appSettings->get('email', 'user') ? $appSettings->get('email', 'user') : $appSettings->get('email', 'email');
@@ -284,7 +284,8 @@ class NewMail
                 return $this->mail->smtpConnect($this->smtpOptions());
 
             default:
-                return true;
+                $this->toolBox()->i18nLog()->warning('not-implemented');
+                return false;
         }
     }
 
