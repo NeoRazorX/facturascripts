@@ -24,7 +24,9 @@ use FacturaScripts\Core\Base\DownloadTools;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\TelemetryManager;
+use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\AttachedFile;
+use FacturaScripts\Dinamic\Model\CuentaEspecial;
 use FacturaScripts\Dinamic\Model\Diario;
 use FacturaScripts\Dinamic\Model\IdentificadorFiscal;
 use FacturaScripts\Dinamic\Model\LiquidacionComision;
@@ -332,6 +334,15 @@ class Updater extends Controller
         new IdentificadorFiscal();
         new Retencion();
         new LiquidacionComision();
+
+        /**
+         * Update special accounts
+         * TODO: remove after version 2020.5
+         */
+        $sql = CSVImport::updateTableSQL(CuentaEspecial::tableName());
+        if (!empty($sql) && $this->dataBase->tableExists(CuentaEspecial::tableName())) {
+            $this->dataBase->exec($sql);
+        }
     }
 
     /**

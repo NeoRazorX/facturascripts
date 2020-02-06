@@ -838,6 +838,7 @@
     "reserved": "Reserved",
     "reset": "Einstellungen zurücksetzen korrekt, drücken Sie <a href=\" %1$s#avanzado\">hier<\/a> fortzusetzen.",
     "resource": "Resource",
+    "restore": "restore",
     "restore-data": "Daten wiederherstellen",
     "result": "Result",
     "retention": "retention",
