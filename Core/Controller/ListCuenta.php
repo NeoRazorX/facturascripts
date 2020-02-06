@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,9 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListController;
+use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\CuentaEspecial;
 
 /**
  * Controller to list the items in the Cuenta model.
@@ -51,10 +53,23 @@ class ListCuenta extends ListController
     }
 
     /**
+     * Load views
+     */
+    protected function createViews()
+    {
+        /// load exercises in class to use in filters
+        $this->exerciseValues = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
+
+        $this->createViewsSubaccounts();
+        $this->createViewsAccounts();
+        $this->createViewsSpecialAcounts();
+    }
+
+    /**
      * 
      * @param string $viewName
      */
-    protected function createViewCuentas($viewName = 'ListCuenta')
+    protected function createViewsAccounts(string $viewName = 'ListCuenta')
     {
         $this->addView($viewName, 'Cuenta', 'accounts', 'fas fa-book');
         $this->addOrderBy($viewName, ['codejercicio desc, codcuenta'], 'code');
@@ -72,7 +87,7 @@ class ListCuenta extends ListController
      * 
      * @param string $viewName
      */
-    protected function createViewCuentasEsp($viewName = 'ListCuentaEspecial')
+    protected function createViewsSpecialAcounts(string $viewName = 'ListCuentaEspecial')
     {
         $this->addView($viewName, 'CuentaEspecial', 'special-accounts', 'fas fa-newspaper');
         $this->addOrderBy($viewName, ['codcuentaesp'], 'code', 1);
@@ -82,13 +97,24 @@ class ListCuenta extends ListController
         /// disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
+
+        /// add restore button
+        if ($this->user->admin) {
+            $this->addButton($viewName, [
+                'action' => 'restore-special',
+                'color' => 'warning',
+                'confirm' => true,
+                'icon' => 'fas fa-trash-restore',
+                'label' => 'restore',
+            ]);
+        }
     }
 
     /**
      * 
      * @param string $viewName
      */
-    protected function createViewSubcuentas($viewName = 'ListSubcuenta')
+    protected function createViewsSubaccounts(string $viewName = 'ListSubcuenta')
     {
         $this->addView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-th-list');
         $this->addOrderBy($viewName, ['codejercicio desc, codsubcuenta'], 'code');
@@ -104,15 +130,25 @@ class ListCuenta extends ListController
     }
 
     /**
-     * Load views
+     * 
+     * @param string $action
+     *
+     * @return bool
      */
-    protected function createViews()
+    protected function execPreviousAction($action)
     {
-        /// load exercises in class to use in filters
-        $this->exerciseValues = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
+        if ($action === 'restore-special') {
+            $this->restoreSpecialAccountsAction();
+        }
 
-        $this->createViewSubcuentas();
-        $this->createViewCuentas();
-        $this->createViewCuentasEsp();
+        return parent::execPreviousAction($action);
+    }
+
+    protected function restoreSpecialAccountsAction()
+    {
+        $sql = CSVImport::updateTableSQL(CuentaEspecial::tableName());
+        if (!empty($sql)) {
+            $this->dataBase->exec($sql);
+        }
     }
 }
