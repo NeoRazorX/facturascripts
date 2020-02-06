@@ -270,6 +270,7 @@ trait InvoiceTrait
         }
 
         switch ($field) {
+            case 'fecha':
             case 'total':
                 return $this->onChangeTotal();
         }
@@ -283,11 +284,16 @@ trait InvoiceTrait
      */
     protected function onChangeTotal()
     {
-        /// check accounting entry
+        /// remove accounting entry
         $asiento = $this->getAccountingEntry();
-        if ($asiento->exists() && $asiento->delete()) {
-            $this->idasiento = null;
+        $asiento->editable = true;
+        if ($asiento->exists() && !$asiento->delete()) {
+            $this->toolBox()->i18nLog()->warning('cant-remove-account-entry');
+            return false;
         }
+
+        /// create a new accounting entry
+        $this->idasiento = null;
         $tool = new InvoiceToAccounting();
         $tool->generate($this);
 
