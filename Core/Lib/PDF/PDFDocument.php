@@ -456,7 +456,7 @@ abstract class PDFDocument extends PDFCore
         $xPos = $this->pdf->ez['leftMargin'];
 
         $logoFile = new AttachedFile();
-        if ($idfile !== 0 && $logoFile->loadFromCode($idfile)) {
+        if ($idfile !== 0 && $logoFile->loadFromCode($idfile) && file_exists($logoFile->path)) {
             $logoSize = $this->calcImageSize($logoFile->path);
             $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
             $this->addImageFromAttachedFile($logoFile, $xPos, $yPos, $logoSize['width'], $logoSize['height']);

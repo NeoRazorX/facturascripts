@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -171,7 +171,7 @@ abstract class PDFCore extends ExportBase
     /**
      * Calculate image size and return as array of width and height
      *
-     * @param $filePath
+     * @param string $filePath
      *
      * @return array
      */
@@ -190,7 +190,7 @@ abstract class PDFCore extends ExportBase
         }
         return [
             'width' => $imageSize[0],
-            'height' => $imageSize[1],
+            'height' => $imageSize[1]
         ];
     }
 
