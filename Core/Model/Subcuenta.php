@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -67,6 +67,7 @@ class Subcuenta extends Base\ModelClass
     public $debe;
 
     /**
+     * All exercises.
      *
      * @var Ejercicio[]
      */
@@ -80,6 +81,7 @@ class Subcuenta extends Base\ModelClass
     public $descripcion;
 
     /**
+     * Configuration parameter.
      *
      * @var bool
      */
@@ -119,18 +121,19 @@ class Subcuenta extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->codejercicio = $this->getDefaultCodejercicio();
+        $this->codejercicio = $this->getExercise()->codejercicio;
         $this->debe = 0.0;
         $this->haber = 0.0;
         $this->saldo = 0.0;
     }
 
     /**
-     *
+     * 
+     * @param bool $value
      */
-    public function disableAditionalTest()
+    public function disableAditionalTest(bool $value = true)
     {
-        self::$disableAditionTest = true;
+        self::$disableAditionTest = $value;
     }
 
     /**
@@ -147,6 +150,38 @@ class Subcuenta extends Base\ModelClass
         $account = new Cuenta();
         $account->loadFromCode('', $where);
         return $account;
+    }
+
+    /**
+     * Returns the current exercise or the default one.
+     * 
+     * @return Ejercicio
+     */
+    public function getExercise()
+    {
+        /// loads all exercise to improve performance
+        if (empty(self::$ejercicios)) {
+            $exerciseModel = new Ejercicio();
+            self::$ejercicios = $exerciseModel->all();
+        }
+
+        /// find exercise
+        foreach (self::$ejercicios as $exe) {
+            if ($exe->codejercicio == $this->codejercicio) {
+                return $exe;
+            } elseif (empty($this->codejercicio) && $exe->isOpened()) {
+                /// return default exercise
+                return $exe;
+            }
+        }
+
+        /// exercise not found? try to get from database
+        $exercise = new Ejercicio();
+        if ($exercise->loadFromCode($this->codejercicio)) {
+            /// add new exercise to cache
+            self::$ejercicios[] = $exercise;
+        }
+        return $exercise;
     }
 
     /**
@@ -250,7 +285,7 @@ class Subcuenta extends Base\ModelClass
         $this->codcuenta = trim($this->codcuenta);
         $this->codsubcuenta = trim($this->codsubcuenta);
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
-        if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
+        if (\strlen($this->descripcion) < 1 || \strlen($this->descripcion) > 255) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']
@@ -258,17 +293,19 @@ class Subcuenta extends Base\ModelClass
             return false;
         }
 
-        if (!self::$disableAditionTest) {
-            if (!$this->testErrorInLengthSubAccount()) {
-                $this->toolBox()->i18nLog()->warning('account-length-error', ['%code%' => $this->codsubcuenta]);
-                return false;
-            }
+        if (self::$disableAditionTest) {
+            return parent::test();
+        }
 
-            $this->idcuenta = $this->getIdAccount();
-            if (empty($this->idcuenta)) {
-                $this->toolBox()->i18nLog()->warning('account-data-error');
-                return false;
-            }
+        if (!$this->testErrorInLengthSubAccount()) {
+            $this->toolBox()->i18nLog()->warning('account-length-error', ['%code%' => $this->codsubcuenta]);
+            return false;
+        }
+
+        $this->idcuenta = $this->getIdAccount();
+        if (empty($this->idcuenta)) {
+            $this->toolBox()->i18nLog()->warning('account-data-error');
+            return false;
         }
 
         return parent::test();
@@ -288,23 +325,19 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
+     * 
+     * @param array $values
      *
-     * @return string
+     * @return bool
      */
-    protected function getDefaultCodejercicio()
+    protected function saveInsert(array $values = [])
     {
-        if (empty(self::$ejercicios)) {
-            $exerciseModel = new Ejercicio();
-            self::$ejercicios = $exerciseModel->all();
+        if ($this->getExercise()->isOpened()) {
+            return parent::saveInsert($values);
         }
 
-        foreach (self::$ejercicios as $eje) {
-            if ($eje->isOpened()) {
-                return $eje->codejercicio;
-            }
-        }
-
-        return '';
+        $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->primaryDescription()]);
+        return false;
     }
 
     /**
@@ -314,16 +347,9 @@ class Subcuenta extends Base\ModelClass
      */
     private function testErrorInLengthSubAccount(): bool
     {
-        foreach (self::$ejercicios as $eje) {
-            if ($eje->codejercicio === $this->codejercicio) {
-                return \strlen($this->codsubcuenta) === $eje->longsubcuenta;
-            }
-        }
-
-        /// new exercise?
-        $exerciseModel = new Ejercicio();
-        if ($exerciseModel->loadFromCode($this->codejercicio)) {
-            return \strlen($this->codsubcuenta) === $exerciseModel->longsubcuenta;
+        $exercise = $this->getExercise();
+        if ($exercise->exists()) {
+            return \strlen($this->codsubcuenta) === $exercise->longsubcuenta;
         }
 
         return false;

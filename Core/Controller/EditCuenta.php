@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Cuenta;
 
 /**
  * Controller to edit a single item from the Cuenta model
@@ -105,7 +106,9 @@ class EditCuenta extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $idcuenta = $this->getViewModelValue('EditCuenta', 'idcuenta');
+        $mainViewName = $this->getMainViewName();
+        $idcuenta = $this->getViewModelValue($mainViewName, 'idcuenta');
+
         switch ($viewName) {
             case 'ListCuenta':
                 $where = [new DataBaseWhere('parent_idcuenta', $idcuenta)];
@@ -117,9 +120,25 @@ class EditCuenta extends EditController
                 $view->loadData('', $where);
                 break;
 
-            default:
+            case $mainViewName:
                 parent::loadData($viewName, $view);
+                if (!$view->model->exists()) {
+                    $this->prepareCuenta($view);
+                }
                 break;
+        }
+    }
+
+    /**
+     * 
+     * @param BaseView $view
+     */
+    protected function prepareCuenta($view)
+    {
+        $cuenta = new Cuenta();
+        $idcuenta = $this->request->query->get('parent_idcuenta', '');
+        if (!empty($idcuenta) && $cuenta->loadFromCode($idcuenta)) {
+            $view->model->codejercicio = $cuenta->codejercicio;
         }
     }
 }

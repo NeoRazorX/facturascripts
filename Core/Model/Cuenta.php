@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,9 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
- * Element of the third level of the accounting plan.
- * It is related to a single fiscal year and epigraph,
- * but it can be related to many subaccounts.
+ * First level of the accounting plan.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
@@ -62,10 +60,18 @@ class Cuenta extends Base\ModelClass
     public $descripcion;
 
     /**
+     * Configuration parameter.
      *
      * @var bool
      */
     private static $disableAditionTest = false;
+
+    /**
+     * All exercises.
+     *
+     * @var Ejercicio[]
+     */
+    protected static $ejercicios;
 
     /**
      * Primary key.
@@ -88,6 +94,21 @@ class Cuenta extends Base\ModelClass
      */
     public $parent_idcuenta;
 
+    public function clear()
+    {
+        parent::clear();
+        $this->codejercicio = $this->getExercise()->codejercicio;
+    }
+
+    /**
+     * 
+     * @param bool $value
+     */
+    public function disableAditionalTest(bool $value = true)
+    {
+        self::$disableAditionTest = $value;
+    }
+
     /**
      *
      * @return Cuenta[]
@@ -96,6 +117,38 @@ class Cuenta extends Base\ModelClass
     {
         $where = [new DataBaseWhere('parent_idcuenta', $this->idcuenta)];
         return $this->all($where, ['codcuenta' => 'ASC'], 0, 0);
+    }
+
+    /**
+     * Returns the current exercise or the default one.
+     * 
+     * @return Ejercicio
+     */
+    public function getExercise()
+    {
+        /// loads all exercise to improve performance
+        if (empty(self::$ejercicios)) {
+            $exerciseModel = new Ejercicio();
+            self::$ejercicios = $exerciseModel->all();
+        }
+
+        /// find exercise
+        foreach (self::$ejercicios as $exe) {
+            if ($exe->codejercicio == $this->codejercicio) {
+                return $exe;
+            } elseif (empty($this->codejercicio) && $exe->isOpened()) {
+                /// return default exercise
+                return $exe;
+            }
+        }
+
+        /// exercise not found? try to get from database
+        $exercise = new Ejercicio();
+        if ($exercise->loadFromCode($this->codejercicio)) {
+            /// add new exercise to cache
+            self::$ejercicios[] = $exercise;
+        }
+        return $exercise;
     }
 
     /**
@@ -133,11 +186,6 @@ class Cuenta extends Base\ModelClass
         $subcuenta = new Subcuenta();
         $where = [new DataBaseWhere('idcuenta', $this->idcuenta)];
         return $subcuenta->all($where, ['codsubcuenta' => 'ASC'], 0, 0);
-    }
-
-    public function disableAditionalTest()
-    {
-        self::$disableAditionTest = true;
     }
 
     /**
@@ -194,7 +242,7 @@ class Cuenta extends Base\ModelClass
     {
         $this->codcuenta = trim($this->codcuenta);
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
-        if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
+        if (\strlen($this->descripcion) < 1 || \strlen($this->descripcion) > 255) {
             $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']);
             return false;
         }
@@ -241,6 +289,22 @@ class Cuenta extends Base\ModelClass
 
         $this->parent_codcuenta = null;
         $this->parent_idcuenta = null;
+        return false;
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if ($this->getExercise()->isOpened()) {
+            return parent::saveInsert($values);
+        }
+
+        $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->primaryDescription()]);
         return false;
     }
 }
