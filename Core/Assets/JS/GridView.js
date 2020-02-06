@@ -22,6 +22,7 @@
 
 var documentUrl = location.href;
 var documentLineData = [];
+var documentReadOnly = false;
 var gridObject = null;               // TODO: convert to POO
 var autocompleteColumns = [];
 var eventManager = {};
@@ -167,6 +168,11 @@ function getColumnSelected() {
     return selected.length > 0 ? gridObject.getSelected()[0][1] : null;
 }
 
+/* Set Read Only to Grid View */
+function setReadOnly(value) {
+    gridObject.updateSettings({ readOnly: value });
+}
+
 /*
  * EVENT MANAGER
  */
@@ -277,6 +283,7 @@ $(document).ready(function () {
 
         // Create Grid Object
         gridObject = new Handsontable(container, {
+            readOnly: documentReadOnly,
             autoWrapRow: true,
             contextMenu: true,
             colHeaders: documentLineData.headers,
