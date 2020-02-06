@@ -496,7 +496,9 @@ class GridView extends EditView
     {
         // load old data, if exits
         $field = $this->detailModel->primaryColumn();
-        if (!empty($data[$field])) {
+        if (empty($data[$field])) {
+            $this->detailModel->clear();
+        } else {
             $this->detailModel->loadFromCode($data[$field]);
         }
 
