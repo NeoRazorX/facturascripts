@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -33,7 +33,17 @@
                         {{ i18n.trans(pageData.title) }}
                     </h1>
                 </div>
-                <div class="col text-right mb-2">
+                <div class="col">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <input type="text" name="fecha" value="{{ task.end | date('d-m-Y') }}" class="form-control datepicker" autocomplete="off"/>
+                    </div>
+                </div>
+                <div class="col mb-2">
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-magic fa-fw"></i> {{ i18n.trans('generate') }}
@@ -47,21 +57,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-3 col-lg-2">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
-                            </span>
-                        </div>
-                        <input type="text" name="fecha" value="{{ task.end | date('d-m-Y') }}" class="form-control datepicker" autocomplete="off"/>
-                    </div>
-                </div>
-                <div class="col-auto">
-                    <div class="btn-group" role="group">                                
-                        <button type="button" class="btn btn-success col" title="{{ i18n.trans('seleccionar_todas_las_cantidades') }}" onClick="selectAll();">{{ i18n.trans('everything') }}</button>
-                        <button type="button" class="btn btn-secondary col" title="{{ i18n.trans('no_seleccionar_ninguna_cantidad') }}" onClick="noSelectAny();">{{ i18n.trans('nothing') }}</button>
-                    </div>
+                <div class="col text-right mb-2">
+                    <button type="button" class="btn btn-outline-secondary" onClick="return selectNone();">
+                        {{ i18n.trans('select-none') }}
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onClick="return selectAll();">
+                        {{ i18n.trans('select-all') }}
+                    </button>
                 </div>
             </div>     
             <div class="row">
@@ -102,12 +104,16 @@
             for (i = 0; i < inputToBeServed.length; i++) {
                 inputToBeServed.item(i).value = inputToServe.item(i).value;
             }
+
+            return false;
         }
-        function noSelectAny() {
+        function selectNone() {
             var inputToBeServed = document.getElementsByClassName("to_be_served");
             for (i = 0; i < inputToBeServed.length; i++) {
                 inputToBeServed.item(i).value = 0;
             }
+
+            return false;
         }
     </script>
 {% endblock %}
