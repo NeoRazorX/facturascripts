@@ -859,6 +859,8 @@
     "save-filter": "save-filter",
     "search": "Pesquisa",
     "second-trimester": "Second trimester",
+    "select-all": "select-all",
+    "select-none": "select-none",
     "select-plugin-zip-file": "Selecione o arquivo zip do plugin:",
     "select-user": "Select User",
     "selected-quantity": "approve-quantity",
