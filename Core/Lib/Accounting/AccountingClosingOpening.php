@@ -107,6 +107,10 @@ class AccountingClosingOpening extends AccountingClosingBase
     {
         $accounting = new AccountingCreation();
 
+        /// update exercise configuration
+        $this->newExercise->longsubcuenta = $this->exercise->longsubcuenta;
+        $this->newExercise->save();
+
         /// copy accounts
         $accountModel = new Cuenta();
         $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
@@ -119,6 +123,7 @@ class AccountingClosingOpening extends AccountingClosingBase
 
         /// copy subaccounts
         $subaccountModel = new Subcuenta();
+        $subaccountModel->clearExerciseCache();
         foreach ($subaccountModel->all($where, ['codsubcuenta' => 'ASC'], 0, 0) as $subaccount) {
             $newSubaccount = $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
             if (!$newSubaccount->exists()) {

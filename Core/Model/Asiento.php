@@ -495,7 +495,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
             return true;
         }
 
-        $this->toolBox()->i18nLog()->warning('non-editable-document');
+        $this->toolBox()->i18nLog()->warning('non-editable-accounting-entry');
         return false;
     }
 

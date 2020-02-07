@@ -42,6 +42,12 @@ trait ExerciseRelationTrait
      */
     private static $ejercicios;
 
+    public function clearExerciseCache()
+    {
+        $exerciseModel = new Ejercicio();
+        self::$ejercicios = $exerciseModel->all();
+    }
+
     /**
      * Returns the current exercise or the default one.
      * 
