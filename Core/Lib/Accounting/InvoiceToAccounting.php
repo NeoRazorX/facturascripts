@@ -355,6 +355,7 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $this->toolBox()->i18nLog()->warning('accounting-lines-error');
+        $accountEntry->editable = true;
         $accountEntry->delete();
     }
 
@@ -380,6 +381,7 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $this->toolBox()->i18nLog()->warning('accounting-lines-error');
+        $accountEntry->editable = true;
         $accountEntry->delete();
     }
 
