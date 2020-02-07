@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,11 @@ use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Dinamic\Model;
+use FacturaScripts\Dinamic\Lib\Import\CSVImport;
+use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\CuentaEspecial;
+use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 use ParseCsv\Csv;
 use SimpleXMLElement;
 
@@ -44,14 +48,14 @@ class AccountingPlanImport
     /**
      * Exercise related to the accounting plan.
      *
-     * @var Model\Ejercicio
+     * @var Ejercicio
      */
     protected $ejercicio;
 
     public function __construct()
     {
         $this->dataBase = new DataBase();
-        $this->ejercicio = new Model\Ejercicio();
+        $this->ejercicio = new Ejercicio();
     }
 
     /**
@@ -79,6 +83,7 @@ class AccountingPlanImport
         $return = true;
 
         try {
+            $this->updateSpecialAccounts();
             $this->processCsvData($filePath);
             $this->updateExercise();
 
@@ -121,6 +126,7 @@ class AccountingPlanImport
         $return = true;
 
         try {
+            $this->updateSpecialAccounts();
             $this->importEpigrafeGroup($data->grupo_epigrafes);
             $this->importEpigrafe($data->epigrafe);
             $this->importCuenta($data->cuenta);
@@ -153,7 +159,7 @@ class AccountingPlanImport
      */
     protected function createAccount(string $code, string $definition, string $parentCode = '', string $codcuentaesp = '')
     {
-        $account = new Model\Cuenta();
+        $account = new Cuenta();
         $account->disableAditionalTest();
 
         /// the account exists?
@@ -170,7 +176,7 @@ class AccountingPlanImport
                 new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
                 new DataBaseWhere('codcuenta', $parentCode)
             ];
-            $parent = new Model\Cuenta();
+            $parent = new Cuenta();
             if (!$parent->loadFromCode('', $whereParent)) {
                 $this->toolBox()->i18nLog()->error('parent-error');
                 return false;
@@ -199,7 +205,7 @@ class AccountingPlanImport
      */
     protected function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp = '')
     {
-        $subaccount = new Model\Subcuenta();
+        $subaccount = new Subcuenta();
         $subaccount->disableAditionalTest();
 
         /// the subaccount exists?
@@ -211,7 +217,7 @@ class AccountingPlanImport
             return true;
         }
 
-        $account = new Model\Cuenta();
+        $account = new Cuenta();
         $whereAccount = [
             new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
             new DataBaseWhere('codcuenta', $parentCode)
@@ -387,12 +393,23 @@ class AccountingPlanImport
      */
     protected function updateExercise()
     {
-        $subAccountModel = new Model\Subcuenta();
+        $subAccountModel = new Subcuenta();
         $where = [new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio)];
         foreach ($subAccountModel->all($where) as $subAccount) {
             $this->ejercicio->longsubcuenta = strlen($subAccount->codsubcuenta);
             $this->ejercicio->save();
             break;
+        }
+    }
+
+    /**
+     * Update special accounts from data file.
+     */
+    protected function updateSpecialAccounts()
+    {
+        $sql = CSVImport::updateTableSQL(CuentaEspecial::tableName());
+        if (!empty($sql) && $this->dataBase->tableExists(CuentaEspecial::tableName())) {
+            $this->dataBase->exec($sql);
         }
     }
 }

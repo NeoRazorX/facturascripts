@@ -30,6 +30,7 @@ class Cuenta extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+    use Base\ExerciseRelationTrait;
 
     /**
      * Account code.
@@ -46,13 +47,6 @@ class Cuenta extends Base\ModelClass
     public $codcuentaesp;
 
     /**
-     * Code of the exercise of this account.
-     *
-     * @var string
-     */
-    public $codejercicio;
-
-    /**
      * Description of the account.
      *
      * @var string
@@ -65,13 +59,6 @@ class Cuenta extends Base\ModelClass
      * @var bool
      */
     private static $disableAditionTest = false;
-
-    /**
-     * All exercises.
-     *
-     * @var Ejercicio[]
-     */
-    protected static $ejercicios;
 
     /**
      * Primary key.
@@ -117,38 +104,6 @@ class Cuenta extends Base\ModelClass
     {
         $where = [new DataBaseWhere('parent_idcuenta', $this->idcuenta)];
         return $this->all($where, ['codcuenta' => 'ASC'], 0, 0);
-    }
-
-    /**
-     * Returns the current exercise or the default one.
-     * 
-     * @return Ejercicio
-     */
-    public function getExercise()
-    {
-        /// loads all exercise to improve performance
-        if (empty(self::$ejercicios)) {
-            $exerciseModel = new Ejercicio();
-            self::$ejercicios = $exerciseModel->all();
-        }
-
-        /// find exercise
-        foreach (self::$ejercicios as $exe) {
-            if ($exe->codejercicio == $this->codejercicio) {
-                return $exe;
-            } elseif (empty($this->codejercicio) && $exe->isOpened()) {
-                /// return default exercise
-                return $exe;
-            }
-        }
-
-        /// exercise not found? try to get from database
-        $exercise = new Ejercicio();
-        if ($exercise->loadFromCode($this->codejercicio)) {
-            /// add new exercise to cache
-            self::$ejercicios[] = $exercise;
-        }
-        return $exercise;
     }
 
     /**

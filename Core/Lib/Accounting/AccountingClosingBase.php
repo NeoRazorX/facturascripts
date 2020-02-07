@@ -86,12 +86,9 @@ abstract class AccountingClosingBase
      */
     public function __construct()
     {
-        if (self::$dataBase === null) {
+        if (!isset(self::$dataBase)) {
             self::$dataBase = new DataBase();
         }
-
-        $this->exercise = null;
-        $this->subAccount = null;
     }
 
     /**
@@ -144,7 +141,7 @@ abstract class AccountingClosingBase
 
         $accountEntry = new Asiento();
         foreach ($accountEntry->all($where) as $row) {
-            $row->setDeleteTest(false);
+            $row->disableDeleteTest(true);
             if (!$row->delete()) {
                 return false;
             }

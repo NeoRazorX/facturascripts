@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,6 +30,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
 {
 
     use Base\ModelTrait;
+    use Base\ExerciseRelationTrait;
 
     const OPERATION_GENERAL = null;
     const OPERATION_OPENING = 'A';
@@ -43,13 +44,6 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     public $canal;
 
     /**
-     * Exercise code of the accounting entry.
-     *
-     * @var string
-     */
-    public $codejercicio;
-
-    /**
      * Accounting entry concept.
      *
      * @var string
@@ -60,7 +54,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @var bool
      */
-    private $deleteTest = true;
+    private $disableDeleteTest = false;
 
     /**
      * Document associated with the accounting entry.
@@ -144,11 +138,12 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     public function clear()
     {
         parent::clear();
-        $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
-        $this->fecha = date(self::DATE_STYLE);
         $this->editable = true;
+        $this->fecha = date(self::DATE_STYLE);
+        $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $this->importe = 0.0;
         $this->numero = '';
+        $this->operacion = self::OPERATION_GENERAL;
     }
 
     /**
@@ -171,13 +166,13 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     }
 
     /**
-     * Change delete test status
+     * Disable/enable delete test.
      *
      * @param bool $value
      */
-    public function setDeleteTest($value)
+    public function disableDeleteTest($value)
     {
-        $this->deleteTest = $value;
+        $this->disableDeleteTest = $value;
     }
 
     /**
@@ -199,7 +194,6 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
         $partida = new Partida();
         $partida->idasiento = $this->primaryColumnValue();
         $partida->concepto = $this->concepto;
-
         return $partida;
     }
 
@@ -211,12 +205,11 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      */
     public function hasClosing(): bool
     {
-        $entry = new self();
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('operacion', self::OPERATION_CLOSING)
         ];
-        return $entry->loadFromCode('', $where);
+        return $this->count($where) > 0;
     }
 
     /**
@@ -227,12 +220,11 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      */
     public function hasRegularization(): bool
     {
-        $entry = new self();
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('operacion', self::OPERATION_REGULARIZATION)
         ];
-        return $entry->loadFromCode('', $where);
+        return $this->count($where) > 0;
     }
 
     /**
@@ -397,11 +389,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      */
     protected function canDelete(): bool
     {
-        if (!$this->deleteTest) {
-            return true;
-        }
-
-        return $this->canUpdate();
+        return $this->disableDeleteTest ? true : $this->canUpdate();
     }
 
     /**
@@ -412,17 +400,15 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      */
     protected function canUpdate(): bool
     {
-        return $this->checkIsEditable()
-            && $this->checkIsOpened()
-            && !$this->checkIsOperation()
-            && !$this->checkInRegularization();
+        return $this->checkIsEditable() && $this->checkIsOpened() && !$this->checkIsOperation() && !$this->checkInRegularization();
     }
 
     /**
      * Update accounting entry number for
      *
      * @param Asiento[] $entries
-     * @param int $number
+     * @param int       $number
+     *
      * @return bool
      */
     protected function renumberAccountingEntries($entries, &$number)
@@ -449,12 +435,12 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      */
     protected function saveInsert(array $values = []): bool
     {
-        if (!$this->canUpdate()) {
-            return false;
+        if ($this->canUpdate()) {
+            $this->numero = $this->newCode('numero');
+            return parent::saveInsert($values);
         }
 
-        $this->numero = $this->newCode('numero');
-        return parent::saveInsert($values);
+        return false;
     }
 
     /**
@@ -464,19 +450,16 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = array())
+    protected function saveUpdate(array $values = [])
     {
-        if (!$this->canUpdate()) {
-            return false;
-        }
-        return parent::saveUpdate($values);
+        return $this->canUpdate() ? parent::saveUpdate($values) : false;
     }
 
     /**
      *
      * @param array $fields
      */
-    protected function setPreviousData(array $fields = array())
+    protected function setPreviousData(array $fields = [])
     {
         $more = ['editable'];
         parent::setPreviousData(array_merge($more, $fields));
@@ -496,6 +479,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
             $this->toolBox()->i18nLog()->warning('acounting-within-regularization');
             return true;
         }
+
         return false;
     }
 
@@ -507,7 +491,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      */
     private function checkIsEditable(): bool
     {
-        if (($this->previousData['editable']) || ($this->editable)) {
+        if ($this->previousData['editable'] || $this->editable) {
             return true;
         }
 
@@ -523,8 +507,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      */
     private function checkIsOpened(): bool
     {
-        $exercise = new Ejercicio();
-        $exercise->loadFromCode($this->codejercicio);
+        $exercise = $this->getExercise();
         if ($exercise->isOpened()) {
             return true;
         }
@@ -536,6 +519,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     /**
      * Check if the accounting entry belongs to the closing or opening
      * of the fiscal year. If yes, it shows the error message.
+     *
      * @return bool
      */
     private function checkIsOperation(): bool

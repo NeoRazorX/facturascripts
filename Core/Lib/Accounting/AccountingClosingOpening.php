@@ -111,13 +111,19 @@ class AccountingClosingOpening extends AccountingClosingBase
         $accountModel = new Cuenta();
         $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
         foreach ($accountModel->all($where, ['codcuenta' => 'ASC'], 0, 0) as $account) {
-            $accounting->copyAccountToExercise($account, $this->newExercise->codejercicio);
+            $newAccount = $accounting->copyAccountToExercise($account, $this->newExercise->codejercicio);
+            if (!$newAccount->exists()) {
+                return false;
+            }
         }
 
         /// copy subaccounts
         $subaccountModel = new Subcuenta();
         foreach ($subaccountModel->all($where, ['codsubcuenta' => 'ASC'], 0, 0) as $subaccount) {
-            $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
+            $newSubaccount = $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
+            if (!$newSubaccount->exists()) {
+                return false;
+            }
         }
 
         return true;

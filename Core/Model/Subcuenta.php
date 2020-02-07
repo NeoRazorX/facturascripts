@@ -30,6 +30,7 @@ class Subcuenta extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+    use Base\ExerciseRelationTrait;
 
     /**
      * Account code.
@@ -46,13 +47,6 @@ class Subcuenta extends Base\ModelClass
     public $codcuentaesp;
 
     /**
-     * Exercise code.
-     *
-     * @var string
-     */
-    public $codejercicio;
-
-    /**
      * Sub-account code.
      *
      * @var string
@@ -65,13 +59,6 @@ class Subcuenta extends Base\ModelClass
      * @var float|int
      */
     public $debe;
-
-    /**
-     * All exercises.
-     *
-     * @var Ejercicio[]
-     */
-    protected static $ejercicios;
 
     /**
      * Description of the subaccount.
@@ -150,38 +137,6 @@ class Subcuenta extends Base\ModelClass
         $account = new Cuenta();
         $account->loadFromCode('', $where);
         return $account;
-    }
-
-    /**
-     * Returns the current exercise or the default one.
-     * 
-     * @return Ejercicio
-     */
-    public function getExercise()
-    {
-        /// loads all exercise to improve performance
-        if (empty(self::$ejercicios)) {
-            $exerciseModel = new Ejercicio();
-            self::$ejercicios = $exerciseModel->all();
-        }
-
-        /// find exercise
-        foreach (self::$ejercicios as $exe) {
-            if ($exe->codejercicio == $this->codejercicio) {
-                return $exe;
-            } elseif (empty($this->codejercicio) && $exe->isOpened()) {
-                /// return default exercise
-                return $exe;
-            }
-        }
-
-        /// exercise not found? try to get from database
-        $exercise = new Ejercicio();
-        if ($exercise->loadFromCode($this->codejercicio)) {
-            /// add new exercise to cache
-            self::$ejercicios[] = $exercise;
-        }
-        return $exercise;
     }
 
     /**
