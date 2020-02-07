@@ -57,7 +57,13 @@
                         <input type="text" name="fecha" value="{{ task.end | date('d-m-Y') }}" class="form-control datepicker" autocomplete="off"/>
                     </div>
                 </div>
-            </div>
+                <div class="col-auto">
+                    <div class="btn-group" role="group">                                
+                        <button type="button" class="btn btn-success col" title="{{ i18n.trans('seleccionar_todas_las_cantidades') }}" onClick="selectAll();">{{ i18n.trans('everything') }}</button>
+                        <button type="button" class="btn btn-secondary col" title="{{ i18n.trans('no_seleccionar_ninguna_cantidad') }}" onClick="noSelectAny();">{{ i18n.trans('nothing') }}</button>
+                    </div>
+                </div>
+            </div>     
             <div class="row">
                 <div class="col mt-3">
                     {% for doc in fsc.documents %}
@@ -89,6 +95,19 @@
         function sendFormData(status) {
             document.formDocStitcher.status.value = status;
             document.formDocStitcher.submit();
+        }
+        function selectAll() {
+            var inputToServe = document.getElementsByClassName("to_serve");
+            var inputToBeServed = document.getElementsByClassName("to_be_served");
+            for (i = 0; i < inputToBeServed.length; i++) {
+                inputToBeServed.item(i).value = inputToServe.item(i).value;
+            }
+        }
+        function noSelectAny() {
+            var inputToBeServed = document.getElementsByClassName("to_be_served");
+            for (i = 0; i < inputToBeServed.length; i++) {
+                inputToBeServed.item(i).value = 0;
+            }
         }
     </script>
 {% endblock %}
@@ -131,7 +150,8 @@
                             </td>
                             {% set newQuantity = line.cantidad - line.servido %}
                             <td class="{{ newQuantity == 0 ? 'table-warning' : 'table-success' }}">
-                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}" value="{{ newQuantity }}" step="any" class="form-control text-right" autocomplete="off"/>
+                                <input type="hidden" class="to_serve" value="{{ newQuantity }}"/>
+                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}" value="{{ newQuantity }}" step="any" class="form-control text-right to_be_served" autocomplete="off"/>
                             </td>
                         </tr>
                     {% endfor %}
