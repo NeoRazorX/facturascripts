@@ -88,25 +88,22 @@ class AccountingCreation
      */
     public function copyAccountToExercise($account, $codejercicio)
     {
-        if (!$this->checkExercise($codejercicio)) {
-            return new Cuenta();
+        /// account already exists?
+        $newAccount = new Cuenta();
+        $where = [
+            new DataBaseWhere('codcuenta', $account->codcuenta),
+            new DataBaseWhere('codejercicio', $codejercicio)
+        ];
+        if ($newAccount->loadFromCode('', $where)) {
+            return $newAccount;
         }
 
-        $newAccount = new Cuenta();
+        /// create account
         $newAccount->codcuenta = $account->codcuenta;
         $newAccount->codcuentaesp = $account->codcuentaesp;
-        $newAccount->codejercicio = $this->exercise->codejercicio;
+        $newAccount->codejercicio = $codejercicio;
         $newAccount->descripcion = $account->descripcion;
-
-        if (!empty($account->parent_codcuenta)) {
-            $newAccount->parent_codcuenta = $account->parent_codcuenta;
-            $parent = $newAccount->getParentFromCode();
-            if (empty($parent->idcuenta)) {
-                $parent = $this->copyAccountToExercise($account->getParent(), $codejercicio);
-            }
-            $newAccount->parent_idcuenta = $parent->idcuenta;
-        }
-
+        $newAccount->parent_codcuenta = $account->parent_codcuenta;
         $newAccount->save();
         return $newAccount;
     }

@@ -355,7 +355,6 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $this->toolBox()->i18nLog()->warning('accounting-lines-error');
-        $accountEntry->editable = true;
         $accountEntry->delete();
     }
 
@@ -381,7 +380,6 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $this->toolBox()->i18nLog()->warning('accounting-lines-error');
-        $accountEntry->editable = true;
         $accountEntry->delete();
     }
 
@@ -399,7 +397,6 @@ class InvoiceToAccounting extends AccountingClass
         $accountEntry->fecha = $this->document->fecha;
         $accountEntry->idempresa = $this->document->idempresa;
         $accountEntry->importe = $this->document->total;
-        $accountEntry->editable = false;
 
         /// Assign analytical data defined in Serie model
         $serie = new Serie();

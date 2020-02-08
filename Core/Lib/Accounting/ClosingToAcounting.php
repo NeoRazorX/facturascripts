@@ -144,8 +144,8 @@ class ClosingToAcounting
             $this->updateSpecialAccounts();
 
             if ($this->execCloseInvoices() && $this->execRegularization() && $this->execClosing() && $this->execOpening()) {
-                $exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
-                $exercise->save();
+                $this->exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
+                $this->exercise->save();
                 self::$dataBase->commit();
             }
         } finally {

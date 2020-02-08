@@ -19,6 +19,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
+use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
+use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
  * First level of the accounting plan.
@@ -54,13 +57,6 @@ class Cuenta extends Base\ModelClass
     public $descripcion;
 
     /**
-     * Configuration parameter.
-     *
-     * @var bool
-     */
-    private static $disableAditionTest = false;
-
-    /**
      * Primary key.
      *
      * @var int
@@ -75,7 +71,7 @@ class Cuenta extends Base\ModelClass
     public $parent_codcuenta;
 
     /**
-     * Identifier of the parent account
+     * Parent account identifier
      *
      * @var integer
      */
@@ -89,16 +85,21 @@ class Cuenta extends Base\ModelClass
 
     /**
      * 
-     * @param bool $value
+     * @return bool
      */
-    public function disableAditionalTest(bool $value = true)
+    public function delete()
     {
-        self::$disableAditionTest = $value;
+        if ($this->getExercise()->isOpened()) {
+            return parent::delete();
+        }
+
+        $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
+        return false;
     }
 
     /**
      *
-     * @return Cuenta[]
+     * @return static[]
      */
     public function getChildren()
     {
@@ -107,38 +108,39 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
+     * Retuns parent account.
      *
-     * @return Cuenta
+     * @return static
      */
     public function getParent()
     {
-        $parent = new Cuenta();
-        $parent->loadFromCode($this->parent_idcuenta);
-        return $parent;
-    }
+        $parent = new static();
 
-    /**
-     *
-     * @return Cuenta
-     */
-    public function getParentFromCode()
-    {
+        /// no parent data?
+        if (empty($this->parent_idcuenta) && empty($this->parent_codcuenta)) {
+            return $parent;
+        }
+
+        /// parent id?
+        if (!empty($this->parent_idcuenta) && $parent->loadFromCode($this->parent_idcuenta) && $parent->codejercicio === $this->codejercicio) {
+            return $parent;
+        }
+
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('codcuenta', $this->parent_codcuenta)
+            new DataBaseWhere('parent_codcuenta', $this->parent_codcuenta)
         ];
-        $parent = new Cuenta();
         $parent->loadFromCode('', $where);
         return $parent;
     }
 
     /**
      *
-     * @return Subcuenta[]
+     * @return DinSubcuenta[]
      */
     public function getSubcuentas()
     {
-        $subcuenta = new Subcuenta();
+        $subcuenta = new DinSubcuenta();
         $where = [new DataBaseWhere('idcuenta', $this->idcuenta)];
         return $subcuenta->all($where, ['codsubcuenta' => 'ASC'], 0, 0);
     }
@@ -153,8 +155,8 @@ class Cuenta extends Base\ModelClass
     public function install()
     {
         /// force the parents tables
-        new CuentaEspecial();
-        new Ejercicio();
+        new DinCuentaEspecial();
+        new DinEjercicio();
 
         return parent::install();
     }
@@ -179,6 +181,20 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return bool
+     */
+    public function save()
+    {
+        if ($this->getExercise()->isOpened()) {
+            return parent::save();
+        }
+
+        $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
+        return false;
+    }
+
+    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -195,24 +211,27 @@ class Cuenta extends Base\ModelClass
      */
     public function test()
     {
-        $this->codcuenta = trim($this->codcuenta);
+        $this->codcuenta = \trim($this->codcuenta);
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         if (\strlen($this->descripcion) < 1 || \strlen($this->descripcion) > 255) {
             $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']);
             return false;
         }
 
-        /// uncomplete parent account data?
-        if (empty($this->parent_codcuenta) && !empty($this->parent_idcuenta)) {
-            $this->completeParentData();
+        /// prevent loops
+        if (!empty($this->parent_idcuenta) && $this->parent_idcuenta === $this->idcuenta) {
+            $this->parent_idcuenta = null;
         }
 
-        if (!empty($this->parent_idcuenta) && !self::$disableAditionTest) {
+        if (!empty($this->parent_codcuenta) && $this->parent_codcuenta === $this->codcuenta) {
+            $this->parent_codcuenta = null;
+        }
+
+        /// uncomplete parent account data?
+        if (!empty($this->parent_idcuenta) || !empty($this->parent_codcuenta)) {
             $parent = $this->getParent();
-            if ($parent->codejercicio != $this->codejercicio || $parent->idcuenta == $this->idcuenta) {
-                $this->toolBox()->i18nLog()->warning('account-parent-error');
-                return false;
-            }
+            $this->parent_codcuenta = $parent->codcuenta;
+            $this->parent_idcuenta = $parent->idcuenta;
         }
 
         return parent::test();
@@ -228,38 +247,5 @@ class Cuenta extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'ListCuenta?activetab=List')
     {
         return parent::url($type, $list);
-    }
-
-    /**
-     *
-     * @return bool
-     */
-    private function completeParentData()
-    {
-        $parent = $this->getParent();
-        if ($parent->exists() && $parent->codejercicio == $this->codejercicio && $parent->idcuenta != $this->idcuenta) {
-            $this->parent_codcuenta = $parent->codcuenta;
-            return true;
-        }
-
-        $this->parent_codcuenta = null;
-        $this->parent_idcuenta = null;
-        return false;
-    }
-
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
-    {
-        if ($this->getExercise()->isOpened()) {
-            return parent::saveInsert($values);
-        }
-
-        $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->primaryDescription()]);
-        return false;
     }
 }

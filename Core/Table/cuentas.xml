@@ -54,7 +54,7 @@
         <type>FOREIGN KEY (codejercicio) REFERENCES ejercicios (codejercicio) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_cuentas_parent2</name>
-        <type>FOREIGN KEY (parent_idcuenta) REFERENCES cuentas (idcuenta) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <name>ca_cuentas_parent</name>
+        <type>FOREIGN KEY (parent_idcuenta) REFERENCES cuentas (idcuenta) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
 </table>

@@ -19,6 +19,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
+use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
+use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
+use FacturaScripts\Dinamic\Model\Partida as DinPartida;
+use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
  * A VAT regularization.
@@ -30,13 +34,7 @@ class RegularizacionImpuesto extends Base\ModelClass
 {
 
     use Base\ModelTrait;
-
-    /**
-     * Exercise code.
-     *
-     * @var string
-     */
-    public $codejercicio;
+    use Base\ExerciseRelationTrait;
 
     /**
      * Code, not ID, of the related sub-account.
@@ -136,24 +134,13 @@ class RegularizacionImpuesto extends Base\ModelClass
 
     /**
      *
-     * @return Asiento
+     * @return DinAsiento
      */
     public function getAsiento()
     {
-        $asiento = new Asiento();
+        $asiento = new DinAsiento();
         $asiento->loadFromCode($this->idasiento);
         return $asiento;
-    }
-
-    /**
-     * 
-     * @return Ejercicio
-     */
-    public function getEjercicio()
-    {
-        $ejercicio = new Ejercicio();
-        $ejercicio->loadFromCode($this->codejercicio);
-        return $ejercicio;
     }
 
     /**
@@ -165,7 +152,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @param string $fecha
      *
-     * @return bool|RegularizacionImpuesto
+     * @return bool|DinRegularizacionImpuesto
      */
     public function getFechaInside($fecha)
     {
@@ -180,12 +167,11 @@ class RegularizacionImpuesto extends Base\ModelClass
     /**
      * Returns the items per accounting entry.
      *
-     * @return Partida[]
+     * @return DinPartida[]
      */
     public function getPartidas()
     {
-        $asiento = $this->getAsiento();
-        return $asiento->getLines();
+        return $this->getAsiento()->getLines();
     }
 
     /**
@@ -198,9 +184,9 @@ class RegularizacionImpuesto extends Base\ModelClass
     public function install()
     {
         /// needed dependencies
-        new Ejercicio();
-        new Subcuenta();
-        new Asiento();
+        new DinEjercicio();
+        new DinSubcuenta();
+        new DinAsiento();
 
         return parent::install();
     }
@@ -249,7 +235,7 @@ class RegularizacionImpuesto extends Base\ModelClass
         $this->fechafin = $period['end'];
 
         if (empty($this->idempresa)) {
-            $this->idempresa = $this->getEjercicio()->idempresa;
+            $this->idempresa = $this->getExercise()->idempresa;
         }
 
         if (empty($this->codsubcuentaacr) || empty($this->codsubcuentadeu)) {
@@ -281,7 +267,7 @@ class RegularizacionImpuesto extends Base\ModelClass
     private function getPeriod($period): array
     {
         /// Calculate year
-        $year = \date('Y', strtotime($this->getEjercicio()->fechainicio));
+        $year = \date('Y', \strtotime($this->getExercise()->fechainicio));
 
         // return periods values
         switch ($period) {

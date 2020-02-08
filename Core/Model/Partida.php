@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
+use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
  * The line of a accounting entry.
@@ -207,11 +209,11 @@ class Partida extends Base\ModelOnChangeClass
 
     /**
      *
-     * @return Asiento
+     * @return DinAsiento
      */
     public function getAsiento()
     {
-        $asiento = new Asiento();
+        $asiento = new DinAsiento();
         $asiento->loadFromCode($this->idasiento);
         return $asiento;
     }
@@ -220,22 +222,34 @@ class Partida extends Base\ModelOnChangeClass
      *
      * @param string $codsubcuenta
      *
-     * @return Subcuenta
+     * @return DinSubcuenta
      */
     public function getSubcuenta($codsubcuenta = '')
     {
-        $subcuenta = new Subcuenta();
-        if (empty($codsubcuenta)) {
-            $subcuenta->loadFromCode($this->idsubcuenta);
+        $asiento = $this->getAsiento();
+        $subcuenta = new DinSubcuenta();
+
+        /// get by parameter
+        if (!empty($codsubcuenta)) {
+            $where = [
+                new DataBaseWhere('codejercicio', $asiento->codejercicio),
+                new DataBaseWhere('codsubcuenta', $codsubcuenta)
+            ];
+            $subcuenta->loadFromCode('', $where);
             return $subcuenta;
         }
 
-        $asiento = $this->getAsiento();
-        $where = [
+        /// get by id
+        if (!empty($this->idsubcuenta) && $subcuenta->loadFromCode($this->idsubcuenta) && $subcuenta->codejercicio === $asiento->codejercicio) {
+            return $subcuenta;
+        }
+
+        /// get by code and exercise
+        $where2 = [
             new DataBaseWhere('codejercicio', $asiento->codejercicio),
             new DataBaseWhere('codsubcuenta', $this->codsubcuenta)
         ];
-        $subcuenta->loadFromCode('', $where);
+        $subcuenta->loadFromCode('', $where2);
         return $subcuenta;
     }
 
@@ -248,8 +262,8 @@ class Partida extends Base\ModelOnChangeClass
      */
     public function install()
     {
-        new Asiento();
-        new Subcuenta();
+        new DinAsiento();
+        new DinSubcuenta();
 
         return parent::install();
     }
@@ -283,19 +297,24 @@ class Partida extends Base\ModelOnChangeClass
     {
         $utils = $this->toolBox()->utils();
         $this->cifnif = $utils->noHtml($this->cifnif);
-        $this->codsubcuenta = trim($this->codsubcuenta);
-        $this->codcontrapartida = trim($this->codcontrapartida);
+        $this->codsubcuenta = \trim($this->codsubcuenta);
+        $this->codcontrapartida = \trim($this->codcontrapartida);
         $this->concepto = $utils->noHtml($this->concepto);
         $this->documento = $utils->noHtml($this->documento);
 
-        if (strlen($this->concepto) < 1 || strlen($this->concepto) > 255) {
+        if (\strlen($this->concepto) < 1 || \strlen($this->concepto) > 255) {
             $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']);
             return false;
         }
 
-        if ($this->testErrorInData()) {
-            $this->toolBox()->i18nLog()->warning('accounting-data-missing');
-            return false;
+        /// set missing subaccount id
+        if (empty($this->idsubcuenta)) {
+            $this->idsubcuenta = $this->getSubcuenta()->idsubcuenta;
+        }
+
+        /// set missing contrapartida id
+        if (!empty($this->codcontrapartida) && empty($this->idcontrapartida)) {
+            $this->idcontrapartida = $this->getSubcuenta($this->codcontrapartida)->idsubcuenta;
         }
 
         return parent::test();
@@ -324,6 +343,10 @@ class Partida extends Base\ModelOnChangeClass
     protected function onChange($field)
     {
         switch ($field) {
+            case 'codcontrapartida':
+                $this->idcontrapartida = $this->getSubcuenta($this->codcontrapartida)->idsubcuenta;
+                break;
+
             case 'codsubcuenta':
                 $this->idsubcuenta = $this->getSubcuenta($this->codsubcuenta)->idsubcuenta;
                 $this->updateBalance($this->previousData['idsubcuenta']);
@@ -363,29 +386,10 @@ class Partida extends Base\ModelOnChangeClass
      *
      * @param array $fields
      */
-    protected function setPreviousData(array $fields = array())
+    protected function setPreviousData(array $fields = [])
     {
-        $more = ['idsubcuenta', 'codsubcuenta', 'debe', 'haber'];
+        $more = ['codcontrapartida', 'codsubcuenta', 'debe', 'haber', 'idsubcuenta'];
         parent::setPreviousData(array_merge($more, $fields));
-    }
-
-    /**
-     * Check if exists error in accounting entry
-     *
-     * @return bool
-     */
-    protected function testErrorInData(): bool
-    {
-        if (empty($this->idasiento) || empty($this->codsubcuenta)) {
-            return true;
-        }
-
-        if (empty($this->idsubcuenta)) {
-            $subcuenta = $this->getSubcuenta($this->codsubcuenta);
-            $this->idsubcuenta = $subcuenta->idsubcuenta;
-        }
-
-        return empty($this->idsubcuenta);
     }
 
     /**
@@ -412,7 +416,7 @@ class Partida extends Base\ModelOnChangeClass
 
         /// calculate account balance
         $sql = "SELECT COALESCE(SUM(debe), 0) as debe, COALESCE(SUM(haber), 0) as haber"
-            . " FROM partidas WHERE idsubcuenta = " . self::$dataBase->var2str($idsubaccount) . ";";
+            . " FROM " . static::tableName() . " WHERE idsubcuenta = " . self::$dataBase->var2str($idsubaccount) . ";";
         foreach (self::$dataBase->select($sql) as $row) {
             $subaccount->debe = (float) $row['debe'];
             $subaccount->haber = (float) $row['haber'];
