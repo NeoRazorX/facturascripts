@@ -158,10 +158,9 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
             return false;
         }
 
-        /// TODO: Check if accounting entry have VAT Accounts
         $regularization = new DinRegularizacionImpuesto();
-        if ($regularization->getFechaInside($this->fecha)) {
-            $this->toolBox()->i18nLog()->warning('acounting-within-regularization');
+        if ($regularization->loadFechaInside($this->fecha) && !empty($regularization->idasiento)) {
+            $this->toolBox()->i18nLog()->warning('accounting-within-regularization');
             return false;
         }
 
@@ -313,10 +312,9 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
             return false;
         }
 
-        /// TODO: Check if accounting entry have VAT Accounts
         $regularization = new DinRegularizacionImpuesto();
-        if ($regularization->getFechaInside($this->fecha)) {
-            $this->toolBox()->i18nLog()->warning('acounting-within-regularization');
+        if ($regularization->loadFechaInside($this->fecha) && !empty($regularization->idasiento)) {
+            $this->toolBox()->i18nLog()->warning('accounting-within-regularization');
             return false;
         }
 

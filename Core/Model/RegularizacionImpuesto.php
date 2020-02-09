@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
@@ -144,27 +145,6 @@ class RegularizacionImpuesto extends Base\ModelClass
     }
 
     /**
-     * Returns the VAT regularization corresponding to that date,
-     * that is, the regularization whose start date is earlier
-     * to the date provided and its end date is after the date
-     * provided. So you can know if the period is still open to be able
-     * check in.
-     *
-     * @param string $fecha
-     *
-     * @return bool|static
-     */
-    public function getFechaInside($fecha)
-    {
-        $sql = 'SELECT * FROM ' . static::tableName()
-            . ' WHERE fechainicio <= ' . self::$dataBase->var2str($fecha)
-            . ' AND fechafin >= ' . self::$dataBase->var2str($fecha) . ';';
-
-        $data = self::$dataBase->select($sql);
-        return empty($data) ? false : new static($data[0]);
-    }
-
-    /**
      * Returns the items per accounting entry.
      *
      * @return DinPartida[]
@@ -189,6 +169,21 @@ class RegularizacionImpuesto extends Base\ModelClass
         new DinAsiento();
 
         return parent::install();
+    }
+
+    /**
+     * 
+     * @param string $fecha
+     *
+     * @return bool
+     */
+    public function loadFechaInside($fecha): bool
+    {
+        $where = [
+            new DataBaseWhere('fechainicio', $fecha, '<='),
+            new DataBaseWhere('fechafin', $fecha, '>=')
+        ];
+        return $this->loadFromCode('', $where);
     }
 
     /**
