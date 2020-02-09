@@ -56,6 +56,12 @@ class BusinessDocumentGenerator
     protected $lastDocs = [];
 
     /**
+     *
+     * @var bool
+     */
+    private static $sameDate = false;
+
+    /**
      * Generates a new document from a prototype document.
      *
      * @param BusinessDocument $prototype
@@ -81,6 +87,11 @@ class BusinessDocumentGenerator
 
             /// copy properties to new document
             $newDoc->{$field} = $prototype->{$field};
+        }
+
+        if (self::$sameDate) {
+            $newDoc->fecha = $prototype->fecha;
+            $newDoc->hora = $prototype->hora;
         }
 
         foreach ($properties as $key => $value) {
@@ -113,6 +124,15 @@ class BusinessDocumentGenerator
     public function getLastDocs()
     {
         return $this->lastDocs;
+    }
+
+    /**
+     * 
+     * @param bool $value
+     */
+    public static function setSameDate(bool $value)
+    {
+        self::$sameDate = $value;
     }
 
     /**

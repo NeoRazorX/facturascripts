@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 
 /**
  * Description of ListBusinessDocument
@@ -34,14 +35,21 @@ abstract class ListBusinessDocument extends ListController
      */
     protected function addButtonApproveDocument($viewName)
     {
-        $newButton = [
+        $this->addButton($viewName, [
+            'action' => 'approve-document-same-date',
+            'confirm' => 'true',
+            'icon' => 'fas fa-calendar-check',
+            'label' => 'approve-document-same-date',
+            'type' => 'action',
+        ]);
+
+        $this->addButton($viewName, [
             'action' => 'approve-document',
             'confirm' => 'true',
             'icon' => 'fas fa-check',
             'label' => 'approve-document',
             'type' => 'action',
-        ];
-        $this->addButton($viewName, $newButton);
+        ]);
     }
 
     /**
@@ -50,13 +58,12 @@ abstract class ListBusinessDocument extends ListController
      */
     protected function addButtonGroupDocument($viewName)
     {
-        $newButton = [
+        $this->addButton($viewName, [
             'action' => 'group-document',
             'icon' => 'fas fa-magic',
             'label' => 'group-or-split',
             'type' => 'action',
-        ];
-        $this->addButton($viewName, $newButton);
+        ]);
     }
 
     /**
@@ -65,14 +72,13 @@ abstract class ListBusinessDocument extends ListController
      */
     protected function addButtonLockInvoice($viewName)
     {
-        $newButton = [
+        $this->addButton($viewName, [
             'action' => 'lock-invoice',
             'confirm' => 'true',
             'icon' => 'fas fa-lock fa-fw',
             'label' => 'lock-invoice',
             'type' => 'action',
-        ];
-        $this->addButton($viewName, $newButton);
+        ]);
     }
 
     /**
@@ -257,6 +263,10 @@ abstract class ListBusinessDocument extends ListController
     {
         switch ($action) {
             case 'approve-document':
+                return $this->approveDocumentAction();
+
+            case 'approve-document-same-date':
+                BusinessDocumentGenerator::setSameDate(true);
                 return $this->approveDocumentAction();
 
             case 'group-document':
