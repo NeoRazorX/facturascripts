@@ -70,13 +70,6 @@ class Subcuenta extends Base\ModelClass
     public $descripcion;
 
     /**
-     * Configuration parameter.
-     *
-     * @var bool
-     */
-    private static $disableAditionalTest = false;
-
-    /**
      * Amount of credit.
      *
      * @var float|int
@@ -117,6 +110,7 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
+     * Removes this subaccount from the database.
      * 
      * @return bool
      */
@@ -131,16 +125,7 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
-     * 
-     * @param bool $value
-     */
-    public function disableAditionalTest(bool $value = true)
-    {
-        self::$disableAditionalTest = $value;
-    }
-
-    /**
-     * Get parent account.
+     * Returns the parent account.
      *
      * @return DinCuenta
      */
@@ -163,6 +148,7 @@ class Subcuenta extends Base\ModelClass
     }
 
     /**
+     * Returns the related special account code.
      *
      * @return string
      */
@@ -257,13 +243,9 @@ class Subcuenta extends Base\ModelClass
             return false;
         }
 
-        if (self::$disableAditionalTest) {
-            return parent::test();
-        }
-
         /// check exercise
         $exercise = $this->getExercise();
-        if ($exercise->exists() && \strlen($this->codsubcuenta) === $exercise->longsubcuenta) {
+        if (\strlen($this->codsubcuenta) !== $exercise->longsubcuenta) {
             $this->toolBox()->i18nLog()->warning('account-length-error', ['%code%' => $this->codsubcuenta]);
             return false;
         }

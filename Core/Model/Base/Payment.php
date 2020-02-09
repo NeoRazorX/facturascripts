@@ -101,6 +101,7 @@ abstract class Payment extends ModelClass
     {
         /// remove accounting
         $acEntry = $this->getAccountingEntry();
+        $acEntry->editable = true;
         if ($acEntry->exists() && !$acEntry->delete()) {
             $this->toolBox()->i18nLog()->warning('cant-remove-accounting-entry');
             return false;

@@ -50,12 +50,12 @@ class AccountingPlanImport
      *
      * @var Ejercicio
      */
-    protected $ejercicio;
+    protected $exercise;
 
     public function __construct()
     {
         $this->dataBase = new DataBase();
-        $this->ejercicio = new Ejercicio();
+        $this->exercise = new Ejercicio();
     }
 
     /**
@@ -68,7 +68,7 @@ class AccountingPlanImport
      */
     public function importCSV(string $filePath, string $codejercicio)
     {
-        if (!$this->ejercicio->loadFromCode($codejercicio)) {
+        if (!$this->exercise->loadFromCode($codejercicio)) {
             $this->toolBox()->i18nLog()->error('exercise-not-found');
             return false;
         }
@@ -85,7 +85,6 @@ class AccountingPlanImport
         try {
             $this->updateSpecialAccounts();
             $this->processCsvData($filePath);
-            $this->updateExercise();
 
             // confirm data
             $this->dataBase->commit();
@@ -111,7 +110,7 @@ class AccountingPlanImport
      */
     public function importXML(string $filePath, string $codejercicio)
     {
-        if (!$this->ejercicio->loadFromCode($codejercicio)) {
+        if (!$this->exercise->loadFromCode($codejercicio)) {
             $this->toolBox()->i18nLog()->error('exercise-not-found');
             return false;
         }
@@ -131,7 +130,6 @@ class AccountingPlanImport
             $this->importEpigrafe($data->epigrafe);
             $this->importCuenta($data->cuenta);
             $this->importSubcuenta($data->subcuenta);
-            $this->updateExercise();
 
             // confirm data
             $this->dataBase->commit();
@@ -163,16 +161,16 @@ class AccountingPlanImport
 
         /// the account exists?
         $where = [
-            new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
+            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codcuenta', $code)
         ];
         if ($account->loadFromCode('', $where)) {
             return true;
         }
 
-        $account->codejercicio = $this->ejercicio->codejercicio;
         $account->codcuenta = $code;
         $account->codcuentaesp = empty($codcuentaesp) ? null : $codcuentaesp;
+        $account->codejercicio = $this->exercise->codejercicio;
         $account->descripcion = $definition;
         $account->parent_codcuenta = empty($parentCode) ? null : $parentCode;
         return $account->save();
@@ -191,32 +189,26 @@ class AccountingPlanImport
     protected function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp = '')
     {
         $subaccount = new Subcuenta();
-        $subaccount->disableAditionalTest();
 
         /// the subaccount exists?
         $where = [
-            new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
+            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codsubcuenta', $code)
         ];
         if ($subaccount->loadFromCode('', $where)) {
             return true;
         }
 
-        /// the account exist?
-        $account = new Cuenta();
-        $whereAccount = [
-            new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio),
-            new DataBaseWhere('codcuenta', $parentCode)
-        ];
-        if (!$account->loadFromCode('', $whereAccount)) {
-            $this->toolBox()->i18nLog()->error('error', ['%error%' => 'account "' . $parentCode . '" not found']);
-            return false;
+        /// update exercise configuration
+        if ($this->exercise->longsubcuenta != \strlen($code)) {
+            $this->exercise->longsubcuenta = \strlen($code);
+            $this->exercise->save();
+            $subaccount->clearExerciseCache();
         }
 
-        $subaccount->codejercicio = $this->ejercicio->codejercicio;
-        $subaccount->idcuenta = $account->idcuenta;
-        $subaccount->codcuenta = $account->codcuenta;
+        $subaccount->codcuenta = $parentCode;
         $subaccount->codcuentaesp = empty($codcuentaesp) ? null : $codcuentaesp;
+        $subaccount->codejercicio = $this->exercise->codejercicio;
         $subaccount->codsubcuenta = $code;
         $subaccount->descripcion = $description;
         return $subaccount->save();
@@ -370,20 +362,6 @@ class AccountingPlanImport
     protected function toolBox()
     {
         return new ToolBox();
-    }
-
-    /**
-     * Updated exercise subaccount length.
-     */
-    protected function updateExercise()
-    {
-        $subAccountModel = new Subcuenta();
-        $where = [new DataBaseWhere('codejercicio', $this->ejercicio->codejercicio)];
-        foreach ($subAccountModel->all($where) as $subAccount) {
-            $this->ejercicio->longsubcuenta = \strlen($subAccount->codsubcuenta);
-            $this->ejercicio->save();
-            break;
-        }
     }
 
     /**

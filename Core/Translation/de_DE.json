@@ -669,6 +669,7 @@
     "no-outstanding-amount": "no-outstanding-amount",
     "no-selected-item": "no-selected-item",
     "no-stock": "Kein Bestand",
+    "non-editable-accounting-entry": "non-editable-accounting-entry",
     "non-editable-columns": "non-editable-columns",
     "non-editable-document": "Non editable document",
     "none": "None",

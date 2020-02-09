@@ -84,6 +84,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
+     * Removes this account from the database.
      * 
      * @return bool
      */
@@ -98,6 +99,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
+     * Returns all children accounts for this account.
      *
      * @return static[]
      */
@@ -128,13 +130,14 @@ class Cuenta extends Base\ModelClass
 
         $where = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
-            new DataBaseWhere('parent_codcuenta', $this->parent_codcuenta)
+            new DataBaseWhere('codcuenta', $this->parent_codcuenta)
         ];
         $parent->loadFromCode('', $where);
         return $parent;
     }
 
     /**
+     * Returns all subaccounts from this account.
      *
      * @return DinSubcuenta[]
      */

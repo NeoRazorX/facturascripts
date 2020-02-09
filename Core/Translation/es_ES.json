@@ -669,6 +669,7 @@
     "no-outstanding-amount": "No hay importe pendiente",
     "no-selected-item": "Ningún elemento seleccionado",
     "no-stock": "No controlar stock",
+    "non-editable-accounting-entry": "Asiento no editable",
     "non-editable-columns": "Columnas no editables: %columns%",
     "non-editable-document": "Documento no editable",
     "none": "Ninguno",

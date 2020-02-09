@@ -94,6 +94,7 @@ class SubAccountTools
      * Indicates whether the subaccount has associated taxes.
      * 
      * @param Subcuenta|string $subAccount
+     *
      * @return bool
      */
     public function hasTax($subAccount)
