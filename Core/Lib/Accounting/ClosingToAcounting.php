@@ -96,19 +96,18 @@ class ClosingToAcounting
         $closing = $data['deleteClosing'] ?? true;
         $opening = $data['deleteOpening'] ?? true;
 
+        self::$dataBase->beginTransaction();
+
         try {
-            self::$dataBase->beginTransaction();
+            $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
+            $exercise->save();
 
             if ($opening && !$this->deleteOpening()) {
                 return false;
             }
 
-            if ($closing) {
-                if (!$this->deleteClosing() || !$this->deleteRegularization()) {
-                    return false;
-                }
-                $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
-                $exercise->save();
+            if ($closing && (!$this->deleteClosing() || !$this->deleteRegularization())) {
+                return false;
             }
 
             self::$dataBase->commit();

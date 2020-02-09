@@ -140,8 +140,9 @@ abstract class AccountingClosingBase
         ];
 
         $accountEntry = new Asiento();
+        $accountEntry->clearExerciseCache();
         foreach ($accountEntry->all($where) as $row) {
-            $row->disableDeleteTest(true);
+            $row->editable = true;
             if (!$row->delete()) {
                 return false;
             }
@@ -264,7 +265,6 @@ abstract class AccountingClosingBase
     protected function setData(&$entry)
     {
         $entry->codejercicio = $this->exercise->codejercicio;
-        $entry->editable = false;
         $entry->idempresa = $this->exercise->idempresa;
         $entry->importe = 0.00;
 
@@ -281,10 +281,7 @@ abstract class AccountingClosingBase
      */
     protected function setDataLine(&$line, $data)
     {
-        $line->idcontrapartida = null;
-        $line->idpartida = null; // Force insert new line
         $line->idsubcuenta = $data['id'];
-        $line->codcontrapartida = null;
         $line->codsubcuenta = $data['code'];
         $line->concepto = $this->getConcept();
         $line->debe = 0.00;
