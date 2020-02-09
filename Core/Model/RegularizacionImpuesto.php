@@ -152,7 +152,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @param string $fecha
      *
-     * @return bool|DinRegularizacionImpuesto
+     * @return bool|static
      */
     public function getFechaInside($fecha)
     {
@@ -288,7 +288,7 @@ class RegularizacionImpuesto extends Base\ModelClass
     protected function setDefaultAccounts()
     {
         $accounts = new AccountingAccounts();
-        $accounts->exercise = $this->getEjercicio();
+        $accounts->exercise = $this->getExercise();
 
         $subcuentaacr = $accounts->getSpecialSubAccount('IVAACR');
         $this->codsubcuentaacr = $subcuentaacr->codsubcuenta;
