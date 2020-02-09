@@ -45,13 +45,13 @@
                                     <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                                 </button>
                             {% else %}
-                                <a href="{{ currentView.btnNewUrl() }}" class="btn btn-success">
+                                <a href="{{ currentView.btnNewUrl() }}" class="btn btn-success" title="{{ i18n.trans('new') }}">
                                     <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                                 </a>
                             {% endif %}
                         {% endif %}
                         {% if currentView.settings.btnDelete %}
-                            <button type="button" class="btn btn-danger" onclick="listViewDelete('{{ currentView.getViewName() }}');">
+                            <button type="button" class="btn btn-danger" onclick="listViewDelete('{{ currentView.getViewName() }}');" title="{{ i18n.trans('delete') }}">
                                 <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
                             </button>
                         {% endif %}
