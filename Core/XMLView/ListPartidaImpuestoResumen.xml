@@ -65,11 +65,7 @@
     </columns>
     <rows>
         <row type="footer">
-            <group name="actions">
-                <button type="action" label="create-accounting-entry" confirm="true"
-                        color="success" action="create-accounting-entry"
-                        hint="hint-create-accounting-entry" icon="fas fa-balance-scale" />
-            </group>
+            <group name="actions" />
             <group name="summary" html="Block/PartidaImpuestoResumen.html.twig"></group>
         </row>
         <row type="status">

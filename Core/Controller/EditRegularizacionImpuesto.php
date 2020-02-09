@@ -329,6 +329,7 @@ class EditRegularizacionImpuesto extends EditController
 
             case 'ListPartidaImpuestoResumen':
                 $this->getListPartidaImpuestoResumen($view);
+                $this->setCreateAcEntryButton();
                 break;
 
             case 'ListPartidaImpuesto-1':
@@ -338,6 +339,21 @@ class EditRegularizacionImpuesto extends EditController
             case 'ListPartidaImpuesto-2':
                 $this->getListPartidaImpuesto($view, SubAccountTools::SPECIAL_GROUP_TAX_OUTPUT);
                 break;
+        }
+    }
+
+    protected function setCreateAcEntryButton()
+    {
+        $idasiento = $this->getViewModelValue('EditRegularizacionImpuesto', 'idasiento');
+        if (empty($idasiento)) {
+            $this->addButton('ListPartidaImpuestoResumen', [
+                'action' => 'create-accounting-entry',
+                'color' => 'success',
+                'confirm' => true,
+                'icon' => 'fas fa-balance-scale',
+                'label' => 'create-accounting-entry',
+                'row' => 'actions'
+            ]);
         }
     }
 
