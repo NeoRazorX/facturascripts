@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -198,7 +198,7 @@ class DocumentStitcher extends Controller
 
             foreach ($doc->getLines() as $line) {
                 $quantity = (float) $this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
-                if (empty($quantity)) {
+                if (empty($quantity) && !empty($line->cantidad)) {
                     continue;
                 }
 

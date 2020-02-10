@@ -161,7 +161,7 @@ class BusinessDocumentGenerator
                 $arrayLine['cantidad'] = $quantity[$line->primaryColumnValue()];
             }
 
-            if ($arrayLine['cantidad'] == 0 && $line->cantidad != 0) {
+            if (empty($arrayLine['cantidad']) && !empty($line->cantidad)) {
                 continue;
             }
 
