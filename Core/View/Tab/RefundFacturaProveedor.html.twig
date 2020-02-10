@@ -21,20 +21,37 @@
 {% set mainViewName = fsc.getMainViewName() %}
 
 {% if currentView.model.exists() %}
+    <script>
+        function refundAll() {
+            var refundableQty = document.getElementsByClassName("refundable");
+            var inputToBeRefunded = document.getElementsByClassName("to_refund");
+            for (i = 0; i < inputToBeRefunded.length; i++) {
+                inputToBeRefunded.item(i).value = refundableQty.item(i).innerHTML;
+            }
+
+            return false;
+        }
+        function refundNone() {
+            var inputToBeRefunded = document.getElementsByClassName("to_refund");
+            for (i = 0; i < inputToBeRefunded.length; i++) {
+                inputToBeRefunded.item(i).value = 0;
+            }
+
+            return false;
+        }
+    </script>
     <form method="post">
         <input type="hidden" name="action" value="new-refund"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <input type="hidden" name="idfactura" value="{{ currentView.model.primaryColumnValue() }}"/>
         <div class="card">
-            <div class="card-header">
-                <div class="col text-right mb-2">
-                    <button type="button" class="btn btn-outline-secondary" onClick="return refundNone();">
-                        {{ i18n.trans('select-none') }}
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary" onClick="return refundAll();">
-                        {{ i18n.trans('select-all') }}
-                    </button>
-                </div>
+            <div class="card-body text-right">
+                <button type="button" class="btn btn-outline-secondary" onClick="return refundNone();">
+                    {{ i18n.trans('select-none') }}
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onClick="return refundAll();">
+                    {{ i18n.trans('select-all') }}
+                </button>
             </div>
             <div class="table-responsive">
                 <table class="table table-striped table-hover">

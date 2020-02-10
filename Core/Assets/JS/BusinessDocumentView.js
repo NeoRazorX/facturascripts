@@ -208,24 +208,6 @@ function randomString(length) {
     return result;
 }
 
-function refundAll() {
-    var refundableQty = document.getElementsByClassName("refundable");
-    var inputToBeRefunded = document.getElementsByClassName("to_refund");
-    for (i = 0; i < inputToBeRefunded.length; i++) {
-        inputToBeRefunded.item(i).value = refundableQty.item(i).innerHTML;
-    }
-    
-    return false;
-}
-function refundNone() {
-    var inputToBeRefunded = document.getElementsByClassName("to_refund");
-    for (i = 0; i < inputToBeRefunded.length; i++) {
-        inputToBeRefunded.item(i).value = 0;
-    }
-
-    return false;
-}
-
 $(document).ready(function () {
     var container = document.getElementById("document-lines");
     hsTable = new Handsontable(container, {
