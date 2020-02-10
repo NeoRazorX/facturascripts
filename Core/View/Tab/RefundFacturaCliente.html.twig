@@ -24,8 +24,18 @@
     <form method="post">
         <input type="hidden" name="action" value="new-refund"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-        <input type="hidden" name="idfactura" value="{{ currentView.model.primaryColumnValue() }}"/>
+        <input type="hidden" name="idfactura" value="{{ currentView.model.primaryColumnValue() }}"/>        
         <div class="card">
+            <div class="card-header">
+                <div class="col text-right mb-2">
+                    <button type="button" class="btn btn-outline-secondary" onClick="return refundNone();">
+                        {{ i18n.trans('select-none') }}
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onClick="return refundAll();">
+                        {{ i18n.trans('select-all') }}
+                    </button>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-striped table-hover">
                     <thead>
@@ -33,7 +43,7 @@
                             <th>{{ i18n.trans('product') }}</th>
                             <th>{{ i18n.trans('description') }}</th>
                             <th class="text-right" width="200">{{ i18n.trans('quantity') }}</th>
-                            <th class="text-right" width="200">{{ i18n.trans('new-refund') }}</th>
+                            <th class="text-right" width="200">{{ i18n.trans('new-refund') }}</th>  
                         </tr>
                     </thead>
                     <tbody>
@@ -47,10 +57,10 @@
                                     <div class="form-control">{{ line.descripcion | raw }}</div>
                                 </td>
                                 <td>
-                                    <div class="form-control text-right">{{ line.cantidad }}</div>
+                                    <div class="form-control text-right refundable">{{ line.cantidad }}</div>
                                 </td>
                                 <td class="table-warning">
-                                    <input type="number" name="refund_{{ line.primaryColumnValue() }}" value="0" min="0" max="{{ line.cantidad - refunded }}" step="any" class="form-control text-right" autocomplete="off"/>
+                                    <input type="number" name="refund_{{ line.primaryColumnValue() }}" value="0" min="0" max="{{ line.cantidad - refunded }}" step="any" class="form-control text-right to_refund" autocomplete="off"/>
                                 </td>
                             </tr>
                         {% endfor %}
