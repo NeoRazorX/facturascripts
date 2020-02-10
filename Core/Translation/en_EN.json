@@ -36,7 +36,7 @@
     "accounting-plan": "Accounting plan",
     "accounting-possible-duplicated": "Accounting entry possible duplicated of this other. If there isn't, to avoid this message, simply change the concept.",
     "accounting-reports": "Accounting reports",
-    "accounting-within-regularization": "The accounting entry is within a regularization of %tax%. It can't be deleted.",
+    "accounting-within-regularization": "There is already a tax regularization in this period. No changes can be made.",
     "accounts": "Accounts",
     "action": "Action",
     "actions": "Actions",

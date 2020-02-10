@@ -36,7 +36,7 @@
     "accounting-plan": "Pla contable",
     "accounting-possible-duplicated": "L'assentament comptable possiblement està duplicat amb aquest altre. Si no és així, per evitar aquest missatge, simplement canviï el concepte.",
     "accounting-reports": "Informe de comptes",
-    "accounting-within-regularization": "L'assentament pertany a una regularització de l'impost %tax%. No pot ser esborrat.",
+    "accounting-within-regularization": "Ja hi ha una regularització d'impostos en aquest període. No es poden fer canvis.",
     "accounts": "Comptes",
     "action": "Acció",
     "actions": "Accions",

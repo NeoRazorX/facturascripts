@@ -115,15 +115,6 @@ trait InvoiceTrait
     }
 
     /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        parent::clear();
-        $this->pagada = false;
-    }
-
-    /**
      * 
      * @return bool
      */

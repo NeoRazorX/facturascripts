@@ -132,7 +132,6 @@
     <column>
         <name>pagada</name>
         <type>boolean</type>
-        <null>NO</null>
         <default>false</default>
     </column>
     <column>

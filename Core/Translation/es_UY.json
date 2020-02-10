@@ -36,7 +36,7 @@
     "accounting-plan": "Plan contable",
     "accounting-possible-duplicated": "El asiento contable posiblemente está duplicado con este otro. Si no es así, para evitar este mensaje, simplemente cambie el concepto.",
     "accounting-reports": "Informe de cuentas",
-    "accounting-within-regularization": "El asiento pertenece a una regularización del impuesto %tax%. No puede ser borrado.",
+    "accounting-within-regularization": "Ya hay una regularización de impuestos en este periodo. No se pueden hacer cambios.",
     "accounts": "Cuentas",
     "action": "Acción",
     "actions": "Acciones",
