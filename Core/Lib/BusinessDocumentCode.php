@@ -86,10 +86,10 @@ class BusinessDocumentCode
         /// find maximum number for this sequence data
         foreach ($previous as $lastDoc) {
             $lastNumber = (int) $lastDoc->numero;
-            if ($lastNumber >= $sequence->numero) {
+            if ($lastNumber >= $sequence->numero || $sequence->usarhuecos) {
                 $sequence->numero = $lastNumber + 1;
-                break;
             }
+            break;
         }
 
         /// use gaps?
