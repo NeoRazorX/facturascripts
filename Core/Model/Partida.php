@@ -401,7 +401,7 @@ class Partida extends Base\ModelOnChangeClass
      */
     private function updateBalance($idsubaccount, $debit = 0.0, $credit = 0.0)
     {
-        $subaccount = new Subcuenta();
+        $subaccount = new DinSubcuenta();
         $subaccount->clearExerciseCache();
         if (!$subaccount->loadFromCode($idsubaccount)) {
             return;
