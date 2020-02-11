@@ -125,6 +125,10 @@
         <type>FOREIGN KEY (idasiento) REFERENCES asientos (idasiento) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
+        <name>ca_partidas_divisas</name>
+        <type>FOREIGN KEY (coddivisa) REFERENCES divisas (coddivisa) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_partidas_subcuentas</name>
         <type>FOREIGN KEY (idsubcuenta) REFERENCES subcuentas (idsubcuenta) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>

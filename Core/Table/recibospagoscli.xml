@@ -86,6 +86,10 @@
         <type>FOREIGN KEY (codcliente) REFERENCES clientes (codcliente) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
+        <name>ca_recibospagoscli_divisas</name>
+        <type>FOREIGN KEY (coddivisa) REFERENCES divisas (coddivisa) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_recibospagoscli_facturascli</name>
         <type>FOREIGN KEY (idfactura) REFERENCES facturascli (idfactura) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
