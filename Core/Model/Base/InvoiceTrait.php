@@ -262,6 +262,13 @@ trait InvoiceTrait
         }
 
         switch ($field) {
+            case 'codcliente':
+            case 'codproveedor':
+                /// remove receipts
+                foreach ($this->getReceipts() as $receipt) {
+                    $receipt->delete();
+                }
+            /// no break
             case 'fecha':
             case 'total':
                 return $this->onChangeTotal();

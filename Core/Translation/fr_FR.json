@@ -150,6 +150,7 @@
     "cant-delete-last-user": "cant-delete-last-user",
     "cant-load-controller": "Impossible de charger le contrôleur '%controllerName%'.",
     "cant-modify-reference": "Impossible d'éditer la référence.",
+    "cant-remove-accounting-entry": "cant-remove-accounting-entry",
     "card": "Carte",
     "carrier": "Transporteur",
     "carriers": "Les transporteurs",

@@ -150,6 +150,7 @@
     "cant-delete-last-user": "No es pot eliminar a l'últim usuari",
     "cant-load-controller": "No es pot carregar el controlador '%controllerName%'.",
     "cant-modify-reference": "Impossible modificar la referència.",
+    "cant-remove-accounting-entry": "No es pot eliminar l'assentament",
     "card": "Targeta",
     "carrier": "Transportista",
     "carriers": "Transportistes",

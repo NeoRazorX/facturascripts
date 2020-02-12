@@ -150,6 +150,7 @@
     "cant-delete-last-user": "Impossibile eliminare l'ultimo utente",
     "cant-load-controller": "Impossibile caricare il controller.",
     "cant-modify-reference": "Non modificare il riferimento.",
+    "cant-remove-accounting-entry": "cant-remove-accounting-entry",
     "card": "Carta",
     "carrier": "Vettore",
     "carriers": "I vettori",

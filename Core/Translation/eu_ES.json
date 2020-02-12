@@ -150,6 +150,7 @@
     "cant-delete-last-user": "cant-delete-last-user",
     "cant-load-controller": "Ezin da  '%controllerName%' kontroladorea kargatu.",
     "cant-modify-reference": "Ezin da erreferentzia aldatu.",
+    "cant-remove-accounting-entry": "cant-remove-accounting-entry",
     "card": "Txartela",
     "carrier": "Garraiolaria",
     "carriers": "Garraiolariak",

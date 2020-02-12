@@ -150,6 +150,7 @@
     "cant-delete-last-user": "You can't delete the last user",
     "cant-load-controller": "Can't load controller '%controllerName%'.",
     "cant-modify-reference": "Cann't edit reference.",
+    "cant-remove-accounting-entry": "Can't remove accounting entry",
     "card": "Card",
     "carrier": "Carrier",
     "carriers": "Carriers",
