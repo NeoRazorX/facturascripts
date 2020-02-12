@@ -227,7 +227,7 @@ class Partida extends Base\ModelOnChangeClass
     public function getSubcuenta($codsubcuenta = '')
     {
         $asiento = $this->getAsiento();
-        $subcuenta = new DinSubcuenta();
+        $subcta = new DinSubcuenta();
 
         /// get by parameter
         if (!empty($codsubcuenta)) {
@@ -235,13 +235,13 @@ class Partida extends Base\ModelOnChangeClass
                 new DataBaseWhere('codejercicio', $asiento->codejercicio),
                 new DataBaseWhere('codsubcuenta', $codsubcuenta)
             ];
-            $subcuenta->loadFromCode('', $where);
-            return $subcuenta;
+            $subcta->loadFromCode('', $where);
+            return $subcta;
         }
 
         /// get by id
-        if (!empty($this->idsubcuenta) && $subcuenta->loadFromCode($this->idsubcuenta) && $subcuenta->codejercicio === $asiento->codejercicio) {
-            return $subcuenta;
+        if (!empty($this->idsubcuenta) && $subcta->loadFromCode($this->idsubcuenta) && $subcta->codsubcuenta === $this->codsubcuenta && $subcta->codejercicio === $asiento->codejercicio) {
+            return $subcta;
         }
 
         /// get by code and exercise
@@ -249,8 +249,8 @@ class Partida extends Base\ModelOnChangeClass
             new DataBaseWhere('codejercicio', $asiento->codejercicio),
             new DataBaseWhere('codsubcuenta', $this->codsubcuenta)
         ];
-        $subcuenta->loadFromCode('', $where2);
-        return $subcuenta;
+        $subcta->loadFromCode('', $where2);
+        return $subcta;
     }
 
     /**
@@ -403,25 +403,8 @@ class Partida extends Base\ModelOnChangeClass
     {
         $subaccount = new DinSubcuenta();
         $subaccount->clearExerciseCache();
-        if (!$subaccount->loadFromCode($idsubaccount)) {
-            return;
-        }
-
-        /// supplied debit and credit?
-        if ($debit + $credit != 0.0) {
-            $subaccount->debe += $debit;
-            $subaccount->haber += $credit;
-            $subaccount->save();
-            return;
-        }
-
-        /// calculate account balance
-        $sql = "SELECT COALESCE(SUM(debe), 0) as debe, COALESCE(SUM(haber), 0) as haber"
-            . " FROM " . static::tableName() . " WHERE idsubcuenta = " . self::$dataBase->var2str($idsubaccount) . ";";
-        foreach (self::$dataBase->select($sql) as $row) {
-            $subaccount->debe = (float) $row['debe'];
-            $subaccount->haber = (float) $row['haber'];
-            $subaccount->save();
+        if ($subaccount->loadFromCode($idsubaccount)) {
+            $subaccount->updateBalance($debit, $credit);
         }
     }
 }

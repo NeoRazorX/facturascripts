@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Cuenta as DinCuenta;
 use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
+use FacturaScripts\Dinamic\Model\Partida as DinPartida;
 
 /**
  * Detail level of an accounting plan. It is related to a single account.
@@ -256,6 +257,34 @@ class Subcuenta extends Base\ModelClass
         $this->idcuenta = $account->idcuenta;
 
         return parent::test();
+    }
+
+    /**
+     * Update subaccount balance.
+     * 
+     * @param float $debit
+     * @param float $credit
+     */
+    public function updateBalance($debit = 0.0, $credit = 0.0)
+    {
+        /// supplied debit and credit?
+        if ($debit + $credit != 0.0) {
+            $this->debe += $debit;
+            $this->haber += $credit;
+            $this->save();
+            return;
+        }
+
+        /// calculate account balance
+        $sql = "SELECT COALESCE(SUM(debe), 0) as debe, COALESCE(SUM(haber), 0) as haber"
+            . " FROM " . DinPartida::tableName()
+            . " WHERE idsubcuenta = " . self::$dataBase->var2str($this->idsubcuenta) . ";";
+
+        foreach (self::$dataBase->select($sql) as $row) {
+            $this->debe = (float) $row['debe'];
+            $this->haber = (float) $row['haber'];
+            $this->save();
+        }
     }
 
     /**
