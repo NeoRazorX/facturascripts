@@ -349,15 +349,6 @@ class Partida extends Base\ModelOnChangeClass
 
             case 'codsubcuenta':
                 $this->idsubcuenta = $this->getSubcuenta($this->codsubcuenta)->idsubcuenta;
-                $this->updateBalance($this->previousData['idsubcuenta']);
-                $this->updateBalance($this->idsubcuenta);
-                break;
-
-            case 'debe':
-            case 'haber':
-                $debit = $this->debe - $this->previousData['debe'];
-                $credit = $this->haber - $this->previousData['haber'];
-                $this->updateBalance($this->idsubcuenta, $debit, $credit);
                 break;
         }
 
@@ -383,28 +374,39 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
+     * This method is called after a record is updated on the database.
+     */
+    protected function onUpdate()
+    {
+        $this->updateBalance($this->idsubcuenta);
+
+        /// Has the subaccount been changed? Then we recalculate the balance of the old one too.
+        if ($this->previousData['idsubcuenta'] != $this->idsubcuenta) {
+            $this->updateBalance($this->previousData['idsubcuenta']);
+        }
+    }
+
+    /**
      *
      * @param array $fields
      */
     protected function setPreviousData(array $fields = [])
     {
-        $more = ['codcontrapartida', 'codsubcuenta', 'debe', 'haber', 'idsubcuenta'];
-        parent::setPreviousData(array_merge($more, $fields));
+        $more = ['codcontrapartida', 'codsubcuenta', 'debe', 'haber', 'idcontrapartida', 'idsubcuenta'];
+        parent::setPreviousData(\array_merge($more, $fields));
     }
 
     /**
      * Update the subaccount balance.
      * 
-     * @param int   $idsubaccount
-     * @param float $debit
-     * @param float $credit
+     * @param int $idsubaccount
      */
-    private function updateBalance($idsubaccount, $debit = 0.0, $credit = 0.0)
+    private function updateBalance($idsubaccount)
     {
         $subaccount = new DinSubcuenta();
         $subaccount->clearExerciseCache();
         if ($subaccount->loadFromCode($idsubaccount)) {
-            $subaccount->updateBalance($debit, $credit);
+            $subaccount->updateBalance();
         }
     }
 }

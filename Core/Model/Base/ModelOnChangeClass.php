@@ -99,9 +99,17 @@ abstract class ModelOnChangeClass extends ModelClass
     }
 
     /**
-     * This methos is called after a new record is saved on the database (saveInsert).
+     * This method is called after a new record is saved on the database (saveInsert).
      */
     protected function onInsert()
+    {
+        ;
+    }
+
+    /**
+     * This method is called after a record is updated on the database (saveUpdate).
+     */
+    protected function onUpdate()
     {
         ;
     }
@@ -140,6 +148,7 @@ abstract class ModelOnChangeClass extends ModelClass
         }
 
         if (parent::saveUpdate($values)) {
+            $this->onUpdate();
             $this->setPreviousData();
             return true;
         }
