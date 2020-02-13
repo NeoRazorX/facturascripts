@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -76,7 +76,7 @@ class SelectFilter extends BaseFilter
     public function render()
     {
         if (empty($this->icon)) {
-            return '<div class="col-sm-2">'
+            return '<div class="col-sm-3 col-lg-2">'
                 . '<div class="form-group">'
                 . '<select name="' . $this->name() . '" class="form-control"' . $this->onChange() . '>'
                 . $this->getHtmlOptions()
@@ -85,7 +85,7 @@ class SelectFilter extends BaseFilter
                 . '</div>';
         }
 
-        return '<div class="col-sm-2">'
+        return '<div class="col-sm-3 col-lg-2">'
             . '<div class="form-group">'
             . '<div class="input-group">'
             . '<span class="input-group-prepend">'

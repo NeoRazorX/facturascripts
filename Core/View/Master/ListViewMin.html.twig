@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -36,7 +36,7 @@
     <div class="container-fluid">
         <div class="row">
             {# -- Left buttons -- #}
-            <div class="col-6 col-md mb-2">
+            <div class="col-8 col-md mb-2">
                 <div class="btn-group">
                     {% if currentView.settings.btnNew %}
                         {% if currentView.settings.modalInsert %}
@@ -65,7 +65,7 @@
                 {# -- Row statistics -- #}
                 {{ currentView.getRow('statistics').render(fsc) | raw }}
             </div>
-            <div class="col-6 col-md-2 mb-2">
+            <div class="col-4 col-md-2 mb-2">
                 {# -- Search field -- #}
                 {{ _self.searchControl(currentView, i18n) }}
             </div>
