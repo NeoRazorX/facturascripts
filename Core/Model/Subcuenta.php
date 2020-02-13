@@ -71,6 +71,12 @@ class Subcuenta extends Base\ModelClass
     public $descripcion;
 
     /**
+     *
+     * @var bool
+     */
+    private $disableAditionalTest = false;
+
+    /**
      * Amount of credit.
      *
      * @var float|int
@@ -117,12 +123,21 @@ class Subcuenta extends Base\ModelClass
      */
     public function delete()
     {
-        if ($this->getExercise()->isOpened()) {
+        if ($this->getExercise()->isOpened() || $this->disableAditionalTest) {
             return parent::delete();
         }
 
         $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
         return false;
+    }
+
+    /**
+     * 
+     * @param bool $value
+     */
+    public function disableAditionalTest(bool $value)
+    {
+        $this->disableAditionalTest = $value;
     }
 
     /**
@@ -206,7 +221,7 @@ class Subcuenta extends Base\ModelClass
      */
     public function save()
     {
-        if ($this->getExercise()->isOpened()) {
+        if ($this->getExercise()->isOpened() || $this->disableAditionalTest) {
             return parent::save();
         }
 

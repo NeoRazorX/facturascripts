@@ -57,6 +57,12 @@ class Cuenta extends Base\ModelClass
     public $descripcion;
 
     /**
+     *
+     * @var bool
+     */
+    private $disableAditionalTest = false;
+
+    /**
      * Primary key.
      *
      * @var int
@@ -90,12 +96,21 @@ class Cuenta extends Base\ModelClass
      */
     public function delete()
     {
-        if ($this->getExercise()->isOpened()) {
+        if ($this->getExercise()->isOpened() || $this->disableAditionalTest) {
             return parent::delete();
         }
 
         $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
         return false;
+    }
+
+    /**
+     * 
+     * @param bool $value
+     */
+    public function disableAditionalTest(bool $value)
+    {
+        $this->disableAditionalTest = $value;
     }
 
     /**
@@ -189,7 +204,7 @@ class Cuenta extends Base\ModelClass
      */
     public function save()
     {
-        if ($this->getExercise()->isOpened()) {
+        if ($this->getExercise()->isOpened() || $this->disableAditionalTest) {
             return parent::save();
         }
 
