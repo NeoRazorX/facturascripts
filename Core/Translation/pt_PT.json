@@ -521,6 +521,7 @@
     "invalid-alphanumeric-code": "invalid-alphanumeric-code",
     "invalid-column-lenght": "%column% must have between %min% and %max% characters.",
     "invalid-date": "Data inválida 0.",
+    "invalid-date-there-are-invoices-after": "invalid-date-there-are-invoices-after",
     "invalid-hash-file": "Invalid hash file",
     "invalid-iban": "invalid-iban",
     "invoice": "Fatura",

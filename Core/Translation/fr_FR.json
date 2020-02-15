@@ -521,6 +521,7 @@
     "invalid-alphanumeric-code": "invalid-alphanumeric-code",
     "invalid-column-lenght": "%column% doit avoir entre %min% et %max% caractères.",
     "invalid-date": "Date %date% non valide.",
+    "invalid-date-there-are-invoices-after": "invalid-date-there-are-invoices-after",
     "invalid-hash-file": "Invalid hash file",
     "invalid-iban": "invalid-iban",
     "invoice": "facture",

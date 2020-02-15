@@ -521,6 +521,7 @@
     "invalid-alphanumeric-code": "invalid-alphanumeric-code",
     "invalid-column-lenght": "%column%  %min% eta %max% karaktere artean egon behar du.",
     "invalid-date": "%date% data ez da zuzena.",
+    "invalid-date-there-are-invoices-after": "invalid-date-there-are-invoices-after",
     "invalid-hash-file": "Hash fitxategi baliogabea",
     "invalid-iban": "invalid-iban",
     "invoice": "Faktura",

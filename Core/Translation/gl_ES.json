@@ -521,6 +521,7 @@
     "invalid-alphanumeric-code": "O código introducido (%value%) non é válido. (%column%) debe ter entre %min% e %max% números ou letras.",
     "invalid-column-lenght": "%column% deben ter %min% and %max% caracteres.",
     "invalid-date": "Data %date% non válida.",
+    "invalid-date-there-are-invoices-after": "invalid-date-there-are-invoices-after",
     "invalid-hash-file": "Arquivo hash non válido",
     "invalid-iban": "IBAN non válido: %iban%",
     "invoice": "Factura",

@@ -521,6 +521,7 @@
     "invalid-alphanumeric-code": "El còdic introduït (% value%) no és vàlit. (% column%) ha de tindre entre %min% i % max% números o lletres.",
     "invalid-column-lenght": "La columna %column% ha de tindre entre %min% i %max% caràcters.",
     "invalid-date": "%date% no és una data vàlida.",
+    "invalid-date-there-are-invoices-after": "invalid-date-there-are-invoices-after",
     "invalid-hash-file": "L'archiu hash no és vàlit",
     "invalid-iban": "IBAN no vàlid: %iban%",
     "invoice": "Factura",
