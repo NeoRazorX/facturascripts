@@ -19,7 +19,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\LineaFacturaProveedor as LineaFactura;
+use FacturaScripts\Dinamic\Model\LineaFacturaProveedor as DinLineaFactura;
+use FacturaScripts\Dinamic\Model\ReciboProveedor as DinReciboProveedor;
 
 /**
  * Invoice from a supplier.
@@ -44,14 +45,13 @@ class FacturaProveedor extends Base\PurchaseDocument
     /**
      * Returns the lines associated with the invoice.
      *
-     * @return LineaFactura[]
+     * @return DinLineaFactura[]
      */
     public function getLines()
     {
-        $lineaModel = new LineaFactura();
+        $lineaModel = new DinLineaFactura();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-
         return $lineaModel->all($where, $order, 0, 0);
     }
 
@@ -61,15 +61,14 @@ class FacturaProveedor extends Base\PurchaseDocument
      * @param array $data
      * @param array $exclude
      *
-     * @return LineaFactura
+     * @return DinLineaFactura
      */
     public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idfactura'])
     {
-        $newLine = new LineaFactura();
+        $newLine = new DinLineaFactura();
         $newLine->idfactura = $this->idfactura;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
-
         $newLine->loadFromData($data, $exclude);
         return $newLine;
     }
@@ -77,11 +76,11 @@ class FacturaProveedor extends Base\PurchaseDocument
     /**
      * Returns all invoice's receipts.
      * 
-     * @return ReciboProveedor[]
+     * @return DinReciboProveedor[]
      */
     public function getReceipts()
     {
-        $receipt = new ReciboProveedor();
+        $receipt = new DinReciboProveedor();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
         return $receipt->all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
     }
