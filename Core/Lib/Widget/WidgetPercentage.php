@@ -18,21 +18,17 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\Base\NumberTools;
-use Symfony\Component\HttpFoundation\Request;
-
 /**
- * Description of WidgetNumber
+ * WidgetPercentage
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Raúl Jiménez Jiménez  <raljopa@gmail.com>
+ *
  */
 class WidgetPercentage extends WidgetNumber
 {
 
     protected function show()
     {
-        error_log('porcentaje');
         return is_null($this->value) ? '-' : static::$numberTools->format($this->value, $this->decimal) . '%';
     }
 }
