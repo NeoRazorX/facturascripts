@@ -153,6 +153,19 @@ class FacturaCliente extends Base\SalesDocument
             }
         }
 
+        /// prevent the use of too new dates
+        $whereNew = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('codserie', $this->codserie),
+            new DataBaseWhere($numColumn, (int) $this->numero, '>'),
+        ];
+        foreach ($this->all($whereNew, ['fecha' => 'ASC'], 0, 1) as $old) {
+            if (\strtotime($old->fecha) < \strtotime($this->fecha)) {
+                $this->toolBox()->i18nLog()->error('invalid-date-there-are-invoices-before', ['%date%' => $this->fecha]);
+                return false;
+            }
+        }
+
         return true;
     }
 }
