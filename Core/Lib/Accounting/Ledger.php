@@ -52,7 +52,7 @@ class Ledger extends AccountingBase
         $this->dateTo = $dateTo;
         $grouping = (isset($params['grouping']) && $params['grouping']);
 
-        $results = $grouping ? $this->getDataGrouped() : $this->getData();
+        $results = $grouping ? $this->getDataGrouped($params) : $this->getData($params);
         if (empty($results)) {
             return [];
         }
@@ -79,23 +79,22 @@ class Ledger extends AccountingBase
      *
      * @return array
      */
-    protected function getData()
+    protected function getData(array $params = [])
     {
         if (!$this->dataBase->tableExists('partidas')) {
             return [];
         }
 
-        $sql = 'SELECT asto.fecha, asto.numero, subc.codcuenta, cuentas.descripcion '
-            . ' as cuenta_descripcion, part.codsubcuenta, part.concepto, part.debe, part.haber '
-            . ' FROM asientos as asto, partidas AS part, subcuentas as subc, cuentas '
-            . ' WHERE asto.idasiento = part.idasiento '
-            . ' AND asto.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
-            . ' AND asto.fecha <= ' . $this->dataBase->var2str($this->dateTo)
-            . ' AND subc.codejercicio = asto.codejercicio '
-            . ' AND cuentas.codejercicio = asto.codejercicio '
-            . ' AND subc.codsubcuenta = part.codsubcuenta '
-            . ' AND subc.idcuenta = cuentas.idcuenta '
-            . ' ORDER BY asto.fecha, asto.numero ASC';
+        $sql = 'SELECT asientos.fecha, asientos.numero,'
+            . ' partidas.codsubcuenta, partidas.concepto, partidas.debe, partidas.haber, '
+            . ' subcuentas.codcuenta,'
+            . ' cuentas.descripcion as cuenta_descripcion'
+            . ' FROM asientos'
+            . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
+            . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
+            . ' INNER JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
+            . ' WHERE ' . $this->getDataWhere($params)
+            . ' ORDER BY asientos.fecha, asientos.numero ASC';
         return $this->dataBase->select($sql);
     }
 
@@ -104,26 +103,48 @@ class Ledger extends AccountingBase
      *
      * @return array
      */
-    protected function getDataGrouped()
+    protected function getDataGrouped(array $params = [])
     {
         if (!$this->dataBase->tableExists('partidas')) {
             return [];
         }
 
-        $sql = 'SELECT subc.codcuenta, cuentas.descripcion '
-            . ' as cuenta_descripcion, part.codsubcuenta, subc.descripcion as concepto, '
-            . ' sum(part.debe) as debe, sum(part.haber) as haber '
-            . ' FROM asientos as asto, partidas AS part, subcuentas as subc, cuentas '
-            . ' WHERE asto.idasiento = part.idasiento '
-            . ' AND asto.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
-            . ' AND asto.fecha <= ' . $this->dataBase->var2str($this->dateTo)
-            . ' AND subc.codejercicio = asto.codejercicio '
-            . ' AND cuentas.codejercicio = asto.codejercicio '
-            . ' AND subc.codsubcuenta = part.codsubcuenta '
-            . ' AND subc.idcuenta = cuentas.idcuenta '
-            . ' GROUP BY subc.codcuenta, cuentas.descripcion, part.codsubcuenta, subc.descripcion'
-            . ' ORDER BY subc.codcuenta, part.codsubcuenta ASC';
+        $sql = 'SELECT subcuentas.codcuenta, subcuentas.descripcion as concepto,'
+            . ' cuentas.descripcion as cuenta_descripcion,'
+            . ' partidas.codsubcuenta,'
+            . ' sum(partidas.debe) as debe, sum(partidas.haber) as haber '
+            . ' FROM asientos'
+            . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
+            . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
+            . ' INNER JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
+
+            . ' WHERE ' . $this->getDataWhere($params)
+            . ' GROUP BY subcuentas.codcuenta, cuentas.descripcion, partidas.codsubcuenta, subcuentas.descripcion'
+            . ' ORDER BY subcuentas.codcuenta, partidas.codsubcuenta ASC';
         return $this->dataBase->select($sql);
+    }
+
+    /**
+     *
+     * @param array $params
+     * @return string
+     */
+    protected function getDataWhere(array $params = [])
+    {
+        $channel = $params['channel'] ?? '';
+        $subaccountFrom = $params['subaccount-from'] ?? '';
+        $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
+
+        $where = 'asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom) . ' AND ' . $this->dataBase->var2str($this->dateTo);
+        if (!empty($channel)) {
+            $where .= ' AND asientos.canal = ' . $channel;
+        }
+
+        if (!empty($subaccountFrom) || (!empty($subaccountTo))) {
+            $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom) . ' AND ' . $this->dataBase->var2str($subaccountTo);
+        }
+
+        return $where;
     }
 
     /**
