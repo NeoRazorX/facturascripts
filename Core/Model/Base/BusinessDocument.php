@@ -262,8 +262,8 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->codserie = $appSettings->get('default', 'codserie');
         $this->dtopor1 = 0.0;
         $this->dtopor2 = 0.0;
-        $this->fecha = date(self::DATE_STYLE);
-        $this->hora = date(self::HOUR_STYLE);
+        $this->fecha = \date(self::DATE_STYLE);
+        $this->hora = \date(self::HOUR_STYLE);
         $this->idempresa = $appSettings->get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
@@ -420,13 +420,18 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 $this->toolBox()->i18nLog()->warning('non-editable-columns', ['%columns%' => 'codalmacen,idempresa']);
                 return false;
 
-            case 'codejercicio':
             case 'codserie':
                 BusinessDocumentCode::getNewCode($this);
                 break;
 
             case 'fecha':
-                return $this->setDate($this->fecha, $this->hora);
+                $oldCodejercicio = $this->codejercicio;
+                if (!$this->setDate($this->fecha, $this->hora)) {
+                    return false;
+                } elseif ($this->codejercicio != $oldCodejercicio) {
+                    BusinessDocumentCode::getNewCode($this);
+                }
+                break;
         }
 
         return parent::onChange($field);
@@ -440,7 +445,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     protected function setPreviousData(array $fields = [])
     {
         $more = [
-            'codalmacen', 'coddivisa', 'codejercicio', 'codpago', 'codserie',
+            'codalmacen', 'coddivisa', 'codpago', 'codserie',
             'fecha', 'hora', 'idempresa', 'total'
         ];
         parent::setPreviousData(array_merge($more, $fields));

@@ -21,10 +21,12 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\BusinessDocSubType;
 use FacturaScripts\Core\Lib\BusinessDocTypeOperation;
-use FacturaScripts\Dinamic\Model\LineaFacturaCliente as LineaFactura;
+use FacturaScripts\Dinamic\Model\LineaFacturaCliente as DinLineaFactura;
+use FacturaScripts\Dinamic\Model\LiquidacionComision as DinLiquidacionComision;
+use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
 
 /**
- * Invoice of a client.
+ * Customer's invoice.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -49,16 +51,16 @@ class FacturaCliente extends Base\SalesDocument
     public $codsubtipodoc;
 
     /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
+     * This function is called when creating the model's table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert
+     * default values.
      *
      * @return string
      */
     public function install()
     {
         /// needed dependencies
-        new LiquidacionComision();
+        new DinLiquidacionComision();
 
         return parent::install();
     }
@@ -77,14 +79,13 @@ class FacturaCliente extends Base\SalesDocument
     /**
      * Returns the lines associated with the invoice.
      *
-     * @return LineaFactura[]
+     * @return DinLineaFactura[]
      */
     public function getLines()
     {
-        $lineaModel = new LineaFactura();
+        $lineaModel = new DinLineaFactura();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-
         return $lineaModel->all($where, $order, 0, 0);
     }
 
@@ -94,15 +95,14 @@ class FacturaCliente extends Base\SalesDocument
      * @param array $data
      * @param array $exclude
      *
-     * @return LineaFactura
+     * @return DinLineaFactura
      */
     public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idfactura'])
     {
-        $newLine = new LineaFactura();
+        $newLine = new DinLineaFactura();
         $newLine->idfactura = $this->idfactura;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
-
         $newLine->loadFromData($data, $exclude);
         return $newLine;
     }
@@ -110,11 +110,11 @@ class FacturaCliente extends Base\SalesDocument
     /**
      * Returns all invoice's receipts.
      *
-     * @return ReciboCliente[]
+     * @return DinReciboCliente[]
      */
     public function getReceipts()
     {
-        $receipt = new ReciboCliente();
+        $receipt = new DinReciboCliente();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
         return $receipt->all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
     }
@@ -127,5 +127,45 @@ class FacturaCliente extends Base\SalesDocument
     public static function tableName()
     {
         return 'facturascli';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        if (!parent::test()) {
+            return false;
+        }
+
+        /// prevent form using old dates
+        $numColumn = \strtolower(\FS_DB_TYPE) == 'postgresql' ? 'CAST(numero as integer)' : 'CAST(numero as unsigned)';
+        $whereOld = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('codserie', $this->codserie),
+            new DataBaseWhere($numColumn, (int) $this->numero, '<'),
+        ];
+        foreach ($this->all($whereOld, ['fecha' => 'DESC'], 0, 1) as $old) {
+            if (\strtotime($old->fecha) > \strtotime($this->fecha)) {
+                $this->toolBox()->i18nLog()->error('invalid-date-there-are-invoices-after', ['%date%' => $this->fecha]);
+                return false;
+            }
+        }
+
+        /// prevent the use of too new dates
+        $whereNew = [
+            new DataBaseWhere('codejercicio', $this->codejercicio),
+            new DataBaseWhere('codserie', $this->codserie),
+            new DataBaseWhere($numColumn, (int) $this->numero, '>'),
+        ];
+        foreach ($this->all($whereNew, ['fecha' => 'ASC'], 0, 1) as $old) {
+            if (\strtotime($old->fecha) < \strtotime($this->fecha)) {
+                $this->toolBox()->i18nLog()->error('invalid-date-there-are-invoices-before', ['%date%' => $this->fecha]);
+                return false;
+            }
+        }
+
+        return true;
     }
 }
