@@ -75,6 +75,24 @@ class Ledger extends AccountingBase
     }
 
     /**
+     * Config options for create a ledger button
+     *
+     * @param string $type
+     * @param string $action
+     * @return array
+     */
+    public static function getButton($type, $action = 'ledger')
+    {
+        return [
+            'color' => 'info',
+            'icon' => 'fas fa-book fa-fw',
+            'label' => 'ledger',
+            'action' => $action,
+            'type' => $type,
+        ];
+    }
+
+    /**
      * Return the appropiate data from database.
      *
      * @return array
@@ -132,6 +150,8 @@ class Ledger extends AccountingBase
     protected function getDataWhere(array $params = [])
     {
         $channel = $params['channel'] ?? '';
+        $accountFrom = $params['account-from'] ?? '';
+        $accountTo = $params['account-to'] ?? $accountFrom;
         $subaccountFrom = $params['subaccount-from'] ?? '';
         $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
 
@@ -142,6 +162,10 @@ class Ledger extends AccountingBase
 
         if (!empty($subaccountFrom) || (!empty($subaccountTo))) {
             $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom) . ' AND ' . $this->dataBase->var2str($subaccountTo);
+        }
+
+        if (!empty($accountFrom) || (!empty($accountTo))) {
+            $where .= ' AND subcuentas.codcuenta BETWEEN ' . $this->dataBase->var2str($accountFrom) . ' AND ' . $this->dataBase->var2str($accountTo);
         }
 
         return $where;

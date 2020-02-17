@@ -70,7 +70,7 @@ class EditSubcuenta extends EditController
      */
     protected function addLedgerReport($viewName)
     {
-        $this->addLedgerReportButton($viewName);
+        $this->addButton($viewName, Ledger::getButton('modal'));
         $this->setLedgerReportExportOptions($viewName);
         $this->setLedgerReportValues($viewName);
     }
@@ -192,24 +192,6 @@ class EditSubcuenta extends EditController
             $view->model->codejercicio = $cuenta->codejercicio;
             $view->model->idcuenta = $cuenta->idcuenta;
         }
-    }
-
-    /**
-     * Add modal button to main view for print/export ledger
-     *
-     * @param string $viewName
-     */
-    private function addLedgerReportButton($viewName)
-    {
-        $ledgerButton = [
-            'action' => 'ledger',
-            'color' => 'info',
-            'icon' => 'fas fa-book fa-fw',
-            'label' => 'ledger',
-            'type' => 'modal',
-        ];
-
-        $this->addButton($viewName, $ledgerButton);
     }
 
     /**
