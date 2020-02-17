@@ -23,6 +23,7 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\Ejercicio;
 
 /**
  * Controller to edit a single item from the Cuenta model
@@ -235,8 +236,12 @@ class EditCuenta extends EditController
      */
     private function setLedgerReportValues($viewName)
     {
+        $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
+        $exercise = new Ejercicio();
+        $exercise->loadFromCode($codeExercise);
+
         $model = $this->views[$viewName]->model;
-        $model->dateFrom = date('01-01-Y');
-        $model->dateTo = date('d-m-Y');
+        $model->dateFrom = $exercise->fechainicio;
+        $model->dateTo = $exercise->fechafin;
     }
 }
