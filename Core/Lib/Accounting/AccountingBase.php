@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Dinamic\Model\Ejercicio;
 
 /**
  * Description of AccountingBase
@@ -52,6 +53,13 @@ abstract class AccountingBase
     protected $dateTo;
 
     /**
+     * Fiscal exercise
+     *
+     * @var Ejercicio
+     */
+    protected $exercise;
+
+    /**
      * Generate the balance amounts between two dates.
      */
     abstract public function generate(string $dateFrom, string $dateTo, array $params = []);
@@ -67,6 +75,17 @@ abstract class AccountingBase
     public function __construct()
     {
         $this->dataBase = new DataBase();
+        $this->exercise = new Ejercicio();
+    }
+
+    /**
+     * Load exercise data for the specified code
+     *
+     * @param string $code
+     */
+    public function setExercise($code)
+    {
+        $this->exercise->loadFromCode($code);
     }
 
     /**
@@ -83,7 +102,7 @@ abstract class AccountingBase
     }
 
     /**
-     * 
+     *
      * @return ToolBox
      */
     protected function toolBox()

@@ -29,6 +29,9 @@ use FacturaScripts\Dinamic\Model\Partida;
 class Ledger extends AccountingBase
 {
 
+    /**
+     * Ledger constructor class
+     */
     public function __construct()
     {
         parent::__construct();
@@ -149,21 +152,22 @@ class Ledger extends AccountingBase
      */
     protected function getDataWhere(array $params = [])
     {
-        $channel = $params['channel'] ?? '';
-        $accountFrom = $params['account-from'] ?? '';
-        $accountTo = $params['account-to'] ?? $accountFrom;
-        $subaccountFrom = $params['subaccount-from'] ?? '';
-        $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
-
         $where = 'asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom) . ' AND ' . $this->dataBase->var2str($this->dateTo);
+        $where .= ' AND asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio);
+
+        $channel = $params['channel'] ?? '';
         if (!empty($channel)) {
             $where .= ' AND asientos.canal = ' . $channel;
         }
 
+        $subaccountFrom = $params['subaccount-from'] ?? '';
+        $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
         if (!empty($subaccountFrom) || (!empty($subaccountTo))) {
             $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom) . ' AND ' . $this->dataBase->var2str($subaccountTo);
         }
 
+        $accountFrom = $params['account-from'] ?? '';
+        $accountTo = $params['account-to'] ?? $accountFrom;
         if (!empty($accountFrom) || (!empty($accountTo))) {
             $where .= ' AND subcuentas.codcuenta BETWEEN ' . $this->dataBase->var2str($accountFrom) . ' AND ' . $this->dataBase->var2str($accountTo);
         }
