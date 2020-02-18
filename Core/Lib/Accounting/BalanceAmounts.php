@@ -108,7 +108,7 @@ class BalanceAmounts extends AccountingBase
     {
         $where = 'asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio)
             . ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom) . ' AND ' . $this->dataBase->var2str($this->dateTo)
-            . ' AND asto.operacion <> \'C\'';
+            . ' AND asientos.operacion <> \'C\'';
 
         $channel = $params['channel'] ?? '';
         if (!empty($channel)) {
