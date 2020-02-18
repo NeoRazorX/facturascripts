@@ -95,12 +95,16 @@ class BalanceSheet extends AccountingBase
         $dateFromPrev = $this->dataBase->var2str($this->dateFromPrev);
         $dateToPrev = $this->dataBase->var2str($this->dateToPrev);
 
+        $entryJoin = 'asto.idempresa = ' . $this->exercise->idempresa
+            . ' AND asto.operacion <> \'C\''
+            . ' AND asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo;
+
         $sql = 'SELECT cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFrom . ' AND ' . $dateTo . ' THEN pa.debe - pa.haber ELSE 0 END) saldo,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateToPrev . ' THEN pa.debe - pa.haber ELSE 0 END) saldoprev'
             . ' FROM balances cb '
             . ' INNER JOIN balancescuentasabreviadas ccb ON ccb.codbalance = cb.codbalance '
-            . ' INNER JOIN asientos asto ON asto.idempresa = ' . $this->exercise->idempresa . ' AND asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo
+            . ' INNER JOIN asientos asto ON ' . $entryJoin
             . ' INNER JOIN partidas pa ON pa.idasiento = asto.idasiento AND substr(pa.codsubcuenta, 1, 1) BETWEEN \'1\' AND \'5\' AND pa.codsubcuenta LIKE CONCAT(ccb.codcuenta,\'%\')'
             . ' WHERE ' . $this->getDataWhere($params)
             . ' GROUP BY 1, 2, 3, 4, 5, 6, 7 '

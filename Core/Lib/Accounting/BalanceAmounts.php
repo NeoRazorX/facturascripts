@@ -106,8 +106,9 @@ class BalanceAmounts extends AccountingBase
      */
     protected function getDataWhere(array $params = [])
     {
-        $where = 'asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom) . ' AND ' . $this->dataBase->var2str($this->dateTo);
-        $where .= ' AND asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio);
+        $where = 'asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio)
+            . ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom) . ' AND ' . $this->dataBase->var2str($this->dateTo)
+            . ' AND asto.operacion <> \'C\'';
 
         $channel = $params['channel'] ?? '';
         if (!empty($channel)) {
