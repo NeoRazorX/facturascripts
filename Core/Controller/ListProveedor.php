@@ -26,6 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Oscar G. Villa   <oscar@sprint.coop>
  */
 class ListProveedor extends ListController
 {
@@ -50,7 +51,8 @@ class ListProveedor extends ListController
     protected function createViews()
     {
         $this->createViewSuppliers();
-        $this->createViewAdresses();
+        $this->createViewAdresses();        
+        $this->createViewSuppliersBankAccount();
     }
 
     /**
@@ -123,5 +125,19 @@ class ListProveedor extends ListController
 
         $paymentMethods = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
         $this->addFilterSelect($viewName, 'codpago', 'payment-methods', 'codpago', $paymentMethods);
+    }
+    
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewSuppliersBankAccount(string $viewName = 'ListCuentaBancoProveedor')
+    {
+        $this->addView($viewName, 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
+        $this->addSearchFields($viewName, ['codproveedor', 'descripcion']);
+        $this->addOrderBy($viewName, ['codproveedor'], 'supplier');
+        $this->addOrderBy($viewName, ['descripcion'], 'description', 1);
+        
+        $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'proveedores', 'codproveedor', 'nombre');
     }
 }

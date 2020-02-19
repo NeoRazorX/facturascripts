@@ -18,6 +18,7 @@
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author PC REDNET S.L.       <lusimi@pcrednet.com>
+ * @author Oscar G. Villa   <oscar@sprint.coop>
 -->
 <view>
     <columns>
@@ -25,8 +26,10 @@
             <column name="code" display="none" order="100">
                 <widget type="text" fieldname="codcuenta" />
             </column>
-            <column name="codproveedor" display="none" order="110">
-                <widget type="text" fieldname="codproveedor" />
+            <column name="supplier" order="110">
+                <widget type="autocomplete" fieldname="codproveedor">
+                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
+                </widget>
             </column>
             <column name="description" order="120">
                 <widget type="text" fieldname="descripcion" required="true" />

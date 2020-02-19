@@ -19,6 +19,7 @@
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Joe Nilson           <joenilson@gmail.com>
+ * @author Oscar G. Villa   <oscar@sprint.coop>
 -->
 <view>
     <columns>
@@ -26,8 +27,10 @@
             <column name="code" display="none" order="100">
                 <widget type="text" fieldname="codcuenta" />
             </column>
-            <column name="codcliente" display="none" order="110">
-                <widget type="text" fieldname="codcliente" />
+            <column name="customer" order="110">
+                <widget type="autocomplete" fieldname="codcliente" >
+                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
+                </widget>
             </column>
             <column name="description" order="120">
                 <widget type="text" fieldname="descripcion" required="true" />

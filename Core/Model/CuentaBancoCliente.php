@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model;
  * A bank account of a client.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Oscar G. Villa   <oscar@sprint.coop>
  */
 class CuentaBancoCliente extends Base\BankAccount
 {
@@ -104,5 +105,18 @@ class CuentaBancoCliente extends Base\BankAccount
                 . ' AND codcuenta != ' . self::$dataBase->var2str($this->codcuenta) . ';';
             self::$dataBase->exec($sql);
         }
+    }
+    
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List')
+    {
+        return parent::url($type, $list);
     }
 }

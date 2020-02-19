@@ -27,6 +27,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Artex Trading sa             <jcuello@artextrading.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ 
  */
 class ListCliente extends ListController
 {
@@ -52,7 +53,8 @@ class ListCliente extends ListController
     {
         $this->createViewCustomers();
         $this->createViewContacts();
-        $this->createViewGroups();
+        $this->createViewGroups();        
+        $this->createViewClientsBankAccount();
     }
 
     /**
@@ -134,5 +136,19 @@ class ListCliente extends ListController
         $this->addSearchFields($viewName, ['nombre', 'codgrupo']);
         $this->addOrderBy($viewName, ['codgrupo'], 'code');
         $this->addOrderBy($viewName, ['nombre'], 'name', 1);
+    }
+    
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewClientsBankAccount(string $viewName = 'ListCuentaBancoCliente')
+    {
+        $this->addView($viewName, 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
+        $this->addSearchFields($viewName, ['codcliente','descripcion']);
+        $this->addOrderBy($viewName, ['codcliente'], 'customer');
+        $this->addOrderBy($viewName, ['descripcion'], 'description', 1);
+        
+        $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'clientes', 'codcliente', 'nombre');
     }
 }
