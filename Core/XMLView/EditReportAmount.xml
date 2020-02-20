@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Jose Antonio Cuello <jcuello@artextrading.com>
+-->
+<view>
+    <columns>
+        <group name="basic" numcolumns="12">
+            <column name="code" display="none" order="100">
+                <widget type="text" fieldname="id" />
+            </column>
+            <column name="name" order="110">
+                <widget type="text" fieldname="name" />
+            </column>
+            <column name="company" numcolumns="2" order="120">
+                <widget type="select" fieldname="idcompany">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                </widget>
+            </column>
+            <column name="channel" numcolumns="2" order="130">
+                <widget type="number" fieldname="channel" decimal="0"/>
+            </column>
+        </group>
+        <group name="date" numcolumns="4">
+            <column name="start-date" order="200">
+                <widget type="date" fieldname="startdate" />
+            </column>
+            <column name="end-date" order="210">
+                <widget type="date" fieldname="enddate" />
+            </column>
+        </group>
+        <group name="other" numcolumns="8" valign="bottom">
+            <column name="start-subaccount" order="300">
+                <widget type="autocomplete" fieldname="startcodsubaccount">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="end-subaccount" order="310">
+                <widget type="autocomplete" fieldname="endcodsubaccount">
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                </widget>
+            </column>
+            <column name="level" numcolumns="2" order="320">
+                <widget type="select" fieldname="level">
+                    <values start="0" end="4" step="1" />
+                </widget>
+            </column>
+            <column name="without-regularization" order="330">
+                <widget type="checkbox" fieldname="ignoreregularization" />
+            </column>
+            <column name="without-closure" order="340">
+                <widget type="checkbox" fieldname="ignoreclosure" />
+            </column>
+        </group>
+    </columns>
+</view>
