@@ -281,6 +281,7 @@ class NewMail
     {
         switch ($this->toolBox()->appSettings()->get('email', 'mailer', '')) {
             case 'smtp':
+                $this->mail->SMTPDebug = 3;
                 return $this->mail->smtpConnect($this->smtpOptions());
 
             default:
@@ -354,8 +355,8 @@ class NewMail
                 'ssl' => [
                     'verify_peer' => false,
                     'verify_peer_name' => false,
-                    'allow_self_signed' => true,
-                ],
+                    'allow_self_signed' => true
+                ]
             ];
         }
 
