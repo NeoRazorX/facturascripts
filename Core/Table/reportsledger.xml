@@ -23,6 +23,10 @@
         <type>integer</type>
     </column>
     <column>
+        <name>grouping</name>
+        <type>boolean</type>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>

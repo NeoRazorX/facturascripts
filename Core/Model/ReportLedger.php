@@ -40,6 +40,12 @@ class ReportLedger extends Base\ReportAccounting
 
     /**
      *
+     * @var bool
+     */
+    public $grouping;
+
+    /**
+     *
      * @var string
      */
     public $startcodsubaccount;
@@ -51,6 +57,16 @@ class ReportLedger extends Base\ReportAccounting
     public $startentry;
 
     /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->grouping = false;
+    }
+
+    /**
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
