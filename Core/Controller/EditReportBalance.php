@@ -82,6 +82,17 @@ class EditReportBalance extends EditReportAccounting
     }
 
     /**
+     * Get Title for report
+     *
+     * @return string
+     */
+    protected function getTitle(): string
+    {
+        $model = $this->getModel();
+        return $this->toolBox()->i18n()->trans($model->type);
+    }
+    
+    /**
      *
      * @param string   $viewName
      * @param BaseView $view
