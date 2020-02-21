@@ -68,6 +68,7 @@ class ReportBalance extends Base\ReportAccounting
     }
 
     /**
+     * Returns the name of the table that uses this model.
      *
      * @return string
      */
