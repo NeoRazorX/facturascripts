@@ -37,19 +37,22 @@
         <column name="end-date" display="center" order="140">
             <widget type="text" fieldname="enddate" />
         </column>
-        <column name="channel" display="center" order="150">
+        <column name="grouping" display="center" order="150">
+            <widget type="checkbox" fieldname="grouping" />
+        </column>
+        <column name="channel" display="center" order="160">
             <widget type="text" fieldname="channel" />
         </column>
-        <column name="start-subaccount" display="center" order="160">
+        <column name="start-subaccount" display="center" order="170">
             <widget type="text" fieldname="startcodsubaccount" />
         </column>
-        <column name="end-subaccount" display="center" order="170">
+        <column name="end-subaccount" display="center" order="180">
             <widget type="text" fieldname="endcodsubaccount" />
         </column>
-        <column name="start-accounting-entry" display="center" order="180">
+        <column name="start-accounting-entry" display="center" order="190">
             <widget type="text" fieldname="startentry" />
         </column>
-        <column name="end-accounting-entry" display="center" order="190">
+        <column name="end-accounting-entry" display="center" order="200">
             <widget type="text" fieldname="endentry" />
         </column>
     </columns>
