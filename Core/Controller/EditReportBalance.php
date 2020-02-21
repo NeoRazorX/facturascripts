@@ -18,16 +18,18 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Controller\Base\EditReportAccounting;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
-use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Model\ReportBalance;
+use FacturaScripts\Dinamic\Lib\Accounting\BalanceSheet;
+use FacturaScripts\Dinamic\Lib\Accounting\ProfitAndLoss;
 
 /**
  * Description of EditReportBalance
  *
  * @author Jose Antonio Cuello <jcuello@artextrading.com>
  */
-class EditReportBalance extends EditController
+class EditReportBalance extends EditReportAccounting
 {
 
     /**
@@ -50,6 +52,33 @@ class EditReportBalance extends EditController
         $data['title'] = 'balances';
         $data['icon'] = 'fas fa-book';
         return $data;
+    }
+
+    /**
+     * Generate Balance Amounts data for report
+     *
+     * @param ReportBalance $model
+     * @return array
+     */
+    protected function generateReport($model)
+    {
+        $params = [
+            'idcompany' => $model->idcompany,
+            'channel' => $model->channel,
+            'format' => $model->format
+        ];
+
+        switch ($model->type) {
+            case ReportBalance::TYPE_SHEET:
+                $balanceAmount = new BalanceSheet();
+                return $balanceAmount->generate($model->startdate, $model->enddate, $params);
+
+            case ReportBalance::TYPE_PROFIT:
+                $profitAndLoss = new ProfitAndLoss();
+                return $profitAndLoss->generate($model->startdate, $model->enddate, $params);
+        }
+
+        return [];
     }
 
     /**

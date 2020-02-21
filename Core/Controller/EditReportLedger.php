@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Controller\Base\EditReportAccounting;
 use FacturaScripts\Core\Model\ReportLedger;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 
@@ -27,27 +27,8 @@ use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
  *
  * @author Jose Antonio Cuello <jcuello@artextrading.com>
  */
-class EditReportLedger extends EditController
+class EditReportLedger extends EditReportAccounting
 {
-
-    /**
-     * Run the controller after actions.
-     *
-     * @param string $action
-     */
-    protected function execAfterAction($action)
-    {
-        switch ($action) {
-            case 'export':
-                $model = $this->getModel();
-                $this->printReport($model);
-                break;
-
-            default:
-                parent::execAfterAction($action);
-                break;
-        }
-    }
 
     /**
      *
@@ -72,12 +53,15 @@ class EditReportLedger extends EditController
     }
 
     /**
+     * Generate Ledger data for report
      *
      * @param ReportLedger $model
+     * @return array
      */
-    protected function printReport($model)
+    protected function generateReport($model)
     {
         $params = [
+            'idcompany' => $model->idcompany,
             'subaccount-from' => $model->startcodsubaccount,
             'subaccount-to' => $model->endcodsubaccount,
             'entry-from' => $model->startentry,
@@ -87,34 +71,6 @@ class EditReportLedger extends EditController
         ];
 
         $ledger = new Ledger();
-        $pages = $ledger->generate($model->startdate, $model->enddate, $params);
-        if (empty($pages)) {
-            $this->toolBox()->i18nLog()->warning('no-data');
-            return;
-        }
-
-        $format = $this->request->get('option', 'PDF');
-        $title = $this->toolBox()->i18n()->trans('ledger') . ' - ' . $model->name;
-
-        $this->setTemplate(false);
-        $this->exportData($pages, $title, $format);
-    }
-
-    /**
-     * Exports data to indicated format.
-     *
-     * @param array  $pages
-     * @param string $format
-     */
-    protected function exportData(&$pages, $title, $format)
-    {
-        $this->exportManager->newDoc($format, $title);
-
-        foreach ($pages as $data) {
-            $headers = empty($data) ? [] : array_keys($data[0]);
-            $this->exportManager->addTablePage($headers, $data);
-        }
-
-        $this->exportManager->show($this->response);
+        return $ledger->generate($model->startdate, $model->enddate, $params);
     }
 }

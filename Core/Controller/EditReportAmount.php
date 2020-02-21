@@ -18,14 +18,16 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Controller\Base\EditReportAccounting;
+use FacturaScripts\Core\Model\ReportAmount;
+use FacturaScripts\Dinamic\Lib\Accounting\BalanceAmounts;
 
 /**
  * Description of EditReportAmount
  *
  * @author Jose Antonio Cuello <jcuello@artextrading.com>
  */
-class EditReportAmount extends EditController
+class EditReportAmount extends EditReportAccounting
 {
 
     /**
@@ -48,5 +50,27 @@ class EditReportAmount extends EditController
         $data['title'] = 'balance-amounts';
         $data['icon'] = 'fas fa-calculator';
         return $data;
+    }
+
+    /**
+     * Generate Balance Amounts data for report
+     *
+     * @param ReportAmount $model
+     * @return array
+     */
+    protected function generateReport($model)
+    {
+        $params = [
+            'idcompany' => $model->idcompany,
+            'subaccount-from' => $model->startcodsubaccount,
+            'subaccount-to' => $model->endcodsubaccount,
+            'channel' => $model->channel,
+            'level' => $model->level,
+            'ignoreregularization' => $model->ignoreregularization,
+            'ignoreclosure' => $model->ignoreclosure
+        ];
+
+        $balanceAmount = new BalanceAmounts();
+        return $balanceAmount->generate($model->startdate, $model->enddate, $params);
     }
 }
