@@ -25,10 +25,10 @@
                 <widget type="text" fieldname="id" />
             </column>
             <column name="name" order="110">
-                <widget type="text" fieldname="name" />
+                <widget type="text" fieldname="name" required="true" />
             </column>
             <column name="company" numcolumns="2" order="120">
-                <widget type="select" fieldname="idcompany">
+                <widget type="select" fieldname="idcompany" required="true">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
@@ -38,25 +38,25 @@
         </group>
         <group name="date" numcolumns="4">
             <column name="start-date" order="200">
-                <widget type="date" fieldname="startdate" />
+                <widget type="date" fieldname="startdate" required="true"/>
             </column>
             <column name="end-date" order="210">
-                <widget type="date" fieldname="enddate" />
+                <widget type="date" fieldname="enddate" required="true" />
             </column>
         </group>
         <group name="other" numcolumns="8" valign="bottom">
             <column name="start-subaccount" order="300">
-                <widget type="autocomplete" fieldname="startcodsubaccount">
+                <widget type="autocomplete" fieldname="startcodsubaccount" strict="false">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
             <column name="end-subaccount" order="310">
-                <widget type="autocomplete" fieldname="endcodsubaccount">
+                <widget type="autocomplete" fieldname="endcodsubaccount" strict="false">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
             <column name="level" numcolumns="2" order="320">
-                <widget type="select" fieldname="level">
+                <widget type="select" fieldname="level" required="true">
                     <values start="0" end="4" step="1" />
                 </widget>
             </column>

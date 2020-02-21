@@ -25,33 +25,39 @@
                 <widget type="text" fieldname="id" />
             </column>
             <column name="name" order="110">
-                <widget type="text" fieldname="name" />
+                <widget type="text" fieldname="name" required="true" />
             </column>
             <column name="company" numcolumns="2" order="120">
-                <widget type="select" fieldname="idcompany">
+                <widget type="select" fieldname="idcompany" required="true">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
                 </widget>
             </column>
-            <column name="channel" numcolumns="2" order="130">
+            <column name="channel" numcolumns="1" order="130">
                 <widget type="number" fieldname="channel" decimal="0"/>
+            </column>
+            <column name="grouping" numcolumns="2" order="140">
+                <widget type="select" fieldname="grouping" translate="true" required="true">
+                    <values title="report-non-grouping-account">0</values>
+                    <values title="report-grouping-account">1</values>
+                </widget>
             </column>
         </group>
         <group name="date" numcolumns="4">
             <column name="start-date" order="200">
-                <widget type="date" fieldname="startdate" />
+                <widget type="date" fieldname="startdate" required="true" />
             </column>
             <column name="end-date" order="210">
-                <widget type="date" fieldname="enddate" />
+                <widget type="date" fieldname="enddate" required="true" />
             </column>
         </group>
         <group name="other" numcolumns="8">
             <column name="start-subaccount" order="300">
-                <widget type="autocomplete" fieldname="startcodsubaccount">
+                <widget type="autocomplete" fieldname="startcodsubaccount" strict="false">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
             <column name="end-subaccount" order="310">
-                <widget type="autocomplete" fieldname="endcodsubaccount">
+                <widget type="autocomplete" fieldname="endcodsubaccount" strict="false">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
                 </widget>
             </column>
