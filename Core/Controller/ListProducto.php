@@ -100,6 +100,8 @@ class ListProducto extends ListController
         $attributeValues = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
         $this->addFilterSelect($viewName, 'idatributovalor1', 'attribute-value-1', 'idatributovalor1', $attributeValues);
         $this->addFilterSelect($viewName, 'idatributovalor2', 'attribute-value-2', 'idatributovalor2', $attributeValues);
+        $this->addFilterSelect($viewName, 'idatributovalor3', 'attribute-value-3', 'idatributovalor3', $attributeValues);
+        $this->addFilterSelect($viewName, 'idatributovalor4', 'attribute-value-4', 'idatributovalor4', $attributeValues);
 
         /// disable new button
         $this->setSettings($viewName, 'btnNew', false);

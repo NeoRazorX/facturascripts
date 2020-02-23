@@ -56,6 +56,18 @@ class Variante extends Base\ModelClass
      * @var int
      */
     public $idatributovalor2;
+    /**
+     * Foreign key of table atributo_valores.
+     *
+     * @var int
+     */
+    public $idatributovalor3;
+	    /**
+     * Foreign key of table atributo_valores.
+     *
+     * @var int
+     */
+    public $idatributovalor4;
 
     /**
      * Product identifier.
@@ -116,7 +128,7 @@ class Variante extends Base\ModelClass
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
         $find = $this->toolBox()->utils()->noHtml(mb_strtolower($query, 'UTF8'));
 
-        $sql = "SELECT v." . $field . " AS code, p.descripcion AS description, v.idatributovalor1, v.idatributovalor2"
+        $sql = "SELECT v." . $field . " AS code, p.descripcion AS description, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4"
             . " FROM " . self::tableName() . " v"
             . " LEFT JOIN " . Producto::tableName() . " p ON v.idproducto = p.idproducto"
             . " WHERE LOWER(v.referencia) LIKE '" . $find . "%'"
@@ -125,7 +137,7 @@ class Variante extends Base\ModelClass
             . " ORDER BY v." . $field . " asc";
 
         foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $data) {
-            $data['description'] = $this->getAttributeDescription($data['idatributovalor1'], $data['idatributovalor2'], $data['description']);
+            $data['description'] = $this->getAttributeDescription($data['idatributovalor1'], $data['idatributovalor2'], $data['idatributovalor3'], $data['idatributovalor4'], $data['description']);
             $results[] = new CodeModel($data);
         }
 
@@ -139,7 +151,7 @@ class Variante extends Base\ModelClass
     public function description(bool $onlyAttributes = false)
     {
         $description = $onlyAttributes ? '' : $this->getProducto()->descripcion;
-        return $this->getAttributeDescription($this->idatributovalor1, $this->idatributovalor2, $description);
+        return $this->getAttributeDescription($this->idatributovalor1, $this->idatributovalor2, $this->idatributovalor3, $this->idatributovalor4, $description);
     }
 
     /**
@@ -167,11 +179,11 @@ class Variante extends Base\ModelClass
      *
      * @return string
      */
-    protected function getAttributeDescription($idatributoval1, $idatributoval2, $description = '', $separator1 = "\n", $separator2 = ', ')
+    protected function getAttributeDescription($idatributoval1, $idatributoval2, $idatributoval3, $idatributoval4, $description = '', $separator1 = "\n", $separator2 = ', ')
     {
         $atributeValue = new AtributoValor();
         $extra = [];
-        foreach ([$idatributoval1, $idatributoval2] as $id) {
+        foreach ([$idatributoval1, $idatributoval2, $idatributoval3, $idatributoval4] as $id) {
             if (!empty($id) && $atributeValue->loadFromCode($id)) {
                 $extra[] = $atributeValue->descripcion;
             }
