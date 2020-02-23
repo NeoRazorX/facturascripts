@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,6 +29,22 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class WidgetFile extends BaseWidget
 {
+
+    /**
+     *
+     * @var string
+     */
+    public $accept;
+
+    /**
+     * 
+     * @param array $data
+     */
+    public function __construct($data)
+    {
+        parent::__construct($data);
+        $this->accept = $data['accept'] ?? '';
+    }
 
     /**
      * 
@@ -113,5 +129,19 @@ class WidgetFile extends BaseWidget
         $class = empty($extraClass) ? $this->css('form-control-file') : $this->css('form-control-file') . ' ' . $extraClass;
         return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    protected function inputHtmlExtraParams()
+    {
+        $html = parent::inputHtmlExtraParams();
+        if (!empty($this->accept)) {
+            $html .= ' accept="' . $this->accept . '"';
+        }
+
+        return $html;
     }
 }
