@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
+use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Serie;
@@ -299,6 +300,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         new Serie();
         new Ejercicio();
         new Almacen();
+        new Divisa();
 
         return parent::install();
     }

@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
+use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 
 /**
  * Description of ProductoProveedor
@@ -121,6 +123,19 @@ class ProductoProveedor extends Base\ModelClass
         $supplier = new Proveedor();
         $supplier->loadFromCode($this->codproveedor);
         return $supplier;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        /// needed dependencies
+        new DinDivisa();
+        new DinProveedor();
+
+        return parent::install();
     }
 
     /**

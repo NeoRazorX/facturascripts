@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
+use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
@@ -262,6 +263,7 @@ class Partida extends Base\ModelOnChangeClass
      */
     public function install()
     {
+        new DinDivisa();
         new DinAsiento();
         new DinSubcuenta();
 
