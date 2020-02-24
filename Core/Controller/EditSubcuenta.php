@@ -21,7 +21,10 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Controller to edit a single item from the SubCuenta model
@@ -36,7 +39,7 @@ class EditSubcuenta extends EditController
 
     /**
      * Returns the class name of the model to use in the editView.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -59,7 +62,22 @@ class EditSubcuenta extends EditController
     }
 
     /**
-     * 
+     * Add subaccount ledger report and export.
+     * - Add button
+     * - Add export options
+     * - Set initial values to modal form
+     *
+     * @param string $viewName
+     */
+    protected function addLedgerReport($viewName)
+    {
+        $this->addButton($viewName, Ledger::getButton('modal'));
+        $this->setLedgerReportExportOptions($viewName);
+        $this->setLedgerReportValues($viewName);
+    }
+
+    /**
+     *
      * @param string $viewName
      */
     protected function createDepartureView($viewName = 'ListPartidaAsiento')
@@ -84,6 +102,56 @@ class EditSubcuenta extends EditController
     }
 
     /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'ledger':
+                $code = $this->request->query->get('code');
+                if (!empty($code)) {
+                    $this->setTemplate(false);
+                    $this->ledgerReport($code);
+                }
+                return true;
+
+            default:
+                return parent::execPreviousAction($action);
+        }
+    }
+
+    /**
+     * Exec ledger report from post/get values
+     *
+     * @param int $idSubAccount
+     */
+    protected function ledgerReport($idSubAccount)
+    {
+        $subAccount = new Subcuenta();
+        $subAccount->loadFromCode($idSubAccount);
+
+        $request = $this->request->request->all();
+        $params = [
+            'grouping' => ('YES' == $request['grouping']),
+            'channel' => $request['channel'],
+            'subaccount-from' => $subAccount->codsubcuenta
+        ];
+
+        $ledger = new Ledger();
+        $pages = $ledger->generate($request['dateFrom'], $request['dateTo'], $params);
+        $this->exportManager->newDoc($request['format']);
+        foreach ($pages as $data) {
+            $headers = empty($data) ? [] : array_keys($data[0]);
+            $this->exportManager->addTablePage($headers, $data);
+        }
+        $this->exportManager->show($this->response);
+    }
+
+    /**
      * Load view data procedure
      *
      * @param string   $viewName
@@ -95,9 +163,12 @@ class EditSubcuenta extends EditController
 
         switch ($viewName) {
             case 'ListPartidaAsiento':
-                $idsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'idsubcuenta');
+                $idsubcuenta = $this->getViewModelValue($mainViewName, 'idsubcuenta');
                 $where = [new DataBaseWhere('idsubcuenta', $idsubcuenta)];
                 $view->loadData('', $where);
+                if ($view->count > 0) {
+                    $this->addLedgerReport($mainViewName);
+                }
                 break;
 
             case $mainViewName:
@@ -110,7 +181,7 @@ class EditSubcuenta extends EditController
     }
 
     /**
-     * 
+     *
      * @param BaseView $view
      */
     protected function prepareSubcuenta($view)
@@ -122,5 +193,38 @@ class EditSubcuenta extends EditController
             $view->model->codejercicio = $cuenta->codejercicio;
             $view->model->idcuenta = $cuenta->idcuenta;
         }
+    }
+
+    /**
+     * Set export options to widget of modal form
+     *
+     * @param string $viewName
+     */
+    private function setLedgerReportExportOptions($viewName)
+    {
+        $columnFormat = $this->views[$viewName]->columnModalForName('format');
+        if (isset($columnFormat)) {
+            $values = [];
+            foreach ($this->exportManager->options() as $key => $options) {
+                $values[] = [ 'title' => $options['description'], 'value' => $key ];
+            }
+            $columnFormat->widget->setValuesFromArray($values, true);
+        }
+    }
+
+    /**
+     * Set initial values to modal fields
+     *
+     * @param string $viewName
+     */
+    private function setLedgerReportValues($viewName)
+    {
+        $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
+        $exercise = new Ejercicio();
+        $exercise->loadFromCode($codeExercise);
+
+        $model = $this->views[$viewName]->model;
+        $model->dateFrom = $exercise->fechainicio;
+        $model->dateTo = $exercise->fechafin;
     }
 }

@@ -51,11 +51,11 @@ class BalanceAmounts extends AccountingBase
 
     /**
      * Generate the balance amounts between two dates.
-     * 
+     *
      * @param string $dateFrom
      * @param string $dateTo
      * @param array  $params
-     * 
+     *
      * @return array
      */
     public function generate(string $dateFrom, string $dateTo, array $params = [])
@@ -63,7 +63,7 @@ class BalanceAmounts extends AccountingBase
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
 
-        $results = $this->getData();
+        $results = $this->getData($params);
         if (empty($results)) {
             return [];
         }
@@ -83,20 +83,45 @@ class BalanceAmounts extends AccountingBase
      *
      * @return array
      */
-    protected function getData()
+    protected function getData(array $params = [])
     {
         if (!$this->dataBase->tableExists('partidas')) {
             return [];
         }
 
-        $sql = 'SELECT partida.idsubcuenta, partida.codsubcuenta, SUM(partida.debe) AS debe, SUM(partida.haber) AS haber'
-            . ' FROM partidas as partida, asientos as asiento'
-            . ' WHERE asiento.idasiento = partida.idasiento'
-            . ' AND asiento.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
-            . ' AND asiento.fecha <= ' . $this->dataBase->var2str($this->dateTo)
-            . ' GROUP BY idsubcuenta, codsubcuenta ORDER BY codsubcuenta ASC';
+        $sql = 'SELECT partidas.idsubcuenta, partidas.codsubcuenta, SUM(partidas.debe) AS debe, SUM(partidas.haber) AS haber'
+            . ' FROM asientos'
+            . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
+            . ' WHERE ' . $this->getDataWhere($params)
+            . ' GROUP BY partidas.idsubcuenta, partidas.codsubcuenta'
+            . ' ORDER BY partidas.codsubcuenta ASC';
 
         return $this->dataBase->select($sql);
+    }
+
+    /**
+     *
+     * @param array $params
+     * @return string
+     */
+    protected function getDataWhere(array $params = [])
+    {
+        $where = 'asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio)
+            . ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom) . ' AND ' . $this->dataBase->var2str($this->dateTo)
+            . ' AND asientos.operacion <> \'C\'';
+
+        $channel = $params['channel'] ?? '';
+        if (!empty($channel)) {
+            $where .= ' AND asientos.canal = ' . $channel;
+        }
+
+        $subaccountFrom = $params['subaccount-from'] ?? '';
+        $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
+        if (!empty($subaccountFrom) || (!empty($subaccountTo))) {
+            $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom) . ' AND ' . $this->dataBase->var2str($subaccountTo);
+        }
+
+        return $where;
     }
 
     /**
