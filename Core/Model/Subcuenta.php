@@ -249,7 +249,7 @@ class Subcuenta extends Base\ModelClass
         $this->saldo = $this->debe - $this->haber;
 
         $this->codcuenta = \trim($this->codcuenta);
-        $this->codsubcuenta = \trim($this->codsubcuenta);
+        $this->codsubcuenta = empty($this->idsubcuenta) ? $this->transformCodsubcuenta($this->codsubcuenta) : \trim($this->codsubcuenta);
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         if (\strlen($this->descripcion) < 1 || \strlen($this->descripcion) > 255) {
             $this->toolBox()->i18nLog()->warning(
@@ -272,6 +272,27 @@ class Subcuenta extends Base\ModelClass
         $this->idcuenta = $account->idcuenta;
 
         return parent::test();
+    }
+
+    /**
+     * Transform subaccount code if necesary
+     * 
+     * @param string $code
+     *
+     * @return string
+     */
+    public function transformCodsubcuenta(string $code): string
+    {
+        if (\strpos($code, '.') === false) {
+            return \trim($code);
+        }
+
+        $parts = \explode('.', \trim($code));
+        if (\count($parts) === 2) {
+            return \str_pad($parts[0], $this->getExercise()->longsubcuenta - 1, '0', \STR_PAD_RIGHT) . $parts[1];
+        }
+
+        return \trim($code);
     }
 
     /**
