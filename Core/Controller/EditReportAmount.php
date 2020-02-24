@@ -71,6 +71,7 @@ class EditReportAmount extends EditReportAccounting
         ];
 
         $balanceAmount = new BalanceAmounts();
+        $balanceAmount->setExerciseFromDate($model->idcompany, $model->startdate);
         return $balanceAmount->generate($model->startdate, $model->enddate, $params);
     }
 }

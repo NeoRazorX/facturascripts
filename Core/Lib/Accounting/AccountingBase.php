@@ -89,6 +89,18 @@ abstract class AccountingBase
     }
 
     /**
+     * Load exercise data for the company and date
+     *
+     * @param int  $idcompany
+     * @param date $date
+     */
+    public function setExerciseFromDate($idcompany, $date)
+    {
+        $this->exercise->idempresa = $idcompany;
+        $this->exercise->loadFromDate($date, false, false);
+    }
+
+    /**
      * Returns a new date.
      *
      * @param string $date

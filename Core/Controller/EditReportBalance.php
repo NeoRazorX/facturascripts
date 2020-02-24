@@ -71,10 +71,12 @@ class EditReportBalance extends EditReportAccounting
         switch ($model->type) {
             case ReportBalance::TYPE_SHEET:
                 $balanceAmount = new BalanceSheet();
+                $balanceAmount->setExerciseFromDate($model->idcompany, $model->startdate);
                 return $balanceAmount->generate($model->startdate, $model->enddate, $params);
 
             case ReportBalance::TYPE_PROFIT:
                 $profitAndLoss = new ProfitAndLoss();
+                $profitAndLoss->setExerciseFromDate($model->idcompany, $model->startdate);
                 return $profitAndLoss->generate($model->startdate, $model->enddate, $params);
         }
 
@@ -91,7 +93,7 @@ class EditReportBalance extends EditReportAccounting
         $model = $this->getModel();
         return $this->toolBox()->i18n()->trans($model->type);
     }
-    
+
     /**
      *
      * @param string   $viewName

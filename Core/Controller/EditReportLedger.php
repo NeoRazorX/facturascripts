@@ -71,6 +71,7 @@ class EditReportLedger extends EditReportAccounting
         ];
 
         $ledger = new Ledger();
+        $ledger->setExerciseFromDate($model->idcompany, $model->startdate);
         return $ledger->generate($model->startdate, $model->enddate, $params);
     }
 }
