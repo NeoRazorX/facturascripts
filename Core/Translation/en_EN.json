@@ -1072,5 +1072,8 @@
     "you-should-change-passwd": "You should change your password",
     "your": "Your",
     "zip-code": "Zip code",
-    "zip-error-wrong-structure": "The zip structure is incorrect. It must contain the plugin folder and only one plugin."
+    "zip-error-wrong-structure": "The zip structure is incorrect. It must contain the plugin folder and only one plugin.",
+    "price-update-policy": "Price update policy",
+    "last-purchase-price": "Last purchase price",
+    "average-purchase-price": "Average purchase price"
 }

@@ -1072,5 +1072,8 @@
     "you-should-change-passwd": "Debería cambiar su contraseña",
     "your": "Suyo",
     "zip-code": "Código Postal",
-    "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin."
+    "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin.",
+    "price-update-policy": "Política de actualización de precios",
+    "last-purchase-price": "Último precio de compra",
+    "average-purchase-price": "Precio medio de compra"
 }
