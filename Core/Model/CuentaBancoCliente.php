@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,6 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 
 /**
  * A bank account of a client.
@@ -55,7 +57,19 @@ class CuentaBancoCliente extends Base\BankAccount
     public function clear()
     {
         parent::clear();
+        $this->fmandato = \date(self::DATE_STYLE);
         $this->principal = true;
+    }
+
+    /**
+     * 
+     * @return DinCliente
+     */
+    public function getSubject()
+    {
+        $customer = new DinCliente();
+        $customer->loadFromCode($this->codcliente);
+        return $customer;
     }
 
     /**
@@ -65,7 +79,7 @@ class CuentaBancoCliente extends Base\BankAccount
     public function install()
     {
         /// needed dependencies
-        new Cliente();
+        new DinCliente();
 
         return parent::install();
     }
@@ -104,5 +118,17 @@ class CuentaBancoCliente extends Base\BankAccount
                 . ' AND codcuenta != ' . self::$dataBase->var2str($this->codcuenta) . ';';
             self::$dataBase->exec($sql);
         }
+    }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List'): string
+    {
+        return empty($this->codcliente) || $type == 'list' ? parent::url($type, $list) : $this->getSubject()->url();
     }
 }
