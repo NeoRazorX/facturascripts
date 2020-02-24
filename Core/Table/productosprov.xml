@@ -54,6 +54,10 @@
         <type>PRIMARY KEY (id)</type>
     </constraint>
     <constraint>
+        <name>ca_productosprov_divisas</name>
+        <type>FOREIGN KEY (coddivisa) REFERENCES divisas (coddivisa) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_productosprov_proveedores</name>
         <type>FOREIGN KEY (codproveedor) REFERENCES proveedores (codproveedor) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
