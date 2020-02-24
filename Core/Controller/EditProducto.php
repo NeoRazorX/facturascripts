@@ -104,7 +104,7 @@ class EditProducto extends EditController
     protected function loadCustomAttributeWidgets(string $viewName)
     {
         $values = $this->codeModel->all('AtributoValor', 'id', '');
-        foreach (['attribute-value-1', 'attribute-value-2'] as $colName) {
+        foreach (['attribute-value-1', 'attribute-value-2', 'attribute-value-3', 'attribute-value-4'] as $colName) {
             $column = $this->views[$viewName]->columnForName($colName);
             if ($column) {
                 $column->widget->setValuesFromCodeModel($values);
