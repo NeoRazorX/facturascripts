@@ -50,10 +50,10 @@
             <widget type="number" fieldname="dtopor2" />
         </column>
         <column name="net" display="right" order="170">
-            <widget type="money" fieldname="pvptotal" />
+            <widget type="money" fieldname="pvptotal" readonly="true" />
         </column>
         <column name="percentage-vat" display="right" order="180">
-            <widget type="number" fieldname="iva" />
+            <widget type="number" fieldname="iva" readonly="true" />
         </column>
         <column name="re" display="none" order="190">
             <widget type="number" fieldname="recargo" />
