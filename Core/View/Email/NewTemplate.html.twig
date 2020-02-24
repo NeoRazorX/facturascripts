@@ -58,29 +58,37 @@
     <body>
         <div id="body">
             {% block body %}
-                <table width="100%">
+                <table style="width:100%; background-color:#E8EAED; color:black" >
                     <tr>
                         <td></td>
-                        <td>
-                            <h3 class="company text-center">
+                        <td style="padding:10px">
+                            <h3 class="company" style="text-align:center; color:#3D67AC; font-size:2em; font-weight:bold">
                                 {% if empresa.web is empty %}
                                     {{ empresa.nombrecorto }}
                                 {% else %}
-                                    <a href="{{ empresa.web }}">
+                                    <a href="{{ empresa.web }}" style="text-decoration:none">
                                         {{ empresa.nombrecorto }}
                                     </a>
                                 {% endif %}
                             </h3>
-                            <div class="container">
-                                {% for block in mainBlocks %}
-                                    {{ block.render() | raw }}
-                                {% endfor %}
-                            </div>
-                            <div class="footer">
-                                {% for block in footerBlocks %}
-                                    {{ block.render() | raw }}
-                                {% endfor %}
-                            </div>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="container" style="background-color: #FFFFFF; border-radius: 5px; color: black; font-size: 1em; padding:10px">
+                            {% for block in mainBlocks %}
+                                {{ block.render() | raw }}
+                            {% endfor %}
+                        </td>
+                        <td></td> 
+                    </tr>  
+                    <tr>
+                        <td></td>
+                        <td class="footer" style="font-size:10px; color:black; padding:10px">
+                            {% for block in footerBlocks %}
+                                {{ block.render() | raw }}
+                            {% endfor %}
                         </td>
                         <td></td>
                     </tr>
