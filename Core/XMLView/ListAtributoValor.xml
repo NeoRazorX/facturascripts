@@ -25,7 +25,7 @@
         </column>
         <column name="attribute" order="110">
             <widget type="select" fieldname="codatributo" readonly="true" required="true">
-                <values source="atributos" fieldcode="codatributo" fieldtitle="nombre"></values>
+                <values source="atributos" fieldcode="codatributo" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="value" order="120">

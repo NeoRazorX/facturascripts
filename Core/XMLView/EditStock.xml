@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,12 +30,12 @@
         </column>
         <column name="reference" title="variant" numcolumns="2" order="110">
             <widget type="select" fieldname="referencia" readonly="dinamic" required="true">
-                <values></values>
+                <values />
             </widget>
         </column>
         <column name="warehouse" titleurl="ListAlmacen" numcolumns="2" order="120">
             <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" readonly="dinamic" required="true">
-                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="quantity" display="right" numcolumns="1" order="130">

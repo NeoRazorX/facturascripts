@@ -29,7 +29,7 @@
         </column>
         <column name="warehouse" order="110">
             <widget type="select" fieldname="codalmacen" required="true">
-                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="quantity" display="right" order="130">

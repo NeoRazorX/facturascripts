@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,7 +34,7 @@
             </column>
             <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal" required="true">
-                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"></values>
+                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal" />
                 </widget>
             </column>
             <column name="fiscal-number" numcolumns="2" order="140">
@@ -70,17 +70,17 @@
         <group name="comercial" title="commercial-terms" numcolumns="12">
             <column name="serie" titleurl="ListSerie" numcolumns="3" order="100">
                 <widget type="select" fieldname="codserie" onclick="EditSerie">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="payment-method" numcolumns="3" titleurl="ListFormaPago" order="110">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="tax-transport" titleurl="ListImpuesto" numcolumns="3" order="120">
                 <widget type="select" fieldname="codimpuestoportes">
-                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="subaccount" titleurl="ListCuenta" numcolumns="3" order="130">
@@ -91,7 +91,7 @@
             </column>
             <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="150">
                 <widget type="select" fieldname="codretencion" onclick="EditRetencion">
-                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"></values>
+                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion" />
                 </widget>
             </column>
         </group>

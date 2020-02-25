@@ -35,12 +35,12 @@
         </column>
         <column name="company" order="140">
             <widget type="select" fieldname="idempresa" onclick="EditEmpresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
             </widget>
         </column>
         <column name="warehouse" order="150">
             <widget type="select" fieldname="codalmacen" onclick="EditAlmacen">
-                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="last-ip" order="160">

@@ -42,12 +42,12 @@
         </column>
         <column name="impacted-tax-subaccount" order="150">
             <widget type="autocomplete" fieldname="codsubcuentarep">
-                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="supported-tax-subaccount" order="160">
             <widget type="autocomplete" fieldname="codsubcuentasop">
-                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
             </widget>
         </column>
     </columns>

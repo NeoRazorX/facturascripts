@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -42,12 +42,12 @@
             </column>
             <column name="company" titleurl="ListEmpresa" order="120">
                 <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
             <column name="serie" titleurl="ListSerie" order="130">
                 <widget type="select" fieldname="codserie" onclick="EditSerie">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="title" order="140" >
@@ -55,7 +55,7 @@
             </column>
             <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" order="150">
                 <widget type="select" fieldname="idlogo" onclick="EditAttachedFile">
-                    <values source="attached_files" fieldcode="idfile" fieldtitle="filename"></values>
+                    <values source="attached_files" fieldcode="idfile" fieldtitle="filename" />
                 </widget>
             </column>
             <column name="additional-text" numcolumns="12" order="160">

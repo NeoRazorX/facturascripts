@@ -26,12 +26,12 @@
         </column>
         <column name="codwarehouseorigin" title="origin-warehouse" order="110">
             <widget type="select" fieldname="codalmacenorigen" required="true">
-                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="codwarehousedestination" title="destination-warehouse" order="120">
             <widget type="select" fieldname="codalmacendestino" required="true">
-                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="observations" order="130">

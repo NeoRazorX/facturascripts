@@ -29,7 +29,7 @@
         </column>
         <column name="province" display="right" order="120">
             <widget type="autocomplete" fieldname="idprovincia" onclick="EditProvincia">
-                <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia"></values>
+                <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia" />
             </widget>
         </column>
         <column name="code" display="right" order="130">

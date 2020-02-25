@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,7 +33,7 @@
             </column>
             <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal" required="true">
-                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"></values>
+                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal" />
                 </widget>
             </column>
             <column name="fiscal-number" numcolumns="2" order="150">
@@ -43,12 +43,12 @@
         <group name="other" numcolumns="12">
             <column name="contact" numcolumns="3" order="100">
                 <widget type="autocomplete" fieldname="idcontacto" onclick="EditContacto">
-                    <values source="contactos" fieldcode="idcontacto" fieldtitle="descripcion"></values>
+                    <values source="contactos" fieldcode="idcontacto" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="settlement-product" numcolumns="3" order="110">
                 <widget type="autocomplete" fieldname="idproducto" onclick="EditProducto">
-                    <values source="productos" fieldcode="idproducto" fieldtitle="referencia"></values>
+                    <values source="productos" fieldcode="idproducto" fieldtitle="referencia" />
                 </widget>
             </column>
             <column name="creation-date" numcolumns="3" order="120">

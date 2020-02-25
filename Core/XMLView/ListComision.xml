@@ -26,27 +26,27 @@
         </column>
         <column name="company" display="none" order="110">
             <widget type="select" fieldname="idempresa" onclick="EditEmpresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
             </widget>
         </column>
         <column name="agent" order="120">
             <widget type="select" fieldname="codagente" onclick="EditAgente">
-                <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                <values source="agentes" fieldcode="codagente" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="customer" order="130">
             <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente">
-                <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
+                <values source="clientes" fieldcode="codcliente" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="family" order="140">
             <widget type="select" fieldname="codfamilia" onclick="EditFamilia">
-                <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+                <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="product" order="150">
             <widget type="autocomplete" fieldname="idproducto" onclick="EditProducto">
-                <values source="productos" fieldcode="idproducto" fieldtitle="referencia"></values>
+                <values source="productos" fieldcode="idproducto" fieldtitle="referencia" />
             </widget>
         </column>
         <column name="percentage" display="right" order="160">

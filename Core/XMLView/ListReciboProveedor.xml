@@ -28,7 +28,7 @@
         </column>
         <column name="invoice" order="120">
             <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaProveedor" readonly="dinamic">
-                <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo"></values>
+                <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo" />
             </widget>
         </column>
         <column name="number" order="130">
@@ -36,7 +36,7 @@
         </column>
         <column name="supplier" order="140">
             <widget type="autocomplete" fieldname="codproveedor">
-                <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
+                <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="observations" order="150">

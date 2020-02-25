@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,22 +35,21 @@
         <group name="seccondary-data" numcolumns="12">
             <column name="parent-account" numcolumns="3" order="100">
                 <widget type="autocomplete" fieldname="parent_idcuenta" onclick="EditCuenta" icon="fas fa-book">
-                    <values source="cuentas" fieldcode="idcuenta" fieldtitle="codcuenta"></values>
+                    <values source="cuentas" fieldcode="idcuenta" fieldtitle="codcuenta" />
                 </widget>
             </column>
             <column name="fiscal-exercise" numcolumns="3" order="110">
                 <widget type="select" fieldname="codejercicio" onclick="EditEjercicio" readonly="dinamic" required="true">
-                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="special-account" titleurl="ListCuenta?activetab=ListCuentaEspecial" order="120">
                 <widget type="select" fieldname="codcuentaesp" onclick="EditCuentaEspecial">
-                    <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
+                    <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion" />
                 </widget>
             </column>
         </group>
     </columns>
-
     <modals>
         <group name="ledger" title="ledger" class="modal-lg" icon="fas fa-book fa-fw">
           <column name="date-from" title="from-date" numcolumns="4">

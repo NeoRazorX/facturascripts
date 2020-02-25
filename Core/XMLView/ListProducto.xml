@@ -35,12 +35,12 @@
         </column>
         <column name="manufacturer" order="140">
             <widget type="autocomplete" fieldname="codfabricante" onclick="EditFabricante">
-                <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre"></values>
+                <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="family" order="150">
             <widget type="autocomplete" fieldname="codfamilia" onclick="EditFamilia">
-                <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+                <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="secompra" title="for-purchase" display="none" order="160">
@@ -63,7 +63,7 @@
         </column>
         <column name="tax" display="none" order="220">
             <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
-                <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"></values>
+                <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="stock" display="right" order="230">

@@ -26,12 +26,12 @@
         </column>
         <column name="delivery-note" order="110">
             <widget type="autocomplete" fieldname="idalbaran" onclick="EditAlbaranCliente">
-                <values source="albaranescli" fieldcode="idalbaran" fieldtitle="codigo"></values>
+                <values source="albaranescli" fieldcode="idalbaran" fieldtitle="codigo" />
             </widget>
         </column>
         <column name="product" order="120">
             <widget type="autocomplete" fieldname="idproducto" onclick="EditProducto">
-                <values source="productos" fieldcode="idproducto" fieldtitle="referencia"></values>
+                <values source="productos" fieldcode="idproducto" fieldtitle="referencia" />
             </widget>
         </column>
         <column name="reference" order="130">

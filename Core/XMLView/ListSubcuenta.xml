@@ -35,7 +35,7 @@
         </column>
         <column name="special-account" order="140">
             <widget type="select" fieldname="codcuentaesp" onclick="EditCuentaEspecial">
-                <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
+                <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="balance" order="160" display="right">

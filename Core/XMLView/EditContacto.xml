@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,7 +35,7 @@
             </column>
             <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="140">
                 <widget type="select" fieldname="tipoidfiscal" required="true">
-                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"></values>
+                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal" />
                 </widget>
             </column>
             <column name="fiscal-number" numcolumns="3" order="150">
@@ -49,17 +49,17 @@
             </column>
             <column name="customer" order="180">
                 <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente">
-                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
+                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="supplier" order="190">
                 <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor">
-                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"></values>
+                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="agent" order="200">
                 <widget type="autocomplete" fieldname="codagente" onclick="EditAgente">
-                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre" />
                 </widget>
             </column>
         </group>
@@ -98,7 +98,7 @@
             </column>
             <column name="country" titleurl="ListPais" numcolumns="2" order="150">
                 <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
-                    <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
+                    <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
                 </widget>
             </column>
         </group>

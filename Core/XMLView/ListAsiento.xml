@@ -29,7 +29,7 @@
         </column>
         <column name="company" display="none" order="110">
             <widget type="select" fieldname="idempresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
             </widget>
         </column>
         <column name="exercise" order="120">
@@ -37,7 +37,7 @@
         </column>
         <column name="journal" order="130">
             <widget type="select" fieldname="iddiario" onclick="EditDiario">
-                <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
+                <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="channel" order="140">
@@ -66,7 +66,7 @@
         <group name="renumber" title="renumber-accounting" icon="fas fa-sort-numeric-down">
             <column name="exercise">
                 <widget type="select" fieldname="exercise" >
-                    <values source="ejercicios" fieldcode="codejercicio"></values>
+                    <values source="ejercicios" fieldcode="codejercicio" />
                 </widget>
             </column>
         </group>

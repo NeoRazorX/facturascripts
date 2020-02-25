@@ -52,7 +52,7 @@
         </column>
         <column name="country" order="200">
             <widget type="select" fieldname="codpais">
-                <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
+                <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="level" display="none" order="210">
