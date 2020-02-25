@@ -70,7 +70,7 @@
                         <span class="d-none d-md-inline-block">{{ i18n.trans('new') }}</span>
                     </a>
                 {% endif %}
-                {% if fsc.hasData %}
+                {% if fsc.hasData and firstView.settings.btnPrint %}
                     {{ _self.printButton(fsc, firstView, i18n) }}
                 {% endif %}
             </div>
