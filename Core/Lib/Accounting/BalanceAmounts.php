@@ -32,19 +32,11 @@ class BalanceAmounts extends AccountingBase
 {
 
     /**
-     * Model with related information.
-     *
-     * @var Subcuenta
-     */
-    private $subcuentaModel;
-
-    /**
      * BalanceAmounts constructor.
      */
     public function __construct()
     {
         parent::__construct();
-        $this->subcuentaModel = new Subcuenta();
 
         /// needed dependencies
         new Partida();
@@ -90,11 +82,14 @@ class BalanceAmounts extends AccountingBase
             return [];
         }
 
-        $sql = 'SELECT partidas.idsubcuenta, partidas.codsubcuenta, SUM(partidas.debe) AS debe, SUM(partidas.haber) AS haber'
+        $sql = 'SELECT partidas.codsubcuenta, subcuentas.descripcion,'
+            .        ' SUM(partidas.debe) AS debe,'
+            .        ' SUM(partidas.haber) AS haber'
             . ' FROM asientos'
             . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
+            . ' LEFT JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
             . ' WHERE ' . $this->getDataWhere($params)
-            . ' GROUP BY partidas.idsubcuenta, partidas.codsubcuenta'
+            . ' GROUP BY 1, 2'
             . ' ORDER BY partidas.codsubcuenta ASC';
 
         return $this->dataBase->select($sql);
@@ -135,19 +130,6 @@ class BalanceAmounts extends AccountingBase
     }
 
     /**
-     * Gets the description of the subaccount with that ID.
-     *
-     * @param string $idsubcuenta
-     *
-     * @return string
-     */
-    private function getDescriptionSubcuenta($idsubcuenta)
-    {
-        $subcuenta = $this->subcuentaModel->get($idsubcuenta);
-        return $subcuenta === false ? '-' : $this->toolBox()->utils()->fixHtml($subcuenta->descripcion);
-    }
-
-    /**
      * Process the line data to use the appropiate formats.
      *
      * @param array $line
@@ -160,7 +142,7 @@ class BalanceAmounts extends AccountingBase
 
         return [
             'subcuenta' => $line['codsubcuenta'],
-            'descripcion' => $this->getDescriptionSubcuenta($line['idsubcuenta']),
+            'descripcion' => $line['descripcion'],
             'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),
             'haber' => $this->toolBox()->coins()->format($line['haber'], FS_NF0, ''),
             'saldo' => $this->toolBox()->coins()->format($saldo, FS_NF0, ''),
