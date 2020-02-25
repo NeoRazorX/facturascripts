@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
-use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Description of BalanceAmounts
