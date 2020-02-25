@@ -57,24 +57,24 @@
     </columns>
     <modals>
         <group name="ledger" title="ledger" class="modal-lg" icon="fas fa-book fa-fw">
-          <column name="date-from" title="from-date" numcolumns="4">
-              <widget type="date" fieldname="dateFrom" required="true" />
-          </column>
-          <column name="date-to" title="until-date" numcolumns="4">
-              <widget type="date" fieldname="dateTo" required="true" />
-          </column>
-          <column name="channel" numcolumns="4">
-              <widget type="number" fieldname="channel" />
-          </column>
-          <column name="grouping" title="grouping" numcolumns="8">
-              <widget type="select" fieldname="grouping" required="true" translate="true">
-                <values title="report-non-grouping-account">NO</values>
-                <values title="report-grouping-account">YES</values>
-              </widget>
-          </column>
-          <column name="format" title="format" numcolumns="4">
-              <widget type="select" fieldname="format" required="true" translate="true" />
-          </column>
+            <column name="date-from" title="from-date" numcolumns="4">
+                <widget type="date" fieldname="dateFrom" required="true" />
+            </column>
+            <column name="date-to" title="until-date" numcolumns="4">
+                <widget type="date" fieldname="dateTo" required="true" />
+            </column>
+            <column name="channel" numcolumns="4">
+                <widget type="number" fieldname="channel" />
+            </column>
+            <column name="grouped" title="group-accounts" numcolumns="8">
+                <widget type="select" fieldname="grouped" required="true" translate="true">
+                    <values title="report-non-grouping-account">NO</values>
+                    <values title="report-grouping-account">YES</values>
+                </widget>
+            </column>
+            <column name="format" title="format" numcolumns="4">
+                <widget type="select" fieldname="format" required="true" translate="true" />
+            </column>
         </group>
     </modals>
 </view>
