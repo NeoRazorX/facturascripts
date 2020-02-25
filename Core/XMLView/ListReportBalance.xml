@@ -37,10 +37,10 @@
         <column name="name" order="120">
             <widget type="text" fieldname="name" />
         </column>
-        <column name="start-date" display="center" order="130">
+        <column name="from-date" display="center" order="130">
             <widget type="text" fieldname="startdate" />
         </column>
-        <column name="end-date" display="center" order="140">
+        <column name="until-date" display="center" order="140">
             <widget type="text" fieldname="enddate" />
         </column>
         <column name="channel" order="150">

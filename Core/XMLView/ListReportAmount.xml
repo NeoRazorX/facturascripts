@@ -31,19 +31,19 @@
         <column name="name" order="120">
             <widget type="text" fieldname="name" />
         </column>
-        <column name="start-date" display="center" order="130">
+        <column name="from-date" display="center" order="130">
             <widget type="text" fieldname="startdate" />
         </column>
-        <column name="end-date" display="center" order="140">
+        <column name="until-date" display="center" order="140">
             <widget type="text" fieldname="enddate" />
         </column>
         <column name="channel" order="150">
             <widget type="text" fieldname="channel" />
         </column>
-        <column name="start-subaccount" display="center" order="160">
+        <column name="from-subaccount" display="center" order="160">
             <widget type="text" fieldname="startcodsubaccount" />
         </column>
-        <column name="end-subaccount" display="center" order="170">
+        <column name="until-subaccount" display="center" order="170">
             <widget type="text" fieldname="endcodsubaccount" />
         </column>
         <column name="level" display="center" order="180">
