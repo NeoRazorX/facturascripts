@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Controller\Base;
+namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Model\Base\ReportAccounting;
 
 /**
  * Class base for accounting reports
@@ -76,6 +76,7 @@ abstract class EditReportAccounting extends EditController
      * Exports data to indicated format.
      *
      * @param array  $pages
+     * @param string $title
      * @param string $format
      */
     protected function exportData(&$pages, $title, $format)

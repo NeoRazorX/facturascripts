@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Controller\Base\EditReportAccounting;
+use FacturaScripts\Core\Lib\ExtendedController\EditReportAccounting;
 use FacturaScripts\Core\Model\ReportLedger;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 
@@ -31,6 +31,7 @@ class EditReportLedger extends EditReportAccounting
 {
 
     /**
+     * Returns the class name of the model to use in the editView.
      *
      * @return string
      */
@@ -40,6 +41,7 @@ class EditReportLedger extends EditReportAccounting
     }
 
     /**
+     * Return the basic data for this page.
      *
      * @return array
      */

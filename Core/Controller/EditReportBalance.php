@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Controller\Base\EditReportAccounting;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\EditReportAccounting;
 use FacturaScripts\Core\Model\ReportBalance;
 use FacturaScripts\Dinamic\Lib\Accounting\BalanceSheet;
 use FacturaScripts\Dinamic\Lib\Accounting\ProfitAndLoss;
@@ -33,6 +33,7 @@ class EditReportBalance extends EditReportAccounting
 {
 
     /**
+     * Returns the class name of the model to use in the editView.
      *
      * @return string
      */
@@ -42,6 +43,7 @@ class EditReportBalance extends EditReportAccounting
     }
 
     /**
+     * Return the basic data for this page.
      *
      * @return array
      */
@@ -95,6 +97,7 @@ class EditReportBalance extends EditReportAccounting
     }
 
     /**
+     * Loads the data to display.
      *
      * @param string   $viewName
      * @param BaseView $view
@@ -110,6 +113,7 @@ class EditReportBalance extends EditReportAccounting
     }
 
     /**
+     * Load values into special widget columns
      *
      * @param BaseView $view
      */
