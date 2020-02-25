@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\BalanceCuentaA;
 use FacturaScripts\Dinamic\Model\Partida;
 
@@ -96,7 +97,7 @@ class ProfitAndLoss extends AccountingBase
         $dateToPrev = $this->dataBase->var2str($this->dateToPrev);
 
         $entryJoin = 'asto.idempresa = ' . $this->exercise->idempresa
-            . ' AND asto.operacion <> \'C\''
+            . ' AND asto.operacion <> \'' . Asiento::OPERATION_CLOSING . '\''
             . ' AND asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo;
 
         $sql = 'SELECT cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
