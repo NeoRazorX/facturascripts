@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -151,15 +151,17 @@ class ProfitAndLoss extends AccountingBase
             return;
         }
 
-        if (!array_key_exists($index, $balance)) {
-            $balance[$index] = [
-                'descripcion' => $index,
-                'saldo' => $linea['saldo'],
-                'saldoprev' => $linea['saldoprev'],];
-        } else {
+        if (\array_key_exists($index, $balance)) {
             $balance[$index]['saldo'] += $linea['saldo'];
             $balance[$index]['saldoprev'] += $linea['saldoprev'];
+            return;
         }
+
+        $balance[$index] = [
+            'descripcion' => $index,
+            'saldo' => $linea['saldo'],
+            'saldoprev' => $linea['saldoprev']
+        ];
     }
 
     /**

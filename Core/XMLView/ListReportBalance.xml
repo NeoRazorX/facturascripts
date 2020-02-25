@@ -17,34 +17,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Jose Antonio Cuello <jcuello@artextrading.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
 -->
 <view>
     <columns>
         <column name="code" display="none" order="100">
             <widget type="text" fieldname="id" />
         </column>
-        <column name="type" order="100">
-            <widget type="select" fieldname="type" />
-        </column>
-        <column name="format" order="100">
-            <widget type="select" fieldname="format" />
-        </column>
-        <column name="company" display="none" order="110">
-            <widget type="select" fieldname="idcompany">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
-            </widget>
-        </column>
-        <column name="name" order="120">
+        <column name="name" order="110">
             <widget type="text" fieldname="name" />
         </column>
-        <column name="start-date" display="center" order="130">
-            <widget type="text" fieldname="startdate" />
+        <column name="type" order="120">
+            <widget type="select" fieldname="type" />
         </column>
-        <column name="end-date" display="center" order="140">
-            <widget type="text" fieldname="enddate" />
+        <column name="sub-type" display="none" order="130">
+            <widget type="select" fieldname="subtype" />
+        </column>
+        <column name="company" display="none" order="140">
+            <widget type="select" fieldname="idcompany">
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+            </widget>
         </column>
         <column name="channel" order="150">
             <widget type="text" fieldname="channel" />
+        </column>
+        <column name="start-date" display="right" order="160">
+            <widget type="date" fieldname="startdate" />
+        </column>
+        <column name="end-date" display="right" order="170">
+            <widget type="date" fieldname="enddate" />
         </column>
     </columns>
 </view>

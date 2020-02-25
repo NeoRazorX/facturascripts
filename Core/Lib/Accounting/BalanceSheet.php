@@ -151,15 +151,17 @@ class BalanceSheet extends AccountingBase
             return;
         }
 
-        if (!array_key_exists($index, $balance)) {
-            $balance[$index] = [
-                'descripcion' => $index,
-                'saldo' => $linea['saldo'],
-                'saldoprev' => $linea['saldoprev'],];
-        } else {
+        if (\array_key_exists($index, $balance)) {
             $balance[$index]['saldo'] += $linea['saldo'];
             $balance[$index]['saldoprev'] += $linea['saldoprev'];
+            return;
         }
+
+        $balance[$index] = [
+            'descripcion' => $index,
+            'saldo' => $linea['saldo'],
+            'saldoprev' => $linea['saldoprev']
+        ];
     }
 
     /**

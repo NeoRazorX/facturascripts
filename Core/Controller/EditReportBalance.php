@@ -60,6 +60,7 @@ class EditReportBalance extends EditReportAccounting
      * Generate Balance Amounts data for report
      *
      * @param ReportBalance $model
+     *
      * @return array
      */
     protected function generateReport($model)
@@ -67,7 +68,7 @@ class EditReportBalance extends EditReportAccounting
         $params = [
             'idcompany' => $model->idcompany,
             'channel' => $model->channel,
-            'format' => $model->format
+            'subtype' => $model->subtype
         ];
 
         switch ($model->type) {
@@ -104,8 +105,9 @@ class EditReportBalance extends EditReportAccounting
      */
     protected function loadData($viewName, $view)
     {
+        $mainViewName = $this->getMainViewName();
         switch ($viewName) {
-            default:
+            case $mainViewName:
                 parent::loadData($viewName, $view);
                 $this->loadWidgetValues($view);
                 break;
@@ -124,9 +126,9 @@ class EditReportBalance extends EditReportAccounting
             $typeColumn->widget->setValuesFromArray(ReportBalance::typeList());
         }
 
-        $formatColumn = $view->columnForField('format');
+        $formatColumn = $view->columnForField('subtype');
         if ($formatColumn) {
-            $formatColumn->widget->setValuesFromArray(ReportBalance::formatList());
+            $formatColumn->widget->setValuesFromArray(ReportBalance::subtypeList());
         }
     }
 }

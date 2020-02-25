@@ -17,6 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Jose Antonio Cuello <jcuello@artextrading.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
 -->
 <view>
     <columns>
@@ -30,23 +31,23 @@
             <column name="type" numcolumns="3" order="120">
                 <widget type="select" fieldname="type" required="true" />
             </column>
-            <column name="format" numcolumns="3" order="130">
-                <widget type="select" fieldname="format" required="true" />
+            <column name="sub-type" display="none" numcolumns="3" order="130">
+                <widget type="select" fieldname="subtype" required="true" />
+            </column>
+            <column name="company" numcolumns="2" order="140">
+                <widget type="select" fieldname="idcompany" required="true">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+                </widget>
             </column>
         </group>
         <group name="date" numcolumns="12">
-            <column name="company" numcolumns="2" order="200">
-                <widget type="select" fieldname="idcompany" required="true">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
-                </widget>
-            </column>
-            <column name="start-date" order="210">
+            <column name="start-date" numcolumns="2" order="100">
                 <widget type="date" fieldname="startdate" required="true" />
             </column>
-            <column name="end-date" order="220">
+            <column name="end-date" numcolumns="2" order="110">
                 <widget type="date" fieldname="enddate" required="true" />
             </column>
-            <column name="channel" numcolumns="2" order="230">
+            <column name="channel" numcolumns="2" order="120">
                 <widget type="number" fieldname="channel" decimal="0"/>
             </column>
         </group>

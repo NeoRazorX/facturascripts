@@ -26,11 +26,10 @@ namespace FacturaScripts\Core\Model;
 class ReportBalance extends Base\ReportAccounting
 {
 
-    const FORMAT_ABBREVIATED = 'abbreviated';
-    const FORMAT_NORMAL = 'normal';
-
     const TYPE_SHEET = 'balance-sheet';
     const TYPE_PROFIT = 'profit-and-loss';
+    const SUBTYPE_ABBREVIATED = 'abbreviated';
+    const SUBTYPE_NORMAL = 'normal';
 
     /**
      *
@@ -42,7 +41,7 @@ class ReportBalance extends Base\ReportAccounting
      *
      * @var string
      */
-    public $format;
+    public $subtype;
 
     /**
      * Reset the values of all model properties.
@@ -51,20 +50,7 @@ class ReportBalance extends Base\ReportAccounting
     {
         parent::clear();
         $this->type = self::TYPE_SHEET;
-        $this->format = self::FORMAT_ABBREVIATED;
-    }
-
-    /**
-     *
-     * @return array
-     */
-    public static function formatList(): array
-    {
-        $i18n = self::toolBox()->i18n();
-        return [
-            ['value' => self::FORMAT_ABBREVIATED, 'title' => $i18n->trans(self::FORMAT_ABBREVIATED)],
-            ['value' => self::FORMAT_NORMAL,  'title' => $i18n->trans(self::FORMAT_NORMAL)]
-        ];
+        $this->subtype = self::SUBTYPE_ABBREVIATED;
     }
 
     /**
@@ -87,6 +73,19 @@ class ReportBalance extends Base\ReportAccounting
         return [
             ['value' => self::TYPE_SHEET, 'title' => $i18n->trans(self::TYPE_SHEET)],
             ['value' => self::TYPE_PROFIT, 'title' => $i18n->trans(self::TYPE_PROFIT)]
+        ];
+    }
+
+    /**
+     *
+     * @return array
+     */
+    public static function subtypeList(): array
+    {
+        $i18n = self::toolBox()->i18n();
+        return [
+            ['value' => self::SUBTYPE_ABBREVIATED, 'title' => $i18n->trans(self::SUBTYPE_ABBREVIATED)],
+            ['value' => self::SUBTYPE_NORMAL, 'title' => $i18n->trans(self::SUBTYPE_NORMAL)]
         ];
     }
 }

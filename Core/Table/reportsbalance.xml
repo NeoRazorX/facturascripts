@@ -34,13 +34,13 @@
         <null>NO</null>
     </column>
     <column>
-        <name>format</name>
-        <type>character varying(20)</type>
+        <name>startdate</name>
+        <type>date</type>
         <null>NO</null>
     </column>
     <column>
-        <name>startdate</name>
-        <type>date</type>
+        <name>subtype</name>
+        <type>character varying(20)</type>
         <null>NO</null>
     </column>
     <constraint>

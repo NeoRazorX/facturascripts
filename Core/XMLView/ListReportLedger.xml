@@ -25,7 +25,7 @@
         </column>
         <column name="company" display="none" order="110">
             <widget type="select" fieldname="idcompany">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
             </widget>
         </column>
         <column name="name" order="120">
@@ -37,7 +37,7 @@
         <column name="end-date" display="center" order="140">
             <widget type="text" fieldname="enddate" />
         </column>
-        <column name="grouped" display="center" order="150">
+        <column name="group-accounts" display="center" order="150">
             <widget type="checkbox" fieldname="grouped" />
         </column>
         <column name="channel" display="center" order="160">
