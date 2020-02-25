@@ -66,6 +66,7 @@ abstract class EditController extends PanelController
         $viewIcon = $this->getPageData()['icon'];
 
         $this->addEditView($viewName, $modelName, $title, $viewIcon);
+        $this->setSettings($viewName, 'btnPrint', true);
     }
 
     /**
