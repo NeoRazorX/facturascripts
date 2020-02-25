@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
@@ -107,12 +108,21 @@ class BalanceAmounts extends AccountingBase
     protected function getDataWhere(array $params = [])
     {
         $where = 'asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio)
-            . ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom) . ' AND ' . $this->dataBase->var2str($this->dateTo)
-            . ' AND asientos.operacion <> \'C\'';
+            . ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom) . ' AND ' . $this->dataBase->var2str($this->dateTo);
 
         $channel = $params['channel'] ?? '';
         if (!empty($channel)) {
             $where .= ' AND asientos.canal = ' . $channel;
+        }
+
+        $ignoreRegularization = (bool) $params['ignoreregularization'] ?? false;
+        if ($ignoreRegularization) {
+            $where .= ' AND asientos.operacion <> \'' . Asiento::OPERATION_REGULARIZATION . '\'';
+        }
+
+        $ignoreClosure = (bool) $params['ignoreclosure'] ?? false;
+        if ($ignoreClosure) {
+            $where .= ' AND asientos.operacion <> \'' . Asiento::OPERATION_CLOSING . '\'';
         }
 
         $subaccountFrom = $params['subaccount-from'] ?? '';
