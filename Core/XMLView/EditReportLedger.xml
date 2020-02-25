@@ -35,8 +35,8 @@
             <column name="channel" numcolumns="1" order="130">
                 <widget type="number" fieldname="channel" decimal="0"/>
             </column>
-            <column name="grouping" numcolumns="2" order="140">
-                <widget type="select" fieldname="grouping" translate="true" required="true">
+            <column name="grouped" numcolumns="2" order="140">
+                <widget type="select" fieldname="grouped" translate="true" required="true">
                     <values title="report-non-grouping-account">0</values>
                     <values title="report-grouping-account">1</values>
                 </widget>

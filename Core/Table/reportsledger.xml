@@ -23,7 +23,7 @@
         <type>integer</type>
     </column>
     <column>
-        <name>grouping</name>
+        <name>grouped</name>
         <type>boolean</type>
     </column>
     <column>

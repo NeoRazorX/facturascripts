@@ -53,9 +53,9 @@ class Ledger extends AccountingBase
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
-        $grouping = (isset($params['grouping']) && $params['grouping']);
+        $grouped =  (bool) $params['grouped'] ?? false;
 
-        $results = $grouping ? $this->getDataGrouped($params) : $this->getData($params);
+        $results = $grouped ? $this->getDataGrouped($params) : $this->getData($params);
         if (empty($results)) {
             return [];
         }
@@ -64,12 +64,12 @@ class Ledger extends AccountingBase
         $ledgerAccount = [];
         /// Process each line of the results
         foreach ($results as $line) {
-            $account = ($grouping) ? $line['codcuenta'] : 0;
-            if ($grouping) {
+            $account = ($grouped) ? $line['codcuenta'] : 0;
+            if ($grouped) {
                 $this->processHeader($ledgerAccount[$account], $line);
-                $ledger[$account][0] = $this->processLine($ledgerAccount[$account], $grouping);
+                $ledger[$account][0] = $this->processLine($ledgerAccount[$account], $grouped);
             }
-            $ledger[$account][] = $this->processLine($line, $grouping);
+            $ledger[$account][] = $this->processLine($line, $grouped);
         }
 
         /// every page is a table
@@ -198,17 +198,17 @@ class Ledger extends AccountingBase
 
     /**
      * Process the line data to use the appropiate formats.
-     * If the $grouping variable is not equal to non-group
+     * If the $grouped variable is not equal to non-group
      * then we dont return the 'fecha' and 'numero' fields
      *
      * @param array $line
-     * @param bool  $grouping
+     * @param bool  $grouped
      *
      * @return array
      */
-    protected function processLine($line, $grouping)
+    protected function processLine($line, $grouped)
     {
-        $item = $grouping ? [] : ['fecha' => $line['fecha'], 'numero' => $line['numero']];
+        $item = $grouped ? [] : ['fecha' => $line['fecha'], 'numero' => $line['numero']];
         $item['cuenta'] = isset($line['cuenta']) ? $line['cuenta'] : $line['codsubcuenta'];
         $item['concepto'] = $this->toolBox()->utils()->fixHtml($line['concepto']);
         $item['debe'] = $this->toolBox()->coins()->format($line['debe'], FS_NF0, '');

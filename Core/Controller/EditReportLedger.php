@@ -69,7 +69,7 @@ class EditReportLedger extends EditReportAccounting
             'entry-from' => $model->startentry,
             'entry-to' => $model->endentry,
             'channel' => $model->channel,
-            'grouping' => $model->grouping
+            'grouped' => $model->grouped
         ];
 
         $ledger = new Ledger();

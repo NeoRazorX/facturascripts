@@ -37,8 +37,8 @@
         <column name="end-date" display="center" order="140">
             <widget type="text" fieldname="enddate" />
         </column>
-        <column name="grouping" display="center" order="150">
-            <widget type="checkbox" fieldname="grouping" />
+        <column name="grouped" display="center" order="150">
+            <widget type="checkbox" fieldname="grouped" />
         </column>
         <column name="channel" display="center" order="160">
             <widget type="text" fieldname="channel" />

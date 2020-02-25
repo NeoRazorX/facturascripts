@@ -42,7 +42,7 @@ class ReportLedger extends Base\ReportAccounting
      *
      * @var bool
      */
-    public $grouping;
+    public $grouped;
 
     /**
      *
@@ -62,7 +62,7 @@ class ReportLedger extends Base\ReportAccounting
     public function clear()
     {
         parent::clear();
-        $this->grouping = false;
+        $this->grouped = false;
     }
 
     /**
