@@ -25,6 +25,7 @@ namespace FacturaScripts\Core\Model\Base;
  */
 abstract class ReportAccounting extends ModelClass
 {
+
     use ModelTrait;
 
     /**
@@ -35,7 +36,7 @@ abstract class ReportAccounting extends ModelClass
 
     /**
      *
-     * @var date
+     * @var string
      */
     public $enddate;
 
@@ -61,7 +62,7 @@ abstract class ReportAccounting extends ModelClass
 
     /**
      *
-     * @var date
+     * @var string
      */
     public $startdate;
 
@@ -71,8 +72,8 @@ abstract class ReportAccounting extends ModelClass
     public function clear()
     {
         parent::clear();
-        $this->startdate = date('01-01-Y');
-        $this->enddate = date('31-12-Y');
+        $this->startdate = \date('01-01-Y');
+        $this->enddate = \date('31-12-Y');
         $this->idcompany = $this->toolBox()->appSettings()->get('default', 'idempresa');
     }
 
@@ -102,8 +103,7 @@ abstract class ReportAccounting extends ModelClass
      */
     public function test()
     {
-        $utils = $this->toolBox()->utils();
-        $this->name = $utils->noHtml($this->name);
+        $this->name = $this->toolBox()->utils()->noHtml($this->name);
 
         if (empty($this->idcompany)) {
             $this->toolBox()->i18nLog()->warning(

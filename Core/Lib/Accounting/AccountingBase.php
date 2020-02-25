@@ -91,8 +91,8 @@ abstract class AccountingBase
     /**
      * Load exercise data for the company and date
      *
-     * @param int  $idcompany
-     * @param date $date
+     * @param int    $idcompany
+     * @param string $date
      */
     public function setExerciseFromDate($idcompany, $date)
     {

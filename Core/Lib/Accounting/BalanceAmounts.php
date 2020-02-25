@@ -83,8 +83,8 @@ class BalanceAmounts extends AccountingBase
         }
 
         $sql = 'SELECT partidas.codsubcuenta, subcuentas.descripcion,'
-            .        ' SUM(partidas.debe) AS debe,'
-            .        ' SUM(partidas.haber) AS haber'
+            . ' SUM(partidas.debe) AS debe,'
+            . ' SUM(partidas.haber) AS haber'
             . ' FROM asientos'
             . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
             . ' LEFT JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
@@ -109,9 +109,9 @@ class BalanceAmounts extends AccountingBase
 
         $codeField = 'SUBSTR(partidas.codsubcuenta, 1, ' . $level . ')';
         $sql = 'SELECT ' . $codeField . ' codsubcuenta,'
-            .        ' cuentas.descripcion,'
-            .        ' SUM(partidas.debe) AS debe,'
-            .        ' SUM(partidas.haber) AS haber'
+            . ' cuentas.descripcion,'
+            . ' SUM(partidas.debe) AS debe,'
+            . ' SUM(partidas.haber) AS haber'
             . ' FROM asientos'
             . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
             . ' LEFT JOIN cuentas ON cuentas.codejercicio = asientos.codejercicio AND cuentas.codcuenta = ' . $codeField

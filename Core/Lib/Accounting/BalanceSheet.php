@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -97,7 +97,7 @@ class BalanceSheet extends AccountingBase
         $dateToPrev = $this->dataBase->var2str($this->dateToPrev);
 
         $entryJoin = 'asto.idempresa = ' . $this->exercise->idempresa
-            . ' AND asto.operacion <> \'' . Asiento::OPERATION_CLOSING .'\''
+            . ' AND asto.operacion <> \'' . Asiento::OPERATION_CLOSING . '\''
             . ' AND asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo;
 
         $sql = 'SELECT cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'

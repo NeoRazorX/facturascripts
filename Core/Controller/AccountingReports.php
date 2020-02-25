@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -102,7 +102,7 @@ class AccountingReports extends Controller
      * Execute main actions.
      * Filter bi date-from date-to format and grouping
      *
-     * @param $action
+     * @param string $action
      */
     protected function execAction($action)
     {
@@ -150,7 +150,8 @@ class AccountingReports extends Controller
      * Report class from action name
      *
      * @param string $action
-     * @return Accounting\AccountingBase|null
+     *
+     * @return object
      */
     protected function reportFromAction($action)
     {
@@ -167,6 +168,7 @@ class AccountingReports extends Controller
             case 'profit':
                 return new Accounting\ProfitAndLoss();
         }
+
         return null;
     }
 }
