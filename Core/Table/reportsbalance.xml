@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : reportsbalance.xml
+    Author     : Jose Antonio Cuello
+    Description:
+        Structure for the annual accounts balance reports table.
+-->
+<table>
+    <column>
+        <name>channel</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>enddate</name>
+        <type>date</type>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idcompany</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>name</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>type</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>format</name>
+        <type>character varying(20)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>startdate</name>
+        <type>date</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>reportsbalance_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_reportsbalance_empresas</name>
+        <type>FOREIGN KEY (idcompany) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

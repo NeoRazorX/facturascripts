@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : reportsledger.xml
+    Author     : Jose Antonio Cuello
+    Description:
+        Structure for the ledger reports table.
+-->
+<table>
+    <column>
+        <name>channel</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>endcodsubaccount</name>
+        <type>character varying(15)</type>
+    </column>
+    <column>
+        <name>enddate</name>
+        <type>date</type>
+    </column>
+    <column>
+        <name>endentry</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>grouped</name>
+        <type>boolean</type>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idcompany</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>name</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>startcodsubaccount</name>
+        <type>character varying(15)</type>
+    </column>
+    <column>
+        <name>startdate</name>
+        <type>date</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>startentry</name>
+        <type>integer</type>
+    </column>
+    <constraint>
+        <name>reportsledger_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_reportsledger_empresas</name>
+        <type>FOREIGN KEY (idcompany) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+</table>

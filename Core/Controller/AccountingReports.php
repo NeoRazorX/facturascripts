@@ -101,39 +101,24 @@ class AccountingReports extends Controller
     /**
      * Execute main actions.
      * Filter bi date-from date-to format and grouping
-     * 
+     *
      * @param $action
      */
     protected function execAction($action)
     {
-        $pages = [];
-        $dateFrom = $this->request->get('date-from', '');
-        $dateTo = $this->request->get('date-to', '');
-        $format = $this->request->get('format', '');
-        $params = ['grouping' => ('YES' == $this->request->get('grouping', 'YES'))];
-
-        switch ($action) {
-            case 'ledger':
-                $ledger = new Accounting\Ledger();
-                $pages = $ledger->generate($dateFrom, $dateTo, $params);
-                break;
-
-            case 'balance-amounts':
-                $balanceAmount = new Accounting\BalanceAmounts();
-                $pages = $balanceAmount->generate($dateFrom, $dateTo, $params);
-                break;
-
-            case 'balance-sheet':
-                $balanceSheet = new Accounting\BalanceSheet();
-                $pages = $balanceSheet->generate($dateFrom, $dateTo, $params);
-                break;
-
-            case 'profit':
-                $profitAndLoss = new Accounting\ProfitAndLoss();
-                $pages = $profitAndLoss->generate($dateFrom, $dateTo, $params);
-                break;
+        $report = $this->reportFromAction($action);
+        if (!isset($report)) {
+            return;
         }
 
+        $exercise = $this->request->get('codejercicio');
+        $dateFrom = $this->request->get('date-from', '');
+        $dateTo = $this->request->get('date-to', '');
+        $format = $this->request->get('format', 'PDF');
+        $params = ['grouping' => ('YES' == $this->request->get('grouping', 'YES'))];
+
+        $report->setExercise($exercise);
+        $pages = $report->generate($dateFrom, $dateTo, $params);
         if (empty($pages)) {
             $this->toolBox()->i18nLog()->warning('no-data');
             return;
@@ -159,5 +144,29 @@ class AccountingReports extends Controller
         }
 
         $this->exportManager->show($this->response);
+    }
+
+    /**
+     * Report class from action name
+     *
+     * @param string $action
+     * @return Accounting\AccountingBase|null
+     */
+    protected function reportFromAction($action)
+    {
+        switch ($action) {
+            case 'ledger':
+                return new Accounting\Ledger();
+
+            case 'balance-amounts':
+                return new Accounting\BalanceAmounts();
+
+            case 'balance-sheet':
+                return new Accounting\BalanceSheet();
+
+            case 'profit':
+                return new Accounting\ProfitAndLoss();
+        }
+        return null;
     }
 }

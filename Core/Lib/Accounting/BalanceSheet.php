@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\BalanceCuentaA;
 use FacturaScripts\Dinamic\Model\Partida;
 
@@ -45,6 +46,9 @@ class BalanceSheet extends AccountingBase
      */
     protected $dateToPrev;
 
+    /**
+     * BalanceSheet constructor
+     */
     public function __construct()
     {
         parent::__construct();
@@ -70,7 +74,7 @@ class BalanceSheet extends AccountingBase
         $this->dateFromPrev = $this->addToDate($dateFrom, '-1 year');
         $this->dateToPrev = $this->addToDate($dateTo, '-1 year');
 
-        $data = $this->getData();
+        $data = $this->getData($params);
         if (empty($data)) {
             return [];
         }
@@ -81,65 +85,56 @@ class BalanceSheet extends AccountingBase
     }
 
     /**
-     * Format de balance including then chapters
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    private function calcSheetBalance($data)
-    {
-        $balanceCalculado = [];
-        foreach ($data as $lineaBalance) {
-            if (!array_key_exists($lineaBalance['naturaleza'], $balanceCalculado)) {
-                $balanceCalculado[$lineaBalance['naturaleza']] = [
-                    'descripcion' => $lineaBalance['naturaleza'] == 'A' ? 'ACTIVO' : 'PASIVO',
-                    'saldo' => $lineaBalance['saldo'],
-                    'saldoprev' => $lineaBalance['saldoprev']
-                ];
-            } else {
-                $balanceCalculado[$lineaBalance['naturaleza']]['saldo'] += $lineaBalance['saldo'];
-                $balanceCalculado[$lineaBalance['naturaleza']]['saldoprev'] += $lineaBalance['saldoprev'];
-            }
-
-            $this->processDescription($lineaBalance, $balanceCalculado, 'descripcion1');
-            $this->processDescription($lineaBalance, $balanceCalculado, 'descripcion2');
-            $this->processDescription($lineaBalance, $balanceCalculado, 'descripcion3');
-            $this->processDescription($lineaBalance, $balanceCalculado, 'descripcion4');
-        }
-
-        $balanceFinal = [];
-        foreach ($balanceCalculado as $lineaBalance) {
-            $balanceFinal[] = $this->processLine($lineaBalance);
-        }
-
-        return $balanceFinal;
-    }
-
-    /**
      * Obtains the balances for each one of the sections of the balance sheet according to their assigned accounts.
      *
      * @return array
      */
-    protected function getData()
+    protected function getData(array $params = [])
     {
         $dateFrom = $this->dataBase->var2str($this->dateFrom);
         $dateTo = $this->dataBase->var2str($this->dateTo);
         $dateFromPrev = $this->dataBase->var2str($this->dateFromPrev);
         $dateToPrev = $this->dataBase->var2str($this->dateToPrev);
 
+        $entryJoin = 'asto.idempresa = ' . $this->exercise->idempresa
+            . ' AND asto.operacion <> \'' . Asiento::OPERATION_CLOSING .'\''
+            . ' AND asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo;
+
         $sql = 'SELECT cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFrom . ' AND ' . $dateTo . ' THEN pa.debe - pa.haber ELSE 0 END) saldo,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateToPrev . ' THEN pa.debe - pa.haber ELSE 0 END) saldoprev'
-            . ' FROM balancescuentasabreviadas ccb '
-            . ' INNER JOIN balances cb ON ccb.codbalance = cb.codbalance '
-            . ' INNER JOIN partidas pa ON substr(pa.codsubcuenta, 1, 1) BETWEEN \'1\' AND \'5\' AND pa.codsubcuenta LIKE CONCAT(ccb.codcuenta,\'%\')'
-            . ' INNER JOIN asientos asto ON asto.idasiento = pa.idasiento and asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo
-            . ' WHERE cb.naturaleza IN (\'A\', \'P\')'
+            . ' FROM balances cb '
+            . ' INNER JOIN balancescuentasabreviadas ccb ON ccb.codbalance = cb.codbalance '
+            . ' INNER JOIN asientos asto ON ' . $entryJoin
+            . ' INNER JOIN partidas pa ON pa.idasiento = asto.idasiento AND substr(pa.codsubcuenta, 1, 1) BETWEEN \'1\' AND \'5\' AND pa.codsubcuenta LIKE CONCAT(ccb.codcuenta,\'%\')'
+            . ' WHERE ' . $this->getDataWhere($params)
             . ' GROUP BY 1, 2, 3, 4, 5, 6, 7 '
             . ' ORDER BY cb.naturaleza, cb.nivel1, cb.nivel2, cb.orden3, cb.nivel4';
 
         return $this->dataBase->select($sql);
+    }
+
+    /**
+     *
+     * @param array $params
+     * @return string
+     */
+    protected function getDataWhere(array $params = [])
+    {
+        $where = 'cb.naturaleza IN (\'A\', \'P\')';
+
+        $channel = $params['channel'] ?? '';
+        if (!empty($channel)) {
+            $where .= ' AND asto.canal = ' . $channel;
+        }
+
+        $subaccountFrom = $params['subaccount-from'] ?? '';
+        $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
+        if (!empty($subaccountFrom) || (!empty($subaccountTo))) {
+            $where .= ' AND pa.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom) . ' AND ' . $this->dataBase->var2str($subaccountTo);
+        }
+
+        return $where;
     }
 
     /**
@@ -180,5 +175,41 @@ class BalanceSheet extends AccountingBase
         $line['saldo'] = $this->toolBox()->coins()->format($line['saldo'], FS_NF0, '');
         $line['saldoprev'] = $this->toolBox()->coins()->format($line['saldoprev'], FS_NF0, '');
         return $line;
+    }
+
+    /**
+     * Format de balance including then chapters
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    private function calcSheetBalance($data)
+    {
+        $balanceCalculado = [];
+        foreach ($data as $lineaBalance) {
+            if (!array_key_exists($lineaBalance['naturaleza'], $balanceCalculado)) {
+                $balanceCalculado[$lineaBalance['naturaleza']] = [
+                    'descripcion' => $lineaBalance['naturaleza'] == 'A' ? 'ACTIVO' : 'PASIVO',
+                    'saldo' => $lineaBalance['saldo'],
+                    'saldoprev' => $lineaBalance['saldoprev']
+                ];
+            } else {
+                $balanceCalculado[$lineaBalance['naturaleza']]['saldo'] += $lineaBalance['saldo'];
+                $balanceCalculado[$lineaBalance['naturaleza']]['saldoprev'] += $lineaBalance['saldoprev'];
+            }
+
+            $this->processDescription($lineaBalance, $balanceCalculado, 'descripcion1');
+            $this->processDescription($lineaBalance, $balanceCalculado, 'descripcion2');
+            $this->processDescription($lineaBalance, $balanceCalculado, 'descripcion3');
+            $this->processDescription($lineaBalance, $balanceCalculado, 'descripcion4');
+        }
+
+        $balanceFinal = [];
+        foreach ($balanceCalculado as $lineaBalance) {
+            $balanceFinal[] = $this->processLine($lineaBalance);
+        }
+
+        return $balanceFinal;
     }
 }
