@@ -18,8 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
-use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Description of BalanceAmounts
@@ -31,19 +31,11 @@ class BalanceAmounts extends AccountingBase
 {
 
     /**
-     * Model with related information.
-     *
-     * @var Subcuenta
-     */
-    private $subcuentaModel;
-
-    /**
      * BalanceAmounts constructor.
      */
     public function __construct()
     {
         parent::__construct();
-        $this->subcuentaModel = new Subcuenta();
 
         /// needed dependencies
         new Partida();
@@ -51,19 +43,20 @@ class BalanceAmounts extends AccountingBase
 
     /**
      * Generate the balance amounts between two dates.
-     * 
+     *
      * @param string $dateFrom
      * @param string $dateTo
      * @param array  $params
-     * 
+     *
      * @return array
      */
     public function generate(string $dateFrom, string $dateTo, array $params = [])
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
+        $level = (int) $params['level'] ?? 0;
 
-        $results = $this->getData();
+        $results = ($level) > 0 ? $this->getDataGrouped($level, $params) : $this->getData($params);
         if (empty($results)) {
             return [];
         }
@@ -83,33 +76,84 @@ class BalanceAmounts extends AccountingBase
      *
      * @return array
      */
-    protected function getData()
+    protected function getData(array $params = [])
     {
         if (!$this->dataBase->tableExists('partidas')) {
             return [];
         }
 
-        $sql = 'SELECT partida.idsubcuenta, partida.codsubcuenta, SUM(partida.debe) AS debe, SUM(partida.haber) AS haber'
-            . ' FROM partidas as partida, asientos as asiento'
-            . ' WHERE asiento.idasiento = partida.idasiento'
-            . ' AND asiento.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
-            . ' AND asiento.fecha <= ' . $this->dataBase->var2str($this->dateTo)
-            . ' GROUP BY idsubcuenta, codsubcuenta ORDER BY codsubcuenta ASC';
+        $sql = 'SELECT partidas.codsubcuenta, subcuentas.descripcion,'
+            .        ' SUM(partidas.debe) AS debe,'
+            .        ' SUM(partidas.haber) AS haber'
+            . ' FROM asientos'
+            . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
+            . ' LEFT JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
+            . ' WHERE ' . $this->getDataWhere($params)
+            . ' GROUP BY 1, 2'
+            . ' ORDER BY 1 ASC';
 
         return $this->dataBase->select($sql);
     }
 
     /**
-     * Gets the description of the subaccount with that ID.
+     * Return the appropiate data from database agrouped
      *
-     * @param string $idsubcuenta
+     * @param int   $level
+     * @param array $params
+     */
+    protected function getDataGrouped(int $level, array $params = [])
+    {
+        if (!$this->dataBase->tableExists('partidas')) {
+            return [];
+        }
+
+        $codeField = 'SUBSTR(partidas.codsubcuenta, 1, ' . $level . ')';
+        $sql = 'SELECT ' . $codeField . ' codsubcuenta,'
+            .        ' cuentas.descripcion,'
+            .        ' SUM(partidas.debe) AS debe,'
+            .        ' SUM(partidas.haber) AS haber'
+            . ' FROM asientos'
+            . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
+            . ' LEFT JOIN cuentas ON cuentas.codejercicio = asientos.codejercicio AND cuentas.codcuenta = ' . $codeField
+            . ' WHERE ' . $this->getDataWhere($params)
+            . ' GROUP BY 1, 2'
+            . ' ORDER BY 1 ASC';
+
+        return $this->dataBase->select($sql);
+    }
+
+    /**
      *
+     * @param array $params
      * @return string
      */
-    private function getDescriptionSubcuenta($idsubcuenta)
+    protected function getDataWhere(array $params = [])
     {
-        $subcuenta = $this->subcuentaModel->get($idsubcuenta);
-        return $subcuenta === false ? '-' : $this->toolBox()->utils()->fixHtml($subcuenta->descripcion);
+        $where = 'asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio)
+            . ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom) . ' AND ' . $this->dataBase->var2str($this->dateTo);
+
+        $channel = $params['channel'] ?? '';
+        if (!empty($channel)) {
+            $where .= ' AND asientos.canal = ' . $channel;
+        }
+
+        $ignoreRegularization = (bool) $params['ignoreregularization'] ?? false;
+        if ($ignoreRegularization) {
+            $where .= ' AND asientos.operacion <> \'' . Asiento::OPERATION_REGULARIZATION . '\'';
+        }
+
+        $ignoreClosure = (bool) $params['ignoreclosure'] ?? false;
+        if ($ignoreClosure) {
+            $where .= ' AND asientos.operacion <> \'' . Asiento::OPERATION_CLOSING . '\'';
+        }
+
+        $subaccountFrom = $params['subaccount-from'] ?? '';
+        $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
+        if (!empty($subaccountFrom) || (!empty($subaccountTo))) {
+            $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom) . ' AND ' . $this->dataBase->var2str($subaccountTo);
+        }
+
+        return $where;
     }
 
     /**
@@ -124,8 +168,8 @@ class BalanceAmounts extends AccountingBase
         $saldo = (float) $line['debe'] - (float) $line['haber'];
 
         return [
-            'subcuenta' => $line['codsubcuenta'],
-            'descripcion' => $this->getDescriptionSubcuenta($line['idsubcuenta']),
+            'cuenta' => $line['codsubcuenta'],
+            'descripcion' => $line['descripcion'],
             'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),
             'haber' => $this->toolBox()->coins()->format($line['haber'], FS_NF0, ''),
             'saldo' => $this->toolBox()->coins()->format($saldo, FS_NF0, ''),

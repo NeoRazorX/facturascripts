@@ -29,6 +29,9 @@ use FacturaScripts\Dinamic\Model\Partida;
 class Ledger extends AccountingBase
 {
 
+    /**
+     * Ledger constructor class
+     */
     public function __construct()
     {
         parent::__construct();
@@ -50,9 +53,9 @@ class Ledger extends AccountingBase
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
-        $grouping = (isset($params['grouping']) && $params['grouping']);
+        $grouped =  (bool) $params['grouped'] ?? false;
 
-        $results = $grouping ? $this->getDataGrouped() : $this->getData();
+        $results = $grouped ? $this->getDataGrouped($params) : $this->getData($params);
         if (empty($results)) {
             return [];
         }
@@ -61,12 +64,12 @@ class Ledger extends AccountingBase
         $ledgerAccount = [];
         /// Process each line of the results
         foreach ($results as $line) {
-            $account = ($grouping) ? $line['codcuenta'] : 0;
-            if ($grouping) {
+            $account = ($grouped) ? $line['codcuenta'] : 0;
+            if ($grouped) {
                 $this->processHeader($ledgerAccount[$account], $line);
-                $ledger[$account][0] = $this->processLine($ledgerAccount[$account], $grouping);
+                $ledger[$account][0] = $this->processLine($ledgerAccount[$account], $grouped);
             }
-            $ledger[$account][] = $this->processLine($line, $grouping);
+            $ledger[$account][] = $this->processLine($line, $grouped);
         }
 
         /// every page is a table
@@ -75,27 +78,44 @@ class Ledger extends AccountingBase
     }
 
     /**
+     * Config options for create a ledger button
+     *
+     * @param string $type
+     * @param string $action
+     * @return array
+     */
+    public static function getButton($type, $action = 'ledger')
+    {
+        return [
+            'color' => 'info',
+            'icon' => 'fas fa-book fa-fw',
+            'label' => 'ledger',
+            'action' => $action,
+            'type' => $type,
+        ];
+    }
+
+    /**
      * Return the appropiate data from database.
      *
      * @return array
      */
-    protected function getData()
+    protected function getData(array $params = [])
     {
         if (!$this->dataBase->tableExists('partidas')) {
             return [];
         }
 
-        $sql = 'SELECT asto.fecha, asto.numero, subc.codcuenta, cuentas.descripcion '
-            . ' as cuenta_descripcion, part.codsubcuenta, part.concepto, part.debe, part.haber '
-            . ' FROM asientos as asto, partidas AS part, subcuentas as subc, cuentas '
-            . ' WHERE asto.idasiento = part.idasiento '
-            . ' AND asto.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
-            . ' AND asto.fecha <= ' . $this->dataBase->var2str($this->dateTo)
-            . ' AND subc.codejercicio = asto.codejercicio '
-            . ' AND cuentas.codejercicio = asto.codejercicio '
-            . ' AND subc.codsubcuenta = part.codsubcuenta '
-            . ' AND subc.idcuenta = cuentas.idcuenta '
-            . ' ORDER BY asto.fecha, asto.numero ASC';
+        $sql = 'SELECT asientos.fecha, asientos.numero,'
+            . ' partidas.codsubcuenta, partidas.concepto, partidas.debe, partidas.haber, '
+            . ' subcuentas.codcuenta,'
+            . ' cuentas.descripcion as cuenta_descripcion'
+            . ' FROM asientos'
+            . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
+            . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
+            . ' INNER JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
+            . ' WHERE ' . $this->getDataWhere($params)
+            . ' ORDER BY asientos.fecha, asientos.numero ASC';
         return $this->dataBase->select($sql);
     }
 
@@ -104,26 +124,55 @@ class Ledger extends AccountingBase
      *
      * @return array
      */
-    protected function getDataGrouped()
+    protected function getDataGrouped(array $params = [])
     {
         if (!$this->dataBase->tableExists('partidas')) {
             return [];
         }
 
-        $sql = 'SELECT subc.codcuenta, cuentas.descripcion '
-            . ' as cuenta_descripcion, part.codsubcuenta, subc.descripcion as concepto, '
-            . ' sum(part.debe) as debe, sum(part.haber) as haber '
-            . ' FROM asientos as asto, partidas AS part, subcuentas as subc, cuentas '
-            . ' WHERE asto.idasiento = part.idasiento '
-            . ' AND asto.fecha >= ' . $this->dataBase->var2str($this->dateFrom)
-            . ' AND asto.fecha <= ' . $this->dataBase->var2str($this->dateTo)
-            . ' AND subc.codejercicio = asto.codejercicio '
-            . ' AND cuentas.codejercicio = asto.codejercicio '
-            . ' AND subc.codsubcuenta = part.codsubcuenta '
-            . ' AND subc.idcuenta = cuentas.idcuenta '
-            . ' GROUP BY subc.codcuenta, cuentas.descripcion, part.codsubcuenta, subc.descripcion'
-            . ' ORDER BY subc.codcuenta, part.codsubcuenta ASC';
+        $sql = 'SELECT subcuentas.codcuenta, subcuentas.descripcion as concepto,'
+            . ' cuentas.descripcion as cuenta_descripcion,'
+            . ' partidas.codsubcuenta,'
+            . ' sum(partidas.debe) as debe, sum(partidas.haber) as haber '
+            . ' FROM asientos'
+            . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
+            . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
+            . ' INNER JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
+
+            . ' WHERE ' . $this->getDataWhere($params)
+            . ' GROUP BY subcuentas.codcuenta, cuentas.descripcion, partidas.codsubcuenta, subcuentas.descripcion'
+            . ' ORDER BY subcuentas.codcuenta, partidas.codsubcuenta ASC';
         return $this->dataBase->select($sql);
+    }
+
+    /**
+     *
+     * @param array $params
+     * @return string
+     */
+    protected function getDataWhere(array $params = [])
+    {
+        $where = 'asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom) . ' AND ' . $this->dataBase->var2str($this->dateTo);
+        $where .= ' AND asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio);
+
+        $channel = $params['channel'] ?? '';
+        if (!empty($channel)) {
+            $where .= ' AND asientos.canal = ' . $channel;
+        }
+
+        $subaccountFrom = $params['subaccount-from'] ?? '';
+        $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
+        if (!empty($subaccountFrom) || (!empty($subaccountTo))) {
+            $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom) . ' AND ' . $this->dataBase->var2str($subaccountTo);
+        }
+
+        $accountFrom = $params['account-from'] ?? '';
+        $accountTo = $params['account-to'] ?? $accountFrom;
+        if (!empty($accountFrom) || (!empty($accountTo))) {
+            $where .= ' AND subcuentas.codcuenta BETWEEN ' . $this->dataBase->var2str($accountFrom) . ' AND ' . $this->dataBase->var2str($accountTo);
+        }
+
+        return $where;
     }
 
     /**
@@ -149,17 +198,17 @@ class Ledger extends AccountingBase
 
     /**
      * Process the line data to use the appropiate formats.
-     * If the $grouping variable is not equal to non-group
+     * If the $grouped variable is not equal to non-group
      * then we dont return the 'fecha' and 'numero' fields
      *
      * @param array $line
-     * @param bool  $grouping
+     * @param bool  $grouped
      *
      * @return array
      */
-    protected function processLine($line, $grouping)
+    protected function processLine($line, $grouped)
     {
-        $item = $grouping ? [] : ['fecha' => $line['fecha'], 'numero' => $line['numero']];
+        $item = $grouped ? [] : ['fecha' => $line['fecha'], 'numero' => $line['numero']];
         $item['cuenta'] = isset($line['cuenta']) ? $line['cuenta'] : $line['codsubcuenta'];
         $item['concepto'] = $this->toolBox()->utils()->fixHtml($line['concepto']);
         $item['debe'] = $this->toolBox()->coins()->format($line['debe'], FS_NF0, '');
