@@ -55,8 +55,9 @@ class BalanceAmounts extends AccountingBase
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
+        $level = (int) $params['level'] ?? 0;
 
-        $results = $this->getData($params);
+        $results = ($level) > 0 ? $this->getDataGrouped($level, $params) : $this->getData($params);
         if (empty($results)) {
             return [];
         }
@@ -90,7 +91,34 @@ class BalanceAmounts extends AccountingBase
             . ' LEFT JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
             . ' WHERE ' . $this->getDataWhere($params)
             . ' GROUP BY 1, 2'
-            . ' ORDER BY partidas.codsubcuenta ASC';
+            . ' ORDER BY 1 ASC';
+
+        return $this->dataBase->select($sql);
+    }
+
+    /**
+     * Return the appropiate data from database agrouped
+     *
+     * @param int   $level
+     * @param array $params
+     */
+    protected function getDataGrouped(int $level, array $params = [])
+    {
+        if (!$this->dataBase->tableExists('partidas')) {
+            return [];
+        }
+
+        $codeField = 'SUBSTR(partidas.codsubcuenta, 1, ' . $level . ')';
+        $sql = 'SELECT ' . $codeField . ' codsubcuenta,'
+            .        ' cuentas.descripcion,'
+            .        ' SUM(partidas.debe) AS debe,'
+            .        ' SUM(partidas.haber) AS haber'
+            . ' FROM asientos'
+            . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
+            . ' LEFT JOIN cuentas ON cuentas.codejercicio = asientos.codejercicio AND cuentas.codcuenta = ' . $codeField
+            . ' WHERE ' . $this->getDataWhere($params)
+            . ' GROUP BY 1, 2'
+            . ' ORDER BY 1 ASC';
 
         return $this->dataBase->select($sql);
     }
@@ -141,7 +169,7 @@ class BalanceAmounts extends AccountingBase
         $saldo = (float) $line['debe'] - (float) $line['haber'];
 
         return [
-            'subcuenta' => $line['codsubcuenta'],
+            'cuenta' => $line['codsubcuenta'],
             'descripcion' => $line['descripcion'],
             'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),
             'haber' => $this->toolBox()->coins()->format($line['haber'], FS_NF0, ''),
