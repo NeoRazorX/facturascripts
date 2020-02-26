@@ -31,7 +31,7 @@
             <column name="type" numcolumns="3" order="120">
                 <widget type="select" fieldname="type" required="true" />
             </column>
-            <column name="sub-type" display="none" numcolumns="3" order="130">
+            <column name="sub-type" numcolumns="3" order="130">
                 <widget type="select" fieldname="subtype" required="true" />
             </column>
             <column name="company" numcolumns="2" order="140">
