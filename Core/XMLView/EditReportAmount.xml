@@ -36,34 +36,32 @@
                 <widget type="number" fieldname="channel" decimal="0"/>
             </column>
         </group>
-        <group name="date" numcolumns="4">
-            <column name="from-date" order="200">
+        <group name="date" valign="bottom" numcolumns="12">
+            <column name="from-date" order="100">
                 <widget type="date" fieldname="startdate" required="true"/>
             </column>
-            <column name="until-date" order="210">
+            <column name="until-date" order="110">
                 <widget type="date" fieldname="enddate" required="true" />
             </column>
-        </group>
-        <group name="other" numcolumns="8" valign="bottom">
-            <column name="from-subaccount" order="300">
+            <column name="from-subaccount" order="120">
                 <widget type="autocomplete" fieldname="startcodsubaccount" strict="false">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="until-subaccount" order="310">
+            <column name="until-subaccount" order="130">
                 <widget type="autocomplete" fieldname="endcodsubaccount" strict="false">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="level" numcolumns="2" order="320">
+            <column name="level" numcolumns="2" order="140">
                 <widget type="select" fieldname="level" required="true">
                     <values start="0" end="4" step="1" />
                 </widget>
             </column>
-            <column name="without-regularization" order="330">
+            <column name="without-regularization" order="150">
                 <widget type="checkbox" fieldname="ignoreregularization" />
             </column>
-            <column name="without-closure" order="340">
+            <column name="without-closure" order="160">
                 <widget type="checkbox" fieldname="ignoreclosure" />
             </column>
         </group>
