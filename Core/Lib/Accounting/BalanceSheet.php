@@ -18,7 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Core\Model\ReportBalance;
 use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Dinamic\Model\BalanceCuenta;
 use FacturaScripts\Dinamic\Model\BalanceCuentaA;
 use FacturaScripts\Dinamic\Model\Partida;
 
@@ -55,6 +57,7 @@ class BalanceSheet extends AccountingBase
 
         /// needed dependencies
         new Partida();
+        new BalanceCuenta();
         new BalanceCuentaA();
     }
 
@@ -100,11 +103,15 @@ class BalanceSheet extends AccountingBase
             . ' AND (asto.operacion IS NULL OR asto.operacion != ' . $this->dataBase->var2str(Asiento::OPERATION_CLOSING) . ')'
             . ' AND asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo;
 
+        $balanceSource = $params['subtype'] == ReportBalance::SUBTYPE_ABBREVIATED
+            ? 'balancescuentasabreviadas'
+            : 'balancescuentas';
+
         $sql = 'SELECT cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFrom . ' AND ' . $dateTo . ' THEN pa.debe - pa.haber ELSE 0 END) saldo,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateToPrev . ' THEN pa.debe - pa.haber ELSE 0 END) saldoprev'
             . ' FROM balances cb '
-            . ' INNER JOIN balancescuentasabreviadas ccb ON ccb.codbalance = cb.codbalance '
+            . ' INNER JOIN ' . $balanceSource . ' ccb ON ccb.codbalance = cb.codbalance '
             . ' INNER JOIN asientos asto ON ' . $entryJoin
             . ' INNER JOIN partidas pa ON pa.idasiento = asto.idasiento AND substr(pa.codsubcuenta, 1, 1) BETWEEN \'1\' AND \'5\' AND pa.codsubcuenta LIKE CONCAT(ccb.codcuenta,\'%\')'
             . ' WHERE ' . $this->getDataWhere($params)
