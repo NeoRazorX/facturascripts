@@ -81,7 +81,11 @@ abstract class EditReportAccounting extends EditController
      */
     protected function exportData(&$pages, $title, $format)
     {
+        $mainViewName = $this->getMainViewName();
+        $view = $this->views[$mainViewName];
+
         $this->exportManager->newDoc($format, $title);
+        $this->exportManager->addModelPage($view->model, $view->getColumns(), $view->title);
 
         foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);

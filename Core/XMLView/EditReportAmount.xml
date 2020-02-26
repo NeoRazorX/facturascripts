@@ -27,16 +27,21 @@
             <column name="name" order="110">
                 <widget type="text" fieldname="name" required="true" />
             </column>
-            <column name="company" numcolumns="2" order="120">
+            <column name="company" numcolumns="3" order="120">
                 <widget type="select" fieldname="idcompany" required="true">
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
-            <column name="channel" numcolumns="2" order="130">
+            <column name="channel" numcolumns="1" order="130">
                 <widget type="number" fieldname="channel" decimal="0"/>
             </column>
+            <column name="level" numcolumns="1" order="140">
+                <widget type="select" fieldname="level" required="true">
+                    <values start="0" end="4" step="1" />
+                </widget>
+            </column>
         </group>
-        <group name="date" valign="bottom" numcolumns="12">
+        <group name="other" valign="bottom" numcolumns="12">
             <column name="from-date" order="100">
                 <widget type="date" fieldname="startdate" required="true"/>
             </column>
@@ -51,11 +56,6 @@
             <column name="until-subaccount" order="130">
                 <widget type="autocomplete" fieldname="endcodsubaccount" strict="false">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
-                </widget>
-            </column>
-            <column name="level" numcolumns="2" order="140">
-                <widget type="select" fieldname="level" required="true">
-                    <values start="0" end="4" step="1" />
                 </widget>
             </column>
             <column name="without-regularization" order="150">
