@@ -28,7 +28,7 @@
         </column>
         <column name="invoice" order="120">
             <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaCliente" readonly="dinamic">
-                <values source="facturascli" fieldcode="idfactura" fieldtitle="codigo"></values>
+                <values source="facturascli" fieldcode="idfactura" fieldtitle="codigo" />
             </widget>
         </column>
         <column name="number" order="130">
@@ -36,7 +36,7 @@
         </column>
         <column name="customer" order="140">
             <widget type="autocomplete" fieldname="codcliente">
-                <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
+                <values source="clientes" fieldcode="codcliente" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="observations" order="150">

@@ -25,7 +25,7 @@
         </column>
         <column name="accounting-entry" order="110">
             <widget type="autocomplete" fieldname="idasiento">
-                <values source="asientos" fieldcode="idasiento" fieldtitle="numero"></values>
+                <values source="asientos" fieldcode="idasiento" fieldtitle="numero" />
             </widget>
         </column>
         <column name="subaccount" display="none" order="120">

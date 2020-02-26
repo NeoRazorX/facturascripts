@@ -26,22 +26,22 @@
         </column>
         <column name="company" display="none" order="110">
             <widget type="select" fieldname="idempresa" onclick="EditEmpresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
             </widget>
         </column>
         <column name="serie" order="120">
             <widget type="select" fieldname="codserie" onclick="EditSerie">
-                <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="agent" order="130">
             <widget type="select" fieldname="codagente" onclick="EditAgente">
-                <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                <values source="agentes" fieldcode="codagente" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="invoice" title="generated-invoice" order="140">
             <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaProveedor">
-                <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo"></values>
+                <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo" />
             </widget>
         </column>
         <column name="observations" order="150">

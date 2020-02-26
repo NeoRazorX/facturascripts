@@ -26,12 +26,12 @@
         </column>
         <column name="code" order="110">
             <widget type="autocomplete" fieldname="idpresupuesto" onclick="EditPresupuestoCliente">
-                <values source="presupuestoscli" fieldcode="idpresupuesto" fieldtitle="codigo"></values>
+                <values source="presupuestoscli" fieldcode="idpresupuesto" fieldtitle="codigo" />
             </widget>
         </column>
         <column name="product" order="120">
             <widget type="autocomplete" fieldname="idproducto" onclick="EditProducto">
-                <values source="productos" fieldcode="idproducto" fieldtitle="referencia"></values>
+                <values source="productos" fieldcode="idproducto" fieldtitle="referencia" />
             </widget>
         </column>
         <column name="reference" order="130">

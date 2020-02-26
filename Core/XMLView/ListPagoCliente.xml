@@ -34,7 +34,7 @@
         </column>
         <column name="accounting-entry" order="140">
             <widget type="autocomplete" fieldname="idasiento" onclick="EditAsiento">
-                <values source="asientos" fieldcode="idasiento" fieldtitle="numero"></values>
+                <values source="asientos" fieldcode="idasiento" fieldtitle="numero" />
             </widget>
         </column>
         <column name="amount" display="right" order="150">
@@ -45,7 +45,7 @@
         </column>
         <column name="payment" title="method-payment" order="170">
             <widget type="select" fieldname="codpago" onclick="EditFormaPago">
-                <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="code" order="180">

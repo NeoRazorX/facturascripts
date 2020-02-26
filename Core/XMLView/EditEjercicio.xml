@@ -30,7 +30,7 @@
             </column>
             <column name="company" numcolumns="5" order="120">
                 <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
             <column name="start-date" numcolumns="3" order="130">
@@ -72,12 +72,12 @@
             </column>
             <column name="journal-closing" numcolumns="6" order="100">
                 <widget type="select" fieldname="iddiario-closing">
-                    <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
+                    <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="journal-opening" numcolumns="6" order="100">
                 <widget type="select" fieldname="iddiario-opening">
-                    <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
+                    <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="copy-subaccounts" numcolumns="12" order="200">

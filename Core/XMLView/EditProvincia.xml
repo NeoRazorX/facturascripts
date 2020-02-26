@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@
             </column>
             <column name="country" titleurl="ListPais" numcolumns="2" order="110">
                 <widget type="select" fieldname="codpais" icon="fas fa-globe-americas" onclick="EditPais" required="true">
-                    <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
+                    <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="province" order="120">

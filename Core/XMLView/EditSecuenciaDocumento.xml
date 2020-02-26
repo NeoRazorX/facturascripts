@@ -39,17 +39,17 @@
             </column>
             <column name="company" titleurl="ListEmpresa" numcolumns="3" order="120">
                 <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
             <column name="exercise" titleurl="ListEjercicio" numcolumns="3" order="130">
                 <widget type="select" fieldname="codejercicio" onclick="EditEjercicio">
-                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="serie" titleurl="ListSerie" numcolumns="3" order="140">
                 <widget type="select" fieldname="codserie" onclick="EditSerie" required="true">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="number" numcolumns="2" order="150">

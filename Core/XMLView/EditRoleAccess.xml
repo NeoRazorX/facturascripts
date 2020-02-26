@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,12 +26,12 @@
             </column>
             <column name="role" display="none" order="110">
                 <widget type="select" fieldname="codrole" required="true">
-                    <values source="roles" fieldcode="codrole" fieldtitle="descripcion"></values>
+                    <values source="roles" fieldcode="codrole" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="pagename" order="120">
                 <widget type="select" fieldname="pagename" required="true">
-                    <values source="pages" fieldcode="name" fieldtitle="name"></values>
+                    <values source="pages" fieldcode="name" fieldtitle="name" />
                 </widget>
             </column>
             <column name="allow-update" order="130">
@@ -53,7 +53,7 @@
         <group name="add-rol-access" title="rules" icon="fas fa-folder-plus">
             <column name="select-menu" title="menu">
                 <widget type="select" fieldname="menu" translate="true">
-                    <values source="pages" fieldcode="menu" fieldtitle="menu"></values>
+                    <values source="pages" fieldcode="menu" fieldtitle="menu" />
                 </widget>
             </column>
         </group>

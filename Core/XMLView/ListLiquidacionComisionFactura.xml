@@ -94,7 +94,7 @@
             </column>
             <column name="customer" numcolumns="12" order="110">
                 <widget type="autocomplete" fieldname="codcliente">
-                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
+                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre" />
                 </widget>
             </column>
         </group>

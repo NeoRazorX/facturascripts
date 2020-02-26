@@ -30,24 +30,24 @@
             </column>
             <column name="parent" description="desc-parent-family" numcolumns="4" order="120">
                 <widget type="select" fieldname="madre" onclick="EditFamilia">
-                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion" />
                 </widget>
             </column>
         </group>
         <group name="accounts" title="accounting" icon="fas fa-balance-scale" numcolumns="12">
             <column name="codsubcuentacom" title="subaccount-purchases" description="optional" order="100">
                 <widget type="autocomplete" fieldname="codsubcuentacom">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="codsubcuentaven" title="subaccount-sales" description="optional" order="110">
                 <widget type="autocomplete" fieldname="codsubcuentaven">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="codsubcuentairpcomf" title="subaccount-irpf" description="optional" order="120">
                 <widget type="autocomplete" fieldname="codsubcuentairpfcom">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>
             </column>
         </group>

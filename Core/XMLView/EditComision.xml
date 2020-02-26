@@ -27,7 +27,7 @@
             </column>
             <column name="agent" titleurl="ListAgente" order="110">
                 <widget type="select" fieldname="codagente" onclick="EditAgente">
-                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="commission" order="120">
@@ -40,22 +40,22 @@
         <group name="conditions" title="conditions" icon="fas fa-filter" numcolumns="12">
             <column name="company" order="100">
                 <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true" readonly="dinamic">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
             <column name="customer" description="optional" order="110">
                 <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente">
-                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"></values>
+                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="family" description="optional" order="120">
                 <widget type="select" fieldname="codfamilia" onclick="EditFamilia">
-                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"></values>
+                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="product" description="optional" order="130">
                 <widget type="autocomplete" fieldname="idproducto" onclick="EditProducto">
-                    <values source="productos" fieldcode="idproducto" fieldtitle="referencia"></values>
+                    <values source="productos" fieldcode="idproducto" fieldtitle="referencia" />
                 </widget>
             </column>
         </group>

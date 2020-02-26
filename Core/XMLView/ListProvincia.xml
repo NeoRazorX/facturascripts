@@ -32,7 +32,7 @@
         </column>
         <column name="country" display="right" order="130">
             <widget type="autocomplete" fieldname="codpais" onclick="EditPais">
-                <values source="paises" fieldcode="codpais" fieldtitle="nombre"></values>
+                <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="code" display="right" order="140">

@@ -29,7 +29,11 @@ use FacturaScripts\Core\Model\ReportBalance;
 class ListReportAccounting extends ListController
 {
 
-    private $companyList = null;
+    /**
+     *
+     * @var array
+     */
+    private $companyList;
 
     /**
      * Return the basic data for this page.
@@ -60,7 +64,7 @@ class ListReportAccounting extends ListController
      */
     protected function createViewsAmount($viewName = 'ListReportAmount')
     {
-        $this->addView($viewName, 'ReportAmount', 'amounts', 'fas fa-calculator');
+        $this->addView($viewName, 'ReportAmount', 'balance-amounts', 'fas fa-calculator');
         $this->addOrderBy($viewName, ['name'], 'name');
         $this->addOrderBy($viewName, ['idcompany', 'name'], 'company');
         $this->addSearchFields($viewName, ['name']);
@@ -104,9 +108,9 @@ class ListReportAccounting extends ListController
             $typeColumn->widget->setValuesFromArray(ReportBalance::typeList());
         }
 
-        $formatColumn = $this->views[$viewName]->columnForField('format');
+        $formatColumn = $this->views[$viewName]->columnForField('subtype');
         if ($formatColumn) {
-            $formatColumn->widget->setValuesFromArray(ReportBalance::formatList());
+            $formatColumn->widget->setValuesFromArray(ReportBalance::subtypeList());
         }
     }
 
@@ -117,9 +121,10 @@ class ListReportAccounting extends ListController
      */
     private function addCommonFilter($viewName)
     {
-        if ($this->companyList === null) {
+        if (empty($this->companyList)) {
             $this->companyList = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
         }
+
         $this->addFilterSelect($viewName, 'idcompany', 'company', 'idcompany', $this->companyList);
         $this->addFilterNumber($viewName, 'channel', 'channel', 'channel', '=');
     }

@@ -150,7 +150,7 @@ class EditCuenta extends EditController
 
         $request = $this->request->request->all();
         $params = [
-            'grouping' => ('YES' == $request['grouping']),
+            'grouped' => ('YES' == $request['grouped']),
             'channel' => $request['channel'],
             'account-from' => $account->codcuenta
         ];

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,7 +33,7 @@
             </column>
             <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal" required="true">
-                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"></values>
+                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal" />
                 </widget>
             </column>
             <column name="fiscal-number" numcolumns="2" order="140">
@@ -69,22 +69,22 @@
         <group name="comercial" title="commercial-terms" numcolumns="12">
             <column name="agent" numcolumns="3" titleurl="ListAgente" order="100">
                 <widget type="select" fieldname="codagente" onclick="EditAgente" icon="fas fa-user-tie">
-                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="rate" titleurl="ListTarifa" numcolumns="3" order="110">
                 <widget type="select" fieldname="codtarifa" onclick="EditTarifa">
-                    <values source="tarifas" fieldcode="codtarifa" fieldtitle="nombre"></values>
+                    <values source="tarifas" fieldcode="codtarifa" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="group" titleurl="ListCliente?activetab=ListGrupoClientes" numcolumns="3" order="120">
                 <widget type="select" fieldname="codgrupo" onclick="EditGrupoClientes">
-                    <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
+                    <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="serie" titleurl="ListSerie" numcolumns="3" order="130">
                 <widget type="select" fieldname="codserie" onclick="EditSerie">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="subaccount" titleurl="ListCuenta" numcolumns="3" order="140">
@@ -92,7 +92,7 @@
             </column>
             <column name="payment-method" titleurl="ListFormaPago" numcolumns="3" order="150">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"></values>
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="payment-days" description="desc-payment-days" numcolumns="3" order="160">
@@ -106,7 +106,7 @@
             </column>
             <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="180">
                 <widget type="select" fieldname="codretencion" onclick="EditRetencion">
-                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"></values>
+                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion" />
                 </widget>
             </column>
         </group>

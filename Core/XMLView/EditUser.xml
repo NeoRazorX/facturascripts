@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,27 +49,27 @@
         <group name="other" numcolumns="12">
             <column name="language" order="100">
                 <widget type="select" fieldname="langcode" icon="fas fa-language">
-                    <values></values>
+                    <values />
                 </widget>
             </column>
             <column name="homepage" order="110">
                 <widget type="select" fieldname="homepage" icon="fas fa-home">
-                    <values></values>
+                    <values />
                 </widget>
             </column>
             <column name="company" titleurl="ListEmpresa" level="99" order="120">
                 <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
             <column name="warehouse" titleurl="ListAlmacen" level="99" order="130">
                 <widget type="select" fieldname="codalmacen" icon="fas fa-warehouse" onclick="EditAlmacen" required="true">
-                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"></values>
+                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="agent" titleurl="ListAgente" level="99" order="140">
                 <widget type="select" fieldname="codagente" icon="fas fa-user-tie" onclick="EditAgente">
-                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre" />
                 </widget>
             </column>
         </group>

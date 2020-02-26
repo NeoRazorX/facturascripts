@@ -38,7 +38,7 @@
         </column>
         <column name="company" display="none" order="120">
             <widget type="select" fieldname="idempresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
             </widget>
         </column>
         <column name="exercise" order="130">
@@ -46,7 +46,7 @@
         </column>
         <column name="serie" order="140">
             <widget type="select" fieldname="codserie">
-                <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="number" display="right" order="150">

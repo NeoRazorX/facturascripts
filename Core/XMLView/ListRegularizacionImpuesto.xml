@@ -26,7 +26,7 @@
         </column>
         <column name="company" display="none" order="100">
             <widget type="select" fieldname="idempresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
             </widget>
         </column>
         <column name="fiscal-exercise" order="100">
@@ -48,7 +48,7 @@
         </column>
         <column name="id-accounting" title="accounting-entry" order="140">
             <widget type="autocomplete" fieldname="idasiento" onclick="EditAsiento">
-                <values source="asientos" fieldcode="idasiento" fieldtitle="numero"></values>
+                <values source="asientos" fieldcode="idasiento" fieldtitle="numero" />
             </widget>
         </column>
         <column name="accounting-date" order="150">

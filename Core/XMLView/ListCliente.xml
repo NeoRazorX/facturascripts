@@ -47,12 +47,12 @@
         </column>
         <column name="rate" display="none" order="175">
             <widget type="select" fieldname="codtarifa" onclick="EditTarifa">
-                <values source="tarifas" fieldcode="codtarifa" fieldtitle="nombre"></values>
+                <values source="tarifas" fieldcode="codtarifa" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="group" order="180">
             <widget type="select" fieldname="codgrupo" onclick="EditGrupoClientes">
-                <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre"></values>
+                <values source="gruposclientes" fieldcode="codgrupo" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="observations" order="190">
@@ -72,7 +72,7 @@
         </column>
         <column name="retention" display="none" order="240">
             <widget type="select" fieldname="codretencion" onclick="EditRetencion">
-                <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"></values>
+                <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="blocked" display="none" order="250">

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -96,8 +96,8 @@ class ProfitAndLoss extends AccountingBase
         $dateFromPrev = $this->dataBase->var2str($this->dateFromPrev);
         $dateToPrev = $this->dataBase->var2str($this->dateToPrev);
 
-        $entryJoin = 'asto.idempresa = ' . $this->exercise->idempresa
-            . ' AND asto.operacion <> \'' . Asiento::OPERATION_CLOSING . '\''
+        $entryJoin = 'asto.idempresa = ' . $this->dataBase->var2str($this->exercise->idempresa)
+            . ' AND (asto.operacion IS NULL OR asto.operacion != ' . $this->dataBase->var2str(Asiento::OPERATION_CLOSING) . ')'
             . ' AND asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo;
 
         $sql = 'SELECT cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
@@ -117,6 +117,7 @@ class ProfitAndLoss extends AccountingBase
     /**
      *
      * @param array $params
+     *
      * @return string
      */
     protected function getDataWhere(array $params = [])
@@ -125,13 +126,14 @@ class ProfitAndLoss extends AccountingBase
 
         $channel = $params['channel'] ?? '';
         if (!empty($channel)) {
-            $where .= ' AND asto.canal = ' . $channel;
+            $where .= ' AND asto.canal = ' . $this->dataBase->var2str($channel);
         }
 
         $subaccountFrom = $params['subaccount-from'] ?? '';
         $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
-        if (!empty($subaccountFrom) || (!empty($subaccountTo))) {
-            $where .= ' AND pa.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom) . ' AND ' . $this->dataBase->var2str($subaccountTo);
+        if (!empty($subaccountFrom) && !empty($subaccountTo)) {
+            $where .= ' AND pa.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom)
+                . ' AND ' . $this->dataBase->var2str($subaccountTo);
         }
 
         return $where;
@@ -151,15 +153,17 @@ class ProfitAndLoss extends AccountingBase
             return;
         }
 
-        if (!array_key_exists($index, $balance)) {
-            $balance[$index] = [
-                'descripcion' => $index,
-                'saldo' => $linea['saldo'],
-                'saldoprev' => $linea['saldoprev'],];
-        } else {
+        if (\array_key_exists($index, $balance)) {
             $balance[$index]['saldo'] += $linea['saldo'];
             $balance[$index]['saldoprev'] += $linea['saldoprev'];
+            return;
         }
+
+        $balance[$index] = [
+            'descripcion' => $index,
+            'saldo' => $linea['saldo'],
+            'saldoprev' => $linea['saldoprev']
+        ];
     }
 
     /**

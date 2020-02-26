@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,17 +24,17 @@
         <group name="data" numcolumns="12">
             <column name="company" titleurl="ListEmpresa" order="100">
                 <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
             <column name="serie" titleurl="ListSerie" order="110">
                 <widget type="select" fieldname="codserie" onclick="EditSerie" required="true">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"></values>
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="agent" titleurl="ListAgente" order="120">
                 <widget type="select" fieldname="codagente" onclick="EditAgente" required="true">
-                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="date" order="130">
@@ -42,7 +42,7 @@
             </column>
             <column name="invoice" title="generated-invoice" order="140">
                 <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaProveedor" readonly="true">
-                    <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo"></values>
+                    <values source="facturasprov" fieldcode="idfactura" fieldtitle="codigo" />
                 </widget>
             </column>
             <column name="amount" order="150">

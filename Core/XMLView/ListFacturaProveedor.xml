@@ -46,7 +46,7 @@
         </column>
         <column name="status" display="none" order="160">
             <widget type="autocomplete" fieldname="idestado">
-                <values source="estados_documentos" fieldcode="idestado" fieldtitle="nombre"></values>
+                <values source="estados_documentos" fieldcode="idestado" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="email-sent" display="none" order="170">

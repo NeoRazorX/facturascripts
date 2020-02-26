@@ -29,7 +29,7 @@
         </column>
         <column name="rate" order="120">
             <widget type="select" fieldname="codtarifa" onclick="EditTarifa">
-                <values source="tarifas" fieldcode="codtarifa" fieldtitle="nombre"></values>
+                <values source="tarifas" fieldcode="codtarifa" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="subaccount" order="130">

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,7 +53,7 @@ class Ledger extends AccountingBase
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
-        $grouped =  (bool) $params['grouped'] ?? false;
+        $grouped = (bool) $params['grouped'] ?? false;
 
         $results = $grouped ? $this->getDataGrouped($params) : $this->getData($params);
         if (empty($results)) {
@@ -64,7 +64,7 @@ class Ledger extends AccountingBase
         $ledgerAccount = [];
         /// Process each line of the results
         foreach ($results as $line) {
-            $account = ($grouped) ? $line['codcuenta'] : 0;
+            $account = $grouped ? $line['codcuenta'] : 0;
             if ($grouped) {
                 $this->processHeader($ledgerAccount[$account], $line);
                 $ledger[$account][0] = $this->processLine($ledgerAccount[$account], $grouped);
@@ -138,7 +138,6 @@ class Ledger extends AccountingBase
             . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
             . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
             . ' INNER JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
-
             . ' WHERE ' . $this->getDataWhere($params)
             . ' GROUP BY subcuentas.codcuenta, cuentas.descripcion, partidas.codsubcuenta, subcuentas.descripcion'
             . ' ORDER BY subcuentas.codcuenta, partidas.codsubcuenta ASC';
@@ -152,8 +151,8 @@ class Ledger extends AccountingBase
      */
     protected function getDataWhere(array $params = [])
     {
-        $where = 'asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom) . ' AND ' . $this->dataBase->var2str($this->dateTo);
-        $where .= ' AND asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio);
+        $where = 'asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom)
+            . ' AND ' . $this->dataBase->var2str($this->dateTo);
 
         $channel = $params['channel'] ?? '';
         if (!empty($channel)) {
@@ -163,13 +162,15 @@ class Ledger extends AccountingBase
         $subaccountFrom = $params['subaccount-from'] ?? '';
         $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
         if (!empty($subaccountFrom) || (!empty($subaccountTo))) {
-            $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom) . ' AND ' . $this->dataBase->var2str($subaccountTo);
+            $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom)
+                . ' AND ' . $this->dataBase->var2str($subaccountTo);
         }
 
         $accountFrom = $params['account-from'] ?? '';
         $accountTo = $params['account-to'] ?? $accountFrom;
         if (!empty($accountFrom) || (!empty($accountTo))) {
-            $where .= ' AND subcuentas.codcuenta BETWEEN ' . $this->dataBase->var2str($accountFrom) . ' AND ' . $this->dataBase->var2str($accountTo);
+            $where .= ' AND subcuentas.codcuenta BETWEEN ' . $this->dataBase->var2str($accountFrom)
+                . ' AND ' . $this->dataBase->var2str($accountTo);
         }
 
         return $where;

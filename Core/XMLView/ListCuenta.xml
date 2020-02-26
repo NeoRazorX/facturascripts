@@ -35,12 +35,12 @@
         </column>
         <column name="special-account" order="130">
             <widget type="autocomplete" fieldname="codcuentaesp" onclick="EditCuentaEspecial">
-                <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"></values>
+                <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="parent-account" order="140">
             <widget type="autocomplete" fieldname="parent_idcuenta">
-                <values source="cuentas" fieldcode="idcuenta" fieldtitle="descripcion"></values>
+                <values source="cuentas" fieldcode="idcuenta" fieldtitle="descripcion" />
             </widget>
         </column>
     </columns>

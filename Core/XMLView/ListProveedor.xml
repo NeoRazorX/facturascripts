@@ -56,7 +56,7 @@
         </column>
         <column name="retention" display="none" order="210">
             <widget type="select" fieldname="codretencion" onclick="EditRetencion">
-                <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"></values>
+                <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="blocked" display="none" order="220">

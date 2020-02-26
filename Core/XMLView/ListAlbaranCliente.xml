@@ -46,7 +46,7 @@
         </column>
         <column name="status" display="right" order="160">
             <widget type="autocomplete" fieldname="idestado">
-                <values source="estados_documentos" fieldcode="idestado" fieldtitle="nombre"></values>
+                <values source="estados_documentos" fieldcode="idestado" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="email-sent" display="center" order="170">
@@ -83,7 +83,7 @@
         </column>
         <column name="agent" display="none" order="270">
             <widget type="autocomplete" fieldname="codagente">
-                <values source="agentes" fieldcode="codagente" fieldtitle="nombre"></values>
+                <values source="agentes" fieldcode="codagente" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="commission" display="none" order="280">

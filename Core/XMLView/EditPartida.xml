@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,18 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
- * Definición inicial para el controlador EditPartida
- *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
-
 <view>
     <columns>
         <group name="master">
             <column name="exercise" numcolumns="2" order="100">
                 <widget type="select" fieldname="codejercicio" readonly="true">
-                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"></values>
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre" />
                 </widget>
             </column>
             <column name="date" numcolumns="2" order="100">
@@ -52,17 +49,17 @@
             </column>
             <column name="subaccount" numcolumns="4" order="105">
                 <widget type="autocomplete" fieldname="codsubcuenta" required="true">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="offsetting" numcolumns="4" order="110">
                 <widget type="autocomplete" fieldname="codcontrapartida" required="true">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="description" order="115">
                 <widget type="autocomplete" fieldname="concepto" required="true">
-                    <values source="conceptos_partidas" fieldcode="descripcion" fieldtitle="codconcepto" strict="false"></values>
+                    <values source="conceptos_partidas" fieldcode="descripcion" fieldtitle="codconcepto" strict="false" />
                 </widget>
             </column>
             <column name="debit" numcolumns="3" display="right" order="120">

@@ -38,7 +38,7 @@
         </column>
         <column name="user" order="150">
             <widget type="select" fieldname="nick" required="true">
-                <values source="users" fieldcode="nick" fieldtitle="nick"></values>
+                <values source="users" fieldcode="nick" fieldtitle="nick" />
             </widget>
         </column>
         <column name="created" display="right" order="160">

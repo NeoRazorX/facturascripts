@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@
             </column>
             <column name="exercise" titleurl="ListEjercicio" order="110">
                 <widget type="select" fieldname="codejercicio" readonly="dinamic" required="true">
-                    <values></values>
+                    <values />
                 </widget>
             </column>
             <column name="period" order="120">
@@ -46,26 +46,26 @@
             </column>
             <column name="company" order="150">
                 <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" readonly="true" required="true">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"></values>
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
         </group>
         <group name="accounts" title="accounts" numcolumns="6" icon="fas fa-th-list">
             <column name="tax-credit-account" order="100">
                 <widget type="autocomplete" fieldname="codsubcuentaacr">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>
             </column>
             <column name="tax-debit-account" order="110">
                 <widget type="autocomplete" fieldname="codsubcuentadeu">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"></values>
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>
             </column>
         </group>
         <group name="accounting" title="accounting-entry" icon="fas fa-book">
             <column name="accounting-entry" order="100">
                 <widget type="autocomplete" fieldname="idasiento" onclick="EditAsiento" readonly="true">
-                    <values source="asientos" fieldcode="idasiento" fieldtitle="numero"></values>
+                    <values source="asientos" fieldcode="idasiento" fieldtitle="numero" />
                 </widget>
             </column>
             <column name="accounting-date" order="110">

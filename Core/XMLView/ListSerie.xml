@@ -29,7 +29,7 @@
         </column>
         <column name="journal" order="120">
             <widget type="select" fieldname="iddiario">
-                <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"></values>
+                <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion" />
             </widget>
         </column>
         <column name="channel" order="130">
