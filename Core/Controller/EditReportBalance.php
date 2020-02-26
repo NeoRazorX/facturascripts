@@ -22,6 +22,7 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditReportAccounting;
 use FacturaScripts\Core\Model\ReportBalance;
 use FacturaScripts\Dinamic\Lib\Accounting\BalanceSheet;
+use FacturaScripts\Dinamic\Lib\Accounting\IncomeAndExpenditure;
 use FacturaScripts\Dinamic\Lib\Accounting\ProfitAndLoss;
 
 /**
@@ -81,6 +82,11 @@ class EditReportBalance extends EditReportAccounting
                 $profitAndLoss = new ProfitAndLoss();
                 $profitAndLoss->setExerciseFromDate($model->idcompany, $model->startdate);
                 return $profitAndLoss->generate($model->startdate, $model->enddate, $params);
+
+            case ReportBalance::TYPE_INCOME:
+                $incomeAndExpenditure = new IncomeAndExpenditure();
+                $incomeAndExpenditure->setExerciseFromDate($model->idcompany, $model->startdate);
+                return $incomeAndExpenditure->generate($model->startdate, $model->enddate, $params);
         }
 
         return [];
