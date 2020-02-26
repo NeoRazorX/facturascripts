@@ -39,12 +39,10 @@
                     <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
-        </group>
-        <group name="date" numcolumns="12">
-            <column name="start-date" numcolumns="2" order="100">
+            <column name="from-date" order="210">
                 <widget type="date" fieldname="startdate" required="true" />
             </column>
-            <column name="end-date" numcolumns="2" order="110">
+            <column name="until-date" order="220">
                 <widget type="date" fieldname="enddate" required="true" />
             </column>
             <column name="channel" numcolumns="2" order="120">

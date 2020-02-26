@@ -37,20 +37,20 @@
             </column>
         </group>
         <group name="date" numcolumns="4">
-            <column name="start-date" order="200">
+            <column name="from-date" order="200">
                 <widget type="date" fieldname="startdate" required="true"/>
             </column>
-            <column name="end-date" order="210">
+            <column name="until-date" order="210">
                 <widget type="date" fieldname="enddate" required="true" />
             </column>
         </group>
         <group name="other" numcolumns="8" valign="bottom">
-            <column name="start-subaccount" order="300">
+            <column name="from-subaccount" order="300">
                 <widget type="autocomplete" fieldname="startcodsubaccount" strict="false">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="end-subaccount" order="310">
+            <column name="until-subaccount" order="310">
                 <widget type="autocomplete" fieldname="endcodsubaccount" strict="false">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>
