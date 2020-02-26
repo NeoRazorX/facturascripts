@@ -78,6 +78,12 @@
             <column name="ventasinstock" title="allow-sale-without-stock" numcolumns="3" order="200">
                 <widget type="checkbox" fieldname="ventasinstock" />
             </column>
+            <column name="price-policy" title="price-update-policy" numcolumns="3" order="200">
+                <widget type="select" fieldname="politicaprecios">
+                    <values title="last-purchase-price">last-price</values>
+                    <values title="average-purchase-price">average-price</values>
+                </widget>
+            </column>
         </group>
         <group name="numericformat" title="numeric-formats" icon="fas fa-info-circle" numcolumns="12">
             <column name="decimals" numcolumns="3" order="100">
