@@ -83,8 +83,7 @@ class ProfitAndLoss extends AccountingBase
         }
 
         /// every page is a table
-        $pages = [$this->calcProffitAndLoss($data)];
-        return $pages;
+        return [$this->calcProffitAndLoss($data)];
     }
 
     /**
@@ -103,9 +102,7 @@ class ProfitAndLoss extends AccountingBase
             . ' AND (asto.operacion IS NULL OR asto.operacion = ' . $this->dataBase->var2str(Asiento::OPERATION_OPENING) . ')'
             . ' AND asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo;
 
-        $balanceSource = $params['subtype'] == ReportBalance::SUBTYPE_ABBREVIATED
-            ? 'balancescuentasabreviadas'
-            : 'balancescuentas';
+        $balanceSource = $params['subtype'] == ReportBalance::SUBTYPE_ABBREVIATED ? 'balancescuentasabreviadas' : 'balancescuentas';
 
         $sql = 'SELECT cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
             . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFrom . ' AND ' . $dateTo . ' THEN pa.debe - pa.haber ELSE 0 END) saldo,'
@@ -185,7 +182,6 @@ class ProfitAndLoss extends AccountingBase
         $line['descripcion'] = $this->toolBox()->utils()->fixHtml($line['descripcion']);
         $line['saldo'] = $this->toolBox()->coins()->format($line['saldo'], FS_NF0, '');
         $line['saldoprev'] = $this->toolBox()->coins()->format($line['saldoprev'], FS_NF0, '');
-
         return $line;
     }
 
