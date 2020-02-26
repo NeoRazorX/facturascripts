@@ -4,6 +4,7 @@
         "codimpuesto": "IVA21",
         "codpago": "CONT",
         "codserie": "A",
+        "codserierec": "R",
         "tipoidfiscal": "NIF"
     },
     "email": {
