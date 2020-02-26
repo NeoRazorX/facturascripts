@@ -26,8 +26,9 @@ namespace FacturaScripts\Core\Model;
 class ReportBalance extends Base\ReportAccounting
 {
 
-    const TYPE_SHEET = 'balance-sheet';
+    const TYPE_SHEET  = 'balance-sheet';
     const TYPE_PROFIT = 'profit-and-loss';
+    const TYPE_INCOME = 'income-and-expenses';
     const SUBTYPE_ABBREVIATED = 'abbreviated';
     const SUBTYPE_NORMAL = 'normal';
 
@@ -72,7 +73,8 @@ class ReportBalance extends Base\ReportAccounting
         $i18n = self::toolBox()->i18n();
         return [
             ['value' => self::TYPE_SHEET, 'title' => $i18n->trans(self::TYPE_SHEET)],
-            ['value' => self::TYPE_PROFIT, 'title' => $i18n->trans(self::TYPE_PROFIT)]
+            ['value' => self::TYPE_PROFIT, 'title' => $i18n->trans(self::TYPE_PROFIT)],
+            ['value' => self::TYPE_INCOME, 'title' => $i18n->trans(self::TYPE_INCOME)]
         ];
     }
 
