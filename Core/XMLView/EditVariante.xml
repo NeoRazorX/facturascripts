@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,27 +25,33 @@
             <column name="product" display="none" order="100">
                 <widget type="text" fieldname="idproducto" required="true" />
             </column>
-            <column name="reference" numcolumns="4" order="110">
+            <column name="reference" order="110">
                 <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag" required="true" />
             </column>
-            <column name="attribute-value-1" titleurl="ListAtributo" numcolumns="4" order="120">
-                <widget type="select" fieldname="idatributovalor1" onclick="EditAtributo">
-                </widget>
+            <column name="attribute-value-1" titleurl="ListAtributo" order="120">
+                <widget type="select" fieldname="idatributovalor1" onclick="EditAtributo" />
             </column>
-            <column name="attribute-value-2" titleurl="ListAtributo" numcolumns="4" order="130">
-                <widget type="select" fieldname="idatributovalor2" onclick="EditAtributo">
-                </widget>
+            <column name="attribute-value-2" titleurl="ListAtributo" order="130">
+                <widget type="select" fieldname="idatributovalor2" onclick="EditAtributo" />
             </column>
-            <column name="barcode" numcolumns="3" order="140">
+            <column name="attribute-value-3" titleurl="ListAtributo" display="none" order="140">
+                <widget type="select" fieldname="idatributovalor3" onclick="EditAtributo" />
+            </column>
+            <column name="attribute-value-4" titleurl="ListAtributo" display="none" order="150">
+                <widget type="select" fieldname="idatributovalor4" onclick="EditAtributo" />
+            </column>
+        </group>
+        <group name="more" numcolumns="12">
+            <column name="barcode" numcolumns="3" order="100">
                 <widget type="text" fieldname="codbarras" icon="fas fa-barcode" />
             </column>
-            <column name="price" display="right" numcolumns="3" order="150">
-                <widget type="money" decimal="2" fieldname="precio" />
-            </column>
-            <column name="cost-price" display="right" numcolumns="3" order="160">
+            <column name="cost-price" display="right" order="110">
                 <widget type="money" decimal="2" fieldname="coste" />
             </column>
-            <column name="stock" display="right" numcolumns="3" order="170">
+            <column name="price" display="right" order="120">
+                <widget type="money" decimal="2" fieldname="precio" />
+            </column>
+            <column name="stock" display="right" order="130">
                 <widget type="number" fieldname="stockfis" readonly="true"/>
             </column>
         </group>

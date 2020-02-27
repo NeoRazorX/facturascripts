@@ -24,6 +24,14 @@
         <type>integer</type>
     </column>
     <column>
+        <name>idatributovalor3</name>
+        <type>integer</type>
+    </column>
+    <column>
+        <name>idatributovalor4</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>idproducto</name>
         <type>integer</type>
         <null>NO</null>
@@ -59,6 +67,14 @@
     <constraint>
         <name>ca_variantes_atributo2</name>
         <type>FOREIGN KEY (idatributovalor2) REFERENCES atributos_valores (id) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_variantes_atributo3</name>
+        <type>FOREIGN KEY (idatributovalor3) REFERENCES atributos_valores (id) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_variantes_atributo4</name>
+        <type>FOREIGN KEY (idatributovalor4) REFERENCES atributos_valores (id) ON DELETE SET NULL ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>ca_variantes_productos</name>
