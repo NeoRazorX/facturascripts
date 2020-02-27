@@ -53,6 +53,7 @@
 "0301";"Cuenta de capital";""
 "030101";"Capital autorizado";""
 "030102";"Perdidas y Ganancias";""
+"03010201";"Subcuenta de Pérdidas y Ganancias";"PYG"
 "04";"Ingresos";""
 "0401";"Ventas";""
 "040101";"Mercaderias";"VENTAS"
