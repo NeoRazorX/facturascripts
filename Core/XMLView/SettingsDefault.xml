@@ -65,23 +65,14 @@
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="codimpuesto" title="tax" numcolumns="3" order="180">
+            <column name="tax" numcolumns="3" order="180">
                 <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="codretencion" title="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="190">
+            <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="190">
                 <widget type="select" fieldname="codretencion" onclick="EditRetencion">
                     <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion" />
-                </widget>
-            </column>
-            <column name="ventasinstock" title="allow-sale-without-stock" numcolumns="3" order="200">
-                <widget type="checkbox" fieldname="ventasinstock" />
-            </column>
-            <column name="price-policy" title="price-update-policy" numcolumns="3" order="200">
-                <widget type="select" fieldname="politicaprecios">
-                    <values title="last-purchase-price">last-price</values>
-                    <values title="average-purchase-price">average-price</values>
                 </widget>
             </column>
         </group>
@@ -91,24 +82,35 @@
                     <values start="0" end="6" step="1" />
                 </widget>
             </column>
-            <column name="decimal_separator" title="decimal-separator" numcolumns="3" order="110">
+            <column name="decimal-separator" numcolumns="3" order="110">
                 <widget type="select" fieldname="decimal_separator" icon="fas fa-calculator" required="true">
                     <values title=",">,</values>
                     <values title=".">.</values>
                 </widget>
             </column>
-            <column name="thousands_separator" title="thousands-separator" numcolumns="3" order="120">
+            <column name="thousands-separator" numcolumns="3" order="120">
                 <widget type="select" fieldname="thousands_separator" icon="fas fa-calculator" required="true">
                     <values title=",">,</values>
                     <values title=".">.</values>
                     <values title=" "> </values>
                 </widget>
             </column>
-            <column name="currency_position" title="currency-position" numcolumns="3" order="130">
+            <column name="currency-position" numcolumns="3" order="130">
                 <widget type="select" fieldname="currency_position" icon="fas fa-money-bill-alt" required="true">
                     <values title="$ 123">left</values>
                     <values title="123 $">right</values>
                 </widget>
+            </column>
+        </group>
+        <group name="products" title="products" icon="fas fa-cubes" valign="bottom" numcolumns="12">
+            <column name="cost-price-policy" numcolumns="3" order="100">
+                <widget type="select" fieldname="costpricepolicy" translate="true">
+                    <values title="last-purchase-price">last-price</values>
+                    <values title="average-purchase-price">average-price</values>
+                </widget>
+            </column>
+            <column name="allow-sale-without-stock" numcolumns="3" order="110">
+                <widget type="checkbox" fieldname="ventasinstock" />
             </column>
         </group>
         <group name="advanced" title="advanced" icon="fas fa-database" valign="bottom" numcolumns="12">
@@ -117,7 +119,7 @@
                     <values source="pages" fieldcode="name" fieldtitle="name" />
                 </widget>
             </column>
-            <column name="item_limit" numcolumns="3" order="110">
+            <column name="item-limit" numcolumns="3" order="110">
                 <widget type="number" fieldname="item_limit" icon="fas fa-list" required="true" />
             </column>
             <column name="table-size" numcolumns="3" order="120">

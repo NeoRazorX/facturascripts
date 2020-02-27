@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,6 +17,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
+use FacturaScripts\Dinamic\Model\Producto as DinProducto;
+use FacturaScripts\Dinamic\Model\Stock as DinStock;
 
 /**
  * Define method and attributes of table variantes.
@@ -169,7 +173,7 @@ class Variante extends Base\ModelClass
      */
     protected function getAttributeDescription($idatributoval1, $idatributoval2, $description = '', $separator1 = "\n", $separator2 = ', ')
     {
-        $atributeValue = new AtributoValor();
+        $atributeValue = new DinAtributoValor();
         $extra = [];
         foreach ([$idatributoval1, $idatributoval2] as $id) {
             if (!empty($id) && $atributeValue->loadFromCode($id)) {
@@ -179,10 +183,10 @@ class Variante extends Base\ModelClass
 
         /// compose text
         if (empty($description)) {
-            return implode($separator2, $extra);
+            return \implode($separator2, $extra);
         }
 
-        return empty($extra) ? $description : implode($separator1, [$description, implode($separator2, $extra)]);
+        return empty($extra) ? $description : \implode($separator1, [$description, \implode($separator2, $extra)]);
     }
 
     /**
@@ -192,7 +196,7 @@ class Variante extends Base\ModelClass
      */
     public function getProducto()
     {
-        $producto = new Producto();
+        $producto = new DinProducto();
         $producto->loadFromCode($this->idproducto);
         return $producto;
     }
@@ -206,8 +210,8 @@ class Variante extends Base\ModelClass
      */
     public function install()
     {
-        new Producto();
-        new AtributoValor();
+        new DinProducto();
+        new DinAtributoValor();
 
         return parent::install();
     }
@@ -286,7 +290,7 @@ class Variante extends Base\ModelClass
     {
         switch ($type) {
             case 'edit':
-                return is_null($this->idproducto) ? 'EditProducto' : 'EditProducto?code=' . $this->idproducto;
+                return \is_null($this->idproducto) ? 'EditProducto' : 'EditProducto?code=' . $this->idproducto;
 
             case 'list':
                 return $list . 'Producto';
@@ -310,7 +314,7 @@ class Variante extends Base\ModelClass
         if (parent::saveInsert($values)) {
             /// set new stock?
             if ($this->stockfis != 0.0) {
-                $stock = new Stock();
+                $stock = new DinStock();
                 $stock->cantidad = $this->stockfis;
                 $stock->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
                 $stock->idproducto = $this->idproducto;
