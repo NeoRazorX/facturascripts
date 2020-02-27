@@ -52,11 +52,11 @@
                 <values source="atributos_valores" fieldcode="id" fieldtitle="descripcion" />
             </widget>
         </column>
-        <column name="price" display="right" order="150">
-            <widget type="money" fieldname="precio" />
-        </column>
-        <column name="cost-price" display="none" order="160">
+        <column name="cost-price" display="none" order="150">
             <widget type="money" fieldname="coste" />
+        </column>
+        <column name="price" display="right" order="160">
+            <widget type="money" fieldname="precio" />
         </column>
         <column name="stock" display="right" order="170">
             <widget type="number" fieldname="stockfis"/>
