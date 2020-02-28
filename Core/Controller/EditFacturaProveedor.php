@@ -278,6 +278,8 @@ class EditFacturaProveedor extends PurchaseDocumentController
                     $this->redirect($doc->url());
                     return true;
                 }
+
+                $doc->delete();
             }
         }
 

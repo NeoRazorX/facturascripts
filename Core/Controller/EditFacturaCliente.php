@@ -277,6 +277,8 @@ class EditFacturaCliente extends SalesDocumentController
                     $this->redirect($doc->url());
                     return true;
                 }
+
+                $doc->delete();
             }
         }
 

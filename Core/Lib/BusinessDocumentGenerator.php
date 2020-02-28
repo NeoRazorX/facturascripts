@@ -37,9 +37,9 @@ class BusinessDocumentGenerator
      * @var array
      */
     public $excludeFields = [
-        'codejercicio', 'codigo', 'fecha', 'femail',
-        'hora', 'idestado', 'neto', 'netosindto', 'numero', 'total',
-        'totalirpf', 'totaliva', 'totalrecargo',
+        'codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora',
+        'idasiento', 'idestado', 'idfacturarect', 'neto', 'netosindto',
+        'numero', 'pagada', 'total', 'totalirpf', 'totaliva', 'totalrecargo'
     ];
 
     /**
@@ -103,11 +103,11 @@ class BusinessDocumentGenerator
             /// recalculate totals on new document
             $tool = new BusinessDocumentTools();
             $tool->recalculate($newDoc);
-            $newDoc->save();
-
-            /// add to last doc list
-            $this->lastDocs[] = $newDoc;
-            return true;
+            if ($newDoc->save()) {
+                /// add to last doc list
+                $this->lastDocs[] = $newDoc;
+                return true;
+            }
         }
 
         if ($newDoc->exists()) {
@@ -119,7 +119,7 @@ class BusinessDocumentGenerator
 
     /**
      * 
-     * @return array
+     * @return BusinessDocument[]
      */
     public function getLastDocs()
     {
