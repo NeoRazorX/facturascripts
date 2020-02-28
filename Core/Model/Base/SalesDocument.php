@@ -340,6 +340,36 @@ abstract class SalesDocument extends TransformerDocument
 
     /**
      * 
+     * @param string $field
+     *
+     * @return bool
+     */
+    protected function onChange($field)
+    {
+        if (!parent::onChange($field)) {
+            return false;
+        }
+
+        switch ($field) {
+            case 'idcontactofact':
+                $contact = new Contacto();
+                if ($contact->loadFromCode($this->idcontactofact)) {
+                    $this->apartado = $contact->apartado;
+                    $this->ciudad = $contact->ciudad;
+                    $this->codpais = $contact->codpais;
+                    $this->codpostal = $contact->codpostal;
+                    $this->direccion = $contact->direccion;
+                    $this->provincia = $contact->provincia;
+                    return true;
+                }
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 
      * @param Contacto $subject
      *
      * @return bool
@@ -420,7 +450,7 @@ abstract class SalesDocument extends TransformerDocument
      */
     protected function setPreviousData(array $fields = [])
     {
-        $more = ['codcliente'];
+        $more = ['codcliente', 'idcontactofact'];
         parent::setPreviousData(array_merge($more, $fields));
     }
 }
