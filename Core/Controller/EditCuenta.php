@@ -223,7 +223,7 @@ class EditCuenta extends EditController
         if (isset($columnFormat)) {
             $values = [];
             foreach ($this->exportManager->options() as $key => $options) {
-                $values[] = [ 'title' => $options['description'], 'value' => $key ];
+                $values[] = ['title' => $options['description'], 'value' => $key];
             }
             $columnFormat->widget->setValuesFromArray($values, true);
         }

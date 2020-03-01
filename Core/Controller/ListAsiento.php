@@ -81,7 +81,7 @@ class ListAsiento extends ListController
 
         $selectChannel = $this->codeModel->all('asientos', 'canal', 'canal');
         $this->addFilterSelect($viewName, 'canal', 'channel', 'canal', $selectChannel);
-        
+
         $this->addFilterCheckbox($viewName, 'editable');
 
         /// buttons

@@ -123,7 +123,7 @@ class ListProveedor extends ListController
 
         $paymentMethods = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
         $this->addFilterSelect($viewName, 'codpago', 'payment-methods', 'codpago', $paymentMethods);
-        
+
         $vatRegimes = $this->codeModel->all('proveedores', 'regimeniva', 'regimeniva');
         $this->addFilterSelect($viewName, 'regimeniva', 'vat-regime', 'regimeniva', $vatRegimes);
     }
