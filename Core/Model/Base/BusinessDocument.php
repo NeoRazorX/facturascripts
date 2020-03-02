@@ -391,8 +391,15 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $utils = $this->toolBox()->utils();
         $this->observaciones = $utils->noHtml($this->observaciones);
 
+        /// check discounts
+        /// TODO: remove after version 2020.6
+        foreach (['dtopor1', 'dtopor2'] as $dtoField) {
+            $this->{$dtoField} = (float) $this->{$dtoField};
+        }
+
         /// check total
-        if (!$utils->floatcmp($this->total, $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo, FS_NF0, true)) {
+        $total = $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo;
+        if (!$utils->floatcmp($this->total, $total, \FS_NF0, true)) {
             $this->toolBox()->i18nLog()->error('bad-total-error');
             return false;
         }
@@ -402,7 +409,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
          * or convert amounts in several currencies. For this reason we need
          * many decimals.
          */
-        $this->totaleuros = empty($this->tasaconv) ? 0 : round($this->total / $this->tasaconv, 5);
+        $this->totaleuros = empty($this->tasaconv) ? 0 : \round($this->total / $this->tasaconv, 5);
 
         return parent::test();
     }
@@ -450,7 +457,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
             'codalmacen', 'coddivisa', 'codpago', 'codserie',
             'fecha', 'hora', 'idempresa', 'total'
         ];
-        parent::setPreviousData(array_merge($more, $fields));
+        parent::setPreviousData(\array_merge($more, $fields));
     }
 
     /**
