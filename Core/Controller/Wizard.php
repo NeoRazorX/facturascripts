@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -273,6 +273,7 @@ class Wizard extends Controller
         $this->empresa->provincia = $this->request->request->get('provincia', '');
         $this->empresa->telefono1 = $this->request->request->get('telefono1', '');
         $this->empresa->telefono2 = $this->request->request->get('telefono2', '');
+        $this->empresa->tipoidfiscal = $appSettings->get('default', 'tipoidfiscal');
         $this->empresa->save();
 
         /// assignes warehouse?
