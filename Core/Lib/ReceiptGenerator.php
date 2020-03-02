@@ -71,7 +71,7 @@ class ReceiptGenerator
             }
         }
 
-        $invoice->pagada = $paidAmount == $invoice->total;
+        $invoice->pagada = \round($paidAmount, \FS_NF0) == \round($invoice->total, \FS_NF0);
     }
 
     /**
