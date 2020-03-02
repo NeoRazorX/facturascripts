@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Dinamic\Model;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -229,6 +230,36 @@ class Wizard extends Controller
     }
 
     /**
+     * Loads the default accounting plan. If there is one.
+     * 
+     * @param string $codpais
+     *
+     * @return bool
+     */
+    private function loadDefaultAccountingPlan(string $codpais)
+    {
+        /// Is there a default accounting plan?
+        $filePath = \FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
+        if (!file_exists($filePath)) {
+            return false;
+        }
+
+        /// Does an accounting plan already exist?
+        $cuenta = new Model\Cuenta();
+        if ($cuenta->count() > 0) {
+            return false;
+        }
+
+        $exerciseModel = new Model\Ejercicio();
+        foreach ($exerciseModel->all() as $exercise) {
+            $planImport = new AccountingPlanImport();
+            return $planImport->importCSV($filePath, $exercise->codejercicio);
+        }
+
+        return false;
+    }
+
+    /**
      * Set default AppSettings based on codpais
      *
      * @param string $codpais
@@ -373,6 +404,8 @@ class Wizard extends Controller
         if ('' !== $email && !$this->saveEmail($email)) {
             return;
         }
+
+        $this->loadDefaultAccountingPlan($codpais);
 
         /// change user homepage
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : 'ListFacturaCliente';
