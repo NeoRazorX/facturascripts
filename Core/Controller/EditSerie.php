@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -60,10 +60,10 @@ class EditSerie extends EditController
      * 
      * @param string $viewName
      */
-    protected function createFormatView($viewName = 'ListFormatoDocumento')
+    protected function createFormatView(string $viewName = 'ListFormatoDocumento')
     {
         $this->addListView($viewName, 'FormatoDocumento', 'printing-format', 'fas fa-print');
-        $this->views[$viewName]->addOrderBy(['tipodoc'], 'document-type', 2);
+        $this->views[$viewName]->addOrderBy(['tipodoc'], 'doc-type', 2);
 
         /// disable columns
         $this->views[$viewName]->disableColumn('serie');
@@ -73,7 +73,7 @@ class EditSerie extends EditController
      * 
      * @param string $viewName
      */
-    protected function createSequenceView($viewName = 'ListSecuenciaDocumento')
+    protected function createSequenceView(string $viewName = 'ListSecuenciaDocumento')
     {
         $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code');
         $this->views[$viewName]->addOrderBy(['codejercicio', 'tipodoc'], 'exercise', 2);
