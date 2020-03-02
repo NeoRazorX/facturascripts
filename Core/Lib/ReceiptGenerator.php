@@ -71,7 +71,7 @@ class ReceiptGenerator
             }
         }
 
-        $invoice->pagada = \round($paidAmount, \FS_NF0) == \round($invoice->total, \FS_NF0);
+        $invoice->pagada = $this->isCero($invoice->total - $paidAmount);
     }
 
     /**
@@ -102,8 +102,8 @@ class ReceiptGenerator
         }
 
         /// create new receipts
-        $partialAmount = $number > 1 ? round($amount / $number, FS_NF0) : $amount;
-        while (round($amount, FS_NF0) > 0 || $newNum > self::MAX_RECEIPTS) {
+        $partialAmount = $number > 1 ? \round($amount / $number, \FS_NF0) : $amount;
+        while (!$this->isCero($amount) || $newNum > self::MAX_RECEIPTS) {
             $receiptAmount = $amount > self::PARTIAL_AMOUNT_MULTIPLIER * $partialAmount ? $partialAmount : $amount;
             if (!$this->newCustomerReceipt($invoice, $newNum, $receiptAmount)) {
                 return false;
@@ -144,8 +144,8 @@ class ReceiptGenerator
         }
 
         /// create new receipts
-        $partialAmount = $number > 1 ? round($amount / $number, FS_NF0) : $amount;
-        while (round($amount, FS_NF0) > 0 || $newNum > self::MAX_RECEIPTS) {
+        $partialAmount = $number > 1 ? \round($amount / $number, \FS_NF0) : $amount;
+        while (!$this->isCero($amount) || $newNum > self::MAX_RECEIPTS) {
             $receiptAmount = $amount > self::PARTIAL_AMOUNT_MULTIPLIER * $partialAmount ? $partialAmount : $amount;
             if (!$this->newSupplierReceipt($invoice, $newNum, $receiptAmount)) {
                 return false;
@@ -172,7 +172,19 @@ class ReceiptGenerator
             $pending -= $receipt->importe;
         }
 
-        return round($pending, FS_NF0);
+        return \round($pending, \FS_NF0);
+    }
+
+    /**
+     * Returns TRUE if $amount is cero.
+     * 
+     * @param float $amount
+     *
+     * @return bool
+     */
+    protected function isCero($amount)
+    {
+        return \round($amount, \FS_NF0) == \round(0.0, \FS_NF0);
     }
 
     /**
