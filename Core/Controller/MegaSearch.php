@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -81,7 +81,7 @@ class MegaSearch extends Controller
         $this->sections = [];
 
         $query = $this->request->request->get('query', '');
-        $this->query = $this->toolBox()->utils()->noHtml(mb_strtolower($query, 'UTF8'));
+        $this->query = $this->toolBox()->utils()->noHtml(\mb_strtolower($query, 'UTF8'));
         if ($this->query !== '') {
             $this->search();
         }
@@ -95,25 +95,25 @@ class MegaSearch extends Controller
         $results = [];
         $pageModel = new Page();
         $i18n = $this->toolBox()->i18n();
-        foreach ($pageModel->all([], [], 0, 500) as $page) {
+        foreach ($pageModel->all([], [], 0, 0) as $page) {
             if (!$page->showonmenu) {
                 continue;
             }
 
             /// Does the page title coincide with the search $query?
-            $translation = mb_strtolower($i18n->trans($page->title), 'UTF8');
-            if (stripos($page->title, $this->query) !== false || stripos($translation, $this->query) !== false) {
+            $translation = \mb_strtolower($i18n->trans($page->title), 'UTF8');
+            if (\stripos($page->title, $this->query) !== false || \stripos($translation, $this->query) !== false) {
                 $results[] = [
                     'icon' => $page->icon,
                     'link' => $page->url(),
                     'menu' => $i18n->trans($page->menu),
                     'submenu' => $i18n->trans($page->submenu),
-                    'title' => $i18n->trans($page->title),
+                    'title' => $i18n->trans($page->title)
                 ];
             }
 
             /// Is it a ListController that could return more results?
-            if (strpos($page->name, 'List') === 0) {
+            if (\strpos($page->name, 'List') === 0) {
                 $this->sections[$page->name] = $page->url() . '?action=megasearch&query=' . $this->query;
             }
         }
@@ -123,7 +123,7 @@ class MegaSearch extends Controller
                 'columns' => ['icon' => 'icon', 'menu' => 'menu', 'submenu' => 'submenu', 'title' => 'title'],
                 'icon' => 'fas fa-mouse-pointer',
                 'title' => 'pages',
-                'results' => $results,
+                'results' => $results
             ];
         }
     }

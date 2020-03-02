@@ -94,7 +94,7 @@ class Translator
      *
      * @return string
      */
-    public function trans(string $txt, array $parameters = []): string
+    public function trans($txt, $parameters = []): string
     {
         return empty($txt) ? '' : $this->customTrans($this->currentLang, $txt, $parameters);
     }
