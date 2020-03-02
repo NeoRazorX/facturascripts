@@ -351,6 +351,21 @@ abstract class SalesDocument extends TransformerDocument
         }
 
         switch ($field) {
+            /// if address is changed and customer billing address is empty, then save new values
+            case 'direccion':
+                $contact = new Contacto();
+                if ($contact->loadFromCode($this->idcontactofact) && empty($contact->direccion)) {
+                    $contact->apartado = $this->apartado;
+                    $contact->ciudad = $this->ciudad;
+                    $contact->codpais = $this->codpais;
+                    $contact->codpostal = $this->codpostal;
+                    $contact->direccion = $this->direccion;
+                    $contact->provincia = $this->provincia;
+                    $contact->save();
+                }
+                break;
+
+            /// if billing address is changed, then change all billing fields
             case 'idcontactofact':
                 $contact = new Contacto();
                 if ($contact->loadFromCode($this->idcontactofact)) {
@@ -450,7 +465,7 @@ abstract class SalesDocument extends TransformerDocument
      */
     protected function setPreviousData(array $fields = [])
     {
-        $more = ['codcliente', 'idcontactofact'];
+        $more = ['codcliente', 'direccion', 'idcontactofact'];
         parent::setPreviousData(array_merge($more, $fields));
     }
 }

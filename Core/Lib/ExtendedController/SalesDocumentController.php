@@ -79,7 +79,7 @@ abstract class SalesDocumentController extends BusinessDocumentController
 
         $addresses = [];
         foreach ($cliente->getAdresses() as $contacto) {
-            $addresses[] = ['value' => $contacto->idcontacto, 'title' => $contacto->direccion];
+            $addresses[] = ['value' => $contacto->idcontacto, 'title' => $contacto->descripcion];
         }
 
         /// billing address
