@@ -56,10 +56,10 @@
             <widget type="money" fieldname="netosindto" />
         </column>
         <column name="global-dto" display="none" order="190">
-            <widget type="number" fieldname="dtopor1" />
+            <widget type="percentage" fieldname="dtopor1" />
         </column>
         <column name="global-dto-2" display="none" order="200">
-            <widget type="number" fieldname="dtopor2" />
+            <widget type="percentage" fieldname="dtopor2" />
         </column>
         <column name="net" display="none" order="210">
             <widget type="money" fieldname="neto" />
@@ -71,7 +71,7 @@
             <widget type="money" fieldname="totalrecargo" />
         </column>
         <column name="retention" display="none" order="240">
-            <widget type="number" fieldname="irpf" />
+            <widget type="percentage" fieldname="irpf" />
         </column>
         <column name="retentions" display="none" order="250">
             <widget type="money" fieldname="totalirpf" />
