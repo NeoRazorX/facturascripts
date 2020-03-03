@@ -275,5 +275,16 @@ class DocumentStitcher extends Controller
                 $this->addDocument($doc);
             }
         }
+
+        /// sort by date
+        \uasort($this->documents, function ($doc1, $doc2) {
+            if (\strtotime($doc1->fecha . ' ' . $doc1->hora) > \strtotime($doc2->fecha . ' ' . $doc2->hora)) {
+                return 1;
+            } elseif (\strtotime($doc1->fecha . ' ' . $doc1->hora) < \strtotime($doc2->fecha . ' ' . $doc2->hora)) {
+                return -1;
+            }
+
+            return 0;
+        });
     }
 }
