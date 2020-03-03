@@ -45,7 +45,7 @@ class XLSExport extends ExportBase
      *
      * @var XLSXWriter
      */
-    private $writer;
+    protected $writer;
 
     /**
      * Adds a new page with the document data.
@@ -162,7 +162,7 @@ class XLSExport extends ExportBase
 
     /**
      * Blank document.
-     * 
+     *
      * @param string $title
      */
     public function newDoc(string $title)
@@ -174,7 +174,7 @@ class XLSExport extends ExportBase
     }
 
     /**
-     * 
+     *
      * @param string $orientation
      */
     public function setOrientation(string $orientation)
@@ -195,7 +195,7 @@ class XLSExport extends ExportBase
     }
 
     /**
-     * 
+     *
      * @param array $columns
      *
      * @return array
@@ -211,7 +211,7 @@ class XLSExport extends ExportBase
     }
 
     /**
-     * 
+     *
      * @param array $cursor
      * @param array $fields
      *
@@ -230,7 +230,7 @@ class XLSExport extends ExportBase
     }
 
     /**
-     * 
+     *
      * @param ModelClass $model
      *
      * @return array
