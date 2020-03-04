@@ -44,7 +44,10 @@ class SalesDocLineAccount extends ModelView
      */
     public function getTotalsForDocument($document, $subaccount)
     {
-        $where = [new DataBaseWhere('lineasfacturascli.idfactura', $document)];
+        $where = [
+            new DataBaseWhere('lineasfacturascli.idfactura', $document),
+            new DataBaseWhere('lineasfacturascli.suplido', false)
+        ];
         $order = [
             'lineasfacturascli.idfactura' => 'ASC',
             "COALESCE(productos.codsubcuentaven, '')" => 'ASC',

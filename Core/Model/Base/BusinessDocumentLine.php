@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -151,6 +151,12 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public $servido;
 
     /**
+     *
+     * @var bool
+     */
+    public $suplido;
+
+    /**
      * Containt all avaliable taxes.
      *
      * @var Impuesto[]
@@ -184,6 +190,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $this->pvptotal = 0.0;
         $this->pvpunitario = 0.0;
         $this->servido = 0.0;
+        $this->suplido = false;
 
         /// default tax
         $impuesto = $this->getDefaultTax();
@@ -261,10 +268,10 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         if ('' === $this->codimpuesto) {
             $this->codimpuesto = null;
         }
-        
+
         /// calculate total discount
         $totalDto = 1.0;
-        foreach([$this->dtopor, $this->dtopor2] as $dto) {
+        foreach ([$this->dtopor, $this->dtopor2] as $dto) {
             $totalDto *= 1 - $dto / 100;
         }
 

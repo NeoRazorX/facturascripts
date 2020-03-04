@@ -32,14 +32,15 @@ class BusinessDocumentGenerator
 {
 
     /**
-     * Dcoument fields to exclude.
+     * Document fields to exclude.
      *
      * @var array
      */
     public $excludeFields = [
         'codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora',
         'idasiento', 'idestado', 'idfacturarect', 'neto', 'netosindto',
-        'numero', 'pagada', 'total', 'totalirpf', 'totaliva', 'totalrecargo'
+        'numero', 'pagada', 'total', 'totalirpf', 'totaliva', 'totalrecargo',
+        'totalsuplidos'
     ];
 
     /**

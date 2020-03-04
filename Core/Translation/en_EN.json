@@ -950,6 +950,8 @@
     "sum-netos-line-tax-must-be": "The sum of the net of the VAT lines should be: %lineNet%",
     "sum-total-line-tax-must-be": "The sum of the VAT totals of the VAT lines should be: %lineTotalTax%",
     "summary": "Summary",
+    "supplied": "Supplied",
+    "supplied-amount": "Supplied amount",
     "supplier": "Supplier",
     "supplier-account-not-found": "Supplier account not found",
     "supplier-albaranes": "Supplier delivery notes",

@@ -150,5 +150,7 @@ class ListCuenta extends ListController
         if (!empty($sql)) {
             $this->dataBase->exec($sql);
         }
+
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
     }
 }

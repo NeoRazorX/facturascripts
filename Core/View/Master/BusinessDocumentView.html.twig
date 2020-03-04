@@ -149,6 +149,9 @@
         {% if currentView.model.totalirpf != 0 %}
             {{ _self.customInput('doc_totalirpf', 'totalirpf', currentView.model.totalirpf, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('irpf')) }}
         {% endif %}
+        {% if currentView.model.totalsuplidos != 0 %}
+            {{ _self.customInput('doc_totalsuplidos', 'totalsuplidos', currentView.model.totalsuplidos, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('supplied-amount')) }}
+        {% endif %}
         {{ _self.customInput('doc_total2', 'total', currentView.model.total, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('total')) }}
     </div>
     <div class="form-row mb-2">

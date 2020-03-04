@@ -66,6 +66,15 @@ abstract class SalesDocumentController extends BusinessDocumentController
     }
 
     /**
+     * 
+     * @return string
+     */
+    protected function getLineXMLView()
+    {
+        return 'SalesDocumentLine';
+    }
+
+    /**
      * Loads custom contact data for additional address details.
      *
      * @param BusinessDocumentView $view

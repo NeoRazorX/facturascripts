@@ -211,6 +211,13 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public $totalrecargo;
 
     /**
+     * Total sum of supplied lines.
+     *
+     * @var float|int
+     */
+    public $totalsuplidos;
+
+    /**
      * Returns the lines associated with the document.
      */
     abstract public function getLines();
@@ -274,6 +281,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->totalirpf = 0.0;
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
+        $this->totalsuplidos = 0.0;
     }
 
     /**
@@ -391,14 +399,8 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $utils = $this->toolBox()->utils();
         $this->observaciones = $utils->noHtml($this->observaciones);
 
-        /// check discounts
-        /// TODO: remove after version 2020.6
-        foreach (['dtopor1', 'dtopor2'] as $dtoField) {
-            $this->{$dtoField} = (float) $this->{$dtoField};
-        }
-
         /// check total
-        $total = $this->neto + $this->totaliva - $this->totalirpf + $this->totalrecargo;
+        $total = $this->neto + $this->totalsuplidos + $this->totaliva - $this->totalirpf + $this->totalrecargo;
         if (!$utils->floatcmp($this->total, $total, \FS_NF0, true)) {
             $this->toolBox()->i18nLog()->error('bad-total-error');
             return false;

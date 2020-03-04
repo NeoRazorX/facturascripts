@@ -950,6 +950,8 @@
     "sum-netos-line-tax-must-be": "La suma dels nets de les llínees del IVA deuria ser: %lineNet%",
     "sum-total-line-tax-must-be": "La suma dels totals del IVA de les llínees del IVA ha de ser: %lineTotalTax%",
     "summary": "Resum",
+    "supplied": "supplied",
+    "supplied-amount": "supplied-amount",
     "supplier": "Proveïdor",
     "supplier-account-not-found": "Subcompte de proveïdor no trobada",
     "supplier-albaranes": "Albarans de proveïdor",

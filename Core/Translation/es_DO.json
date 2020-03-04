@@ -950,6 +950,8 @@
     "sum-netos-line-tax-must-be": "La suma de los netos de las líneas de ITBIS debería ser: %lineNet%",
     "sum-total-line-tax-must-be": "La suma de los totales de ITBIS de las líneas de ITBIS debería ser: %lineTotalTax%",
     "summary": "Resumen",
+    "supplied": "Suplido",
+    "supplied-amount": "Suplidos",
     "supplier": "Proveedor",
     "supplier-account-not-found": "Subcuenta de proveedor no encontrada",
     "supplier-albaranes": "Conduces de proveedor",

@@ -950,6 +950,8 @@
     "sum-netos-line-tax-must-be": "A suma dos netos das liñas de IVE debe ser: %lineNet%",
     "sum-total-line-tax-must-be": "A suma dos totais de IVE das liñas de IVE debe ser: %lineTotalTax%",
     "summary": "Resumo",
+    "supplied": "supplied",
+    "supplied-amount": "supplied-amount",
     "supplier": "Provedor",
     "supplier-account-not-found": "Subconta de provedor non atopada",
     "supplier-albaranes": "Albaráns dos provedores",
