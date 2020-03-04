@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
@@ -35,14 +35,14 @@ abstract class AccountingClass extends AccountingAccounts
 
     /**
      *
-     * @var BusinessDocument
+     * @var ModelClass
      */
     protected $document;
 
     /**
      * Method to launch the accounting process
      *
-     * @param BusinessDocument $model
+     * @param ModelClass $model
      */
     public function generate($model)
     {
