@@ -42,7 +42,7 @@ abstract class AccountingClass extends AccountingAccounts
     /**
      * Method to launch the accounting process
      *
-     * @param ModelClass $model
+     * @param BusinessDocument $model
      */
     public function generate($model)
     {
