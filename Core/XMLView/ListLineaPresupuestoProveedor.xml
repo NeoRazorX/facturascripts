@@ -50,10 +50,10 @@
             <widget type="money" fieldname="pvpunitario" />
         </column>
         <column name="dto" display="right" order="180">
-            <widget type="number" fieldname="dtopor" />
+            <widget type="percentage" fieldname="dtopor" />
         </column>
         <column name="dto-2" display="right" order="190">
-            <widget type="number" fieldname="dtopor2" />
+            <widget type="percentage" fieldname="dtopor2" />
         </column>
         <column name="amount-without-discount" display="none" order="200">
             <widget type="money" fieldname="pvpsindto" />
@@ -64,13 +64,13 @@
             </widget>
         </column>
         <column name="tax" display="right" order="220">
-            <widget type="number" fieldname="iva" />
+            <widget type="percentage" fieldname="iva" />
         </column>
         <column name="surcharge" display="right" order="230">
-            <widget type="number" fieldname="recargo" />
+            <widget type="percentage" fieldname="recargo" />
         </column>
         <column name="irpf" display="right" order="240">
-            <widget type="number" fieldname="irpf" />
+            <widget type="percentage" fieldname="irpf" />
         </column>
     </columns>
     <rows>
