@@ -141,6 +141,11 @@
         <name>totalrecargo</name>
         <type>double precision</type>
     </column>
+    <column>
+        <name>totalsuplidos</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
     <constraint>
         <name>albaranesprov_pkey</name>
         <type>PRIMARY KEY (idalbaran)</type>

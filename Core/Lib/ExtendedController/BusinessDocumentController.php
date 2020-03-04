@@ -65,6 +65,11 @@ abstract class BusinessDocumentController extends PanelController
     abstract public function getNewSubjectUrl();
 
     /**
+     * Returns the name of the XMLView file for lines.
+     */
+    abstract protected function getLineXMLView();
+
+    /**
      * Sets subject for this document.
      *
      * @param mixed $view
@@ -163,16 +168,6 @@ abstract class BusinessDocumentController extends PanelController
         }
 
         return $data;
-    }
-
-    /**
-     * Return the name of the xml file with the column configuration por lines.
-     *
-     * @return string
-     */
-    protected function getLineXMLView()
-    {
-        return 'BusinessDocumentLine';
     }
 
     /**

@@ -84,7 +84,14 @@ class BusinessDocumentTools
         $irpf = 0.0;
         $subtotals = [];
         $totalIrpf = 0.0;
+        $totalSuplidos = 0.0;
         foreach ($lines as $line) {
+            $pvpTotal = $line->pvptotal * $totalDto;
+            if ($line->suplido) {
+                $totalSuplidos += $pvpTotal;
+                continue;
+            }
+
             $codimpuesto = empty($line->codimpuesto) ? $line->iva . '-' . $line->recargo : $line->codimpuesto;
             if (!\array_key_exists($codimpuesto, $subtotals)) {
                 $subtotals[$codimpuesto] = [
@@ -96,10 +103,10 @@ class BusinessDocumentTools
                     'totalirpf' => 0.0,
                     'totaliva' => 0.0,
                     'totalrecargo' => 0.0,
+                    'totalsuplidos' => 0.0
                 ];
             }
 
-            $pvpTotal = $line->pvptotal * $totalDto;
             $subtotals[$codimpuesto]['neto'] += $pvpTotal;
             $subtotals[$codimpuesto]['netosindto'] += $line->pvptotal;
 
@@ -119,10 +126,11 @@ class BusinessDocumentTools
             }
         }
 
-        /// IRPF to the first subtotal
+        /// Aditional taxes to the first subtotal
         foreach ($subtotals as $key => $value) {
             $subtotals[$key]['irpf'] = $irpf;
             $subtotals[$key]['totalirpf'] = $totalIrpf;
+            $subtotals[$key]['totalsuplidos'] = $totalSuplidos;
             break;
         }
 
@@ -133,6 +141,7 @@ class BusinessDocumentTools
             $subtotals[$key]['totalirpf'] = \round($value['totalirpf'], (int) \FS_NF0);
             $subtotals[$key]['totaliva'] = \round($value['totaliva'], (int) \FS_NF0);
             $subtotals[$key]['totalrecargo'] = \round($value['totalrecargo'], (int) \FS_NF0);
+            $subtotals[$key]['totalsuplidos'] = \round($value['totalsuplidos'], (int) \FS_NF0);
         }
 
         return $subtotals;
@@ -158,6 +167,7 @@ class BusinessDocumentTools
             $doc->totalirpf += $subt['totalirpf'];
             $doc->totaliva += $subt['totaliva'];
             $doc->totalrecargo += $subt['totalrecargo'];
+            $doc->totalsuplidos += $subt['totalsuplidos'];
         }
 
         /// rounding totals again
@@ -166,7 +176,8 @@ class BusinessDocumentTools
         $doc->totalirpf = \round($doc->totalirpf, (int) \FS_NF0);
         $doc->totaliva = \round($doc->totaliva, (int) \FS_NF0);
         $doc->totalrecargo = \round($doc->totalrecargo, (int) \FS_NF0);
-        $doc->total = \round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) \FS_NF0);
+        $doc->totalsuplidos = \round($doc->totalsuplidos, (int) \FS_NF0);
+        $doc->total = \round($doc->neto + $doc->totalsuplidos + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) \FS_NF0);
 
         /// recalculate commissions
         $this->commissionTools->recalculate($doc, $lines);
@@ -195,6 +206,7 @@ class BusinessDocumentTools
             $doc->totaliva += $subt['totaliva'];
             $doc->totalirpf += $subt['totalirpf'];
             $doc->totalrecargo += $subt['totalrecargo'];
+            $doc->totalsuplidos += $subt['totalsuplidos'];
         }
 
         /// rounding totals again
@@ -203,7 +215,8 @@ class BusinessDocumentTools
         $doc->totalirpf = \round($doc->totalirpf, (int) \FS_NF0);
         $doc->totaliva = \round($doc->totaliva, (int) \FS_NF0);
         $doc->totalrecargo = \round($doc->totalrecargo, (int) \FS_NF0);
-        $doc->total = \round($doc->neto + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) \FS_NF0);
+        $doc->totalsuplidos = \round($doc->totalsuplidos, (int) \FS_NF0);
+        $doc->total = \round($doc->neto + $doc->totalsuplidos + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) \FS_NF0);
         return \json_encode([
             'doc' => $doc,
             'lines' => $lines,
@@ -227,6 +240,7 @@ class BusinessDocumentTools
         $doc->totalirpf = 0.0;
         $doc->totaliva = 0.0;
         $doc->totalrecargo = 0.0;
+        $doc->totalsuplidos = 0.0;
 
         $serie = new Serie();
         if ($serie->loadFromCode($doc->codserie)) {
@@ -305,7 +319,7 @@ class BusinessDocumentTools
         }
 
         $save = false;
-        if ($this->siniva || $newCodimpuesto === null) {
+        if ($this->siniva || $newCodimpuesto === null || $line->suplido) {
             $line->codimpuesto = null;
             $line->irpf = $line->iva = $line->recargo = 0.0;
             $save = true;
@@ -358,7 +372,8 @@ class BusinessDocumentTools
         $newLine->pvptotal = $newLine->pvpsindto * (100 - $newLine->dtopor) / 100 * (100 - $newLine->dtopor2) / 100;
         $newLine->referencia = Utils::fixHtml($newLine->referencia);
 
-        if ($this->siniva) {
+        $suplido = isset($fLine['suplido']) && $fLine['suplido'] === 'true';
+        if ($this->siniva || $suplido) {
             $newLine->codimpuesto = null;
             $newLine->irpf = $newLine->iva = $newLine->recargo = 0.0;
         } elseif (!$this->recargo) {

@@ -143,7 +143,7 @@ abstract class PDFDocument extends PDFCore
 
         $subtotals = [];
         foreach ($model->getLines() as $line) {
-            if (empty($line->pvptotal)) {
+            if (empty($line->pvptotal) || $line->suplido) {
                 continue;
             }
 
@@ -155,7 +155,7 @@ abstract class PDFDocument extends PDFCore
                     'taxp' => $line->iva . '%',
                     'taxamount' => 0,
                     'taxsurchargep' => $line->recargo . '%',
-                    'taxsurcharge' => 0,
+                    'taxsurcharge' => 0
                 ];
 
                 $impuesto = new Impuesto();
@@ -183,7 +183,7 @@ abstract class PDFDocument extends PDFCore
                     'taxp' => $line->irpf,
                     'taxamount' => 0,
                     'taxsurchargep' => 0,
-                    'taxsurcharge' => 0,
+                    'taxsurcharge' => 0
                 ];
             }
 
@@ -279,7 +279,8 @@ abstract class PDFDocument extends PDFCore
             'taxes' => $this->i18n->trans('taxes'),
             'totalSurcharge' => $this->i18n->trans('surcharge'),
             'totalIrpf' => $this->i18n->trans('irpf'),
-            'total' => $this->i18n->trans('total'),
+            'totalSupplied' => $this->i18n->trans('supplied-amount'),
+            'total' => $this->i18n->trans('total')
         ];
         $rows = [
             [
@@ -291,7 +292,8 @@ abstract class PDFDocument extends PDFCore
                 'taxes' => $this->numberTools->format($model->totaliva),
                 'totalSurcharge' => $this->numberTools->format($model->totalrecargo),
                 'totalIrpf' => $this->numberTools->format(0 - $model->totalirpf),
-                'total' => $this->numberTools->format($model->total),
+                'totalSupplied' => $this->numberTools->format($model->totalsuplidos),
+                'total' => $this->numberTools->format($model->total)
             ]
         ];
         $this->removeEmptyCols($rows, $headers, $this->numberTools->format(0));
@@ -304,7 +306,8 @@ abstract class PDFDocument extends PDFCore
                 'taxes' => ['justification' => 'right'],
                 'totalSurcharge' => ['justification' => 'right'],
                 'totalIrpf' => ['justification' => 'right'],
-                'total' => ['justification' => 'right'],
+                'totalSupplied' => ['justification' => 'right'],
+                'total' => ['justification' => 'right']
             ],
             'shadeCol' => [0.95, 0.95, 0.95],
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
@@ -324,7 +327,7 @@ abstract class PDFDocument extends PDFCore
             'taxp' => $this->i18n->trans('percentage'),
             'taxamount' => $this->i18n->trans('amount'),
             'taxsurchargep' => $this->i18n->trans('re'),
-            'taxsurcharge' => $this->i18n->trans('amount'),
+            'taxsurcharge' => $this->i18n->trans('amount')
         ];
         $taxRows = $this->getTaxesRows($model);
         $taxTableOptions = [
@@ -334,7 +337,7 @@ abstract class PDFDocument extends PDFCore
                 'taxp' => ['justification' => 'right'],
                 'taxamount' => ['justification' => 'right'],
                 'taxsurchargep' => ['justification' => 'right'],
-                'taxsurcharge' => ['justification' => 'right'],
+                'taxsurcharge' => ['justification' => 'right']
             ],
             'shadeCol' => [0.95, 0.95, 0.95],
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
@@ -383,7 +386,7 @@ abstract class PDFDocument extends PDFCore
             ['key' => $headerData['subject'], 'value' => Utils::fixHtml($model->{$headerData['fieldName']})],
             ['key' => $this->i18n->trans('number'), 'value' => $model->numero],
             ['key' => $tipoidfiscal, 'value' => $model->cifnif],
-            ['key' => $this->i18n->trans('serie'), 'value' => $model->codserie],
+            ['key' => $this->i18n->trans('serie'), 'value' => $model->codserie]
         ];
 
         if (!empty($model->direccion)) {
@@ -400,7 +403,7 @@ abstract class PDFDocument extends PDFCore
             'showHeadings' => 0,
             'shaded' => 0,
             'lineCol' => [1, 1, 1],
-            'cols' => [],
+            'cols' => []
         ];
         $this->insertParalellTable($tableData, '', $tableOptions);
         $this->pdf->ezText('');
@@ -433,7 +436,7 @@ abstract class PDFDocument extends PDFCore
                 'showHeadings' => 0,
                 'shaded' => 0,
                 'lineCol' => [1, 1, 1],
-                'cols' => [],
+                'cols' => []
             ];
             $this->insertParalellTable($tableData, '', $tableOptions);
             $this->pdf->ezText('');

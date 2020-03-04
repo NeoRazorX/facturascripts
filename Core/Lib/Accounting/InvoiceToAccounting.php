@@ -193,6 +193,27 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
+     *
+     * @param Asiento $accountEntry
+     *
+     * @return bool
+     */
+    protected function addPurchaseSuppliedLines($accountEntry)
+    {
+        if (empty($this->document->totalsuplidos)) {
+            return true;
+        }
+
+        $subaccount = $this->getSpecialSubAccount('OTRIB');
+        if (!$subaccount->exists()) {
+            $this->toolBox()->i18nLog()->warning('otrib-subaccount-not-found');
+            return false;
+        }
+
+        return $this->addBasicLine($accountEntry, $subaccount, true, $this->document->totalsuplidos);
+    }
+
+    /**
      * Add the purchase line to the accounting entry
      *
      * @param Asiento $accountEntry
@@ -247,6 +268,28 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         return $this->addBasicLine($accountEntry, $subaccount, true, $this->subtotals[$key]['totalirpf']);
+    }
+
+    /**
+     * Add the supplied line to the accounting entry
+     *
+     * @param Asiento $accountEntry
+     *
+     * @return bool
+     */
+    protected function addSalesSuppliedLines($accountEntry): bool
+    {
+        if (empty($this->document->totalsuplidos)) {
+            return true;
+        }
+
+        $subaccount = $this->getSpecialSubAccount('SUPLI');
+        if (!$subaccount->exists()) {
+            $this->toolBox()->i18nLog()->warning('supplied-subaccount-not-found');
+            return false;
+        }
+
+        return $this->addBasicLine($accountEntry, $subaccount, false, $this->document->totalsuplidos);
     }
 
     /**
@@ -349,6 +392,7 @@ class InvoiceToAccounting extends AccountingClass
         if ($this->addSupplierLine($accountEntry) &&
             $this->addPurchaseTaxLines($accountEntry) &&
             $this->addPurchaseIrpfLines($accountEntry) &&
+            $this->addPurchaseSuppliedLines($accountEntry) &&
             $this->addGoodsPurchaseLine($accountEntry)) {
             $this->document->idasiento = $accountEntry->primaryColumnValue();
             return;
@@ -374,6 +418,7 @@ class InvoiceToAccounting extends AccountingClass
         if ($this->addCustomerLine($accountEntry) &&
             $this->addSalesTaxLines($accountEntry) &&
             $this->addSalesIrpfLines($accountEntry) &&
+            $this->addSalesSuppliedLines($accountEntry) &&
             $this->addGoodsSalesLine($accountEntry)) {
             $this->document->idasiento = $accountEntry->primaryColumnValue();
             return;

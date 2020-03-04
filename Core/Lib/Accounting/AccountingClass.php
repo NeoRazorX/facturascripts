@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
@@ -35,7 +35,7 @@ abstract class AccountingClass extends AccountingAccounts
 
     /**
      *
-     * @var ModelClass
+     * @var BusinessDocument
      */
     protected $document;
 
