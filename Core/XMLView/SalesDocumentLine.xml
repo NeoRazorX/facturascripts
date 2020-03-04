@@ -61,7 +61,7 @@
         <column name="irpf" display="right" order="200">
             <widget type="number" fieldname="irpf" />
         </column>
-        <column name="supplied" display="center" order="210">
+        <column name="supplied" display="none" order="210">
             <widget type="checkbox" fieldname="suplido" />
         </column>
     </columns>

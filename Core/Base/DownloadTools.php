@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -103,7 +103,7 @@ class DownloadTools
             case 303:
                 list($header) = explode("\r\n\r\n", $data, 2);
                 $matches = [];
-                if (1 !== preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches)) {
+                if (1 !== preg_match("/(Location:|URI:)[^(\n)]*/i", $header, $matches)) {
                     break;
                 }
 
