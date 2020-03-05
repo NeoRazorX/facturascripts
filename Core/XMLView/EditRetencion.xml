@@ -29,7 +29,7 @@
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
             <column name="percentage" numcolumns="2" order="120">
-                <widget type="number" decimal="2" fieldname="porcentaje" icon="fas fa-percent" required="true" />
+                <widget type="percentage" decimal="2" fieldname="porcentaje" required="true" />
             </column>
             <column name="subaccount-irpf" description="optional" numcolumns="3" order="130">
                 <widget type="autocomplete" fieldname="codsubcuentaret">

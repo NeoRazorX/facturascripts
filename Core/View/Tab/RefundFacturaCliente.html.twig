@@ -91,7 +91,7 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    {{ _self.customSelect('codserie', 'codserie', appSettings.get('default', 'codserierec'), fsc.views[mainViewName].getSelectValues('Serie')) }}
+                    {{ _self.customSelect('codserie', 'codserie', appSettings.get('default', 'codserierec', 'R'), fsc.views[mainViewName].getSelectValues('Serie')) }}
                     {{ _self.customInput('fecha', 'fecha', fsc.toolBox().today(), 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
                     <div class="col text-right">
                         <button type="submit" class="btn btn-sm btn-primary">

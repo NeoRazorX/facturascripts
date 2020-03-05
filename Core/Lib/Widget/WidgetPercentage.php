@@ -21,14 +21,28 @@ namespace FacturaScripts\Core\Lib\Widget;
 /**
  * WidgetPercentage
  *
+ * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Raúl Jiménez Jiménez <raljopa@gmail.com>
- *
  */
 class WidgetPercentage extends WidgetNumber
 {
 
+    /**
+     * 
+     * @param array $data
+     */
+    public function __construct($data)
+    {
+        parent::__construct($data);
+        $this->icon = $data['icon'] ?? 'fas fa-percentage';
+    }
+
+    /**
+     * 
+     * @return string
+     */
     protected function show()
     {
-        return is_null($this->value) ? '-' : static::$numberTools->format($this->value, $this->decimal) . '%';
+        return \is_null($this->value) ? '-' : static::$numberTools->format($this->value, $this->decimal) . '%';
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -71,6 +71,9 @@ class EditReport extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
         $this->addHtmlView('chart', 'Master/htmlChart', 'Report', 'chart');
+
+        /// disable print button
+        $this->setSettings($this->getMainViewName(), 'btnPrint', false);
     }
 
     /**
