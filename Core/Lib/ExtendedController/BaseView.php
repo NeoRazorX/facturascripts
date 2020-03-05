@@ -182,6 +182,7 @@ abstract class BaseView
             'btnPrint' => false,
             'btnSave' => true,
             'btnUndo' => true,
+			'checkBoxes' => true,
         ];
         $this->template = 'Master/BaseView.html.twig';
         $this->title = $this->toolBox()->i18n()->trans($title);
