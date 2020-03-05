@@ -1015,6 +1015,7 @@
     "totallinea-value-error": "Fakturako %taxCode% Zergaren lerroko guztizkoa BEZ balio ez zuzena. Balio zuzena: %totalLine%",
     "town": "Herria",
     "traceability": "Trazabilitatea",
+    "transfer": "transfer",
     "transfers-stock": "Stock transferentziak",
     "translations": "Itzulpenak",
     "try-again-later": "Saiatu berriro geroago",

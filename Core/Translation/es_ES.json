@@ -1015,6 +1015,7 @@
     "totallinea-value-error": "Error en el valor de totallinea de la línea de IVA del impuesto %taxCode% de la factura. Valor correcto: %totalLine%",
     "town": "Población",
     "traceability": "Trazabilidad",
+    "transfer": "transfer",
     "transfers-stock": "Transferencias de stock",
     "translations": "Traducciones",
     "try-again-later": "Pruebe de nuevo más tarde",
