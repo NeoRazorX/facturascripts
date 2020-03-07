@@ -204,9 +204,9 @@ class InvoiceToAccounting extends AccountingClass
             return true;
         }
 
-        $subaccount = $this->getSpecialSubAccount('OTRIB');
+        $subaccount = $this->getSpecialSubAccount('SUPLI');
         if (!$subaccount->exists()) {
-            $this->toolBox()->i18nLog()->warning('otrib-subaccount-not-found');
+            $this->toolBox()->i18nLog()->warning('supplied-subaccount-not-found');
             return false;
         }
 
