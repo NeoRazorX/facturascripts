@@ -52,7 +52,7 @@ abstract class ModelCore
 
     /**
      * Adds an extension to this model.
-     * 
+     *
      * @param mixed $extension
      */
     abstract public static function addExtension($extension);
@@ -68,7 +68,7 @@ abstract class ModelCore
      * Loads table fields if is necessary.
      *
      * @param DataBase $dataBase
-     * @param string   $tableName
+     * @param string $tableName
      */
     abstract protected function loadModelFields(DataBase &$dataBase, string $tableName);
 
@@ -88,9 +88,9 @@ abstract class ModelCore
 
     /**
      * Executes all $name methods added from the extensions.
-     * 
+     *
      * @param string $name
-     * @param array  $arguments
+     * @param array $arguments
      *
      * @return mixed
      */
@@ -199,7 +199,7 @@ abstract class ModelCore
         foreach ($data as $key => $value) {
             if (in_array($key, $exclude)) {
                 continue;
-            } elseif (!isset($fields[$key])) {
+            } else if (!isset($fields[$key])) {
                 $this->{$key} = $value;
                 continue;
             }
@@ -287,7 +287,7 @@ abstract class ModelCore
     /**
      * Returns the boolean value for the field.
      *
-     * @param array  $field
+     * @param array $field
      * @param string $value
      *
      * @return bool|null
@@ -296,7 +296,7 @@ abstract class ModelCore
     {
         if (in_array(strtolower($value), ['true', 't', '1'], false)) {
             return true;
-        } elseif (in_array(strtolower($value), ['false', 'f', '0'], false)) {
+        } else if (in_array(strtolower($value), ['false', 'f', '0'], false)) {
             return false;
         }
 
@@ -306,7 +306,7 @@ abstract class ModelCore
     /**
      * Returns the float value for the field.
      *
-     * @param array  $field
+     * @param array $field
      * @param string $value
      *
      * @return float|null
@@ -314,7 +314,7 @@ abstract class ModelCore
     private function getFloatValueForField($field, $value)
     {
         if (is_numeric($value)) {
-            return (float) $value;
+            return (float)$value;
         }
 
         return $field['is_nullable'] === 'NO' ? 0.0 : null;
@@ -323,7 +323,7 @@ abstract class ModelCore
     /**
      * Returns the integer value by controlling special cases for the PK and FK.
      *
-     * @param array  $field
+     * @param array $field
      * @param string $value
      *
      * @return int|null
@@ -331,7 +331,7 @@ abstract class ModelCore
     private function getIntergerValueForField($field, $value)
     {
         if (is_numeric($value)) {
-            return (int) $value;
+            return (int)$value;
         }
 
         if ($field['name'] === static::primaryColumn()) {
@@ -342,11 +342,25 @@ abstract class ModelCore
     }
 
     /**
-     * 
+     *
      * @return ToolBox
      */
     protected static function toolBox()
     {
         return new ToolBox();
+    }
+
+    /**
+     * Return an array with the model fields values.
+     * @return array
+     */
+    public function getFieldsValues()
+    {
+        $data = [];
+        foreach ($this->getModelFields() as $field) {
+            $name = $field["name"];
+            $data[$name] = $this->{$name};
+        }
+        return $data;
     }
 }
