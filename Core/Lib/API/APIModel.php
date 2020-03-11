@@ -53,7 +53,7 @@ class APIModel extends APIResourceClass
         }
 
         if ($this->model->delete()) {
-            $this->setOk($this->toolBox()->i18n()->trans('record-deleted-correctly'), (array)$this->model);
+            $this->setOk($this->toolBox()->i18n()->trans('record-deleted-correctly'), $this->model->getFieldsValues());
             return true;
         }
 
@@ -93,7 +93,7 @@ class APIModel extends APIResourceClass
             return false;
         }
 
-        $this->returnResult((array)$this->model);
+        $this->returnResult($this->model->getFieldsValues());
         return true;
     }
 
@@ -110,7 +110,9 @@ class APIModel extends APIResourceClass
         $param0 = empty($this->params) ? '' : $this->params[0];
         $code = $values[$field] ?? $param0;
         if ($this->model->loadFromCode($code)) {
-            $this->setError($this->toolBox()->i18n()->trans('duplicate-record'), (array)$this->model);
+            $this->setError(
+                $this->toolBox()->i18n()->trans('duplicate-record'),
+                $this->model->getFieldsValues());
             return false;
         }
 
