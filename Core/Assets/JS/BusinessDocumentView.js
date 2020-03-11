@@ -64,6 +64,21 @@ function businessDocViewSubjectChanged() {
         success: function (results) {
             $("#doc_codpago").val(results.codpago);
             $("#doc_codserie").val(results.codserie);
+            /**
+             * Review the doc_codsubtipodoc existence, 
+             * if it exist we put the value from the customer data
+             */
+            if($("#doc_codsubtipodoc").length !== 0) {
+                $("#doc_codsubtipodoc").val(results.codsubtipodoc);
+            }
+            /**
+             * Review the doc_codopersaciondoc existence, 
+             * if it exist we put the value from the customer data
+             */
+            if($("#doc_codoperaciondoc").length !== 0) {
+                $("#doc_codoperaciondoc").val(results.codoperaciondoc);
+            }
+            
             console.log("results", results);
 
             businessDocViewRecalculate();
