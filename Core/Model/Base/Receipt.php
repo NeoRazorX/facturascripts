@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
 /**
@@ -331,17 +332,12 @@ abstract class Receipt extends ModelOnChangeClass
             return;
         }
 
-        $paidAmount = 0.0;
         $invoice = $this->getInvoice();
-        foreach ($invoice->getReceipts() as $receipt) {
-            if ($receipt->pagado) {
-                $paidAmount += $receipt->importe;
-            }
-        }
+        $paid = $invoice->pagada;
 
-        $paid = $paidAmount == $invoice->total;
+        $generator = new ReceiptGenerator();
+        $generator->update($invoice);
         if ($invoice->exists() && $invoice->pagada != $paid) {
-            $invoice->pagada = $paid;
             $invoice->save();
         }
     }
