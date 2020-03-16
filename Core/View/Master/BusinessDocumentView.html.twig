@@ -57,12 +57,12 @@
     <input type="hidden" name="idestado" value="{{ currentView.model.idestado }}" id="doc_idestado"/>
     <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <div class="form-row">
-        {{ _self.customSelect('doc_codalmacen', 'codalmacen', currentView.model.codalmacen, currentView.getSelectValues('Almacen')) }}
         {% if currentView.model.subjectColumn() == 'codcliente' %}
             {{ _self.customerSelect(i18n, 'codcliente', 'codcliente', currentView.model, fsc.getNewSubjectUrl()) }}
         {% elseif currentView.model.subjectColumn() == 'codproveedor' %}
             {{ _self.supplierSelect(i18n, 'codproveedor', 'codproveedor', currentView.model, fsc.getNewSubjectUrl()) }}
         {% endif %}
+        {{ _self.customSelect('doc_codalmacen', 'codalmacen', currentView.model.codalmacen, currentView.getSelectValues('Almacen')) }}
         {{ _self.customSelect('doc_codserie', 'codserie', currentView.model.codserie, currentView.getSelectValues('Serie')) }}
         {{ _self.customInput('doc_fecha', 'fecha', currentView.model.fecha, 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
         {% for field in fsc.getCustomFields() %}
