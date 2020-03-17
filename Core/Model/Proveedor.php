@@ -101,6 +101,17 @@ class Proveedor extends Base\ComercialContact
     }
 
     /**
+     * Returns the bank accounts associated with the provider.
+     * 
+     * @return array
+     */
+    public function getBankAccounts()
+    {
+        $contactAccounts = new CuentaBancoProveedor();
+        return $contactAccounts->all([new DataBaseWhere('codproveedor', $this->codproveedor)]);
+    }	
+
+    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
