@@ -29,6 +29,7 @@ use FacturaScripts\Dinamic\Model\ModelView\SalesDocLineAccount;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Retencion;
 use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Class for the generation of accounting entries of a sale/purchase document
@@ -39,6 +40,12 @@ use FacturaScripts\Dinamic\Model\Serie;
  */
 class InvoiceToAccounting extends AccountingClass
 {
+
+    /**
+     *
+     * @var Subcuenta
+     */
+    protected $counterpart;
 
     /**
      * Document Subtotals Lines array
@@ -82,15 +89,18 @@ class InvoiceToAccounting extends AccountingClass
         $customer = new Cliente();
         if (!$customer->loadFromCode($this->document->codcliente)) {
             $this->toolBox()->i18nLog()->warning('customer-not-found');
+            $this->counterpart = null;
             return false;
         }
 
         $subaccount = $this->getCustomerAccount($customer);
         if (!$subaccount->exists()) {
             $this->toolBox()->i18nLog()->warning('customer-account-not-found');
+            $this->counterpart = null;
             return false;
         }
 
+        $this->counterpart = $subaccount;
         return $this->addBasicLine($accountEntry, $subaccount, true);
     }
 
@@ -232,7 +242,7 @@ class InvoiceToAccounting extends AccountingClass
                 return false;
             }
 
-            if (!$this->addTaxLine($accountEntry, $subaccount, true, $value)) {
+            if (!$this->addTaxLine($accountEntry, $subaccount, $this->counterpart, true, $value)) {
                 return false;
             }
         }
@@ -312,7 +322,7 @@ class InvoiceToAccounting extends AccountingClass
             }
 
             /// add tax line
-            if (!$this->addTaxLine($accountEntry, $subaccount, false, $value)) {
+            if (!$this->addTaxLine($accountEntry, $subaccount, $this->counterpart, false, $value)) {
                 return false;
             }
         }
@@ -330,15 +340,18 @@ class InvoiceToAccounting extends AccountingClass
         $supplier = new Proveedor();
         if (!$supplier->loadFromCode($this->document->codproveedor)) {
             $this->toolBox()->i18nLog()->warning('supplier-not-found');
+            $this->counterpart = null;
             return false;
         }
 
         $subaccount = $this->getSupplierAccount($supplier);
         if (!$subaccount->exists()) {
             $this->toolBox()->i18nLog()->warning('supplier-account-not-found');
+            $this->counterpart = null;
             return false;
         }
 
+        $this->counterpart = $subaccount;
         return $this->addBasicLine($accountEntry, $subaccount, false);
     }
 
