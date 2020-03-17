@@ -349,7 +349,7 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function initialChecks(): bool
     {
-        if (!empty($this->document->idasiento)) {
+        if (!empty($this->document->idasiento) || empty($this->document->total)) {
             return false;
         }
 
