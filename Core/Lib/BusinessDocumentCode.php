@@ -31,7 +31,7 @@ use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 class BusinessDocumentCode
 {
 
-    const GAP_LIMIT = 100;
+    const GAP_LIMIT = 1000;
 
     /**
      * Generates a new identifier for humans from a document.
@@ -41,15 +41,6 @@ class BusinessDocumentCode
     public static function getNewCode(&$document)
     {
         $sequence = static::getSequence($document);
-
-        /**
-         * Fix sequence start number.
-         * TODO: remove after version 2020.5
-         */
-        if (empty($sequence->inicio)) {
-            $sequence->inicio = 1;
-        }
-
         $document->numero = static::getNewNumber($sequence, $document);
         $vars = [
             '{EJE}' => $document->codejercicio,

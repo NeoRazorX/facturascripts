@@ -217,6 +217,16 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public function getProducto()
     {
         $producto = new Producto();
+
+        /// for backward compatibility we must search by reference
+        if (empty($this->idproducto) && !empty($this->referencia)) {
+            $variante = new Variante();
+            $where = [new DataBaseWhere('referencia', $this->referencia)];
+            if ($variante->loadFromCode('', $where)) {
+                $this->idproducto = $variante->idproducto;
+            }
+        }
+
         $producto->loadFromCode($this->idproducto);
         return $producto;
     }
