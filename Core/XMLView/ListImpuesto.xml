@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -41,14 +41,10 @@
             <widget type="number" decimal="2" fieldname="recargo" />
         </column>
         <column name="impacted-tax-subaccount" order="150">
-            <widget type="autocomplete" fieldname="codsubcuentarep">
-                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
-            </widget>
+            <widget type="text" fieldname="codsubcuentarep" />
         </column>
         <column name="supported-tax-subaccount" order="160">
-            <widget type="autocomplete" fieldname="codsubcuentasop">
-                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
-            </widget>
+            <widget type="text" fieldname="codsubcuentasop" />
         </column>
     </columns>
     <rows>

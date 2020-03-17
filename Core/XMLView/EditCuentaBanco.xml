@@ -39,14 +39,14 @@
             <column name="sepa-suffix" numcolumns="2" order="100">
                 <widget type="text" fieldname="sufijosepa" maxlength="3" />
             </column>
-            <column name="subaccount" order="110">
+            <column name="subaccount" titleurl="ListCuenta" order="110">
                 <widget type="autocomplete" fieldname="codsubcuenta">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                    <values source="subcuentas" fieldcode="codsubcuenta" />
                 </widget>
             </column>
-            <column name="expense-subaccount" order="120">
+            <column name="expense-subaccount" titleurl="ListCuenta" order="120">
                 <widget type="autocomplete" fieldname="codsubcuentagasto">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                    <values source="subcuentas" fieldcode="codsubcuenta" />
                 </widget>
             </column>
             <column name="company" numcolumns="2" order="130">
