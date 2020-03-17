@@ -86,19 +86,19 @@
             </column>
         </group>
         <group name="accounts" title="accounting" icon="fas fa-balance-scale" numcolumns="12">
-            <column name="codsubcuentacom" title="subaccount-purchases" description="optional" order="100">
+            <column name="codsubcuentacom" title="subaccount-purchases" titleurl="ListCuenta" description="optional" order="100">
                 <widget type="autocomplete" fieldname="codsubcuentacom">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                    <values source="subcuentas" fieldcode="codsubcuenta" />
                 </widget>
             </column>
-            <column name="codsubcuentaven" title="subaccount-sales" description="optional" order="110">
+            <column name="codsubcuentaven" title="subaccount-sales" titleurl="ListCuenta" description="optional" order="110">
                 <widget type="autocomplete" fieldname="codsubcuentaven">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                    <values source="subcuentas" fieldcode="codsubcuenta" />
                 </widget>
             </column>
-            <column name="codsubcuentairpfcom" title="subaccount-irpf" description="optional" order="120">
+            <column name="codsubcuentairpfcom" title="subaccount-irpf" titleurl="ListCuenta" description="optional" order="120">
                 <widget type="autocomplete" fieldname="codsubcuentairpfcom">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                    <values source="subcuentas" fieldcode="codsubcuenta" />
                 </widget>
             </column>
         </group>

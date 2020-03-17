@@ -289,7 +289,7 @@ class Subcuenta extends Base\ModelClass
 
         $parts = \explode('.', \trim($code));
         if (\count($parts) === 2) {
-            return \str_pad($parts[0], $this->getExercise()->longsubcuenta - 1, '0', \STR_PAD_RIGHT) . $parts[1];
+            return \str_pad($parts[0], $this->getExercise()->longsubcuenta - \strlen($parts[1]), '0', \STR_PAD_RIGHT) . $parts[1];
         }
 
         return \trim($code);

@@ -72,16 +72,23 @@ abstract class AccountingClass extends AccountingAccounts
      *
      * @param Asiento   $accountEntry
      * @param Subcuenta $subaccount
+     * @param Subcuenta $counterpart
      * @param bool      $isDebit
      * @param array     $values
      *
      * @return bool
      */
-    protected function addTaxLine($accountEntry, $subaccount, $isDebit, $values): bool
+    protected function addTaxLine($accountEntry, $subaccount, $counterpart, $isDebit, $values): bool
     {
         /// add basic data
         $amount = (float) $values['totaliva'] + (float) $values['totalrecargo'];
         $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount);
+
+        /// counterpart?
+        if (!empty($counterpart)) {
+            $line->codcontrapartida = $counterpart->codsubcuenta;
+            $line->idcontrapartida = $counterpart->idsubcuenta;
+        }
 
         /// add tax register data
         $line->baseimponible = (float) $values['neto'];
