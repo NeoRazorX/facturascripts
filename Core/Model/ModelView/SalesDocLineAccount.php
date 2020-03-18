@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Model\ModelView;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\ModelView;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
-use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Familia;
 
 /**
@@ -32,6 +31,7 @@ use FacturaScripts\Dinamic\Model\Familia;
  * 
  * @property string $codfamilia
  * @property string $codsubcuenta
+ * @property float  $total
  */
 class SalesDocLineAccount extends ModelView
 {
@@ -39,8 +39,8 @@ class SalesDocLineAccount extends ModelView
     /**
      * Get totals for subaccount of sale document
      *
-     * @param FacturaCliente|FacturaProveedor $document
-     * @param string                          $subaccount
+     * @param FacturaCliente $document
+     * @param string         $subaccount
      *
      * @return array
      */

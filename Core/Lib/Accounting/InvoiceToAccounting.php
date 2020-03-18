@@ -48,6 +48,12 @@ class InvoiceToAccounting extends AccountingClass
     protected $counterpart;
 
     /**
+     *
+     * @var FacturaCliente|FacturaProveedor
+     */
+    protected $document;
+
+    /**
      * Document Subtotals Lines array
      *
      * @var array
