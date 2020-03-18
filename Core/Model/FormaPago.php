@@ -85,6 +85,17 @@ class FormaPago extends Base\ModelClass
     public $tipovencimiento;
 
     /**
+     * Returns the bank accounts associated with the company.
+     * 
+     * @return array
+     */
+    public function getBankAccounts()
+    {
+        $payAccount = new CuentaBanco();
+        return $payAccounts->all([new DataBaseWhere('codcuenta', $this->codcuentabanco)]);
+    }
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -174,8 +185,7 @@ class FormaPago extends Base\ModelClass
         $this->codpago = trim($this->codpago);
         if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codpago)) {
             $this->toolBox()->i18nLog()->error(
-                'invalid-alphanumeric-code',
-                ['%value%' => $this->codpago, '%column%' => 'codpago', '%min%' => '1', '%max%' => '10']
+                'invalid-alphanumeric-code', ['%value%' => $this->codpago, '%column%' => 'codpago', '%min%' => '1', '%max%' => '10']
             );
             return false;
         } elseif ($this->plazovencimiento < 0) {
