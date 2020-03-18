@@ -20,6 +20,8 @@ namespace FacturaScripts\Core\Model\ModelView;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\ModelView;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Familia;
 
 /**
@@ -37,15 +39,23 @@ class SalesDocLineAccount extends ModelView
     /**
      * Get totals for subaccount of sale document
      *
-     * @param int    $document
-     * @param string $subaccount
+     * @param FacturaCliente|FacturaProveedor $document
+     * @param string                          $subaccount
      *
      * @return array
      */
     public function getTotalsForDocument($document, $subaccount)
     {
+        $totals = [];
+
+        /// calculate total discount
+        $totalDto = 1.0;
+        foreach ([$document->dtopor1, $document->dtopor2] as $dto) {
+            $totalDto *= 1 - $dto / 100;
+        }
+
         $where = [
-            new DataBaseWhere('lineasfacturascli.idfactura', $document),
+            new DataBaseWhere('lineasfacturascli.idfactura', $document->idfactura),
             new DataBaseWhere('lineasfacturascli.suplido', false)
         ];
         $order = [
@@ -53,16 +63,18 @@ class SalesDocLineAccount extends ModelView
             "COALESCE(productos.codsubcuentaven, '')" => 'ASC',
             "COALESCE(productos.codfamilia, '')" => 'ASC'
         ];
-
-        $totals = [];
         foreach ($this->all($where, $order) as $row) {
             $codSubAccount = empty($row->codsubcuenta) ? Familia::saleSubAccount($row->codfamilia) : $row->codsubcuenta;
             if (empty($codSubAccount)) {
                 $codSubAccount = $subaccount;
             }
 
-            $amount = $totals[$codSubAccount] ?? 0.00;
-            $totals[$codSubAccount] = $amount + $row->total;
+            if (isset($totals[$codSubAccount])) {
+                $totals[$codSubAccount] += $row->total * $totalDto;
+                continue;
+            }
+
+            $totals[$codSubAccount] = $row->total * $totalDto;
         }
 
         return $totals;
