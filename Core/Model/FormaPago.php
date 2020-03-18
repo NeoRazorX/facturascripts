@@ -89,10 +89,12 @@ class FormaPago extends Base\ModelClass
      * 
      * @return array
      */
-    public function getBankAccounts()
+    public function getBankAccount()
     {
         $payAccount = new CuentaBanco();
-        return $payAccounts->all([new DataBaseWhere('codcuenta', $this->codcuentabanco)]);
+        if ($payAccount->loadFromCode('', [new DataBaseWhere('codcuenta', $this->codcuentabanco)])) {
+            return $payAccount;
+        }
     }
 
     /**
