@@ -32,6 +32,21 @@
                 <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion" />
             </widget>
         </column>
+        <column name="subaccount-purchases" display="none" order="130">
+            <widget type="select" fieldname="codsubcuentacom" onclick="EditSubcuenta">
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+            </widget>
+        </column>
+        <column name="subaccount-irpf" display="none" order="140">
+            <widget type="select" fieldname="codsubcuentairpfcom" onclick="EditSubcuenta">
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+            </widget>
+        </column>
+        <column name="subaccount-sales" display="none" order="150">
+            <widget type="select" fieldname="codsubcuentaven" onclick="EditSubcuenta">
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+            </widget>
+        </column>		
     </columns>
     <rows>
         <row type="status">
