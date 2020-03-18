@@ -62,8 +62,7 @@ abstract class AccountingClass extends AccountingAccounts
      */
     protected function addBasicLine($accountEntry, $subaccount, $isDebit, $amount = null): bool
     {
-        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount);
-        return $line->save();
+        return $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount)->save();
     }
 
     /**
@@ -86,8 +85,7 @@ abstract class AccountingClass extends AccountingAccounts
 
         /// counterpart?
         if (!empty($counterpart)) {
-            $line->codcontrapartida = $counterpart->codsubcuenta;
-            $line->idcontrapartida = $counterpart->idsubcuenta;
+            $line->setCounterpart($counterpart);
         }
 
         /// add tax register data
@@ -116,8 +114,7 @@ abstract class AccountingClass extends AccountingAccounts
     protected function getBasicLine($accountEntry, $subaccount, $isDebit, $amount = null)
     {
         $line = $accountEntry->getNewLine();
-        $line->idsubcuenta = $subaccount->idsubcuenta;
-        $line->codsubcuenta = $subaccount->codsubcuenta;
+        $line->setAccount($subaccount);
 
         $total = ($amount === null) ? $this->document->total : $amount;
         if ($isDebit) {

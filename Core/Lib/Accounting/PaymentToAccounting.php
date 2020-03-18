@@ -195,25 +195,22 @@ class PaymentToAccounting extends AccountingClass
      * Establishes the common data of the entries of the accounting entry
      *
      * @param Partida   $line
-     * @param Subcuenta $account
-     * @param Subcuenta $offsetting
+     * @param Subcuenta $subaccount
+     * @param Subcuenta $counterpart
      * @param string    $concept
      */
-    protected function setCommonDataLine(&$line, $account, $offsetting, string $concept)
+    protected function setCommonDataLine(&$line, $subaccount, $counterpart, $concept)
     {
         $line->concepto = $concept;
-        $line->idsubcuenta = $account->idsubcuenta;
-        $line->codsubcuenta = $account->codsubcuenta;
+        $line->setAccount($subaccount);
         $line->debe = 0.00;
         $line->haber = 0.00;
         $line->idpartida = null; // Force insert new line
+        $line->idcontrapartida = null;
+        $line->codcontrapartida = null;
 
-        if ($offsetting !== null) {
-            $line->idcontrapartida = $offsetting->idsubcuenta;
-            $line->codcontrapartida = $offsetting->codsubcuenta;
-        } else {
-            $line->idcontrapartida = null;
-            $line->codcontrapartida = null;
+        if ($counterpart !== null) {
+            $line->setCounterpart($counterpart);
         }
     }
 }

@@ -130,9 +130,8 @@ class InvoiceToAccounting extends AccountingClass
             }
 
             $line = $accountEntry->getNewLine();
-            $line->codsubcuenta = $subaccount->codsubcuenta;
+            $line->setAccount($subaccount);
             $line->debe = $total;
-            $line->idsubcuenta = $subaccount->idsubcuenta;
             if (!$line->save()) {
                 $this->toolBox()->i18nLog()->warning('good-purchases-line-error');
                 return false;
@@ -162,9 +161,8 @@ class InvoiceToAccounting extends AccountingClass
             }
 
             $line = $accountEntry->getNewLine();
-            $line->codsubcuenta = $subaccount->codsubcuenta;
+            $line->setAccount($subaccount);
             $line->haber = $total;
-            $line->idsubcuenta = $subaccount->idsubcuenta;
             if (!$line->save()) {
                 $this->toolBox()->i18nLog()->warning('good-sales-line-error');
                 return false;

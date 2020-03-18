@@ -241,7 +241,10 @@ class Partida extends Base\ModelOnChangeClass
         }
 
         /// get by id
-        if (!empty($this->idsubcuenta) && $subcta->loadFromCode($this->idsubcuenta) && $subcta->codsubcuenta === $this->codsubcuenta && $subcta->codejercicio === $asiento->codejercicio) {
+        if (!empty($this->idsubcuenta) &&
+            $subcta->loadFromCode($this->idsubcuenta) &&
+            $subcta->codsubcuenta === $this->codsubcuenta &&
+            $subcta->codejercicio === $asiento->codejercicio) {
             return $subcta;
         }
 
@@ -278,6 +281,26 @@ class Partida extends Base\ModelOnChangeClass
     public static function primaryColumn()
     {
         return 'idpartida';
+    }
+
+    /**
+     * 
+     * @param Subcuenta $subaccount
+     */
+    public function setAccount($subaccount)
+    {
+        $this->codsubcuenta = $subaccount->codsubcuenta;
+        $this->idsubcuenta = $subaccount->idsubcuenta;
+    }
+
+    /**
+     * 
+     * @param Subcuenta $subaccount
+     */
+    public function setCounterpart($subaccount)
+    {
+        $this->codcontrapartida = $subaccount->codsubcuenta;
+        $this->idcontrapartida = $subaccount->idsubcuenta;
     }
 
     /**
