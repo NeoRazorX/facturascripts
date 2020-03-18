@@ -224,6 +224,23 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     }
 
     /**
+     * Returns TRUE if accounting entry is balanced.
+     * 
+     * @return bool
+     */
+    public function isBalanced(): bool
+    {
+        $debe = 0.0;
+        $haber = 0.0;
+        foreach ($this->getLines() as $line) {
+            $debe += $line->debe;
+            $haber += $line->haber;
+        }
+
+        return $this->toolBox()->utils()->floatcmp($debe, $haber, \FS_NF0, true);
+    }
+
+    /**
      * Returns the following code for the reported field or the primary key of the model.
      *
      * @param string $field

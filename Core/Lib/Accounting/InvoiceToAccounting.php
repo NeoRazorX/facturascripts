@@ -408,7 +408,8 @@ class InvoiceToAccounting extends AccountingClass
             $this->addPurchaseTaxLines($accountEntry) &&
             $this->addPurchaseIrpfLines($accountEntry) &&
             $this->addPurchaseSuppliedLines($accountEntry) &&
-            $this->addGoodsPurchaseLine($accountEntry)) {
+            $this->addGoodsPurchaseLine($accountEntry) &&
+            $accountEntry->isBalanced()) {
             $this->document->idasiento = $accountEntry->primaryColumnValue();
             return;
         }
@@ -434,7 +435,8 @@ class InvoiceToAccounting extends AccountingClass
             $this->addSalesTaxLines($accountEntry) &&
             $this->addSalesIrpfLines($accountEntry) &&
             $this->addSalesSuppliedLines($accountEntry) &&
-            $this->addGoodsSalesLine($accountEntry)) {
+            $this->addGoodsSalesLine($accountEntry) &&
+            $accountEntry->isBalanced()) {
             $this->document->idasiento = $accountEntry->primaryColumnValue();
             return;
         }

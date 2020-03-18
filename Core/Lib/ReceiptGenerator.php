@@ -184,7 +184,7 @@ class ReceiptGenerator
      */
     protected function isCero($amount)
     {
-        return \round($amount, \FS_NF0) == \round(0.0, \FS_NF0);
+        return $this->toolBox()->utils()->floatcmp($amount, 0.0, \FS_NF0, true);
     }
 
     /**
