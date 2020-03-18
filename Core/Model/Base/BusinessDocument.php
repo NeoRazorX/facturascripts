@@ -33,6 +33,8 @@ use FacturaScripts\Dinamic\Model\Serie;
 abstract class BusinessDocument extends ModelOnChangeClass
 {
 
+    use ExerciseRelationTrait;
+
     /**
      * VAT number of the customer or supplier.
      *
@@ -53,13 +55,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
      * @var string
      */
     public $coddivisa;
-
-    /**
-     * Related accounting exercise. The one that corresponds to the date.
-     *
-     * @var string
-     */
-    public $codejercicio;
 
     /**
      * Unique identifier for humans.
