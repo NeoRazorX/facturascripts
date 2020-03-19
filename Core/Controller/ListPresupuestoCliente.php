@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\PresupuestoCliente;
 
 /**
  * Controller to list the items in the PresupuestoCliente model
@@ -30,6 +32,19 @@ use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
  */
 class ListPresupuestoCliente extends ListBusinessDocument
 {
+
+    /**
+     * Runs the controller's private logic.
+     *
+     * @param Response                   $response
+     * @param User                       $user
+     * @param Base\ControllerPermissions $permissions
+     */
+    public function privateCore(&$response, $user, $permissions)
+    {
+        $this->checkExpiredBudgets();// 
+        parent::privateCore($response, $user, $permissions);
+    }
 
     /**
      * Returns basic page attributes
@@ -55,5 +70,27 @@ class ListPresupuestoCliente extends ListBusinessDocument
         $this->addButtonApproveDocument('ListPresupuestoCliente');
 
         $this->createViewLines('ListLineaPresupuestoCliente', 'LineaPresupuestoCliente');
+    }
+
+    protected function checkExpiredBudgets()
+    {
+        $presupuesto = new PresupuestoCliente;        
+        foreach ($presupuesto->getAvaliableStatus() as $status) {
+            if ($status->idestado == 23 && !$status->editable && empty($status->generadoc)) {
+                $newStatus = $status->idestado;
+                break;
+            }
+            if (!$status->editable && empty($status->generadoc)) {
+                $newStatus = $status->idestado;
+            }
+        }
+        
+        $where = [new DataBaseWhere('editable', true)];
+        foreach ($presupuesto->all($where) as $value) {
+            if (time() >= \strtotime($value->finoferta)) {
+                $value->idestado = $newStatus;
+                $value->save();
+            }
+        }
     }
 }
