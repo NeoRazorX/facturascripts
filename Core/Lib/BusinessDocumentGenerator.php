@@ -180,7 +180,7 @@ class BusinessDocumentGenerator
             $docTrans->model2 = $newDoc->modelClassName();
             $docTrans->iddoc2 = $newDoc->primaryColumnValue();
             $docTrans->idlinea2 = $newLine->primaryColumnValue();
-            if (!$docTrans->save()) {
+            if (!empty($line->primaryColumnValue()) && !$docTrans->save()) {
                 return false;
             }
         }

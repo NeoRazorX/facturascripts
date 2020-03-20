@@ -63,7 +63,7 @@ class DocumentStitcher extends Controller
      */
     public function fixDescription($description)
     {
-        return nl2br($this->toolBox()->utils()->fixHtml($description));
+        return \nl2br($this->toolBox()->utils()->fixHtml($description));
     }
 
     /**
@@ -130,6 +130,18 @@ class DocumentStitcher extends Controller
 
     /**
      * 
+     * @param array                          $newLines
+     * @param Model\Base\TransformerDocument $doc
+     */
+    protected function addBlankLine(array &$newLines, $doc)
+    {
+        $blankLine = $doc->getNewLine();
+        $blankLine->cantidad = 0;
+        $newLines[] = $blankLine;
+    }
+
+    /**
+     * 
      * @param Model\Base\TransformerDocument $newDoc
      *
      * @return bool
@@ -145,6 +157,20 @@ class DocumentStitcher extends Controller
 
         $this->documents[] = $newDoc;
         return true;
+    }
+
+    /**
+     * 
+     * @param array                          $newLines
+     * @param Model\Base\TransformerDocument $doc
+     */
+    protected function addInfoLine(array &$newLines, $doc)
+    {
+        $infoLine = $doc->getNewLine();
+        $infoLine->cantidad = 0;
+        $infoLine->descripcion = $this->toolBox()->i18n()->trans($doc->modelClassName() . '-min')
+            . ' ' . $doc->codigo . "\n--------------------";
+        $newLines[] = $infoLine;
     }
 
     /**
@@ -194,6 +220,12 @@ class DocumentStitcher extends Controller
         foreach ($this->documents as $doc) {
             if (null === $prototype) {
                 $prototype = $doc;
+            } else {
+                $this->addBlankLine($newLines, $doc);
+            }
+
+            if (count($this->documents) > 1) {
+                $this->addInfoLine($newLines, $doc);
             }
 
             foreach ($doc->getLines() as $line) {
@@ -235,7 +267,7 @@ class DocumentStitcher extends Controller
         }
 
         $codes = $this->request->get('codes', '');
-        return explode(',', $codes);
+        return \explode(',', $codes);
     }
 
     /**
