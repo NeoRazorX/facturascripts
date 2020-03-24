@@ -261,7 +261,7 @@ class Subcuenta extends Base\ModelClass
 
         /// check exercise
         $exercise = $this->getExercise();
-        if (\strlen($this->codsubcuenta) !== $exercise->longsubcuenta) {
+        if (!$this->disableAditionalTest && \strlen($this->codsubcuenta) !== $exercise->longsubcuenta) {
             $this->toolBox()->i18nLog()->warning('account-length-error', ['%code%' => $this->codsubcuenta]);
             return false;
         }
