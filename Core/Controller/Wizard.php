@@ -46,7 +46,7 @@ class Wizard extends Controller
     {
         $pluginManager = new PluginManager();
         $installedPlugins = $pluginManager->installedPlugins();
-        if (!defined('FS_HIDDEN_PLUGINS')) {
+        if (false === \defined('FS_HIDDEN_PLUGINS')) {
             return $installedPlugins;
         }
 
@@ -215,14 +215,14 @@ class Wizard extends Controller
         $pluginManager->deploy(true, true);
 
         $hiddenPlugins = \explode(',', \FS_HIDDEN_PLUGINS);
-        if (is_array($hiddenPlugins)) {
+        if (\is_array($hiddenPlugins)) {
             foreach ($hiddenPlugins as $pluginName) {
                 $pluginManager->enable($pluginName);
             }
         }
 
         $plugins = $this->request->request->get('plugins', []);
-        if (is_array($plugins)) {
+        if (\is_array($plugins)) {
             foreach ($plugins as $pluginName) {
                 $pluginManager->enable($pluginName);
             }
@@ -240,13 +240,13 @@ class Wizard extends Controller
     {
         /// Is there a default accounting plan?
         $filePath = \FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
-        if (!file_exists($filePath)) {
+        if (false === \file_exists($filePath)) {
             return false;
         }
 
         /// Does an accounting plan already exist?
         $cuenta = new Model\Cuenta();
-        if ($cuenta->count() > 0) {
+        if ($cuenta->count() > 0 || $this->dataBase->tableExists('co_cuentas')) {
             return false;
         }
 
@@ -267,14 +267,13 @@ class Wizard extends Controller
     private function preSetAppSettings(string $codpais)
     {
         $filePath = \FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/default.json';
-        if (!file_exists($filePath)) {
+        if (false === \file_exists($filePath)) {
             return;
         }
 
         $appSettings = $this->toolBox()->appSettings();
-
-        $fileContent = file_get_contents($filePath);
-        $defaultValues = json_decode($fileContent, true) ?? [];
+        $fileContent = \file_get_contents($filePath);
+        $defaultValues = \json_decode($fileContent, true) ?? [];
         foreach ($defaultValues as $group => $values) {
             foreach ($values as $key => $value) {
                 $appSettings->set($group, $key, $value);
