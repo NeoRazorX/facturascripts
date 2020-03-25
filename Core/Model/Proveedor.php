@@ -63,17 +63,18 @@ class Proveedor extends Base\ComercialContact
     }
 
     /**
-     * 
+     *
      * @param string $query
      * @param string $fieldcode
+     * @param DataBaseWhere[] $where
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldcode = '')
+    public function codeModelSearch(string $query, string $fieldcode = '', $where = [])
     {
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
         $fields = 'cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2';
-        $where = [new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
+        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
@@ -149,7 +150,7 @@ class Proveedor extends Base\ComercialContact
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool

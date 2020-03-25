@@ -122,13 +122,14 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param string $query
      * @param string $fieldcode
+     * @param DataBaseWhere[] $where
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldcode = '')
+    public function codeModelSearch(string $query, string $fieldcode = '', $where = [])
     {
         $results = [];
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
@@ -157,7 +158,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function description(bool $onlyAttributes = false)
@@ -173,7 +174,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function delete()
@@ -187,7 +188,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param int    $idAttVal1
      * @param int    $idAttVal2
      * @param int    $idAttVal3
@@ -254,7 +255,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function primaryDescriptionColumn()
@@ -263,7 +264,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function save()
@@ -287,7 +288,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function test()
@@ -307,7 +308,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $list
      *
@@ -331,7 +332,7 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool
