@@ -40,11 +40,11 @@ class SalesDocLineAccount extends ModelView
      * Get totals for subaccount of sale document
      *
      * @param FacturaCliente $document
-     * @param string         $subaccount
+     * @param string         $defaultSubacode
      *
      * @return array
      */
-    public function getTotalsForDocument($document, $subaccount)
+    public function getTotalsForDocument($document, $defaultSubacode)
     {
         $totals = [];
 
@@ -59,22 +59,43 @@ class SalesDocLineAccount extends ModelView
             new DataBaseWhere('lineasfacturascli.suplido', false)
         ];
         $order = [
-            'lineasfacturascli.idfactura' => 'ASC',
             "COALESCE(productos.codsubcuentaven, '')" => 'ASC',
             "COALESCE(productos.codfamilia, '')" => 'ASC'
         ];
         foreach ($this->all($where, $order) as $row) {
             $codSubAccount = empty($row->codsubcuenta) ? Familia::saleSubAccount($row->codfamilia) : $row->codsubcuenta;
             if (empty($codSubAccount)) {
-                $codSubAccount = $subaccount;
+                $codSubAccount = $defaultSubacode;
             }
 
-            if (isset($totals[$codSubAccount])) {
-                $totals[$codSubAccount] += $row->total * $totalDto;
-                continue;
-            }
+            $amount = $row->total * $totalDto;
+            $totals[$codSubAccount] = isset($totals[$codSubAccount]) ? $totals[$codSubAccount] + $amount : $amount;
+        }
 
-            $totals[$codSubAccount] = $row->total * $totalDto;
+        return $this->checkTotals($totals, $document, $defaultSubacode);
+    }
+
+    /**
+     * 
+     * @param array          $totals
+     * @param FacturaCliente $document
+     * @param string         $defaultSubacode
+     *
+     * @return array
+     */
+    protected function checkTotals(&$totals, $document, $defaultSubacode)
+    {
+        /// round and add the totals
+        $sum = 0.0;
+        foreach ($totals as $key => $value) {
+            $totals[$key] = \round($value, \FS_NF0);
+            $sum += $totals[$key];
+        }
+
+        /// fix occasional penny mismatch
+        if (!$this->toolBox()->utils()->floatcmp($document->neto, $sum, \FS_NF0, true)) {
+            $diff = \round($document->neto - $sum, \FS_NF0);
+            $totals[$defaultSubacode] = isset($totals[$defaultSubacode]) ? $totals[$defaultSubacode] + $diff : $diff;
         }
 
         return $totals;
