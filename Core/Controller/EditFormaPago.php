@@ -33,7 +33,7 @@ class EditFormaPago extends EditController
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -53,52 +53,5 @@ class EditFormaPago extends EditController
         $data['title'] = 'payment-method';
         $data['icon'] = 'fas fa-credit-card';
         return $data;
-    }
-
-    /**
-     * Run the autocomplete action with exercise filter
-     * Returns a JSON string for the searched values.
-     *
-     * @return array
-     */
-    protected function autocompleteAction(): array
-    {
-        $source = $this->request->get('source', '');
-        switch ($source) {
-            case 'cuentasbanco':
-                return $this->autocompleteWithFilter('idempresa');
-
-            case 'subcuentas':
-                return $this->autocompleteWithFilter('codejercicio');
-
-            default:
-                return parent::autocompleteAction();
-        }
-    }
-
-    /**
-     * 
-     * @param string $filterField
-     *
-     * @return array
-     */
-    protected function autocompleteWithFilter($filterField)
-    {
-        $results = [];
-        $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', $filterField]);
-        $fields = $data['fieldcode'] . '|' . $data['fieldtitle'];
-        $where = [
-            new DataBaseWhere($filterField, $data[$filterField]),
-            new DataBaseWhere($fields, mb_strtolower($data['term'], 'UTF8'), 'LIKE')
-        ];
-
-        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $row) {
-            $results[] = ['key' => $row->code, 'value' => $row->description];
-        }
-
-        if (empty($results)) {
-            $results[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-value')];
-        }
-        return $results;
     }
 }
