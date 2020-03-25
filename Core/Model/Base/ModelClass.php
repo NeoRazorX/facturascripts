@@ -53,9 +53,9 @@ abstract class ModelClass extends ModelCore
 
     /**
      * Allows to use this model as source in CodeModel special model.
-     * 
+     *
      * @param string $fieldCode
-     * 
+     *
      * @return CodeModel[]
      */
     public function codeModelAll(string $fieldCode = '')
@@ -74,17 +74,18 @@ abstract class ModelClass extends ModelCore
 
     /**
      * Allows to use this model as source in CodeModel special model.
-     * 
+     *
      * @param string $query
      * @param string $fieldCode
+     * @param DataBaseWhere[] $where
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldCode = '')
+    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
     {
         $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
         $fields = $field . '|' . $this->primaryDescriptionColumn();
-        $where = [new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
+        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
         return CodeModel::all(static::tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 

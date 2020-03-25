@@ -29,6 +29,13 @@ class WidgetAutocomplete extends WidgetSelect
 {
 
     /**
+     * Name of the field by which it is filtered.
+     *
+     * @var string
+     */
+    protected $fieldfilter;
+
+    /**
      * Indicates whether a value should be selected strictly from the list
      * of values or whether the user can enter a new or different value
      * from the list.
@@ -39,8 +46,8 @@ class WidgetAutocomplete extends WidgetSelect
 
     /**
      * Descriptive text of the selected value
-     * 
-     * @var string 
+     *
+     * @var string
      */
     protected $selected = null;
 
@@ -87,7 +94,7 @@ class WidgetAutocomplete extends WidgetSelect
 
     /**
      * Set a descriptive text for the selected value
-     * 
+     *
      * @param string $text
      */
     public function setSelected($text)
@@ -97,7 +104,7 @@ class WidgetAutocomplete extends WidgetSelect
 
     /**
      * Get the descriptive text of the selected value
-     * 
+     *
      * @return string
      */
     protected function getSelected()
@@ -114,7 +121,7 @@ class WidgetAutocomplete extends WidgetSelect
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function inputGroupClearBtn()
@@ -143,9 +150,14 @@ class WidgetAutocomplete extends WidgetSelect
     {
         $cssFormControl = $this->css('form-control');
         $class = empty($extraClass) ? $cssFormControl : $cssFormControl . ' ' . $extraClass;
-        return '<input type="' . $type . '" value="' . $this->getSelected() . '" class="' . $class . '" data-field="' . $this->fieldname
-            . '" data-source="' . $this->source . '" data-fieldcode="' . $this->fieldcode . '" data-fieldtitle="' . $this->fieldtitle
-            . '" data-strict="' . $this->strictStr() . '" autocomplete="off"' . $this->inputHtmlExtraParams() . '/>';
+        return '<input type="' . $type . '" value="' . $this->getSelected() . '" class="' . $class . '"'
+            . ' data-field="' . $this->fieldname . '"'
+            . ' data-source="' . $this->source . '"'
+            . ' data-fieldcode="' . $this->fieldcode . '"'
+            . ' data-fieldtitle="' . $this->fieldtitle . '"'
+            . ' data-fieldfilter="' . $this->fieldfilter . '"'
+            . ' data-strict="' . $this->strictStr() . '"'
+            . ' autocomplete="off"' . $this->inputHtmlExtraParams() . '/>';
     }
 
     /**
@@ -156,11 +168,12 @@ class WidgetAutocomplete extends WidgetSelect
         // The values are filled in automatically by the view controller
         // according to the information entered by the user.
         parent::setSourceData($child, false);
+        $this->fieldfilter = $child['fieldfilter'] ?? '';
         $this->strict = isset($child['strict']) ? ($child['strict'] == 'true') : true;
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function strictStr()

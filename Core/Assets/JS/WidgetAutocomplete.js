@@ -32,6 +32,7 @@ $(document).ready(function () {
             field: $(this).attr("data-field"),
             fieldcode: $(this).attr("data-fieldcode"),
             fieldtitle: $(this).attr("data-fieldtitle"),
+            fieldfilter: $(this).attr("data-fieldfilter"),
             source: $(this).attr("data-source"),
             strict: $(this).attr("data-strict")
         };
