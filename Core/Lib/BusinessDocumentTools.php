@@ -46,7 +46,7 @@ class BusinessDocumentTools
      *
      * @var ImpuestoZona[]
      */
-    protected $impuestosZonas = [];
+    protected $taxZones = [];
 
     /**
      *
@@ -229,7 +229,7 @@ class BusinessDocumentTools
      */
     protected function clearTotals(BusinessDocument &$doc)
     {
-        $this->impuestosZonas = [];
+        $this->taxZones = [];
         $this->recargo = false;
         $this->siniva = false;
 
@@ -291,14 +291,14 @@ class BusinessDocumentTools
      */
     protected function loadTaxZones($doc)
     {
-        $impuestoZonaModel = new ImpuestoZona();
-        foreach ($impuestoZonaModel->all([], ['prioridad' => 'DESC']) as $impZona) {
-            if ($impZona->codpais == $doc->codpais && $impZona->provincia() == $doc->provincia) {
-                $this->impuestosZonas[] = $impZona;
-            } elseif ($impZona->codpais == $doc->codpais && $impZona->codisopro == null) {
-                $this->impuestosZonas[] = $impZona;
-            } elseif ($impZona->codpais == null) {
-                $this->impuestosZonas[] = $impZona;
+        $taxZoneModel = new ImpuestoZona();
+        foreach ($taxZoneModel->all([], ['prioridad' => 'DESC']) as $taxZone) {
+            if ($taxZone->codpais == $doc->codpais && $taxZone->provincia() == $doc->provincia) {
+                $this->taxZones[] = $taxZone;
+            } elseif ($taxZone->codpais == $doc->codpais && $taxZone->codisopro == null) {
+                $this->taxZones[] = $taxZone;
+            } elseif ($taxZone->codpais == null) {
+                $this->taxZones[] = $taxZone;
             }
         }
     }
@@ -309,12 +309,25 @@ class BusinessDocumentTools
      */
     protected function recalculateLine(&$line)
     {
-        /// apply tax zones
-        $newCodimpuesto = $line->getProducto()->codimpuesto;
-        foreach ($this->impuestosZonas as $impZona) {
-            if ($newCodimpuesto == $impZona->codimpuesto) {
-                $newCodimpuesto = $impZona->codimpuestosel;
-                break;
+        $newCodimpuesto = $line->codimpuesto;
+
+        /// tax manually changed?
+        if ($line->getTax()->iva != $line->iva) {
+            /// only defined tax are allowed
+            $newCodimpuesto = null;
+            foreach ($line->getTax()->all() as $tax) {
+                if ($line->iva == $tax->iva) {
+                    $newCodimpuesto = $tax->codimpuesto;
+                    break;
+                }
+            }
+        } elseif ($line->codimpuesto === $line->getProducto()->codimpuesto) {
+            /// apply tax zones
+            foreach ($this->taxZones as $taxZone) {
+                if ($newCodimpuesto == $taxZone->codimpuesto) {
+                    $newCodimpuesto = $taxZone->codimpuestosel;
+                    break;
+                }
             }
         }
 
@@ -324,17 +337,14 @@ class BusinessDocumentTools
             $line->irpf = $line->iva = $line->recargo = 0.0;
             $save = true;
         } elseif ($newCodimpuesto != $line->codimpuesto) {
-            /// get new tax
-            $impuesto = new Impuesto();
-            $impuesto->loadFromCode($newCodimpuesto);
-
+            /// set new tax
             $line->codimpuesto = $newCodimpuesto;
-            $line->iva = $impuesto->iva;
-            $line->recargo = $impuesto->recargo;
+            $line->iva = $line->getTax()->iva;
+            $line->recargo = $line->getTax()->recargo;
             $save = true;
         }
 
-        if ($line->recargo && !$this->recargo) {
+        if ($line->recargo && $this->recargo === false) {
             $line->recargo = 0.0;
             $save = true;
         }
@@ -376,7 +386,7 @@ class BusinessDocumentTools
         if ($this->siniva || $suplido) {
             $newLine->codimpuesto = null;
             $newLine->irpf = $newLine->iva = $newLine->recargo = 0.0;
-        } elseif (!$this->recargo) {
+        } elseif ($this->recargo === false) {
             $newLine->recargo = 0.0;
         }
 
@@ -390,21 +400,18 @@ class BusinessDocumentTools
     protected function recalculateFormLineTaxZones(&$line)
     {
         $newCodimpuesto = $line->codimpuesto;
-        foreach ($this->impuestosZonas as $impZona) {
-            if ($newCodimpuesto == $impZona->codimpuesto) {
-                $newCodimpuesto = $impZona->codimpuestosel;
+        foreach ($this->taxZones as $taxZone) {
+            if ($newCodimpuesto == $taxZone->codimpuesto) {
+                $newCodimpuesto = $taxZone->codimpuestosel;
                 break;
             }
         }
 
         if ($newCodimpuesto != $line->codimpuesto) {
-            /// get new tax
-            $impuesto = new Impuesto();
-            $impuesto->loadFromCode($newCodimpuesto);
-
+            /// set new tax
             $line->codimpuesto = $newCodimpuesto;
-            $line->iva = $impuesto->iva;
-            $line->recargo = $impuesto->recargo;
+            $line->iva = $line->getTax()->iva;
+            $line->recargo = $line->getTax()->recargo;
         }
     }
 }

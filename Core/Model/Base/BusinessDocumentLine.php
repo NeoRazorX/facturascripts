@@ -32,6 +32,8 @@ use FacturaScripts\Dinamic\Model\Variante;
 abstract class BusinessDocumentLine extends ModelOnChangeClass
 {
 
+    use TaxRelationTrait;
+
     /**
      * Update stock status.
      *
@@ -45,13 +47,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      * @var float|int
      */
     public $cantidad;
-
-    /**
-     * Code of the related tax.
-     *
-     * @var string
-     */
-    public $codimpuesto;
 
     /**
      * Description of the line.
@@ -157,13 +152,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public $suplido;
 
     /**
-     * Containt all avaliable taxes.
-     *
-     * @var Impuesto[]
-     */
-    private static $taxes = [];
-
-    /**
      * Returns the parent document of this line.
      */
     abstract public function getDocument();
@@ -193,10 +181,9 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $this->suplido = false;
 
         /// default tax
-        $impuesto = $this->getDefaultTax();
-        $this->codimpuesto = $impuesto->codimpuesto;
-        $this->iva = $impuesto->iva;
-        $this->recargo = $impuesto->recargo;
+        $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
+        $this->iva = $this->getTax()->iva;
+        $this->recargo = $this->getTax()->recargo;
     }
 
     /**
@@ -233,20 +220,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
     /**
      * 
-     * @return Impuesto
-     */
-    public function getTax()
-    {
-        if (!isset(self::$taxes[$this->codimpuesto])) {
-            self::$taxes[$this->codimpuesto] = new Impuesto();
-            self::$taxes[$this->codimpuesto]->loadFromCode($this->codimpuesto);
-        }
-
-        return self::$taxes[$this->codimpuesto];
-    }
-
-    /**
-     * 
      * @return string
      */
     public function install()
@@ -275,7 +248,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public function test()
     {
-        if ('' === $this->codimpuesto) {
+        if (empty($this->codimpuesto)) {
             $this->codimpuesto = null;
         }
 
@@ -303,7 +276,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        $name = str_replace('Linea', '', $this->modelClassName());
+        $name = \str_replace('Linea', '', $this->modelClassName());
         if ($type === 'new') {
             return 'Edit' . $name;
         }
@@ -334,18 +307,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
                 $stock->reservada += $quantity;
                 break;
         }
-    }
-
-    /**
-     * 
-     * @return Impuesto
-     */
-    private function getDefaultTax()
-    {
-        $codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
-        $impuesto = new Impuesto();
-        $impuesto->loadFromCode($codimpuesto);
-        return $impuesto;
     }
 
     /**
@@ -397,11 +358,8 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     protected function setPreviousData(array $fields = [])
     {
-        $more = [
-            'actualizastock', 'cantidad', 'descripcion', 'dtopor', 'irpf',
-            'iva', 'pvptotal', 'recargo'
-        ];
-        parent::setPreviousData(array_merge($more, $fields));
+        $more = ['actualizastock', 'cantidad'];
+        parent::setPreviousData(\array_merge($more, $fields));
 
         if (null === $this->previousData['actualizastock']) {
             $this->previousData['actualizastock'] = 0;
