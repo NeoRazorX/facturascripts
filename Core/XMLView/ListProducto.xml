@@ -71,10 +71,25 @@
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="creation-date" display="none" order="240">
+        <column name="subaccount-purchases" display="none" order="240">
+            <widget type="select" fieldname="codsubcuentacom" onclick="EditSubcuenta">
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+            </widget>
+        </column>
+        <column name="subaccount-irpf" display="none" order="250">
+            <widget type="select" fieldname="codsubcuentairpfcom" onclick="EditSubcuenta">
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+            </widget>
+        </column>
+        <column name="subaccount-sales" display="none" order="260">
+            <widget type="select" fieldname="codsubcuentaven" onclick="EditSubcuenta">
+                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+            </widget>
+        </column>        
+        <column name="creation-date" display="none" order="270">
             <widget type="text" fieldname="fechaalta" />
         </column>
-        <column name="update-time" display="none" order="250">
+        <column name="update-time" display="none" order="280">
             <widget type="datetime" fieldname="actualizado" />
         </column>
     </columns>
