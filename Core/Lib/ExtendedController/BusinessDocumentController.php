@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
-use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
+use FacturaScripts\Core\Lib\BusinessDocumentFormTools;
 
 /**
  * Description of BusinessDocumentController
@@ -31,7 +31,7 @@ abstract class BusinessDocumentController extends PanelController
 
     /**
      *
-     * @var BusinessDocumentTools
+     * @var BusinessDocumentFormTools
      */
     protected $documentTools;
 
@@ -86,7 +86,7 @@ abstract class BusinessDocumentController extends PanelController
     public function __construct(string $className, string $uri = '')
     {
         parent::__construct($className, $uri);
-        $this->documentTools = new BusinessDocumentTools();
+        $this->documentTools = new BusinessDocumentFormTools();
     }
 
     /**
