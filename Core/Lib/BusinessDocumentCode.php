@@ -37,21 +37,23 @@ class BusinessDocumentCode
      * Generates a new identifier for humans from a document.
      *
      * @param BusinessDocument $document
+     * @param bool             $newNumber
      */
-    public static function getNewCode(&$document)
+    public static function getNewCode(&$document, $newNumber = true)
     {
         $sequence = static::getSequence($document);
-        $document->numero = static::getNewNumber($sequence, $document);
-        $vars = [
+        if ($newNumber) {
+            $document->numero = static::getNewNumber($sequence, $document);
+        }
+
+        $document->codigo = \strtr($sequence->patron, [
             '{EJE}' => $document->codejercicio,
             '{EJE2}' => \substr($document->codejercicio, -2),
             '{SERIE}' => $document->codserie,
             '{0SERIE}' => \str_pad($document->codserie, 2, '0', \STR_PAD_LEFT),
             '{NUM}' => $document->numero,
-            '{0NUM}' => \str_pad($document->numero, $sequence->longnumero, '0', \STR_PAD_LEFT),
-        ];
-
-        $document->codigo = \strtr($sequence->patron, $vars);
+            '{0NUM}' => \str_pad($document->numero, $sequence->longnumero, '0', \STR_PAD_LEFT)
+        ]);
     }
 
     /**
