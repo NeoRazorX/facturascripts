@@ -96,17 +96,17 @@
         <table class="table table-hover {{ tableClass }}">
             <thead>
                 <tr>
-                    {% if (currentView.cursor | length > 0) and (currentView.settings.checkBoxes )%}
+                    {% if (currentView.cursor | length > 0) and currentView.settings.checkBoxes %}
                         <th width="50">
-                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                    <input class="form-check-input listActionCB" type="checkbox" />
-                </div>
-                </th>
-            {% endif %}
-            {% for column in currentView.getColumns() %}
-                {{ column.tableHeader() | raw }}
-            {% endfor %}
-            </tr>
+                            <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                <input class="form-check-input listActionCB" type="checkbox" />
+                            </div>
+                        </th>
+                    {% endif %}
+                    {% for column in currentView.getColumns() %}
+                        {{ column.tableHeader() | raw }}
+                    {% endfor %}
+                </tr>
             </thead>
             <tbody>
                 {% for model in currentView.cursor %}
