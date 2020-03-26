@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -72,20 +72,14 @@
             </widget>
         </column>
         <column name="subaccount-purchases" display="none" order="240">
-            <widget type="select" fieldname="codsubcuentacom" onclick="EditSubcuenta">
-                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
-            </widget>
+            <widget type="text" fieldname="codsubcuentacom" />
         </column>
         <column name="subaccount-irpf" display="none" order="250">
-            <widget type="select" fieldname="codsubcuentairpfcom" onclick="EditSubcuenta">
-                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
-            </widget>
+            <widget type="text" fieldname="codsubcuentairpfcom" />
         </column>
         <column name="subaccount-sales" display="none" order="260">
-            <widget type="select" fieldname="codsubcuentaven" onclick="EditSubcuenta">
-                <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
-            </widget>
-        </column>        
+            <widget type="text" fieldname="codsubcuentaven" />
+        </column>
         <column name="creation-date" display="none" order="270">
             <widget type="text" fieldname="fechaalta" />
         </column>
