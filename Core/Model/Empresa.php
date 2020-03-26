@@ -112,6 +112,17 @@ class Empresa extends Base\Contact
      * @var string
      */
     public $web;
+	
+    /**
+     * Returns the bank accounts associated with the company.
+     * 
+     * @return array
+     */
+    public function getBankAccounts()
+    {
+        $companyAccounts = new CuentaBanco();
+        return $companyAccounts->all([new DataBaseWhere('idempresa', $this->idempresa)]);
+    }	
 
     /**
      * Reset the values of all model properties.

@@ -147,6 +147,17 @@ class Cliente extends Base\ComercialContact
 
         return $days;
     }
+	
+    /**
+     * Returns the bank accounts associated with this customer.
+     * 
+     * @return array
+     */
+    public function getBankAccounts()
+    {
+        $contactAccounts = new CuentaBancoCliente();
+        return $contactAccounts->all([new DataBaseWhere('codcliente', $this->codcliente)]);
+    }	
 
     /**
      * This function is called when creating the model table. Returns the SQL
