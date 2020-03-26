@@ -53,7 +53,7 @@ class APIModel extends APIResourceClass
         }
 
         if ($this->model->delete()) {
-            $this->setOk($this->toolBox()->i18n()->trans('record-deleted-correctly'), (array) $this->model);
+            $this->setOk($this->toolBox()->i18n()->trans('record-deleted-correctly'), $this->model->getFieldsValues());
             return true;
         }
 
@@ -93,7 +93,7 @@ class APIModel extends APIResourceClass
             return false;
         }
 
-        $this->returnResult((array) $this->model);
+        $this->returnResult($this->model->getFieldsValues());
         return true;
     }
 
@@ -110,7 +110,9 @@ class APIModel extends APIResourceClass
         $param0 = empty($this->params) ? '' : $this->params[0];
         $code = $values[$field] ?? $param0;
         if ($this->model->loadFromCode($code)) {
-            $this->setError($this->toolBox()->i18n()->trans('duplicate-record'), (array) $this->model);
+            $this->setError(
+                $this->toolBox()->i18n()->trans('duplicate-record'),
+                $this->model->getFieldsValues());
             return false;
         }
 
@@ -215,8 +217,8 @@ class APIModel extends APIResourceClass
     /**
      * Returns the where clauses.
      *
-     * @param array  $filter
-     * @param array  $operation
+     * @param array $filter
+     * @param array $operation
      * @param string $defaultOperation
      *
      * @return DataBaseWhere[]
@@ -265,7 +267,7 @@ class APIModel extends APIResourceClass
             if (substr($key, -5) == '_like') {
                 $field = substr($key, 0, -5);
                 $operator = 'LIKE';
-            } elseif (substr($key, -6) == '_isnot') {
+            } else if (substr($key, -6) == '_isnot') {
                 $field = substr($key, 0, -6);
                 $operator = 'IS NOT';
             }
@@ -281,14 +283,14 @@ class APIModel extends APIResourceClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function listAll(): bool
     {
         $filter = $this->getRequestArray('filter');
-        $limit = (int) $this->request->get('limit', 50);
-        $offset = (int) $this->request->get('offset', 0);
+        $limit = (int)$this->request->get('limit', 50);
+        $offset = (int)$this->request->get('offset', 0);
         $operation = $this->getRequestArray('operation');
         $order = $this->getRequestArray('sort');
 
@@ -325,13 +327,16 @@ class APIModel extends APIResourceClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     private function saveResource(): bool
     {
         if ($this->model->save()) {
-            $this->setOk($this->toolBox()->i18n()->trans('record-updated-correctly'), (array) $this->model);
+            $this->setOk(
+                $this->toolBox()->i18n()->trans('record-updated-correctly'),
+                $this->model->getFieldsValues()
+            );
             return true;
         }
 
@@ -340,7 +345,7 @@ class APIModel extends APIResourceClass
             $message .= ' - ' . $log['message'];
         }
 
-        $this->setError($message, (array) $this->model);
+        $this->setError($message, $this->model->getFieldsValues());
         return false;
     }
 }
