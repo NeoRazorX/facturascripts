@@ -152,7 +152,7 @@ class Proveedor extends Base\ComercialContact
      */
     public function test()
     {
-        if (!empty($this->codproveedor) && false == \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
+        if (!empty($this->codproveedor) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codproveedor, '%column%' => 'codproveedor', '%min%' => '1', '%max%' => '10']
