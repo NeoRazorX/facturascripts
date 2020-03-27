@@ -233,10 +233,9 @@ abstract class BaseController extends Base\Controller
         }
 
         $where = [];
-        if (!empty($data['fieldfilter'])) {
-            $filterField = $data['fieldfilter'];
-            $filterValue = $this->request->get($filterField);
-            $where[] = new DataBaseWhere($filterField, $filterValue);
+        foreach (DataBaseWhere::applyOperation($data['fieldfilter']) as $field => $operation) {
+            $value = $this->request->get($field);
+            $where[] = new DataBaseWhere($field, $value, '=', $operation);
         }
 
         $results = [];

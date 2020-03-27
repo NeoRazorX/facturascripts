@@ -89,6 +89,39 @@ class DataBaseWhere
     }
 
     /**
+     * Given a list of fields with operators:
+     * '|' for OR operations
+     * ',' for AND operations
+     * Returns an array with the field (key) and the operation (value).
+     *
+     * @param string $fields
+     * @return array
+     */
+    public static function applyOperation(string $fields)
+    {
+        if (empty($fields)) {
+            return [];
+        }
+
+        $result = [];
+        $fieldAnd = explode(',', $fields);
+        foreach ($fieldAnd as $field) {
+            if ($field !=='' && strpos($field, '|') === false) {
+                $result[$field] = 'AND';
+            }
+        }
+
+        $fieldOr = explode('|', $fields);
+        foreach ($fieldOr as $field) {
+            if ($field !=='' && strpos($field, ',') === false) {
+                $result[$field] = 'OR';
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Given a DataBaseWhere array, it returns the field list with their values
      * that will be applied as a filter. (It only returns filters with the '=' operator).
      *
@@ -225,7 +258,7 @@ class DataBaseWhere
     }
 
     /**
-     * 
+     *
      * @param string $column
      *
      * @return string
