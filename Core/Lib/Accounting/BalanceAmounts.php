@@ -62,12 +62,17 @@ class BalanceAmounts extends AccountingBase
         }
 
         $balance = [];
+        $totals = [['debe' => 0.00, 'haber' => 0.00, 'saldo' => 0.00 ]];
         foreach ($results as $line) {
-            $balance[] = $this->processLine($line);
+            $balance[] = $this->processLine($line, $totals);
         }
 
+        $totals[0]['debe'] = $this->toolBox()->coins()->format($totals[0]['debe'], FS_NF0, '');
+        $totals[0]['haber'] = $this->toolBox()->coins()->format($totals[0]['haber'], FS_NF0, '');
+        $totals[0]['saldo'] = $this->toolBox()->coins()->format($totals[0]['saldo'], FS_NF0, '');
+
         /// every page is a table
-        $pages = [$balance];
+        $pages = [$balance, $totals];
         return $pages;
     }
 
@@ -158,20 +163,27 @@ class BalanceAmounts extends AccountingBase
 
     /**
      * Process the line data to use the appropiate formats.
+     * Accumulate the line in the totals.
      *
      * @param array $line
-     *
+     * @param array $totals
      * @return array
      */
-    private function processLine($line)
+    private function processLine($line, &$totals)
     {
-        $saldo = (float) $line['debe'] - (float) $line['haber'];
+        $debe = (float) $line['debe'];
+        $haber = (float) $line['haber'];
+        $saldo = $debe - $haber;
+
+        $totals[0]['debe'] += $debe;
+        $totals[0]['haber'] += $haber;
+        $totals[0]['saldo'] += $saldo;
 
         return [
             'cuenta' => $line['codsubcuenta'],
             'descripcion' => $line['descripcion'],
-            'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),
-            'haber' => $this->toolBox()->coins()->format($line['haber'], FS_NF0, ''),
+            'debe' => $this->toolBox()->coins()->format($debe, FS_NF0, ''),
+            'haber' => $this->toolBox()->coins()->format($haber, FS_NF0, ''),
             'saldo' => $this->toolBox()->coins()->format($saldo, FS_NF0, ''),
         ];
     }
