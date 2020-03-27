@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\CuentaBancoProveedor as DinCuentaBancoProveedor;
+use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 
 /**
  * A supplier. It can be related to several addresses or sub-accounts.
@@ -74,29 +76,42 @@ class Proveedor extends Base\ComercialContact
     {
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
         $fields = 'cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2';
-        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = new DataBaseWhere($fields, \mb_strtolower($query, 'UTF8'), 'LIKE');
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
     /**
-     * Returns the addresses associated with the provider.
+     * Returns the addresses associated with this supplier.
      *
-     * @return Contacto[]
+     * @return DinContacto[]
      */
     public function getAdresses()
     {
-        $contactModel = new Contacto();
-        return $contactModel->all([new DataBaseWhere('codproveedor', $this->codproveedor)]);
+        $contactModel = new DinContacto();
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
+        return $contactModel->all($where, [], 0, 0);
+    }
+
+    /**
+     * Returns the bank accounts associated with the provider.
+     *
+     * @return DinCuentaBancoProveedor[]
+     */
+    public function getBankAccounts()
+    {
+        $contactAccounts = new DinCuentaBancoProveedor();
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
+        return $contactAccounts->all($where, [], 0, 0);
     }
 
     /**
      * Return the default billing or shipping address.
      *
-     * @return Contacto
+     * @return DinContacto
      */
     public function getDefaultAddress()
     {
-        $contact = new Contacto();
+        $contact = new DinContacto();
         $contact->loadFromCode($this->idcontacto);
         return $contact;
     }
@@ -138,7 +153,7 @@ class Proveedor extends Base\ComercialContact
      */
     public function test()
     {
-        if (!empty($this->codproveedor) && !preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
+        if (!empty($this->codproveedor) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codproveedor, '%column%' => 'codproveedor', '%min%' => '1', '%max%' => '10']
@@ -164,7 +179,7 @@ class Proveedor extends Base\ComercialContact
         $return = parent::saveInsert($values);
         if ($return && empty($this->idcontacto)) {
             /// creates new contact
-            $contact = new Contacto();
+            $contact = new DinContacto();
             $contact->cifnif = $this->cifnif;
             $contact->codproveedor = $this->codproveedor;
             $contact->descripcion = $this->nombre;

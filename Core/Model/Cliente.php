@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\CuentaBancoCliente as DinCuentaBancoCliente;
+use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 
 /**
  * The client. You can have one or more associated addresses and sub-accounts.
@@ -96,39 +98,44 @@ class Cliente extends Base\ComercialContact
     {
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
         $fields = 'cifnif|codcliente|email|nombre|observaciones|razonsocial|telefono1|telefono2';
-        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = new DataBaseWhere($fields, \mb_strtolower($query, 'UTF8'), 'LIKE');
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
     /**
-     * Returns an array with the addresses associated with the client.
+     * Returns an array with the addresses associated with this customer.
      *
-     * @return Contacto[]
+     * @return DinContacto[]
      */
     public function getAdresses()
     {
-        $contactModel = new Contacto();
-        return $contactModel->all([new DataBaseWhere('codcliente', $this->codcliente)]);
+        $contactModel = new DinContacto();
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
+        return $contactModel->all($where, [], 0, 0);
+    }
+
+    /**
+     * Returns the bank accounts associated with this customer.
+     *
+     * @return DinCuentaBancoCliente[]
+     */
+    public function getBankAccounts()
+    {
+        $contactAccounts = new DinCuentaBancoCliente();
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
+        return $contactAccounts->all($where, [], 0, 0);
     }
 
     /**
      * Return the default billing or shipping address.
      *
-     * @return Contacto
+     * @return DinContacto
      */
     public function getDefaultAddress($type = 'billing')
     {
-        $contact = new Contacto();
-        switch ($type) {
-            case 'shipping':
-                $contact->loadFromCode($this->idcontactoenv);
-                break;
-
-            default:
-                $contact->loadFromCode($this->idcontactofact);
-                break;
-        }
-
+        $contact = new DinContacto();
+        $idcontact = $type === 'shipping' ? $this->idcontactoenv : $this->idcontactofact;
+        $contact->loadFromCode($idcontact);
         return $contact;
     }
 
@@ -140,9 +147,9 @@ class Cliente extends Base\ComercialContact
     public function getPaymentDays()
     {
         $days = [];
-        foreach (explode(',', $this->diaspago . ',') as $str) {
-            if (is_numeric(trim($str))) {
-                $days[] = trim($str);
+        foreach (\explode(',', $this->diaspago . ',') as $str) {
+            if (\is_numeric(\trim($str))) {
+                $days[] = \trim($str);
             }
         }
 
@@ -203,7 +210,7 @@ class Cliente extends Base\ComercialContact
      */
     public function test()
     {
-        if (!empty($this->codcliente) && !preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcliente)) {
+        if (!empty($this->codcliente) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcliente)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codcliente, '%column%' => 'codcliente', '%min%' => '1', '%max%' => '10']
@@ -213,12 +220,12 @@ class Cliente extends Base\ComercialContact
 
         /// we validate the days of payment
         $arrayDias = [];
-        foreach (str_getcsv($this->diaspago) as $day) {
+        foreach (\str_getcsv($this->diaspago) as $day) {
             if ((int) $day >= 1 && (int) $day <= 31) {
                 $arrayDias[] = (int) $day;
             }
         }
-        $this->diaspago = empty($arrayDias) ? null : implode(',', $arrayDias);
+        $this->diaspago = empty($arrayDias) ? null : \implode(',', $arrayDias);
         return parent::test();
     }
 
@@ -237,7 +244,7 @@ class Cliente extends Base\ComercialContact
         $return = parent::saveInsert($values);
         if ($return && empty($this->idcontactofact)) {
             /// creates new contact
-            $contact = new Contacto();
+            $contact = new DinContacto();
             $contact->cifnif = $this->cifnif;
             $contact->codcliente = $this->codcliente;
             $contact->descripcion = $this->nombre;

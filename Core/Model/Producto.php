@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,6 +29,7 @@ class Producto extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+    use Base\TaxRelationTrait;
 
     const ROUND_DECIMALS = 5;
 
@@ -59,13 +60,6 @@ class Producto extends Base\ModelClass
      * @var string
      */
     public $codfamilia;
-
-    /**
-     * Tax identifier of the tax assigned.
-     *
-     * @var string
-     */
-    public $codimpuesto;
 
     /**
      * Sub-account code for purchases.
@@ -108,12 +102,6 @@ class Producto extends Base\ModelClass
      * @var int
      */
     public $idproducto;
-
-    /**
-     *
-     * @var Impuesto[]
-     */
-    private static $impuestos = [];
 
     /**
      * True -> do not control the stock.
@@ -185,10 +173,10 @@ class Producto extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->actualizado = date(self::DATETIME_STYLE);
+        $this->actualizado = \date(self::DATETIME_STYLE);
         $this->bloqueado = false;
         $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
-        $this->fechaalta = date(self::DATE_STYLE);
+        $this->fechaalta = \date(self::DATE_STYLE);
         $this->nostock = false;
         $this->precio = 0.0;
         $this->publico = false;
@@ -196,20 +184,6 @@ class Producto extends Base\ModelClass
         $this->sevende = true;
         $this->stockfis = 0.0;
         $this->ventasinstock = (bool) $this->toolBox()->appSettings()->get('default', 'ventasinstock', false);
-    }
-
-    /**
-     * 
-     * @return Impuesto
-     */
-    public function getImpuesto()
-    {
-        if (!isset(self::$impuestos[$this->codimpuesto])) {
-            self::$impuestos[$this->codimpuesto] = new Impuesto();
-            self::$impuestos[$this->codimpuesto]->loadFromCode($this->codimpuesto);
-        }
-
-        return self::$impuestos[$this->codimpuesto];
     }
 
     /**
@@ -248,7 +222,7 @@ class Producto extends Base\ModelClass
      */
     public function priceWithTax()
     {
-        return $this->precio * (100 + $this->getImpuesto()->iva) / 100;
+        return $this->precio * (100 + $this->getTax()->iva) / 100;
     }
 
     /**
@@ -276,17 +250,15 @@ class Producto extends Base\ModelClass
      */
     public function setPriceWithTax($price)
     {
-        $impuesto = $this->getImpuesto();
-        $newPrice = (100 * $price) / (100 + $impuesto->iva);
-
+        $newPrice = (100 * $price) / (100 + $this->getTax()->iva);
         foreach ($this->getVariants() as $variant) {
             if ($variant->referencia == $this->referencia) {
-                $variant->precio = round($newPrice, self::ROUND_DECIMALS);
+                $variant->precio = \round($newPrice, self::ROUND_DECIMALS);
                 return $variant->save();
             }
         }
 
-        $this->precio = round($newPrice, self::ROUND_DECIMALS);
+        $this->precio = \round($newPrice, self::ROUND_DECIMALS);
     }
 
     /**
@@ -311,7 +283,7 @@ class Producto extends Base\ModelClass
         $this->observaciones = $utils->noHtml($this->observaciones);
         $this->referencia = $utils->noHtml($this->referencia);
 
-        if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
+        if (\strlen($this->referencia) < 1 || \strlen($this->referencia) > 30) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
@@ -335,7 +307,7 @@ class Producto extends Base\ModelClass
             $this->publico = false;
         }
 
-        $this->actualizado = date(self::DATETIME_STYLE);
+        $this->actualizado = \date(self::DATETIME_STYLE);
         return parent::test();
     }
 
@@ -348,7 +320,7 @@ class Producto extends Base\ModelClass
         $newReferencia = null;
 
         foreach ($this->getVariants() as $variant) {
-            if ($variant->referencia == $this->referencia || is_null($newReferencia)) {
+            if ($variant->referencia == $this->referencia || \is_null($newReferencia)) {
                 $newPrecio = $variant->precio;
                 $newReferencia = $variant->referencia;
                 break;

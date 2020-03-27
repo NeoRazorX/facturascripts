@@ -52,7 +52,7 @@ abstract class ModelCore
 
     /**
      * Adds an extension to this model.
-     * 
+     *
      * @param mixed $extension
      */
     abstract public static function addExtension($extension);
@@ -88,7 +88,7 @@ abstract class ModelCore
 
     /**
      * Executes all $name methods added from the extensions.
-     * 
+     *
      * @param string $name
      * @param array  $arguments
      *
@@ -121,12 +121,12 @@ abstract class ModelCore
             self::$dataBase = new DataBase();
 
             $tables = $this->toolBox()->cache()->get('fs_checked_tables');
-            if (is_array($tables) && !empty($tables)) {
+            if (\is_array($tables) && !empty($tables)) {
                 self::$checkedTables = $tables;
             }
         }
 
-        if (static::tableName() !== '' && !in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
+        if (static::tableName() !== '' && false === \in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
             $this->toolBox()->i18nLog()->debug('table-checked', ['%tableName%' => static::tableName()]);
             self::$checkedTables[] = static::tableName();
             $this->toolBox()->cache()->set('fs_checked_tables', self::$checkedTables);
@@ -168,8 +168,8 @@ abstract class ModelCore
      */
     public function clear()
     {
-        foreach ($this->getModelFields() as $field) {
-            $this->{$field['name']} = null;
+        foreach (\array_keys($this->getModelFields()) as $fieldName) {
+            $this->{$fieldName} = null;
         }
 
         $this->pipe('clear');
@@ -197,16 +197,16 @@ abstract class ModelCore
     {
         $fields = $this->getModelFields();
         foreach ($data as $key => $value) {
-            if (in_array($key, $exclude)) {
+            if (\in_array($key, $exclude)) {
                 continue;
-            } elseif (!isset($fields[$key])) {
+            } else if (!isset($fields[$key])) {
                 $this->{$key} = $value;
                 continue;
             }
 
             // We check if it is a varchar (with established length) or another type of data
             $field = $fields[$key];
-            $type = (strpos($field['type'], '(') === false) ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
+            $type = \strpos($field['type'], '(') === false ? $field['type'] : \substr($field['type'], 0, \strpos($field['type'], '('));
 
             switch ($type) {
                 case 'tinyint':
@@ -226,12 +226,12 @@ abstract class ModelCore
                     break;
 
                 case 'date':
-                    $this->{$key} = empty($value) ? null : date(self::DATE_STYLE, strtotime($value));
+                    $this->{$key} = empty($value) ? null : \date(self::DATE_STYLE, \strtotime($value));
                     break;
 
                 case 'datetime':
                 case 'timestamp':
-                    $this->{$key} = empty($value) ? null : date(self::DATETIME_STYLE, strtotime($value));
+                    $this->{$key} = empty($value) ? null : \date(self::DATETIME_STYLE, \strtotime($value));
                     break;
 
                 default:
@@ -248,6 +248,21 @@ abstract class ModelCore
     public function primaryColumnValue()
     {
         return $this->{$this->primaryColumn()};
+    }
+
+    /**
+     * Returns an array with the model fields values.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        $data = [];
+        foreach (\array_keys($this->getModelFields()) as $fieldName) {
+            $data[$fieldName] = $this->{$fieldName};
+        }
+
+        return $data;
     }
 
     /**
@@ -294,9 +309,9 @@ abstract class ModelCore
      */
     private function getBoolValueForField($field, $value)
     {
-        if (in_array(strtolower($value), ['true', 't', '1'], false)) {
+        if (\in_array(\strtolower($value), ['true', 't', '1'], false)) {
             return true;
-        } elseif (in_array(strtolower($value), ['false', 'f', '0'], false)) {
+        } else if (\in_array(\strtolower($value), ['false', 'f', '0'], false)) {
             return false;
         }
 
@@ -313,7 +328,7 @@ abstract class ModelCore
      */
     private function getFloatValueForField($field, $value)
     {
-        if (is_numeric($value)) {
+        if (\is_numeric($value)) {
             return (float) $value;
         }
 
@@ -330,7 +345,7 @@ abstract class ModelCore
      */
     private function getIntergerValueForField($field, $value)
     {
-        if (is_numeric($value)) {
+        if (\is_numeric($value)) {
             return (int) $value;
         }
 
@@ -342,7 +357,7 @@ abstract class ModelCore
     }
 
     /**
-     * 
+     *
      * @return ToolBox
      */
     protected static function toolBox()

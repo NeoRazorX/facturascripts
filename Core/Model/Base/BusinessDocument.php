@@ -271,6 +271,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->irpf = 0.0;
         $this->neto = 0.0;
         $this->netosindto = 0.0;
+        $this->numero = 1;
         $this->total = 0.0;
         $this->totaleuros = 0.0;
         $this->totalirpf = 0.0;
@@ -394,6 +395,12 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $utils = $this->toolBox()->utils();
         $this->observaciones = $utils->noHtml($this->observaciones);
 
+        /// check number
+        if ((int) $this->numero < 1) {
+            $this->toolBox()->i18nLog()->error('invalid-number');
+            return false;
+        }
+
         /// check total
         $total = $this->neto + $this->totalsuplidos + $this->totaliva - $this->totalirpf + $this->totalrecargo;
         if (!$utils->floatcmp($this->total, $total, \FS_NF0, true)) {
@@ -438,6 +445,10 @@ abstract class BusinessDocument extends ModelOnChangeClass
                     BusinessDocumentCode::getNewCode($this);
                 }
                 break;
+
+            case 'numero':
+                BusinessDocumentCode::getNewCode($this, false);
+                break;
         }
 
         return parent::onChange($field);
@@ -452,7 +463,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     {
         $more = [
             'codalmacen', 'coddivisa', 'codpago', 'codserie',
-            'fecha', 'hora', 'idempresa', 'total'
+            'fecha', 'hora', 'idempresa', 'numero', 'total'
         ];
         parent::setPreviousData(\array_merge($more, $fields));
     }

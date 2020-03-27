@@ -96,7 +96,7 @@
         <table class="table table-hover {{ tableClass }}">
             <thead>
                 <tr>
-                    {% if currentView.cursor | length > 0 %}
+                    {% if (currentView.cursor | length > 0) and currentView.settings.checkBoxes %}
                         <th width="50">
                             <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
                                 <input class="form-check-input listActionCB" type="checkbox" />
@@ -112,11 +112,13 @@
                 {% for model in currentView.cursor %}
                     {% set trClass = currentView.getRow('status').trClass(model) %}
                     <tr class="clickableRow {{ trClass }}" data-href="{{ model.url() }}">
-                        <td class="cancelClickable">
-                            <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                                <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
-                            </div>
-                        </td>
+                        {% if currentView.settings.checkBoxes %}
+                            <td class="cancelClickable">
+                                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                    <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
+                                </div>
+                            </td>
+                        {% endif %}
                         {% for column in currentView.getColumns() %}
                             {{ column.tableCell(model) | raw }}
                         {% endfor %}

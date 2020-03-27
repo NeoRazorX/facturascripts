@@ -120,9 +120,9 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addGoodsPurchaseLine($accountEntry)
     {
-        $purchaseAccount = $this->getSpecialSubAccount('COMPRA')->codsubcuenta;
+        $purchaseAccount = $this->getSpecialSubAccount('COMPRA');
         $tool = new PurchasesDocLineAccount();
-        foreach ($tool->getTotalsForDocument($this->document, $purchaseAccount) as $code => $total) {
+        foreach ($tool->getTotalsForDocument($this->document, $purchaseAccount->codsubcuenta) as $code => $total) {
             $subaccount = $this->getSubAccount($code);
             if (empty($subaccount->codsubcuenta)) {
                 $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
@@ -151,9 +151,9 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addGoodsSalesLine($accountEntry)
     {
-        $salesAccount = $this->getSpecialSubAccount('VENTAS')->codsubcuenta;
+        $salesAccount = $this->getSpecialSubAccount('VENTAS');
         $tool = new SalesDocLineAccount();
-        foreach ($tool->getTotalsForDocument($this->document, $salesAccount) as $code => $total) {
+        foreach ($tool->getTotalsForDocument($this->document, $salesAccount->codsubcuenta) as $code => $total) {
             $subaccount = $this->getSubAccount($code);
             if (empty($subaccount->codsubcuenta)) {
                 $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');

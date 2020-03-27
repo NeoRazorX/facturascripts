@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,9 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 
 /**
  * This class stores the main data of the company.
@@ -136,6 +138,18 @@ class Empresa extends Base\Contact
         }
 
         return parent::delete();
+    }
+
+    /**
+     * Returns the bank accounts associated with the company.
+     * 
+     * @return DinCuentaBanco[]
+     */
+    public function getBankAccounts()
+    {
+        $companyAccounts = new DinCuentaBanco();
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
+        return $companyAccounts->all($where, [], 0, 0);
     }
 
     /**

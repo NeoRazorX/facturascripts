@@ -195,14 +195,13 @@ abstract class SalesDocument extends TransformerDocument
         $where2 = [new DataBaseWhere('codbarras', $this->toolBox()->utils()->noHtml($reference))];
         if ($variant->loadFromCode('', $where1) || $variant->loadFromCode('', $where2)) {
             $product = $variant->getProducto();
-            $impuesto = $product->getImpuesto();
 
-            $newLine->codimpuesto = $impuesto->codimpuesto;
+            $newLine->codimpuesto = $product->getTax()->codimpuesto;
             $newLine->descripcion = $variant->description();
             $newLine->idproducto = $product->idproducto;
-            $newLine->iva = $impuesto->iva;
+            $newLine->iva = $product->getTax()->iva;
             $newLine->pvpunitario = isset($this->tarifa) ? $this->tarifa->apply($variant->coste, $variant->precio) : $variant->precio;
-            $newLine->recargo = $impuesto->recargo;
+            $newLine->recargo = $product->getTax()->recargo;
             $newLine->referencia = $variant->referencia;
 
             /// allow extensions

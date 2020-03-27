@@ -84,14 +84,13 @@ abstract class PurchaseDocument extends TransformerDocument
         $where2 = [new DataBaseWhere('codbarras', $this->toolBox()->utils()->noHtml($reference))];
         if ($variant->loadFromCode('', $where1) || $variant->loadFromCode('', $where2)) {
             $product = $variant->getProducto();
-            $impuesto = $product->getImpuesto();
 
-            $newLine->codimpuesto = $impuesto->codimpuesto;
+            $newLine->codimpuesto = $product->getTax()->codimpuesto;
             $newLine->descripcion = $variant->description();
             $newLine->idproducto = $product->idproducto;
-            $newLine->iva = $impuesto->iva;
+            $newLine->iva = $product->getTax()->iva;
             $newLine->pvpunitario = $variant->coste;
-            $newLine->recargo = $impuesto->recargo;
+            $newLine->recargo = $product->getTax()->recargo;
             $newLine->referencia = $variant->referencia;
 
             $this->setLastSupplierPrice($newLine);
