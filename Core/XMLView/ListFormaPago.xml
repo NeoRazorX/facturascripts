@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,10 +49,16 @@
         <column name="domiciled" display="center" order="150">
             <widget type="checkbox" fieldname="domiciliado" />
         </column>
+        <column name="bank-account" display="right" order="160">
+            <widget type="select" fieldname="codcuentabanco" onclick="EditCuentaBanco">
+                <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion" />
+            </widget>
+        </column>
     </columns>
     <rows>
         <row type="status">
             <option color="success" fieldname="pagado">1</option>
+            <option color="info" fieldname="domiciliado">1</option>
         </row>
     </rows>
 </view>
