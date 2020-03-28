@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,7 +59,7 @@ class EditCuentaEspecial extends EditController
      * 
      * @param string $viewName
      */
-    protected function createAccountingView($viewName = 'ListCuenta')
+    protected function createAccountingView(string $viewName = 'ListCuenta')
     {
         $this->addListView($viewName, 'Cuenta', 'accounts');
         $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
@@ -70,6 +70,7 @@ class EditCuentaEspecial extends EditController
         /// disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'checkBoxes', false);
     }
 
     /**
@@ -78,6 +79,7 @@ class EditCuentaEspecial extends EditController
     protected function createViews()
     {
         parent::createViews();
+
         /// disable buttons
         $mainViewName = $this->getMainViewName();
         $this->setSettings($mainViewName, 'btnDelete', false);
