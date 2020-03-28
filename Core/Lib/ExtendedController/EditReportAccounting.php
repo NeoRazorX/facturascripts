@@ -35,28 +35,7 @@ abstract class EditReportAccounting extends EditController
      */
     abstract protected function generateReport($model);
 
-    /**
-     * Run the controller after actions.
-     *
-     * @param string $action
-     */
-    protected function execAfterAction($action)
-    {
-        switch ($action) {
-            case 'export':
-                $this->printReport();
-                break;
-
-            default:
-                parent::execAfterAction($action);
-                break;
-        }
-    }
-
-    /**
-     * Print/Export report
-     */
-    protected function printReport()
+    protected function exportAction()
     {
         $model = $this->getModel();
         $pages = $this->generateReport($model);

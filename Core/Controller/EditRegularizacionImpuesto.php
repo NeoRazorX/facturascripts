@@ -206,19 +206,6 @@ class EditRegularizacionImpuesto extends EditController
     }
 
     /**
-     * 
-     * @param string $action
-     */
-    protected function execAfterAction($action)
-    {
-        if ($action === 'export') {
-            $this->exportManager->setOrientation('landscape');
-        }
-
-        parent::execAfterAction($action);
-    }
-
-    /**
      * Run the actions that alter data before reading it.
      *
      * @param string $action
@@ -235,6 +222,12 @@ class EditRegularizacionImpuesto extends EditController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    protected function exportAction()
+    {
+        $this->exportManager->setOrientation('landscape');
+        parent::exportAction();
     }
 
     /**
