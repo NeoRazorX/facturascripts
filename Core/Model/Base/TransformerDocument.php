@@ -177,14 +177,9 @@ abstract class TransformerDocument extends BusinessDocument
      */
     public function getStatus()
     {
-        foreach ($this->getAvaliableStatus() as $status) {
-            /// don't use ===
-            if ($status->idestado == $this->idestado) {
-                return $status;
-            }
-        }
-
-        return new EstadoDocumento();
+        $status = new EstadoDocumento();
+        $status->loadFromCode($this->idestado);
+        return $status;
     }
 
     /**

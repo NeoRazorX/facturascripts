@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019  Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020  Carlos Garcia Gomez <carlos@facturascripts.com>
  * Copyright (C) 2017       Joe Nilson          <joenilson@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,19 +23,19 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" display="none" order="100">
-                <widget type="text" fieldname="codcuenta" />
+            <column name="code" title="bank-mandate" numcolumns="2" order="100">
+                <widget type="text" fieldname="codcuenta" readonly="true" />
             </column>
-            <column name="codcliente" display="none" order="110">
+            <column name="customer" display="none" order="110">
                 <widget type="text" fieldname="codcliente" />
             </column>
-            <column name="description" order="120">
+            <column name="description" numcolumns="2" order="120">
                 <widget type="text" fieldname="descripcion" required="true" />
             </column>
             <column name="iban" order="130">
                 <widget type="text" fieldname="iban" maxlength="34" />
             </column>
-            <column name="swift" order="140">
+            <column name="swift" numcolumns="2" order="140">
                 <widget type="text" fieldname="swift"/>
             </column>
         </group>
@@ -43,7 +43,7 @@
             <column name="principal" numcolumns="9" order="100">
                 <widget type="checkbox" fieldname="principal" />
             </column>
-            <column name="bank-fmandato" numcolumns="3" order="110">
+            <column name="bank-mandate-date" numcolumns="3" order="110">
                 <widget type="date" fieldname="fmandato" />
             </column>
         </group>

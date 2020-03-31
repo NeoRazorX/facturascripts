@@ -94,7 +94,7 @@ class PaymentToAccounting extends AccountingClass
 
         /// Create account entry header
         $accountEntry = new Asiento();
-        $concept = $this->toolBox()->i18n()->trans('receipt-payment-concept', ['%document%' => $this->receipt->getCode()]);
+        $concept = $this->toolBox()->i18n()->trans('customer-payment-concept', ['%document%' => $this->receipt->getCode()]);
         $this->setCommonData($accountEntry, $concept);
         $accountEntry->importe += $this->document->gastos;
         if (!$accountEntry->save()) {
@@ -105,7 +105,7 @@ class PaymentToAccounting extends AccountingClass
         /// Create account entry detail
         /// Add Customer Receipt Amount Line
         $line = $accountEntry->getNewLine();
-        $this->setCommonDataLine($line, $customerSubaccount, $paymentSubaccount, $concept);
+        $this->setCommonDataLine($line, $customerSubaccount, null, $concept);
         $line->documento = $accountEntry->documento;
         $line->haber = $this->document->importe;
         $line->save();
@@ -113,13 +113,13 @@ class PaymentToAccounting extends AccountingClass
         /// Add Expense Amount Line
         if ($this->document->gastos != 0) {
             $concept2 = $this->toolBox()->i18n()->trans('receipt-expense-account', ['%document%' => $accountEntry->documento]);
-            $this->setCommonDataLine($line, $customerSubaccount, $paymentSubaccount, $concept2);
+            $this->setCommonDataLine($line, $customerSubaccount, null, $concept2);
             $line->haber = $this->document->gastos;
             $line->save();
         }
 
         /// Add Cash/Bank Import Line
-        $this->setCommonDataLine($line, $paymentSubaccount, $customerSubaccount, $concept);
+        $this->setCommonDataLine($line, $paymentSubaccount, null, $concept);
         $line->debe = $this->document->importe + $this->document->gastos;
         $line->save();
 
@@ -145,7 +145,7 @@ class PaymentToAccounting extends AccountingClass
 
         /// Create account entry header
         $accountEntry = new Asiento();
-        $concept = $this->toolBox()->i18n()->trans('receipt-payment-concept', ['%document%' => $this->receipt->getCode()]);
+        $concept = $this->toolBox()->i18n()->trans('supplier-payment-concept', ['%document%' => $this->receipt->getCode()]);
         $this->setCommonData($accountEntry, $concept);
         if (!$accountEntry->save()) {
             $this->toolBox()->i18nLog()->warning('accounting-entry-error');
@@ -155,13 +155,13 @@ class PaymentToAccounting extends AccountingClass
         /// Create account entry detail
         /// Add Customer Receipt Amount Line
         $line = $accountEntry->getNewLine();
-        $this->setCommonDataLine($line, $supplierSubaccount, $paymentSubaccount, $concept);
+        $this->setCommonDataLine($line, $supplierSubaccount, null, $concept);
         $line->documento = $accountEntry->documento;
         $line->debe = $this->document->importe;
         $line->save();
 
         /// Add Cash/Bank Import Line
-        $this->setCommonDataLine($line, $paymentSubaccount, $supplierSubaccount, $concept);
+        $this->setCommonDataLine($line, $paymentSubaccount, null, $concept);
         $line->haber = $this->document->importe;
         $line->save();
 

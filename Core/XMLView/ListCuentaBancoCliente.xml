@@ -21,7 +21,7 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" display="none" order="100">
+            <column name="code" title="bank-mandate" order="100">
                 <widget type="text" fieldname="codcuenta" />
             </column>
             <column name="customer" order="110">
@@ -41,7 +41,7 @@
             <column name="principal" display="none" order="150">
                 <widget type="checkbox" fieldname="principal" />
             </column>
-            <column name="bank-fmandato" display="right" order="160">
+            <column name="bank-mandate-date" display="right" order="160">
                 <widget type="date" fieldname="fmandato" />
             </column>
         </group>

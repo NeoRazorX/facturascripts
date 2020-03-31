@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController;
+use FacturaScripts\Core\Lib\ExtendedController\EditView;
+use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
@@ -29,7 +30,7 @@ use FacturaScripts\Dinamic\Model\Impuesto;
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
  */
-class EditSettings extends ExtendedController\PanelController
+class EditSettings extends PanelController
 {
 
     const KEY_SETTINGS = 'Settings';
@@ -235,8 +236,8 @@ class EditSettings extends ExtendedController\PanelController
     /**
      * Load view data
      *
-     * @param string                      $viewName
-     * @param ExtendedController\EditView $view
+     * @param string   $viewName
+     * @param EditView $view
      */
     protected function loadData($viewName, $view)
     {

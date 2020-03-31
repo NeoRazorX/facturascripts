@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,9 +59,9 @@ class EditCuentaEspecial extends EditController
      * 
      * @param string $viewName
      */
-    protected function createAccountingView($viewName = 'ListCuenta')
+    protected function createAccountsView(string $viewName = 'ListCuenta')
     {
-        $this->addListView($viewName, 'Cuenta', 'accounts');
+        $this->addListView($viewName, 'Cuenta', 'accounts', 'fas fa-book');
         $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
 
         /// disable columns
@@ -70,6 +70,25 @@ class EditCuentaEspecial extends EditController
         /// disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'checkBoxes', false);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createSubaccountsView(string $viewName = 'ListSubcuenta')
+    {
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-th-list');
+        $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn('special-account');
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'checkBoxes', false);
     }
 
     /**
@@ -78,13 +97,15 @@ class EditCuentaEspecial extends EditController
     protected function createViews()
     {
         parent::createViews();
+
         /// disable buttons
         $mainViewName = $this->getMainViewName();
         $this->setSettings($mainViewName, 'btnDelete', false);
         $this->setSettings($mainViewName, 'btnNew', false);
 
         $this->setTabsPosition('bottom');
-        $this->createAccountingView();
+        $this->createAccountsView();
+        $this->createSubaccountsView();
     }
 
     /**
@@ -96,6 +117,7 @@ class EditCuentaEspecial extends EditController
     {
         switch ($viewName) {
             case 'ListCuenta':
+            case 'ListSubcuenta':
                 $codcuentaesp = $this->getViewModelValue('EditCuentaEspecial', 'codcuentaesp');
                 $where = [new DataBaseWhere('codcuentaesp', $codcuentaesp)];
                 $view->loadData('', $where);

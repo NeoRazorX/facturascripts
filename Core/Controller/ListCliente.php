@@ -63,14 +63,16 @@ class ListCliente extends ListController
     protected function createViewBankAccounts(string $viewName = 'ListCuentaBancoCliente')
     {
         $this->addView($viewName, 'CuentaBancoCliente', 'bank-accounts', 'fas fa-piggy-bank');
-        $this->addSearchFields($viewName, ['descripcion', 'iban', 'swift']);
+        $this->addSearchFields($viewName, ['codcuenta', 'descripcion', 'iban', 'swift']);
+        $this->addOrderBy($viewName, ['codcuenta'], 'bank-mandate');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
         $this->addOrderBy($viewName, ['iban'], 'iban');
-        $this->addOrderBy($viewName, ['fmandato', 'codcuenta'], 'bank-fmandato', 2);
+        $this->addOrderBy($viewName, ['fmandato', 'codcuenta'], 'bank-mandate-date', 2);
 
         /// disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'checkBoxes', false);
     }
 
     /**

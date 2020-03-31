@@ -18,7 +18,8 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
@@ -29,7 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-abstract class BaseController extends Base\Controller
+abstract class BaseController extends Controller
 {
 
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
@@ -147,7 +148,7 @@ abstract class BaseController extends Base\Controller
      */
     public function getMainViewName()
     {
-        foreach (array_keys($this->views) as $key) {
+        foreach (\array_keys($this->views) as $key) {
             return $key;
         }
 
@@ -184,9 +185,9 @@ abstract class BaseController extends Base\Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response                   $response
-     * @param User                       $user
-     * @param Base\ControllerPermissions $permissions
+     * @param Response              $response
+     * @param User                  $user
+     * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
@@ -265,7 +266,7 @@ abstract class BaseController extends Base\Controller
             // no selected item
             $this->toolBox()->i18nLog()->warning('no-selected-item');
             return false;
-        } elseif (is_array($codes)) {
+        } elseif (\is_array($codes)) {
             $this->dataBase->beginTransaction();
 
             // deleting multiples rows
@@ -297,6 +298,22 @@ abstract class BaseController extends Base\Controller
         $this->toolBox()->i18nLog()->warning('record-deleted-error');
         $model->clear();
         return false;
+    }
+
+    protected function exportAction()
+    {
+        $this->setTemplate(false);
+        $this->exportManager->newDoc($this->request->get('option', ''), $this->title);
+        foreach ($this->views as $selectedView) {
+            if (false === $selectedView->settings['active']) {
+                continue;
+            }
+
+            if (false === $selectedView->export($this->exportManager)) {
+                break;
+            }
+        }
+        $this->exportManager->show($this->response);
     }
 
     /**
