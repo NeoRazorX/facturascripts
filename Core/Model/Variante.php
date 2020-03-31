@@ -245,6 +245,15 @@ class Variante extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return float
+     */
+    public function priceWithTax()
+    {
+        return $this->precio * (100 + $this->getProducto()->getTax()->iva) / 100;
+    }
+
+    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
@@ -275,6 +284,16 @@ class Variante extends Base\ModelClass
         }
 
         return false;
+    }
+
+    /**
+     * 
+     * @param float $price
+     */
+    public function setPriceWithTax($price)
+    {
+        $newPrice = (100 * $price) / (100 + $this->getProducto()->getTax()->iva);
+        $this->precio = \round($newPrice, DinProducto::ROUND_DECIMALS);
     }
 
     /**

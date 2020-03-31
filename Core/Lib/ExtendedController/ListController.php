@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\ListFilter;
 use FacturaScripts\Dinamic\Model\User;
@@ -49,9 +49,9 @@ abstract class ListController extends BaseController
     /**
      * Runs the controller's private logic.
      *
-     * @param Response                   $response
-     * @param User                       $user
-     * @param Base\ControllerPermissions $permissions
+     * @param Response              $response
+     * @param User                  $user
+     * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
@@ -270,10 +270,7 @@ abstract class ListController extends BaseController
     {
         switch ($action) {
             case 'export':
-                $this->setTemplate(false);
-                $this->exportManager->newDoc($this->request->get('option', ''));
-                $this->views[$this->active]->export($this->exportManager);
-                $this->exportManager->show($this->response);
+                $this->exportAction();
                 break;
 
             case 'megasearch':
@@ -312,6 +309,14 @@ abstract class ListController extends BaseController
         }
 
         return true;
+    }
+
+    protected function exportAction()
+    {
+        $this->setTemplate(false);
+        $this->exportManager->newDoc($this->request->get('option', ''));
+        $this->views[$this->active]->export($this->exportManager);
+        $this->exportManager->show($this->response);
     }
 
     /**

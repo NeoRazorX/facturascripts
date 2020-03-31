@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -77,17 +77,26 @@ abstract class PanelController extends BaseController
     {
         parent::privateCore($response, $user, $permissions);
 
-        // Get any operations that have to be performed
+        /// Get any operations that have to be performed
         $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
-        // Run operations on the data before reading it
+        /// Runs operations before reading data
         if ($this->execPreviousAction($action) === false || $this->pipe('execPreviousAction', $action) === false) {
             return;
         }
 
-        // Load the model data for each view
+        /// Load the data for each view
+        $mainViewName = $this->getMainViewName();
         foreach ($this->views as $viewName => $view) {
-            if ($this->active == $viewName) {
+            /// disable views if main view has no data
+            if ($viewName != $mainViewName && false === $this->hasData) {
+                $this->setSettings($viewName, 'active', false);
+            }
+
+            if (false === $view->settings['active']) {
+                /// exclude inactive views
+                continue;
+            } elseif ($this->active == $viewName) {
                 $view->processFormData($this->request, 'load');
             } else {
                 $view->processFormData($this->request, 'preload');
@@ -96,19 +105,12 @@ abstract class PanelController extends BaseController
             $this->loadData($viewName, $view);
             $this->pipe('loadData', $viewName, $view);
 
-            // check if we are processing the main view
-            if ($viewName === $this->getMainViewName()) {
-                $this->hasData = $view->model->exists();
-                continue;
-            }
-
-            // check if the view should be active
-            if ($view->settings['active']) {
-                $this->setSettings($viewName, 'active', $this->hasData);
+            if ($viewName === $mainViewName && $view->model->exists()) {
+                $this->hasData = true;
             }
         }
 
-        // General operations with the loaded data
+        /// General operations with the loaded data
         $this->execAfterAction($action);
         $this->pipe('execAfterAction', $action);
     }
@@ -277,14 +279,7 @@ abstract class PanelController extends BaseController
     {
         switch ($action) {
             case 'export':
-                $this->setTemplate(false);
-                $this->exportManager->newDoc($this->request->get('option', ''), $this->title);
-                foreach ($this->views as $selectedView) {
-                    if (!$selectedView->export($this->exportManager)) {
-                        break;
-                    }
-                }
-                $this->exportManager->show($this->response);
+                $this->exportAction();
                 break;
 
             case 'save-ok':
