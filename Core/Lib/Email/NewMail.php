@@ -149,14 +149,14 @@ class NewMail
         $this->emailbcc = $appSettings->get('email', 'emailbcc');
         
         if (!empty($this->emailcc)) {
-            $emails = explode(',', $this->emailcc);
+            $emails = explode(',', trim($this->emailcc));
             foreach ($emails as $email) {
                 $this->mail->addCC($email);
             }
         }
         
         if (!empty($this->emailbcc)) {
-            $emails = explode(',', $this->emailbcc);
+            $emails = explode(',', trim($this->emailbcc));
             foreach ($emails as $email) {
                 $this->mail->addBCC($email);
             }
