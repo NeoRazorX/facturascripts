@@ -195,8 +195,9 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     public function getNewLine()
     {
         $partida = new DinPartida();
-        $partida->idasiento = $this->primaryColumnValue();
         $partida->concepto = $this->concepto;
+        $partida->documento = $this->documento;
+        $partida->idasiento = $this->primaryColumnValue();
         return $partida;
     }
 
