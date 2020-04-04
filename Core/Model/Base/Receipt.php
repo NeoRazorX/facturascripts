@@ -138,7 +138,7 @@ abstract class Receipt extends ModelOnChangeClass
         $appSettings = $this->toolBox()->appSettings();
         $this->coddivisa = $appSettings->get('default', 'coddivisa');
         $this->codpago = $appSettings->get('default', 'codpago');
-        $this->fecha = date(self::DATE_STYLE);
+        $this->fecha = \date(self::DATE_STYLE);
         $this->idempresa = $appSettings->get('default', 'idempresa');
         $this->importe = 0.0;
         $this->liquidado = 0.0;
@@ -153,7 +153,7 @@ abstract class Receipt extends ModelOnChangeClass
     public function delete()
     {
         foreach ($this->getPayments() as $pay) {
-            if (!$pay->delete()) {
+            if (false === $pay->delete()) {
                 $this->toolBox()->i18nLog()->warning('cant-remove-payment');
                 return false;
             }
