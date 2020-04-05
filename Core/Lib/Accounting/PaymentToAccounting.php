@@ -93,7 +93,7 @@ class PaymentToAccounting extends AccountingClass
         }
 
         /// Add lines and save accounting entry relation
-        if ($this->customerPaymentLine($accEntry) && $this->customerPaymentBankLine($accEntry)) {
+        if ($this->customerPaymentLine($accEntry) && $this->customerPaymentBankLine($accEntry) && $accEntry->isBalanced()) {
             $this->document->idasiento = $accEntry->primaryColumnValue();
             return true;
         }
@@ -167,7 +167,7 @@ class PaymentToAccounting extends AccountingClass
         }
 
         /// Add lines and save accounting entry relation
-        if ($this->supplierPaymentLine($accEntry) && $this->supplierPaymentBankLine($accEntry)) {
+        if ($this->supplierPaymentLine($accEntry) && $this->supplierPaymentBankLine($accEntry) && $accEntry->isBalanced()) {
             $this->document->idasiento = $accEntry->primaryColumnValue();
             return true;
         }
