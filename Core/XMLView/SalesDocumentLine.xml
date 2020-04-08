@@ -65,4 +65,11 @@
             <widget type="checkbox" fieldname="suplido" />
         </column>
     </columns>
+    <rows>
+        <row type="business">
+            <column name="observations" numcolumns="12" order="100">
+                <widget type="textarea" fieldname="observaciones" />
+            </column>
+        </row>
+    </rows>
 </view>

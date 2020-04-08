@@ -40,11 +40,11 @@
             </column>
         </group>
         <group name="other" numcolumns="12" valign="bottom">
-            <column name="principal" numcolumns="9" order="100">
-                <widget type="checkbox" fieldname="principal" />
-            </column>
-            <column name="bank-mandate-date" numcolumns="3" order="110">
+            <column name="bank-mandate-date" numcolumns="3" order="100">
                 <widget type="date" fieldname="fmandato" />
+            </column>
+            <column name="principal" order="110">
+                <widget type="checkbox" fieldname="principal" />
             </column>
         </group>
     </columns>

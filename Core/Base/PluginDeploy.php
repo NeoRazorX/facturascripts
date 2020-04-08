@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -359,7 +359,10 @@ class PluginDeploy
         }
 
         foreach ($extension->attributes() as $extAttr => $extAttrValue) {
-            if ($extAttr != 'name') {
+            /// We use name as identifier except with row, which is identified by type
+            if ($extAttr != 'name' && $extension->getName() != 'row') {
+                continue;
+            } elseif ($extAttr != 'type' && $extension->getName() == 'row') {
                 continue;
             }
 

@@ -156,6 +156,7 @@
     "cant-load-controller": "No se puede cargar el controlador '%controllerName%'.",
     "cant-modify-reference": "No puede modificar la referencia",
     "cant-remove-accounting-entry": "No se puede eliminar el asiento",
+    "cant-remove-receipt": "No se puede eliminar el recibo",
     "card": "Tarjeta",
     "carrier": "arriero de transporte",
     "carriers": "Transportistas",
