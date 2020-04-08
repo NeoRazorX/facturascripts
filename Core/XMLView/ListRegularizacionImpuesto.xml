@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,8 +21,8 @@
 -->
 <view>
     <columns>
-        <column name="id" order="100" display="none">
-            <widget type="text" fieldname="idregiva" onclick="EditRegularizacionImpuesto" />
+        <column name="id" display="none" order="100">
+            <widget type="text" fieldname="idregiva" />
         </column>
         <column name="company" display="none" order="100">
             <widget type="select" fieldname="idempresa">
@@ -40,19 +40,24 @@
                 <values title="fourth-trimester">T4</values>
             </widget>
         </column>
-        <column name="start-date" order="120">
-            <widget type="text" fieldname="fechainicio" />
+        <column name="start-date" display="right" order="120">
+            <widget type="date" fieldname="fechainicio" />
         </column>
         <column name="end-date" order="130">
-            <widget type="text" fieldname="fechafin" />
+            <widget type="date" fieldname="fechafin" />
         </column>
-        <column name="id-accounting" title="accounting-entry" order="140">
+        <column name="accounting-entry" display="right" order="140">
             <widget type="autocomplete" fieldname="idasiento" onclick="EditAsiento">
                 <values source="asientos" fieldcode="idasiento" fieldtitle="numero" />
             </widget>
         </column>
-        <column name="accounting-date" order="150">
+        <column name="accounting-date" display="right" order="150">
             <widget type="text" fieldname="fechaasiento" />
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="warning" fieldname="bloquear">1</option>
+        </row>
+    </rows>
 </view>
