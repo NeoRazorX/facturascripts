@@ -68,12 +68,10 @@ class VatRegularizationToAccounting extends AccountingClass
     public function generate($model)
     {
         parent::generate($model);
+        $this->subAccTools = new SubAccountTools();
         if (!$this->initialChecks()) {
             return;
         }
-
-        $this->subAccTools = new SubAccountTools();
-        $this->subaccount = new Subcuenta();
 
         /// Create accounting entry
         $accEntry = new Asiento();

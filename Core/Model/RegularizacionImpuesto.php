@@ -38,6 +38,12 @@ class RegularizacionImpuesto extends Base\ModelClass
     use Base\ExerciseRelationTrait;
 
     /**
+     *
+     * @var bool
+     */
+    public $bloquear;
+
+    /**
      * Code, not ID, of the related sub-account.
      *
      * @var string
@@ -113,6 +119,12 @@ class RegularizacionImpuesto extends Base\ModelClass
      * @var string
      */
     public $periodo;
+
+    public function clear()
+    {
+        parent::clear();
+        $this->bloquear = false;
+    }
 
     /**
      * Deletes the regularization of VAT from the database.

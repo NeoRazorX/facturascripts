@@ -174,9 +174,10 @@ class EditRegularizacionImpuesto extends EditController
         if ($reg->loadFromCode($code) && empty($reg->idasiento)) {
             $accounting = new VatRegularizationToAccounting();
             $accounting->generate($reg);
-            if (!empty($reg->idasiento)) {
-                $reg->save();
-            }
+
+            /// lock accounting and save
+            $reg->bloquear = true;
+            $reg->save();
         }
     }
 

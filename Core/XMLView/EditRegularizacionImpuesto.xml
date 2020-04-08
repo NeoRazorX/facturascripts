@@ -50,7 +50,7 @@
                 </widget>
             </column>
         </group>
-        <group name="accounting" numcolumns="12">
+        <group name="accounting" valign="bottom" numcolumns="12">
             <column name="tax-credit-account" order="100">
                 <widget type="autocomplete" fieldname="codsubcuentaacr">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="codsubcuenta" />
@@ -69,6 +69,9 @@
             <column name="accounting-date" order="130">
                 <widget type="date" fieldname="fechaasiento" readonly="true" />
             </column>
+            <column name="lock-accounting" order="140">
+            <widget type="checkbox" fieldname="bloquear" />
+        </column>
         </group>
     </columns>
 </view>
