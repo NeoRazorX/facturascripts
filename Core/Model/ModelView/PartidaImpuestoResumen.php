@@ -26,12 +26,17 @@ use FacturaScripts\Core\Model\Base\ModelView;
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * 
- * @property float $baseimponible
- * @property float $cuotaiva
- * @property float $cuotarecargo
- * @property float $iva
- * @property float $recargo
- * @property float $total
+ * @property float  $baseimponible
+ * @property string $codcuentaesp
+ * @property string $codejercicio
+ * @property string $codsubcuenta
+ * @property float  $cuotaiva
+ * @property float  $cuotarecargo
+ * @property string $descripcion
+ * @property int    $idsubcuenta
+ * @property float  $iva
+ * @property float  $recargo
+ * @property float  $total
  */
 class PartidaImpuestoResumen extends ModelView
 {
