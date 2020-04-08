@@ -138,7 +138,7 @@ class MysqlEngine extends DataBaseEngine
             return true;
         } else if ($dbType == 'tinyint(1)' && $xmlType == 'boolean') {
             return true;
-        } else if (substr($dbType, 0, 4) == 'int(' && strtolower($xmlType) == 'integer') {
+        } else if (substr($dbType, 0, 3) == 'int' && strtolower($xmlType) == 'integer') {
             return true;
         } else if (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision') {
             return true;

@@ -37,7 +37,7 @@
                 <widget type="number" fieldname="canal" readonly="true" />
             </column>
             <column name="amount" numcolumns="2" display="right" order="200">
-                <widget type="money" fieldname="importe" icon="fas fa-money-bill-alt" readonly="true" />
+                <widget type="money" fieldname="importe" readonly="true" />
             </column>
         </group>
         <group name="detail">

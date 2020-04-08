@@ -86,7 +86,9 @@ class BusinessDocumentTools
         $totalSuplidos = 0.0;
         foreach ($lines as $line) {
             $pvpTotal = $line->pvptotal * $totalDto;
-            if ($line->suplido) {
+            if (empty($pvpTotal)) {
+                continue;
+            } elseif ($line->suplido) {
                 $totalSuplidos += $pvpTotal;
                 continue;
             }

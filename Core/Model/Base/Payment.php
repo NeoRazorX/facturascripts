@@ -88,8 +88,8 @@ abstract class Payment extends ModelClass
     public function clear()
     {
         parent::clear();
-        $this->fecha = date(self::DATE_STYLE);
-        $this->hora = date(self::HOUR_STYLE);
+        $this->fecha = \date(self::DATE_STYLE);
+        $this->hora = \date(self::HOUR_STYLE);
         $this->importe = 0.0;
     }
 
@@ -102,7 +102,7 @@ abstract class Payment extends ModelClass
         /// remove accounting
         $acEntry = $this->getAccountingEntry();
         $acEntry->editable = true;
-        if ($acEntry->exists() && !$acEntry->delete()) {
+        if ($acEntry->exists() && false === $acEntry->delete()) {
             $this->toolBox()->i18nLog()->warning('cant-remove-accounting-entry');
             return false;
         }
@@ -153,24 +153,6 @@ abstract class Payment extends ModelClass
 
     /**
      * 
-     * @return bool
-     */
-    public function test()
-    {
-        if (parent::test()) {
-            if (empty($this->idasiento) && !$this->disableAccountingGeneration) {
-                $tool = new PaymentToAccounting();
-                $tool->generate($this);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * 
      * @param string $type
      * @param string $list
      *
@@ -179,5 +161,21 @@ abstract class Payment extends ModelClass
     public function url(string $type = 'auto', string $list = 'List')
     {
         return empty($this->idasiento) ? $this->getReceipt()->url() : $this->getAccountingEntry()->url();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->idasiento) && !$this->disableAccountingGeneration) {
+            $tool = new PaymentToAccounting();
+            $tool->generate($this);
+        }
+
+        return parent::saveInsert($values);
     }
 }

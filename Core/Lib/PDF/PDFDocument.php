@@ -180,7 +180,7 @@ abstract class PDFDocument extends PDFCore
                 $subtotals[$key] = [
                     'tax' => $this->i18n->trans('irpf') . ' ' . $line->irpf . '%',
                     'taxbase' => 0,
-                    'taxp' => $line->irpf,
+                    'taxp' => $line->irpf . '%',
                     'taxamount' => 0,
                     'taxsurchargep' => 0,
                     'taxsurcharge' => 0
