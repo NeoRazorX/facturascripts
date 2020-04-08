@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -92,7 +92,7 @@ class GroupItem extends VisualItem
     /**
      *
      * @param object $model
-     * @param bool $forceReadOnly
+     * @param bool   $forceReadOnly
      *
      * @return string
      */
@@ -189,7 +189,7 @@ class GroupItem extends VisualItem
             return 0;
         }
 
-        return ($column1->order < $column2->order) ? -1 : 1;
+        return $column1->order < $column2->order ? -1 : 1;
     }
 
     /**
@@ -218,7 +218,7 @@ class GroupItem extends VisualItem
             $this->columns[$columnItem->name] = $columnItem;
         }
 
-        uasort($this->columns, ['self', 'sortColumns']);
+        \uasort($this->columns, ['self', 'sortColumns']);
     }
 
     /**

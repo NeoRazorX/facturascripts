@@ -156,6 +156,7 @@
     "cant-load-controller": "Can't load controller '%controllerName%'.",
     "cant-modify-reference": "Cann't edit reference.",
     "cant-remove-accounting-entry": "Can't remove accounting entry",
+    "cant-remove-receipt": "Can't remove the receipt",
     "card": "Card",
     "carrier": "Carrier",
     "carriers": "Carriers",
