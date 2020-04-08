@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,12 +26,17 @@ use FacturaScripts\Core\Model\Base\ModelView;
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * 
- * @property float $baseimponible
- * @property float $cuotaiva
- * @property float $cuotarecargo
- * @property float $iva
- * @property float $recargo
- * @property float $total
+ * @property float  $baseimponible
+ * @property string $codcuentaesp
+ * @property string $codejercicio
+ * @property string $codsubcuenta
+ * @property float  $cuotaiva
+ * @property float  $cuotarecargo
+ * @property string $descripcion
+ * @property int    $idsubcuenta
+ * @property float  $iva
+ * @property float  $recargo
+ * @property float  $total
  */
 class PartidaImpuestoResumen extends ModelView
 {
@@ -42,12 +47,12 @@ class PartidaImpuestoResumen extends ModelView
     public function clear()
     {
         parent::clear();
-        $this->baseimponible = 0.00;
-        $this->iva = 0.00;
-        $this->recargo = 0.00;
-        $this->cuotaiva = 0.00;
-        $this->cuotarecargo = 0.00;
-        $this->total = 0.00;
+        $this->baseimponible = 0.0;
+        $this->iva = 0.0;
+        $this->recargo = 0.0;
+        $this->cuotaiva = 0.0;
+        $this->cuotarecargo = 0.0;
+        $this->total = 0.0;
     }
 
     /**
@@ -63,7 +68,7 @@ class PartidaImpuestoResumen extends ModelView
             'descripcion' => 'cuentasesp.descripcion',
             'idsubcuenta' => 'partidas.idsubcuenta',
             'iva' => 'partidas.iva',
-            'recargo' => 'partidas.recargo',
+            'recargo' => 'partidas.recargo'
         ];
     }
 
@@ -117,8 +122,8 @@ class PartidaImpuestoResumen extends ModelView
     protected function loadFromData($data)
     {
         parent::loadFromData($data);
-        $this->cuotaiva = $this->baseimponible * ($this->iva / 100.00);
-        $this->cuotarecargo = $this->baseimponible * ($this->recargo / 100.00);
+        $this->cuotaiva = $this->baseimponible * ($this->iva / 100.0);
+        $this->cuotarecargo = $this->baseimponible * ($this->recargo / 100.0);
         $this->total = $this->baseimponible + $this->cuotaiva + $this->cuotarecargo;
     }
 }

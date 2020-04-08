@@ -3,9 +3,14 @@
     Document   : regularizacionimpuestos.xml
     Author     : Carlos Garcia Gomez
     Description:
-        Structure for the regularizacion impuestos table.
+        Structure for the tax regularizacions table.
 -->
 <table>
+    <column>
+        <name>bloquear</name>
+        <type>boolean</type>
+        <default>true</default>
+    </column>
     <column>
         <name>codejercicio</name>
         <type>character varying(4)</type>
