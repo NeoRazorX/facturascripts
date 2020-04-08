@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -109,7 +109,7 @@ abstract class ModelClass extends ModelCore
      */
     public function delete()
     {
-        if ($this->pipe('deleteBefore') === 'false') {
+        if ($this->pipe('deleteBefore') === false) {
             return false;
         }
 

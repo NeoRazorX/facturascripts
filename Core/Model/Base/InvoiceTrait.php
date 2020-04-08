@@ -106,7 +106,7 @@ trait InvoiceTrait
                 }
             }
 
-            if (!$found) {
+            if (false === $found) {
                 $children[] = $invoice;
             }
         }
@@ -120,25 +120,25 @@ trait InvoiceTrait
      */
     public function delete()
     {
-        if (!$this->editable) {
+        if (false === $this->editable) {
             $this->toolBox()->i18nLog()->warning('non-editable-document');
-            return false;
-        }
-
-        /// remove accounting
-        $acEntry = $this->getAccountingEntry();
-        $acEntry->editable = true;
-        if ($acEntry->exists() && !$acEntry->delete()) {
-            $this->toolBox()->i18nLog()->warning('cant-remove-accounting-entry');
             return false;
         }
 
         /// remove receipts
         foreach ($this->getReceipts() as $receipt) {
-            if (!$receipt->delete()) {
+            if (false === $receipt->delete()) {
                 $this->toolBox()->i18nLog()->warning('cant-remove-receipt');
                 return false;
             }
+        }
+
+        /// remove accounting
+        $acEntry = $this->getAccountingEntry();
+        $acEntry->editable = true;
+        if ($acEntry->exists() && false === $acEntry->delete()) {
+            $this->toolBox()->i18nLog()->warning('cant-remove-accounting-entry');
+            return false;
         }
 
         return parent::delete();
@@ -212,7 +212,7 @@ trait InvoiceTrait
                 }
             }
 
-            if (!$found) {
+            if (false === $found) {
                 $parents[] = $invoice;
             }
         }
@@ -257,7 +257,7 @@ trait InvoiceTrait
      */
     protected function onChange($field)
     {
-        if (!parent::onChange($field)) {
+        if (false === parent::onChange($field)) {
             return false;
         }
 
@@ -267,7 +267,10 @@ trait InvoiceTrait
             case 'codpago':
                 /// remove receipts
                 foreach ($this->getReceipts() as $receipt) {
-                    $receipt->delete();
+                    if (false === $receipt->delete()) {
+                        $this->toolBox()->i18nLog()->warning('cant-remove-receipt');
+                        return false;
+                    }
                 }
             /// no break
             case 'fecha':
@@ -287,7 +290,7 @@ trait InvoiceTrait
         /// remove accounting entry
         $asiento = $this->getAccountingEntry();
         $asiento->editable = true;
-        if ($asiento->exists() && !$asiento->delete()) {
+        if ($asiento->exists() && false === $asiento->delete()) {
             $this->toolBox()->i18nLog()->warning('cant-remove-account-entry');
             return false;
         }

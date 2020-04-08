@@ -155,9 +155,7 @@
         {{ _self.customInput('doc_total2', 'total', currentView.model.total, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('total')) }}
     </div>
     <div class="form-row mb-2">
-        <div class="col">
-            <textarea name="observaciones" class="form-control" placeholder="{{ i18n.trans('observations') }}">{{ currentView.model.observaciones | raw }}</textarea>
-        </div>
+        {{ currentView.getRow('business').edit(currentView.model) | raw }}
     </div>
     <div class="form-row">
         <div class="col">
@@ -296,8 +294,7 @@
                                 <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                             </a>
                         {% else %}
-                            <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ status.idestado }}');
-                                    businessDocViewSave();">
+                            <a class="dropdown-item" href="#" onclick="$('#doc_idestado').val('{{ status.idestado }}'); businessDocViewSave();">
                                 {% if status.generadoc %}
                                     {% set showDocumentStitcher = true %}
                                 {% endif %}
