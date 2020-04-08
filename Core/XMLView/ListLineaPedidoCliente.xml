@@ -78,6 +78,9 @@
         <column name="show-price" display="none" order="260">
             <widget type="checkbox" fieldname="mostrar_precio" />
         </column>
+        <column name="supplied" display="none" order="270">
+            <widget type="checkbox" fieldname="suplido" />
+        </column>
     </columns>
     <rows>
         <row type="status">
