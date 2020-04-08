@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,6 +34,20 @@ class VatRegularizationToAccounting extends AccountingClass
 {
 
     /**
+     * Sum of the items accounting on the credit
+     *
+     * @var float
+     */
+    private $credit = 0.0;
+
+    /**
+     * Sum of the items accounting on the debit
+     *
+     * @var float
+     */
+    private $debit = 0.0;
+
+    /**
      * Regularization that is accounting
      *
      * @var RegularizacionImpuesto
@@ -41,38 +55,10 @@ class VatRegularizationToAccounting extends AccountingClass
     protected $document;
 
     /**
-     * Tax Subtotals Lines array
-     *
-     * @var PartidaImpuestoResumen[]
-     */
-    protected $subtotals;
-
-    /**
      *
      * @var SubAccountTools
      */
-    private $subAccountTools;
-
-    /**
-     * Sub-account on which the item is accounting
-     *
-     * @var Subcuenta
-     */
-    private $subaccount;
-
-    /**
-     * Sum of the items accounting on the debit
-     *
-     * @var double
-     */
-    private $debit;
-
-    /**
-     * Sum of the items accounting on the credit
-     *
-     * @var double
-     */
-    private $credit;
+    private $subAccTools;
 
     /**
      * Method to launch the accounting process
@@ -82,72 +68,123 @@ class VatRegularizationToAccounting extends AccountingClass
     public function generate($model)
     {
         parent::generate($model);
+        $this->subAccTools = new SubAccountTools();
         if (!$this->initialChecks()) {
             return;
         }
 
-        $this->subAccountTools = new SubAccountTools();
-        $this->subaccount = new Subcuenta();
-        $this->subtotals = $this->getSubtotals();
-        $this->debit = 0.00;
-        $this->credit = 0.00;
+        /// Create accounting entry
+        $accEntry = new Asiento();
+        $accEntry->codejercicio = $this->document->codejercicio;
+        $accEntry->concepto = $this->toolBox()->i18n()->trans('vat-regularization') . ' ' . $this->document->periodo;
+        $accEntry->fecha = $this->document->fechafin;
+        $accEntry->idempresa = $this->document->idempresa;
+        if (false === $accEntry->save()) {
+            $this->toolBox()->i18nLog()->warning('accounting-entry-error');
+            return;
+        }
 
-        $this->vatAccountingEntry();
+        if ($this->addAccountingTaxLines($accEntry) && $this->addAccountingResultLine($accEntry) && $accEntry->isBalanced()) {
+            $this->document->idasiento = $accEntry->primaryColumnValue();
+            $this->document->fechaasiento = $accEntry->fecha;
+
+            $accEntry->importe = \max([$this->debit, $this->credit]);
+            $accEntry->save();
+            return;
+        }
+
+        $this->toolBox()->i18nLog()->warning('accounting-lines-error');
+        $accEntry->delete();
     }
 
     /**
      * Add the game with the result of regularization
      *
-     * @param Asiento $accountEntry
+     * @param Asiento $accEntry
      *
      * @return bool
      */
-    protected function addAccountingResultLine($accountEntry): bool
+    protected function addAccountingResultLine($accEntry): bool
     {
+        $subaccount = new Subcuenta();
         if ($this->debit >= $this->credit) {
-            $this->subaccount->idsubcuenta = $this->document->idsubcuentaacr;
-            $this->subaccount->codsubcuenta = $this->document->codsubcuentaacr;
-            return $this->addBasicLine($accountEntry, $this->subaccount, false, $this->debit - $this->credit);
+            $subaccount->loadFromCode($this->document->idsubcuentaacr);
+            return $this->addBasicLine($accEntry, $subaccount, false, $this->debit - $this->credit);
         }
 
-        $this->subaccount->idsubcuenta = $this->document->idsubcuentadeu;
-        $this->subaccount->codsubcuenta = $this->document->codsubcuentadeu;
-        return $this->addBasicLine($accountEntry, $this->subaccount, true, $this->credit - $this->debit);
+        $subaccount->loadFromCode($this->document->idsubcuentadeu);
+        return $this->addBasicLine($accEntry, $subaccount, true, $this->credit - $this->debit);
     }
 
     /**
      * Add the items with the tax amounts
      *
-     * @param Asiento $accountEntry
+     * @param Asiento $accEntry
      *
      * @return bool
      */
-    protected function addAccountingTaxLines($accountEntry): bool
+    protected function addAccountingTaxLines($accEntry): bool
     {
-        $inputTaxGroup = $this->subAccountTools->specialAccountsForGroup(SubAccountTools::SPECIAL_GROUP_TAX_INPUT);
-        $outputTaxGroup = $this->subAccountTools->specialAccountsForGroup(SubAccountTools::SPECIAL_GROUP_TAX_OUTPUT);
+        $subaccount = new Subcuenta();
 
-        foreach ($this->subtotals as $row) {
-            $amount = $row->cuotaiva + $row->cuotarecargo;
-            $this->subaccount->idsubcuenta = $row->idsubcuenta;
-            $this->subaccount->codsubcuenta = $row->codsubcuenta;
-
-            if (in_array($row->codcuentaesp, $outputTaxGroup)) {
-                if (!$this->addBasicLine($accountEntry, $this->subaccount, true, $amount)) {
-                    return false;
-                }
-                $this->debit += $amount;
+        foreach ($this->getSubtotals() as $idsubcuenta => $total) {
+            if (false === $subaccount->loadFromCode($idsubcuenta)) {
                 continue;
             }
 
-            if (in_array($row->codcuentaesp, $inputTaxGroup)) {
-                if (!$this->addBasicLine($accountEntry, $this->subaccount, false, $amount)) {
-                    return false;
-                }
-                $this->credit += $amount;
+            $newLine = $accEntry->getNewLine();
+            $newLine->setAccount($subaccount);
+            $newLine->debe = \round($total['debe'], \FS_NF0);
+            $newLine->haber = \round($total['haber'], \FS_NF0);
+            if ($newLine->save()) {
+                $this->debit += $newLine->debe;
+                $this->credit += $newLine->haber;
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Obtain the cumulative list of amounts by tax
+     *
+     * @return array
+     */
+    protected function getSubtotals()
+    {
+        $field = 'COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp)';
+        $where = [
+            new DataBaseWhere('asientos.codejercicio', $this->document->codejercicio),
+            new DataBaseWhere('asientos.fecha', $this->document->fechainicio, '>='),
+            new DataBaseWhere('asientos.fecha', $this->document->fechafin, '<='),
+            $this->subAccTools->whereForSpecialAccounts($field, SubAccountTools::SPECIAL_GROUP_TAX_ALL)
+        ];
+        $orderby = [
+            $field => 'ASC',
+            'partidas.iva' => 'ASC',
+            'partidas.recargo' => 'ASC'
+        ];
+
+        $subtotals = [];
+        $inputTaxGroup = $this->subAccTools->specialAccountsForGroup(SubAccountTools::SPECIAL_GROUP_TAX_INPUT);
+        $outputTaxGroup = $this->subAccTools->specialAccountsForGroup(SubAccountTools::SPECIAL_GROUP_TAX_OUTPUT);
+        $totals = new PartidaImpuestoResumen();
+        foreach ($totals->all($where, $orderby) as $row) {
+            if (!isset($subtotals[$row->idsubcuenta])) {
+                $subtotals[$row->idsubcuenta] = ['debe' => 0.0, 'haber' => 0.0];
+            }
+
+            if (\in_array($row->codcuentaesp, $outputTaxGroup)) {
+                $subtotals[$row->idsubcuenta]['debe'] += $row->cuotaiva + $row->cuotarecargo;
+            } elseif (\in_array($row->codcuentaesp, $inputTaxGroup)) {
+                $subtotals[$row->idsubcuenta]['haber'] += $row->cuotaiva + $row->cuotarecargo;
             }
         }
-        return true;
+
+        return $subtotals;
     }
 
     /**
@@ -161,73 +198,11 @@ class VatRegularizationToAccounting extends AccountingClass
             return false;
         }
 
-        if (!$this->exercise->loadFromCode($this->document->codejercicio) || !$this->exercise->isOpened()) {
-            $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->document->codejercicio]);
-            return false;
+        if ($this->exercise->loadFromCode($this->document->codejercicio) && $this->exercise->isOpened()) {
+            return true;
         }
 
-        return true;
-    }
-
-    /**
-     * Obtain the cumulative list of amounts by tax
-     *
-     * @return PartidaImpuestoResumen[]
-     */
-    protected function getSubtotals()
-    {
-        $field = 'COALESCE(subcuentas.codcuentaesp, cuentas.codcuentaesp)';
-        $where = [
-            new DataBaseWhere('asientos.codejercicio', $this->document->codejercicio),
-            new DataBaseWhere('asientos.fecha', $this->document->fechainicio, '>='),
-            new DataBaseWhere('asientos.fecha', $this->document->fechafin, '<='),
-            $this->subAccountTools->whereForSpecialAccounts($field, SubAccountTools::SPECIAL_GROUP_TAX_ALL)
-        ];
-
-        $orderby = [
-            $field => 'ASC',
-            'partidas.iva' => 'ASC',
-            'partidas.recargo' => 'ASC'
-        ];
-
-        $totals = new PartidaImpuestoResumen();
-        return $totals->all($where, $orderby);
-    }
-
-    /**
-     * Assign the document data to the accounting entry
-     *
-     * @param Asiento $accountEntry
-     * @param string  $concept
-     */
-    protected function setAccountingData(&$accountEntry, $concept)
-    {
-        $accountEntry->codejercicio = $this->document->codejercicio;
-        $accountEntry->concepto = $concept;
-        $accountEntry->fecha = date('d-m-Y');
-        $accountEntry->idempresa = $this->document->idempresa;
-    }
-
-    /**
-     * Generates the regularization entry
-     */
-    protected function vatAccountingEntry()
-    {
-        $accountEntry = new Asiento();
-        $this->setAccountingData($accountEntry, $this->toolBox()->i18n()->trans('vat-regularization') . ' ' . $this->document->periodo);
-        if (!$accountEntry->save()) {
-            $this->toolBox()->i18nLog()->warning('accounting-entry-error');
-            return;
-        }
-
-        if ($this->addAccountingTaxLines($accountEntry) &&
-            $this->addAccountingResultLine($accountEntry)) {
-            $this->document->idasiento = $accountEntry->primaryColumnValue();
-            $this->document->fechaasiento = $accountEntry->fecha;
-            return;
-        }
-
-        $this->toolBox()->i18nLog()->warning('accounting-lines-error');
-        $accountEntry->delete();
+        $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->document->codejercicio]);
+        return false;
     }
 }

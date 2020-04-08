@@ -51,71 +51,70 @@ class ListImpuesto extends ListController
      */
     protected function createViews()
     {
-        $this->createViewTax();
-        $this->createViewTaxZone();
-        $this->createViewRetention();
-        $this->createViewRegularization();
+        $this->createViewsTax();
+        $this->createViewsTaxZone();
+        $this->createViewsRetention();
+        $this->createViewsRegularization();
     }
 
     /**
      * 
      * @param string $viewName
      */
-    protected function createViewRegularization($viewName = 'ListRegularizacionImpuesto')
+    protected function createViewsRegularization(string $viewName = 'ListRegularizacionImpuesto')
     {
         $this->addView($viewName, 'RegularizacionImpuesto', 'vat-regularization', 'fas fa-balance-scale-right');
+        $this->addOrderBy($viewName, ['fechainicio'], 'start-date', 2);
         $this->addOrderBy($viewName, ['codejercicio||periodo'], 'period');
-        $this->addOrderBy($viewName, ['fechainicio'], 'start-date');
     }
 
     /**
      * 
      * @param string $viewName
      */
-    protected function createViewRetention($viewName = 'ListRetencion')
+    protected function createViewsRetention(string $viewName = 'ListRetencion')
     {
         $this->addView($viewName, 'Retencion', 'retentions', 'fas fa-plus-square');
-        $this->addSearchFields($viewName, ['descripcion', 'codretencion']);
         $this->addOrderBy($viewName, ['codretencion'], 'code');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addSearchFields($viewName, ['descripcion', 'codretencion']);
     }
 
     /**
      * 
      * @param string $viewName
      */
-    protected function createViewTax($viewName = 'ListImpuesto')
+    protected function createViewsTax(string $viewName = 'ListImpuesto')
     {
         $this->addView($viewName, 'Impuesto', 'taxes', 'fas fa-plus-square');
-        $this->addSearchFields($viewName, ['descripcion', 'codimpuesto']);
         $this->addOrderBy($viewName, ['codimpuesto'], 'code');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addSearchFields($viewName, ['descripcion', 'codimpuesto']);
     }
 
     /**
      * 
      * @param string $viewName
      */
-    protected function createViewTaxZone($viewName = 'ListImpuestoZona')
+    protected function createViewsTaxZone(string $viewName = 'ListImpuestoZona')
     {
         $this->addView($viewName, 'ImpuestoZona', 'tax-areas', 'fas fa-globe-americas');
-        $this->addSearchFields($viewName, ['codpais']);
         $this->addOrderBy($viewName, ['prioridad'], 'priority', 2);
         $this->addOrderBy($viewName, ['codimpuesto'], 'tax');
         $this->addOrderBy($viewName, ['codpais'], 'country');
         $this->addOrderBy($viewName, ['codisopro'], 'province');
         $this->addOrderBy($viewName, ['codimpuestosel'], 'applied-tax');
+        $this->addSearchFields($viewName, ['codpais']);
 
-        /// buttons
-        $button = [
+        /// adds generate button
+        $this->addButton($viewName, [
             'action' => 'generate-zones',
             'color' => 'warning',
             'confirm' => true,
             'icon' => 'fas fa-magic',
             'label' => 'generate',
             'type' => 'action'
-        ];
-        $this->addButton($viewName, $button);
+        ]);
     }
 
     /**
