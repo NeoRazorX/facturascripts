@@ -403,8 +403,11 @@ class Wizard extends Controller
         if ('' !== $email && !$this->saveEmail($email)) {
             return;
         }
-
-        $this->loadDefaultAccountingPlan($codpais);
+        
+        $DefaultAccountingPlan = $this->request->request->get('DefaultAccountingPlan', '');
+        if ($DefaultAccountingPlan === '') {
+            $this->loadDefaultAccountingPlan($codpais);
+        }
 
         /// change user homepage
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : 'ListFacturaCliente';

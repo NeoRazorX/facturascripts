@@ -107,6 +107,12 @@
                         {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'), i18n.trans('country'), 'fas fa-globe-americas') }}
                     </div>
                 </div>
+                <div class="col-sm-12">
+                    <label>
+                        <input type="checkbox" name="DefaultAccountingPlan" value="1" />
+                        {{ i18n.trans('not-default-accounting-plan') }}
+                    </label>
+                </div>
             </div>
             {% if fsc.user.verifyPassword('admin') %}
                 <div class="row">

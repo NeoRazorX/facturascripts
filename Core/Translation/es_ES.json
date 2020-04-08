@@ -1095,5 +1095,6 @@
     "you-should-change-passwd": "Debería cambiar su contraseña",
     "your": "Suyo",
     "zip-code": "Código Postal",
-    "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin."
+    "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin.",
+    "not-default-accounting-plan": "NO instalar plan contable por defecto"
 }
