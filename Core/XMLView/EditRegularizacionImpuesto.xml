@@ -21,7 +21,7 @@
 -->
 <view>
     <columns>
-        <group name="period" title="period" numcolumns="12" icon="fas fa-calendar-alt">
+        <group name="period" numcolumns="12">
             <column name="id" display="none" order="100">
                 <widget type="text" fieldname="idregiva" />
             </column>
@@ -50,27 +50,28 @@
                 </widget>
             </column>
         </group>
-        <group name="accounts" title="accounts" numcolumns="6" icon="fas fa-th-list">
+        <group name="accounting" valign="bottom" numcolumns="12">
             <column name="tax-credit-account" order="100">
                 <widget type="autocomplete" fieldname="codsubcuentaacr">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="codsubcuenta" />
                 </widget>
             </column>
             <column name="tax-debit-account" order="110">
                 <widget type="autocomplete" fieldname="codsubcuentadeu">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="codsubcuenta" />
                 </widget>
             </column>
-        </group>
-        <group name="accounting" title="accounting-entry" icon="fas fa-book">
-            <column name="accounting-entry" order="100">
+            <column name="accounting-entry" order="120">
                 <widget type="autocomplete" fieldname="idasiento" onclick="EditAsiento" readonly="true">
                     <values source="asientos" fieldcode="idasiento" fieldtitle="numero" />
                 </widget>
             </column>
-            <column name="accounting-date" order="110">
+            <column name="accounting-date" order="130">
                 <widget type="date" fieldname="fechaasiento" readonly="true" />
             </column>
+            <column name="lock-accounting" order="140">
+            <widget type="checkbox" fieldname="bloquear" />
+        </column>
         </group>
     </columns>
 </view>

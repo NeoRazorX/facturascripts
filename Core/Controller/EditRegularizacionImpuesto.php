@@ -144,9 +144,9 @@ class EditRegularizacionImpuesto extends EditController
     protected function calculateAmounts($data)
     {
         /// Init totals values
-        $this->previousBalance = 0.00;    /// TODO: Calculate previous balance from generated accounting entry
-        $this->sales = 0.00;
-        $this->purchases = 0.00;
+        $this->previousBalance = 0.0; /// TODO: Calculate previous balance from generated accounting entry
+        $this->sales = 0.0;
+        $this->purchases = 0.0;
 
         $subAccountTools = new SubAccountTools();
         foreach ($data as $row) {
@@ -174,9 +174,10 @@ class EditRegularizacionImpuesto extends EditController
         if ($reg->loadFromCode($code) && empty($reg->idasiento)) {
             $accounting = new VatRegularizationToAccounting();
             $accounting->generate($reg);
-            if (!empty($reg->idasiento)) {
-                $reg->save();
-            }
+
+            /// lock accounting and save
+            $reg->bloquear = true;
+            $reg->save();
         }
     }
 
@@ -201,8 +202,9 @@ class EditRegularizacionImpuesto extends EditController
      */
     protected function disableButtons($viewName)
     {
-        $this->views[$viewName]->settings['btnDelete'] = false;
-        $this->views[$viewName]->settings['btnNew'] = false;
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'checkBoxes', false);
     }
 
     /**

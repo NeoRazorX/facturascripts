@@ -40,6 +40,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     const OPERATION_OPENING = 'A';
     const OPERATION_CLOSING = 'C';
     const OPERATION_REGULARIZATION = 'R';
+    const RENUMBER_LIMIT = 1000;
 
     /**
      * Accounting channel. For statisctics purpose.
@@ -153,18 +154,18 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      */
     public function delete()
     {
-        if ($this->getExercise()->isOpened() === false) {
+        if (false === $this->getExercise()->isOpened()) {
             $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
             return false;
         }
 
-        $regularization = new DinRegularizacionImpuesto();
-        if ($regularization->loadFechaInside($this->fecha) && !empty($regularization->idasiento)) {
+        $reg = new DinRegularizacionImpuesto();
+        if ($reg->loadFechaInside($this->fecha) && $reg->bloquear) {
             $this->toolBox()->i18nLog()->warning('accounting-within-regularization');
             return false;
         }
 
-        if ($this->isEditable() === false) {
+        if (false === $this->isEditable()) {
             $this->toolBox()->i18nLog()->warning('non-editable-accounting-entry');
             return false;
         }
@@ -286,11 +287,10 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      */
     public function renumber($codejercicio = '')
     {
-        $exercise = new DinEjercicio();
+        $exerciseModel = new DinEjercicio();
         $where = empty($codejercicio) ? [] : [new DataBaseWhere('codejercicio', $codejercicio)];
-
-        foreach ($exercise->all($where) as $exe) {
-            if ($exe->isOpened() === false) {
+        foreach ($exerciseModel->all($where) as $exe) {
+            if (false === $exe->isOpened()) {
                 continue;
             }
 
@@ -300,15 +300,15 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
                 . ' WHERE codejercicio = ' . self::$dataBase->var2str($exe->codejercicio)
                 . ' ORDER BY codejercicio ASC, fecha ASC, idasiento ASC';
 
-            $rows = self::$dataBase->selectLimit($sql, 1000, $offset);
+            $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
             while (!empty($rows)) {
-                if (!$this->renumberAccountingEntries($rows, $number)) {
+                if (false === $this->renumberAccEntries($rows, $number)) {
                     $this->toolBox()->i18nLog()->warning('renumber-accounting-error', ['%exerciseCode%' => $exe->codejercicio]);
                     return false;
                 }
 
-                $offset += 1000;
-                $rows = self::$dataBase->selectLimit($sql, 1000, $offset);
+                $offset += self::RENUMBER_LIMIT;
+                $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
             }
         }
 
@@ -325,18 +325,18 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
             $this->setDate($this->fecha);
         }
 
-        if ($this->getExercise()->isOpened() === false) {
+        if (false === $this->getExercise()->isOpened()) {
             $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
             return false;
         }
 
-        $regularization = new DinRegularizacionImpuesto();
-        if ($regularization->loadFechaInside($this->fecha) && !empty($regularization->idasiento)) {
+        $reg = new DinRegularizacionImpuesto();
+        if ($reg->loadFechaInside($this->fecha) && $reg->bloquear) {
             $this->toolBox()->i18nLog()->warning('accounting-within-regularization');
             return false;
         }
 
-        if ($this->isEditable() === false) {
+        if (false === $this->isEditable()) {
             $this->toolBox()->i18nLog()->warning('non-editable-accounting-entry');
             return false;
         }
@@ -435,7 +435,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return bool
      */
-    protected function renumberAccountingEntries(&$entries, &$number)
+    protected function renumberAccEntries(&$entries, &$number)
     {
         $sql = '';
         foreach ($entries as $row) {
@@ -470,6 +470,6 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codejercicio', 'editable', 'fecha'];
-        parent::setPreviousData(array_merge($more, $fields));
+        parent::setPreviousData(\array_merge($more, $fields));
     }
 }
