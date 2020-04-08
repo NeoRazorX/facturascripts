@@ -113,6 +113,22 @@ class CodeModel
     }
 
     /**
+     * Convert an associative array (code and value) into a CodeModel array.
+     * 
+     * @param array $data
+     * @return static[]
+     */
+    public static function array2codeModel(array $data)
+    {
+        $result = [];
+        foreach ($data as $key => $value) {
+            $row = ['code' => $key, 'description' => $value];
+            $result[] = new static($row);
+        }
+        return $result;
+    }
+
+    /**
      * Load a CodeModel list (code and description) for the indicated table and search.
      *
      * @param string $tableName
@@ -198,7 +214,7 @@ class CodeModel
     }
 
     /**
-     * 
+     *
      * @return ToolBox
      */
     protected static function toolBox()
