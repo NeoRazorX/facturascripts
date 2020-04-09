@@ -18,7 +18,9 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Dinamic\Model\Asiento;
 
 /**
  * Controller to list the items in the Asiento model
@@ -40,6 +42,61 @@ class ListAsiento extends ListController
         $data['title'] = 'accounting-entries';
         $data['icon'] = 'fas fa-balance-scale';
         return $data;
+    }
+
+    /**
+     * Add an action button for lock entries list
+     *
+     * @param string $viewName
+     */
+    protected function addLockButton($viewName)
+    {
+        $newButton = [
+            'action' => 'lock-entries',
+            'color' => 'warning',
+            'icon' => 'fas fa-lock',
+            'label' => 'lock-entries',
+            'type' => 'action',
+        ];
+        $this->addButton($viewName, $newButton);
+    }
+
+    /**
+     * Add an modal button for renumber entries
+     *
+     * @param string $viewName
+     */
+    protected function addRenumberButton($viewName)
+    {
+        $newButton = [
+            'action' => 'renumber',
+            'color' => 'warning',
+            'icon' => 'fas fa-sort-numeric-down',
+            'label' => 'renumber-accounting',
+            'type' => 'modal',
+        ];
+        $this->addButton($viewName, $newButton);
+    }
+
+    /**
+     * Blocks the list of indicated accounting entries
+     *
+     * @param array|int $codeList
+     * @return boolean
+     */
+    protected function changeLockStatus($codeList)
+    {
+        $codes = is_array($codeList) ? implode(',', $codeList) : $codeList;
+        $where = [ new DataBaseWhere('idasiento', $codes, 'IN') ];
+
+        $accounting = new Asiento();
+        foreach ($accounting->all($where) as $row) {
+            if ($row->editable) {
+                $row->editable = false;
+                $row->save();
+            }
+        }
+        return true;
     }
 
     /**
@@ -85,14 +142,8 @@ class ListAsiento extends ListController
         $this->addFilterCheckbox($viewName, 'editable');
 
         /// buttons
-        $newButton = [
-            'action' => 'renumber',
-            'color' => 'warning',
-            'icon' => 'fas fa-sort-numeric-down',
-            'label' => 'renumber-accounting',
-            'type' => 'modal',
-        ];
-        $this->addButton($viewName, $newButton);
+        $this->addRenumberButton($viewName);
+        $this->addLockButton($viewName);
     }
 
     /**
@@ -133,6 +184,13 @@ class ListAsiento extends ListController
                 $codejercicio = $this->request->request->get('exercise');
                 if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
                     $this->toolBox()->i18nLog()->notice('renumber-accounting-ok');
+                }
+                return true;
+
+            case 'lock-entries':
+                $codeList = $this->request->get('code');
+                if ($this->changeLockStatus($codeList)) {
+                    $this->toolBox()->i18nLog()->notice('lock-entries-ok');
                 }
                 return true;
         }
