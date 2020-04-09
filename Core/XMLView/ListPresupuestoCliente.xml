@@ -92,6 +92,9 @@
         <column name="date" display="right" order="290">
             <widget type="date" fieldname="fecha" />
         </column>
+        <column name="expiration" display="right" order="300">
+            <widget type="date" fieldname="finoferta" />
+        </column>
     </columns>
     <rows>
         <row type="status">

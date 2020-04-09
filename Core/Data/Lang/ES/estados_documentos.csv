@@ -21,3 +21,4 @@ idestado;tipodoc;nombre;predeterminado;bloquear;editable;actualizastock;generado
 20;AlbaranProveedor;Devuelto;false;true;false;0;
 21;FacturaProveedor;Nueva;true;true;true;1;
 22;FacturaProveedor;Completada;false;true;false;1;
+23;PresupuestoCliente;Caducado;false;true;false;0;
