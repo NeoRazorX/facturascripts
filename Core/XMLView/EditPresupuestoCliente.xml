@@ -42,7 +42,7 @@
             <column name="expiration" order="150">
                 <widget type="date" fieldname="finoferta" />
             </column>
-            <column name="email-sent" order="150">
+            <column name="email-sent" order="160">
                 <widget type="date" fieldname="femail" />
             </column>
         </group>

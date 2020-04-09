@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2019  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2020  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014       Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,13 +33,6 @@ class PresupuestoCliente extends Base\SalesDocument
     use Base\ModelTrait;
 
     /**
-     * Primary key.
-     *
-     * @var integer
-     */
-    public $idpresupuesto;
-
-    /**
      * Date on which the validity of the estimation ends.
      *
      * @var string
@@ -47,13 +40,11 @@ class PresupuestoCliente extends Base\SalesDocument
     public $finoferta;
 
     /**
-     * Reset the values of all model properties.
+     * Primary key.
+     *
+     * @var integer
      */
-    public function clear()
-    {
-        parent::clear();
-        $this->finoferta = date(self::DATE_STYLE, strtotime(date(self::DATE_STYLE) . ' +1 month'));
-    }
+    public $idpresupuesto;
 
     /**
      * Returns the lines associated with the estimation.
@@ -65,7 +56,6 @@ class PresupuestoCliente extends Base\SalesDocument
         $lineaModel = new LineaPresupuesto();
         $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
         $order = ['orden' => 'DESC', 'idlinea' => 'ASC'];
-
         return $lineaModel->all($where, $order, 0, 0);
     }
 
@@ -106,5 +96,19 @@ class PresupuestoCliente extends Base\SalesDocument
     public static function tableName()
     {
         return 'presupuestoscli';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        /// finoferta can't be previous to fecha
+        if (!empty($this->finoferta) && \strtotime($this->finoferta) < \strtotime($this->fecha)) {
+            $this->finoferta = null;
+        }
+
+        return parent::test();
     }
 }
