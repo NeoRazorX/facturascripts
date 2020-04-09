@@ -193,6 +193,8 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterNumber($viewName, 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber($viewName, 'pvpunitario', 'pvp', 'pvpunitario');
         $this->addFilterNumber($viewName, 'pvptotal', 'amount', 'pvptotal');
+        
+        $this->addFilterCheckbox($viewName, 'suplido', 'supplied', 'suplido');
 
         /// disable megasearch for this view
         $this->setSettings($viewName, 'btnDelete', false);
