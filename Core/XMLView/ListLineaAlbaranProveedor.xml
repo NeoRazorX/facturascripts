@@ -72,6 +72,9 @@
         <column name="irpf" display="right" order="240">
             <widget type="percentage" fieldname="irpf" />
         </column>
+        <column name="supplied" display="none" order="250">
+            <widget type="checkbox" fieldname="suplido" />
+        </column>
     </columns>
     <rows>
         <row type="status">
