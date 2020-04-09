@@ -342,12 +342,6 @@ class Partida extends Base\ModelOnChangeClass
             $this->idcontrapartida = $this->getSubcuenta($this->codcontrapartida)->idsubcuenta;
         }
 
-        /// if there is a tax base we check VAT tax
-        if ($this->baseimponible != 0 && $this->errorTaxBase()) {
-            $this->toolBox()->i18nLog()->warning('tax-base-error');
-            return false;
-        }
-
         return parent::test();
     }
 
@@ -425,18 +419,6 @@ class Partida extends Base\ModelOnChangeClass
     {
         $more = ['codcontrapartida', 'codsubcuenta', 'debe', 'haber', 'idcontrapartida', 'idsubcuenta'];
         parent::setPreviousData(\array_merge($more, $fields));
-    }
-
-    /**
-     * Check if the tax rate corresponds to the amount
-     *
-     * @return bool
-     */
-    private function errorTaxBase()
-    {
-        $saldo = $this->debe + $this->haber;
-        $tax = $this->baseimponible * ($this->iva + $this->recargo) / 100.00;
-        return (\round($saldo, (int) \FS_NF0) !== \round($tax, (int) \FS_NF0));
     }
 
     /**
