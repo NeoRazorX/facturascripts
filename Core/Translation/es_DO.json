@@ -607,6 +607,7 @@
     "loading-controller": "Cargando controlador: '%controllerName%'",
     "location": "Ubicación",
     "lock-accounting": "Bloquear contabilidad",
+    "lock-entry": "Bloquear asiento",
     "lock-invoice": "Bloquear factura",
     "lock-unlock": "(Des)Bloquear",
     "lock-unlock-account-entry": "Bloquear\/Desbloquear el asiento contable",

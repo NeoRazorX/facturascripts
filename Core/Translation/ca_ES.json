@@ -607,6 +607,7 @@
     "loading-controller": "Carregant controlador: '%controllerName%'",
     "location": "Localització",
     "lock-accounting": "lock-accounting",
+    "lock-entry": "lock-entry",
     "lock-invoice": "Bloquejar factura",
     "lock-unlock": "(Des)Bloquejar",
     "lock-unlock-account-entry": "Bloquejar \/ Desbloquejar l'assentament comptable",

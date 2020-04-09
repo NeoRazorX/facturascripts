@@ -607,6 +607,7 @@
     "loading-controller": "Chargement du contrôleur: '%controllerName%'",
     "location": "Localisation",
     "lock-accounting": "lock-accounting",
+    "lock-entry": "lock-entry",
     "lock-invoice": "lock-invoice",
     "lock-unlock": "Verrouiller-Déverrouiller",
     "lock-unlock-account-entry": "Bloquer\/Débloquer l'entrée comptable",

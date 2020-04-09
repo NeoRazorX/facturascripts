@@ -607,6 +607,7 @@
     "loading-controller": "'%controllerName%' kontrolatzailea kargatzen",
     "location": "Kokapena",
     "lock-accounting": "Kontabilitatea blokeatu",
+    "lock-entry": "lock-entry",
     "lock-invoice": "Faktura blokeatu",
     "lock-unlock": "(Des)Blokeatu",
     "lock-unlock-account-entry": "Blokeatu\/desblokeatu kontabilitate idazpena",

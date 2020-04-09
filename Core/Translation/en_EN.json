@@ -607,6 +607,7 @@
     "loading-controller": "Loading controller: '%controllerName%'",
     "location": "Location",
     "lock-accounting": "Lock accounting",
+    "lock-entry": "Lock entry",
     "lock-invoice": "Lock invoice",
     "lock-unlock": "Lock-Unlock",
     "lock-unlock-account-entry": "Block\/Unlock the accounting entry",
