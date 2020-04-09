@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
-use FacturaScripts\Dinamic\Model\Asiento;
 
 /**
  * Controller to list the items in the Asiento model
@@ -49,16 +47,14 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function addLockButton($viewName)
+    protected function addLockButton(string $viewName)
     {
-        $newButton = [
+        $this->addButton($viewName, [
             'action' => 'lock-entries',
-            'color' => 'warning',
+            'confirm' => true,
             'icon' => 'fas fa-lock',
-            'label' => 'lock-entries',
-            'type' => 'action',
-        ];
-        $this->addButton($viewName, $newButton);
+            'label' => 'lock-entry'
+        ]);
     }
 
     /**
@@ -66,37 +62,14 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function addRenumberButton($viewName)
+    protected function addRenumberButton(string $viewName)
     {
-        $newButton = [
+        $this->addButton($viewName, [
             'action' => 'renumber',
-            'color' => 'warning',
             'icon' => 'fas fa-sort-numeric-down',
             'label' => 'renumber-accounting',
-            'type' => 'modal',
-        ];
-        $this->addButton($viewName, $newButton);
-    }
-
-    /**
-     * Blocks the list of indicated accounting entries
-     *
-     * @param array|int $codeList
-     * @return boolean
-     */
-    protected function changeLockStatus($codeList)
-    {
-        $codes = is_array($codeList) ? implode(',', $codeList) : $codeList;
-        $where = [ new DataBaseWhere('idasiento', $codes, 'IN') ];
-
-        $accounting = new Asiento();
-        foreach ($accounting->all($where) as $row) {
-            if ($row->editable) {
-                $row->editable = false;
-                $row->save();
-            }
-        }
-        return true;
+            'type' => 'modal'
+        ]);
     }
 
     /**
@@ -104,9 +77,9 @@ class ListAsiento extends ListController
      */
     protected function createViews()
     {
-        $this->createViewAccountEntries();
-        $this->createViewConcepts();
-        $this->createViewJournals();
+        $this->createViewsAccountEntries();
+        $this->createViewsConcepts();
+        $this->createViewsJournals();
     }
 
     /**
@@ -114,13 +87,13 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function createViewAccountEntries($viewName = 'ListAsiento')
+    protected function createViewsAccountEntries(string $viewName = 'ListAsiento')
     {
         $this->addView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->addSearchFields($viewName, ['numero', 'concepto']);
         $this->addOrderBy($viewName, ['fecha', 'idasiento'], 'date', 2);
         $this->addOrderBy($viewName, ['numero', 'idasiento'], 'number');
         $this->addOrderBy($viewName, ['importe', 'idasiento'], 'amount');
+        $this->addSearchFields($viewName, ['numero', 'concepto']);
 
         /// filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
@@ -142,32 +115,32 @@ class ListAsiento extends ListController
         $this->addFilterCheckbox($viewName, 'editable');
 
         /// buttons
-        $this->addRenumberButton($viewName);
         $this->addLockButton($viewName);
+        $this->addRenumberButton($viewName);
     }
 
     /**
      *
      * @param string $viewName
      */
-    protected function createViewConcepts($viewName = 'ListConceptoPartida')
+    protected function createViewsConcepts(string $viewName = 'ListConceptoPartida')
     {
         $this->addView($viewName, 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
-        $this->addSearchFields($viewName, ['codconcepto', 'descripcion']);
         $this->addOrderBy($viewName, ['codconcepto'], 'code');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addSearchFields($viewName, ['codconcepto', 'descripcion']);
     }
 
     /**
      *
      * @param string $viewName
      */
-    protected function createViewJournals($viewName = 'ListDiario')
+    protected function createViewsJournals(string $viewName = 'ListDiario')
     {
         $this->addView($viewName, 'Diario', 'journals', 'fas fa-book');
-        $this->addSearchFields($viewName, ['descripcion']);
         $this->addOrderBy($viewName, ['iddiario'], 'code');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addSearchFields($viewName, ['descripcion']);
     }
 
     /**
@@ -180,21 +153,72 @@ class ListAsiento extends ListController
     protected function execPreviousAction($action)
     {
         switch ($action) {
-            case 'renumber':
-                $codejercicio = $this->request->request->get('exercise');
-                if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
-                    $this->toolBox()->i18nLog()->notice('renumber-accounting-ok');
-                }
-                return true;
-
             case 'lock-entries':
-                $codeList = $this->request->get('code');
-                if ($this->changeLockStatus($codeList)) {
-                    $this->toolBox()->i18nLog()->notice('lock-entries-ok');
-                }
-                return true;
+                return $this->lockEntriesAction();
+
+            case 'renumber':
+                return $this->renumberAction();
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function lockEntriesAction()
+    {
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $codes = $this->request->request->get('code');
+        $model = $this->views[$this->active]->model;
+        if (false === \is_array($codes) || empty($model)) {
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            return true;
+        }
+
+        $this->dataBase->beginTransaction();
+        foreach ($codes as $code) {
+            if (false === $model->loadFromCode($code)) {
+                $this->toolBox()->i18nLog()->error('record-not-found');
+                continue;
+            } elseif (false === $model->editable) {
+                continue;
+            }
+
+            $model->editable = false;
+            if (false === $model->save()) {
+                $this->toolBox()->i18nLog()->error('record-save-error');
+                $this->dataBase->rollback();
+                return true;
+            }
+        }
+
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        $this->dataBase->commit();
+        $model->clear();
+        return true;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function renumberAction()
+    {
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $codejercicio = $this->request->request->get('exercise');
+        if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
+            $this->toolBox()->i18nLog()->notice('renumber-accounting-ok');
+        }
+        return true;
     }
 }
