@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,11 +19,13 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\ApiKey as DinApiKey;
 
 /**
  * Defines the individual permissions for each resrouce within an api key.
  *
- * @author Francesc Pineda Segarra <francesc.pineda@x-netdigital.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
+ * @author Francesc Pineda Segarra  <francesc.pineda@x-netdigital.com>
  */
 class ApiAccess extends Base\ModelClass
 {
@@ -93,20 +95,23 @@ class ApiAccess extends Base\ModelClass
         $apiAccess = new static();
 
         foreach ($resources as $resource) {
-            $where = [new DataBaseWhere('idapikey', $idApiKey)];
-            $where[] = new DataBaseWhere('resource', $resource);
-            if (!$apiAccess->loadFromCode('', $where)) {
-                $apiAccess->idapikey = $idApiKey;
-                $apiAccess->resource = $resource;
-                $apiAccess->allowdelete = $state;
-                $apiAccess->allowget = $state;
-                $apiAccess->allowpost = $state;
-                $apiAccess->allowput = $state;
-                if (!$apiAccess->save()) {
-                    return false;
-                }
+            $where = [
+                new DataBaseWhere('idapikey', $idApiKey),
+                new DataBaseWhere('resource', $resource)
+            ];
+            if ($apiAccess->loadFromCode('', $where)) {
+                continue;
             }
-            unset($where[1]);
+
+            $apiAccess->idapikey = $idApiKey;
+            $apiAccess->resource = $resource;
+            $apiAccess->allowdelete = $state;
+            $apiAccess->allowget = $state;
+            $apiAccess->allowpost = $state;
+            $apiAccess->allowput = $state;
+            if (false === $apiAccess->save()) {
+                return false;
+            }
         }
 
         return true;
@@ -121,7 +126,8 @@ class ApiAccess extends Base\ModelClass
      */
     public function install()
     {
-        new ApiKey();
+        /// needed dependencies
+        new DinApiKey();
 
         return parent::install();
     }

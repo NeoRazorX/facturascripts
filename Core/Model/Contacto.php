@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Agente as DinAgente;
+use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
+use FacturaScripts\Dinamic\Model\Pais as DinPais;
+use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 
 /**
  * Description of crm_contacto
@@ -197,15 +201,15 @@ class Contacto extends Base\Contact
      */
     public function alias()
     {
-        if (empty($this->email) || strpos($this->email, '@') === false) {
+        if (empty($this->email) || \strpos($this->email, '@') === false) {
             return (string) $this->idcontacto;
         }
 
-        $aux = explode('@', $this->email);
+        $aux = \explode('@', $this->email);
         switch ($aux[0]) {
             case 'admin':
             case 'info':
-                $domain = explode('.', $aux[1]);
+                $domain = \explode('.', $aux[1]);
                 return $domain[0] . '_' . $this->idcontacto;
 
             default:
@@ -234,7 +238,7 @@ class Contacto extends Base\Contact
      */
     public function country()
     {
-        $country = new Pais();
+        $country = new DinPais();
         $where = [new DataBaseWhere('codiso', $this->codpais)];
         if ($country->loadFromCode($this->codpais) || $country->loadFromCode('', $where)) {
             return $this->toolBox()->utils()->fixHtml($country->nombre);
@@ -257,11 +261,11 @@ class Contacto extends Base\Contact
      * 
      * @param bool $create
      *
-     * @return Cliente
+     * @return DinCliente
      */
     public function getCustomer($create = true)
     {
-        $cliente = new Cliente();
+        $cliente = new DinCliente();
         if ($this->codcliente && $cliente->loadFromCode($this->codcliente)) {
             return $cliente;
         }
@@ -293,11 +297,11 @@ class Contacto extends Base\Contact
      * 
      * @param bool $create
      *
-     * @return Proveedor
+     * @return DinProveedor
      */
     public function getSupplier($create = true)
     {
-        $proveedor = new Proveedor();
+        $proveedor = new DinProveedor();
         if ($this->codproveedor && $proveedor->loadFromCode($this->codproveedor)) {
             return $proveedor;
         }
@@ -334,9 +338,9 @@ class Contacto extends Base\Contact
     public function install()
     {
         /// we need this models to be checked before
-        new Agente();
-        new Cliente();
-        new Proveedor();
+        new DinAgente();
+        new DinCliente();
+        new DinProveedor();
 
         return parent::install();
     }
@@ -351,7 +355,7 @@ class Contacto extends Base\Contact
      */
     public function newLogkey($ipAddress)
     {
-        $this->lastactivity = date(self::DATETIME_STYLE);
+        $this->lastactivity = \date(self::DATETIME_STYLE);
         $this->lastip = $ipAddress;
         $this->logkey = $this->toolBox()->utils()->randomString(99);
         return $this->logkey;

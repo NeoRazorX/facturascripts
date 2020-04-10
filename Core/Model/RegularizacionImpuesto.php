@@ -262,16 +262,16 @@ class RegularizacionImpuesto extends Base\ModelClass
         // return periods values
         switch ($period) {
             case 'T2':
-                return ['start' => date('01-04-' . $year), 'end' => date('30-06-' . $year)];
+                return ['start' => \date('01-04-' . $year), 'end' => \date('30-06-' . $year)];
 
             case 'T3':
-                return ['start' => date('01-07-' . $year), 'end' => date('30-09-' . $year)];
+                return ['start' => \date('01-07-' . $year), 'end' => \date('30-09-' . $year)];
 
             case 'T4':
-                return ['start' => date('01-10-' . $year), 'end' => date('31-12-' . $year)];
+                return ['start' => \date('01-10-' . $year), 'end' => \date('31-12-' . $year)];
 
             default:
-                return ['start' => date('01-01-' . $year), 'end' => date('31-03-' . $year)];
+                return ['start' => \date('01-01-' . $year), 'end' => \date('31-03-' . $year)];
         }
     }
 
