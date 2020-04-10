@@ -114,7 +114,7 @@ class Retencion extends Base\ModelClass
     public function test(): bool
     {
         $this->codretencion = \trim($this->codretencion);
-        if (false === preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codretencion)) {
+        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codretencion)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codretencion, '%column%' => 'codretencion', '%min%' => '1', '%max%' => '10']

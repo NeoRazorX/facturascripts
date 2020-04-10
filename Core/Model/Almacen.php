@@ -133,7 +133,7 @@ class Almacen extends Base\Address
      */
     public function test()
     {
-        if (!empty($this->codalmacen) && false === preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
+        if (!empty($this->codalmacen) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codalmacen, '%column%' => 'codalmacen', '%min%' => '1', '%max%' => '4']

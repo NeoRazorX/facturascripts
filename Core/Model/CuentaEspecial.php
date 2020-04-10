@@ -80,7 +80,7 @@ class CuentaEspecial extends Base\ModelClass
     public function test()
     {
         $this->codcuentaesp = \trim($this->codcuentaesp);
-        if (false === preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codcuentaesp)) {
+        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codcuentaesp)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codcuentaesp, '%column%' => 'codcuentaesp', '%min%' => '1', '%max%' => '6']

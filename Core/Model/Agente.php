@@ -154,7 +154,7 @@ class Agente extends Base\Contact
     {
         $this->cargo = $this->toolBox()->utils()->noHtml($this->cargo);
 
-        if (!empty($this->codagente) && false === preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codagente)) {
+        if (!empty($this->codagente) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codagente)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codagente, '%column%' => 'codagente', '%min%' => '1', '%max%' => '10']
