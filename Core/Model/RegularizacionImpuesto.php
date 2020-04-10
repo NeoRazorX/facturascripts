@@ -35,6 +35,7 @@ class RegularizacionImpuesto extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+    use Base\AccEntryRelationTrait;
     use Base\ExerciseRelationTrait;
 
     /**
@@ -77,13 +78,6 @@ class RegularizacionImpuesto extends Base\ModelClass
      * @var string
      */
     public $fechainicio;
-
-    /**
-     * ID of the generated accounting entry.
-     *
-     * @var int
-     */
-    public $idasiento;
 
     /**
      * Foreign Key with Empresas table.
@@ -134,9 +128,9 @@ class RegularizacionImpuesto extends Base\ModelClass
     public function delete()
     {
         if (parent::delete()) {
-            $asiento = $this->getAsiento();
-            if ($asiento->exists()) {
-                $asiento->delete();
+            $accEntry = $this->getAccountingEntry();
+            if ($accEntry->exists()) {
+                $accEntry->delete();
             }
 
             return true;
@@ -146,24 +140,13 @@ class RegularizacionImpuesto extends Base\ModelClass
     }
 
     /**
-     *
-     * @return DinAsiento
-     */
-    public function getAsiento()
-    {
-        $asiento = new DinAsiento();
-        $asiento->loadFromCode($this->idasiento);
-        return $asiento;
-    }
-
-    /**
      * Returns the items per accounting entry.
      *
      * @return DinPartida[]
      */
     public function getPartidas()
     {
-        return $this->getAsiento()->getLines();
+        return $this->getAccountingEntry()->getLines();
     }
 
     /**

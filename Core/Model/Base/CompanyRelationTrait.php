@@ -18,30 +18,25 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Dinamic\Model\FormaPago;
+use FacturaScripts\Dinamic\Model\Empresa;
 
-/**
- * 
- * @author Oscar G. Villa <ogvilla@gmail.com>
- */
-trait PaymentRelationTrait
+trait CompanyRelationTrait
 {
 
     /**
-     * Payment method code.
      *
-     * @var string
+     * @var int
      */
-    public $codpago;
+    public $idempresa;
 
     /**
      * 
-     * @return FormaPago
+     * @return Empresa
      */
-    public function getPaymentMethod()
+    public function getCompany()
     {
-        $paymentMethod = new FormaPago();
-        $paymentMethod->loadFromCode($this->codpago);
-        return $paymentMethod;
+        $company = new Empresa();
+        $company->loadFromCode($this->idempresa);
+        return $company;
     }
 }

@@ -32,6 +32,8 @@ use FacturaScripts\Dinamic\Model\Asiento;
 trait InvoiceTrait
 {
 
+    use AccEntryRelationTrait;
+
     /**
      * Code of the invoice that rectifies.
      *
@@ -52,13 +54,6 @@ trait InvoiceTrait
      * @var string
      */
     public $fecha;
-
-    /**
-     * Related accounting entry ID, if any.
-     *
-     * @var int
-     */
-    public $idasiento;
 
     /**
      * Primary key.
@@ -142,17 +137,6 @@ trait InvoiceTrait
         }
 
         return parent::delete();
-    }
-
-    /**
-     * 
-     * @return Asiento
-     */
-    public function getAccountingEntry()
-    {
-        $asiento = new Asiento();
-        $asiento->loadFromCode($this->idasiento);
-        return $asiento;
     }
 
     /**
@@ -241,7 +225,7 @@ trait InvoiceTrait
         foreach ($this->getRefunds() as $invoice) {
             foreach ($invoice->getLines() as $line) {
                 if ($line->referencia == $ref) {
-                    $amount += abs($line->cantidad);
+                    $amount += \abs($line->cantidad);
                 }
             }
         }

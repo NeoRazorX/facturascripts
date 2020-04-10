@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,6 +27,7 @@ class User extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+    use Base\CompanyRelationTrait;
     use Base\PasswordTrait;
 
     const DEFAULT_LEVEL = 2;
@@ -70,13 +71,6 @@ class User extends Base\ModelClass
      * @var string
      */
     public $homepage;
-
-    /**
-     * Corporation identifier.
-     *
-     * @var int
-     */
-    public $idempresa;
 
     /**
      * Language code.

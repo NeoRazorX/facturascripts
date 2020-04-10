@@ -18,30 +18,25 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Dinamic\Model\FormaPago;
+use FacturaScripts\Dinamic\Model\Asiento;
 
-/**
- * 
- * @author Oscar G. Villa <ogvilla@gmail.com>
- */
-trait PaymentRelationTrait
+trait AccEntryRelationTrait
 {
 
     /**
-     * Payment method code.
      *
-     * @var string
+     * @var int
      */
-    public $codpago;
+    public $idasiento;
 
     /**
      * 
-     * @return FormaPago
+     * @return Asiento
      */
-    public function getPaymentMethod()
+    public function getAccountingEntry()
     {
-        $paymentMethod = new FormaPago();
-        $paymentMethod->loadFromCode($this->codpago);
-        return $paymentMethod;
+        $accEntry = new Asiento();
+        $accEntry->loadFromCode($this->idasiento);
+        return $accEntry;
     }
 }

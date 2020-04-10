@@ -18,30 +18,25 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Dinamic\Model\FormaPago;
+use FacturaScripts\Dinamic\Model\Serie;
 
-/**
- * 
- * @author Oscar G. Villa <ogvilla@gmail.com>
- */
-trait PaymentRelationTrait
+trait SerieRelationTrait
 {
 
     /**
-     * Payment method code.
      *
      * @var string
      */
-    public $codpago;
+    public $codserie;
 
     /**
      * 
-     * @return FormaPago
+     * @return Serie
      */
-    public function getPaymentMethod()
+    public function getSerie()
     {
-        $paymentMethod = new FormaPago();
-        $paymentMethod->loadFromCode($this->codpago);
-        return $paymentMethod;
+        $serie = new Serie();
+        $serie->loadFromCode($this->codserie);
+        return $serie;
     }
 }
