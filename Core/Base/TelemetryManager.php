@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -73,9 +73,9 @@ class TelemetryManager
          * Is telemetry data defined in the config.php?
          * FS_TELEMETRY_TOKEN = IDINSTALL:SIGNKEY
          */
-        if (empty($this->idinstall) && defined('FS_TELEMETRY_TOKEN')) {
-            $data = explode(':', FS_TELEMETRY_TOKEN);
-            if (count($data) === 2) {
+        if (empty($this->idinstall) && \defined('FS_TELEMETRY_TOKEN')) {
+            $data = \explode(':', \FS_TELEMETRY_TOKEN);
+            if (\count($data) === 2) {
                 $this->idinstall = (int) $data[0];
                 $this->signkey = $data[1];
                 $this->update();
@@ -92,7 +92,7 @@ class TelemetryManager
         $params = $this->collectData(true);
         $params['action'] = 'claim';
         $this->calculateHash($params);
-        return self::TELEMETRY_URL . '?' . http_build_query($params);
+        return self::TELEMETRY_URL . '?' . \http_build_query($params);
     }
 
     /**
@@ -112,8 +112,8 @@ class TelemetryManager
     {
         $params = $this->collectData();
         $params['action'] = 'install';
-        $json = $this->getDownloader()->getContents(self::TELEMETRY_URL . '?' . http_build_query($params), 3);
-        $data = json_decode($json, true);
+        $json = $this->getDownloader()->getContents(self::TELEMETRY_URL . '?' . \http_build_query($params), 3);
+        $data = \json_decode($json, true);
         if ($data['idinstall']) {
             $this->idinstall = $data['idinstall'];
             $this->signkey = $data['signkey'];
@@ -147,7 +147,7 @@ class TelemetryManager
 
         $params = $this->collectData(true);
         $this->calculateHash($params);
-        return $url . '?' . http_build_query($params);
+        return $url . '?' . \http_build_query($params);
     }
 
     /**
@@ -156,7 +156,7 @@ class TelemetryManager
      */
     public function update(): bool
     {
-        if (false === $this->ready() || time() - $this->lastupdate < self::UPDATE_INTERVAL) {
+        if (false === $this->ready() || \time() - $this->lastupdate < self::UPDATE_INTERVAL) {
             return false;
         }
 
@@ -164,11 +164,11 @@ class TelemetryManager
         $params['action'] = 'update';
         $this->calculateHash($params);
 
-        $json = $this->getDownloader()->getContents(self::TELEMETRY_URL . '?' . http_build_query($params), 3);
-        $data = json_decode($json, true);
+        $json = $this->getDownloader()->getContents(self::TELEMETRY_URL . '?' . \http_build_query($params), 3);
+        $data = \json_decode($json, true);
 
         $this->save();
-        return (bool) $data['ok'];
+        return isset($data['ok']) ? (bool) $data['ok'] : false;
     }
 
     /**
@@ -177,7 +177,7 @@ class TelemetryManager
      */
     private function calculateHash(array &$data)
     {
-        $data['hash'] = sha1($data['randomnum'] . $this->signkey);
+        $data['hash'] = \sha1($data['randomnum'] . $this->signkey);
     }
 
     /**
@@ -189,12 +189,12 @@ class TelemetryManager
     private function collectData(bool $minimum = false): array
     {
         $data = [
-            'codpais' => FS_CODPAIS,
+            'codpais' => \FS_CODPAIS,
             'coreversion' => PluginManager::CORE_VERSION,
             'idinstall' => $this->idinstall,
-            'langcode' => FS_LANG,
-            'phpversion' => (float) PHP_VERSION,
-            'randomnum' => mt_rand(),
+            'langcode' => \FS_LANG,
+            'phpversion' => (float) \PHP_VERSION,
+            'randomnum' => \mt_rand()
         ];
 
         if ($minimum) {
@@ -211,10 +211,10 @@ class TelemetryManager
             'numinvoices' => $invoice->count(),
             'numusers' => $user->count(),
             'numvariants' => $variant->count(),
-            'pluginlist' => implode(',', $pluginManager->enabledPlugins()),
+            'pluginlist' => \implode(',', $pluginManager->enabledPlugins())
         ];
 
-        return array_merge($data, $more);
+        return \array_merge($data, $more);
     }
 
     /**
@@ -228,7 +228,7 @@ class TelemetryManager
 
     private function save()
     {
-        $this->lastupdate = time();
+        $this->lastupdate = \time();
         $this->appSettings->set('default', 'telemetryinstall', $this->idinstall);
         $this->appSettings->set('default', 'telemetrykey', $this->signkey);
         $this->appSettings->set('default', 'telemetrylastu', $this->lastupdate);
