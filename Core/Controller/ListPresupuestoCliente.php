@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,9 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
+use FacturaScripts\Dinamic\Model\PresupuestoCliente;
 
 /**
  * Controller to list the items in the PresupuestoCliente model
@@ -50,10 +52,61 @@ class ListPresupuestoCliente extends ListBusinessDocument
      */
     protected function createViews()
     {
-        $this->createViewSales('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
-        $this->addButtonGroupDocument('ListPresupuestoCliente');
-        $this->addButtonApproveDocument('ListPresupuestoCliente');
+        /// main view/tab
+        $mainViewName = 'ListPresupuestoCliente';
+        $this->createViewSales($mainViewName, 'PresupuestoCliente', 'estimations');
+        $this->views[$mainViewName]->addOrderBy(['finoferta'], 'expiration');
+        $this->addButtonGroupDocument($mainViewName);
+        $this->addButtonApproveDocument($mainViewName);
 
+        /// lines view/tab
         $this->createViewLines('ListLineaPresupuestoCliente', 'LineaPresupuestoCliente');
+    }
+
+    /**
+     * 
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        if (empty($action)) {
+            $this->setExpiredItems();
+        }
+
+        return parent::execPreviousAction($action);
+    }
+
+    protected function setExpiredItems()
+    {
+        $presupuestoModel = new PresupuestoCliente;
+
+        /// select the avaliable expired status
+        $expiredStatus = null;
+        foreach ($presupuestoModel->getAvaliableStatus() as $status) {
+            if ($status->idestado == 23 && !$status->editable && empty($status->generadoc)) {
+                $expiredStatus = $status->idestado;
+                break;
+            } elseif (false === $status->editable && empty($status->generadoc)) {
+                $expiredStatus = $status->idestado;
+            }
+        }
+        if (null === $expiredStatus) {
+            return;
+        }
+
+        $where = [
+            new DataBaseWhere('editable', true),
+            new DataBaseWhere('finoferta', null, 'IS NOT')
+        ];
+        foreach ($presupuestoModel->all($where, ['finoferta' => 'ASC']) as $item) {
+            if (\time() < \strtotime($item->finoferta)) {
+                continue;
+            }
+
+            $item->idestado = $expiredStatus;
+            $item->save();
+        }
     }
 }

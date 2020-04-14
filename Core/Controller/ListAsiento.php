@@ -43,13 +43,43 @@ class ListAsiento extends ListController
     }
 
     /**
+     * Add an action button for lock entries list
+     *
+     * @param string $viewName
+     */
+    protected function addLockButton(string $viewName)
+    {
+        $this->addButton($viewName, [
+            'action' => 'lock-entries',
+            'confirm' => true,
+            'icon' => 'fas fa-lock',
+            'label' => 'lock-entry'
+        ]);
+    }
+
+    /**
+     * Add an modal button for renumber entries
+     *
+     * @param string $viewName
+     */
+    protected function addRenumberButton(string $viewName)
+    {
+        $this->addButton($viewName, [
+            'action' => 'renumber',
+            'icon' => 'fas fa-sort-numeric-down',
+            'label' => 'renumber-accounting',
+            'type' => 'modal'
+        ]);
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
     {
-        $this->createViewAccountEntries();
-        $this->createViewConcepts();
-        $this->createViewJournals();
+        $this->createViewsAccountEntries();
+        $this->createViewsConcepts();
+        $this->createViewsJournals();
     }
 
     /**
@@ -57,13 +87,13 @@ class ListAsiento extends ListController
      *
      * @param string $viewName
      */
-    protected function createViewAccountEntries($viewName = 'ListAsiento')
+    protected function createViewsAccountEntries(string $viewName = 'ListAsiento')
     {
         $this->addView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->addSearchFields($viewName, ['numero', 'concepto']);
         $this->addOrderBy($viewName, ['fecha', 'idasiento'], 'date', 2);
         $this->addOrderBy($viewName, ['numero', 'idasiento'], 'number');
         $this->addOrderBy($viewName, ['importe', 'idasiento'], 'amount');
+        $this->addSearchFields($viewName, ['numero', 'concepto']);
 
         /// filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
@@ -85,38 +115,32 @@ class ListAsiento extends ListController
         $this->addFilterCheckbox($viewName, 'editable');
 
         /// buttons
-        $newButton = [
-            'action' => 'renumber',
-            'color' => 'warning',
-            'icon' => 'fas fa-sort-numeric-down',
-            'label' => 'renumber-accounting',
-            'type' => 'modal',
-        ];
-        $this->addButton($viewName, $newButton);
+        $this->addLockButton($viewName);
+        $this->addRenumberButton($viewName);
     }
 
     /**
      *
      * @param string $viewName
      */
-    protected function createViewConcepts($viewName = 'ListConceptoPartida')
+    protected function createViewsConcepts(string $viewName = 'ListConceptoPartida')
     {
         $this->addView($viewName, 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
-        $this->addSearchFields($viewName, ['codconcepto', 'descripcion']);
         $this->addOrderBy($viewName, ['codconcepto'], 'code');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addSearchFields($viewName, ['codconcepto', 'descripcion']);
     }
 
     /**
      *
      * @param string $viewName
      */
-    protected function createViewJournals($viewName = 'ListDiario')
+    protected function createViewsJournals(string $viewName = 'ListDiario')
     {
         $this->addView($viewName, 'Diario', 'journals', 'fas fa-book');
-        $this->addSearchFields($viewName, ['descripcion']);
         $this->addOrderBy($viewName, ['iddiario'], 'code');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addSearchFields($viewName, ['descripcion']);
     }
 
     /**
@@ -129,14 +153,72 @@ class ListAsiento extends ListController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'lock-entries':
+                return $this->lockEntriesAction();
+
             case 'renumber':
-                $codejercicio = $this->request->request->get('exercise');
-                if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
-                    $this->toolBox()->i18nLog()->notice('renumber-accounting-ok');
-                }
-                return true;
+                return $this->renumberAction();
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function lockEntriesAction()
+    {
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $codes = $this->request->request->get('code');
+        $model = $this->views[$this->active]->model;
+        if (false === \is_array($codes) || empty($model)) {
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            return true;
+        }
+
+        $this->dataBase->beginTransaction();
+        foreach ($codes as $code) {
+            if (false === $model->loadFromCode($code)) {
+                $this->toolBox()->i18nLog()->error('record-not-found');
+                continue;
+            } elseif (false === $model->editable) {
+                continue;
+            }
+
+            $model->editable = false;
+            if (false === $model->save()) {
+                $this->toolBox()->i18nLog()->error('record-save-error');
+                $this->dataBase->rollback();
+                return true;
+            }
+        }
+
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        $this->dataBase->commit();
+        $model->clear();
+        return true;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function renumberAction()
+    {
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $codejercicio = $this->request->request->get('exercise');
+        if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
+            $this->toolBox()->i18nLog()->notice('renumber-accounting-ok');
+        }
+        return true;
     }
 }

@@ -33,7 +33,10 @@ use FacturaScripts\Dinamic\Model\Serie;
 abstract class BusinessDocument extends ModelOnChangeClass
 {
 
+    use CompanyRelationTrait;
     use ExerciseRelationTrait;
+    use PaymentRelationTrait;
+    use SerieRelationTrait;
 
     /**
      * VAT number of the customer or supplier.
@@ -62,20 +65,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
      * @var string
      */
     public $codigo;
-
-    /**
-     * Payment method associated.
-     *
-     * @var string
-     */
-    public $codpago;
-
-    /**
-     * Related serie.
-     *
-     * @var string
-     */
-    public $codserie;
 
     /**
      * Percentage of discount.
@@ -111,13 +100,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
      * @var string
      */
     public $hora;
-
-    /**
-     * Company id. of the document.
-     *
-     * @var int
-     */
-    public $idempresa;
 
     /**
      * Default retention for this document. Each line can have a different retention.
@@ -281,17 +263,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     *
-     * @return Empresa
-     */
-    public function getCompany()
-    {
-        $empresa = new Empresa();
-        $empresa->loadFromCode($this->idempresa);
-        return $empresa;
-    }
-
-    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
@@ -359,7 +330,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public function setDate(string $date, string $hour): bool
     {
         /// force check of warehouse-company relation
-        if (!$this->setWarehouse($this->codalmacen)) {
+        if (false === $this->setWarehouse($this->codalmacen)) {
             return false;
         }
 
@@ -403,7 +374,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
         /// check total
         $total = $this->neto + $this->totalsuplidos + $this->totaliva - $this->totalirpf + $this->totalrecargo;
-        if (!$utils->floatcmp($this->total, $total, \FS_NF0, true)) {
+        if (false === $utils->floatcmp($this->total, $total, \FS_NF0, true)) {
             $this->toolBox()->i18nLog()->error('bad-total-error');
             return false;
         }
@@ -439,7 +410,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
             case 'fecha':
                 $oldCodejercicio = $this->codejercicio;
-                if (!$this->setDate($this->fecha, $this->hora)) {
+                if (false === $this->setDate($this->fecha, $this->hora)) {
                     return false;
                 } elseif ($this->codejercicio != $oldCodejercicio) {
                     BusinessDocumentCode::getNewCode($this);

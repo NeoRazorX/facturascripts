@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,6 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
+use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 
 /**
  * The agent/employee is the one associated with a delivery note, invoice o box.
@@ -76,11 +79,11 @@ class Agente extends Base\Contact
     /**
      * Returns the addresses associated with the provider.
      *
-     * @return Contacto
+     * @return DinContacto
      */
     public function getContact()
     {
-        $contact = new Contacto();
+        $contact = new DinContacto();
         $contact->loadFromCode($this->idcontacto);
         return $contact;
     }
@@ -88,11 +91,11 @@ class Agente extends Base\Contact
     /**
      * Returns settlement product.
      * 
-     * @return Producto
+     * @return DinProducto
      */
     public function getProduct()
     {
-        $product = new Producto();
+        $product = new DinProducto();
         $product->loadFromCode($this->idproducto);
         return $product;
     }
@@ -107,7 +110,7 @@ class Agente extends Base\Contact
     public function install()
     {
         /// needed dependencies
-        new Producto();
+        new DinProducto();
 
         return parent::install();
     }
@@ -151,7 +154,7 @@ class Agente extends Base\Contact
     {
         $this->cargo = $this->toolBox()->utils()->noHtml($this->cargo);
 
-        if (!empty($this->codagente) && !preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codagente)) {
+        if (!empty($this->codagente) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codagente)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codagente, '%column%' => 'codagente', '%min%' => '1', '%max%' => '10']
@@ -177,7 +180,7 @@ class Agente extends Base\Contact
 
         if (parent::saveInsert($values)) {
             /// creates new contact
-            $contact = new Contacto();
+            $contact = new DinContacto();
             $contact->cifnif = $this->cifnif;
             $contact->codagente = $this->codagente;
             $contact->descripcion = $this->nombre;

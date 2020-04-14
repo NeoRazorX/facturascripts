@@ -79,12 +79,15 @@
         <column name="retentions" display="none" order="250">
             <widget type="money" fieldname="totalirpf" />
         </column>
-        <column name="total" display="right" order="260">
+        <column name="supplied-amount" display="none" order="260">
+            <widget type="money" fieldname="totalsuplidos" />
+        </column>
+        <column name="total" display="right" order="270">
             <widget type="money" fieldname="total">
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="date" display="right" order="270">
+        <column name="date" display="right" order="280">
             <widget type="date" fieldname="fecha" />
         </column>
     </columns>

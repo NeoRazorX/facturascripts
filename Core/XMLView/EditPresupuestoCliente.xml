@@ -39,7 +39,10 @@
             <column name="number2" order="140">
                 <widget type="text" fieldname="numero2" icon="fas fa-hashtag" />
             </column>
-            <column name="email-sent" order="150">
+            <column name="expiration" order="150">
+                <widget type="date" fieldname="finoferta" />
+            </column>
+            <column name="email-sent" order="160">
                 <widget type="date" fieldname="femail" />
             </column>
         </group>

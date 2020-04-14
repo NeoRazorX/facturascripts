@@ -29,17 +29,14 @@ use FacturaScripts\Dinamic\Model\FormaPago;
 abstract class Receipt extends ModelOnChangeClass
 {
 
-    /**
-     *
-     * @var string
-     */
-    public $coddivisa;
+    use CompanyRelationTrait;
+    use PaymentRelationTrait;
 
     /**
      *
      * @var string
      */
-    public $codpago;
+    public $coddivisa;
 
     /**
      *
@@ -64,12 +61,6 @@ abstract class Receipt extends ModelOnChangeClass
      * @var string
      */
     public $fechapago;
-
-    /**
-     *
-     * @var int
-     */
-    public $idempresa;
 
     /**
      *
@@ -191,17 +182,6 @@ abstract class Receipt extends ModelOnChangeClass
 
     /**
      * 
-     * @return FormaPago
-     */
-    public function getPaymentMethod()
-    {
-        $paymentMethod = new FormaPago();
-        $paymentMethod->loadFromCode($this->codpago);
-        return $paymentMethod;
-    }
-
-    /**
-     * 
      * @return string
      */
     public static function primaryColumn()
@@ -244,11 +224,11 @@ abstract class Receipt extends ModelOnChangeClass
         if ($this->pagado === false) {
             $this->fechapago = null;
         } elseif (empty($this->fechapago)) {
-            $this->fechapago = date(self::DATE_STYLE);
+            $this->fechapago = \date(self::DATE_STYLE);
         }
 
         /// check expiration date
-        if (strtotime($this->vencimiento) < strtotime($this->fecha)) {
+        if (\strtotime($this->vencimiento) < \strtotime($this->fecha)) {
             $this->vencimiento = $this->fecha;
         }
 
