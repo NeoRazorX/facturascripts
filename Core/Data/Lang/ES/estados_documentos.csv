@@ -5,6 +5,7 @@ idestado;tipodoc;nombre;predeterminado;bloquear;editable;actualizastock;generado
 4;PedidoCliente;Nuevo;true;true;true;-2;
 5;PedidoCliente;Aprobado;false;true;false;0;AlbaranCliente
 6;PedidoCliente;Cancelado;false;true;false;0;
+23;PresupuestoCliente;Caducado;false;true;false;0;
 7;AlbaranCliente;Nuevo;true;true;true;-1;
 8;AlbaranCliente;Aprobado;false;true;false;0;FacturaCliente
 9;AlbaranCliente;Devuelto;false;true;false;0;

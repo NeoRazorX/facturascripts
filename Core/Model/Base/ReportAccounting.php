@@ -113,7 +113,7 @@ abstract class ReportAccounting extends ModelClass
             return false;
         }
 
-        if (strtotime($this->startdate) > strtotime($this->enddate)) {
+        if (strtotime($this->startdate) > \strtotime($this->enddate)) {
             $params = ['%endDate%' => $this->startdate, '%startDate%' => $this->enddate];
             $this->toolBox()->i18nLog()->warning('start-date-later-end-date', $params);
             return false;

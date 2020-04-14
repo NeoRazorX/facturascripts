@@ -29,11 +29,8 @@ use FacturaScripts\Dinamic\Model\Asiento;
 abstract class Payment extends ModelClass
 {
 
-    /**
-     *
-     * @var string
-     */
-    public $codpago;
+    use PaymentRelationTrait;
+    use AccEntryRelationTrait;
 
     /**
      *
@@ -52,12 +49,6 @@ abstract class Payment extends ModelClass
      * @var string
      */
     public $hora;
-
-    /**
-     *
-     * @var int
-     */
-    public $idasiento;
 
     /**
      *
@@ -117,17 +108,6 @@ abstract class Payment extends ModelClass
     public function disableAccountingGeneration(bool $value = true)
     {
         $this->disableAccountingGeneration = $value;
-    }
-
-    /**
-     * 
-     * @return Asiento
-     */
-    public function getAccountingEntry()
-    {
-        $entry = new Asiento();
-        $entry->loadFromCode($this->idasiento);
-        return $entry;
     }
 
     /**

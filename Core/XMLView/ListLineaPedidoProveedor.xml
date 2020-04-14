@@ -52,7 +52,7 @@
         <column name="dto" display="right" order="180">
             <widget type="percentage" fieldname="dtopor" />
         </column>
-        <column name="dto-2" display="right" order="190">
+        <column name="dto-2" display="none" order="190">
             <widget type="percentage" fieldname="dtopor2" />
         </column>
         <column name="amount-without-discount" display="none" order="200">
@@ -71,6 +71,9 @@
         </column>
         <column name="irpf" display="right" order="240">
             <widget type="percentage" fieldname="irpf" />
+        </column>
+        <column name="supplied" display="none" order="250">
+            <widget type="checkbox" fieldname="suplido" />
         </column>
     </columns>
     <rows>

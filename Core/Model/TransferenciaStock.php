@@ -75,7 +75,7 @@ class TransferenciaStock extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->fecha = date(self::DATETIME_STYLE);
+        $this->fecha = \date(self::DATETIME_STYLE);
     }
 
     /**

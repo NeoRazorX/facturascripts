@@ -114,7 +114,7 @@ class Familia extends Base\ModelClass
         $this->codfamilia = $utils->noHtml($this->codfamilia);
         $this->descripcion = $utils->noHtml($this->descripcion);
 
-        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
+        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codfamilia, '%column%' => 'codfamilia', '%min%' => '1', '%max%' => '8']

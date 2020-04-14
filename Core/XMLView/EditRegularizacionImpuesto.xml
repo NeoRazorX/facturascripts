@@ -70,8 +70,8 @@
                 <widget type="date" fieldname="fechaasiento" readonly="true" />
             </column>
             <column name="lock-accounting" order="140">
-            <widget type="checkbox" fieldname="bloquear" />
-        </column>
+                <widget type="checkbox" fieldname="bloquear" />
+            </column>
         </group>
     </columns>
 </view>

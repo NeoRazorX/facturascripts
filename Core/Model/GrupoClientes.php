@@ -108,7 +108,7 @@ class GrupoClientes extends Base\ModelClass
      */
     public function test()
     {
-        if (!empty($this->codgrupo) && !preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codgrupo)) {
+        if (!empty($this->codgrupo) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codgrupo)) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codgrupo, '%column%' => 'codgrupo', '%min%' => '1', '%max%' => '6']

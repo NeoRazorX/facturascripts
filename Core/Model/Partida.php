@@ -34,6 +34,7 @@ class Partida extends Base\ModelOnChangeClass
 {
 
     use Base\ModelTrait;
+    use Base\AccEntryRelationTrait;
 
     /**
      * Amount of the tax base.
@@ -127,13 +128,6 @@ class Partida extends Base\ModelOnChangeClass
     public $haberme;
 
     /**
-     * Related accounting entry ID.
-     *
-     * @var int
-     */
-    public $idasiento;
-
-    /**
      * Identifier of the counterpart.
      *
      * @var int
@@ -210,30 +204,19 @@ class Partida extends Base\ModelOnChangeClass
 
     /**
      *
-     * @return DinAsiento
-     */
-    public function getAsiento()
-    {
-        $asiento = new DinAsiento();
-        $asiento->loadFromCode($this->idasiento);
-        return $asiento;
-    }
-
-    /**
-     *
      * @param string $codsubcuenta
      *
      * @return DinSubcuenta
      */
     public function getSubcuenta($codsubcuenta = '')
     {
-        $asiento = $this->getAsiento();
+        $accEntry = $this->getAccountingEntry();
         $subcta = new DinSubcuenta();
 
         /// get by parameter
         if (!empty($codsubcuenta)) {
             $where = [
-                new DataBaseWhere('codejercicio', $asiento->codejercicio),
+                new DataBaseWhere('codejercicio', $accEntry->codejercicio),
                 new DataBaseWhere('codsubcuenta', $codsubcuenta)
             ];
             $subcta->loadFromCode('', $where);
@@ -244,13 +227,13 @@ class Partida extends Base\ModelOnChangeClass
         if (!empty($this->idsubcuenta) &&
             $subcta->loadFromCode($this->idsubcuenta) &&
             $subcta->codsubcuenta === $this->codsubcuenta &&
-            $subcta->codejercicio === $asiento->codejercicio) {
+            $subcta->codejercicio === $accEntry->codejercicio) {
             return $subcta;
         }
 
         /// get by code and exercise
         $where2 = [
-            new DataBaseWhere('codejercicio', $asiento->codejercicio),
+            new DataBaseWhere('codejercicio', $accEntry->codejercicio),
             new DataBaseWhere('codsubcuenta', $this->codsubcuenta)
         ];
         $subcta->loadFromCode('', $where2);
@@ -284,7 +267,7 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @param Subcuenta $subaccount
      */
     public function setAccount($subaccount)
@@ -294,7 +277,7 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @param Subcuenta $subaccount
      */
     public function setCounterpart($subaccount)
@@ -354,7 +337,7 @@ class Partida extends Base\ModelOnChangeClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        return $this->getAsiento()->url($type, $list);
+        return $this->getAccountingEntry()->url($type, $list);
     }
 
     /**
@@ -423,7 +406,7 @@ class Partida extends Base\ModelOnChangeClass
 
     /**
      * Update the subaccount balance.
-     * 
+     *
      * @param int $idsubaccount
      */
     private function updateBalance($idsubaccount)

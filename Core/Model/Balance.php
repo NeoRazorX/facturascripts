@@ -139,7 +139,7 @@ class Balance extends Base\ModelClass
      */
     public function test()
     {
-        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,15}$/i', $this->codbalance)) {
+        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,15}$/i', $this->codbalance)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codbalance, '%column%' => 'codbalance', '%min%' => '1', '%max%' => '15']

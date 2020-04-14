@@ -138,12 +138,12 @@ class Divisa extends Base\ModelClass
         $this->descripcion = $utils->noHtml($this->descripcion);
         $this->simbolo = $utils->noHtml($this->simbolo);
 
-        if (!preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
+        if (1 !== \preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->coddivisa, '%column%' => 'coddivisa', '%min%' => '1', '%max%' => '3']
             );
-        } elseif ($this->codiso !== null && !preg_match('/^[A-Z0-9]{1,5}$/i', $this->codiso)) {
+        } elseif ($this->codiso !== null && 1 !== \preg_match('/^[A-Z0-9]{1,5}$/i', $this->codiso)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codiso, '%column%' => 'codiso', '%min%' => '1', '%max%' => '5']
