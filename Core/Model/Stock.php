@@ -32,6 +32,7 @@ class Stock extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+    use Base\ProductRelationTrait;
 
     const MAX_DECIMALS = 3;
 
@@ -55,13 +56,6 @@ class Stock extends Base\ModelClass
      * @var float|int
      */
     public $disponible;
-
-    /**
-     * Product identifier.
-     *
-     * @var int
-     */
-    public $idproducto;
 
     /**
      * Primary key.
@@ -268,19 +262,7 @@ class Stock extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        switch ($type) {
-            case 'edit':
-                return \is_null($this->idproducto) ? 'EditProducto' : 'EditProducto?code=' . $this->idproducto;
-
-            case 'list':
-                return $list . 'Producto';
-
-            case 'new':
-                return 'EditProducto';
-        }
-
-        /// default
-        return empty($this->idproducto) ? $list . 'Producto' : 'EditProducto?code=' . $this->idproducto;
+        return $this->getProducto()->url($type);
     }
 
     /**

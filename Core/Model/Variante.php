@@ -32,6 +32,7 @@ class Variante extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+    use Base\ProductRelationTrait;
 
     /**
      * Barcode. Maximun 20 characteres.
@@ -74,13 +75,6 @@ class Variante extends Base\ModelClass
      * @var int
      */
     public $idatributovalor4;
-
-    /**
-     * Product identifier.
-     *
-     * @var int
-     */
-    public $idproducto;
 
     /**
      * Primary Key, autoincremental.
@@ -132,7 +126,7 @@ class Variante extends Base\ModelClass
     {
         $results = [];
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
-        $find = $this->toolBox()->utils()->noHtml(mb_strtolower($query, 'UTF8'));
+        $find = $this->toolBox()->utils()->noHtml(\mb_strtolower($query, 'UTF8'));
 
         $sql = "SELECT v." . $field . " AS code, p.descripcion AS description, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4"
             . " FROM " . static::tableName() . " v"
@@ -214,18 +208,6 @@ class Variante extends Base\ModelClass
         }
 
         return empty($extra) ? $description : \implode($separator1, [$description, \implode($separator2, $extra)]);
-    }
-
-    /**
-     * Returns related product.
-     *
-     * @return Producto
-     */
-    public function getProducto()
-    {
-        $producto = new DinProducto();
-        $producto->loadFromCode($this->idproducto);
-        return $producto;
     }
 
     /**
@@ -334,19 +316,7 @@ class Variante extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        switch ($type) {
-            case 'edit':
-                return \is_null($this->idproducto) ? 'EditProducto' : 'EditProducto?code=' . $this->idproducto;
-
-            case 'list':
-                return $list . 'Producto';
-
-            case 'new':
-                return 'EditProducto';
-        }
-
-        /// default
-        return empty($this->idproducto) ? $list . 'Producto' : 'EditProducto?code=' . $this->idproducto;
+        return $this->getProducto()->url($type);
     }
 
     /**

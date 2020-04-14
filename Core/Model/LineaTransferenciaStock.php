@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2019  Carlos Garcia Gomez       <carlos@facturascripts.com>
- * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
+ * Copyright (C) 2014-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +19,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\TransferenciaStock as DinTransferenciaStock;
+use FacturaScripts\Dinamic\Model\Variante as DinVariante;
 
 /**
  * Transfers stock lines.
@@ -31,6 +32,7 @@ class LineaTransferenciaStock extends Base\ModelOnChangeClass
 {
 
     use Base\ModelTrait;
+    use Base\ProductRelationTrait;
 
     /**
      * Quantity of product transfered
@@ -45,13 +47,6 @@ class LineaTransferenciaStock extends Base\ModelOnChangeClass
      * @var int
      */
     public $idlinea;
-
-    /**
-     * Foreign key with Productos table.
-     *
-     * @var int
-     */
-    public $idproducto;
 
     /**
      * Foreign key with head of this transfer line.
@@ -77,22 +72,22 @@ class LineaTransferenciaStock extends Base\ModelOnChangeClass
 
     /**
      * 
-     * @return TransferenciaStock
+     * @return DinTransferenciaStock
      */
     public function getTransference()
     {
-        $transf = new TransferenciaStock();
+        $transf = new DinTransferenciaStock();
         $transf->loadFromCode($this->idtrans);
         return $transf;
     }
 
     /**
      * 
-     * @return Variante
+     * @return DinVariante
      */
     public function getVariant()
     {
-        $variant = new Variante();
+        $variant = new DinVariante();
         $where = [new DataBaseWhere('referencia', $this->referencia)];
         $variant->loadFromCode('', $where);
         return $variant;
@@ -105,8 +100,8 @@ class LineaTransferenciaStock extends Base\ModelOnChangeClass
     public function install()
     {
         /// needed dependencies
-        new TransferenciaStock();
-        new Variante();
+        new DinTransferenciaStock();
+        new DinVariante();
 
         return parent::install();
     }
@@ -128,7 +123,7 @@ class LineaTransferenciaStock extends Base\ModelOnChangeClass
     public function test()
     {
         $this->referencia = $this->toolBox()->utils()->noHtml($this->referencia);
-        if (is_null($this->idproducto)) {
+        if (empty($this->idproducto)) {
             $variant = $this->getVariant();
             $this->idproducto = $variant->idproducto;
         }
@@ -188,7 +183,7 @@ class LineaTransferenciaStock extends Base\ModelOnChangeClass
     protected function setPreviousData(array $fields = [])
     {
         $more = ['cantidad'];
-        parent::setPreviousData(array_merge($more, $fields));
+        parent::setPreviousData(\array_merge($more, $fields));
     }
 
     protected function updateStock()
@@ -197,10 +192,9 @@ class LineaTransferenciaStock extends Base\ModelOnChangeClass
         $stock = new Stock();
         $where = [
             new DataBaseWhere('codalmacen', $transfer->codalmacenorigen),
-            new DataBaseWhere('referencia', $this->referencia),
+            new DataBaseWhere('referencia', $this->referencia)
         ];
-
-        if (!$stock->loadFromCode('', $where)) {
+        if (false === $stock->loadFromCode('', $where)) {
             $stock->codalmacen = $transfer->codalmacenorigen;
             $stock->idproducto = $this->getVariant()->idproducto;
             $stock->referencia = $this->referencia;

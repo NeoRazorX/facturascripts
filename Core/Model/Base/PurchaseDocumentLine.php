@@ -62,6 +62,7 @@ abstract class PurchaseDocumentLine extends BusinessDocumentLine
             $product->codproveedor = $doc->codproveedor;
             $product->dtopor = $this->dtopor;
             $product->dtopor2 = $this->dtopor2;
+            $product->idproducto = $this->idproducto;
             $product->precio = $this->pvpunitario;
             $product->referencia = $this->referencia;
             $product->save();

@@ -162,7 +162,10 @@ class EditProducto extends EditController
                 break;
 
             case 'ListProductoProveedor':
-                $where2 = [new DataBaseWhere('referencia', $this->getViewModelValue('EditProducto', 'referencia'))];
+                $where2 = [
+                    new DataBaseWhere('idproducto', $idproducto),
+                    new DataBaseWhere('referencia', $this->getViewModelValue('EditProducto', 'referencia'), '=', 'OR')
+                ];
                 $view->loadData('', $where2);
                 break;
         }

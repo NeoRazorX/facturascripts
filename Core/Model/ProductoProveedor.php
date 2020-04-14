@@ -33,6 +33,7 @@ class ProductoProveedor extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+    use Base\ProductRelationTrait;
 
     /**
      *
@@ -201,6 +202,6 @@ class ProductoProveedor extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
-        return $this->getVariant()->url();
+        return $this->getVariant()->url($type);
     }
 }
