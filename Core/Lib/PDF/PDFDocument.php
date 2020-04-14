@@ -43,13 +43,36 @@ use FacturaScripts\Dinamic\Model\ReciboCliente;
  */
 abstract class PDFDocument extends PDFCore
 {
+    /**
+     *
+     * @var array
+     */
+    protected $lineHeaders; 
 
     /**
      *
      * @var FormatoDocumento
      */
     protected $format;
-
+    
+    public function __construct() {
+        parent::__construct();
+        $this->lineHeaders = [
+            'referencia' => [
+                'type' => 'text',
+                'title' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description')
+            ],
+            'cantidad' => ['type' => 'number', 'title' => $this->i18n->trans('quantity')],
+            'pvpunitario' => ['type' => 'number', 'title' => $this->i18n->trans('price')],
+            'dtopor' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto')],
+            'dtopor2' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto-2')],
+            'iva' => ['type' => 'percentage', 'title' => $this->i18n->trans('tax')],
+            'recargo' => ['type' => 'percentage', 'title' => $this->i18n->trans('surcharge')],
+            'irpf' => ['type' => 'percentage', 'title' => $this->i18n->trans('irpf')],
+            'pvptotal' => ['type' => 'number', 'title' => $this->i18n->trans('total')]
+        ];
+    }
+    
     /**
      * Combine address if the parameters don´t empty
      *
@@ -208,48 +231,36 @@ abstract class PDFDocument extends PDFCore
      */
     protected function insertBusinessDocBody($model)
     {
-        $headers = [
-            'reference' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description'),
-            'quantity' => $this->i18n->trans('quantity'),
-            'price' => $this->i18n->trans('price'),
-            'dto' => $this->i18n->trans('dto'),
-            'dto-2' => $this->i18n->trans('dto-2'),
-            'tax' => $this->i18n->trans('tax'),
-            'surcharge' => $this->i18n->trans('re'),
-            'irpf' => $this->i18n->trans('irpf'),
-            'total' => $this->i18n->trans('total'),
-        ];
-        $tableData = [];
-        foreach ($model->getlines() as $line) {
-            $tableData[] = [
-                'reference' => empty($line->referencia) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->referencia . " - " . $line->descripcion),
-                'quantity' => $this->numberTools->format($line->cantidad),
-                'price' => $this->numberTools->format($line->pvpunitario),
-                'dto' => $this->numberTools->format($line->dtopor) . '%',
-                'dto-2' => $this->numberTools->format($line->dtopor2) . '%',
-                'tax' => $this->numberTools->format($line->iva) . '%',
-                'surcharge' => $this->numberTools->format($line->recargo) . '%',
-                'irpf' => $this->numberTools->format($line->irpf) . '%',
-                'total' => $this->numberTools->format($line->pvptotal),
-            ];
-        }
-
-        $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
+        $headers = [];
         $tableOptions = [
-            'cols' => [
-                'quantity' => ['justification' => 'right'],
-                'price' => ['justification' => 'right'],
-                'dto' => ['justification' => 'right'],
-                'dto-2' => ['justification' => 'right'],
-                'tax' => ['justification' => 'right'],
-                'surcharge' => ['justification' => 'right'],
-                'irpf' => ['justification' => 'right'],
-                'total' => ['justification' => 'right'],
-            ],
+            'cols' => [],
             'shadeCol' => [0.95, 0.95, 0.95],
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'width' => $this->tableWidth
         ];
+        foreach ($this->lineHeaders as $key => $value) {            
+            $headers[$key] = $value['title'];
+            
+            if ($value['type'] === 'number' || $value['type'] === 'percentage') {
+                $tableOptions['cols'][$key] = ['justification' => 'right'];
+            }
+        }
+        
+        $tableData = [];
+        foreach ($model->getlines() as $line) {
+            $data = [];
+            foreach ($this->lineHeaders as $key => $value) {
+                if ($value['type'] === 'percentage') {
+                    $data[$key] = $this->numberTools->format($line->$key) . '%';
+                } else if ($key === 'referencia') {
+                    $data[$key] = empty($line->$key) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->$key . " - " . $line->descripcion);
+                } else {
+                    $data[$key] = $this->numberTools->format($line->$key);
+                }
+            }
+            array_push($tableData, $data);
+        }
+        
         $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
     }
 
