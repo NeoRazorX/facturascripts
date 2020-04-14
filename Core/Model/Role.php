@@ -72,7 +72,7 @@ class Role extends Base\ModelClass
      */
     public function test()
     {
-        if (!empty($this->codrole) && !preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codrole)) {
+        if (!empty($this->codrole) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codrole)) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codrole, '%column%' => 'codrole', '%min%' => '1', '%max%' => '20']

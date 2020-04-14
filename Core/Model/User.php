@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,9 @@
  */
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
+use FacturaScripts\Dinamic\Model\Page as DinPage;
+
 /**
  * Usuario de FacturaScripts.
  *
@@ -27,6 +30,7 @@ class User extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+    use Base\CompanyRelationTrait;
     use Base\PasswordTrait;
 
     const DEFAULT_LEVEL = 2;
@@ -70,13 +74,6 @@ class User extends Base\ModelClass
      * @var string
      */
     public $homepage;
-
-    /**
-     * Corporation identifier.
-     *
-     * @var int
-     */
-    public $idempresa;
 
     /**
      * Language code.
@@ -157,14 +154,14 @@ class User extends Base\ModelClass
     public function install()
     {
         /// we need this models to be checked before
-        new Page();
-        new Empresa();
+        new DinPage();
+        new DinEmpresa();
 
         $nick = \defined('FS_INITIAL_USER') ? \FS_INITIAL_USER : 'admin';
         $pass = \defined('FS_INITIAL_PASS') ? \FS_INITIAL_PASS : 'admin';
         $this->toolBox()->i18nLog()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
-            . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT)
+            . " VALUES ('" . $nick . "','" . \password_hash($pass, \PASSWORD_DEFAULT)
             . "',TRUE,TRUE,'1','1','" . \FS_LANG . "','Wizard','99');";
     }
 
@@ -219,8 +216,8 @@ class User extends Base\ModelClass
             $this->level = 0;
         }
 
-        $this->nick = trim($this->nick);
-        if (!preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
+        $this->nick = \trim($this->nick);
+        if (1 !== \preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']
@@ -228,8 +225,8 @@ class User extends Base\ModelClass
             return false;
         }
 
-        $this->email = $this->toolBox()->utils()->noHtml(mb_strtolower($this->email, 'UTF8'));
-        if (!empty($this->email) && !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+        $this->email = $this->toolBox()->utils()->noHtml(\mb_strtolower($this->email, 'UTF8'));
+        if (!empty($this->email) && false === \filter_var($this->email, \FILTER_VALIDATE_EMAIL)) {
             $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
             $this->email = null;
             return false;
@@ -245,7 +242,7 @@ class User extends Base\ModelClass
      */
     public function updateActivity($ipAddress)
     {
-        $this->lastactivity = date(self::DATETIME_STYLE);
+        $this->lastactivity = \date(self::DATETIME_STYLE);
         $this->lastip = $ipAddress;
     }
 
@@ -270,7 +267,7 @@ class User extends Base\ModelClass
     protected function saveInsert(array $values = [])
     {
         $result = parent::saveInsert($values);
-        if ($result && !$this->admin) {
+        if ($result && false === $this->admin) {
             $this->setNewRole();
         }
 
@@ -292,7 +289,7 @@ class User extends Base\ModelClass
             /// set user homepage
             foreach ($roleUser->getRoleAccess() as $roleAccess) {
                 $this->homepage = $roleAccess->pagename;
-                if ('List' == substr($this->homepage, 0, 4)) {
+                if ('List' == \substr($this->homepage, 0, 4)) {
                     break;
                 }
             }
@@ -313,7 +310,7 @@ class User extends Base\ModelClass
         }
 
         $agent = new Agente();
-        if (!$agent->loadFromCode($this->codagente)) {
+        if (false === $agent->loadFromCode($this->codagente)) {
             $this->codagente = null;
         }
 
@@ -335,7 +332,7 @@ class User extends Base\ModelClass
         }
 
         $warehouse = new Almacen();
-        if (!$warehouse->loadFromCode($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
+        if (false === $warehouse->loadFromCode($this->codalmacen) || $warehouse->idempresa != $this->idempresa) {
             $this->codalmacen = $appSettings->get('default', 'codalmacen');
             $this->idempresa = $appSettings->get('default', 'idempresa');
         }

@@ -170,8 +170,8 @@ class Impuesto extends Base\ModelClass
      */
     public function test()
     {
-        $this->codimpuesto = trim($this->codimpuesto);
-        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
+        $this->codimpuesto = \trim($this->codimpuesto);
+        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codimpuesto, '%column%' => 'codimpuesto', '%min%' => '1', '%max%' => '10']

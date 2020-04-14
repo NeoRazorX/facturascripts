@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,6 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Dinamic\Model\Atributo as DinAtributo;
 
 /**
  * A Value for an article attribute.
@@ -102,7 +104,7 @@ class AtributoValor extends Base\ModelClass
     public function install()
     {
         /// needed dependency
-        new Atributo();
+        new DinAtributo();
 
         return parent::install();
     }
@@ -137,7 +139,7 @@ class AtributoValor extends Base\ModelClass
         $this->valor = $this->toolBox()->utils()->noHtml($this->valor);
 
         /// combine attribute name + value
-        $attribute = new Atributo();
+        $attribute = new DinAtributo();
         if ($attribute->loadFromCode($this->codatributo)) {
             $this->descripcion = $attribute->nombre . ' ' . $this->valor;
         }
@@ -157,7 +159,7 @@ class AtributoValor extends Base\ModelClass
         $value = $this->codatributo;
         switch ($type) {
             case 'edit':
-                return is_null($value) ? 'EditAtributo' : 'EditAtributo?code=' . $value;
+                return null === $value ? 'EditAtributo' : 'EditAtributo?code=' . $value;
 
             case 'list':
                 return $list;

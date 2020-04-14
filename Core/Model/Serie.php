@@ -135,8 +135,8 @@ class Serie extends Base\ModelClass
      */
     public function test()
     {
-        $this->codserie = trim($this->codserie);
-        if (!preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codserie)) {
+        $this->codserie = \trim($this->codserie);
+        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codserie)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codserie, '%column%' => 'codserie', '%min%' => '1', '%max%' => '4']

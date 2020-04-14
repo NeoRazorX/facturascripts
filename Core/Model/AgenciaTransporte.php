@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -97,7 +97,7 @@ class AgenciaTransporte extends Base\ModelClass
      */
     public function test()
     {
-        if (!empty($this->codtrans) && !preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codtrans)) {
+        if (!empty($this->codtrans) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codtrans)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codtrans, '%column%' => 'codtrans', '%min%' => '1', '%max%' => '8']

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,6 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 
 /**
  * The warehouse where the items are physically.
@@ -79,7 +81,8 @@ class Almacen extends Base\Address
     public function install()
     {
         /// needed dependencies
-        new Empresa();
+        new DinEmpresa();
+
         return parent::install();
     }
 
@@ -130,7 +133,7 @@ class Almacen extends Base\Address
      */
     public function test()
     {
-        if (!empty($this->codalmacen) && !preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
+        if (!empty($this->codalmacen) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codalmacen, '%column%' => 'codalmacen', '%min%' => '1', '%max%' => '4']

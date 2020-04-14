@@ -104,8 +104,8 @@ class AttachedFile extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->date = date(self::DATE_STYLE);
-        $this->hour = date(self::HOUR_STYLE);
+        $this->date = \date(self::DATE_STYLE);
+        $this->hour = \date(self::HOUR_STYLE);
         $this->size = 0;
     }
 
@@ -208,7 +208,7 @@ class AttachedFile extends Base\ModelClass
         }
 
         $this->filename = $this->path;
-        $path = 'MyFiles' . DIRECTORY_SEPARATOR . date('Y' . DIRECTORY_SEPARATOR . 'm', strtotime($this->date));
+        $path = 'MyFiles' . DIRECTORY_SEPARATOR . \date('Y' . DIRECTORY_SEPARATOR . 'm', \strtotime($this->date));
         if (!FileManager::createFolder(\FS_FOLDER . DIRECTORY_SEPARATOR . $path, true)) {
             $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => \FS_FOLDER . DIRECTORY_SEPARATOR . $path]);
             return false;

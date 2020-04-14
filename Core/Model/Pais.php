@@ -113,8 +113,8 @@ class Pais extends Base\ModelClass
      */
     public function test()
     {
-        $this->codpais = trim($this->codpais);
-        if (!preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
+        $this->codpais = \trim($this->codpais);
+        if (1 !== \preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codpais, '%column%' => 'codpais', '%min%' => '1', '%max%' => '20']

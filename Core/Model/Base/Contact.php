@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -106,7 +106,7 @@ abstract class Contact extends ModelClass
     public function clear()
     {
         parent::clear();
-        $this->fechaalta = date(self::DATE_STYLE);
+        $this->fechaalta = \date(self::DATE_STYLE);
         $this->personafisica = true;
         $this->tipoidfiscal = $this->toolBox()->appSettings()->get('default', 'tipoidfiscal');
     }
@@ -120,7 +120,7 @@ abstract class Contact extends ModelClass
      */
     public function gravatar($size = 80)
     {
-        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($this->email))) . '?s=' . $size;
+        return 'https://www.gravatar.com/avatar/' . \md5(\strtolower(trim($this->email))) . '?s=' . $size;
     }
 
     /**
@@ -144,13 +144,13 @@ abstract class Contact extends ModelClass
             return false;
         }
 
-        $fiscalNumberValidator = new FiscalNumberValitator();
-        if (!empty($this->cifnif) && !$fiscalNumberValidator->validate($this->tipoidfiscal, $this->cifnif)) {
+        $validator = new FiscalNumberValitator();
+        if (!empty($this->cifnif) && false === $validator->validate($this->tipoidfiscal, $this->cifnif)) {
             $this->toolBox()->i18nLog()->warning('not-valid-fiscal-number', ['%type%' => $this->tipoidfiscal, '%number%' => $this->cifnif]);
             return false;
         }
 
-        if (!empty($this->email) && !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+        if (!empty($this->email) && false === \filter_var($this->email, \FILTER_VALIDATE_EMAIL)) {
             $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
             $this->email = null;
             return false;

@@ -39,16 +39,14 @@ abstract class ListBusinessDocument extends ListController
             'action' => 'approve-document-same-date',
             'confirm' => 'true',
             'icon' => 'fas fa-calendar-check',
-            'label' => 'approve-document-same-date',
-            'type' => 'action',
+            'label' => 'approve-document-same-date'
         ]);
 
         $this->addButton($viewName, [
             'action' => 'approve-document',
             'confirm' => 'true',
             'icon' => 'fas fa-check',
-            'label' => 'approve-document',
-            'type' => 'action',
+            'label' => 'approve-document'
         ]);
     }
 
@@ -61,8 +59,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addButton($viewName, [
             'action' => 'group-document',
             'icon' => 'fas fa-magic',
-            'label' => 'group-or-split',
-            'type' => 'action',
+            'label' => 'group-or-split'
         ]);
     }
 
@@ -76,8 +73,7 @@ abstract class ListBusinessDocument extends ListController
             'action' => 'lock-invoice',
             'confirm' => 'true',
             'icon' => 'fas fa-lock fa-fw',
-            'label' => 'lock-invoice',
-            'type' => 'action',
+            'label' => 'lock-invoice'
         ]);
     }
 
@@ -97,22 +93,22 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterSelect($viewName, 'idestado', 'state', 'idestado', $statusValues);
 
         $users = $this->codeModel->all('users', 'nick', 'nick');
-        if (count($users) > 2) {
+        if (\count($users) > 2) {
             $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
         }
 
         $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-        if (count($companies) > 2) {
+        if (\count($companies) > 2) {
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
         }
 
         $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        if (count($warehouseValues) > 2) {
+        if (\count($warehouseValues) > 2) {
             $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
         }
 
         $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
-        if (count($serieValues) > 2) {
+        if (\count($serieValues) > 2) {
             $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', $serieValues);
         }
 
@@ -129,21 +125,21 @@ abstract class ListBusinessDocument extends ListController
      */
     protected function approveDocumentAction()
     {
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return true;
         }
 
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
-        if (!is_array($codes) || empty($model)) {
+        if (false === \is_array($codes) || empty($model)) {
             $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }
 
         $this->dataBase->beginTransaction();
         foreach ($codes as $code) {
-            if (!$model->loadFromCode($code)) {
+            if (false === $model->loadFromCode($code)) {
                 $this->toolBox()->i18nLog()->error('record-not-found');
                 continue;
             }
@@ -154,7 +150,7 @@ abstract class ListBusinessDocument extends ListController
                 }
 
                 $model->idestado = $status->idestado;
-                if (!$model->save()) {
+                if (false === $model->save()) {
                     $this->toolBox()->i18nLog()->error('record-save-error');
                     $this->dataBase->rollback();
                     return true;
@@ -193,6 +189,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterNumber($viewName, 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber($viewName, 'pvpunitario', 'pvp', 'pvpunitario');
         $this->addFilterNumber($viewName, 'pvptotal', 'amount', 'pvptotal');
+        $this->addFilterCheckbox($viewName, 'suplido', 'supplied', 'suplido');
 
         /// disable megasearch for this view
         $this->setSettings($viewName, 'btnDelete', false);
@@ -246,7 +243,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterautocomplete($viewName, 'idcontactoenv', 'shipping-address', 'idcontacto', 'contacto');
 
         $agents = $this->codeModel->all('agentes', 'codagente', 'nombre');
-        if (count($agents) > 0) {
+        if (\count($agents) > 0) {
             $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
         }
 
@@ -294,7 +291,7 @@ abstract class ListBusinessDocument extends ListController
         $model = $this->views[$this->active]->model;
 
         if (!empty($codes) && $model) {
-            $codes = implode(',', $codes);
+            $codes = \implode(',', $codes);
             $url = 'DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $codes;
             $this->redirect($url);
             return false;
@@ -310,21 +307,21 @@ abstract class ListBusinessDocument extends ListController
      */
     protected function lockInvoiceAction()
     {
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return true;
         }
 
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
-        if (!is_array($codes) || empty($model)) {
+        if (false === \is_array($codes) || empty($model)) {
             $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }
 
         $this->dataBase->beginTransaction();
         foreach ($codes as $code) {
-            if (!$model->loadFromCode($code)) {
+            if (false === $model->loadFromCode($code)) {
                 $this->toolBox()->i18nLog()->error('record-not-found');
                 continue;
             }
@@ -335,7 +332,7 @@ abstract class ListBusinessDocument extends ListController
                 }
 
                 $model->idestado = $status->idestado;
-                if (!$model->save()) {
+                if (false === $model->save()) {
                     $this->toolBox()->i18nLog()->error('record-save-error');
                     $this->dataBase->rollback();
                     return true;
@@ -355,28 +352,28 @@ abstract class ListBusinessDocument extends ListController
      */
     protected function paidAction()
     {
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return true;
         }
 
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
-        if (!is_array($codes) || empty($model)) {
+        if (false === \is_array($codes) || empty($model)) {
             $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }
 
         $this->dataBase->beginTransaction();
         foreach ($codes as $code) {
-            if (!$model->loadFromCode($code)) {
+            if (false === $model->loadFromCode($code)) {
                 $this->toolBox()->i18nLog()->error('record-not-found');
                 continue;
             }
 
             $model->nick = $this->user->nick;
             $model->pagado = true;
-            if (!$model->save()) {
+            if (false === $model->save()) {
                 $this->toolBox()->i18nLog()->error('record-save-error');
                 $this->dataBase->rollback();
                 return true;
