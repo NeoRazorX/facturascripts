@@ -78,7 +78,7 @@
                 </widget>
             </column>
             <column name="warehouse" order="110">
-                <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true" readonly="dinamic">
+                <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true">
                     <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
                 </widget>
             </column>

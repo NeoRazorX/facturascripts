@@ -399,9 +399,10 @@ abstract class BusinessDocument extends ModelOnChangeClass
     {
         switch ($field) {
             case 'codalmacen':
-            case 'idempresa':
-                $this->toolBox()->i18nLog()->warning('non-editable-columns', ['%columns%' => 'codalmacen,idempresa']);
-                return false;
+                foreach ($this->getLines() as $line) {
+                    $line->transfer($this->previousData['codalmacen'], $this->codalmacen);
+                }
+                break;
 
             case 'codserie':
                 BusinessDocumentCode::getNewCode($this);
@@ -415,6 +416,10 @@ abstract class BusinessDocument extends ModelOnChangeClass
                     BusinessDocumentCode::getNewCode($this);
                 }
                 break;
+
+            case 'idempresa':
+                $this->toolBox()->i18nLog()->warning('non-editable-columns', ['%columns%' => 'idempresa']);
+                return false;
 
             case 'numero':
                 BusinessDocumentCode::getNewCode($this, false);

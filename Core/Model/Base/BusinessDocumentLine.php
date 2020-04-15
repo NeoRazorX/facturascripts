@@ -267,6 +267,42 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     }
 
     /**
+     * Transfers the line stock from one warehouse to another.
+     * 
+     * @param string $fromCodalmacen
+     * @param string $toCodalmacen
+     */
+    public function transfer($fromCodalmacen, $toCodalmacen)
+    {
+        /// find the stock
+        $fromStock = new Stock();
+        $where = [
+            new DataBaseWhere('codalmacen', $fromCodalmacen),
+            new DataBaseWhere('referencia', $this->referencia)
+        ];
+        if ($fromStock->loadFromCode('', $where)) {
+            $this->applyStockChanges($this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $fromStock);
+            $fromStock->save();
+        }
+
+        /// find the new stock
+        $toStock = new Stock();
+        $where2 = [
+            new DataBaseWhere('codalmacen', $toCodalmacen),
+            new DataBaseWhere('referencia', $this->referencia)
+        ];
+        if (false === $toStock->loadFromCode('', $where2)) {
+            /// stock not found, then create one
+            $toStock->codalmacen = $toCodalmacen;
+            $toStock->idproducto = $this->idproducto;
+            $toStock->referencia = $this->referencia;
+        }
+
+        $this->applyStockChanges($this->actualizastock, $this->cantidad, $toStock);
+        $toStock->save();
+    }
+
+    /**
      * Custom url method.
      *
      * @param string $type
