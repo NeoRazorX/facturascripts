@@ -29,6 +29,8 @@ use FacturaScripts\Dinamic\Model\Serie;
  * Description of BusinessDocument
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Oscar G. Villa <ogvilla@gmail.com>
+ * 
  */
 abstract class BusinessDocument extends ModelOnChangeClass
 {
@@ -260,6 +262,21 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
         $this->totalsuplidos = 0.0;
+    }
+    
+    /**
+     * Calculate total discount
+     * 
+     * @return float
+     */
+    public function getTotalDiscount()
+    {
+        $totalDto = 1.0;
+        foreach ([$this->dtopor1, $this->dtopor2] as $dto) {
+            $totalDto *= 1 - $dto / 100;
+        }
+        
+        return $totalDto;
     }
 
     /**
