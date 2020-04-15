@@ -197,6 +197,21 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     }
 
     /**
+     * Returns the Equivalent Unified Discount.
+     * 
+     * @return float
+     */
+    public function getEUDiscount()
+    {
+        $eud = 1.0;
+        foreach ([$this->dtopor, $this->dtopor2] as $dto) {
+            $eud *= 1 - $dto / 100;
+        }
+
+        return $eud;
+    }
+
+    /**
      * Returns related product.
      *
      * @return Producto
@@ -252,16 +267,10 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             $this->codimpuesto = null;
         }
 
-        /// calculate total discount
-        $totalDto = 1.0;
-        foreach ([$this->dtopor, $this->dtopor2] as $dto) {
-            $totalDto *= 1 - $dto / 100;
-        }
-
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
         $this->pvpsindto = $this->pvpunitario * $this->cantidad;
-        $this->pvptotal = $this->pvpsindto * $totalDto;
+        $this->pvptotal = $this->pvpsindto * $this->getEUDiscount();
         $this->referencia = $utils->noHtml($this->referencia);
         return parent::test();
     }

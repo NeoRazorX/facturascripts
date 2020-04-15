@@ -135,11 +135,7 @@ abstract class PDFDocument extends PDFCore
      */
     protected function getTaxesRows($model)
     {
-        /// calculate total discount
-        $totalDto = 1.0;
-        foreach ([$model->dtopor1, $model->dtopor2] as $dto) {
-            $totalDto *= 1 - $dto / 100;
-        }
+        $eud = $model->getEUDiscount();
 
         $subtotals = [];
         foreach ($model->getLines() as $line) {
@@ -164,9 +160,9 @@ abstract class PDFDocument extends PDFCore
                 }
             }
 
-            $subtotals[$key]['taxbase'] += $line->pvptotal * $totalDto;
-            $subtotals[$key]['taxamount'] += $line->pvptotal * $totalDto * $line->iva / 100;
-            $subtotals[$key]['taxsurcharge'] += $line->pvptotal * $totalDto * $line->recargo / 100;
+            $subtotals[$key]['taxbase'] += $line->pvptotal * $eud;
+            $subtotals[$key]['taxamount'] += $line->pvptotal * $eud * $line->iva / 100;
+            $subtotals[$key]['taxsurcharge'] += $line->pvptotal * $eud * $line->recargo / 100;
         }
 
         /// irpf
@@ -187,8 +183,8 @@ abstract class PDFDocument extends PDFCore
                 ];
             }
 
-            $subtotals[$key]['taxbase'] += $line->pvptotal * $totalDto;
-            $subtotals[$key]['taxamount'] -= $line->pvptotal * $totalDto * $line->irpf / 100;
+            $subtotals[$key]['taxbase'] += $line->pvptotal * $eud;
+            $subtotals[$key]['taxamount'] -= $line->pvptotal * $eud * $line->irpf / 100;
         }
 
         /// round

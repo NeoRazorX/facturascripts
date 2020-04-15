@@ -106,6 +106,21 @@ class ProductoProveedor extends Base\ModelClass
     }
 
     /**
+     * Returns the Equivalent Unified Discount.
+     * 
+     * @return float
+     */
+    public function getEUDiscount()
+    {
+        $eud = 1.0;
+        foreach ([$this->dtopor, $this->dtopor2] as $dto) {
+            $eud *= 1 - $dto / 100;
+        }
+
+        return $eud;
+    }
+
+    /**
      * 
      * @return DinVariante
      */
@@ -183,13 +198,7 @@ class ProductoProveedor extends Base\ModelClass
             $this->refproveedor = $this->referencia;
         }
 
-        /// calculate total discount
-        $totalDto = 1.0;
-        foreach ([$this->dtopor, $this->dtopor2] as $dto) {
-            $totalDto *= 1 - $dto / 100;
-        }
-        $this->neto = $this->precio * $totalDto;
-
+        $this->neto = $this->precio * $this->getEUDiscount();
         return parent::test();
     }
 
