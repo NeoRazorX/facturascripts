@@ -43,25 +43,24 @@ use FacturaScripts\Dinamic\Model\ReciboCliente;
  */
 abstract class PDFDocument extends PDFCore
 {
+
     /**
      *
      * @var array
      */
-    protected $lineHeaders; 
+    protected $lineHeaders;
 
     /**
      *
      * @var FormatoDocumento
      */
     protected $format;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         parent::__construct();
         $this->lineHeaders = [
-            'referencia' => [
-                'type' => 'text',
-                'title' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description')
-            ],
+            'referencia' => ['type' => 'text', 'title' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description')],
             'cantidad' => ['type' => 'number', 'title' => $this->i18n->trans('quantity')],
             'pvpunitario' => ['type' => 'number', 'title' => $this->i18n->trans('price')],
             'dtopor' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto')],
@@ -72,7 +71,7 @@ abstract class PDFDocument extends PDFCore
             'pvptotal' => ['type' => 'number', 'title' => $this->i18n->trans('total')]
         ];
     }
-    
+
     /**
      * Combine address if the parameters don´t empty
      *
@@ -234,29 +233,34 @@ abstract class PDFDocument extends PDFCore
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'width' => $this->tableWidth
         ];
-        foreach ($this->lineHeaders as $key => $value) {            
+
+        /// fill headers and options with the line headers information
+        foreach ($this->lineHeaders as $key => $value) {
             $headers[$key] = $value['title'];
-            
-            if ($value['type'] === 'number' || $value['type'] === 'percentage') {
+            if (\in_array($value['type'], ['number', 'percentage'], true)) {
                 $tableOptions['cols'][$key] = ['justification' => 'right'];
             }
         }
-        
+
         $tableData = [];
         foreach ($model->getlines() as $line) {
             $data = [];
             foreach ($this->lineHeaders as $key => $value) {
-                if ($value['type'] === 'percentage') {
-                    $data[$key] = $this->numberTools->format($line->$key) . '%';
-                } else if ($key === 'referencia') {
-                    $data[$key] = empty($line->$key) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->$key . " - " . $line->descripcion);
+                if ($key === 'referencia') {
+                    $data[$key] = empty($line->{$key}) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->{$key} . " - " . $line->descripcion);
+                } elseif ($value['type'] === 'percentage') {
+                    $data[$key] = $this->numberTools->format($line->{$key}) . '%';
+                } elseif ($value['type'] === 'number') {
+                    $data[$key] = $this->numberTools->format($line->{$key});
                 } else {
-                    $data[$key] = $this->numberTools->format($line->$key);
+                    $data[$key] = $line->{$key};
                 }
             }
-            array_push($tableData, $data);
+
+            $tableData[] = $data;
         }
-        
+
+        $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
         $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
     }
 
