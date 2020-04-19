@@ -47,13 +47,6 @@ class SalesDocLineAccount extends ModelView
     public function getTotalsForDocument($document, $defaultSubacode)
     {
         $totals = [];
-
-        /// calculate total discount
-        $totalDto = 1.0;
-        foreach ([$document->dtopor1, $document->dtopor2] as $dto) {
-            $totalDto *= 1 - $dto / 100;
-        }
-
         $where = [
             new DataBaseWhere('lineasfacturascli.idfactura', $document->idfactura),
             new DataBaseWhere('lineasfacturascli.suplido', false)
@@ -68,7 +61,7 @@ class SalesDocLineAccount extends ModelView
                 $codSubAccount = $defaultSubacode;
             }
 
-            $amount = $row->total * $totalDto;
+            $amount = $row->total * $document->getEUDiscount();
             $totals[$codSubAccount] = isset($totals[$codSubAccount]) ? $totals[$codSubAccount] + $amount : $amount;
         }
 
@@ -110,7 +103,7 @@ class SalesDocLineAccount extends ModelView
             'idfactura' => 'lineasfacturascli.idfactura',
             'codsubcuenta' => "COALESCE(productos.codsubcuentaven, '')",
             'codfamilia' => "COALESCE(productos.codfamilia, '')",
-            'total' => 'SUM(lineasfacturascli.pvptotal)',
+            'total' => 'SUM(lineasfacturascli.pvptotal)'
         ];
     }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,10 @@ define('FS_FOLDER', __DIR__);
 /**
  * Preliminary checks
  */
-if (!file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'config.php')) {
+if (false === file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'config.php')) {
     if ((int) substr(phpversion(), 0, 1) < 7) {
         die('You need PHP 7<br/>You have PHP ' . phpversion());
-    } elseif (!file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'vendor')) {
+    } elseif (false === file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'vendor')) {
         die('<h1>COMPOSER ERROR</h1><p>You need to run: composer install</p><p>You should also run: npm install</p>');
     }
 
@@ -35,10 +35,10 @@ if (!file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'config.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
 
     $router = new \FacturaScripts\Core\App\AppRouter();
-    if (!$router->getFile()) {
+    if (false === $router->getFile()) {
         $app = new \FacturaScripts\Core\App\AppInstaller();
     }
-    die('');
+    exit();
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -69,7 +69,7 @@ if (isset($argv[1]) && $argv[1] === '-cron') {
     $app->run();
     $app->render();
     $app->close();
-} elseif (!$router->getFile()) {
+} elseif (false === $router->getFile()) {
     $app = $router->getApp();
 
     /// Connect to the database, cache, etc.

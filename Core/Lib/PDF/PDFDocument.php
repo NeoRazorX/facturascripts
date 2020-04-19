@@ -46,9 +46,31 @@ abstract class PDFDocument extends PDFCore
 
     /**
      *
+     * @var array
+     */
+    protected $lineHeaders;
+
+    /**
+     *
      * @var FormatoDocumento
      */
     protected $format;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->lineHeaders = [
+            'referencia' => ['type' => 'text', 'title' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description')],
+            'cantidad' => ['type' => 'number', 'title' => $this->i18n->trans('quantity')],
+            'pvpunitario' => ['type' => 'number', 'title' => $this->i18n->trans('price')],
+            'dtopor' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto')],
+            'dtopor2' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto-2')],
+            'iva' => ['type' => 'percentage', 'title' => $this->i18n->trans('tax')],
+            'recargo' => ['type' => 'percentage', 'title' => $this->i18n->trans('surcharge')],
+            'irpf' => ['type' => 'percentage', 'title' => $this->i18n->trans('irpf')],
+            'pvptotal' => ['type' => 'number', 'title' => $this->i18n->trans('total')]
+        ];
+    }
 
     /**
      * Combine address if the parameters don´t empty
@@ -135,11 +157,7 @@ abstract class PDFDocument extends PDFCore
      */
     protected function getTaxesRows($model)
     {
-        /// calculate total discount
-        $totalDto = 1.0;
-        foreach ([$model->dtopor1, $model->dtopor2] as $dto) {
-            $totalDto *= 1 - $dto / 100;
-        }
+        $eud = $model->getEUDiscount();
 
         $subtotals = [];
         foreach ($model->getLines() as $line) {
@@ -164,9 +182,9 @@ abstract class PDFDocument extends PDFCore
                 }
             }
 
-            $subtotals[$key]['taxbase'] += $line->pvptotal * $totalDto;
-            $subtotals[$key]['taxamount'] += $line->pvptotal * $totalDto * $line->iva / 100;
-            $subtotals[$key]['taxsurcharge'] += $line->pvptotal * $totalDto * $line->recargo / 100;
+            $subtotals[$key]['taxbase'] += $line->pvptotal * $eud;
+            $subtotals[$key]['taxamount'] += $line->pvptotal * $eud * $line->iva / 100;
+            $subtotals[$key]['taxsurcharge'] += $line->pvptotal * $eud * $line->recargo / 100;
         }
 
         /// irpf
@@ -187,8 +205,8 @@ abstract class PDFDocument extends PDFCore
                 ];
             }
 
-            $subtotals[$key]['taxbase'] += $line->pvptotal * $totalDto;
-            $subtotals[$key]['taxamount'] -= $line->pvptotal * $totalDto * $line->irpf / 100;
+            $subtotals[$key]['taxbase'] += $line->pvptotal * $eud;
+            $subtotals[$key]['taxamount'] -= $line->pvptotal * $eud * $line->irpf / 100;
         }
 
         /// round
@@ -208,48 +226,41 @@ abstract class PDFDocument extends PDFCore
      */
     protected function insertBusinessDocBody($model)
     {
-        $headers = [
-            'reference' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description'),
-            'quantity' => $this->i18n->trans('quantity'),
-            'price' => $this->i18n->trans('price'),
-            'dto' => $this->i18n->trans('dto'),
-            'dto-2' => $this->i18n->trans('dto-2'),
-            'tax' => $this->i18n->trans('tax'),
-            'surcharge' => $this->i18n->trans('re'),
-            'irpf' => $this->i18n->trans('irpf'),
-            'total' => $this->i18n->trans('total'),
-        ];
-        $tableData = [];
-        foreach ($model->getlines() as $line) {
-            $tableData[] = [
-                'reference' => empty($line->referencia) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->referencia . " - " . $line->descripcion),
-                'quantity' => $this->numberTools->format($line->cantidad),
-                'price' => $this->numberTools->format($line->pvpunitario),
-                'dto' => $this->numberTools->format($line->dtopor) . '%',
-                'dto-2' => $this->numberTools->format($line->dtopor2) . '%',
-                'tax' => $this->numberTools->format($line->iva) . '%',
-                'surcharge' => $this->numberTools->format($line->recargo) . '%',
-                'irpf' => $this->numberTools->format($line->irpf) . '%',
-                'total' => $this->numberTools->format($line->pvptotal),
-            ];
-        }
-
-        $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
+        $headers = [];
         $tableOptions = [
-            'cols' => [
-                'quantity' => ['justification' => 'right'],
-                'price' => ['justification' => 'right'],
-                'dto' => ['justification' => 'right'],
-                'dto-2' => ['justification' => 'right'],
-                'tax' => ['justification' => 'right'],
-                'surcharge' => ['justification' => 'right'],
-                'irpf' => ['justification' => 'right'],
-                'total' => ['justification' => 'right'],
-            ],
+            'cols' => [],
             'shadeCol' => [0.95, 0.95, 0.95],
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'width' => $this->tableWidth
         ];
+
+        /// fill headers and options with the line headers information
+        foreach ($this->lineHeaders as $key => $value) {
+            $headers[$key] = $value['title'];
+            if (\in_array($value['type'], ['number', 'percentage'], true)) {
+                $tableOptions['cols'][$key] = ['justification' => 'right'];
+            }
+        }
+
+        $tableData = [];
+        foreach ($model->getlines() as $line) {
+            $data = [];
+            foreach ($this->lineHeaders as $key => $value) {
+                if ($key === 'referencia') {
+                    $data[$key] = empty($line->{$key}) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->{$key} . " - " . $line->descripcion);
+                } elseif ($value['type'] === 'percentage') {
+                    $data[$key] = $this->numberTools->format($line->{$key}) . '%';
+                } elseif ($value['type'] === 'number') {
+                    $data[$key] = $this->numberTools->format($line->{$key});
+                } else {
+                    $data[$key] = $line->{$key};
+                }
+            }
+
+            $tableData[] = $data;
+        }
+
+        $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
         $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
     }
 
@@ -464,7 +475,7 @@ abstract class PDFDocument extends PDFCore
             $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
             $this->addImageFromAttachedFile($logoFile, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
         } else {
-            $logoPath = \FS_FOLDER . '/Core/Assets/Images/horizontal-logo.png';
+            $logoPath = \FS_FOLDER . '/Dinamic/Assets/Images/horizontal-logo.png';
             $logoSize = $this->calcImageSize($logoPath);
             $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
             $this->addImageFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);

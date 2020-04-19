@@ -33,6 +33,7 @@ class ProductoProveedor extends Base\ModelClass
 {
 
     use Base\ModelTrait;
+    use Base\ProductRelationTrait;
 
     /**
      *
@@ -102,6 +103,21 @@ class ProductoProveedor extends Base\ModelClass
         $this->dtopor2 = 0.0;
         $this->neto = 0.0;
         $this->precio = 0.0;
+    }
+
+    /**
+     * Returns the Equivalent Unified Discount.
+     * 
+     * @return float
+     */
+    public function getEUDiscount()
+    {
+        $eud = 1.0;
+        foreach ([$this->dtopor, $this->dtopor2] as $dto) {
+            $eud *= 1 - $dto / 100;
+        }
+
+        return $eud;
     }
 
     /**
@@ -182,13 +198,7 @@ class ProductoProveedor extends Base\ModelClass
             $this->refproveedor = $this->referencia;
         }
 
-        /// calculate total discount
-        $totalDto = 1.0;
-        foreach ([$this->dtopor, $this->dtopor2] as $dto) {
-            $totalDto *= 1 - $dto / 100;
-        }
-        $this->neto = $this->precio * $totalDto;
-
+        $this->neto = $this->precio * $this->getEUDiscount();
         return parent::test();
     }
 
@@ -201,6 +211,6 @@ class ProductoProveedor extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
-        return $this->getVariant()->url();
+        return $this->getVariant()->url($type);
     }
 }
