@@ -475,7 +475,7 @@ abstract class PDFDocument extends PDFCore
             $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
             $this->addImageFromAttachedFile($logoFile, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
         } else {
-            $logoPath = \FS_FOLDER . '/Core/Assets/Images/horizontal-logo.png';
+            $logoPath = \FS_FOLDER . '/Dinamic/Assets/Images/horizontal-logo.png';
             $logoSize = $this->calcImageSize($logoPath);
             $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
             $this->addImageFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
