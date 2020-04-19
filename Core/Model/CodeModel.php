@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -116,6 +116,7 @@ class CodeModel
      * Convert an associative array (code and value) into a CodeModel array.
      * 
      * @param array $data
+     *
      * @return static[]
      */
     public static function array2codeModel(array $data)
@@ -125,6 +126,7 @@ class CodeModel
             $row = ['code' => $key, 'description' => $value];
             $result[] = new static($row);
         }
+
         return $result;
     }
 

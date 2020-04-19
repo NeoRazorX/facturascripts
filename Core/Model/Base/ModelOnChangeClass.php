@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -87,6 +87,10 @@ abstract class ModelOnChangeClass extends ModelClass
      */
     protected function onChange($field)
     {
+        if ($this->pipe('onChange', $field) === false) {
+            return false;
+        }
+
         return true;
     }
 
@@ -95,7 +99,7 @@ abstract class ModelOnChangeClass extends ModelClass
      */
     protected function onDelete()
     {
-        ;
+        $this->pipe('onDelete');
     }
 
     /**
@@ -103,7 +107,7 @@ abstract class ModelOnChangeClass extends ModelClass
      */
     protected function onInsert()
     {
-        ;
+        $this->pipe('onInsert');
     }
 
     /**
@@ -111,7 +115,7 @@ abstract class ModelOnChangeClass extends ModelClass
      */
     protected function onUpdate()
     {
-        ;
+        $this->pipe('onUpdate');
     }
 
     /**
@@ -141,7 +145,7 @@ abstract class ModelOnChangeClass extends ModelClass
      */
     protected function saveUpdate(array $values = [])
     {
-        foreach (array_keys($this->previousData) as $field) {
+        foreach (\array_keys($this->previousData) as $field) {
             if ($this->{$field} != $this->previousData[$field] && !$this->onChange($field)) {
                 return false;
             }
@@ -163,6 +167,13 @@ abstract class ModelOnChangeClass extends ModelClass
      */
     protected function setPreviousData(array $fields = [])
     {
+        $more = $this->pipe('setPreviousDataMore');
+        if (\is_array($more)) {
+            foreach ($more as $key) {
+                $fields[] = $key;
+            }
+        }
+
         foreach ($fields as $field) {
             $this->previousData[$field] = $this->{$field};
         }

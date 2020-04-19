@@ -74,10 +74,10 @@ class BusinessDocumentTools
      */
     public function getSubtotals(array $lines, array $discounts): array
     {
-        /// calculate total discount
-        $totalDto = 1.0;
+        /// calculates the equivalent unified discount
+        $eud = 1.0;
         foreach ($discounts as $dto) {
-            $totalDto *= 1 - $dto / 100;
+            $eud *= 1 - $dto / 100;
         }
 
         $irpf = 0.0;
@@ -85,7 +85,7 @@ class BusinessDocumentTools
         $totalIrpf = 0.0;
         $totalSuplidos = 0.0;
         foreach ($lines as $line) {
-            $pvpTotal = $line->pvptotal * $totalDto;
+            $pvpTotal = $line->pvptotal * $eud;
             if (empty($pvpTotal)) {
                 continue;
             } elseif ($line->suplido) {

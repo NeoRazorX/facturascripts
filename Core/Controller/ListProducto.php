@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,14 +59,15 @@ class ListProducto extends ListController
     protected function createViewProducto(string $viewName = 'ListProducto')
     {
         $this->addView($viewName, 'Producto', 'products', 'fas fa-cubes');
-        $this->addSearchFields($viewName, ['referencia', 'descripcion', 'observaciones']);
         $this->addOrderBy($viewName, ['referencia'], 'reference');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
         $this->addOrderBy($viewName, ['fechaalta'], 'creation-date');
         $this->addOrderBy($viewName, ['precio'], 'price');
         $this->addOrderBy($viewName, ['stockfis'], 'stock');
         $this->addOrderBy($viewName, ['actualizado'], 'update-time');
+        $this->addSearchFields($viewName, ['referencia', 'descripcion', 'observaciones']);
 
+        /// filters
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
         $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
 
@@ -90,18 +91,19 @@ class ListProducto extends ListController
     protected function createViewVariante(string $viewName = 'ListVariante')
     {
         $this->addView($viewName, 'Variante', 'variants', 'fas fa-project-diagram');
-        $this->addSearchFields($viewName, ['referencia', 'codbarras']);
         $this->addOrderBy($viewName, ['referencia'], 'reference');
         $this->addOrderBy($viewName, ['codbarras'], 'barcode');
         $this->addOrderBy($viewName, ['precio'], 'price');
         $this->addOrderBy($viewName, ['coste'], 'cost-price');
         $this->addOrderBy($viewName, ['stockfis'], 'stock');
+        $this->addSearchFields($viewName, ['referencia', 'codbarras']);
 
+        /// filters
         $attributeValues = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
         $this->addFilterSelect($viewName, 'idatributovalor1', 'attribute-value-1', 'idatributovalor1', $attributeValues);
         $this->addFilterSelect($viewName, 'idatributovalor2', 'attribute-value-2', 'idatributovalor2', $attributeValues);
 
-        /// disable new button
+        /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }
 
@@ -112,17 +114,18 @@ class ListProducto extends ListController
     protected function createViewStock(string $viewName = 'ListStock')
     {
         $this->addView($viewName, 'Stock', 'stock', 'fas fa-dolly');
-        $this->addSearchFields($viewName, ['referencia']);
         $this->addOrderBy($viewName, ['referencia'], 'reference');
         $this->addOrderBy($viewName, ['cantidad'], 'quantity');
         $this->addOrderBy($viewName, ['disponible'], 'available');
         $this->addOrderBy($viewName, ['reservada'], 'reserved');
         $this->addOrderBy($viewName, ['pterecibir'], 'pending-reception');
+        $this->addSearchFields($viewName, ['referencia']);
 
+        /// filters
         $selectValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $selectValues);
 
-        /// disable new button
+        /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }
 }

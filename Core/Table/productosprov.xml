@@ -33,6 +33,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>idproducto</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>neto</name>
         <type>double precision</type>
     </column>
@@ -60,6 +64,10 @@
     <constraint>
         <name>ca_productosprov_proveedores</name>
         <type>FOREIGN KEY (codproveedor) REFERENCES proveedores (codproveedor) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_productosprov_productos</name>
+        <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
         <name>uniq_productosprov</name>

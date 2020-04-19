@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,7 +47,7 @@ trait ExtensionsTrait
     {
         foreach (static::$extensions as $ext) {
             if ($ext['name'] === $name && $ext['function'] instanceof Closure) {
-                return call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
+                return \call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
             }
         }
 
@@ -60,10 +60,10 @@ trait ExtensionsTrait
      */
     public static function addExtension($extension)
     {
-        $methods = (new ReflectionClass($extension))->getMethods(ReflectionMethod::IS_PUBLIC);
+        $methods = (new ReflectionClass($extension))->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED);
         foreach ($methods as $method) {
             $method->setAccessible(true);
-            array_unshift(self::$extensions, ['name' => $method->name, 'function' => $method->invoke($extension)]);
+            \array_unshift(self::$extensions, ['name' => $method->name, 'function' => $method->invoke($extension)]);
         }
     }
 
@@ -81,7 +81,7 @@ trait ExtensionsTrait
             if ($ext['name'] !== $name) {
                 continue;
             } elseif ($ext['function'] instanceof Closure) {
-                $return = call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
+                $return = \call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
             }
 
             if ($return !== null) {
