@@ -197,6 +197,21 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     }
 
     /**
+     * Returns the Equivalent Unified Discount.
+     * 
+     * @return float
+     */
+    public function getEUDiscount()
+    {
+        $eud = 1.0;
+        foreach ([$this->dtopor, $this->dtopor2] as $dto) {
+            $eud *= 1 - $dto / 100;
+        }
+
+        return $eud;
+    }
+
+    /**
      * Returns related product.
      *
      * @return Producto
@@ -252,18 +267,48 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             $this->codimpuesto = null;
         }
 
-        /// calculate total discount
-        $totalDto = 1.0;
-        foreach ([$this->dtopor, $this->dtopor2] as $dto) {
-            $totalDto *= 1 - $dto / 100;
-        }
-
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
         $this->pvpsindto = $this->pvpunitario * $this->cantidad;
-        $this->pvptotal = $this->pvpsindto * $totalDto;
+        $this->pvptotal = $this->pvpsindto * $this->getEUDiscount();
         $this->referencia = $utils->noHtml($this->referencia);
         return parent::test();
+    }
+
+    /**
+     * Transfers the line stock from one warehouse to another.
+     * 
+     * @param string $fromCodalmacen
+     * @param string $toCodalmacen
+     */
+    public function transfer($fromCodalmacen, $toCodalmacen)
+    {
+        /// find the stock
+        $fromStock = new Stock();
+        $where = [
+            new DataBaseWhere('codalmacen', $fromCodalmacen),
+            new DataBaseWhere('referencia', $this->referencia)
+        ];
+        if ($fromStock->loadFromCode('', $where)) {
+            $this->applyStockChanges($this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $fromStock);
+            $fromStock->save();
+        }
+
+        /// find the new stock
+        $toStock = new Stock();
+        $where2 = [
+            new DataBaseWhere('codalmacen', $toCodalmacen),
+            new DataBaseWhere('referencia', $this->referencia)
+        ];
+        if (false === $toStock->loadFromCode('', $where2)) {
+            /// stock not found, then create one
+            $toStock->codalmacen = $toCodalmacen;
+            $toStock->idproducto = $this->idproducto;
+            $toStock->referencia = $this->referencia;
+        }
+
+        $this->applyStockChanges($this->actualizastock, $this->cantidad, $toStock);
+        $toStock->save();
     }
 
     /**
@@ -377,38 +422,47 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     protected function updateStock()
     {
+        /// find the variant
         $variante = new Variante();
         $where = [new DataBaseWhere('referencia', $this->referencia)];
-        if (!empty($this->referencia) && $variante->loadFromCode('', $where)) {
-            $producto = $variante->getProducto();
-            if ($producto->nostock) {
-                return true;
-            }
-
-            $stock = new Stock();
-            $codalmacen = $this->getDocument()->codalmacen;
-            $where2 = [
-                new DataBaseWhere('codalmacen', $codalmacen),
-                new DataBaseWhere('referencia', $this->referencia)
-            ];
-            if (!$stock->loadFromCode('', $where2)) {
-                $stock->codalmacen = $codalmacen;
-                $stock->idproducto = $producto->idproducto;
-                $stock->referencia = $this->referencia;
-            }
-
-            $this->applyStockChanges($this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $stock);
-            $this->applyStockChanges($this->actualizastock, $this->cantidad, $stock);
-
-            /// enough stock?
-            if (!$producto->ventasinstock && $this->actualizastock === -1 && $stock->cantidad < 0) {
-                $this->toolBox()->i18nLog()->warning('not-enough-stock', ['%reference%' => $this->referencia]);
-                return false;
-            }
-
-            return $stock->save();
+        if (empty($this->referencia) || false === $variante->loadFromCode('', $where)) {
+            return true;
         }
 
-        return true;
+        /// find the product
+        $producto = $variante->getProducto();
+        if ($producto->nostock) {
+            return true;
+        }
+
+        /// find the stock
+        $stock = new Stock();
+        $codalmacen = $this->getDocument()->codalmacen;
+        $where2 = [
+            new DataBaseWhere('codalmacen', $codalmacen),
+            new DataBaseWhere('referencia', $this->referencia)
+        ];
+        if (false === $stock->loadFromCode('', $where2)) {
+            /// stock not found, then create one
+            $stock->codalmacen = $codalmacen;
+            $stock->idproducto = $this->idproducto;
+            $stock->referencia = $this->referencia;
+        }
+
+        $this->applyStockChanges($this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $stock);
+        $this->applyStockChanges($this->actualizastock, $this->cantidad, $stock);
+
+        /// enough stock?
+        if (false === $producto->ventasinstock && $this->actualizastock === -1 && $stock->cantidad < 0) {
+            $this->toolBox()->i18nLog()->warning('not-enough-stock', ['%reference%' => $this->referencia]);
+            return false;
+        }
+
+        if ($stock->save()) {
+            $this->pipe('updateStock');
+            return true;
+        }
+
+        return false;
     }
 }

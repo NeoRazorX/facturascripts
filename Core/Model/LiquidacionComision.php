@@ -143,7 +143,7 @@ class LiquidacionComision extends Base\ModelClass
         }
 
         if ($invoice->save()) {
-            $product = $agent->getProduct();
+            $product = $agent->getProducto();
             $newLine = $product->exists() ? $invoice->getNewProductLine($product->referencia) : $invoice->getNewLine();
             $newLine->cantidad = 1;
             $newLine->descripcion = $this->toolBox()->i18n()->trans('commission-settlement', ['%code%' => $this->idliquidacion]);

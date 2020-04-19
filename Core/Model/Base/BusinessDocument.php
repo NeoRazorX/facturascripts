@@ -22,7 +22,6 @@ use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\Ejercicio;
-use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Serie;
 
 /**
@@ -263,6 +262,21 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
+     * Returns the Equivalent Unified Discount.
+     * 
+     * @return float
+     */
+    public function getEUDiscount()
+    {
+        $eud = 1.0;
+        foreach ([$this->dtopor1, $this->dtopor2] as $dto) {
+            $eud *= 1 - $dto / 100;
+        }
+
+        return $eud;
+    }
+
+    /**
      * This function is called when creating the model table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert values
      * default.
@@ -400,9 +414,10 @@ abstract class BusinessDocument extends ModelOnChangeClass
     {
         switch ($field) {
             case 'codalmacen':
-            case 'idempresa':
-                $this->toolBox()->i18nLog()->warning('non-editable-columns', ['%columns%' => 'codalmacen,idempresa']);
-                return false;
+                foreach ($this->getLines() as $line) {
+                    $line->transfer($this->previousData['codalmacen'], $this->codalmacen);
+                }
+                break;
 
             case 'codserie':
                 BusinessDocumentCode::getNewCode($this);
@@ -416,6 +431,10 @@ abstract class BusinessDocument extends ModelOnChangeClass
                     BusinessDocumentCode::getNewCode($this);
                 }
                 break;
+
+            case 'idempresa':
+                $this->toolBox()->i18nLog()->warning('non-editable-columns', ['%columns%' => 'idempresa']);
+                return false;
 
             case 'numero':
                 BusinessDocumentCode::getNewCode($this, false);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,7 +44,7 @@ abstract class InitClass
      */
     protected function getNamespace()
     {
-        return substr(static::class, 0, -5);
+        return \substr(static::class, 0, -5);
     }
 
     /**
@@ -53,17 +53,69 @@ abstract class InitClass
      *
      * @return bool
      */
-    protected function loadExtension($extension)
+    protected function loadExtension($extension): bool
     {
-        $namespace = get_class($extension);
+        $namespace = \get_class($extension);
         $findNamespace = $this->getNamespace() . '\\Extension\\';
-        if (strpos($namespace, $findNamespace) !== 0) {
+        if (\strpos($namespace, $findNamespace) !== 0) {
             $this->toolBox()->log()->error('Target object not found for: ' . $namespace);
             return false;
         }
 
-        $targetClass = '\\FacturaScripts\\Dinamic\\' . substr($namespace, strlen($findNamespace));
-        $targetClass::addExtension($extension);
+        $className = \substr($namespace, \strlen($findNamespace));
+        switch ($className) {
+            case 'Model\\Base\\BusinessDocument':
+                return $this->loadBusinessDocumentExtension($extension);
+
+            case 'Model\\Base\\BusinessDocumentLine':
+                return $this->loadBusinessDocumentLineExtension($extension);
+
+            default:
+                $targetClass = '\\FacturaScripts\\Dinamic\\' . $className;
+                $targetClass::addExtension($extension);
+        }
+
+        return true;
+    }
+
+    /**
+     * 
+     * @param mixed $extension
+     *
+     * @return bool
+     */
+    private function loadBusinessDocumentExtension($extension): bool
+    {
+        $models = [
+            'AlbaranCliente', 'AlbaranProveedor', 'FacturaCliente', 'FacturaProveedor',
+            'PedidoCliente', 'PedidoProveedor', 'PresupuestoCliente', 'PresupuestoProveedor'
+        ];
+        foreach ($models as $model) {
+            $targetClass = '\\FacturaScripts\\Dinamic\\Model\\' . $model;
+            $targetClass::addExtension($extension);
+        }
+
+        return true;
+    }
+
+    /**
+     * 
+     * @param mixed $extension
+     *
+     * @return bool
+     */
+    private function loadBusinessDocumentLineExtension($extension): bool
+    {
+        $models = [
+            'LineaAlbaranCliente', 'LineaAlbaranProveedor', 'LineaFacturaCliente',
+            'LineaFacturaProveedor', 'LineaPedidoCliente', 'LineaPedidoProveedor',
+            'LineaPresupuestoCliente', 'LineaPresupuestoProveedor'
+        ];
+        foreach ($models as $model) {
+            $targetClass = '\\FacturaScripts\\Dinamic\\Model\\' . $model;
+            $targetClass::addExtension($extension);
+        }
+
         return true;
     }
 

@@ -54,18 +54,6 @@ class ListImpuesto extends ListController
         $this->createViewsTax();
         $this->createViewsTaxZone();
         $this->createViewsRetention();
-        $this->createViewsRegularization();
-    }
-
-    /**
-     * 
-     * @param string $viewName
-     */
-    protected function createViewsRegularization(string $viewName = 'ListRegularizacionImpuesto')
-    {
-        $this->addView($viewName, 'RegularizacionImpuesto', 'vat-regularization', 'fas fa-balance-scale-right');
-        $this->addOrderBy($viewName, ['fechainicio'], 'start-date', 2);
-        $this->addOrderBy($viewName, ['codejercicio||periodo'], 'period');
     }
 
     /**
@@ -112,8 +100,7 @@ class ListImpuesto extends ListController
             'color' => 'warning',
             'confirm' => true,
             'icon' => 'fas fa-magic',
-            'label' => 'generate',
-            'type' => 'action'
+            'label' => 'generate'
         ]);
     }
 

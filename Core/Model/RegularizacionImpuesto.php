@@ -236,18 +236,6 @@ class RegularizacionImpuesto extends Base\ModelClass
     }
 
     /**
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListImpuesto?activetab=List')
-    {
-        return parent::url($type, $list);
-    }
-
-    /**
      * Calculate Period data
      *
      * @param string $period

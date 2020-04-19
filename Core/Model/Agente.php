@@ -33,6 +33,7 @@ class Agente extends Base\Contact
 {
 
     use Base\ModelTrait;
+    use Base\ProductRelationTrait;
 
     /**
      * Position in the company.
@@ -70,13 +71,6 @@ class Agente extends Base\Contact
     public $idcontacto;
 
     /**
-     * Link to product model for settle commission
-     *
-     * @var int
-     */
-    public $idproducto;
-
-    /**
      * Returns the addresses associated with the provider.
      *
      * @return DinContacto
@@ -86,18 +80,6 @@ class Agente extends Base\Contact
         $contact = new DinContacto();
         $contact->loadFromCode($this->idcontacto);
         return $contact;
-    }
-
-    /**
-     * Returns settlement product.
-     * 
-     * @return DinProducto
-     */
-    public function getProduct()
-    {
-        $product = new DinProducto();
-        $product->loadFromCode($this->idproducto);
-        return $product;
     }
 
     /**
