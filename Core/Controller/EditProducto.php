@@ -21,6 +21,8 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Producto;
+use FacturaScripts\Dinamic\Model\ProductoProveedor;
 
 /**
  * Controller to edit a single item from the EditProducto model
@@ -33,7 +35,7 @@ class EditProducto extends EditController
 {
 
     /**
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -67,7 +69,7 @@ class EditProducto extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewsSuppliers(string $viewName = 'ListProductoProveedor')
@@ -75,13 +77,28 @@ class EditProducto extends EditController
         $this->addListView($viewName, 'ProductoProveedor', 'suppliers', 'fas fa-users');
         $this->views[$viewName]->addOrderBy(['actualizado'], 'update-time', 2);
         $this->views[$viewName]->addOrderBy(['neto'], 'net');
-
-        /// disable buttons
-        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'modalInsert', 'new-supplier');
     }
 
     /**
-     * 
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'new-supplier':
+                $this->newSupplier();
+                return true;
+        }
+
+        return parent::execPreviousAction($action);
+    }
+
+    /**
+     *
      * @return bool
      */
     protected function insertAction()
@@ -98,7 +115,7 @@ class EditProducto extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function loadCustomAttributeWidgets(string $viewName)
@@ -113,7 +130,7 @@ class EditProducto extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function loadCustomStockWidget(string $viewName)
@@ -169,5 +186,46 @@ class EditProducto extends EditController
                 $view->loadData('', $where2);
                 break;
         }
+    }
+
+    /**
+     * Create a new supplier for pruduct from modal form data.
+     *
+     * @return boolean
+     */
+    protected function newSupplier()
+    {
+        $code = $this->request->get('code');
+        $data = $this->request->request->all();
+        if (empty($code) || empty($data['new_codproveedor'])) {
+            return true;
+        }
+
+        /// check for duplicate record
+        $where = [
+            new DataBaseWhere('idproducto', $code),
+            new DataBaseWhere('codproveedor', $data['new_codproveedor'])
+        ];
+
+        $productSupplier = new ProductoProveedor();
+        if ($productSupplier->loadFromCode('', $where)) {
+            $this->toolBox()->i18nLog()->error('duplicate-record');
+            return true;
+        }
+
+        /// search product data
+        $product = new Producto();
+        $product->loadFromCode($code);
+
+        /// save data
+        $productSupplier->idproducto = $code;
+        $productSupplier->referencia = $product->referencia;
+        $productSupplier->codproveedor = $data['new_codproveedor'];
+        $productSupplier->refproveedor = $data['new_refproveedor'];
+        if ($productSupplier->save()) {
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        }
+
+        return true;
     }
 }
