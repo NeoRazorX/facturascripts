@@ -91,6 +91,29 @@ class EditCliente extends ComercialContactController
     }
 
     /**
+     *
+     * @param string $viewName
+     * @param string $model
+     * @param string $label
+     */
+    protected function createDocumentView($viewName, $model, $label)
+    {
+        $this->createCustomerListView($viewName, $model, $label);
+        $this->addButtonGroupDocument($viewName);
+        $this->addButtonApproveDocument($viewName);
+    }
+
+    /**
+     *
+     * @param string $viewName
+     */
+    protected function createInvoiceView($viewName)
+    {
+        $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
+        $this->addButtonLockInvoice($viewName);
+    }
+
+    /**
      * Create views
      */
     protected function createViews()
@@ -101,16 +124,16 @@ class EditCliente extends ComercialContactController
         $this->createSubaccountsView();
         $this->createEmailsView();
 
-        $this->createCustomerListView('ListFacturaCliente', 'FacturaCliente', 'invoices');
+        $this->createInvoiceView('ListFacturaCliente');
         $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente');
-        $this->createCustomerListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
-        $this->createCustomerListView('ListPedidoCliente', 'PedidoCliente', 'orders');
-        $this->createCustomerListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+        $this->createDocumentView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
+        $this->createDocumentView('ListPedidoCliente', 'PedidoCliente', 'orders');
+        $this->createDocumentView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
         $this->createReceiptView('ListReciboCliente', 'ReciboCliente');
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function editAction()
@@ -125,7 +148,7 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function insertAction()

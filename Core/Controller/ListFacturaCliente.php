@@ -59,7 +59,7 @@ class ListFacturaCliente extends ListBusinessDocument
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewReceipts($viewName = 'ListReciboCliente')
@@ -72,14 +72,7 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addSearchFields($viewName, ['observaciones']);
 
         /// buttons
-        $newButton = [
-            'action' => 'paid',
-            'confirm' => 'true',
-            'icon' => 'fas fa-check',
-            'label' => 'paid',
-            'type' => 'action',
-        ];
-        $this->addButton($viewName, $newButton);
+        $this->addButtonReceiptPay($viewName);
 
         /// filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');

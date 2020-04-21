@@ -91,7 +91,30 @@ class EditProveedor extends ComercialContactController
     }
 
     /**
-     * 
+     *
+     * @param string $viewName
+     * @param string $model
+     * @param string $label
+     */
+    protected function createDocumentView($viewName, $model, $label)
+    {
+        $this->createSupplierListView($viewName, $model, $label);
+        $this->addButtonGroupDocument($viewName);
+        $this->addButtonApproveDocument($viewName);
+    }
+
+    /**
+     *
+     * @param string $viewName
+     */
+    protected function createInvoiceView($viewName)
+    {
+        $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices');
+        $this->addButtonLockInvoice($viewName);
+    }
+
+    /**
+     *
      * @param string $viewName
      */
     protected function createProductView(string $viewName = 'ListProductoProveedor')
@@ -122,15 +145,15 @@ class EditProveedor extends ComercialContactController
         $this->createEmailsView();
 
         $this->createProductView();
-        $this->createSupplierListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
-        $this->createSupplierListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
-        $this->createSupplierListView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
-        $this->createSupplierListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
+        $this->createInvoiceView('ListFacturaProveedor');
+        $this->createDocumentView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
+        $this->createDocumentView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
+        $this->createDocumentView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
         $this->createReceiptView('ListReciboProveedor', 'ReciboProveedor');
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function editAction()
@@ -145,7 +168,7 @@ class EditProveedor extends ComercialContactController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function insertAction()
