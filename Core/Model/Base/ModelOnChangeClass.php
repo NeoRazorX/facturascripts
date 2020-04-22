@@ -175,7 +175,7 @@ abstract class ModelOnChangeClass extends ModelClass
         }
 
         foreach ($fields as $field) {
-            $this->previousData[$field] = $this->{$field};
+            $this->previousData[$field] = isset($this->{$field}) ? $this->{$field} : null;
         }
     }
 }
