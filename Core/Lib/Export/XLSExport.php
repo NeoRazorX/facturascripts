@@ -238,10 +238,19 @@ class XLSExport extends ExportBase
     protected function getModelHeaders($model): array
     {
         $headers = [];
-        foreach ($this->getModelFields($model) as $col) {
-            $headers[$col] = 'string';
+        $modelFields = $model->getModelFields();
+        foreach ($this->getModelFields($model) as $col) {            
+            switch ($modelFields[$col]['type']) {
+                case 'int':
+                    $headers[$col] = 'integer';
+                    break;
+                case 'double':
+                    $headers[$col] = 'price';
+                    break;
+                default:
+                    $headers[$col] = 'string';
+            }
         }
-
         return $headers;
     }
 }
