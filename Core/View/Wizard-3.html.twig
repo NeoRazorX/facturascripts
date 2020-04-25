@@ -1,0 +1,73 @@
+{#
+    /**
+     * This file is part of FacturaScripts
+     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program. If not, see http://www.gnu.org/licenses/.
+     */
+#}
+{% extends "Master/MicroTemplate.html.twig" %}
+
+{% block body %}
+    <!-- Macros Template Imports -->
+    {% import 'Macro/Forms.html.twig' as forms %}
+    {% set plugins = fsc.getAvaliablePlugins() %}
+
+    <br/>
+    <form action="#" method="post" class="form">
+        <input type="hidden" name="action" value="step3" />
+        <div class="container card">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="h3 mt-3">
+                        <i class="fas fa-plug" aria-hidden="true"></i> {{ i18n.trans('plugins') }}
+                        <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
+                            <i class="fas fa-redo" aria-hidden="true"></i>
+                        </a>
+                    </h1>
+                    <p>{{ i18n.trans('wizard-plugins') }}</p>
+                    <hr/>
+                </div>
+            </div>
+            {% for plugin in plugins %}
+                <div class="row">
+                    <div class="col mb-3">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="plugins[]" value="{{ plugin.name }}" checked=""/>
+                                <b>{{ plugin.name }}</b><br/>{{ plugin.description }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="row mb-3 mt-2">
+                <div class="col text-right">
+                    <button type="submit" class="btn btn-primary">
+                        {{ i18n.trans('continue') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        body {
+            background-color: #3A414B;
+        }
+    </style>
+{% endblock %}

@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -77,15 +78,25 @@ class Wizard extends Controller
     }
 
     /**
+     * 
+     * @return array
+     */
+    public function getRegimenIva()
+    {
+        return RegimenIVA::all();
+    }
+
+    /**
      * Returns an array with all data from selected model.
      *
      * @param string $modelName
+     * @param nool   $addEmpty
      *
-     * @return mixed
+     * @return array
      */
-    public function getSelectValues($modelName)
+    public function getSelectValues($modelName, $addEmpty = false)
     {
-        $values = [];
+        $values = $addEmpty ? ['' => '------'] : [];
         $modelName = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;
         $model = new $modelName();
 
@@ -108,16 +119,26 @@ class Wizard extends Controller
     {
         parent::privateCore($response, $user, $permissions);
 
-        $codpais = $this->request->request->get('codpais', '');
-        if ('' !== $codpais) {
-            $this->saveStep1($codpais);
+        $action = $this->request->request->get('action', '');
+        switch ($action) {
+            case 'step1':
+                $this->saveStep1();
+                break;
+
+            case 'step2':
+                $this->saveStep2();
+                break;
+
+            case 'step3':
+                $this->saveStep3();
+                break;
         }
     }
 
     /**
      * Add/update the default role for agents, and adds to this role access to all default pages.
      *
-     * @return bool Returns true on success, false otherwise
+     * @return bool
      */
     private function addDefaultRoleAccess(): bool
     {
@@ -198,35 +219,11 @@ class Wizard extends Controller
     {
         new Model\AttachedFile();
         new Model\Diario();
-        new Model\IdentificadorFiscal();
         new Model\FormaPago();
         new Model\Impuesto();
         new Model\Retencion();
         new Model\Serie();
         new Model\Provincia();
-    }
-
-    /**
-     * Initialize selected plugins
-     */
-    private function initPlugins()
-    {
-        $pluginManager = new PluginManager();
-        $pluginManager->deploy(true, true);
-
-        $hiddenPlugins = \explode(',', \FS_HIDDEN_PLUGINS);
-        if (\is_array($hiddenPlugins)) {
-            foreach ($hiddenPlugins as $pluginName) {
-                $pluginManager->enable($pluginName);
-            }
-        }
-
-        $plugins = $this->request->request->get('plugins', []);
-        if (\is_array($plugins)) {
-            foreach ($plugins as $pluginName) {
-                $pluginManager->enable($pluginName);
-            }
-        }
     }
 
     /**
@@ -299,18 +296,19 @@ class Wizard extends Controller
         $this->empresa->codpostal = $this->request->request->get('codpostal', '');
         $this->empresa->direccion = $this->request->request->get('direccion', '');
         $this->empresa->nombre = $this->request->request->get('empresa', '');
-        $this->empresa->nombrecorto = $this->request->request->get('nombrecorto', '');
+        $this->empresa->nombrecorto = \mb_substr($this->empresa->nombre, 0, 32);
+        $this->empresa->personafisica = (bool) $this->request->request->get('personafisica', '0');
         $this->empresa->provincia = $this->request->request->get('provincia', '');
         $this->empresa->telefono1 = $this->request->request->get('telefono1', '');
         $this->empresa->telefono2 = $this->request->request->get('telefono2', '');
-        $this->empresa->tipoidfiscal = $appSettings->get('default', 'tipoidfiscal');
+        $this->empresa->tipoidfiscal = $this->request->request->get('tipoidfiscal', '');
         $this->empresa->save();
 
         /// assignes warehouse?
         $almacenModel = new Model\Almacen();
         $where = [
             new DataBaseWhere('idempresa', $this->empresa->idempresa),
-            new DataBaseWhere('idempresa', null, 'IS', 'OR'),
+            new DataBaseWhere('idempresa', null, 'IS', 'OR')
         ];
         foreach ($almacenModel->all($where) as $almacen) {
             $almacen->ciudad = $this->empresa->ciudad;
@@ -375,12 +373,9 @@ class Wizard extends Controller
         return $this->user->save();
     }
 
-    /**
-     * 
-     * @param string $codpais
-     */
-    private function saveStep1(string $codpais)
+    private function saveStep1()
     {
+        $codpais = $this->request->request->get('codpais', '');
         $this->preSetAppSettings($codpais);
 
         $appSettings = $this->toolBox()->appSettings();
@@ -389,7 +384,6 @@ class Wizard extends Controller
         $appSettings->save();
 
         $this->initModels();
-        $this->initPlugins();
         $this->saveAddress($codpais);
 
         /// change password
@@ -404,14 +398,12 @@ class Wizard extends Controller
             return;
         }
 
-        $this->loadDefaultAccountingPlan($codpais);
-
-        /// change user homepage
-        $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : 'ListFacturaCliente';
-        $this->user->save();
-
         /// change default log values to enabled
         $this->enableLogs();
+
+        /// load controllers
+        $pluginManager = new PluginManager();
+        $pluginManager->deploy(true, true);
 
         /// add the default role for employees
         $this->addDefaultRoleAccess();
@@ -419,6 +411,51 @@ class Wizard extends Controller
         /// clear routes
         $appRouter = new AppRouter();
         $appRouter->clear();
+
+        /// change template
+        $this->setTemplate('Wizard-2');
+    }
+
+    private function saveStep2()
+    {
+        $this->empresa->regimeniva = $this->request->request->get('regimeniva');
+        $this->empresa->save();
+
+        $appSettings = $this->toolBox()->appSettings();
+        $appSettings->set('default', 'codimpuesto', $this->request->request->get('codimpuesto'));
+        $appSettings->set('default', 'codretencion', $this->request->request->get('codretencion'));
+        $appSettings->save();
+
+        if ((bool) $this->request->request->get('defaultplan', '0')) {
+            $this->loadDefaultAccountingPlan($this->empresa->codpais);
+        }
+
+        if (empty($this->getAvaliablePlugins())) {
+            $this->saveStep4();
+        } else {
+            /// change template
+            $this->setTemplate('Wizard-3');
+        }
+    }
+
+    private function saveStep3()
+    {
+        $pluginManager = new PluginManager();
+        $plugins = $this->request->request->get('plugins', []);
+        if (\is_array($plugins)) {
+            foreach ($plugins as $pluginName) {
+                $pluginManager->enable($pluginName);
+            }
+        }
+
+        $this->saveStep4();
+    }
+
+    private function saveStep4()
+    {
+        /// change user homepage
+        $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : 'ListFacturaCliente';
+        $this->user->save();
 
         /// redirect to the home page
         $this->redirect($this->user->homepage);

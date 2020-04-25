@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@
     {% import 'Macro/Forms.html.twig' as forms %}
 
     {% set ciudad = fsc.empresa ? fsc.empresa.ciudad : '' %}
-    {% set codpais = fsc.empresa ? fsc.empresa.codpais : appSettings.get('default','codpais','ESP') %}
+    {% set codpais = fsc.empresa ? fsc.empresa.codpais : appSettings.get('default', 'codpais', 'ESP') %}
     {% set provincia = fsc.empresa ? fsc.empresa.provincia : '' %}
 
     <br/>
@@ -41,21 +41,62 @@
                 <hr/>
             </div>
         </div>
-        <form action="#" method="post" class="form">
+        <form method="post" class="form">
+            <input type="hidden" name="action" value="step1" />
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <div class="form-group">
                         {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombre, 'text', i18n.trans('company-name'), '', {'autofocus': '', 'maxlength': '100', 'required': ''}) }}
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-2">
                     <div class="form-group">
-                        {{ forms.simpleInput('nombrecorto', 'nombrecorto', fsc.empresa.nombrecorto, 'text', i18n.trans('short-name'), '', {'maxlength': '32', 'required': ''}) }}
+                        {{ forms.simpleSelect('tipoidfiscal', 'tipoidfiscal', fsc.empresa.tipoidfiscal, fsc.getSelectValues('IdentificadorFiscal'), i18n.trans('fiscal-id')) }}
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('cifnif', 'cifnif', fsc.empresa.cifnif, 'text', i18n.trans('cifnif'), '', {'maxlength': '30'}) }}
+                        {{ forms.simpleInput('cifnif', 'cifnif', fsc.empresa.cifnif, 'text', i18n.trans('fiscal-number'), '', {'maxlength': '30'}) }}
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group form-check">
+                        {% if fsc.empresa.personafisica %}
+                            <input type="checkbox" name="personafisica" value="1" id="checkboxPersona" class="form-check-input" checked="" />
+                        {% else %}
+                            <input type="checkbox" name="personafisica" value="1" id="checkboxPersona" class="form-check-input" />
+                        {% endif %}
+                        <label for="checkboxPersona">{{ i18n.trans('is-person') }}</label>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'), i18n.trans('country'), 'fas fa-globe-americas') }}
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        {{ forms.simpleInput('provincia', 'provincia', provincia, 'text', i18n.trans('province')) }}
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', i18n.trans('city')) }}
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'), 'fas fa-map-marked', {'maxlength': '100', 'required': ''}) }}
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        {{ forms.simpleInput('apartado', 'apartado', fsc.empresa.apartado, 'text', i18n.trans('post-office-box'), NULL, {'maxlength': '10', 'placeholder': i18n.trans('optional')}) }}
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('zip-code'), NULL, {'maxlength': '10'}) }}
                     </div>
                 </div>
                 {% if fsc.empresa.email is empty or fsc.user.email is empty %}
@@ -73,38 +114,6 @@
                 <div class="col-sm-4">
                     <div class="form-group">
                         {{ forms.simpleInput('telefono2', 'telefono2', fsc.empresa.telefono2, 'text', i18n.trans('phone2'), 'fas fa-mobile-alt', {'maxlength': '30'}) }}
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'), 'fas fa-map-marked', {'maxlength': '100', 'required': ''}) }}
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        {{ forms.simpleInput('apartado', 'apartado', fsc.empresa.apartado, 'text', i18n.trans('post-office-box'), NULL, {'maxlength': '10', 'placeholder': i18n.trans('optional')}) }}
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('zip-code'), NULL, {'maxlength': '10'}) }}
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', i18n.trans('city')) }}
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        {{ forms.simpleInput('provincia', 'provincia', provincia, 'text', i18n.trans('province')) }}
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'), i18n.trans('country'), 'fas fa-globe-americas') }}
                     </div>
                 </div>
             </div>
@@ -133,35 +142,14 @@
                 </div>
             {% endif %}
             <div class="row mb-3 mt-2">
-                {% set plugins = fsc.getAvaliablePlugins() %}
-                {% if plugins is not empty %}
-                    <div class="col-md-9">
-                        <h3 class="h4 text-info">
-                            <i class="fas fa-plug" aria-hidden="true"></i> {{ i18n.trans('plugins') }}
-                        </h3>
-                        {% for plugin in plugins %}
-                            <div class="form-check">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" type="checkbox" name="plugins[]" value="{{ plugin.name }}" checked=""/>
-                                    <b>{{ plugin.name }}</b>: {{ plugin.description }}
-                                </label>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
                 <div class="col text-right">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save fa-fw" aria-hidden="true"></i>
-                        {{ i18n.trans('save') }}
+                        {{ i18n.trans('continue') }}
                     </button>
                 </div>
             </div>
         </form>
     </div>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
 {% endblock %}
 
 {% block css %}
