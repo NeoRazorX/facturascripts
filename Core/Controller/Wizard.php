@@ -90,7 +90,7 @@ class Wizard extends Controller
      * Returns an array with all data from selected model.
      *
      * @param string $modelName
-     * @param nool   $addEmpty
+     * @param bool   $addEmpty
      *
      * @return array
      */
