@@ -422,8 +422,11 @@ class Wizard extends Controller
         $this->empresa->save();
 
         $appSettings = $this->toolBox()->appSettings();
-        $appSettings->set('default', 'codimpuesto', $this->request->request->get('codimpuesto'));
-        $appSettings->set('default', 'codretencion', $this->request->request->get('codretencion'));
+        foreach (['codimpuesto', 'codretencion'] as $key) {
+            $value = $this->request->request->get($key);
+            $finalValue = empty($value) ? null : $value;
+            $appSettings->set('default', $key, $finalValue);
+        }
         $appSettings->save();
 
         if ((bool) $this->request->request->get('defaultplan', '0')) {
