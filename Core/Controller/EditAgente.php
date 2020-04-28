@@ -75,7 +75,7 @@ class EditAgente extends ComercialContactController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createCommissionsView($viewName = 'ListComision')
@@ -88,7 +88,7 @@ class EditAgente extends ComercialContactController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createContactView($viewName = 'EditContacto')
@@ -107,7 +107,30 @@ class EditAgente extends ComercialContactController
     }
 
     /**
-     * 
+     *
+     * @param string $viewName
+     * @param string $model
+     * @param string $label
+     */
+    protected function createDocumentView($viewName, $model, $label)
+    {
+        $this->createCustomerListView($viewName, $model, $label);
+        $this->addButtonGroupDocument($viewName);
+        $this->addButtonApproveDocument($viewName);
+    }
+
+    /**
+     *
+     * @param string $viewName
+     */
+    protected function createInvoiceView($viewName)
+    {
+        $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
+        $this->addButtonLockInvoice($viewName);
+    }
+
+    /**
+     *
      * @param string $viewName
      */
     protected function createSettlementView($viewName = 'ListLiquidacionComision')
@@ -124,14 +147,14 @@ class EditAgente extends ComercialContactController
         $this->createContactView();
         $this->createCommissionsView();
         $this->createSettlementView();
-        $this->createCustomerListView('ListFacturaCliente', 'FacturaCliente', 'invoices');
-        $this->createCustomerListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
-        $this->createCustomerListView('ListPedidoCliente', 'PedidoCliente', 'orders');
-        $this->createCustomerListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+        $this->createInvoiceView('ListFacturaCliente');
+        $this->createDocumentView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
+        $this->createDocumentView('ListPedidoCliente', 'PedidoCliente', 'orders');
+        $this->createDocumentView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function editAction()
