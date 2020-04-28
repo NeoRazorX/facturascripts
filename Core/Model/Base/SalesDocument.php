@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\Divisa;
@@ -235,6 +236,34 @@ abstract class SalesDocument extends TransformerDocument
         new Cliente();
 
         return $result;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function save()
+    {
+        if (empty($this->total)) {
+            return parent::save();
+        }
+
+        /// check if the customer has exceeded the maximum risk
+        $customer = $this->getSubject();
+        if (!empty($customer->riesgomax) && $customer->riesgoalcanzado > $customer->riesgomax) {
+            $this->toolBox()->i18nLog()->warning('customer-reached-maximum-risk');
+            return false;
+        }
+
+        if (parent::save()) {
+            /// update customer risk
+            $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->primaryColumnValue());
+            $customer->save();
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

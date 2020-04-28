@@ -87,24 +87,27 @@
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="subaccount" titleurl="ListCuenta" numcolumns="3" order="140">
-                <widget type="text" fieldname="codsubcuenta" maxlength="15" icon="fas fa-balance-scale" />
-            </column>
-            <column name="payment-method" titleurl="ListFormaPago" numcolumns="3" order="150">
+            <column name="payment-method" titleurl="ListFormaPago" numcolumns="3" order="140">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="payment-days" description="desc-payment-days" numcolumns="3" order="160">
+            <column name="payment-days" description="desc-payment-days" numcolumns="3" order="150">
                 <widget type="text" fieldname="diaspago" icon="fas fa-calendar-alt" />
             </column>
-            <column name="max-risk" display="right" numcolumns="3" order="170">
-                <widget type="number" fieldname="riesgomax" icon="fas fa-funnel-dollar" />
+            <column name="current-risk" numcolumns="3" order="160">
+                <widget type="money" fieldname="riesgoalcanzado" readonly="true" />
             </column>
-            <column name="vat-regime" numcolumns="3" order="180">
+            <column name="max-risk" numcolumns="3" order="170">
+                <widget type="money" fieldname="riesgomax" min="0" />
+            </column>
+            <column name="subaccount" titleurl="ListCuenta" numcolumns="3" order="180">
+                <widget type="text" fieldname="codsubcuenta" maxlength="15" icon="fas fa-balance-scale" />
+            </column>
+            <column name="vat-regime" numcolumns="3" order="190">
                 <widget type="select" fieldname="regimeniva" required="true" />
             </column>
-            <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="180">
+            <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="200">
                 <widget type="select" fieldname="codretencion" onclick="EditRetencion">
                     <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion" />
                 </widget>
