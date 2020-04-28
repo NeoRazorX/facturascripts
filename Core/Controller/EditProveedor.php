@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
+use FacturaScripts\Core\Lib\SupplierRiskTools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
-use FacturaScripts\Dinamic\Model\TotalModel;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -39,15 +39,11 @@ class EditProveedor extends ComercialContactController
      *
      * @return string
      */
-    public function calcSupplierDeliveryNotes()
+    public function getDeliveryNotesRisk()
     {
-        $where = [
-            new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor')),
-            new DataBaseWhere('editable', true)
-        ];
-
-        $totalModel = TotalModel::all('albaranesprov', $where, ['total' => 'SUM(total)'], '')[0];
-        return $this->toolBox()->coins()->format($totalModel->totals['total'], 2);
+        $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $total = SupplierRiskTools::getDeliveryNotesRisk($codproveedor);
+        return $this->toolBox()->coins()->format($total);
     }
 
     /**
@@ -55,15 +51,11 @@ class EditProveedor extends ComercialContactController
      *
      * @return string
      */
-    public function calcSupplierInvoicePending()
+    public function getInvoicesRisk()
     {
-        $where = [
-            new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor')),
-            new DataBaseWhere('pagada', false)
-        ];
-
-        $totalModel = TotalModel::all('facturasprov', $where, ['total' => 'SUM(total)'], '')[0];
-        return $this->toolBox()->coins()->format($totalModel->totals['total'], 2);
+        $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $total = SupplierRiskTools::getInvoicesRisk($codproveedor);
+        return $this->toolBox()->coins()->format($total);
     }
 
     /**

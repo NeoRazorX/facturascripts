@@ -21,12 +21,11 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\DataBase;
 
 /**
- * Set of tools for the management of customer payment risk
+ * Description of SupplierRiskTools
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class CustomerRiskTools
+class SupplierRiskTools
 {
 
     /**
@@ -37,32 +36,32 @@ class CustomerRiskTools
     private static $dataBase;
 
     /**
-     * Returns the current customer's risk.
+     * Returns the current supplier's risk.
      * 
-     * @param string $codcliente
+     * @param string $codproveedor
      * @param int    $idempresa
      *
      * @return float
      */
-    public static function getCurrent($codcliente, $idempresa = null): float
+    public static function getCurrent($codproveedor, $idempresa = null): float
     {
-        return static::getInvoicesRisk($codcliente, $idempresa) +
-            static::getDeliveryNotesRisk($codcliente, $idempresa) +
-            static::getOrdersRisk($codcliente, $idempresa);
+        return static::getInvoicesRisk($codproveedor, $idempresa) +
+            static::getDeliveryNotesRisk($codproveedor, $idempresa) +
+            static::getOrdersRisk($codproveedor, $idempresa);
     }
 
     /**
-     * Returns the sum of the customer's pending delivery notes.
+     * Returns the sum of the supplier's pending delivery notes.
      * 
-     * @param string $codcliente
+     * @param string $codproveedor
      * @param int    $idempresa
      *
      * @return float
      */
-    public static function getDeliveryNotesRisk($codcliente, $idempresa = null): float
+    public static function getDeliveryNotesRisk($codproveedor, $idempresa = null): float
     {
-        $sql = "SELECT SUM(total) AS total FROM albaranescli"
-            . " WHERE codcliente = " . static::database()->var2str($codcliente)
+        $sql = "SELECT SUM(total) AS total FROM albaranesprov"
+            . " WHERE codproveedor = " . static::database()->var2str($codproveedor)
             . " AND editable = true";
         if (null !== $idempresa) {
             $sql .= " AND idempresa = " . static::database()->var2str($idempresa);
@@ -76,17 +75,17 @@ class CustomerRiskTools
     }
 
     /**
-     * Returns the sum of the customer's unpaid invoices receipts.
+     * Returns the sum of the supplier's unpaid invoices receipts.
      * 
-     * @param string $codcliente
+     * @param string $codproveedor
      * @param int    $idempresa
      *
      * @return float
      */
-    public static function getInvoicesRisk($codcliente, $idempresa = null): float
+    public static function getInvoicesRisk($codproveedor, $idempresa = null): float
     {
-        $sql = "SELECT SUM(importe) AS total FROM recibospagoscli"
-            . " WHERE codcliente = " . static::database()->var2str($codcliente)
+        $sql = "SELECT SUM(importe) AS total FROM recibospagosprov"
+            . " WHERE codproveedor = " . static::database()->var2str($codproveedor)
             . " AND pagado = false";
         if (null !== $idempresa) {
             $sql .= " AND idempresa = " . static::database()->var2str($idempresa);
@@ -100,17 +99,17 @@ class CustomerRiskTools
     }
 
     /**
-     * Returns the sum of the customer's pending orders.
+     * Returns the sum of the supplier's pending orders.
      * 
-     * @param string $codcliente
+     * @param string $codproveedor
      * @param int    $idempresa
      *
      * @return float
      */
-    public static function getOrdersRisk($codcliente, $idempresa = null): float
+    public static function getOrdersRisk($codproveedor, $idempresa = null): float
     {
-        $sql = "SELECT SUM(total) AS total FROM pedidoscli"
-            . " WHERE codcliente = " . static::database()->var2str($codcliente)
+        $sql = "SELECT SUM(total) AS total FROM pedidosprov"
+            . " WHERE codproveedor = " . static::database()->var2str($codproveedor)
             . " AND editable = true";
         if (null !== $idempresa) {
             $sql .= " AND idempresa = " . static::database()->var2str($idempresa);

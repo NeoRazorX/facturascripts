@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
-use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
+use FacturaScripts\Core\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
@@ -35,58 +35,27 @@ class EditCliente extends ComercialContactController
 {
 
     /**
-     * Link to risk tools
-     *
-     * @var CustomerRiskTools
-     */
-    private $riskTools;
-
-    /**
-     * Starts all the objects and properties.
-     *
-     * @param string $className
-     * @param string $uri
-     */
-    public function __construct(string $className, string $uri = '')
-    {
-        parent::__construct($className, $uri);
-        $this->riskTools = new CustomerRiskTools();
-    }
-
-    /**
-     * Returns the sum of the customer's pending delivery notes.
+     * Returns the customer's risk on pending delivery notes.
      *
      * @return string
      */
-    public function calcCustomerDeliveryNotes()
+    public function getDeliveryNotesRisk()
     {
-        $customer = $this->getViewModelValue('EditCliente', 'codcliente');
-        $total = $this->riskTools->deliveryNotesPending($customer);
-        return $this->toolBox()->coins()->format($total, FS_NF0);
+        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $total = CustomerRiskTools::getDeliveryNotesRisk($codcliente);
+        return $this->toolBox()->coins()->format($total);
     }
 
     /**
-     * Returns the sum of the customer's total pending invoices.
+     * Returns the customer's risk on unpaid invoices.
      *
      * @return string
      */
-    public function calcCustomerInvoicePending()
+    public function getInvoicesRisk()
     {
-        $customer = $this->getViewModelValue('EditCliente', 'codcliente');
-        $total = $this->riskTools->invoicesPending($customer);
-        return $this->toolBox()->coins()->format($total, FS_NF0);
-    }
-
-    /**
-     * Returns the sum of the customer's total pending orders.
-     *
-     * @return string
-     */
-    public function calcCustomerOrders()
-    {
-        $customer = $this->getViewModelValue('EditCliente', 'codcliente');
-        $total = $this->riskTools->ordersPending($customer);
-        return $this->toolBox()->coins()->format($total, FS_NF0);
+        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $total = CustomerRiskTools::getInvoicesRisk($codcliente);
+        return $this->toolBox()->coins()->format($total);
     }
 
     /**
@@ -97,6 +66,18 @@ class EditCliente extends ComercialContactController
     public function getModelClassName()
     {
         return 'Cliente';
+    }
+
+    /**
+     * Returns the customer's risk on pending orders.
+     *
+     * @return string
+     */
+    public function getOrdersRisk()
+    {
+        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $total = CustomerRiskTools::getOrdersRisk($codcliente);
+        return $this->toolBox()->coins()->format($total);
     }
 
     /**
