@@ -126,6 +126,7 @@
     </columns>
     <rows>
         <row type="statistics">
+            <datalabel icon="fas fa-copy" label="pending-orders-button" function="calcCustomerOrders" />
             <datalabel icon="fas fa-copy" label="delivery-notes-button" function="calcCustomerDeliveryNotes" />
             <datalabel icon="fas fa-money-bill-alt" label="pending-invoices-button" function="calcCustomerInvoicePending" />
         </row>

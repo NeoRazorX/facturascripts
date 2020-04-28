@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
+use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
-use FacturaScripts\Dinamic\Model\TotalModel;
 
 /**
  * Controller to edit a single item from the Cliente model
@@ -35,35 +35,58 @@ class EditCliente extends ComercialContactController
 {
 
     /**
-     * Returns the sum of the customer's total delivery notes.
+     * Link to risk tools
+     *
+     * @var CustomerRiskTools
+     */
+    private $riskTools;
+
+    /**
+     * Starts all the objects and properties.
+     *
+     * @param string $className
+     * @param string $uri
+     */
+    public function __construct(string $className, string $uri = '')
+    {
+        parent::__construct($className, $uri);
+        $this->riskTools = new CustomerRiskTools();
+    }
+
+    /**
+     * Returns the sum of the customer's pending delivery notes.
      *
      * @return string
      */
     public function calcCustomerDeliveryNotes()
     {
-        $where = [
-            new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente')),
-            new DataBaseWhere('editable', true)
-        ];
-
-        $totalModel = TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'], '')[0];
-        return $this->toolBox()->coins()->format($totalModel->totals['total']);
+        $customer = $this->getViewModelValue('EditCliente', 'codcliente');
+        $total = $this->riskTools->deliveryNotesPending($customer);
+        return $this->toolBox()->coins()->format($total, FS_NF0);
     }
 
     /**
-     * Returns the sum of the customer's total outstanding invoices.
+     * Returns the sum of the customer's total pending invoices.
      *
      * @return string
      */
     public function calcCustomerInvoicePending()
     {
-        $where = [
-            new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente')),
-            new DataBaseWhere('pagada', false)
-        ];
+        $customer = $this->getViewModelValue('EditCliente', 'codcliente');
+        $total = $this->riskTools->invoicesPending($customer);
+        return $this->toolBox()->coins()->format($total, FS_NF0);
+    }
 
-        $totalModel = TotalModel::all('facturascli', $where, ['total' => 'SUM(total)'], '')[0];
-        return $this->toolBox()->coins()->format($totalModel->totals['total'], 2);
+    /**
+     * Returns the sum of the customer's total pending orders.
+     *
+     * @return string
+     */
+    public function calcCustomerOrders()
+    {
+        $customer = $this->getViewModelValue('EditCliente', 'codcliente');
+        $total = $this->riskTools->ordersPending($customer);
+        return $this->toolBox()->coins()->format($total, FS_NF0);
     }
 
     /**
@@ -110,7 +133,7 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function editAction()
@@ -125,7 +148,7 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function insertAction()
