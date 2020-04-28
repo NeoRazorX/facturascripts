@@ -180,6 +180,28 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
+     * 
+     * @return bool
+     */
+    public function delete()
+    {
+        if (empty($this->total)) {
+            return parent::delete();
+        }
+
+        if (parent::delete()) {
+            /// update customer risk
+            $customer = $this->getSubject();
+            $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->primaryColumnValue());
+            $customer->save();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns a new document line with the data of the product. Finds product
      * by reference or barcode.
      *
