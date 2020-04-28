@@ -52,13 +52,16 @@
     </columns>
     <modals>
         <group name="new-supplier" title="new-supplier" icon="fas fa-user-plus">
-            <column name="newsupplier" title="supplier" numcolumns="12" order="100">
-                <widget type="autocomplete" fieldname="new_codproveedor" required="true">
+            <column name="supplier" numcolumns="12" order="100">
+                <widget type="autocomplete" fieldname="newcodproveedor" required="true">
                     <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre" />
                 </widget>
             </column>
-            <column name="newsupplier-reference" title="supplier-reference" numcolumns="6" order="110">
-                <widget type="text" fieldname="new_refproveedor" />
+            <column name="supplier-reference" description="optional" numcolumns="12" order="110">
+                <widget type="text" fieldname="newrefproveedor" />
+            </column>
+            <column name="price" description="optional" numcolumns="12" order="120">
+                <widget type="money" fieldname="newprecio" />
             </column>
         </group>
     </modals>

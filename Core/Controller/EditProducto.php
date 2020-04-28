@@ -77,6 +77,8 @@ class EditProducto extends EditController
         $this->addListView($viewName, 'ProductoProveedor', 'suppliers', 'fas fa-users');
         $this->views[$viewName]->addOrderBy(['actualizado'], 'update-time', 2);
         $this->views[$viewName]->addOrderBy(['neto'], 'net');
+
+        /// change new button settings
         $this->setSettings($viewName, 'modalInsert', 'new-supplier');
     }
 
@@ -90,8 +92,7 @@ class EditProducto extends EditController
     {
         switch ($action) {
             case 'new-supplier':
-                $this->newSupplier();
-                return true;
+                return $this->newSupplierAction();
         }
 
         return parent::execPreviousAction($action);
@@ -189,43 +190,43 @@ class EditProducto extends EditController
     }
 
     /**
-     * Create a new supplier for pruduct from modal form data.
+     * Create a new supplier for this pruduct from the modal insert.
      *
-     * @return boolean
+     * @return bool
      */
-    protected function newSupplier()
+    protected function newSupplierAction()
     {
         $code = $this->request->get('code');
         $data = $this->request->request->all();
-        if (empty($code) || empty($data['new_codproveedor'])) {
+
+        $product = new Producto();
+        if (empty($code) || false === $product->loadFromCode($code) || empty($data['newcodproveedor'])) {
             return true;
         }
 
         /// check for duplicate record
+        $productSupplier = new ProductoProveedor();
         $where = [
             new DataBaseWhere('idproducto', $code),
-            new DataBaseWhere('codproveedor', $data['new_codproveedor'])
+            new DataBaseWhere('codproveedor', $data['newcodproveedor'])
         ];
-
-        $productSupplier = new ProductoProveedor();
         if ($productSupplier->loadFromCode('', $where)) {
             $this->toolBox()->i18nLog()->error('duplicate-record');
             return true;
         }
 
-        /// search product data
-        $product = new Producto();
-        $product->loadFromCode($code);
-
         /// save data
-        $productSupplier->idproducto = $code;
+        $productSupplier->codproveedor = $data['newcodproveedor'];
+        $productSupplier->idproducto = $product->primaryColumnValue();
+        $productSupplier->precio = (float) $data['newprecio'];
         $productSupplier->referencia = $product->referencia;
-        $productSupplier->codproveedor = $data['new_codproveedor'];
-        $productSupplier->refproveedor = $data['new_refproveedor'];
+        $productSupplier->refproveedor = $data['newrefproveedor'];
         if ($productSupplier->save()) {
             $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            return true;
         }
 
+        $this->toolBox()->i18nLog()->error('record-save-error');
         return true;
     }
 }
