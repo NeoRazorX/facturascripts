@@ -25,14 +25,14 @@
   },
   "homepage": "https://facturascripts.com",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.13.0",
-    "bootbox": "^5.4.0",
-    "bootstrap": "^4.4.1",
-    "chart.js": "^2.9.3",
+    "@fortawesome/fontawesome-free": "^5.x",
+    "bootbox": "^5.x",
+    "bootstrap": "^4.x",
+    "chart.js": "^2.x",
     "handsontable": "^6.x",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jquery-ui-dist": "^1.12.x",
-    "pace-js": "^1.0.2",
-    "popper.js": "^1.16.1"
+    "pace-js": "^1.x",
+    "popper.js": "^1.x"
   }
 }
