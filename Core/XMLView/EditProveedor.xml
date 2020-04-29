@@ -111,8 +111,8 @@
     </columns>
     <rows>
         <row type="statistics">
-            <datalabel icon="fas fa-copy" label="delivery-notes-button" function="calcSupplierDeliveryNotes" />
-            <datalabel icon="fas fa-money-bill-alt" label="pending-invoices-button" function="calcSupplierInvoicePending" />
+            <datalabel icon="fas fa-copy" label="delivery-notes-button" function="getDeliveryNotesRisk" />
+            <datalabel icon="fas fa-money-bill-alt" label="pending-invoices-button" function="getInvoicesRisk" />
         </row>
     </rows>
 </view>

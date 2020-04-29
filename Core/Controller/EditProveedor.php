@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
+use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
-use FacturaScripts\Dinamic\Model\TotalModel;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -39,15 +39,11 @@ class EditProveedor extends ComercialContactController
      *
      * @return string
      */
-    public function calcSupplierDeliveryNotes()
+    public function getDeliveryNotesRisk()
     {
-        $where = [
-            new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor')),
-            new DataBaseWhere('editable', true)
-        ];
-
-        $totalModel = TotalModel::all('albaranesprov', $where, ['total' => 'SUM(total)'], '')[0];
-        return $this->toolBox()->coins()->format($totalModel->totals['total'], 2);
+        $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $total = SupplierRiskTools::getDeliveryNotesRisk($codproveedor);
+        return $this->toolBox()->coins()->format($total);
     }
 
     /**
@@ -55,15 +51,11 @@ class EditProveedor extends ComercialContactController
      *
      * @return string
      */
-    public function calcSupplierInvoicePending()
+    public function getInvoicesRisk()
     {
-        $where = [
-            new DataBaseWhere('codproveedor', $this->getViewModelValue('EditProveedor', 'codproveedor')),
-            new DataBaseWhere('pagada', false)
-        ];
-
-        $totalModel = TotalModel::all('facturasprov', $where, ['total' => 'SUM(total)'], '')[0];
-        return $this->toolBox()->coins()->format($totalModel->totals['total'], 2);
+        $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $total = SupplierRiskTools::getInvoicesRisk($codproveedor);
+        return $this->toolBox()->coins()->format($total);
     }
 
     /**
@@ -91,7 +83,30 @@ class EditProveedor extends ComercialContactController
     }
 
     /**
-     * 
+     *
+     * @param string $viewName
+     * @param string $model
+     * @param string $label
+     */
+    protected function createDocumentView($viewName, $model, $label)
+    {
+        $this->createSupplierListView($viewName, $model, $label);
+        $this->addButtonGroupDocument($viewName);
+        $this->addButtonApproveDocument($viewName);
+    }
+
+    /**
+     *
+     * @param string $viewName
+     */
+    protected function createInvoiceView($viewName)
+    {
+        $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices');
+        $this->addButtonLockInvoice($viewName);
+    }
+
+    /**
+     *
      * @param string $viewName
      */
     protected function createProductView(string $viewName = 'ListProductoProveedor')
@@ -122,15 +137,15 @@ class EditProveedor extends ComercialContactController
         $this->createEmailsView();
 
         $this->createProductView();
-        $this->createSupplierListView('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
-        $this->createSupplierListView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
-        $this->createSupplierListView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
-        $this->createSupplierListView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
+        $this->createInvoiceView('ListFacturaProveedor');
+        $this->createDocumentView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
+        $this->createDocumentView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
+        $this->createDocumentView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
         $this->createReceiptView('ListReciboProveedor', 'ReciboProveedor');
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function editAction()
@@ -145,7 +160,7 @@ class EditProveedor extends ComercialContactController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function insertAction()

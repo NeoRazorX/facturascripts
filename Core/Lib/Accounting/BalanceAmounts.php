@@ -56,19 +56,25 @@ class BalanceAmounts extends AccountingBase
         $this->dateTo = $dateTo;
         $level = (int) $params['level'] ?? 0;
 
-        $results = ($level) > 0 ? $this->getDataGrouped($level, $params) : $this->getData($params);
+        $results = $level > 0 ? $this->getDataGrouped($level, $params) : $this->getData($params);
         if (empty($results)) {
             return [];
         }
 
+        /// we need this multidimensial array for printing support
+        $totals = [['debe' => 0.00, 'haber' => 0.00, 'saldo' => 0.00]];
+
         $balance = [];
         foreach ($results as $line) {
-            $balance[] = $this->processLine($line);
+            $balance[] = $this->processLine($line, $totals);
         }
 
+        $totals[0]['debe'] = $this->toolBox()->coins()->format($totals[0]['debe'], FS_NF0, '');
+        $totals[0]['haber'] = $this->toolBox()->coins()->format($totals[0]['haber'], FS_NF0, '');
+        $totals[0]['saldo'] = $this->toolBox()->coins()->format($totals[0]['saldo'], FS_NF0, '');
+
         /// every page is a table
-        $pages = [$balance];
-        return $pages;
+        return [$balance, $totals];
     }
 
     /**
@@ -149,7 +155,7 @@ class BalanceAmounts extends AccountingBase
 
         $subaccountFrom = $params['subaccount-from'] ?? '';
         $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
-        if (!empty($subaccountFrom) || (!empty($subaccountTo))) {
+        if (!empty($subaccountFrom) || !empty($subaccountTo)) {
             $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom) . ' AND ' . $this->dataBase->var2str($subaccountTo);
         }
 
@@ -158,21 +164,29 @@ class BalanceAmounts extends AccountingBase
 
     /**
      * Process the line data to use the appropiate formats.
+     * Accumulate the line in the totals.
      *
      * @param array $line
+     * @param array $totals
      *
      * @return array
      */
-    private function processLine($line)
+    private function processLine(&$line, &$totals)
     {
-        $saldo = (float) $line['debe'] - (float) $line['haber'];
+        $debe = (float) $line['debe'];
+        $haber = (float) $line['haber'];
+        $saldo = $debe - $haber;
+
+        $totals[0]['debe'] += $debe;
+        $totals[0]['haber'] += $haber;
+        $totals[0]['saldo'] += $saldo;
 
         return [
             'cuenta' => $line['codsubcuenta'],
             'descripcion' => $line['descripcion'],
-            'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),
-            'haber' => $this->toolBox()->coins()->format($line['haber'], FS_NF0, ''),
-            'saldo' => $this->toolBox()->coins()->format($saldo, FS_NF0, ''),
+            'debe' => $this->toolBox()->coins()->format($debe, FS_NF0, ''),
+            'haber' => $this->toolBox()->coins()->format($haber, FS_NF0, ''),
+            'saldo' => $this->toolBox()->coins()->format($saldo, FS_NF0, '')
         ];
     }
 }

@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
@@ -32,9 +33,11 @@ use FacturaScripts\Dinamic\Model\Proveedor;
 abstract class ComercialContactController extends EditController
 {
 
+    use ListBusinessActionTrait;
+
     /**
      * Set custom configuration when load main data
-     * 
+     *
      * @param string $viewName
      */
     abstract protected function setCustomWidgetValues($viewName);
@@ -124,6 +127,9 @@ abstract class ComercialContactController extends EditController
         /// search columns
         $this->views[$viewName]->searchFields[] = 'observaciones';
 
+        /// add pay button
+        $this->addButtonReceiptPay($viewName);
+
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
@@ -198,6 +204,35 @@ abstract class ComercialContactController extends EditController
     }
 
     /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'approve-document':
+                return $this->approveDocumentAction();
+
+            case 'approve-document-same-date':
+                BusinessDocumentGenerator::setSameDate(true);
+                return $this->approveDocumentAction();
+
+            case 'group-document':
+                return $this->groupDocumentAction();
+
+            case 'lock-invoice':
+                return $this->lockInvoiceAction();
+
+            case 'paid':
+                return $this->paidAction();
+        }
+
+        return parent::execPreviousAction($action);
+    }
+
+    /**
      * Customer special fields
      *
      * @return array
@@ -224,6 +259,7 @@ abstract class ComercialContactController extends EditController
             'numtitle' => 'numsupplier'
         ];
     }
+
 
     /**
      * Load view data
@@ -255,7 +291,7 @@ abstract class ComercialContactController extends EditController
     }
 
     /**
-     * 
+     *
      * @param Cliente|Proveedor $subject
      */
     protected function updateContact($subject)

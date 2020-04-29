@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
+use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
-use FacturaScripts\Dinamic\Model\TotalModel;
 
 /**
  * Controller to edit a single item from the Cliente model
@@ -35,35 +35,27 @@ class EditCliente extends ComercialContactController
 {
 
     /**
-     * Returns the sum of the customer's total delivery notes.
+     * Returns the customer's risk on pending delivery notes.
      *
      * @return string
      */
-    public function calcCustomerDeliveryNotes()
+    public function getDeliveryNotesRisk()
     {
-        $where = [
-            new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente')),
-            new DataBaseWhere('editable', true)
-        ];
-
-        $totalModel = TotalModel::all('albaranescli', $where, ['total' => 'SUM(total)'], '')[0];
-        return $this->toolBox()->coins()->format($totalModel->totals['total']);
+        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $total = CustomerRiskTools::getDeliveryNotesRisk($codcliente);
+        return $this->toolBox()->coins()->format($total);
     }
 
     /**
-     * Returns the sum of the customer's total outstanding invoices.
+     * Returns the customer's risk on unpaid invoices.
      *
      * @return string
      */
-    public function calcCustomerInvoicePending()
+    public function getInvoicesRisk()
     {
-        $where = [
-            new DataBaseWhere('codcliente', $this->getViewModelValue('EditCliente', 'codcliente')),
-            new DataBaseWhere('pagada', false)
-        ];
-
-        $totalModel = TotalModel::all('facturascli', $where, ['total' => 'SUM(total)'], '')[0];
-        return $this->toolBox()->coins()->format($totalModel->totals['total'], 2);
+        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $total = CustomerRiskTools::getInvoicesRisk($codcliente);
+        return $this->toolBox()->coins()->format($total);
     }
 
     /**
@@ -74,6 +66,18 @@ class EditCliente extends ComercialContactController
     public function getModelClassName()
     {
         return 'Cliente';
+    }
+
+    /**
+     * Returns the customer's risk on pending orders.
+     *
+     * @return string
+     */
+    public function getOrdersRisk()
+    {
+        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $total = CustomerRiskTools::getOrdersRisk($codcliente);
+        return $this->toolBox()->coins()->format($total);
     }
 
     /**
@@ -91,6 +95,29 @@ class EditCliente extends ComercialContactController
     }
 
     /**
+     *
+     * @param string $viewName
+     * @param string $model
+     * @param string $label
+     */
+    protected function createDocumentView($viewName, $model, $label)
+    {
+        $this->createCustomerListView($viewName, $model, $label);
+        $this->addButtonGroupDocument($viewName);
+        $this->addButtonApproveDocument($viewName);
+    }
+
+    /**
+     *
+     * @param string $viewName
+     */
+    protected function createInvoiceView($viewName)
+    {
+        $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
+        $this->addButtonLockInvoice($viewName);
+    }
+
+    /**
      * Create views
      */
     protected function createViews()
@@ -101,16 +128,16 @@ class EditCliente extends ComercialContactController
         $this->createSubaccountsView();
         $this->createEmailsView();
 
-        $this->createCustomerListView('ListFacturaCliente', 'FacturaCliente', 'invoices');
+        $this->createInvoiceView('ListFacturaCliente');
         $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente');
-        $this->createCustomerListView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
-        $this->createCustomerListView('ListPedidoCliente', 'PedidoCliente', 'orders');
-        $this->createCustomerListView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+        $this->createDocumentView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
+        $this->createDocumentView('ListPedidoCliente', 'PedidoCliente', 'orders');
+        $this->createDocumentView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
         $this->createReceiptView('ListReciboCliente', 'ReciboCliente');
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function editAction()
@@ -125,7 +152,7 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function insertAction()

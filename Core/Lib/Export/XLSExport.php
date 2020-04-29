@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -238,8 +238,20 @@ class XLSExport extends ExportBase
     protected function getModelHeaders($model): array
     {
         $headers = [];
-        foreach ($this->getModelFields($model) as $col) {
-            $headers[$col] = 'string';
+        $modelFields = $model->getModelFields();
+        foreach ($this->getModelFields($model) as $key) {
+            switch ($modelFields[$key]['type']) {
+                case 'int':
+                    $headers[$key] = 'integer';
+                    break;
+
+                case 'double':
+                    $headers[$key] = 'price';
+                    break;
+
+                default:
+                    $headers[$key] = 'string';
+            }
         }
 
         return $headers;
