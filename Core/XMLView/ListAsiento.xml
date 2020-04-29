@@ -57,9 +57,9 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="info" fieldname="editable">1</option>
-            <option color="warning" fieldname="operacion">notnull:</option>
-            <option color="success" fieldname="documento">neq:</option>
+            <option color="info" title="editable" fieldname="editable">1</option>
+            <option color="warning" title="special-accounting-entries" fieldname="operacion">notnull:</option>
+            <option color="success" title="document" fieldname="documento">neq:</option>
         </row>
     </rows>
     <modals>
