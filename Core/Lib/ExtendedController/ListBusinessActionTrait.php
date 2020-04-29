@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\Receipt;
+use FacturaScripts\Core\Model\Base\TransformerDocument;
 
 /**
  * Contains common utilities for grouping and collecting documents.
@@ -107,10 +107,10 @@ trait ListBusinessActionTrait
     /**
      * Approves selected documents.
      * 
-     * @param mixed            $codes
-     * @param BusinessDocument $model
-     * @param bool             $allowUpdate
-     * @param DataBase         $dataBase
+     * @param mixed               $codes
+     * @param TransformerDocument $model
+     * @param bool                $allowUpdate
+     * @param DataBase            $dataBase
      *
      * @return bool
      */
@@ -154,8 +154,8 @@ trait ListBusinessActionTrait
     /**
      * Group selected documents.
      * 
-     * @param mixed            $codes
-     * @param BusinessDocument $model
+     * @param mixed               $codes
+     * @param TransformerDocument $model
      *
      * @return bool
      */
@@ -175,10 +175,10 @@ trait ListBusinessActionTrait
     /**
      * Locks selected invoices.
      * 
-     * @param mixed            $codes
-     * @param BusinessDocument $model
-     * @param bool             $allowUpdate
-     * @param DataBase         $dataBase
+     * @param mixed               $codes
+     * @param TransformerDocument $model
+     * @param bool                $allowUpdate
+     * @param DataBase            $dataBase
      *
      * @return bool
      */
