@@ -72,6 +72,8 @@
             <div class="col-6 col-md-3 mb-2">
                 {# -- Filters button -- #}
                 {{ _self.filterButton(currentView, i18n) }}
+                {# -- Legend button -- #}
+                {{ _self.legendButton(currentView, i18n) }}
             </div>
             <div class="col-6 col-md-2 text-right mb-2">
                 {# -- OrderBy button -- #}
@@ -298,6 +300,44 @@
                             <i class="{{ icon }} fa-fw" aria-hidden="true"></i> {{ orderby.label }}
                         </a>
                     {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro legendButton(currentView, i18n) %}
+    {% set legend = currentView.getRow('status').legend() %}
+    {% if legend %}
+        {% set viewName = currentView.getViewName() %}
+        <div class="btn-group">
+            <button type="button" class="btn btn-light" data-toggle="modal" data-target="#statuslegend{{ viewName }}">
+                <i class="fas fa-info fa-fw" aria-hidden="true"></i> {{ i18n.trans('legend') }}
+            </button>
+        </div>
+        <div class="modal" id="statuslegend{{ viewName }}" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-info-circle fa-fw"></i> {{ i18n.trans('legend') }}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                {{ legend | raw }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            {{ i18n.trans('accept') }}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
