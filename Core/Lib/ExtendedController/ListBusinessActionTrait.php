@@ -19,7 +19,8 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\Receipt;
 
 /**
  * Contains common utilities for grouping and collecting documents.
@@ -106,10 +107,10 @@ trait ListBusinessActionTrait
     /**
      * Approves selected documents.
      * 
-     * @param mixed      $codes
-     * @param ModelClass $model
-     * @param bool       $allowUpdate
-     * @param DataBase   $dataBase
+     * @param mixed            $codes
+     * @param BusinessDocument $model
+     * @param bool             $allowUpdate
+     * @param DataBase         $dataBase
      *
      * @return bool
      */
@@ -153,8 +154,8 @@ trait ListBusinessActionTrait
     /**
      * Group selected documents.
      * 
-     * @param mixed      $codes
-     * @param ModelClass $model
+     * @param mixed            $codes
+     * @param BusinessDocument $model
      *
      * @return bool
      */
@@ -174,10 +175,10 @@ trait ListBusinessActionTrait
     /**
      * Locks selected invoices.
      * 
-     * @param mixed      $codes
-     * @param ModelClass $model
-     * @param bool       $allowUpdate
-     * @param DataBase   $dataBase
+     * @param mixed            $codes
+     * @param BusinessDocument $model
+     * @param bool             $allowUpdate
+     * @param DataBase         $dataBase
      *
      * @return bool
      */
@@ -221,11 +222,11 @@ trait ListBusinessActionTrait
     /**
      * Sets selected receipts as paid.
      * 
-     * @param mixed      $codes
-     * @param ModelClass $model
-     * @param bool       $allowUpdate
-     * @param DataBase   $dataBase
-     * @param string     $nick
+     * @param mixed    $codes
+     * @param Receipt  $model
+     * @param bool     $allowUpdate
+     * @param DataBase $dataBase
+     * @param string   $nick
      *
      * @return bool
      */
