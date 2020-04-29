@@ -75,7 +75,7 @@ class VisualItem
     }
 
     /**
-     * 
+     *
      * @return int
      */
     public static function getLevel()
@@ -84,7 +84,7 @@ class VisualItem
     }
 
     /**
-     * 
+     *
      * @param int $new
      */
     public static function setLevel($new)
@@ -135,6 +135,19 @@ class VisualItem
      */
     public function getColorFromOption($option, $value, $prefix): string
     {
+        return $this->applyOperatorFromOption($option, $value)
+            ? $this->colorToClass($option['color'], $prefix)
+            : '';
+    }
+
+    /**
+     *
+     * @param string[] $option
+     * @param mixed    $value
+     * @return boolean
+     */
+    protected function applyOperatorFromOption($option, $value)
+    {
         $text = $option['text'] ?? '';
 
         $applyOperator = '';
@@ -147,48 +160,40 @@ class VisualItem
         }
 
         $matchValue = substr($text, strlen($applyOperator));
-        $apply = $matchValue == $value;
+        $apply = ($matchValue == $value);
 
         switch ($applyOperator) {
             case '>':
             case 'gt:':
-                $apply = (float) $value > (float) $matchValue;
-                break;
+                return (float) $value > (float) $matchValue;
 
             case 'gte:':
-                $apply = (float) $value >= (float) $matchValue;
-                break;
+                return (float) $value >= (float) $matchValue;
 
             case '<':
             case 'lt:':
-                $apply = (float) $value < (float) $matchValue;
-                break;
+                return (float) $value < (float) $matchValue;
 
             case 'lte:':
-                $apply = (float) $value <= (float) $matchValue;
-                break;
+                return (float) $value <= (float) $matchValue;
 
             case '!':
             case 'neq:':
-                $apply = $value != $matchValue;
-                break;
+                return $value != $matchValue;
 
             case 'like:':
-                $apply = false !== stripos($value, $matchValue);
-                break;
+                return false !== stripos($value, $matchValue);
 
             case 'null:':
-                $apply = null === $value;
-                break;
+                return null === $value;
 
             case 'notnull:':
-                $apply = null !== $value;
-                break;
+                return null !== $value;
         }
 
-        return $apply ? $this->colorToClass($option['color'], $prefix) : '';
+        return $apply;
     }
-
+    
     /**
      * Returns equivalent css class to $class. To extend in plugins.
      *
