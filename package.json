@@ -1,6 +1,6 @@
 {
   "name": "facturascripts",
-  "description": "Open source ERP software. Built on PHP, symfony componentes and bootstrap 4. Easy and powerful.",
+  "description": "Open source ERP software. Built on modern PHP and bootstrap 4. Easy and powerful.",
   "main": "index.php",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

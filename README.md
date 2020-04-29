@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/NeoRazorX/facturascripts.svg?branch=master)](https://travis-ci.org/NeoRazorX/facturascripts)
 
 # FacturaScripts
-Open source ERP software. Built on PHP, symfony componentes and bootstrap 4. Easy and powerful.
+Open source ERP software. Built on modern PHP and bootstrap 4. Easy and powerful.
 
 ## Install
 Clone and deploy with composer and npm (composer is for PHP dependencies, and npm for JavaScript and CSS):
