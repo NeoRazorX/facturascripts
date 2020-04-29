@@ -113,17 +113,17 @@
                 </widget>
             </column>
         </group>
-        <group name="other" title="other-data" numcolumns="12">
-            <column name="creation-date" numcolumns="3" order="100">
-                <widget type="date" fieldname="fechaalta" icon="fas fa-calendar-alt" readonly="true" />
-            </column>
-            <column name="date-of-suspension" numcolumns="3" order="110">
-                <widget type="date" fieldname="fechabaja" icon="fas fa-calendar-alt" />
+        <group name="notes" numcolumns="9">
+            <column name="observations" order="100">
+                <widget type="textarea" fieldname="observaciones" />
             </column>
         </group>
-        <group name="notes">
-            <column name="observations" order="100" numcolumns="12">
-                <widget type="textarea" fieldname="observaciones" />
+        <group name="other" numcolumns="3">
+            <column name="creation-date" numcolumns="12" order="100">
+                <widget type="date" fieldname="fechaalta" icon="fas fa-calendar-alt" readonly="true" />
+            </column>
+            <column name="date-of-suspension" numcolumns="12" order="110">
+                <widget type="date" fieldname="fechabaja" icon="fas fa-calendar-alt" />
             </column>
         </group>
     </columns>
