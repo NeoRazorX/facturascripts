@@ -175,8 +175,9 @@ class EditSettings extends PanelController
                 }
             }
 
-            /// disable delete
+            /// disable buttons
             $this->setSettings($name, 'btnDelete', false);
+            $this->setSettings($name, 'btnNew', false);
         }
     }
 
