@@ -27,12 +27,13 @@ use FacturaScripts\Dinamic\Model\Variante;
  * Description of CostPriceTools
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Raul Jimenez <raljopa@gmail.com>
  */
 class CostPriceTools
 {
 
     /**
-     * 
+     *
      * @param Variante $variant
      */
     public static function update($variant)
@@ -50,7 +51,7 @@ class CostPriceTools
     }
 
     /**
-     * 
+     *
      * @param Variante $variant
      */
     protected static function updateAveragePrice($variant)
@@ -67,7 +68,7 @@ class CostPriceTools
     }
 
     /**
-     * 
+     *
      * @param Variante $variant
      */
     protected static function updateLastPrice($variant)
@@ -82,11 +83,67 @@ class CostPriceTools
     }
 
     /**
-     * 
+     *
      * @return ToolBox
      */
     protected static function toolBox()
     {
         return new ToolBox();
+    }
+
+    /**
+     * Return de effective cost of a referencia
+     *
+     * @param string $referencia
+     * @return double
+     */
+    public function effectiveCost($variant)
+    {
+        $init = 0;
+        $albaran = new \FacturaScripts\Dinamic\Model\AlbaranProveedor();
+        $factura = new \FacturaScripts\Dinamic\Model\FacturaProveedor();
+
+        $datos = [];
+        $where = [new DataBaseWhere('referencia', $variant->referencia), new DataBaseWhere('actualizastock', '1')];
+        $order = ['idlinea' => 'DESC'];
+        $totalCost = 0;
+        $buyedUnits = 0;
+        while ($buyedUnits < $variant->stockfis) {
+            $lineasAlbaran = new \FacturaScripts\Dinamic\Model\lineaAlbaranProveedor();
+            $lineasFactura = new \FacturaScripts\Dinamic\Model\lineaFacturaProveedor();
+            $lineasAlbaran = $lineasAlbaran->all($where, $order, $init, FS_ITEM_LIMIT);
+            $lineasFactura = $lineasFactura->all($where, $order, $init, FS_ITEM_LIMIT);
+
+            foreach ($lineasAlbaran as $linea) {
+                $albaran->loadFromCode($linea->idalbaran);
+                $datos[] = ['fecha' => $albaran->fecha, 'cantidad' => $linea->cantidad, 'pvpunitario' => $linea->pvpunitario];
+            }
+
+            foreach ($lineasFactura as $linea) {
+                $factura->loadFromcode($linea->idfactura);
+                $datos[] = ['fecha' => $factura->fecha, 'cantidad' => $linea->cantidad, 'pvpunitario' => $linea->pvpunitario];
+            }
+
+            foreach ($datos as $clave => $valor) {
+                $fecha[$clave] = $valor['fecha'];
+                $cantidad[$clave] = $valor['cantidad'];
+                $pvpunitario[$clave] = $valor['pvpunitario'];
+            }
+            array_multisort($fecha, SORT_DESC, $cantidad, SORT_ASC, $pvpunitario, SORT_ASC, $datos);
+
+            foreach ($datos as $dato) {
+                if ($buyedUnits < $variant->stockfis) {
+                    if ($buyedUnits + $dato['cantidad'] <= $variant->stockfis) {
+                        $totalCost += $dato['pvpunitario'] * $dato['cantidad'];
+                        $buyedUnits += $dato['cantidad'];
+                    } else {
+                        $totalCost += $dato['pvpunitario'] * ( $variant->stockfis - $buyedUnits);
+                        $buyedUnits += ( $variant->stockfis - $buyedUnits);
+                    }
+                }
+            }
+            $init += FS_ITEM_LIMIT;
+        }
+        return $totalCost / $buyedUnits;
     }
 }
