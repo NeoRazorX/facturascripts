@@ -92,7 +92,7 @@
                                     {% endfor %}
                                 </div>
                             {% endblock %}
-                            {% if currentView.model.editable == false %}
+                            {% if currentView.model.editable is same as(false) %}
                                 <div class="row">
                                     <script type="text/javascript">
                                         documentReadOnly = true;
