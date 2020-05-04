@@ -71,9 +71,9 @@ class Wizard extends Controller
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
-        $data['showonmenu'] = false;
         $data['title'] = 'wizard';
         $data['icon'] = 'fas fa-magic';
+        $data['showonmenu'] = false;
         return $data;
     }
 
@@ -454,7 +454,7 @@ class Wizard extends Controller
         $this->saveStep4();
     }
 
-    private function saveStep4()
+    protected function saveStep4()
     {
         /// change user homepage
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : 'ListFacturaCliente';
