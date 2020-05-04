@@ -111,7 +111,8 @@
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
                             {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-toggle="pill" href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
+                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-toggle="pill" href="#{{ viewName }}"
+                               role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
                                 {% if view.count >= 1 and viewName != firstView.getViewName() %}
                                     <span class='badge badge-secondary float-right'>{{ view.count }}</span>
                                 {% endif %}
@@ -130,7 +131,8 @@
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
                             {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab2" data-toggle="pill" href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
+                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab2" data-toggle="pill" href="#{{ viewName }}"
+                               role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
                                 {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
                                 <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i>
                             </a>
@@ -183,15 +185,17 @@
         </button>
         <div class="dropdown-menu">
             {% for key, option in fsc.exportManager.options() %}
-                <a href="{{ firstView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
-                    <i class="{{ option.icon }} fa-fw" aria-hidden="true"></i>
-                    {{ i18n.trans(option.description) }}
-                </a>
+                {% if key != fsc.exportManager.defaultOption() %}
+                    <a href="{{ firstView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
+                        <i class="{{ option.icon }} fa-fw" aria-hidden="true"></i>
+                        {{ i18n.trans(option.description) }}
+                    </a>
+                {% endif %}
             {% endfor %}
             {% if fsc.exportManager.tools is not empty %}
                 <div class="dropdown-divider"></div>
                 {% for key, tool in fsc.exportManager.tools() %}
-                    <a href="{{ tool.link }}" class="dropdown-item">
+                    <a href="{{ tool.link }}" target="_blank" class="dropdown-item">
                         <i class="{{ tool.icon }} fa-fw" aria-hidden="true"></i>
                         {{ i18n.trans(tool.description) }}
                     </a>
