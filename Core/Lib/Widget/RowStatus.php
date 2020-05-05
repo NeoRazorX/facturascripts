@@ -69,4 +69,27 @@ class RowStatus extends VisualItem
 
         return '';
     }
+
+    /**
+     *
+     * @param object $model
+     * @return string
+     */
+    public function trTitle($model)
+    {
+        foreach ($this->options as $opt) {
+            $title = $opt['title'] ?? '';
+            if (empty($title)) {
+                continue;
+            }
+
+            $fieldname = isset($opt['fieldname']) ? $opt['fieldname'] : $this->fieldname;
+            $value = isset($model->{$fieldname}) ? $model->{$fieldname} : null;
+            if ($this->applyOperatorFromOption($opt, $value)) {
+                return static::$i18n->trans($title);
+            }
+        }
+
+        return '';
+    }
 }
