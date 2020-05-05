@@ -101,6 +101,27 @@ class DocumentStitcher extends Controller
         return $data;
     }
 
+    public function getRemainingDocs()
+    {
+        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $this->modelName;
+        $reference = $this->documents[0];
+        $list = [];
+
+        $model = new $modelClass();
+        $where = [
+            new DataBaseWhere('editable', true),
+            new DataBaseWhere($model->subjectColumn(), $reference->subjectColumnValue())
+        ];
+
+        foreach ($model->all($where) as $doc) {
+            if (!in_array($doc->primaryColumnValue(), $this->getCodes())) {
+                $list[] = $doc;
+            }
+        }
+
+        return $list;
+    }
+
     /**
      * Runs the controller's private logic.
      *
@@ -267,7 +288,14 @@ class DocumentStitcher extends Controller
         }
 
         $codes = $this->request->get('codes', '');
-        return \explode(',', $codes);
+        $codes = \explode(',', $codes);
+
+        $newcodes = $this->request->get('newcodes', []);
+        if (!empty($newcodes)) {
+            return \array_merge($codes, $newcodes);
+        }
+
+        return $codes;
     }
 
     /**
