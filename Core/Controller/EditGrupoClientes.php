@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -61,18 +61,20 @@ class EditGrupoClientes extends EditController
     protected function addCustomerAction()
     {
         $codes = $this->request->request->get('code', []);
-        if (!is_array($codes)) {
+        if (false === \is_array($codes)) {
             return;
         }
 
         $num = 0;
+        $cliente = new Cliente();
         foreach ($codes as $code) {
-            $cliente = new Cliente();
-            if ($cliente->loadFromCode($code)) {
-                $cliente->codgrupo = $this->request->query->get('code');
-                if ($cliente->save()) {
-                    $num++;
-                }
+            if (false === $cliente->loadFromCode($code)) {
+                return;
+            }
+
+            $cliente->codgrupo = $this->request->query->get('code');
+            if ($cliente->save()) {
+                $num++;
             }
         }
 
@@ -101,6 +103,7 @@ class EditGrupoClientes extends EditController
         $this->views[$viewName]->addOrderBy(['email'], 'email');
         $this->views[$viewName]->addOrderBy(['fechaalta'], 'creation-date');
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
+        $this->views[$viewName]->addOrderBy(['riesgoalcanzado'], 'current-risk');
         $this->views[$viewName]->searchFields = ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'];
 
         /// settings
@@ -137,14 +140,13 @@ class EditGrupoClientes extends EditController
         $this->createViewCommon($viewName);
 
         /// add action button
-        $newButton = [
+        $this->addButton($viewName, [
             'action' => 'remove-customer',
             'color' => 'danger',
             'confirm' => true,
             'icon' => 'fas fa-user-minus',
-            'label' => 'remove-from-list',
-        ];
-        $this->addButton($viewName, $newButton);
+            'label' => 'remove-from-list'
+        ]);
     }
 
     /**
@@ -157,13 +159,12 @@ class EditGrupoClientes extends EditController
         $this->createViewCommon($viewName);
 
         /// add action button
-        $newButton = [
+        $this->addButton($viewName, [
             'action' => 'add-customer',
             'color' => 'success',
             'icon' => 'fas fa-user-plus',
-            'label' => 'add',
-        ];
-        $this->addButton($viewName, $newButton);
+            'label' => 'add'
+        ]);
     }
 
     /**
@@ -217,18 +218,20 @@ class EditGrupoClientes extends EditController
     protected function removeCustomerAction()
     {
         $codes = $this->request->request->get('code', []);
-        if (!is_array($codes)) {
+        if (false === \is_array($codes)) {
             return;
         }
 
         $num = 0;
+        $cliente = new Cliente();
         foreach ($codes as $code) {
-            $cliente = new Cliente();
-            if ($cliente->loadFromCode($code)) {
-                $cliente->codgrupo = null;
-                if ($cliente->save()) {
-                    $num++;
-                }
+            if (false === $cliente->loadFromCode($code)) {
+                return;
+            }
+
+            $cliente->codgrupo = null;
+            if ($cliente->save()) {
+                $num++;
             }
         }
 

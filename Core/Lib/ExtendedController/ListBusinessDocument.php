@@ -168,22 +168,26 @@ abstract class ListBusinessDocument extends ListController
      */
     protected function execPreviousAction($action)
     {
+        $allowUpdate = $this->permissions->allowUpdate;
+        $codes = $this->request->request->get('code');
+        $model = $this->views[$this->active]->model;
+
         switch ($action) {
             case 'approve-document':
-                return $this->approveDocumentAction();
+                return $this->approveDocumentAction($codes, $model, $allowUpdate, $this->dataBase);
 
             case 'approve-document-same-date':
                 BusinessDocumentGenerator::setSameDate(true);
-                return $this->approveDocumentAction();
+                return $this->approveDocumentAction($codes, $model, $allowUpdate, $this->dataBase);
 
             case 'group-document':
-                return $this->groupDocumentAction();
+                return $this->groupDocumentAction($codes, $model);
 
             case 'lock-invoice':
-                return $this->lockInvoiceAction();
+                return $this->lockInvoiceAction($codes, $model, $allowUpdate, $this->dataBase);
 
-            case 'paid':
-                return $this->paidAction();
+            case 'pay-receipt':
+                return $this->payReceiptAction($codes, $model, $allowUpdate, $this->dataBase, $this->user->nick);
         }
 
         return parent::execPreviousAction($action);

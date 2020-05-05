@@ -109,9 +109,11 @@
                 </tr>
             </thead>
             <tbody>
+                {% set rowStatus = currentView.getRow('status') %}
                 {% for model in currentView.cursor %}
-                    {% set trClass = currentView.getRow('status').trClass(model) %}
-                    <tr class="clickableRow {{ trClass }}" data-href="{{ model.url() }}">
+                    {% set trClass = rowStatus.trClass(model) %}
+                    {% set trTitle = rowStatus.trTitle(model) %}
+                    <tr class="clickableRow {{ trClass }}" title="{{ trTitle }}" data-href="{{ model.url() }}">
                         {% if currentView.settings.checkBoxes %}
                             <td class="cancelClickable">
                                 <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">

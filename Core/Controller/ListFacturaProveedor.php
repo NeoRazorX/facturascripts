@@ -71,9 +71,6 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addOrderBy($viewName, ['importe'], 'amount');
         $this->addSearchFields($viewName, ['observaciones']);
 
-        /// buttons
-        $this->addButtonReceiptPay($viewName);
-
         /// filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
@@ -87,6 +84,9 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymentValues);
 
         $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');
+
+        /// buttons
+        $this->addButtonPayReceipt($viewName);
 
         /// settings
         $this->setSettings($viewName, 'btnNew', false);

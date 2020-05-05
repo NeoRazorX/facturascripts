@@ -55,13 +55,6 @@
             <widget type="date" fieldname="fecha" />
         </column>
     </columns>
-    <rows>
-        <row type="status">
-            <option color="info" fieldname="editable">1</option>
-            <option color="warning" fieldname="operacion">notnull:</option>
-            <option color="success" fieldname="documento">neq:</option>
-        </row>
-    </rows>
     <modals>
         <group name="renumber" title="renumber-accounting" icon="fas fa-sort-numeric-down">
             <column name="exercise">
@@ -71,4 +64,11 @@
             </column>
         </group>
     </modals>
+    <rows>
+        <row type="status">
+            <option color="secondary" title="special-accounting-entries" fieldname="operacion">notnull:</option>
+            <option color="warning" title="non-editable-accounting-entry" fieldname="editable">0</option>
+            <option color="info" title="invoice" fieldname="documento">neq:</option>
+        </row>
+    </rows>
 </view>

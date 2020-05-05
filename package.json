@@ -1,6 +1,6 @@
 {
   "name": "facturascripts",
-  "description": "Open source ERP software. Built on PHP, symfony componentes and bootstrap 4. Easy and powerful.",
+  "description": "Open source ERP software. Built on modern PHP and bootstrap 4. Easy and powerful.",
   "main": "index.php",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,14 +25,14 @@
   },
   "homepage": "https://facturascripts.com",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.13.0",
-    "bootbox": "^5.4.0",
-    "bootstrap": "^4.4.1",
-    "chart.js": "^2.9.3",
-    "handsontable": "^6.x",
-    "jquery": "^3.4.1",
-    "jquery-ui-dist": "^1.12.x",
-    "pace-js": "^1.0.2",
-    "popper.js": "^1.16.1"
+    "@fortawesome/fontawesome-free": "5.*",
+    "bootbox": "5.*",
+    "bootstrap": "4.*",
+    "chart.js": "2.*",
+    "handsontable": "6.*",
+    "jquery": "3.4.*",
+    "jquery-ui-dist": "1.12.*",
+    "pace-js": "1.*",
+    "popper.js": "1.*"
   }
 }

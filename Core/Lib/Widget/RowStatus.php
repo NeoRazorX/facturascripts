@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -64,6 +64,30 @@ class RowStatus extends VisualItem
             $rowColor = $this->getColorFromOption($opt, $value, $classPrefix);
             if (!empty($rowColor)) {
                 return $rowColor;
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     *
+     * @param object $model
+     *
+     * @return string
+     */
+    public function trTitle($model)
+    {
+        foreach ($this->options as $opt) {
+            $title = $opt['title'] ?? '';
+            if (empty($title)) {
+                continue;
+            }
+
+            $fieldname = isset($opt['fieldname']) ? $opt['fieldname'] : $this->fieldname;
+            $value = isset($model->{$fieldname}) ? $model->{$fieldname} : null;
+            if ($this->applyOperatorFromOption($opt, $value)) {
+                return static::$i18n->trans($title);
             }
         }
 

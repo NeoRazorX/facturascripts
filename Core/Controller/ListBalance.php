@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,26 +52,19 @@ class ListBalance extends ListController
      * @param string $viewName
      * @param string $viewTitle
      */
-    protected function addViewBalance($viewName, $viewTitle)
+    protected function addViewBalance(string $viewName, string $viewTitle)
     {
         $this->addView($viewName, 'Balance', $viewTitle);
-        $fields = [
-            'codbalance',
-            'naturaleza',
-            'descripcion1',
-            'descripcion2',
-            'descripcion3',
-            'descripcion4',
-            'descripcion4ba'
-        ];
-        $this->addSearchFields($viewName, $fields);
-
         $this->addOrderBy($viewName, ['codbalance'], 'code');
         $this->addOrderBy($viewName, ['descripcion1'], 'description-1');
         $this->addOrderBy($viewName, ['descripcion2'], 'description-2');
         $this->addOrderBy($viewName, ['descripcion3'], 'description-3');
         $this->addOrderBy($viewName, ['descripcion4'], 'description-4');
         $this->addOrderBy($viewName, ['descripcion4ba'], 'description-4ba');
+        $this->addSearchFields($viewName, [
+            'codbalance', 'naturaleza', 'descripcion1', 'descripcion2',
+            'descripcion3', 'descripcion4', 'descripcion4ba'
+        ]);
     }
 
     /**

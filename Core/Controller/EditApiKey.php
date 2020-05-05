@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -174,18 +174,20 @@ class EditApiKey extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $mainViewName = $this->getMainViewName();
         switch ($viewName) {
             case 'EditApiAccess':
-                $idApiKey = $this->getViewModelValue($this->getMainViewName(), 'id');
+                $idApiKey = $this->getViewModelValue($mainViewName, 'id');
                 $where = [new DataBaseWhere('idapikey', $idApiKey)];
                 $view->loadData('', $where, ['resource' => 'ASC']);
-                if (!$this->views[$this->active]->model->exists()) {
-                    $this->views[$this->active]->model->nick = $this->user->nick;
-                }
                 break;
 
-            default:
+            case $mainViewName:
                 parent::loadData($viewName, $view);
+                if (false === $view->model->exists()) {
+                    $view->model->nick = $this->user->nick;
+                }
+                break;
         }
     }
 }

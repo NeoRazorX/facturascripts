@@ -89,10 +89,10 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="danger" fieldname="bloqueado">1</option>
-            <option color="info" fieldname="nostock">1</option>
-            <option color="warning" fieldname="stockfis">lte:0</option>
-            <option color="success" fieldname="stockfis">gt:0</option>
+            <option color="danger" title="locked" fieldname="bloqueado">1</option>
+            <option color="info" title="no-stock" fieldname="nostock">1</option>
+            <option color="warning" title="out-of-stock" fieldname="stockfis">lte:0</option>
+            <option color="success" title="in-stock" fieldname="stockfis">gt:0</option>
         </row>
     </rows>
 </view>
