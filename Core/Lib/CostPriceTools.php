@@ -20,14 +20,16 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor;
+use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
 use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
  * Description of CostPriceTools
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- * @author Raul Jimenez <raljopa@gmail.com>
+ * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * @author Raul Jimenez         <raljopa@gmail.com>
  */
 class CostPriceTools
 {
@@ -40,6 +42,10 @@ class CostPriceTools
     {
         $policy = static::toolBox()->appSettings()->get('default', 'costpricepolicy');
         switch ($policy) {
+            case 'actual-price':
+                static::updateActualPrice($variant);
+                break;
+
             case 'average-price':
                 static::updateAveragePrice($variant);
                 break;
@@ -51,6 +57,69 @@ class CostPriceTools
     }
 
     /**
+     * Returns the actual cost of the product stock.
+     *
+     * @param Variante $variant
+     */
+    protected static function updateActualPrice($variant)
+    {
+        if ($variant->stockfis < 1) {
+            return static::updateLastPrice($variant);
+        }
+
+        $rows = [];
+        $where = [
+            new DataBaseWhere('referencia', $variant->referencia),
+            new DataBaseWhere('actualizastock', '1')
+        ];
+        $order = ['idlinea' => 'DESC'];
+
+        /// we collect the latest delivery notes for this product
+        $lineaAlbaran = new LineaAlbaranProveedor();
+        foreach ($lineaAlbaran->all($where, $order, 0, $variant->stockfis) as $line) {
+            $rows[] = [
+                'time' => \strtotime($line->getDocument()->fecha),
+                'quantity' => $line->cantidad,
+                'cost' => $line->pvptotal
+            ];
+        }
+
+        /// we collect the latest invoices for this product
+        $lineaFactura = new LineaFacturaProveedor();
+        foreach ($lineaFactura->all($where, $order, 0, $variant->stockfis) as $line) {
+            $rows[] = [
+                'time' => \strtotime($line->getDocument()->fecha),
+                'quantity' => $line->cantidad,
+                'cost' => $line->pvptotal
+            ];
+        }
+
+        /// now we sort by date
+        \usort($rows, function($item1, $item2) {
+            if ($item1['time'] > $item2['time']) {
+                return -1;
+            } elseif ($item1['time'] < $item2['time']) {
+                return 1;
+            }
+
+            return 0;
+        });
+
+        $buyedUnits = 0.0;
+        $totalCost = 0.0;
+        foreach ($rows as $item) {
+            if ($buyedUnits < $variant->stockfis) {
+                $totalCost += $item['cost'];
+                $buyedUnits += $item['quantity'];
+            }
+        }
+
+        $variant->coste = empty($buyedUnits) ? 0.0 : $totalCost / $buyedUnits;
+        $variant->save();
+    }
+
+    /**
+     * Returns the average price to buy this product.
      *
      * @param Variante $variant
      */
@@ -68,6 +137,7 @@ class CostPriceTools
     }
 
     /**
+     * Returns the last price to buy this product.
      *
      * @param Variante $variant
      */
@@ -89,61 +159,5 @@ class CostPriceTools
     protected static function toolBox()
     {
         return new ToolBox();
-    }
-
-    /**
-     * Return de effective cost of a referencia
-     *
-     * @param string $referencia
-     * @return double
-     */
-    public function effectiveCost($variant)
-    {
-        $init = 0;
-        $albaran = new \FacturaScripts\Dinamic\Model\AlbaranProveedor();
-        $factura = new \FacturaScripts\Dinamic\Model\FacturaProveedor();
-
-        $datos = [];
-        $where = [new DataBaseWhere('referencia', $variant->referencia), new DataBaseWhere('actualizastock', '1')];
-        $order = ['idlinea' => 'DESC'];
-        $totalCost = 0;
-        $buyedUnits = 0;
-        while ($buyedUnits < $variant->stockfis) {
-            $lineasAlbaran = new \FacturaScripts\Dinamic\Model\lineaAlbaranProveedor();
-            $lineasFactura = new \FacturaScripts\Dinamic\Model\lineaFacturaProveedor();
-            $lineasAlbaran = $lineasAlbaran->all($where, $order, $init, FS_ITEM_LIMIT);
-            $lineasFactura = $lineasFactura->all($where, $order, $init, FS_ITEM_LIMIT);
-
-            foreach ($lineasAlbaran as $linea) {
-                $albaran->loadFromCode($linea->idalbaran);
-                $datos[] = ['fecha' => $albaran->fecha, 'cantidad' => $linea->cantidad, 'pvpunitario' => $linea->pvpunitario];
-            }
-
-            foreach ($lineasFactura as $linea) {
-                $factura->loadFromcode($linea->idfactura);
-                $datos[] = ['fecha' => $factura->fecha, 'cantidad' => $linea->cantidad, 'pvpunitario' => $linea->pvpunitario];
-            }
-
-            foreach ($datos as $clave => $valor) {
-                $fecha[$clave] = $valor['fecha'];
-                $cantidad[$clave] = $valor['cantidad'];
-                $pvpunitario[$clave] = $valor['pvpunitario'];
-            }
-            array_multisort($fecha, SORT_DESC, $cantidad, SORT_ASC, $pvpunitario, SORT_ASC, $datos);
-
-            foreach ($datos as $dato) {
-                if ($buyedUnits < $variant->stockfis) {
-                    if ($buyedUnits + $dato['cantidad'] <= $variant->stockfis) {
-                        $totalCost += $dato['pvpunitario'] * $dato['cantidad'];
-                        $buyedUnits += $dato['cantidad'];
-                    } else {
-                        $totalCost += $dato['pvpunitario'] * ( $variant->stockfis - $buyedUnits);
-                        $buyedUnits += ( $variant->stockfis - $buyedUnits);
-                    }
-                }
-            }
-            $init += FS_ITEM_LIMIT;
-        }
-        return $totalCost / $buyedUnits;
     }
 }
