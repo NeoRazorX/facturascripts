@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -121,8 +121,10 @@ class EditUser extends EditController
         if ($result && $this->views['EditUser']->model->nick === $this->user->nick) {
             $this->toolBox()->i18n()->setLang($this->views['EditUser']->model->langcode);
 
-            $expire = time() + \FS_COOKIES_EXPIRE;
-            $this->response->headers->setCookie(new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire));
+            $expire = \time() + \FS_COOKIES_EXPIRE;
+            $this->response->headers->setCookie(
+                new Cookie('fsLang', $this->views['EditUser']->model->langcode, $expire, \FS_ROUTE)
+            );
         }
 
         return $result;
@@ -233,8 +235,8 @@ class EditUser extends EditController
             }
 
             /// sorting
-            usort($langs, function ($objA, $objB) {
-                return strcmp($objA['title'], $objB['title']);
+            \usort($langs, function ($objA, $objB) {
+                return \strcmp($objA['title'], $objB['title']);
             });
 
             $columnLangCode->widget->setValuesFromArray($langs, false);
