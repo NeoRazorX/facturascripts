@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -58,11 +58,11 @@
         <column name="observations" order="190">
             <widget type="textarea" fieldname="observaciones" />
         </column>
-        <column name="risk" display="none" order="200">
-            <widget type="number" fieldname="riesgoalcanzado" />
+        <column name="current-risk" display="none" order="200">
+            <widget type="money" fieldname="riesgoalcanzado" />
         </column>
         <column name="max-risk" display="none" order="210">
-            <widget type="number" fieldname="riesgomax" />
+            <widget type="money" fieldname="riesgomax" />
         </column>
         <column name="subaccount" display="none" order="220">
             <widget type="text" fieldname="codsubcuenta" />
@@ -87,8 +87,8 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="danger" fieldname="debaja">1</option>
-            <option color="info" fieldname="personafisica">0</option>
+            <option color="danger" title="suspended" fieldname="debaja">1</option>
+            <option color="warning" title="risky-customer" fieldname="riesgomax">gt:0</option>
         </row>
     </rows>
 </view>

@@ -107,6 +107,7 @@
                 <widget type="select" fieldname="costpricepolicy" translate="true">
                     <values title="last-purchase-price">last-price</values>
                     <values title="average-purchase-price">average-price</values>
+                    <values title="actual-cost-price">actual-price</values>
                 </widget>
             </column>
             <column name="allow-sale-without-stock" numcolumns="3" order="110">

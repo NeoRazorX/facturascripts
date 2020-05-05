@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,9 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Model\Base\Receipt;
+use FacturaScripts\Core\Model\Base\TransformerDocument;
 
 /**
  * Contains common utilities for grouping and collecting documents.
@@ -29,8 +31,14 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 trait ListBusinessActionTrait
 {
 
+    abstract public function addButton($viewName, $params);
+
+    abstract public function redirect($url, $delay = 0);
+
+    abstract public function toolBox();
+
     /**
-     * Add buttons for approve document.
+     * Adds buttons to approve documents.
      *
      * @param string $viewName
      */
@@ -52,7 +60,7 @@ trait ListBusinessActionTrait
     }
 
     /**
-     * Add button for group document.
+     * Adds button to group documents.
      *
      * @param string $viewName
      */
@@ -66,7 +74,7 @@ trait ListBusinessActionTrait
     }
 
     /**
-     * Add button for lock invoice document.
+     * Adds button to lock invoices.
      *
      * @param string $viewName
      */
@@ -81,14 +89,14 @@ trait ListBusinessActionTrait
     }
 
     /**
-     * Add button for pay receipt.
+     * Adds button to pay receipts.
      *
      * @param string $viewName
      */
-    protected function addButtonReceiptPay($viewName)
+    protected function addButtonPayReceipt($viewName)
     {
         $this->addButton($viewName, [
-            'action' => 'paid',
+            'action' => 'pay-receipt',
             'confirm' => 'true',
             'icon' => 'fas fa-check',
             'label' => 'pay',
@@ -97,18 +105,26 @@ trait ListBusinessActionTrait
     }
 
     /**
+     * Approves selected documents.
+     * 
+     * @param mixed               $codes
+     * @param TransformerDocument $model
+     * @param bool                $allowUpdate
+     * @param DataBase            $dataBase
      *
      * @return bool
      */
-    protected function approveDocumentAction()
+    protected function approveDocumentAction($codes, $model, $allowUpdate, $dataBase)
     {
-        $codes = null;
-        $model = null;
-        if (false === $this->checkAndInit($codes, $model)) {
+        if (false === $allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === \is_array($codes) || empty($model)) {
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }
 
-        $this->dataBase->beginTransaction();
+        $dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
                 $this->toolBox()->i18nLog()->error('record-not-found');
@@ -123,28 +139,28 @@ trait ListBusinessActionTrait
                 $model->idestado = $status->idestado;
                 if (false === $model->save()) {
                     $this->toolBox()->i18nLog()->error('record-save-error');
-                    $this->dataBase->rollback();
+                    $dataBase->rollback();
                     return true;
                 }
             }
         }
 
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-        $this->dataBase->commit();
+        $dataBase->commit();
         $model->clear();
         return true;
     }
 
     /**
-     * Send the selected codes to the DocumentStitcher controller.
+     * Group selected documents.
+     * 
+     * @param mixed               $codes
+     * @param TransformerDocument $model
      *
      * @return bool
      */
-    protected function groupDocumentAction()
+    protected function groupDocumentAction($codes, $model)
     {
-        $codes = $this->request->request->get('code');
-        $model = $this->views[$this->active]->model;
-
         if (!empty($codes) && $model) {
             $codes = \implode(',', $codes);
             $url = 'DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $codes;
@@ -157,19 +173,26 @@ trait ListBusinessActionTrait
     }
 
     /**
-     * Lock invoice document list.
+     * Locks selected invoices.
+     * 
+     * @param mixed               $codes
+     * @param TransformerDocument $model
+     * @param bool                $allowUpdate
+     * @param DataBase            $dataBase
      *
      * @return bool
      */
-    protected function lockInvoiceAction()
+    protected function lockInvoiceAction($codes, $model, $allowUpdate, $dataBase)
     {
-        $codes = null;
-        $model = null;
-        if (false === $this->checkAndInit($codes, $model)) {
+        if (false === $allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === \is_array($codes) || empty($model)) {
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }
 
-        $this->dataBase->beginTransaction();
+        $dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
                 $this->toolBox()->i18nLog()->error('record-not-found');
@@ -184,73 +207,58 @@ trait ListBusinessActionTrait
                 $model->idestado = $status->idestado;
                 if (false === $model->save()) {
                     $this->toolBox()->i18nLog()->error('record-save-error');
-                    $this->dataBase->rollback();
+                    $dataBase->rollback();
                     return true;
                 }
             }
         }
 
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-        $this->dataBase->commit();
+        $dataBase->commit();
         $model->clear();
         return true;
     }
 
     /**
-     * Payment receipt process.
+     * Sets selected receipts as paid.
+     * 
+     * @param mixed    $codes
+     * @param Receipt  $model
+     * @param bool     $allowUpdate
+     * @param DataBase $dataBase
+     * @param string   $nick
      *
      * @return bool
      */
-    protected function paidAction()
+    protected function payReceiptAction($codes, $model, $allowUpdate, $dataBase, $nick)
     {
-        $codes = null;
-        $model = null;
-        if (false === $this->checkAndInit($codes, $model)) {
+        if (false === $allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === \is_array($codes) || empty($model)) {
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }
 
-        $this->dataBase->beginTransaction();
+        $dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
                 $this->toolBox()->i18nLog()->error('record-not-found');
                 continue;
             }
 
-            $model->nick = $this->user->nick;
+            $model->nick = $nick;
             $model->pagado = true;
             if (false === $model->save()) {
                 $this->toolBox()->i18nLog()->error('record-save-error');
-                $this->dataBase->rollback();
+                $dataBase->rollback();
                 return true;
             }
         }
 
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-        $this->dataBase->commit();
+        $dataBase->commit();
         $model->clear();
-        return true;
-    }
-
-    /**
-     *
-     * @param array $codes
-     * @param BaseView $model
-     * @return bool
-     */
-    private function checkAndInit(&$codes, &$model): bool
-    {
-        if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return false;
-        }
-
-        $codes = $this->request->request->get('code');
-        $model = $this->views[$this->active]->model;
-        if (false === \is_array($codes) || empty($model)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
-            return false;
-        }
-
         return true;
     }
 }

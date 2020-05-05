@@ -63,7 +63,7 @@
             {% block navbar %}
                 <nav class="navbar navbar-expand navbar-dark bg-dark sticky-top d-print-none">
                     {% block navbarContent %}
-                        <a class="navbar-brand d-none d-sm-inline" href="index.php" title="{{ i18n.trans('homepage') }}">
+                        <a class="navbar-brand d-none d-sm-inline" href="{{ asset('') }}" title="{{ i18n.trans('homepage') }}">
                             <img src="{{ asset('Dinamic/Assets/Images/logo-white.png') }}" width="30" height="30" class="d-inline-block align-top" alt="FacturaScripts"/>
                             <span class="d-none d-xl-inline">{{ fsc.empresa.nombrecorto }}</span>
                         </a>
@@ -75,6 +75,13 @@
                                 {% endfor %}
                             </ul>
                             <ul class="navbar-nav flex-row ml-auto">
+                                {% if template != 'MegaSearch.html.twig' %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="MegaSearch">
+                                            <i class="fas fa-search" aria-hidden="true"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle mr-md-2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>
@@ -90,23 +97,6 @@
                                     </div>
                                 </li>
                             </ul>
-                            {% if template != 'MegaSearch.html.twig' %}
-                                <form action="MegaSearch" method="post" class="form-inline">
-                                    <button type="submit" class="btn btn-outline-light d-xl-none">
-                                        <i class="fas fa-search" aria-hidden="true"></i>
-                                    </button>
-                                    <div class="d-none d-xl-inline">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" name="query" placeholder="{{ i18n.trans('search') }}"/>
-                                            <div class="input-group-append">
-                                                <button type="submit" class="btn btn-light">
-                                                    <i class="fas fa-search" aria-hidden="true"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            {% endif %}
                         </div>
                     {% endblock %}
                 </nav>

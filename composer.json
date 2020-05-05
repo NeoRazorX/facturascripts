@@ -1,6 +1,6 @@
 {
     "name": "facturascripts/facturascripts",
-    "description": "Open source ERP software. Built on PHP, symfony componentes and bootstrap 4. Easy and powerful.",
+    "description": "Open source ERP software. Built on modern PHP and bootstrap 4. Easy and powerful.",
     "homepage": "https://facturascripts.com",
     "license": "LGPL-3.0-or-later",
     "authors": [
@@ -13,14 +13,14 @@
         "php": ">=7.0.8",
         "mk-j/php_xlsxwriter": "0.37",
         "parsecsv/php-parsecsv": "1.*",
-        "phpmailer/phpmailer": "v6.0.7",
-        "rospdf/pdf-php": "0.12.52",
-        "symfony/http-foundation": "^3.4",
-        "symfony/translation": "^3.4",
-        "twig/twig": "v2.12.1",
+        "phpmailer/phpmailer": "6.*",
+        "rospdf/pdf-php": "0.12.*",
+        "symfony/http-foundation": "3.4.*",
+        "symfony/translation": "3.4.*",
+        "twig/twig": "2.12.*",
         "skilla/validator-cif-nif-nie": "1.0.6",
-        "tavo1987/ec-validador-cedula-ruc": "v1.0.2",
-        "filp/whoops": "2.5.*"
+        "tavo1987/ec-validador-cedula-ruc": "1.0.2",
+        "filp/whoops": "2.*"
     },
     "require-dev": {
         "phpunit/phpunit": "6.*",
