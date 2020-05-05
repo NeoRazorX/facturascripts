@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -135,15 +135,14 @@ class VisualItem
      */
     public function getColorFromOption($option, $value, $prefix): string
     {
-        return $this->applyOperatorFromOption($option, $value)
-            ? $this->colorToClass($option['color'], $prefix)
-            : '';
+        return $this->applyOperatorFromOption($option, $value) ? $this->colorToClass($option['color'], $prefix) : '';
     }
 
     /**
      *
      * @param string[] $option
      * @param mixed    $value
+     *
      * @return boolean
      */
     protected function applyOperatorFromOption($option, $value)
@@ -153,14 +152,14 @@ class VisualItem
         $applyOperator = '';
         $operators = ['>', 'gt:', 'gte:', '<', 'lt:', 'lte:', '!', 'neq:', 'like:', 'null:', 'notnull:'];
         foreach ($operators as $operator) {
-            if (0 === strpos($text, $operator)) {
+            if (0 === \strpos($text, $operator)) {
                 $applyOperator = $operator;
                 break;
             }
         }
 
-        $matchValue = substr($text, strlen($applyOperator));
-        $apply = ($matchValue == $value);
+        $matchValue = \substr($text, \strlen($applyOperator));
+        $apply = $matchValue == $value;
 
         switch ($applyOperator) {
             case '>':
@@ -182,7 +181,7 @@ class VisualItem
                 return $value != $matchValue;
 
             case 'like:':
-                return false !== stripos($value, $matchValue);
+                return false !== \stripos($value, $matchValue);
 
             case 'null:':
                 return null === $value;
@@ -193,7 +192,7 @@ class VisualItem
 
         return $apply;
     }
-    
+
     /**
      * Returns equivalent css class to $class. To extend in plugins.
      *

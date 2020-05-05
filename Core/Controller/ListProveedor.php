@@ -126,5 +126,7 @@ class ListProveedor extends ListController
 
         $vatRegimes = $this->codeModel->all('proveedores', 'regimeniva', 'regimeniva');
         $this->addFilterSelect($viewName, 'regimeniva', 'vat-regime', 'regimeniva', $vatRegimes);
+
+        $this->addFilterCheckbox($viewName, 'acreedor', 'is-creditor');
     }
 }

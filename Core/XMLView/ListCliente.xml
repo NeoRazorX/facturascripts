@@ -87,8 +87,8 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="danger" fieldname="debaja">1</option>
-            <option color="info" fieldname="personafisica">0</option>
+            <option color="danger" title="suspended" fieldname="debaja">1</option>
+            <option color="warning" title="risky-customer" fieldname="riesgomax">gt:0</option>
         </row>
     </rows>
 </view>

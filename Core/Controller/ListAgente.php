@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,26 +57,22 @@ class ListAgente extends ListController
      *
      * @param string $viewName
      */
-    protected function createAgentView($viewName = 'ListAgente')
+    protected function createAgentView(string $viewName = 'ListAgente')
     {
-        /// View
         $this->addView($viewName, 'Agente', 'agents', 'fas fa-user-tie');
-        $this->addSearchFields($viewName, ['nombre', 'codagente', 'email', 'telefono1', 'telefono2', 'observaciones']);
-
-        /// Order by
         $this->addOrderBy($viewName, ['codagente'], 'code');
         $this->addOrderBy($viewName, ['nombre'], 'name', 1);
+        $this->addSearchFields($viewName, ['nombre', 'codagente', 'email', 'telefono1', 'telefono2', 'observaciones']);
 
         /// Filters
-        $selectValues = $this->codeModel->all('agentes', 'cargo', 'cargo');
-        $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $selectValues);
-
-        $values = [
+        $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $this->toolBox()->i18n()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
             ['label' => $this->toolBox()->i18n()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
             ['label' => $this->toolBox()->i18n()->trans('all'), 'where' => []]
-        ];
-        $this->addFilterSelectWhere($viewName, 'status', $values);
+        ]);
+
+        $selectValues = $this->codeModel->all('agentes', 'cargo', 'cargo');
+        $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $selectValues);
     }
 
     /**
@@ -84,19 +80,16 @@ class ListAgente extends ListController
      *
      * @param string $viewName
      */
-    protected function createCommissionView($viewName = 'ListComision')
+    protected function createCommissionView(string $viewName = 'ListComision')
     {
-        /// View
         $this->addView($viewName, 'Comision', 'commissions', 'fas fa-percentage');
-        $this->addSearchFields($viewName, ['codagente', 'codcliente']);
-
-        /// Order By
         $this->addOrderBy($viewName, ['idcomision'], 'id');
         $this->addOrderBy($viewName, ['prioridad'], 'priority', 2);
         $this->addOrderBy($viewName, ['idempresa', 'codagente', 'porcentaje'], 'company');
         $this->addOrderBy($viewName, ['codagente', 'codcliente', 'codfamilia', 'idproducto', 'porcentaje'], 'agent');
         $this->addOrderBy($viewName, ['codcliente', 'codfamilia', 'idproducto', 'porcentaje'], 'customer');
         $this->addOrderBy($viewName, ['codfamilia', 'idproducto', 'porcentaje'], 'family');
+        $this->addSearchFields($viewName, ['codagente', 'codcliente']);
 
         /// Filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyList);
@@ -111,16 +104,13 @@ class ListAgente extends ListController
      *
      * @param string $viewName
      */
-    protected function createSettlementView($viewName = 'ListLiquidacionComision')
+    protected function createSettlementView(string $viewName = 'ListLiquidacionComision')
     {
-        /// View
         $this->addView($viewName, 'LiquidacionComision', 'settlements', 'fas fa-chalkboard-teacher');
-        $this->addSearchFields($viewName, ['observaciones']);
-
-        /// Order By
         $this->addOrderBy($viewName, ['fecha', 'idliquidacion'], 'date', 2);
         $this->addOrderBy($viewName, ['codagente', 'fecha'], 'agent');
         $this->addOrderBy($viewName, ['total', 'fecha'], 'amount');
+        $this->addSearchFields($viewName, ['observaciones']);
 
         /// Filters
         $this->addFilterPeriod($viewName, 'fecha', 'date', 'fecha');
