@@ -64,7 +64,8 @@ class CostPriceTools
     protected static function updateActualPrice($variant)
     {
         if ($variant->stockfis < 1) {
-            return static::updateLastPrice($variant);
+            static::updateLastPrice($variant);
+            return;
         }
 
         $rows = [];
@@ -76,7 +77,7 @@ class CostPriceTools
 
         /// we collect the latest delivery notes for this product
         $lineaAlbaran = new LineaAlbaranProveedor();
-        foreach ($lineaAlbaran->all($where, $order, 0, $variant->stockfis) as $line) {
+        foreach ($lineaAlbaran->all($where, $order, 0, (int) $variant->stockfis) as $line) {
             $rows[] = [
                 'time' => \strtotime($line->getDocument()->fecha),
                 'quantity' => $line->cantidad,
@@ -86,7 +87,7 @@ class CostPriceTools
 
         /// we collect the latest invoices for this product
         $lineaFactura = new LineaFacturaProveedor();
-        foreach ($lineaFactura->all($where, $order, 0, $variant->stockfis) as $line) {
+        foreach ($lineaFactura->all($where, $order, 0, (int) $variant->stockfis) as $line) {
             $rows[] = [
                 'time' => \strtotime($line->getDocument()->fecha),
                 'quantity' => $line->cantidad,
@@ -95,7 +96,7 @@ class CostPriceTools
         }
 
         /// now we sort by date
-        \usort($rows, function($item1, $item2) {
+        \usort($rows, function ($item1, $item2) {
             if ($item1['time'] > $item2['time']) {
                 return -1;
             } elseif ($item1['time'] < $item2['time']) {
