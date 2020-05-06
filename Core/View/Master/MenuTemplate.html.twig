@@ -76,13 +76,18 @@
                             </ul>
                             <ul class="navbar-nav flex-row ml-auto">
                                 {% if template != 'MegaSearch.html.twig' %}
-                                    <li class="nav-item">
+                                    <li class="nav-item" title="{{ i18n.trans('search') }}">
                                         <a class="nav-link" href="MegaSearch">
                                             <i class="fas fa-search" aria-hidden="true"></i>
                                         </a>
                                     </li>
                                 {% endif %}
-                                <li class="nav-item dropdown">
+                                <li class="nav-item" title="{{ i18n.trans('help') }}">
+                                    <a class="nav-link" href="https://facturascripts.com/doc" target="_blank">
+                                        <i class="fas fa-question-circle" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                                <li class="nav-item dropdown" title="{{ i18n.trans('user') }}">
                                     <a class="nav-link dropdown-toggle mr-md-2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>
                                     </a>

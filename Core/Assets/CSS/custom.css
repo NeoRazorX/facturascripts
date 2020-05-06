@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,24 +16,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* bootstrap customizations */
 .navbar .dropdown-toggle::after {
     display: none;
 }
-
 .nav-pills-sm.nav > li > a,
 .nav-pills-sm a {
     padding-top: 3px;
     padding-bottom: 3px;
 }
-
 .table th {
     border-top: none;
 }
-
 .clickable, .clickableRow:hover {
     cursor: pointer;
 }
-
 .custom-checkbox-control {
     position: relative;
     display: -ms-inline-flexbox;
@@ -42,15 +39,12 @@
     padding-left: 1.5rem;
     margin-right: 1rem;
 }
-
 .dropdown-menu {
     position: absolute !important;
 }
-
 .dropdown-submenu {
     position: relative
 }
-
 .dropdown-submenu > .dropdown-menu {
     top: 0;
     left: 100%;
@@ -58,11 +52,9 @@
     margin-left: 0;
     border-radius: 0.25rem;
 }
-
 .dropdown-submenu:hover > .dropdown-menu {
     display: block;
 }
-
 .dropdown-submenu > a::after {
     display: block;
     content: " ";
@@ -76,11 +68,9 @@
     margin-right: -0.6em;
     margin-top: 0.6em;
 }
-
 .dropdown-submenu.pull-left {
     float: none
 }
-
 .dropdown-submenu.pull-left > .dropdown-menu {
     left: -100%;
     margin-left: 10px;
@@ -88,23 +78,20 @@
     -moz-border-radius: 4px;
     border-radius: 4px;
 }
-
+/* autocomplete customizations */
 .ui-autocomplete {
     z-index: 1500;
 }
-
+/* pace customizations */
 .pace {
     -webkit-pointer-events: none;
     pointer-events: none;
     -webkit-user-select: none;
     -moz-user-select: none;
-    user-select: none;
 }
-
 .pace-inactive {
     display: none;
 }
-
 .pace .pace-progress {
     background: #ffffff;
     position: fixed;

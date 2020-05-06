@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,8 +40,6 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
 }
 
 $(document).ready(function () {
-    Pace.restart();
-    
     $(".datepicker").datepicker({
         dateFormat: "dd-mm-yy",
         firstDay: 1,
@@ -51,12 +49,6 @@ $(document).ready(function () {
             }, 0);
         }
     });
-
-    // Adds a delay to help messages
-    $("[data-toggle=\"popover\"]").popover({
-        delay: {"show": 1000, "hide": 100}
-    });
-
     $(".clickableRow").mousedown(function (event) {
         if (event.which === 1) {
             var href = $(this).attr("data-href");
@@ -70,17 +62,12 @@ $(document).ready(function () {
             }
         }
     });
-
     $(".cancelClickable").mousedown(function (event) {
         event.preventDefault();
         event.stopPropagation();
     });
-
+    /* fix to dropdown submenus */
     $(document).on("click", "nav .dropdown-submenu", function (e) {
         e.stopPropagation();
     });
-});
-
-$(document).ajaxStart(function() {
-    Pace.restart();
 });
