@@ -59,9 +59,7 @@ final class AlbaranClienteTest extends CustomTest
         foreach ($serieModel->all() as $serie) {
             $model->codserie = $serie->codserie;
         }
-        
-        \var_dump($model);
-        
+
         $this->assertTrue($model->save(), 'albaran-cliente-save-error');
 
         /// creating line
