@@ -269,7 +269,7 @@ class EditFacturaCliente extends SalesDocumentController
         if ($generator->generate($invoice, $invoice->modelClassName(), $lines, $quantities, $properties)) {
             foreach ($generator->getLastDocs() as $doc) {
                 $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-                $this->redirect($doc->url());
+                $this->redirect($doc->url() . '&action=save-ok');
                 return true;
             }
         }
