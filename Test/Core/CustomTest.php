@@ -27,7 +27,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author Carlos García Gómez
  */
-class CustomTest extends TestCase
+abstract class CustomTest extends TestCase
 {
 
     /**
