@@ -64,18 +64,16 @@ class EditFacturaProveedor extends PurchaseDocumentController
      * 
      * @param string $viewName
      */
-    protected function createAccountsView($viewName = 'ListAsiento')
+    protected function createAccountsView(string $viewName = 'ListAsiento')
     {
         $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
 
         /// buttons
-        $newButton = [
+        $this->addButton($viewName, [
             'action' => 'generate-accounting',
             'icon' => 'fas fa-magic',
-            'label' => 'generate-accounting-entry',
-            'type' => 'action',
-        ];
-        $this->addButton($viewName, $newButton);
+            'label' => 'generate-accounting-entry'
+        ]);
 
         /// settings
         $this->setSettings($viewName, 'btnNew', false);
@@ -85,29 +83,25 @@ class EditFacturaProveedor extends PurchaseDocumentController
      * 
      * @param string $viewName
      */
-    protected function createReceiptsView($viewName = 'ListReciboProveedor')
+    protected function createReceiptsView(string $viewName = 'ListReciboProveedor')
     {
         $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
         $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
 
         /// buttons
-        $generateButton = [
+        $this->addButton($viewName, [
             'action' => 'generate-receipts',
             'confirm' => 'true',
             'icon' => 'fas fa-magic',
-            'label' => 'generate-receipts',
-            'type' => 'action',
-        ];
-        $this->addButton($viewName, $generateButton);
+            'label' => 'generate-receipts'
+        ]);
 
-        $payButton = [
+        $this->addButton($viewName, [
             'action' => 'paid',
             'confirm' => 'true',
             'icon' => 'fas fa-check',
-            'label' => 'paid',
-            'type' => 'action',
-        ];
-        $this->addButton($viewName, $payButton);
+            'label' => 'paid'
+        ]);
 
         /// disable columns
         $this->views[$viewName]->disableColumn('invoice');
@@ -163,7 +157,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
     protected function generateAccountingAction()
     {
         $invoice = new FacturaProveedor();
-        if (!$invoice->loadFromCode($this->request->query->get('code'))) {
+        if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
             $this->toolBox()->i18nLog()->warning('record-not-found');
             return false;
         }
@@ -191,7 +185,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
     protected function generateReceiptsAction()
     {
         $invoice = new FacturaProveedor();
-        if (!$invoice->loadFromCode($this->request->query->get('code'))) {
+        if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
             $this->toolBox()->i18nLog()->warning('record-not-found');
             return false;
         }
@@ -242,7 +236,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
     protected function newRefundAction()
     {
         $invoice = new FacturaProveedor();
-        if (!$invoice->loadFromCode($this->request->request->get('idfactura'))) {
+        if (false === $invoice->loadFromCode($this->request->request->get('idfactura'))) {
             $this->toolBox()->i18nLog()->warning('record-not-found');
             return false;
         }
@@ -265,21 +259,19 @@ class EditFacturaProveedor extends PurchaseDocumentController
         }
 
         $generator = new BusinessDocumentGenerator();
-        if ($generator->generate($invoice, $invoice->modelClassName(), $lines, $quantities)) {
+        $properties = [
+            'codigorect' => $invoice->codigo,
+            'codserie' => $this->request->request->get('codserie'),
+            'fecha' => $this->request->request->get('fecha'),
+            'idfacturarect' => $invoice->idfactura,
+            'numproveedor' => $this->request->request->get('numproveedor'),
+            'observaciones' => $this->request->request->get('observaciones')
+        ];
+        if ($generator->generate($invoice, $invoice->modelClassName(), $lines, $quantities, $properties)) {
             foreach ($generator->getLastDocs() as $doc) {
-                $doc->codigorect = $invoice->codigo;
-                $doc->codserie = $this->request->request->get('codserie');
-                $doc->fecha = $this->request->request->get('fecha');
-                $doc->idfacturarect = $invoice->idfactura;
-                $doc->numproveedor = $this->request->request->get('numproveedor');
-                $doc->observaciones = $this->request->request->get('observaciones');
-                if ($doc->save()) {
-                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-                    $this->redirect($doc->url());
-                    return true;
-                }
-
-                $doc->delete();
+                $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+                $this->redirect($doc->url());
+                return true;
             }
         }
 
@@ -293,27 +285,27 @@ class EditFacturaProveedor extends PurchaseDocumentController
      */
     protected function paidAction()
     {
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return true;
         }
 
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
-        if (!is_array($codes) || empty($model)) {
+        if (false === \is_array($codes) || empty($model)) {
             $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }
 
         foreach ($codes as $code) {
-            if (!$model->loadFromCode($code)) {
+            if (false === $model->loadFromCode($code)) {
                 $this->toolBox()->i18nLog()->error('record-not-found');
                 continue;
             }
 
             $model->nick = $this->user->nick;
             $model->pagado = true;
-            if (!$model->save()) {
+            if (false === $model->save()) {
                 $this->toolBox()->i18nLog()->error('record-save-error');
                 return true;
             }

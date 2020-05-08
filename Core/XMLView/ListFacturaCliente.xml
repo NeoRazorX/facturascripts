@@ -102,7 +102,7 @@
     <rows>
         <row type="status">
             <option color="secondary" fieldname="codcliente">null:</option>
-            <option color="danger" fieldname="idfacturarect">notnull:</option>
+            <option color="danger" title="rectified-invoice" fieldname="idfacturarect">notnull:</option>
             <option color="success" fieldname="pagada">1</option>
             <option color="warning" title="non-editable-document" fieldname="editable">0</option>
             <option color="info" fieldname="femail">notnull:</option>
