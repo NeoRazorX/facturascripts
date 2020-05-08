@@ -650,6 +650,7 @@
     "margin-top": "Márgen superior",
     "mark-as-homepage": "Marcar como página de inicio",
     "marked-as-homepage": "Marcada como página de inicio. Pulsa de nuevo para desmarcar.",
+    "max-input-vars-warning": "Con la configuración actual de PHP (max_input_vars) no podrás trabajar con documentos de más de %numlines% líneas.",
     "max-risk": "Riesgo máximo",
     "maximum-stock": "Stock máximo",
     "megasearch": "MegaBuscador",

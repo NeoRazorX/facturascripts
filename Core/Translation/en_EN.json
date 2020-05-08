@@ -650,6 +650,7 @@
     "margin-top": "Margin top",
     "mark-as-homepage": "Mark as homepage",
     "marked-as-homepage": "Marked as homepage. Press again to uncheck.",
+    "max-input-vars-warning": "With the current PHP configuration (max_input_vars) you will not be able to work with documents of more than %numlines% lines.",
     "max-risk": "Maximum risk",
     "maximum-stock": "Maximum stock",
     "megasearch": "MegaSearch",
