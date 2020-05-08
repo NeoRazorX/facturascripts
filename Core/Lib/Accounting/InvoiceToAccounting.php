@@ -68,7 +68,7 @@ class InvoiceToAccounting extends AccountingClass
     public function generate($model)
     {
         parent::generate($model);
-        if (!$this->initialChecks()) {
+        if (false === $this->initialChecks()) {
             return;
         }
 
@@ -93,14 +93,14 @@ class InvoiceToAccounting extends AccountingClass
     protected function addCustomerLine($accountEntry): bool
     {
         $customer = new Cliente();
-        if (!$customer->loadFromCode($this->document->codcliente)) {
+        if (false === $customer->loadFromCode($this->document->codcliente)) {
             $this->toolBox()->i18nLog()->warning('customer-not-found');
             $this->counterpart = null;
             return false;
         }
 
         $subaccount = $this->getCustomerAccount($customer);
-        if (!$subaccount->exists()) {
+        if (false === $subaccount->exists()) {
             $this->toolBox()->i18nLog()->warning('customer-account-not-found');
             $this->counterpart = null;
             return false;
@@ -132,7 +132,7 @@ class InvoiceToAccounting extends AccountingClass
             $line = $accountEntry->getNewLine();
             $line->setAccount($subaccount);
             $line->debe = $total;
-            if (!$line->save()) {
+            if (false === $line->save()) {
                 $this->toolBox()->i18nLog()->warning('good-purchases-line-error');
                 return false;
             }
@@ -163,7 +163,7 @@ class InvoiceToAccounting extends AccountingClass
             $line = $accountEntry->getNewLine();
             $line->setAccount($subaccount);
             $line->haber = $total;
-            if (!$line->save()) {
+            if (false === $line->save()) {
                 $this->toolBox()->i18nLog()->warning('good-sales-line-error');
                 return false;
             }
@@ -184,22 +184,24 @@ class InvoiceToAccounting extends AccountingClass
             return true;
         }
 
-        $key = array_keys($this->subtotals)[0];
+        $key = \array_keys($this->subtotals)[0];
         $percentaje = $this->subtotals[$key]['irpf'];
 
         $retention = new Retencion();
-        if (!$retention->loadFromPercentage($percentaje)) {
+        if (false === $retention->loadFromPercentage($percentaje)) {
             $this->toolBox()->i18nLog()->warning('irpf-code-not-found');
             return false;
         }
 
         $subaccount = $this->getIRPFPurchaseAccount($retention);
-        if (!$subaccount->exists()) {
+        if (false === $subaccount->exists()) {
             $this->toolBox()->i18nLog()->warning('irpfpr-subaccount-not-found');
             return false;
         }
 
-        return $this->addBasicLine($accountEntry, $subaccount, false, $this->subtotals[$key]['totalirpf']);
+        $newLine = $this->getBasicLine($accountEntry, $subaccount, false, $this->subtotals[$key]['totalirpf']);
+        $newLine->setCounterpart($this->counterpart);
+        return $newLine->save();
     }
 
     /**
@@ -215,7 +217,7 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $subaccount = $this->getSpecialSubAccount('SUPLI');
-        if (!$subaccount->exists()) {
+        if (false === $subaccount->exists()) {
             $this->toolBox()->i18nLog()->warning('supplied-subaccount-not-found');
             return false;
         }
@@ -237,12 +239,12 @@ class InvoiceToAccounting extends AccountingClass
             /// search for tax data
             $tax->loadFromCode($key);
             $subaccount = $this->getTaxSupportedAccount($tax);
-            if (!$subaccount->exists()) {
+            if (false === $subaccount->exists()) {
                 $this->toolBox()->i18nLog()->warning('ivasop-account-not-found');
                 return false;
             }
 
-            if (!$this->addTaxLine($accountEntry, $subaccount, $this->counterpart, true, $value)) {
+            if (false === $this->addTaxLine($accountEntry, $subaccount, $this->counterpart, true, $value)) {
                 return false;
             }
         }
@@ -262,22 +264,24 @@ class InvoiceToAccounting extends AccountingClass
             return true;
         }
 
-        $key = array_keys($this->subtotals)[0];
+        $key = \array_keys($this->subtotals)[0];
         $percentaje = $this->subtotals[$key]['irpf'];
 
         $retention = new Retencion();
-        if (!$retention->loadFromPercentage($percentaje)) {
+        if (false === $retention->loadFromPercentage($percentaje)) {
             $this->toolBox()->i18nLog()->warning('irpf-code-not-found');
             return false;
         }
 
         $subaccount = $this->getIRPFSalesAccount($retention);
-        if (!$subaccount->exists()) {
+        if (false === $subaccount->exists()) {
             $this->toolBox()->i18nLog()->warning('irpf-subaccount-not-found');
             return false;
         }
 
-        return $this->addBasicLine($accountEntry, $subaccount, true, $this->subtotals[$key]['totalirpf']);
+        $newLine = $this->getBasicLine($accountEntry, $subaccount, true, $this->subtotals[$key]['totalirpf']);
+        $newLine->setCounterpart($this->counterpart);
+        return $newLine->save();
     }
 
     /**
@@ -294,7 +298,7 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $subaccount = $this->getSpecialSubAccount('SUPLI');
-        if (!$subaccount->exists()) {
+        if (false === $subaccount->exists()) {
             $this->toolBox()->i18nLog()->warning('supplied-subaccount-not-found');
             return false;
         }
@@ -316,13 +320,13 @@ class InvoiceToAccounting extends AccountingClass
             /// search for tax data
             $tax->loadFromCode($key);
             $subaccount = $this->getTaxImpactedAccount($tax);
-            if (!$subaccount->exists()) {
+            if (false === $subaccount->exists()) {
                 $this->toolBox()->i18nLog()->warning('ivarep-subaccount-not-found');
                 return false;
             }
 
             /// add tax line
-            if (!$this->addTaxLine($accountEntry, $subaccount, $this->counterpart, false, $value)) {
+            if (false === $this->addTaxLine($accountEntry, $subaccount, $this->counterpart, false, $value)) {
                 return false;
             }
         }
@@ -338,14 +342,14 @@ class InvoiceToAccounting extends AccountingClass
     protected function addSupplierLine($accountEntry): bool
     {
         $supplier = new Proveedor();
-        if (!$supplier->loadFromCode($this->document->codproveedor)) {
+        if (false === $supplier->loadFromCode($this->document->codproveedor)) {
             $this->toolBox()->i18nLog()->warning('supplier-not-found');
             $this->counterpart = null;
             return false;
         }
 
         $subaccount = $this->getSupplierAccount($supplier);
-        if (!$subaccount->exists()) {
+        if (false === $subaccount->exists()) {
             $this->toolBox()->i18nLog()->warning('supplier-account-not-found');
             $this->counterpart = null;
             return false;
@@ -366,12 +370,12 @@ class InvoiceToAccounting extends AccountingClass
             return false;
         }
 
-        if (!$this->exercise->loadFromCode($this->document->codejercicio) || !$this->exercise->isOpened()) {
+        if (false === $this->exercise->loadFromCode($this->document->codejercicio) || false === $this->exercise->isOpened()) {
             $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->document->codejercicio]);
             return false;
         }
 
-        if (!$this->loadSubtotals()) {
+        if (false === $this->loadSubtotals()) {
             $this->toolBox()->i18nLog()->warning('invoice-subtotals-error');
             return false;
         }
@@ -397,7 +401,7 @@ class InvoiceToAccounting extends AccountingClass
     {
         $accountEntry = new Asiento();
         $this->setAccountingData($accountEntry, $this->toolBox()->i18n()->trans('supplier-invoice') . ' ' . $this->document->codigo);
-        if (!$accountEntry->save()) {
+        if (false === $accountEntry->save()) {
             $this->toolBox()->i18nLog()->warning('accounting-entry-error');
             return;
         }
@@ -424,7 +428,7 @@ class InvoiceToAccounting extends AccountingClass
         $accountEntry = new Asiento();
         $this->setAccountingData($accountEntry, $this->toolBox()->i18n()->trans('customer-invoice') . ' ' . $this->document->codigo);
 
-        if (!$accountEntry->save()) {
+        if (false === $accountEntry->save()) {
             $this->toolBox()->i18nLog()->warning('accounting-entry-error');
             return;
         }

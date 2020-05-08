@@ -21,10 +21,10 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Lib\ExtendedController\GridView;
-use FacturaScripts\Core\Model\ModelView\SubcuentaSaldo;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\ModelView\SubcuentaSaldo;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
@@ -84,7 +84,7 @@ class AccountingEntryTools
         ];
 
         $subAccount = new Subcuenta();
-        if ($subAccount->loadFromCode(null, $where)) {
+        if ($subAccount->loadFromCode('', $where)) {
             $result['description'] = $subAccount->descripcion;
             $result['specialaccount'] = $subAccount->getSpecialAccountCode();
             $result['hasvat'] = $this->subAccountTools->hasTax($result['specialaccount']);
@@ -127,7 +127,7 @@ class AccountingEntryTools
             $this->calculateAmounts($result, $totalCredit, $totalDebit);
 
             // If only change subaccount, search for subaccount data
-            if (count($data['changes']) === 1 && $data['changes'][0][1] === 'codsubcuenta') {
+            if (\count($data['changes']) === 1 && $data['changes'][0][1] === 'codsubcuenta') {
                 $index = $data['changes'][0][0];
                 $line = &$result['lines'][$index];
                 $exercise = $data['document']['codejercicio'];
@@ -149,16 +149,16 @@ class AccountingEntryTools
      */
     protected function calculateAmounts(array &$data, float $credit, float $debit)
     {
-        $unbalance = round(($credit - $debit), (int) FS_NF0);
-        $index = count($data['lines']) - 1;
+        $unbalance = \round(($credit - $debit), (int) FS_NF0);
+        $index = \count($data['lines']) - 1;
         $line = &$data['lines'][$index];
         $lineDebit = (double) $line['debe'] ?? 0.00;
         $lineCredit = (double) $line['haber'] ?? 0.00;
 
         if (($lineDebit + $lineCredit) === 0.00 && $index > 0) {
-            $offsetting = $data['lines'][$index - 1]['codcontrapartida'] ?? null;
-            // if the sub-account is the same as the previous offsetting
-            if ($line['codsubcuenta'] === $offsetting) {
+            $counterpart = $data['lines'][$index - 1]['codcontrapartida'] ?? null;
+            // if the sub-account is the same as the previous counterpart
+            if ($line['codsubcuenta'] === $counterpart) {
                 $field = $unbalance < 0 ? 'debe' : 'haber';
                 $line[$field] = abs($unbalance);
                 $unbalance = 0.00;
@@ -166,7 +166,7 @@ class AccountingEntryTools
         }
 
         $data['unbalance'] = $unbalance;
-        $data['total'] = ($credit > $debit) ? round($credit, (int) FS_NF0) : round($debit, (int) FS_NF0);
+        $data['total'] = ($credit > $debit) ? \round($credit, (int) FS_NF0) : \round($debit, (int) FS_NF0);
     }
 
     /**
@@ -183,7 +183,7 @@ class AccountingEntryTools
             }
 
             if (empty($line['codcontrapartida']) && !empty($line['codsubcuenta'])) {
-                // TODO: [Fix] Go through previous lines in search of the offsetting. The sub-account that uses the offsetting for the first time is needed
+                // TODO: [Fix] Go through previous lines in search of the counterpart. The sub-account that uses the counterpart for the first time is needed
                 $line['codcontrapartida'] = ($line['codsubcuenta'] === $previousLine['codcontrapartida']) ? $previousLine['codsubcuenta'] : $previousLine['codcontrapartida'];
             }
         }
@@ -210,7 +210,7 @@ class AccountingEntryTools
         ];
 
         $subAccount = new Subcuenta();
-        if ($subAccount->loadFromCode(null, $where)) {
+        if ($subAccount->loadFromCode('', $where)) {
             $result['group'] = $subAccount->getSpecialAccountCode();
             switch ($result['group']) {
                 case AccountingAccounts::SPECIAL_CUSTOMER_ACCOUNT:
@@ -341,7 +341,7 @@ class AccountingEntryTools
     {
         $where = [new DataBaseWhere('codsubcuenta', $codeSubAccount)];
         $supplier = new Proveedor();
-        if ($supplier->loadFromCode(null, $where)) {
+        if ($supplier->loadFromCode('', $where)) {
             $values['code'] = $supplier->codproveedor;
             $values['description'] = $supplier->nombre;
             $values['id'] = $supplier->cifnif;
