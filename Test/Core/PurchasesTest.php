@@ -19,6 +19,7 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Model\Almacen;
+use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\Serie;
@@ -30,6 +31,12 @@ use FacturaScripts\Core\Model\Serie;
  */
 abstract class PurchasesTest extends CustomTest
 {
+
+    /**
+     *
+     * @var PurchaseDocument
+     */
+    public $model;
 
     public function testPurchaseSave()
     {
