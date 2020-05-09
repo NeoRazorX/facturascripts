@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,13 @@
 {% extends "Master/MenuTemplate.html.twig" %}
 
 {% block body %}
+    {{ parent() }}
+
+    {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
+    {% set allPlugins = fsc.getAllPlugins() %}
+    {% set installedPlugins = fsc.getPlugins() %}
+
     <div class="container-fluid mb-2">
-        {{ parent() }}
         <div class="row">
             <div class="col-sm-6">
                 <div class="btn-group d-xs-none">
@@ -51,16 +56,11 @@
             </div>
             <div class="col-sm text-right">
                 <h1 class="h3">
-                    {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
                     {{ title }} <i class="{{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
                 </h1>
             </div>
         </div>
     </div>
-
-    {% set allPlugins = fsc.getAllPlugins() %}
-    {% set installedPlugins = fsc.getPlugins() %}
-
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a class="nav-link active" id="installedPluginsTab" data-toggle="tab" href="#installed" role="tab">
@@ -106,16 +106,25 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
+                        {% if fsc.getMaxFileUpload() < 99 %}
+                            <div class="alert alert-warning mb-0">
+                                {{ i18n.trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}
+                            </div>
+                        {% endif %}
                         <div class="modal-body">
                             <div class="form-group">
-                                <label class="control-label" for="plugin">{{ i18n.trans('select-plugin-zip-file') }}</label>
+                                {{ i18n.trans('select-plugin-zip-file') }}
                                 <input type="file" name="plugin[]" multiple="" accept="application/zip" required=""/>
-                                <small class="form-text text-muted">{{ i18n.trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}</small>
+                                {% if fsc.getMaxFileUpload() >= 99 %}
+                                    <small class="form-text text-muted">
+                                        {{ i18n.trans('help-server-accepts-filesize', {'%size%': fsc.getMaxFileUpload()}) }}
+                                    </small>
+                                {% endif %}
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ i18n.trans('cancel') }}</button>
-                            <button type="submit" class="btn btn-primary">{{ i18n.trans('continue') }}</button>
+                            <div class="text-right mt-5">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ i18n.trans('cancel') }}</button>
+                                <button type="submit" class="btn btn-primary">{{ i18n.trans('continue') }}</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -229,7 +238,7 @@
                         {% elseif plugin.compatible %}
                             <td>
                                 {% if not constant('FS_DISABLE_RM_PLUGINS') %}
-                                    <a class="btn btn-block btn-sm btn-danger" href="#" onclick="deletePlugin('{{ plugin.name }}')">
+                                    <a class="btn btn-block btn-sm btn-danger" href="#" onclick="deletePlugin('{{ plugin.name }}');">
                                         <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
                                         <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
                                     </a>

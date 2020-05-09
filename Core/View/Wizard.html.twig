@@ -27,8 +27,7 @@
     {% set codpais = fsc.empresa ? fsc.empresa.codpais : appSettings.get('default', 'codpais', 'ESP') %}
     {% set provincia = fsc.empresa ? fsc.empresa.provincia : '' %}
 
-    <br/>
-    <div class="container card">
+    <div class="container card mt-3">
         <div class="row">
             <div class="col-12">
                 <h1 class="h3 mt-3">
@@ -46,17 +45,20 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
-                        {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombre, 'text', i18n.trans('company-name'), '', {'autofocus': '', 'maxlength': '100', 'required': ''}) }}
+                        {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombre, 'text', i18n.trans('company-name'),
+                            '', {'autofocus': '', 'maxlength': '100', 'required': ''}) }}
                     </div>
                 </div>
                 <div class="col-sm-2">
                     <div class="form-group">
-                        {{ forms.simpleSelect('tipoidfiscal', 'tipoidfiscal', fsc.empresa.tipoidfiscal, fsc.getSelectValues('IdentificadorFiscal'), i18n.trans('fiscal-id')) }}
+                        {{ forms.simpleSelect('tipoidfiscal', 'tipoidfiscal', fsc.empresa.tipoidfiscal,
+                            fsc.getSelectValues('IdentificadorFiscal'), i18n.trans('fiscal-id')) }}
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('cifnif', 'cifnif', fsc.empresa.cifnif, 'text', i18n.trans('fiscal-number'), '', {'maxlength': '30'}) }}
+                        {{ forms.simpleInput('cifnif', 'cifnif', fsc.empresa.cifnif, 'text', i18n.trans('fiscal-number'),
+                            '', {'maxlength': '30'}) }}
                     </div>
                 </div>
                 <div class="col-sm-12">
@@ -71,7 +73,8 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'), i18n.trans('country'), 'fas fa-globe-americas') }}
+                        {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'),
+                            i18n.trans('country'), 'fas fa-globe-americas') }}
                     </div>
                 </div>
                 <div class="col-sm-4">
@@ -86,34 +89,40 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'), 'fas fa-map-marked', {'maxlength': '100', 'required': ''}) }}
+                        {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'),
+                            'fas fa-map-marked', {'maxlength': '100', 'required': ''}) }}
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="form-group">
-                        {{ forms.simpleInput('apartado', 'apartado', fsc.empresa.apartado, 'text', i18n.trans('post-office-box'), NULL, {'maxlength': '10', 'placeholder': i18n.trans('optional')}) }}
+                        {{ forms.simpleInput('apartado', 'apartado', fsc.empresa.apartado, 'text', i18n.trans('post-office-box'),
+                            NULL, {'maxlength': '10', 'placeholder': i18n.trans('optional')}) }}
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="form-group">
-                        {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('zip-code'), NULL, {'maxlength': '10'}) }}
+                        {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('zip-code'),
+                            NULL, {'maxlength': '10'}) }}
                     </div>
                 </div>
                 {% if fsc.empresa.email is empty or fsc.user.email is empty %}
                     <div class="col-sm-4">
                         <div class="form-group">
-                            {{ forms.simpleInput('email', 'email', fsc.empresa.email, 'email', i18n.trans('email'), 'fas fa-envelope', {'required': '', 'class': 'form-control'}) }}
+                            {{ forms.simpleInput('email', 'email', fsc.empresa.email, 'email', i18n.trans('email'),
+                                'fas fa-envelope', {'required': '', 'class': 'form-control'}) }}
                         </div>
                     </div>
                 {% endif %}
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('telefono1', 'telefono1', fsc.empresa.telefono1, 'text', i18n.trans('phone'), 'fas fa-phone', {'maxlength': '30'}) }}
+                        {{ forms.simpleInput('telefono1', 'telefono1', fsc.empresa.telefono1, 'text', i18n.trans('phone'),
+                            'fas fa-phone', {'maxlength': '30'}) }}
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleInput('telefono2', 'telefono2', fsc.empresa.telefono2, 'text', i18n.trans('phone2'), 'fas fa-mobile-alt', {'maxlength': '30'}) }}
+                        {{ forms.simpleInput('telefono2', 'telefono2', fsc.empresa.telefono2, 'text', i18n.trans('phone2'),
+                            'fas fa-mobile-alt', {'maxlength': '30'}) }}
                     </div>
                 </div>
             </div>
@@ -131,12 +140,14 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
-                            {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key', {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
+                            {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key',
+                                {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <div class="form-group">
-                            {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'), 'fas fa-key', {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
+                            {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'),
+                                'fas fa-key', {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
                         </div>
                     </div>
                 </div>
