@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,14 +19,15 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\FacturaCliente;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\SalesTest;
 
 /**
- * @covers \FacturaCliente
+ * Description of FacturaClienteTest
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @covers FacturaCliente
  */
-final class FacturaClienteTest extends CustomTest
+class FacturaClienteTest extends SalesTest
 {
 
     protected function setUp()

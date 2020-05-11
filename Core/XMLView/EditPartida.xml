@@ -52,7 +52,7 @@
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="offsetting" numcolumns="4" order="110">
+            <column name="counterpart" numcolumns="4" order="110">
                 <widget type="autocomplete" fieldname="codcontrapartida" required="true">
                     <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
                 </widget>

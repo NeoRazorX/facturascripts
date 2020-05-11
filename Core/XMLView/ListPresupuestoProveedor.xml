@@ -92,7 +92,7 @@
         <row type="status">
             <option color="success" fieldname="idestado">13</option>
             <option color="danger" fieldname="idestado">14</option>
-            <option color="warning" fieldname="editable">0</option>
+            <option color="warning" title="non-editable-document" fieldname="editable">0</option>
             <option color="info" fieldname="femail">notnull:</option>
         </row>
     </rows>

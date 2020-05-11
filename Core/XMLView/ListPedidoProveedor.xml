@@ -93,7 +93,7 @@
             <option color="secondary" fieldname="codproveedor">null:</option>
             <option color="success" fieldname="idestado">16</option>
             <option color="danger" fieldname="idestado">17</option>
-            <option color="warning" fieldname="editable">0</option>
+            <option color="warning" title="non-editable-document" fieldname="editable">0</option>
             <option color="info" fieldname="femail">notnull:</option>
         </row>
     </rows>

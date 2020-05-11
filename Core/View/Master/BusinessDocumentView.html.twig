@@ -17,12 +17,12 @@
      * along with this program. If not, see http://www.gnu.org/licenses/.
      */
 #}
-{% set currentView = fsc.getCurrentView() %}
+{% set thisView = fsc.getCurrentView() %}
 
 <script type="text/javascript">
-    businessDocViewLineData = {{ currentView.getLineData() | raw }};
-    businessDocViewFormName = "form{{ currentView.getViewName() }}";
-    businessDocViewUrl = "{{ currentView.model.url('edit') | raw }}";
+    businessDocViewLineData = {{ thisView.getLineData() | raw }};
+    businessDocViewFormName = "form{{ thisView.getViewName() }}";
+    businessDocViewUrl = "{{ thisView.model.url('edit') | raw }}";
     function businessDocViewDelete(viewName) {
         bootbox.confirm({
             title: "{{ i18n.trans('confirm-delete') }}",
@@ -49,32 +49,32 @@
     }
 </script>
 
-<form id="form{{ currentView.getViewName() }}" action="#" method="post">
+<form id="form{{ thisView.getViewName() }}" action="#" method="post">
     <input type="hidden" name="action"/>
-    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-    <input type="hidden" name="code" value="{{ currentView.model.primaryColumnValue() }}"/>
-    <input type="hidden" name="{{ currentView.model.primaryColumn() }}" value="{{ currentView.model.primaryColumnValue() }}"/>
-    <input type="hidden" name="idestado" value="{{ currentView.model.idestado }}" id="doc_idestado"/>
+    <input type="hidden" name="activetab" value="{{ thisView.getViewName() }}"/>
+    <input type="hidden" name="code" value="{{ thisView.model.primaryColumnValue() }}"/>
+    <input type="hidden" name="{{ thisView.model.primaryColumn() }}" value="{{ thisView.model.primaryColumnValue() }}"/>
+    <input type="hidden" name="idestado" value="{{ thisView.model.idestado }}" id="doc_idestado"/>
     <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <div class="form-row">
-        {% if currentView.model.subjectColumn() == 'codcliente' %}
-            {{ _self.customerSelect(i18n, 'codcliente', 'codcliente', currentView.model, fsc.getNewSubjectUrl()) }}
-        {% elseif currentView.model.subjectColumn() == 'codproveedor' %}
-            {{ _self.supplierSelect(i18n, 'codproveedor', 'codproveedor', currentView.model, fsc.getNewSubjectUrl()) }}
+        {% if thisView.model.subjectColumn() == 'codcliente' %}
+            {{ _self.customerSelect(i18n, 'codcliente', 'codcliente', thisView.model, fsc.getNewSubjectUrl()) }}
+        {% elseif thisView.model.subjectColumn() == 'codproveedor' %}
+            {{ _self.supplierSelect(i18n, 'codproveedor', 'codproveedor', thisView.model, fsc.getNewSubjectUrl()) }}
         {% endif %}
-        {{ _self.customSelect('doc_codalmacen', 'codalmacen', currentView.model.codalmacen, currentView.getSelectValues('Almacen')) }}
-        {{ _self.customSelect('doc_codserie', 'codserie', currentView.model.codserie, currentView.getSelectValues('Serie')) }}
-        {{ _self.customInput('doc_fecha', 'fecha', currentView.model.fecha, 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
+        {{ _self.customSelect('doc_codalmacen', 'codalmacen', thisView.model.codalmacen, thisView.getSelectValues('Almacen')) }}
+        {{ _self.customSelect('doc_codserie', 'codserie', thisView.model.codserie, thisView.getSelectValues('Serie')) }}
+        {{ _self.customInput('doc_fecha', 'fecha', thisView.model.fecha, 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
         {% for field in fsc.getCustomFields() %}
-            {{ _self.customInput('doc_' ~ field.name, field.name, fsc.getViewModelValue(currentView.getViewName(), field.name), 'text', field.icon, {placeholder: i18n.trans(field.label)}) }}
+            {{ _self.customInput('doc_' ~ field.name, field.name, fsc.getViewModelValue(thisView.getViewName(), field.name), 'text', field.icon, {placeholder: i18n.trans(field.label)}) }}
         {% endfor %}
-        {{ _self.customSelect('doc_codpago', 'codpago', currentView.model.codpago, currentView.getSelectValues('FormaPago')) }}
-        {{ _self.customSelect('doc_coddivisa', 'coddivisa', currentView.model.coddivisa, currentView.getSelectValues('Divisa')) }}
+        {{ _self.customSelect('doc_codpago', 'codpago', thisView.model.codpago, thisView.getSelectValues('FormaPago')) }}
+        {{ _self.customSelect('doc_coddivisa', 'coddivisa', thisView.model.coddivisa, thisView.getSelectValues('Divisa')) }}
         <div class="col-sm-3 col-md-2 col-lg mb-2">
             <div class="input-group">
-                <input type="text" id="doc_total" name="total" value="{{ currentView.model.total }}" class="form-control text-right" disabled="" />
+                <input type="text" id="doc_total" name="total" value="{{ thisView.model.total }}" class="form-control text-right" disabled="" />
                 <div class="input-group-append">
-                    {% if currentView.settings.btnSave %}
+                    {% if thisView.settings.btnSave %}
                         <button type="button" class="btn btn-primary" onclick="businessDocViewSave();">
                             <i class="fas fa-save" aria-hidden="true"></i>
                         </button>
@@ -82,11 +82,11 @@
                 </div>
             </div>
         </div>
-        {{ _self.statusSelect(currentView.model, currentView, i18n) }}
+        {{ _self.statusSelect(thisView.model, thisView, i18n) }}
     </div>
-    {% if currentView.model.exists() %}
+    {% if thisView.model.exists() %}
         <div class="row">
-            {% for parentDoc in currentView.model.parentDocuments() %}
+            {% for parentDoc in thisView.model.parentDocuments() %}
                 <div class="col">
                     <div class="alert alert-warning text-center">
                         <i class="fas fa-backward fa-fw" aria-hidden="true"></i> {{ i18n.trans(parentDoc.modelClassName()) }}
@@ -94,28 +94,28 @@
                     </div>
                 </div>
             {% endfor %}
-            {% if currentView.model.femail %}
+            {% if thisView.model.femail %}
                 <div class="col">
                     <div class="alert alert-info text-center">
-                        <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ currentView.model.femail }}
+                        <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ thisView.model.femail }}
                     </div>
                 </div>
             {% endif %}
-            {% if currentView.model.paid() %}
+            {% if thisView.model.paid() %}
                 <div class="col">
                     <div class="alert alert-success text-center">
                         <i class="fas fa-check fa-fw" aria-hidden="true"></i> {{ i18n.trans('paid') }}
                     </div>
                 </div>
             {% endif %}
-            {% if currentView.model.editable == false %}
+            {% if thisView.model.editable == false %}
                 <div class="col">
                     <div class="alert alert-danger text-center">
                         <i class="fas fa-lock fa-fw"></i> {{ i18n.trans('non-editable-document') }}
                     </div>
                 </div>
             {% endif %}
-            {% for childrenDoc in currentView.model.childrenDocuments() %}
+            {% for childrenDoc in thisView.model.childrenDocuments() %}
                 <div class="col">
                     <div class="alert alert-success text-center">
                         <i class="fas fa-forward fa-fw" aria-hidden="true"></i> {{ i18n.trans(childrenDoc.modelClassName()) }}
@@ -128,39 +128,46 @@
     <div id="document-lines"></div>
     <div class="form-row mt-2">
         {% if fsc.showDocSubType %}
-            {{ _self.customSelect('doc_codsubtipodoc', 'codsubtipodoc', currentView.model.codsubtipodoc, currentView.getSelectValues('BusinessDocSubType'), true, i18n.trans('doc-subtype')) }}
+            {{ _self.customSelect('doc_codsubtipodoc', 'codsubtipodoc', thisView.model.codsubtipodoc, thisView.getSelectValues('BusinessDocSubType'), true, i18n.trans('doc-subtype')) }}
         {% endif %}
         {% if fsc.showDocOperation %}
-            {{ _self.customSelect('doc_codoperaciondoc', 'codoperaciondoc', currentView.model.codoperaciondoc, currentView.getSelectValues('BusinessDocTypeOperation'), true, i18n.trans('doc-operation')) }}
+            {{ _self.customSelect('doc_codoperaciondoc', 'codoperaciondoc', thisView.model.codoperaciondoc, thisView.getSelectValues('BusinessDocTypeOperation'), true, i18n.trans('doc-operation')) }}
         {% endif %}
-        {{ _self.customInput('doc_netosindto', 'netosindto', currentView.model.netosindto, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('subtotal')) }}
-        {% if currentView.model.editable %}
-            {{ _self.customInput('doc_dtopor1', 'dtopor1', currentView.model.dtopor1, 'number', 'fas fa-percentage', {class: 'form-control'}, i18n.trans('global-dto')) }}
-            {{ _self.customInput('doc_dtopor2', 'dtopor2', currentView.model.dtopor2, 'number', 'fas fa-percentage', {class: 'form-control'}, i18n.trans('global-dto-2')) }}
+        {{ _self.customInput('doc_netosindto', 'netosindto', thisView.model.netosindto, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('subtotal')) }}
+        {% if thisView.model.editable %}
+            {{ _self.customInput('doc_dtopor1', 'dtopor1', thisView.model.dtopor1, 'number', 'fas fa-percentage', {class: 'form-control'}, i18n.trans('global-dto')) }}
+            {{ _self.customInput('doc_dtopor2', 'dtopor2', thisView.model.dtopor2, 'number', 'fas fa-percentage', {class: 'form-control'}, i18n.trans('global-dto-2')) }}
         {% else %}
-            {{ _self.customInput('doc_dtopor1', 'dtopor1', currentView.model.dtopor1, 'number', 'fas fa-percentage', {class: 'form-control', disabled: ''}, i18n.trans('global-dto')) }}
-            {{ _self.customInput('doc_dtopor2', 'dtopor2', currentView.model.dtopor2, 'number', 'fas fa-percentage', {class: 'form-control', disabled: ''}, i18n.trans('global-dto-2')) }}
+            {{ _self.customInput('doc_dtopor1', 'dtopor1', thisView.model.dtopor1, 'number', 'fas fa-percentage', {class: 'form-control', disabled: ''}, i18n.trans('global-dto')) }}
+            {{ _self.customInput('doc_dtopor2', 'dtopor2', thisView.model.dtopor2, 'number', 'fas fa-percentage', {class: 'form-control', disabled: ''}, i18n.trans('global-dto-2')) }}
         {% endif %}
-        {{ _self.customInput('doc_neto', 'neto', currentView.model.neto, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('net')) }}
-        {{ _self.customInput('doc_totaliva', 'totaliva', currentView.model.totaliva, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('taxes')) }}
-        {% if currentView.model.totalrecargo != 0 %}
-            {{ _self.customInput('doc_totalrecargo', 'totalrecargo', currentView.model.totalrecargo, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('re')) }}
+        {{ _self.customInput('doc_neto', 'neto', thisView.model.neto, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('net')) }}
+        {{ _self.customInput('doc_totaliva', 'totaliva', thisView.model.totaliva, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('taxes')) }}
+        {% if thisView.model.totalrecargo != 0 %}
+            {{ _self.customInput('doc_totalrecargo', 'totalrecargo', thisView.model.totalrecargo, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('re')) }}
         {% endif %}
-        {% if currentView.model.totalirpf != 0 %}
-            {{ _self.customInput('doc_totalirpf', 'totalirpf', currentView.model.totalirpf, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('irpf')) }}
+        {% if thisView.model.totalirpf != 0 %}
+            {{ _self.customInput('doc_totalirpf', 'totalirpf', thisView.model.totalirpf, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('irpf')) }}
         {% endif %}
-        {% if currentView.model.totalsuplidos != 0 %}
-            {{ _self.customInput('doc_totalsuplidos', 'totalsuplidos', currentView.model.totalsuplidos, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('supplied-amount')) }}
+        {% if thisView.model.totalsuplidos != 0 %}
+            {{ _self.customInput('doc_totalsuplidos', 'totalsuplidos', thisView.model.totalsuplidos, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('supplied-amount')) }}
         {% endif %}
-        {{ _self.customInput('doc_total2', 'total', currentView.model.total, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('total')) }}
+        {{ _self.customInput('doc_total2', 'total', thisView.model.total, 'text', '', {class: 'form-control', disabled: ''}, i18n.trans('total')) }}
     </div>
     <div class="form-row mb-2">
-        {{ currentView.getRow('business').edit(currentView.model) | raw }}
+        {{ thisView.getRow('business').edit(thisView.model) | raw }}
     </div>
     <div class="form-row">
+        {% if thisView.getMaxLines() < 200 %}
+            <div class="col-12">
+                <p class="alert alert-warning" role="alert">
+                    {{ i18n.trans('max-input-vars-warning', {'%numlines%': thisView.getMaxLines()}) }}
+                </p>
+            </div>
+        {% endif %}
         <div class="col">
-            {% if fsc.hasData and currentView.settings.btnDelete %}
-                <button type="button" class="btn btn-sm btn-danger" onclick="businessDocViewDelete('{{ currentView.getViewName() }}');">
+            {% if fsc.hasData and thisView.settings.btnDelete %}
+                <button type="button" class="btn btn-sm btn-danger" onclick="businessDocViewDelete('{{ thisView.getViewName() }}');">
                     <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
                 </button>
@@ -169,13 +176,13 @@
         {% block extras %}
         {% endblock %}
         <div class="col text-right">
-            {% if currentView.settings.btnUndo %}
-                <a class="btn btn-sm btn-secondary" href="{{ currentView.model.url() }}">
+            {% if thisView.settings.btnUndo %}
+                <a class="btn btn-sm btn-secondary" href="{{ thisView.model.url() }}">
                     <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">{{ i18n.trans('undo') }}</span>
                 </a>
             {% endif %}
-            {% if currentView.settings.btnSave %}
+            {% if thisView.settings.btnSave %}
                 <button type="button" class="btn btn-sm btn-primary" onclick="businessDocViewSave();">
                     <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
                 </button>

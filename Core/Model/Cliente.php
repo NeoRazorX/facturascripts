@@ -86,6 +86,12 @@ class Cliente extends Base\ComercialContact
      */
     public $riesgomax;
 
+    public function clear()
+    {
+        parent::clear();
+        $this->codretencion = $this->toolBox()->appSettings()->get('default', 'codretencion');
+    }
+
     /**
      *
      * @param string $query

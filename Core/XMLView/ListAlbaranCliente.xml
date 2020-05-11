@@ -101,7 +101,7 @@
             <option color="secondary" fieldname="codcliente">null:</option>
             <option color="success" fieldname="idestado">8</option>
             <option color="danger" fieldname="idestado">9</option>
-            <option color="warning" fieldname="editable">0</option>
+            <option color="warning" title="non-editable-document" fieldname="editable">0</option>
             <option color="info" fieldname="femail">notnull:</option>
         </row>
     </rows>
