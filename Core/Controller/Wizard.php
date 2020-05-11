@@ -183,7 +183,7 @@ class Wizard extends Controller
             }
 
             /// add pages to the role
-            if (!$roleAccess->addPagesToRole($codrole, $pages)) {
+            if (false === $roleAccess->addPagesToRole($codrole, $pages)) {
                 throw new Exception($this->toolBox()->i18n()->trans('cancel-process'));
             }
 
@@ -203,9 +203,7 @@ class Wizard extends Controller
     private function enableLogs()
     {
         $appSettings = $this->toolBox()->appSettings();
-
-        $types = ['critical', 'error', 'warning'];
-        foreach ($types as $type) {
+        foreach (['critical', 'error', 'warning'] as $type) {
             $appSettings->set('log', $type, 'true');
         }
 
@@ -388,13 +386,13 @@ class Wizard extends Controller
 
         /// change password
         $pass = $this->request->request->get('password', '');
-        if ('' !== $pass && !$this->saveNewPassword($pass)) {
+        if ('' !== $pass && false === $this->saveNewPassword($pass)) {
             return;
         }
 
         /// change email
         $email = $this->request->request->get('email', '');
-        if ('' !== $email && !$this->saveEmail($email)) {
+        if ('' !== $email && false === $this->saveEmail($email)) {
             return;
         }
 

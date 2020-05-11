@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -98,6 +98,15 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
+     * 
+     * @return int
+     */
+    public function getMaxLines()
+    {
+        return \intval(\ini_get('max_input_vars') / \count($this->getColumns()));
+    }
+
+    /**
      * Returns the data of lines to the view.
      *
      * @return string
@@ -107,7 +116,7 @@ class BusinessDocumentView extends BaseView
         $data = [
             'headers' => [],
             'columns' => [],
-            'rows' => [],
+            'rows' => []
         ];
 
         foreach ($this->getColumns() as $col) {
@@ -139,13 +148,13 @@ class BusinessDocumentView extends BaseView
         $fixColumns = ['descripcion', 'referencia'];
         foreach ($this->lines as $line) {
             $lineArray = [];
-            foreach (array_keys($line->getModelFields()) as $key) {
-                $lineArray[$key] = in_array($key, $fixColumns) ? $this->toolBox()->utils()->fixHtml($line->{$key}) : $line->{$key};
+            foreach (\array_keys($line->getModelFields()) as $key) {
+                $lineArray[$key] = \in_array($key, $fixColumns) ? $this->toolBox()->utils()->fixHtml($line->{$key}) : $line->{$key};
             }
             $data['rows'][] = $lineArray;
         }
 
-        return json_encode($data);
+        return \json_encode($data);
     }
 
     /**
@@ -158,7 +167,7 @@ class BusinessDocumentView extends BaseView
     public function getSelectValues($modelName)
     {
         $classModel = self::MODEL_NAMESPACE . $modelName;
-        if (class_exists($classModel)) {
+        if (\class_exists($classModel)) {
             $values = [];
             $model = new $classModel();
 
@@ -171,7 +180,7 @@ class BusinessDocumentView extends BaseView
         }
 
         $classLib = self::MODEL_NAMESPACE_LIB . $modelName;
-        return class_exists($classLib) ? $classLib::all() : [];
+        return \class_exists($classLib) ? $classLib::all() : [];
     }
 
     /**
@@ -210,7 +219,7 @@ class BusinessDocumentView extends BaseView
     public function processFormLines(array $formLines)
     {
         $newLines = [];
-        $order = count($formLines);
+        $order = \count($formLines);
         foreach ($formLines as $line) {
             if (is_array($line)) {
                 $line['orden'] = $order;

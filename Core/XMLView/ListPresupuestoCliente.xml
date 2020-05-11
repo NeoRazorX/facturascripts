@@ -104,7 +104,7 @@
             <option color="success" fieldname="idestado">2</option>
             <option color="danger" fieldname="idestado">3</option>
             <option color="danger" fieldname="idestado">23</option>
-            <option color="warning" fieldname="editable">0</option>
+            <option color="warning" title="non-editable-document" fieldname="editable">0</option>
             <option color="info" fieldname="femail">notnull:</option>
         </row>
     </rows>

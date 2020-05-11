@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author Carlos García Gómez
  */
-class CustomTest extends TestCase
+abstract class CustomTest extends TestCase
 {
 
     /**
@@ -43,23 +43,17 @@ class CustomTest extends TestCase
 
     public function testTableName()
     {
-        $this->assertInternalType(
-            'string', $this->model->tableName()
-        );
+        $this->assertInternalType('string', $this->model->tableName());
     }
 
     public function testPrimaryColumn()
     {
-        $this->assertInternalType(
-            'string', $this->model->primaryColumn()
-        );
+        $this->assertInternalType('string', $this->model->primaryColumn());
     }
 
     public function testPrimaryDescription()
     {
-        $this->assertInternalType(
-            'string', $this->model->primaryDescription()
-        );
+        $this->assertInternalType('string', $this->model->primaryDescription());
     }
 
     public function testFields()
@@ -72,16 +66,14 @@ class CustomTest extends TestCase
         $install = $this->model->install();
         $this->assertInternalType('string', $install);
 
-        if (strlen($install) > 0) {
+        if (\strlen($install) > 0) {
             $this->assertNotEmpty($this->model->all());
         }
     }
 
     public function testUrl()
     {
-        $this->assertInternalType(
-            'string', $this->model->url()
-        );
+        $this->assertInternalType('string', $this->model->url());
     }
 
     public function testExists()
@@ -103,12 +95,12 @@ class CustomTest extends TestCase
         $minilog = new MiniLog();
         $messages = $minilog->read();
         if (!empty($messages) && $this->getStatus() > 1) {
-            array_unshift($messages, ['test' => get_called_class()]);
-            $filename = \FS_FOLDER . DIRECTORY_SEPARATOR . 'MINILOG.json';
-            $content = file_exists($filename) ? file_get_contents($filename) . "\n-----------\n" : '';
-            $content .= json_encode($messages);
+            \array_unshift($messages, ['test' => \get_called_class()]);
+            $filename = \FS_FOLDER . \DIRECTORY_SEPARATOR . 'MINILOG.json';
+            $content = \file_exists($filename) ? \file_get_contents($filename) . "\n-----------\n" : '';
+            $content .= \json_encode($messages);
 
-            file_put_contents($filename, $content);
+            \file_put_contents($filename, $content);
         }
 
         $minilog->clear();

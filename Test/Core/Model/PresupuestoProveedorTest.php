@@ -18,20 +18,20 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Model\PedidoCliente;
-use FacturaScripts\Test\Core\SalesTest;
+use FacturaScripts\Core\Model\PresupuestoProveedor;
+use FacturaScripts\Test\Core\PurchasesTest;
 
 /**
- * Description of PedidoClienteTest
+ * Description of PresupuestoProveedorTest
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- * @covers PedidoCliente
+ * @covers PresupuestoProveedor
  */
-class PedidoClienteTest extends SalesTest
+class PresupuestoProveedorTest extends PurchasesTest
 {
 
     protected function setUp()
     {
-        $this->model = new PedidoCliente();
+        $this->model = new PresupuestoProveedor();
     }
 }

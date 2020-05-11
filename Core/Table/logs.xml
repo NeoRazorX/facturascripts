@@ -26,7 +26,7 @@
     </column>
     <column>
         <name>message</name>
-        <type>character varying(500)</type>
+        <type>text</type>
         <null>NO</null>
     </column>
     <column>

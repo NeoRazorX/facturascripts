@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -121,7 +121,6 @@ abstract class ComercialContact extends Contact
     public function clear()
     {
         parent::clear();
-        $this->codretencion = $this->toolBox()->appSettings()->get('default', 'codretencion');
         $this->debaja = false;
         $this->regimeniva = RegimenIVA::defaultValue();
     }
