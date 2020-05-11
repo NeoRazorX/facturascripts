@@ -142,6 +142,19 @@ class GridView extends EditView
     }
 
     /**
+     *
+     * @return int
+     */
+    public function getMaxLines(): int
+    {
+        $numColumns = 0;
+        foreach ($this->detailView->columns as $group) {
+            $numColumns += \count($group->columns);
+        }
+        return \intval(\ini_get('max_input_vars') / $numColumns);
+    }
+
+    /**
      * Load the data in the model property, according to the code specified.
      *
      * @param string          $code
