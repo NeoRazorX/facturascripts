@@ -167,7 +167,7 @@ class User extends Base\ModelClass
 
     /**
      * Generates a new login key for the user. It also updates lastactivity
-     * ans last IP.
+     * and last IP.
      *
      * @param string $ipAddress
      *
