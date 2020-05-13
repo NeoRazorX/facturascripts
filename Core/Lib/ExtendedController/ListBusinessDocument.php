@@ -71,6 +71,10 @@ abstract class ListBusinessDocument extends ListController
 
         $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
         $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
+        
+        $this->addFilterCheckbox($viewName, 'totalirpf', 'retention', 'totalirpf', '!=', 0);
+        $this->addFilterCheckbox($viewName, 'totalrecargo', 'surcharge', 'totalrecargo', '!=', 0);
+        $this->addFilterCheckbox($viewName, 'totalsuplidos', 'supplied-amount', 'totalsuplidos', '!=', 0);
     }
 
     /**
