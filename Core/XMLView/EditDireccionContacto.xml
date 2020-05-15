@@ -58,5 +58,25 @@
                 </widget>
             </column>
         </group>
+        <group name="contact" numcolumns="12">
+            <column name="name" order="100">
+                <widget type="text" fieldname="nombre" maxlength="100" required="true" />
+            </column>
+            <column name="surname" order="110">
+                <widget type="text" fieldname="apellidos" maxlength="150" />
+            </column>
+            <column name="position" display="none" order="120">
+                <widget type="text" fieldname="cargo" />
+            </column>
+            <column name="phone" order="130">
+                <widget type="text" fieldname="telefono1" maxlength="30" icon="fas fa-phone" />
+            </column>
+            <column name="phone2" order="140">
+                <widget type="text" fieldname="telefono2" maxlength="30" icon="fas fa-mobile-alt" />
+            </column>
+            <column name="email" order="150">
+                <widget type="text" fieldname="email" maxlength="100" icon="fas fa-envelope" />
+            </column>
+        </group>
     </columns>
 </view>
