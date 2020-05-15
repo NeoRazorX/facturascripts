@@ -53,7 +53,7 @@
             <widget type="money" fieldname="pvptotal" readonly="true" />
         </column>
         <column name="percentage-vat" display="right" order="180">
-            <widget type="number" fieldname="iva" readonly="true" />
+            <widget type="number" fieldname="iva" />
         </column>
         <column name="re" display="none" order="190">
             <widget type="number" fieldname="recargo" />

@@ -292,6 +292,9 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         if ($fromStock->loadFromCode('', $where)) {
             $this->applyStockChanges($this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $fromStock);
             $fromStock->save();
+        } else {
+            /// no need to transfer
+            return;
         }
 
         /// find the new stock
