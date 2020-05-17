@@ -18,12 +18,15 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
+require_once(FS_FOLDER . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'globalcitizen' . DIRECTORY_SEPARATOR . 'php-iban' . DIRECTORY_SEPARATOR . 'oophp-iban.php');
+
 /**
  * This class groups the data and bank calculation methods
  * for a generic use.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Raúl Jiménez         <raljopa@gmail.com>
  */
 abstract class BankAccount extends ModelClass
 {
@@ -83,7 +86,7 @@ abstract class BankAccount extends ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public static function primaryColumn()
@@ -92,7 +95,7 @@ abstract class BankAccount extends ModelClass
     }
 
     /**
-     * 
+     *
      * @param bool $value
      */
     public function setDisableIbanTest($value)
@@ -129,43 +132,12 @@ abstract class BankAccount extends ModelClass
      */
     public function verifyIBAN(string $iban)
     {
-        if (\strlen($iban) != 24) {
-            return false;
-        }
-
-        $codpais = \substr($iban, 0, 2);
-        $ccc = \substr($iban, -20);
-        return $iban == $this->calculateIBAN($ccc, $codpais);
+        $account = new \IBAN($iban);
+        return $account->Verify();
     }
 
     /**
-     * Calculate the IBAN from the bank account.
      *
-     * @param string $ccc
-     * @param string $codpais
-     *
-     * @return string
-     */
-    private function calculateIBAN(string $ccc, string $codpais = '')
-    {
-        $pais = \strtoupper(\substr($codpais, 0, 2));
-        $pesos = ['A' => '10', 'B' => '11', 'C' => '12', 'D' => '13', 'E' => '14', 'F' => '15',
-            'G' => '16', 'H' => '17', 'I' => '18', 'J' => '19', 'K' => '20', 'L' => '21', 'M' => '22',
-            'N' => '23', 'O' => '24', 'P' => '25', 'Q' => '26', 'R' => '27', 'S' => '28', 'T' => '29',
-            'U' => '30', 'V' => '31', 'W' => '32', 'X' => '33', 'Y' => '34', 'Z' => '35',
-        ];
-
-        $dividendo = $ccc . $pesos[$pais[0]] . $pesos[$pais[1]] . '00';
-        $digitoControl = 98 - \bcmod($dividendo, '97');
-        if (\strlen($digitoControl) === 1) {
-            $digitoControl = '0' . $digitoControl;
-        }
-
-        return $pais . $digitoControl . $ccc;
-    }
-
-    /**
-     * 
      * @param array $values
      *
      * @return bool
