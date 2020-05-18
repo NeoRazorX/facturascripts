@@ -423,7 +423,8 @@ class GridView extends EditView
         $item = [
             'className' => $this->getCellAlign($column->display),
             'data' => $column->widget->fieldname,
-            'type' => $column->widget->getType()
+            'type' => $column->widget->getType(),
+            'readOnly' => ($column->widget->readonly == 'true' || $this->readOnly())
         ];
         switch ($item['type']) {
             case 'autocomplete':
@@ -502,6 +503,19 @@ class GridView extends EditView
             return $this->model->test();
         }
 
+        return false;
+    }
+
+    /**
+     * indicates if the model is in read-only mode.
+     *
+     * @return boolean
+     */
+    private function readOnly()
+    {
+        if (isset($this->model->editable)) {
+            return !$this->model->editable;
+        }
         return false;
     }
 
