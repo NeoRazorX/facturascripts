@@ -82,7 +82,16 @@ class WidgetNumber extends BaseWidget
     }
 
     /**
-     * 
+     *
+     * @return array
+     */
+    public function gridFormat()
+    {
+        return static::$numberTools->gridFormat($this->decimal);
+    }
+
+    /**
+     *
      * @param object  $model
      * @param Request $request
      */
@@ -117,7 +126,7 @@ class WidgetNumber extends BaseWidget
     }
 
     /**
-     * 
+     *
      * @param object $model
      */
     protected function setValue($model)

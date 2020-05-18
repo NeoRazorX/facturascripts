@@ -49,4 +49,21 @@ class NumberTools
     {
         return number_format((float) $number, (int) $decimals, FS_NF1, FS_NF2);
     }
+
+    /**
+     * Return format mask for edit grid
+     *
+     * @param int $decimals
+     *
+     * @return array
+     */
+    public static function gridFormat($decimals)
+    {
+        $moneyFormat = '0.';
+        for ($num = 0; $num < $decimals; $num++) {
+            $moneyFormat .= '0';
+        }
+
+        return ['pattern' => $moneyFormat];
+    }
 }

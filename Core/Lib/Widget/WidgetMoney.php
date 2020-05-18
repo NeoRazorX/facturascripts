@@ -35,7 +35,7 @@ class WidgetMoney extends WidgetNumber
     protected static $divisaTools;
 
     /**
-     * 
+     *
      * @param array $data
      */
     public function __construct($data)
@@ -48,7 +48,16 @@ class WidgetMoney extends WidgetNumber
     }
 
     /**
-     * 
+     *
+     * @return array
+     */
+    public function gridFormat()
+    {
+        return static::$divisaTools->gridFormat(FS_NF0);
+    }
+
+    /**
+     *
      * @param object $model
      */
     protected function setValue($model)
@@ -71,7 +80,7 @@ class WidgetMoney extends WidgetNumber
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function show()
@@ -80,7 +89,7 @@ class WidgetMoney extends WidgetNumber
     }
 
     /**
-     * 
+     *
      * @param string $initialClass
      * @param string $alternativeClass
      */

@@ -59,7 +59,7 @@ class BusinessDocumentView extends BaseView
     public $model;
 
     /**
-     * 
+     *
      * @param string $name
      * @param string $title
      * @param string $modelName
@@ -85,7 +85,7 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
-     * 
+     *
      * @return ColumnItem[]
      */
     public function getColumns()
@@ -98,7 +98,7 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
-     * 
+     *
      * @return int
      */
     public function getMaxLines()
@@ -133,7 +133,7 @@ class BusinessDocumentView extends BaseView
 
             if ($item['type'] === 'number' || $item['type'] === 'money') {
                 $item['type'] = 'numeric';
-                $item['numericFormat'] = $this->toolBox()->coins()->gridMoneyFormat();
+                $item['numericFormat'] = $col->widget->gridFormat();
             } elseif ($item['type'] === 'autocomplete') {
                 $item['source'] = $col->widget->getDataSource();
                 $item['strict'] = false;
@@ -184,7 +184,7 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
-     * 
+     *
      * @param string $code
      * @param array  $where
      * @param int    $order
@@ -237,7 +237,7 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
-     * 
+     *
      * @param Request $request
      * @param string  $case
      */
@@ -270,7 +270,7 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
-     * 
+     *
      * @param string $code
      *
      * @return string

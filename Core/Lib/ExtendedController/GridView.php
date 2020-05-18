@@ -351,6 +351,25 @@ class GridView extends EditView
 
     /**
      *
+     * @param string $code
+     * @return string
+     */
+    private function getCellAlign($code): string
+    {
+        switch ($code) {
+            case 'center':
+                return 'htCenter';
+
+            case 'right':
+                return 'htRight';
+
+            default:
+                return 'htLeft';
+        }
+    }
+
+    /**
+     *
      * @return array
      */
     private function getErrors(): array
@@ -402,6 +421,7 @@ class GridView extends EditView
     private function getItemForColumn($column): array
     {
         $item = [
+            'className' => $this->getCellAlign($column->display),
             'data' => $column->widget->fieldname,
             'type' => $column->widget->getType()
         ];
@@ -417,10 +437,11 @@ class GridView extends EditView
             case 'number':
             case 'money':
                 $item['type'] = 'numeric';
-                $item['numericFormat'] = $this->toolBox()->coins()->gridMoneyFormat();
+                $item['numericFormat'] = $column->widget->gridFormat();
                 break;
 
             case 'select':
+                $item['type'] = 'text';
                 $item['editor'] = 'select';
                 $item['selectOptions'] = $this->getSelectSource($column->widget);
                 break;

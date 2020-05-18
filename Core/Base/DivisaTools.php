@@ -80,7 +80,7 @@ class DivisaTools extends NumberTools
 
     /**
      * Finds a coddivisa and uses it as selected currency.
-     * 
+     *
      * @param object $model
      */
     public function findDivisa($model)
@@ -115,7 +115,7 @@ class DivisaTools extends NumberTools
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public static function getSymbol()
@@ -124,24 +124,7 @@ class DivisaTools extends NumberTools
     }
 
     /**
-     * Return format mask for edit grid
      *
-     * @param int $decimals
-     * 
-     * @return array
-     */
-    public static function gridMoneyFormat($decimals = FS_NF0)
-    {
-        $moneyFormat = '0.';
-        for ($num = 0; $num < $decimals; $num++) {
-            $moneyFormat .= '0';
-        }
-
-        return ['pattern' => $moneyFormat];
-    }
-
-    /**
-     * 
      * @param string $coddivisa
      *
      * @return Divisa
