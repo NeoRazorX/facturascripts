@@ -62,15 +62,15 @@ abstract class ModelOnChangeClass extends ModelClass
     /**
      * Loads a record from database.
      * 
-     * @param string $cod
+     * @param string $code
      * @param array  $where
      * @param array  $orderby
      * 
      * @return bool
      */
-    public function loadFromCode($cod, array $where = [], array $orderby = [])
+    public function loadFromCode($code, array $where = [], array $orderby = [])
     {
-        if (parent::loadFromCode($cod, $where, $orderby)) {
+        if (parent::loadFromCode($code, $where, $orderby)) {
             $this->setPreviousData();
             return true;
         }
