@@ -212,16 +212,15 @@ class Wizard extends Controller
 
     /**
      * Initialize required models.
+     * 
+     * @param array $names
      */
-    private function initModels()
+    private function initModels(array $names)
     {
-        new Model\AttachedFile();
-        new Model\Diario();
-        new Model\FormaPago();
-        new Model\Impuesto();
-        new Model\Retencion();
-        new Model\Serie();
-        new Model\Provincia();
+        foreach ($names as $name) {
+            $className = '\\FacturaScripts\\Dinamic\\Model\\' . $name;
+            new $className();
+        }
     }
 
     /**
@@ -381,7 +380,7 @@ class Wizard extends Controller
         $appSettings->set('default', 'homepage', 'AdminPlugins');
         $appSettings->save();
 
-        $this->initModels();
+        $this->initModels(['AttachedFile', 'Diario', 'FormaPago', 'Impuesto', 'Retencion', 'Serie', 'Provincia']);
         $this->saveAddress($codpais);
 
         /// change password
@@ -454,6 +453,16 @@ class Wizard extends Controller
 
     protected function saveStep4()
     {
+        /// load all models
+        $modelNames = [];
+        $modelsFolder = \FS_FOLDER . \DIRECTORY_SEPARATOR . 'Dinamic' . \DIRECTORY_SEPARATOR . 'Model';
+        foreach ($this->toolBox()->files()->scanFolder($modelsFolder) as $fileName) {
+            if ('.php' === \substr($fileName, -4)) {
+                $modelNames[] = \substr($fileName, 0, -4);
+            }
+        }
+        $this->initModels($modelNames);
+
         /// change user homepage
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : 'ListFacturaCliente';
         $this->user->save();

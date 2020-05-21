@@ -183,6 +183,21 @@ abstract class TransformerDocument extends BusinessDocument
     }
 
     /**
+     * This function is called when creating the model table. Returns the SQL
+     * that will be executed after the creation of the table. Useful to insert values
+     * default.
+     * 
+     * @return string
+     */
+    public function install()
+    {
+        /// needed dependencies
+        new EstadoDocumento();
+
+        return parent::install();
+    }
+
+    /**
      * Returns all parent document of this one.
      *
      * @return TransformerDocument[]
