@@ -305,5 +305,9 @@ $(document).ready(function () {
 
         Handsontable.hooks.add("afterSelection", eventAfterSelection);
         Handsontable.hooks.add("beforeChange", eventBeforeChange);
+
+        $("#mainTabs li:first-child a").on('shown.bs.tab', function (e) {
+            gridObject.render();
+        });
     }
 });
