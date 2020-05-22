@@ -271,6 +271,20 @@ class NewMail
         $this->toolBox()->i18nLog()->error('error', ['%error%' => $this->mail->ErrorInfo]);
         return false;
     }
+    
+    /**
+     * Check if the email is configured
+     * 
+     * @return bool
+     */
+    public function canSendMail()
+    {
+        if ($this->toolBox()->appSettings()->get('email', 'host', '') == "") {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     /**
      * Test the PHPMailer connection. Return the result of the connection.
