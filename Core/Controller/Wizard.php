@@ -132,6 +132,12 @@ class Wizard extends Controller
             case 'step3':
                 $this->saveStep3();
                 break;
+
+            default:
+                if (empty($this->empresa->email) && !empty($this->user->email)) {
+                    $this->empresa->email = $this->user->email;
+                    $this->empresa->save();
+                }
         }
     }
 
@@ -380,7 +386,8 @@ class Wizard extends Controller
         $appSettings->set('default', 'homepage', 'AdminPlugins');
         $appSettings->save();
 
-        $this->initModels(['AttachedFile', 'Diario', 'FormaPago', 'Impuesto', 'Retencion', 'Serie', 'Provincia']);
+        $this->initModels(['AttachedFile', 'Diario', 'EstadoDocumento', 'FormaPago',
+            'Impuesto', 'Retencion', 'Serie', 'Provincia']);
         $this->saveAddress($codpais);
 
         /// change password
@@ -461,7 +468,10 @@ class Wizard extends Controller
                 $modelNames[] = \substr($fileName, 0, -4);
             }
         }
-        $this->initModels($modelNames);
+        if (false === $this->dataBase->tableExists('fs_users')) {
+            /// avoid this step in 2017 installations
+            $this->initModels($modelNames);
+        }
 
         /// change user homepage
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : 'ListFacturaCliente';
