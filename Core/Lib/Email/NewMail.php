@@ -285,6 +285,32 @@ class NewMail
             return true;
         }
     }
+    
+    /**
+     * Returns an array with available email trays
+     * 
+     * @return array
+     */
+    public function getAvailableMailboxes()
+    {
+        $results = [];
+    
+        $emailSend = $this->toolBox()->appSettings()->get('email', 'email', '');
+        if ($emailSend != "") {
+            $results = [$emailSend];
+        }
+        
+        return $results;
+    }
+    
+    /**
+     * 
+     * @param type $emailFrom
+     */
+    public function setMailbox($emailFrom)
+    {
+        $this->mail->Email = $emailFrom;
+    }
 
     /**
      * Test the PHPMailer connection. Return the result of the connection.

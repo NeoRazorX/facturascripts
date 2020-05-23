@@ -84,7 +84,7 @@ class SendMail extends Controller
         $this->newMail = new NewMail();
 
         /// Check if the email is configurate
-        if ($this->newMail->canSendMail()) {
+        if (!$this->newMail->canSendMail()) {
             $this->toolBox()->i18nLog()->warning('email-not-configured');
         }
 
@@ -234,7 +234,9 @@ class SendMail extends Controller
         $this->newMail->fromNick = $this->user->nick;
         $this->newMail->title = $this->request->request->get('subject', '');
         $this->newMail->text = $this->request->request->get('body', '');
-
+        
+        $this->newMail->setMailbox($this->request->request->get('email-from', ''));
+        
         foreach ($this->getEmails('email') as $email) {
             $this->newMail->addAddress($email);
         }
