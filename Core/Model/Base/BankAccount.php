@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-require_once(FS_FOLDER . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'globalcitizen' . DIRECTORY_SEPARATOR . 'php-iban' . DIRECTORY_SEPARATOR . 'oophp-iban.php');
-
 /**
  * This class groups the data and bank calculation methods
  * for a generic use.
