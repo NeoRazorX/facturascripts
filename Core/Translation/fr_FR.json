@@ -1012,6 +1012,7 @@
     "tax-transport": "Transport fiscal",
     "taxes": "Taxes",
     "template": "Modèle",
+    "template-error": "template-error",
     "template-not-found": "Modèle non trouvé",
     "test": "Essai",
     "third-trimester": "Third trimester",

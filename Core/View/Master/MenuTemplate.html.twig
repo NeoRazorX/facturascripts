@@ -22,7 +22,7 @@
     <head>
         {% block meta %}
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <title>{{ fsc.title }}</title>
+            <title>{{ fsc.title | raw }}</title>
             <meta name="description" content="{{ i18n.trans('meta-description') }}" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <meta name="generator" content="FacturaScripts" />
@@ -106,22 +106,23 @@
                     {% endblock %}
                 </nav>
             {% endblock %}
-            <br/>
-            {% block messages %}
-                {% from 'Macro/Utils.html.twig' import message as showMessage %}
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12">
-                            {{ showMessage(log, ['error', 'critical'], 'danger') }}
-                            {{ showMessage(log, ['warning'], 'warning') }}
-                            {{ showMessage(log, ['notice'], 'success') }}
-                            {{ showMessage(log, ['info'], 'info') }}
+            <div class="bg-header pt-3">
+                {% block messages %}
+                    {% from 'Macro/Utils.html.twig' import message as showMessage %}
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12">
+                                {{ showMessage(log, ['error', 'critical'], 'danger') }}
+                                {{ showMessage(log, ['warning'], 'warning') }}
+                                {{ showMessage(log, ['notice'], 'success') }}
+                                {{ showMessage(log, ['info'], 'info') }}
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endblock %}
-            {% block bodyHeaderOptions %}
-            {% endblock %}
+                {% endblock %}
+                {% block bodyHeaderOptions %}
+                {% endblock %}
+            </div>
             {% block body %}
             {% endblock %}
             <br/>

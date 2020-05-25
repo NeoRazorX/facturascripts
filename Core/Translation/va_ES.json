@@ -1012,6 +1012,7 @@
     "tax-transport": "Imposts del transport",
     "taxes": "Imposts",
     "template": "Plantilla",
+    "template-error": "template-error",
     "template-not-found": "No s'ha trobat la plantilla",
     "test": "Prova",
     "third-trimester": "Tercer trimestre",

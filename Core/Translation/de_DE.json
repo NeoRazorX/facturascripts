@@ -1012,6 +1012,7 @@
     "tax-transport": "Steuerverkehr",
     "taxes": "Steuern",
     "template": "Vorlage",
+    "template-error": "template-error",
     "template-not-found": "Vorlage nicht gefunden",
     "test": "Test",
     "third-trimester": "Third trimester",

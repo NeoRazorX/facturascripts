@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -19,23 +19,27 @@
 #}
 {% extends "Master/PanelController.html.twig" %}
 
+{% block bodyHeaderOptions %}
+    {{ parent() }}
+    <ul class="nav nav-tabs mb-3 d-print-none" id="mainTabs" role="tablist">
+        {% for viewName, view in fsc.views %}
+            <li class="nav-item">
+                {% set active = (viewName == fsc.active) ? ' active' : '' %}
+                {% set disable = view.settings.active ? '' : ' disabled' %}
+                <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
+                    <i class="{{ view.icon }}" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
+                    {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>{% endif %}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
 {% block body %}
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <ul class="nav nav-tabs mb-3 d-print-none" id="mainTabs" role="tablist">
-                    {% for viewName, view in fsc.views %}
-                        <li class="nav-item">
-                            {% set active = (viewName == fsc.active) ? ' active' : '' %}
-                            {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
-                                <i class="{{ view.icon }}" aria-hidden="true"></i>
-                                <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
-                                {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>{% endif %}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
                 <div class="tab-content" id="mainTabsContent">
                     {% for viewName, view in fsc.views %}
                         {% set active = (viewName == fsc.active) ? ' show active' : '' %}
@@ -48,4 +52,16 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        body {
+            background-color: transparent;
+        }
+        .bg-header {
+            background-color: #FAFBFC;
+        }
+    </style>
 {% endblock %}
