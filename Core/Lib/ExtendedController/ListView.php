@@ -505,7 +505,7 @@ class ListView extends BaseView
 
     private function sortFilters()
     {
-        \uasort($this->filters, function($filter1, $filter2) {
+        \uasort($this->filters, function ($filter1, $filter2) {
             if ($filter1->ordernum === $filter2->ordernum) {
                 return 0;
             }
