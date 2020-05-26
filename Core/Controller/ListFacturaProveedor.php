@@ -51,12 +51,22 @@ class ListFacturaProveedor extends ListBusinessDocument
     protected function createViews()
     {
         $this->createViewPurchases('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
-        $this->addFilterCheckbox('ListFacturaProveedor', 'pagada', 'unpaid', '', '=', false);
-        $this->addFilterCheckbox('ListFacturaProveedor', 'idasiento', 'Facturas sin asiento', 'idasiento', 'IS', null);
-        $this->addButtonLockInvoice('ListFacturaProveedor');
-
         $this->createViewLines('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
         $this->createViewReceipts();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     * @param string $modelName
+     * @param string $label
+     */
+    protected function createViewPurchases(string $viewName, $modelName, $label)
+    {
+        parent::createViewPurchases($viewName, $modelName, $label);
+        $this->addFilterCheckbox('ListFacturaProveedor', 'pagada', 'unpaid', 'pagada', '=', false);
+        $this->addFilterCheckbox('ListFacturaProveedor', 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
+        $this->addButtonLockInvoice('ListFacturaProveedor');
     }
 
     /**

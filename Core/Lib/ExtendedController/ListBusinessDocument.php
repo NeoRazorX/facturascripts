@@ -75,6 +75,10 @@ abstract class ListBusinessDocument extends ListController
         if (\count($currencies) > 2) {
             $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
         }
+
+        $this->addFilterCheckbox($viewName, 'totalrecargo', 'surcharge', 'totalrecargo', '!=', 0);
+        $this->addFilterCheckbox($viewName, 'totalirpf', 'retention', 'totalirpf', '!=', 0);
+        $this->addFilterCheckbox($viewName, 'totalsuplidos', 'supplied-amount', 'totalsuplidos', '!=', 0);
     }
 
     /**
@@ -102,9 +106,11 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterNumber($viewName, 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber($viewName, 'pvpunitario', 'pvp', 'pvpunitario');
         $this->addFilterNumber($viewName, 'pvptotal', 'amount', 'pvptotal');
+        $this->addFilterCheckbox($viewName, 'recargo', 'surcharge', 'recargo', '!=', 0);
+        $this->addFilterCheckbox($viewName, 'irpf', 'retention', 'irpf', '!=', 0);
         $this->addFilterCheckbox($viewName, 'suplido', 'supplied', 'suplido');
 
-        /// disable megasearch for this view
+        /// settings
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'checkBoxes', false);
