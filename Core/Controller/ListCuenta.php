@@ -79,8 +79,8 @@ class ListCuenta extends ListController
         /// filters
         $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $this->exerciseValues);
 
-        $specialAccountsValues = $this->codeModel->all('cuentasesp', 'codcuentaesp', 'codcuentaesp');
-        $this->addFilterSelect($viewName, 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccountsValues);
+        $specialAccounts = $this->codeModel->all('cuentasesp', 'codcuentaesp', 'codcuentaesp');
+        $this->addFilterSelect($viewName, 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccounts);
     }
 
     /**
@@ -106,7 +106,7 @@ class ListCuenta extends ListController
                 'color' => 'warning',
                 'confirm' => true,
                 'icon' => 'fas fa-trash-restore',
-                'label' => 'restore',
+                'label' => 'restore'
             ]);
         }
     }
@@ -125,6 +125,9 @@ class ListCuenta extends ListController
 
         /// filters
         $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $this->exerciseValues);
+
+        $specialAccounts = $this->codeModel->all('cuentasesp', 'codcuentaesp', 'codcuentaesp');
+        $this->addFilterSelect($viewName, 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccounts);
 
         /// disable new button
         $this->setSettings($viewName, 'btnNew', false);
