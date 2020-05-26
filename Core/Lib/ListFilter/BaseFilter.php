@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,30 +30,35 @@ abstract class BaseFilter
 {
 
     /**
+     * Submit form on every filter change.
      *
      * @var bool
      */
-    public $autoSubmit = true;
+    public $autosubmit = true;
 
     /**
+     * Field name.
      *
      * @var string
      */
     public $field;
 
     /**
+     * Translator object.
      *
      * @var Translator
      */
     protected static $i18n;
 
     /**
+     * Filter key.
      *
      * @var string
      */
     public $key;
 
     /**
+     * Label to show on this filter.
      *
      * @var string
      */
@@ -61,6 +66,12 @@ abstract class BaseFilter
 
     /**
      *
+     * @var int
+     */
+    public $ordernum = 100;
+
+    /**
+     * 
      * @var bool
      */
     public $readonly = false;
@@ -146,7 +157,7 @@ abstract class BaseFilter
      */
     protected function onChange()
     {
-        return $this->autoSubmit ? ' onchange="this.form.submit();"' : '';
+        return $this->autosubmit ? ' onchange="this.form.submit();"' : '';
     }
 
     /**

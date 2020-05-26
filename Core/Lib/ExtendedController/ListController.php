@@ -20,7 +20,6 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Lib\ListFilter;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,11 +56,11 @@ abstract class ListController extends BaseController
     {
         parent::privateCore($response, $user, $permissions);
 
-        // Store action to execute
+        // Get action to execute
         $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
-        // Operations with data, before execute action
-        if ($this->execPreviousAction($action) === false || $this->pipe('execPreviousAction', $action) === false) {
+        // Execute actions before loaging data
+        if (false === $this->execPreviousAction($action) || false === $this->pipe('execPreviousAction', $action)) {
             return;
         }
 
@@ -77,21 +76,9 @@ abstract class ListController extends BaseController
             $this->pipe('loadData', $viewName, $view);
         }
 
-        // Operations with data, after execute action
+        // Execute actions after loaging data
         $this->execAfterAction($action);
         $this->pipe('execAfterAction', $action);
-    }
-
-    /**
-     * Base method to add a filter to the view
-     *
-     * @param string                $viewName
-     * @param string                $key
-     * @param ListFilter\BaseFilter $filter
-     */
-    protected function addFilter($viewName, $key, $filter)
-    {
-        $this->views[$viewName]->filters[$key] = $filter;
     }
 
     /**
@@ -336,11 +323,10 @@ abstract class ListController extends BaseController
     {
         $this->setTemplate(false);
         $json = [];
-        $query = $this->request->get('query', '');
 
         /// we search in all listviews
         foreach ($this->views as $viewName => $listView) {
-            if (!$this->getSettings($viewName, 'megasearch') || empty($listView->searchFields)) {
+            if (false === $this->getSettings($viewName, 'megasearch') || empty($listView->searchFields)) {
                 continue;
             }
 
@@ -348,16 +334,16 @@ abstract class ListController extends BaseController
                 'title' => $listView->title,
                 'icon' => $listView->icon,
                 'columns' => $this->megaSearchColumns($listView),
-                'results' => [],
+                'results' => []
             ];
 
-            $fields = implode('|', $listView->searchFields);
-            $where = [new DataBaseWhere($fields, $query, 'LIKE')];
+            $fields = \implode('|', $listView->searchFields);
+            $where = [new DataBaseWhere($fields, $this->request->get('query', ''), 'LIKE')];
             $listView->loadData(false, $where);
             foreach ($listView->cursor as $model) {
                 $item = ['url' => $model->url()];
                 foreach ($listView->getColumns() as $col) {
-                    if (!$col->hidden()) {
+                    if (false === $col->hidden()) {
                         $item[$col->widget->fieldname] = $col->widget->plainText($model);
                     }
                 }
@@ -366,7 +352,7 @@ abstract class ListController extends BaseController
             }
         }
 
-        $this->response->setContent(json_encode($json));
+        $this->response->setContent(\json_encode($json));
     }
 
     /**
@@ -380,7 +366,7 @@ abstract class ListController extends BaseController
     {
         $result = [];
         foreach ($view->getColumns() as $col) {
-            if (!$col->hidden()) {
+            if (false === $col->hidden()) {
                 $result[] = $this->toolBox()->i18n()->trans($col->title);
             }
         }
@@ -393,8 +379,7 @@ abstract class ListController extends BaseController
      */
     protected function saveFilterAction()
     {
-        $view = $this->views[$this->active];
-        $idFilter = $view->savePageFilter($this->request, $this->user);
+        $idFilter = $this->views[$this->active]->savePageFilter($this->request, $this->user);
         if (!empty($idFilter)) {
             $this->toolBox()->i18nLog()->notice('record-updated-correctly');
 

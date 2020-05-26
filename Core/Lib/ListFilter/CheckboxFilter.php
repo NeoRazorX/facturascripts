@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,6 +30,12 @@ class CheckboxFilter extends BaseFilter
 
     /**
      *
+     * @var DataBaseWhere[]
+     */
+    public $default;
+
+    /**
+     *
      * @var mixed
      */
     public $matchValue;
@@ -42,12 +48,6 @@ class CheckboxFilter extends BaseFilter
 
     /**
      *
-     * @var DataBaseWhere[]
-     */
-    public $default;
-
-    /**
-     *
      * @param string $key
      * @param string $field
      * @param string $label
@@ -57,9 +57,10 @@ class CheckboxFilter extends BaseFilter
     public function __construct($key, $field = '', $label = '', $operation = '=', $matchValue = true, $default = [])
     {
         parent::__construct($key, $field, $label);
-        $this->operation = $operation;
-        $this->matchValue = $matchValue;
         $this->default = $default;
+        $this->matchValue = $matchValue;
+        $this->operation = $operation;
+        $this->ordernum += 10;
     }
 
     /**
@@ -70,15 +71,15 @@ class CheckboxFilter extends BaseFilter
      */
     public function getDataBaseWhere(array &$where): bool
     {
-        $result = false;
         if ('TRUE' === $this->value) {
             $where[] = new DataBaseWhere($this->field, $this->matchValue, $this->operation);
+            return true;
+        }
+
+        $result = false;
+        foreach ($this->default as $value) {
+            $where[] = $value;
             $result = true;
-        } else {
-            foreach ($this->default as $value) {
-                $where[] = $value;
-                $result = true;
-            }
         }
 
         return $result;
@@ -90,7 +91,7 @@ class CheckboxFilter extends BaseFilter
      */
     public function render()
     {
-        $extra = is_null($this->value) ? '' : ' checked=""';
+        $extra = \is_null($this->value) ? '' : ' checked=""';
         return '<div class="col">'
             . '<div class="form-group">'
             . '<div class="form-check mb-2 mb-sm-0">'

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -216,18 +216,18 @@ class ListView extends BaseView
      */
     public function addOrderBy(array $fields, $label, $default = 0)
     {
-        $key1 = strtolower(implode('|', $fields)) . '_asc';
+        $key1 = \strtolower(\implode('|', $fields)) . '_asc';
         $this->orderOptions[$key1] = [
             'fields' => $fields,
             'label' => $this->toolBox()->i18n()->trans($label),
-            'type' => 'ASC',
+            'type' => 'ASC'
         ];
 
-        $key2 = strtolower(implode('|', $fields)) . '_desc';
+        $key2 = \strtolower(\implode('|', $fields)) . '_desc';
         $this->orderOptions[$key2] = [
             'fields' => $fields,
             'label' => $this->toolBox()->i18n()->trans($label),
-            'type' => 'DESC',
+            'type' => 'DESC'
         ];
 
         if ($default === 2) {
@@ -264,7 +264,7 @@ class ListView extends BaseView
             }
         }
 
-        return empty($params) ? $url : $url . '?' . implode('&', $params);
+        return empty($params) ? $url : $url . '?' . \implode('&', $params);
     }
 
     /**
@@ -331,8 +331,8 @@ class ListView extends BaseView
     {
         $this->offset = $offset < 0 ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
-        $this->where = array_merge($where, $this->where);
-        $this->count = is_null($this->model) ? 0 : $this->model->count($this->where);
+        $this->where = \array_merge($where, $this->where);
+        $this->count = \is_null($this->model) ? 0 : $this->model->count($this->where);
 
         /// avoid overflow
         if ($this->offset > $this->count) {
@@ -384,51 +384,16 @@ class ListView extends BaseView
                 break;
 
             case 'load':
+                $this->sortFilters();
                 $this->processFormDataLoad($request);
                 break;
 
             case 'preload':
+                $this->sortFilters();
                 foreach ($this->filters as $filter) {
                     $filter->getDataBaseWhere($this->where);
                 }
                 break;
-        }
-    }
-
-    /**
-     * 
-     * @param Request $request
-     */
-    private function processFormDataLoad($request)
-    {
-        $this->offset = (int) $request->request->get('offset', 0);
-        $this->setSelectedOrderBy($request->request->get('order', ''));
-
-        /// query
-        $this->query = $request->request->get('query', '');
-        if ('' !== $this->query) {
-            $fields = implode('|', $this->searchFields);
-            $this->where[] = new DataBaseWhere($fields, $this->toolBox()->utils()->noHtml($this->query), 'XLIKE');
-        }
-
-        /// select saved filter
-        $this->pageFilterKey = $request->request->get('loadfilter', 0);
-        if (!empty($this->pageFilterKey)) {
-            // Load saved filter into page parameters
-            foreach ($this->pageFilters as $item) {
-                if ($item->id == $this->pageFilterKey) {
-                    $request->request->add($item->filters);
-                    break;
-                }
-            }
-        }
-
-        /// filters
-        foreach ($this->filters as $filter) {
-            $filter->setValueFromRequest($request);
-            if ($filter->getDataBaseWhere($this->where)) {
-                $this->showFilters = true;
-            }
         }
     }
 
@@ -461,7 +426,7 @@ class ListView extends BaseView
         // Set basic data and save filter
         $pageFilter->id = $request->request->get('filter-id', null);
         $pageFilter->description = $request->request->get('filter-description', '');
-        $pageFilter->name = explode('-', $this->getViewName())[0];
+        $pageFilter->name = \explode('-', $this->getViewName())[0];
         $pageFilter->nick = $user->nick;
 
         // Save and return it's all ok
@@ -482,6 +447,43 @@ class ListView extends BaseView
     }
 
     /**
+     * 
+     * @param Request $request
+     */
+    private function processFormDataLoad($request)
+    {
+        $this->offset = (int) $request->request->get('offset', 0);
+        $this->setSelectedOrderBy($request->request->get('order', ''));
+
+        /// query
+        $this->query = $request->request->get('query', '');
+        if ('' !== $this->query) {
+            $fields = \implode('|', $this->searchFields);
+            $this->where[] = new DataBaseWhere($fields, $this->toolBox()->utils()->noHtml($this->query), 'XLIKE');
+        }
+
+        /// select saved filter
+        $this->pageFilterKey = $request->request->get('loadfilter', 0);
+        if (!empty($this->pageFilterKey)) {
+            // Load saved filter into page parameters
+            foreach ($this->pageFilters as $item) {
+                if ($item->id == $this->pageFilterKey) {
+                    $request->request->add($item->filters);
+                    break;
+                }
+            }
+        }
+
+        /// filters
+        foreach ($this->filters as $filter) {
+            $filter->setValueFromRequest($request);
+            if ($filter->getDataBaseWhere($this->where)) {
+                $this->showFilters = true;
+            }
+        }
+    }
+
+    /**
      * Checks and establishes the selected value in the Order By
      *
      * @param string $orderKey
@@ -499,5 +501,16 @@ class ListView extends BaseView
         }
 
         $this->orderKey = $orderKey;
+    }
+
+    private function sortFilters()
+    {
+        \uasort($this->filters, function($filter1, $filter2) {
+            if ($filter1->ordernum === $filter2->ordernum) {
+                return 0;
+            }
+
+            return $filter1->ordernum > $filter2->ordernum ? 1 : -1;
+        });
     }
 }
