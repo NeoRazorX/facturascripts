@@ -76,9 +76,11 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
-
-        $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
-        $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
+        
+        if ($this->toolBox()->appSettings()->get('default', 'multicurrency',true) == true){
+           $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
+           $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies); 
+        }        
 
         $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
         $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymentValues);
