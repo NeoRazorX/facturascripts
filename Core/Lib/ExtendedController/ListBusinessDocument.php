@@ -34,15 +34,15 @@ abstract class ListBusinessDocument extends ListController
     /**
      *
      * @param string $viewName
-     * @param string $model
+     * @param string $modelName
      */
-    protected function addCommonViewFilters($viewName, $model)
+    protected function addCommonViewFilters(string $viewName, $modelName)
     {
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
         $this->addFilterNumber($viewName, 'min-total', 'total', 'total', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'total', 'total', '<=');
 
-        $where = [new DataBaseWhere('tipodoc', $model)];
+        $where = [new DataBaseWhere('tipodoc', $modelName)];
         $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
         $this->addFilterSelect($viewName, 'idestado', 'state', 'idestado', $statusValues);
 
@@ -56,21 +56,23 @@ abstract class ListBusinessDocument extends ListController
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
         }
 
-        $warehouseValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        if (\count($warehouseValues) > 2) {
-            $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouseValues);
+        $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        if (\count($warehouses) > 2) {
+            $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
         }
 
-        $serieValues = $this->codeModel->all('series', 'codserie', 'descripcion');
-        if (\count($serieValues) > 2) {
-            $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', $serieValues);
+        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
+        if (\count($series) > 2) {
+            $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', $series);
         }
 
-        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymentValues);        
-        
-        if ($this->toolBox()->appSettings()->get('default', 'multicurrency',true) == true) {
-            $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
+        $paymethods = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        if (\count($paymethods) > 2) {
+            $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymethods);
+        }
+
+        $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
+        if (\count($currencies) > 2) {
             $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
         }
     }
@@ -78,11 +80,11 @@ abstract class ListBusinessDocument extends ListController
     /**
      *
      * @param string $viewName
-     * @param string $model
+     * @param string $modelName
      */
-    protected function createViewLines($viewName, $model)
+    protected function createViewLines(string $viewName, $modelName)
     {
-        $this->addView($viewName, $model, 'lines', 'fas fa-list');
+        $this->addView($viewName, $modelName, 'lines', 'fas fa-list');
         $this->addSearchFields($viewName, ['referencia', 'descripcion']);
         $this->addOrderBy($viewName, ['referencia'], 'reference');
         $this->addOrderBy($viewName, ['cantidad'], 'quantity');
@@ -112,12 +114,12 @@ abstract class ListBusinessDocument extends ListController
     /**
      *
      * @param string $viewName
-     * @param string $model
+     * @param string $modelName
      * @param string $label
      */
-    protected function createViewPurchases($viewName, $model, $label)
+    protected function createViewPurchases(string $viewName, $modelName, $label)
     {
-        $this->addView($viewName, $model, $label, 'fas fa-copy');
+        $this->addView($viewName, $modelName, $label, 'fas fa-copy');
         $this->addSearchFields($viewName, ['codigo', 'nombre', 'numproveedor', 'observaciones']);
         $this->addOrderBy($viewName, ['codigo'], 'code');
         $this->addOrderBy($viewName, ['fecha', 'hora', 'codigo'], 'date', 2);
@@ -126,7 +128,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['total'], 'total');
 
         /// filters
-        $this->addCommonViewFilters($viewName, $model);
+        $this->addCommonViewFilters($viewName, $modelName);
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
     }
@@ -134,12 +136,12 @@ abstract class ListBusinessDocument extends ListController
     /**
      *
      * @param string $viewName
-     * @param string $model
+     * @param string $modelName
      * @param string $label
      */
-    protected function createViewSales($viewName, $model, $label)
+    protected function createViewSales(string $viewName, $modelName, $label)
     {
-        $this->addView($viewName, $model, $label, 'fas fa-copy');
+        $this->addView($viewName, $modelName, $label, 'fas fa-copy');
         $this->addSearchFields($viewName, ['codigo', 'nombrecliente', 'numero2', 'observaciones']);
         $this->addOrderBy($viewName, ['codigo'], 'code');
         $this->addOrderBy($viewName, ['fecha', 'codigo'], 'date', 2);
@@ -148,13 +150,13 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['total'], 'total');
 
         /// filters
-        $this->addCommonViewFilters($viewName, $model);
+        $this->addCommonViewFilters($viewName, $modelName);
         $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterAutocomplete($viewName, 'idcontactofact', 'billing-address', 'idcontacto', 'contacto');
         $this->addFilterautocomplete($viewName, 'idcontactoenv', 'shipping-address', 'idcontacto', 'contacto');
 
         $agents = $this->codeModel->all('agentes', 'codagente', 'nombre');
-        if (\count($agents) > 0) {
+        if (\count($agents) > 1) {
             $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
         }
 

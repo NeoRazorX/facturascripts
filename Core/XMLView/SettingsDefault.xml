@@ -60,20 +60,17 @@
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="multicurrency" title="multi-currency" numcolumns="3" order="170">
-                <widget type="checkbox" fieldname="multicurrency" />
-            </column>                        
-            <column name="payment-method" numcolumns="3" order="180">
+            <column name="payment-method" numcolumns="3" order="170">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago" required="true">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="tax" numcolumns="3" order="190">
+            <column name="tax" numcolumns="3" order="180">
                 <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="200">
+            <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="190">
                 <widget type="select" fieldname="codretencion" onclick="EditRetencion">
                     <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion" />
                 </widget>
@@ -132,7 +129,7 @@
                     <values title="small">small</values>
                 </widget>
             </column>
-            <column name="balancegraphic" title="show-balance-graphic" order="130">
+            <column name="show-balance-graphic" numcolumns="3" order="130">
                 <widget type="checkbox" fieldname="balancegraphic" />
             </column>
         </group>

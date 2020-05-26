@@ -62,7 +62,7 @@ class ListFacturaProveedor extends ListBusinessDocument
      *
      * @param string $viewName
      */
-    protected function createViewReceipts($viewName = 'ListReciboProveedor')
+    protected function createViewReceipts(string $viewName = 'ListReciboProveedor')
     {
         $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
         $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date', 2);
@@ -77,13 +77,15 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
 
-        if ($this->toolBox()->appSettings()->get('default', 'multicurrency',true) == true) {
-            $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
+        $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
+        if (\count($currencies) > 2) {
             $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
         }
 
-        $paymentValues = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymentValues);
+        $paymethods = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        if (\count($paymethods) > 2) {
+            $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymethods);
+        }
 
         $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');
 
