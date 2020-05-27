@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -112,7 +112,7 @@ class MenuManager
     public function removeOld($currentPageNames)
     {
         foreach (self::$pageModel->all([], [], 0, 0) as $page) {
-            if (!in_array($page->name, $currentPageNames)) {
+            if (false === \in_array($page->name, $currentPageNames, true)) {
                 $page->delete();
             }
         }
@@ -126,18 +126,13 @@ class MenuManager
      */
     public function selectPage($pageData)
     {
-        $pageModel = self::$pageModel->get($pageData['name']);
-        if ($pageModel === false) {
+        $pageModel = new Page();
+        if (false === $pageModel->loadFromCode($pageData['name'])) {
             $pageData['ordernum'] = 100;
             $pageModel = new Page($pageData);
             $pageModel->save();
         } elseif ($this->pageNeedSave($pageModel, $pageData)) {
-            $pageModel->menu = $pageData['menu'];
-            $pageModel->submenu = $pageData['submenu'];
-            $pageModel->showonmenu = $pageData['showonmenu'];
-            $pageModel->title = $pageData['title'];
-            $pageModel->icon = $pageData['icon'];
-            $pageModel->ordernum = $pageData['ordernum'];
+            $pageModel->loadFromData($pageData);
             $pageModel->save();
         }
 
@@ -191,7 +186,7 @@ class MenuManager
             'lower(menu)' => 'ASC',
             'lower(submenu)' => 'ASC',
             'ordernum' => 'ASC',
-            'lower(title)' => 'ASC',
+            'lower(title)' => 'ASC'
         ];
 
         $pages = self::$pageModel->all($where, $order, 0, 0);
@@ -266,11 +261,11 @@ class MenuManager
      */
     private function pageNeedSave($pageModel, $pageData)
     {
-        return
-            ($pageModel->menu !== $pageData['menu']) || ($pageModel->submenu !== $pageData['submenu']) ||
-            ($pageModel->title !== $pageData['title']) || ($pageModel->icon !== $pageData['icon']) ||
-            ($pageModel->showonmenu !== $pageData['showonmenu'])
-        ;
+        return $pageModel->menu !== $pageData['menu'] ||
+            $pageModel->submenu !== $pageData['submenu'] ||
+            $pageModel->title !== $pageData['title'] ||
+            $pageModel->icon !== $pageData['icon'] ||
+            $pageModel->showonmenu !== $pageData['showonmenu'];
     }
 
     /**
@@ -320,8 +315,8 @@ class MenuManager
     private function sortMenu(&$result)
     {
         /// sort this menu
-        uasort($result, function ($menu1, $menu2) {
-            return strcasecmp($menu1->title, $menu2->title);
+        \uasort($result, function ($menu1, $menu2) {
+            return \strcasecmp($menu1->title, $menu2->title);
         });
 
         /// sort submenus
