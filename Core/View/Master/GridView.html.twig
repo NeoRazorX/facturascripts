@@ -122,6 +122,16 @@
                             </div>
                         {% endblock %}
                     </div>
+                    {% set maxLines = currentView.getMaxLines() %}
+                    {% if maxLines < 200 %}
+                    <div class="row">
+                        <div class="col-12">
+                            <p class="alert alert-warning" role="alert">
+                                {{ i18n.trans('max-input-vars-warning', {'%numlines%': maxLines}) }}
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
                     {# Buttons actions #}
                     <div class="row no-gutters mt-2">
                         <div class="card col-12">
