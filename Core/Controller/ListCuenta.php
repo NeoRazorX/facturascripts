@@ -129,6 +129,8 @@ class ListCuenta extends ListController
         $specialAccounts = $this->codeModel->all('cuentasesp', 'codcuentaesp', 'codcuentaesp');
         $this->addFilterSelect($viewName, 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccounts);
 
+        $this->addFilterCheckbox($viewName, 'saldo', 'balance', 'saldo', '!=', 0);
+
         /// disable new button
         $this->setSettings($viewName, 'btnNew', false);
     }
