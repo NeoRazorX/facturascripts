@@ -66,7 +66,7 @@ abstract class PDFDocument extends PDFCore
             'dtopor' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto')],
             'dtopor2' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto-2')],
             'iva' => ['type' => 'percentage', 'title' => $this->i18n->trans('tax')],
-            'recargo' => ['type' => 'percentage', 'title' => $this->i18n->trans('surcharge')],
+            'recargo' => ['type' => 'percentage', 'title' => $this->i18n->trans('re')],
             'irpf' => ['type' => 'percentage', 'title' => $this->i18n->trans('irpf')],
             'pvptotal' => ['type' => 'number', 'title' => $this->i18n->trans('total')]
         ];
@@ -288,7 +288,7 @@ abstract class PDFDocument extends PDFCore
             'dto-2' => $this->i18n->trans('global-dto-2'),
             'net' => $this->i18n->trans('net'),
             'taxes' => $this->i18n->trans('taxes'),
-            'totalSurcharge' => $this->i18n->trans('surcharge'),
+            'totalSurcharge' => $this->i18n->trans('re'),
             'totalIrpf' => $this->i18n->trans('irpf'),
             'totalSupplied' => $this->i18n->trans('supplied-amount'),
             'total' => $this->i18n->trans('total')
