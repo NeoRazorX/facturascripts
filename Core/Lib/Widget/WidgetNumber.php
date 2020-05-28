@@ -134,7 +134,7 @@ class WidgetNumber extends BaseWidget
      */
     protected function show()
     {
-        return is_null($this->value) ? '-' : static::$numberTools->format($this->value, $this->decimal);
+        return \is_null($this->value) ? '-' : static::$numberTools->format($this->value, $this->decimal);
     }
 
     /**

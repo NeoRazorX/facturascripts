@@ -404,16 +404,11 @@ abstract class BaseView
      */
     protected function getPageWhere($user = false)
     {
-        $viewName = explode('-', $this->name)[0];
-
-        if (is_bool($user)) {
-            return [new DataBaseWhere('name', $viewName)];
-        }
-
-        return [
+        $viewName = \explode('-', $this->name)[0];
+        return \is_bool($user) ? [new DataBaseWhere('name', $viewName)] : [
             new DataBaseWhere('name', $viewName),
             new DataBaseWhere('nick', $user->nick),
-            new DataBaseWhere('nick', null, 'IS', 'OR'),
+            new DataBaseWhere('nick', null, 'IS', 'OR')
         ];
     }
 

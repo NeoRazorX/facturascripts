@@ -184,6 +184,15 @@ class BaseWidget extends VisualItem
     }
 
     /**
+     * 
+     * @return bool
+     */
+    public function showTableTotals(): bool
+    {
+        return false;
+    }
+
+    /**
      *
      * @param object $model
      * @param string $display
@@ -240,7 +249,7 @@ class BaseWidget extends VisualItem
     {
         foreach ($children as $child) {
             if ($child['tag'] === 'option') {
-                $child['text'] = html_entity_decode($child['text']);
+                $child['text'] = \html_entity_decode($child['text']);
                 $this->options[] = $child;
             }
         }
@@ -255,11 +264,11 @@ class BaseWidget extends VisualItem
      */
     protected function onclickHtml($inside, $titleurl = '')
     {
-        if (empty($this->onclick) || is_null($this->value)) {
+        if (empty($this->onclick) || \is_null($this->value)) {
             return empty($titleurl) ? $inside : '<a href="' . $titleurl . '">' . $inside . '</a>';
         }
 
-        return '<a href="' . \FS_ROUTE . '/' . $this->onclick . '?code=' . rawurlencode($this->value)
+        return '<a href="' . \FS_ROUTE . '/' . $this->onclick . '?code=' . \rawurlencode($this->value)
             . '" class="cancelClickable">' . $inside . '</a>';
     }
 
@@ -291,7 +300,7 @@ class BaseWidget extends VisualItem
      */
     protected function show()
     {
-        return is_null($this->value) ? '-' : (string) $this->value;
+        return \is_null($this->value) ? '-' : (string) $this->value;
     }
 
     /**
@@ -311,13 +320,13 @@ class BaseWidget extends VisualItem
             }
         }
 
-        $class = [trim($initialClass)];
+        $class = [\trim($initialClass)];
         if (!empty($alternativeClass)) {
             $class[] = $alternativeClass;
-        } elseif (is_null($this->value)) {
+        } elseif (\is_null($this->value)) {
             $class[] = $this->colorToClass('warning', 'text-');
         }
 
-        return implode(' ', $class);
+        return \implode(' ', $class);
     }
 }

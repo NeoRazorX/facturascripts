@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,6 +49,15 @@ class WidgetMoney extends WidgetNumber
 
     /**
      * 
+     * @return bool
+     */
+    public function showTableTotals(): bool
+    {
+        return true;
+    }
+
+    /**
+     * 
      * @param object $model
      */
     protected function setValue($model)
@@ -76,7 +85,7 @@ class WidgetMoney extends WidgetNumber
      */
     protected function show()
     {
-        return is_null($this->value) ? '-' : static::$divisaTools->format($this->value);
+        return \is_null($this->value) ? '-' : static::$divisaTools->format($this->value);
     }
 
     /**

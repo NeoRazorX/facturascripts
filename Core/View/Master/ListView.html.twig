@@ -134,6 +134,42 @@
                 </tbody>
             </table>
         </div>
+        {# -- Totals -- #}
+        {% if currentView.totalAmounts is not empty %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                            </th>
+                            {% for item in currentView.totalAmounts %}
+                                <th class="text-right text-capitalize">
+                                    {{ i18n.trans(item.title) }}
+                                </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-right">{{ i18n.trans('page-total-amount') }}</td>
+                            {% for item in currentView.totalAmounts %}
+                                <td class="text-right">
+                                    {{ fsc.toolBox().numbers().format(item.page) }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td class="text-right">{{ i18n.trans('total-amount') }}</td>
+                            {% for item in currentView.totalAmounts %}
+                                <td class="text-right">
+                                    {{ fsc.toolBox().numbers().format(item.total) }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
         {# -- Pagination -- #}
         {% set pages = currentView.getPagination() %}
         {% if pages | length > 0 %}

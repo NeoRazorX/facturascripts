@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
 /**
  * Auxiliary model to load a list of totals
@@ -64,20 +65,91 @@ class TotalModel
                 $this->code = $value;
                 continue;
             }
+
             $this->totals[$field] = empty($value) ? 0 : $value;
         }
     }
 
     /**
-     * Reset the totals to 0.
+     * Load a list of TotalModel (code and fields of statistics) for the indicated table.
+     *
+     * @param string          $tableName
+     * @param DataBaseWhere[] $where
+     * @param array           $fieldList (['key' => 'SUM(total)', 'key2' => 'MAX(total)' ...])
+     * @param string          $fieldCode (for multiples rows agruped by field code)
+     *
+     * @return static[]
+     */
+    public static function all($tableName, $where, $fieldList, $fieldCode = '')
+    {
+        $result = [];
+        if (static::dataBase()->tableExists($tableName)) {
+            $sql = 'SELECT ' . static::getFieldSQL($fieldCode, $fieldList);
+            $groupby = empty($fieldCode) ? ';' : ' GROUP BY 1 ORDER BY 1;';
+
+            $sqlWhere = DataBaseWhere::getSQLWhere($where);
+            $sql .= ' FROM ' . $tableName . $sqlWhere . $groupby;
+            $data = static::dataBase()->select($sql);
+            foreach ($data as $row) {
+                $result[] = new static($row);
+            }
+        }
+
+        /// if it is empty we are obliged to always return a record with the totals to zero
+        if (empty($result)) {
+            $item = new static();
+            $item->clearTotals(\array_keys($fieldList));
+            return [$item];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Reset the totals to 0.0
      *
      * @param array $totalFields
      */
-    private function clearTotals($totalFields)
+    public function clearTotals($totalFields)
     {
         foreach ($totalFields as $fieldName) {
-            $this->totals[$fieldName] = 0;
+            $this->totals[$fieldName] = 0.0;
         }
+    }
+
+    /**
+     * 
+     * @param string          $tableName
+     * @param string          $fieldName
+     * @param DataBaseWhere[] $where
+     *
+     * @return float
+     */
+    public static function sum($tableName, $fieldName, $where): float
+    {
+        if (static::dataBase()->tableExists($tableName)) {
+            $sql = 'SELECT SUM(' . static::dataBase()->escapeColumn($fieldName) . ') as sum'
+                . ' FROM ' . static::dataBase()->escapeColumn($tableName)
+                . DataBaseWhere::getSQLWhere($where);
+            foreach (static::dataBase()->select($sql) as $row) {
+                return (float) $row['sum'];
+            }
+        }
+
+        return 0.0;
+    }
+
+    /**
+     * 
+     * @return DataBase
+     */
+    private static function dataBase()
+    {
+        if (self::$dataBase === null) {
+            self::$dataBase = new DataBase();
+        }
+
+        return self::$dataBase;
     }
 
     /**
@@ -101,45 +173,6 @@ class TotalModel
         foreach ($fieldList as $fieldName => $fieldSQL) {
             $result .= $comma . $fieldSQL . ' AS ' . $fieldName;
             $comma = ', ';
-        }
-
-        return $result;
-    }
-
-    /**
-     * Load a list of TotalModel (code and fields of statistics) for the indicated table.
-     *
-     * @param string                   $tableName
-     * @param DataBase\DataBaseWhere[] $where
-     * @param array                    $fieldList (['key' => 'SUM(total)', 'key2' => 'MAX(total)' ...])
-     * @param string                   $fieldCode (for multiples rows agruped by field code)
-     *
-     * @return static[]
-     */
-    public static function all($tableName, $where, $fieldList, $fieldCode = '')
-    {
-        $result = [];
-
-        if (self::$dataBase === null) {
-            self::$dataBase = new DataBase();
-        }
-
-        if (self::$dataBase->tableExists($tableName)) {
-            $sql = 'SELECT ' . self::getFieldSQL($fieldCode, $fieldList);
-            $groupby = empty($fieldCode) ? ';' : ' GROUP BY 1 ORDER BY 1;';
-
-            $sqlWhere = DataBase\DataBaseWhere::getSQLWhere($where);
-            $sql .= ' FROM ' . $tableName . $sqlWhere . $groupby;
-            $data = self::$dataBase->select($sql);
-            foreach ($data as $row) {
-                $result[] = new static($row);
-            }
-        }
-
-        /// if it is empty we are obliged to always return a record with the totals to zero
-        if (empty($result)) {
-            $result[] = new static();
-            $result[0]->clearTotals(array_keys($fieldList));
         }
 
         return $result;

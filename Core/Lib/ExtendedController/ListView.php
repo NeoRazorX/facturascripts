@@ -19,11 +19,10 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ListFilter;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
-use FacturaScripts\Dinamic\Model\PageFilter;
+use FacturaScripts\Dinamic\Model\TotalModel;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -36,15 +35,10 @@ use Symfony\Component\HttpFoundation\Request;
 class ListView extends BaseView
 {
 
+    use ListViewFiltersTrait;
+
     const DEFAULT_TEMPLATE = 'Master/ListView.html.twig';
     const MINI_TEMPLATE = 'Master/ListViewMin.html.twig';
-
-    /**
-     * Filter configuration preset by the user
-     *
-     * @var ListFilter\BaseFilter[]
-     */
-    public $filters = [];
 
     /**
      *
@@ -58,20 +52,6 @@ class ListView extends BaseView
      * @var array
      */
     public $orderOptions = [];
-
-    /**
-     * Predefined filter values selected
-     *
-     * @var int
-     */
-    public $pageFilterKey = 0;
-
-    /**
-     * List of predefined filter values
-     *
-     * @var PageFilter[]
-     */
-    public $pageFilters = [];
 
     /**
      *
@@ -88,9 +68,9 @@ class ListView extends BaseView
 
     /**
      *
-     * @var bool
+     * @var array
      */
-    public $showFilters = false;
+    public $totalAmounts = [];
 
     /**
      * ListView constructor and initialization.
@@ -104,107 +84,6 @@ class ListView extends BaseView
     {
         parent::__construct($name, $title, $modelName, $icon);
         $this->template = self::DEFAULT_TEMPLATE;
-    }
-
-    /**
-     * Add an autocomplete type filter to the ListView.
-     *
-     * @param string $key
-     * @param string $label
-     * @param string $field
-     * @param string $table
-     * @param string $fieldcode
-     * @param string $fieldtitle
-     * @param array  $where
-     */
-    public function addFilterAutocomplete($key, $label, $field, $table, $fieldcode = '', $fieldtitle = '', $where = [])
-    {
-        $this->filters[$key] = new ListFilter\AutocompleteFilter($key, $field, $label, $table, $fieldcode, $fieldtitle, $where);
-    }
-
-    /**
-     * Adds a boolean condition type filter to the ListView.
-     *
-     * @param string          $key
-     * @param string          $label
-     * @param string          $field
-     * @param string          $operation
-     * @param mixed           $matchValue
-     * @param DataBaseWhere[] $default
-     */
-    public function addFilterCheckbox($key, $label = '', $field = '', $operation = '=', $matchValue = true, $default = [])
-    {
-        $this->filters[$key] = new ListFilter\CheckboxFilter($key, $field, $label, $operation, $matchValue, $default);
-    }
-
-    /**
-     * Adds a date type filter to the ListView.
-     *
-     * @param string $key
-     * @param string $label
-     * @param string $field
-     * @param string $operation
-     */
-    public function addFilterDatePicker($key, $label = '', $field = '', $operation = '>=')
-    {
-        $this->filters[$key] = new ListFilter\DateFilter($key, $field, $label, $operation);
-    }
-
-    /**
-     * Adds a numeric type filter to the ListView.
-     *
-     * @param string $key
-     * @param string $label
-     * @param string $field
-     * @param string $operation
-     */
-    public function addFilterNumber($key, $label = '', $field = '', $operation = '>=')
-    {
-        $this->filters[$key] = new ListFilter\NumberFilter($key, $field, $label, $operation);
-    }
-
-    /**
-     * Adds a period type filter to the ListView.
-     * (period + start date + end date)
-     *
-     * @param string $key
-     * @param string $label
-     * @param string $field
-     */
-    public function addFilterPeriod($key, $label, $field)
-    {
-        $this->filters[$key] = new ListFilter\PeriodFilter($key, $field, $label);
-    }
-
-    /**
-     * Add a select type filter to a ListView.
-     *
-     * @param string $key
-     * @param string $label
-     * @param string $field
-     * @param array  $values
-     */
-    public function addFilterSelect($key, $label, $field, $values = [])
-    {
-        $this->filters[$key] = new ListFilter\SelectFilter($key, $field, $label, $values);
-    }
-
-    /**
-     * Add a select where type filter to a ListView.
-     *
-     * @param string $key
-     * @param array  $values
-     *
-     * Example of values:
-     *   [
-     *    ['label' => 'Only active', 'where' => [ new DataBaseWhere('suspended', 'FALSE') ]]
-     *    ['label' => 'Only suspended', 'where' => [ new DataBaseWhere('suspended', 'TRUE') ]]
-     *    ['label' => 'All records', 'where' => []],
-     *   ]
-     */
-    public function addFilterSelectWhere($key, $values)
-    {
-        $this->filters[$key] = new ListFilter\SelectWhereFilter($key, $values);
     }
 
     /**
@@ -268,26 +147,6 @@ class ListView extends BaseView
     }
 
     /**
-     * Removes a saved user filter.
-     *
-     * @param string $idfilter
-     *
-     * @return boolean
-     */
-    public function deletePageFilter($idfilter)
-    {
-        $pageFilter = new PageFilter();
-        if ($pageFilter->loadFromCode($idfilter) && $pageFilter->delete()) {
-            /// remove form the list
-            unset($this->pageFilters[$idfilter]);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Method to export the view data.
      *
      * @param ExportManager $exportManager
@@ -343,6 +202,7 @@ class ListView extends BaseView
         $this->cursor = [];
         if ($this->count > 0) {
             $this->cursor = $this->model->all($this->where, $this->order, $this->offset, $limit);
+            $this->loadTotalAmounts();
         }
     }
 
@@ -355,12 +215,8 @@ class ListView extends BaseView
         parent::loadPageOptions($user);
 
         // load saved filters
-        $orderby = ['nick' => 'ASC', 'description' => 'ASC'];
         $where = $this->getPageWhere($user);
-        $pageFilter = new PageFilter();
-        foreach ($pageFilter->all($where, $orderby) as $filter) {
-            $this->pageFilters[$filter->id] = $filter;
-        }
+        $this->loadSavedFilters($where);
     }
 
     /**
@@ -398,52 +254,36 @@ class ListView extends BaseView
     }
 
     /**
-     * Save filter values for user/s.
-     *
-     * @param Request $request
-     * @param User    $user
-     *
-     * @return int
-     */
-    public function savePageFilter($request, $user)
-    {
-        $pageFilter = new PageFilter();
-
-        // Set values data filter
-        foreach ($this->filters as $filter) {
-            $name = $filter->name();
-            $value = $request->request->get($name, null);
-            if (!empty($value)) {
-                $pageFilter->filters[$name] = $value;
-            }
-        }
-
-        // If filters values its empty, don't save filter
-        if (empty($pageFilter->filters)) {
-            return 0;
-        }
-
-        // Set basic data and save filter
-        $pageFilter->id = $request->request->get('filter-id', null);
-        $pageFilter->description = $request->request->get('filter-description', '');
-        $pageFilter->name = \explode('-', $this->getViewName())[0];
-        $pageFilter->nick = $user->nick;
-
-        // Save and return it's all ok
-        if ($pageFilter->save()) {
-            $this->pageFilters[] = $pageFilter;
-            return $pageFilter->id;
-        }
-
-        return 0;
-    }
-
-    /**
      * Adds assets to the asset manager.
      */
     protected function assets()
     {
         AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/ListView.js');
+    }
+
+    private function loadTotalAmounts()
+    {
+        $tableName = \count($this->cursor) > 1 && \method_exists($this->model, 'tableName') ? $this->model->tableName() : '';
+        if (empty($tableName)) {
+            return;
+        }
+
+        foreach ($this->getColumns() as $col) {
+            if ($col->hidden() || false === $col->widget->showTableTotals()) {
+                continue;
+            }
+
+            $pageTotalAmount = 0;
+            foreach ($this->cursor as $model) {
+                $pageTotalAmount += $model->{$col->widget->fieldname};
+            }
+
+            $this->totalAmounts[$col->widget->fieldname] = [
+                'title' => $col->title,
+                'page' => $pageTotalAmount,
+                'total' => TotalModel::sum($tableName, $col->widget->fieldname, $this->where)
+            ];
+        }
     }
 
     /**
@@ -490,27 +330,14 @@ class ListView extends BaseView
      */
     protected function setSelectedOrderBy($orderKey)
     {
-        if (!isset($this->orderOptions[$orderKey])) {
-            return;
-        }
-
-        $this->order = [];
-        $option = $this->orderOptions[$orderKey];
-        foreach ($option['fields'] as $field) {
-            $this->order[$field] = $option['type'];
-        }
-
-        $this->orderKey = $orderKey;
-    }
-
-    private function sortFilters()
-    {
-        \uasort($this->filters, function ($filter1, $filter2) {
-            if ($filter1->ordernum === $filter2->ordernum) {
-                return 0;
+        if (isset($this->orderOptions[$orderKey])) {
+            $this->order = [];
+            $option = $this->orderOptions[$orderKey];
+            foreach ($option['fields'] as $field) {
+                $this->order[$field] = $option['type'];
             }
 
-            return $filter1->ordernum > $filter2->ordernum ? 1 : -1;
-        });
+            $this->orderKey = $orderKey;
+        }
     }
 }
