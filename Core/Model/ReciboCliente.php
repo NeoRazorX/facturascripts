@@ -143,6 +143,8 @@ class ReciboCliente extends Base\Receipt
     {
         if ('list' === $type && !empty($this->idfactura)) {
             return $this->getInvoice()->url() . '&activetab=List' . $this->modelClassName();
+        } elseif ('pay' === $type) {
+            return '';
         }
 
         return parent::url($type, $list);

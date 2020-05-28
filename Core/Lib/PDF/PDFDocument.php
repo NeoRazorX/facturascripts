@@ -549,9 +549,11 @@ abstract class PDFDocument extends PDFCore
             ];
             $rows = [];
             foreach ($receipts as $receipt) {
+                $paylink = $receipt->url('pay');
                 $rows[] = [
                     'numero' => $receipt->numero,
-                    'bank' => $this->getBankData($receipt),
+                    'bank' => empty($paylink) ? $this->getBankData($receipt) : '<c:alink:' . $paylink . '>'
+                    . $this->i18n->trans('pay') . '</c:alink>',
                     'importe' => $this->numberTools->format($receipt->importe),
                     'vencimiento' => $receipt->pagado ? $this->i18n->trans('paid') : $receipt->vencimiento
                 ];
