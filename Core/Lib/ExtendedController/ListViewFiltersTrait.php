@@ -66,6 +66,8 @@ trait ListViewFiltersTrait
      */
     public $showFilters = false;
 
+    abstract public function getViewName();
+
     /**
      * Add an autocomplete type filter to the ListView.
      *
