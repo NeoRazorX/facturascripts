@@ -252,9 +252,10 @@
                 {% endif %}
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codcliente }}"/>
+            {% set autofocus = model.codcliente ? '' : 'autofocus=""' %}
             <input type="text" id="{{ id }}" value="{{ model.nombrecliente | raw }}" class="form-control autocomplete-dc"
                    data-field="{{ id }}" data-source="Cliente" data-fieldcode="codcliente" data-fieldtitle="nombre"
-                   placeholder="{{ i18n.trans('customer') }}" autocomplete="off"/>
+                   placeholder="{{ i18n.trans('customer') }}" {{ autofocus }} autocomplete="off"/>
         </div>
     </div>
 {% endmacro %}
@@ -274,9 +275,10 @@
                 {% endif %}
             </span>
             <input type="hidden" id="{{ id }}Autocomplete" name="{{ name }}" value="{{ model.codproveedor }}"/>
+            {% set autofocus = model.codproveedor ? '' : 'autofocus=""' %}
             <input type="text" id="{{ id }}" value="{{ model.nombre | raw }}" class="form-control autocomplete-dc"
                    data-field="{{ id }}" data-source="Proveedor" data-fieldcode="codproveedor" data-fieldtitle="nombre"
-                   placeholder="{{ i18n.trans('supplier') }}" autocomplete="off"/>
+                   placeholder="{{ i18n.trans('supplier') }}" {{ autofocus }} autocomplete="off"/>
         </div>
     </div>
 {% endmacro %}
