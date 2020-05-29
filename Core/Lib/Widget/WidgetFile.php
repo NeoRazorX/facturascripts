@@ -63,7 +63,7 @@ class WidgetFile extends BaseWidget
         $finalDesc = empty($description) ? $additionalDesc : static::$i18n->trans($description) . ' ' . $additionalDesc;
 
         if ($this->readonly()) {
-            $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
+            $class = $this->combineClasses($this->css('form-control'), $this->class);
             return '<div class="form-group">'
                 . '<label>' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>'
                 . '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
