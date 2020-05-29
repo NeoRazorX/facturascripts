@@ -30,6 +30,12 @@ class VisualItem
 
     /**
      *
+     * @var string
+     */
+    public $class;
+
+    /**
+     *
      * @var Translator
      */
     protected static $i18n;
@@ -70,6 +76,7 @@ class VisualItem
             static::$i18n = new Translator();
         }
 
+        $this->class = $data['class'] ?? '';
         $this->id = $data['id'] ?? '';
         $this->name = $data['name'] ?? '';
     }
@@ -191,6 +198,24 @@ class VisualItem
         }
 
         return $apply;
+    }
+
+    /**
+     * 
+     * @param array $classes
+     *
+     * @return string
+     */
+    protected function combineClasses(...$classes): string
+    {
+        $mix = [];
+        foreach ($classes as $class) {
+            if (!empty($class)) {
+                $mix[] = $class;
+            }
+        }
+
+        return \implode(' ', $mix);
     }
 
     /**

@@ -106,13 +106,12 @@ class BaseWidget extends VisualItem
     {
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
-        $inputHtml = $this->inputHtml();
         $labelHtml = '<label>' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
         if (empty($this->icon)) {
             return '<div class="form-group">'
                 . $labelHtml
-                . $inputHtml
+                . $this->inputHtml()
                 . $descriptionHtml
                 . '</div>';
         }
@@ -123,7 +122,7 @@ class BaseWidget extends VisualItem
             . '<div class="' . $this->css('input-group-prepend') . '">'
             . '<span class="input-group-text"><i class="' . $this->icon . ' fa-fw"></i></span>'
             . '</div>'
-            . $inputHtml
+            . $this->inputHtml()
             . '</div>'
             . $descriptionHtml
             . '</div>';
@@ -202,8 +201,8 @@ class BaseWidget extends VisualItem
     public function tableCell($model, $display = 'left')
     {
         $this->setValue($model);
-        $class = 'text-' . $display;
-        return '<td class="' . $this->tableCellClass($class) . '">' . $this->onclickHtml($this->show()) . '</td>';
+        $class = $this->combineClasses($this->tableCellClass('text-' . $display), $this->class);
+        return '<td class="' . $class . '">' . $this->onclickHtml($this->show()) . '</td>';
     }
 
     /**
@@ -223,8 +222,7 @@ class BaseWidget extends VisualItem
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        $cssFormControl = $this->css('form-control');
-        $class = empty($extraClass) ? $cssFormControl : $cssFormControl . ' ' . $extraClass;
+        $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
         return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
             . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }

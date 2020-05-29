@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -137,9 +137,8 @@ class WidgetSelect extends BaseWidget
     public function setValuesFromArray($items, $translate = false, $addEmpty = false, $col1 = 'value', $col2 = 'title')
     {
         $this->values = $addEmpty ? [['value' => null, 'title' => '------']] : [];
-
         foreach ($items as $item) {
-            if (!is_array($item)) {
+            if (false === \is_array($item)) {
                 $this->values[] = ['value' => $item, 'title' => $item];
                 continue;
             } elseif (isset($item['tag']) && $item['tag'] !== 'values') {
@@ -168,11 +167,10 @@ class WidgetSelect extends BaseWidget
     public function setValuesFromArrayKeys($values, $translate = false, $addEmpty = false)
     {
         $this->values = $addEmpty ? [['value' => null, 'title' => '------']] : [];
-
         foreach ($values as $key => $value) {
             $this->values[] = [
                 'value' => $key,
-                'title' => $value,
+                'title' => $value
             ];
         }
 
@@ -193,7 +191,7 @@ class WidgetSelect extends BaseWidget
         foreach ($rows as $codeModel) {
             $this->values[] = [
                 'value' => $codeModel->code,
-                'title' => $codeModel->description,
+                'title' => $codeModel->description
             ];
         }
 
@@ -210,7 +208,7 @@ class WidgetSelect extends BaseWidget
      */
     public function setValuesFromRange($start, $end, $step)
     {
-        $values = range($start, $end, $step);
+        $values = \range($start, $end, $step);
         $this->setValuesFromArray($values);
     }
 
@@ -237,14 +235,14 @@ class WidgetSelect extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        $cssFormControl = $this->css('form-control');
+        $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
         if ($this->readonly()) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-                . '<input type="text" value="' . $this->show() . '" class="' . $cssFormControl . '" readonly=""/>';
+                . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>';
         }
 
         $found = false;
-        $html = '<select name="' . $this->fieldname . '" class="' . $cssFormControl . '"' . $this->inputHtmlExtraParams() . '>';
+        $html = '<select name="' . $this->fieldname . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '>';
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
@@ -292,7 +290,7 @@ class WidgetSelect extends BaseWidget
      */
     protected function show()
     {
-        if (is_null($this->value)) {
+        if (null === $this->value) {
             return '-';
         }
 
@@ -309,7 +307,7 @@ class WidgetSelect extends BaseWidget
             $selected = static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle);
             $this->values[] = [
                 'value' => $this->value,
-                'title' => $selected,
+                'title' => $selected
             ];
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Description of WidgetCheckbox
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class WidgetCheckbox extends BaseWidget
 {
@@ -42,8 +42,9 @@ class WidgetCheckbox extends BaseWidget
         $this->setValue($model);
         $checked = $this->value ? ' checked=""' : '';
         $id = 'checkbox' . $this->getUniqueId();
+        $class = $this->combineClasses($this->css('form-check-input'), $this->class);
 
-        $inputHtml = '<input type="checkbox" name="' . $this->fieldname . '" value="TRUE" id="' . $id . '" class="form-check-input"' . $checked . '/>';
+        $inputHtml = '<input type="checkbox" name="' . $this->fieldname . '" value="TRUE" id="' . $id . '" class="' . $class . '"' . $checked . '/>';
         $labelHtml = '<label for="' . $id . '">' . static::$i18n->trans($title) . '</label>';
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
 
@@ -62,7 +63,7 @@ class WidgetCheckbox extends BaseWidget
     public function processFormData(&$model, $request)
     {
         $value = $request->request->get($this->fieldname);
-        $model->{$this->fieldname} = !is_null($value);
+        $model->{$this->fieldname} = null !== $value;
     }
 
     /**
@@ -97,7 +98,7 @@ class WidgetCheckbox extends BaseWidget
      */
     protected function show()
     {
-        if (is_null($this->value)) {
+        if (null === $this->value) {
             return '-';
         }
 

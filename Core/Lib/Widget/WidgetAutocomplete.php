@@ -141,8 +141,7 @@ class WidgetAutocomplete extends WidgetSelect
      */
     protected function inputHtml($type = 'text', $extraClass = 'widget-autocomplete')
     {
-        $cssFormControl = $this->css('form-control');
-        $class = empty($extraClass) ? $cssFormControl : $cssFormControl . ' ' . $extraClass;
+        $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
         return '<input type="' . $type . '" value="' . $this->getSelected() . '" class="' . $class . '" data-field="' . $this->fieldname
             . '" data-source="' . $this->source . '" data-fieldcode="' . $this->fieldcode . '" data-fieldtitle="' . $this->fieldtitle
             . '" data-strict="' . $this->strictStr() . '" autocomplete="off"' . $this->inputHtmlExtraParams() . '/>';

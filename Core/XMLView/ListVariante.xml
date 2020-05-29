@@ -55,10 +55,13 @@
         <column name="cost-price" display="none" order="150">
             <widget type="money" fieldname="coste" />
         </column>
-        <column name="price" display="right" order="160">
+        <column name="margin" display="none" order="160">
+            <widget type="percentage" fieldname="margen" />
+        </column>
+        <column name="price" display="right" order="170">
             <widget type="money" fieldname="precio" />
         </column>
-        <column name="stock" display="right" order="170">
+        <column name="stock" display="right" order="180">
             <widget type="number" fieldname="stockfis"/>
         </column>
     </columns>

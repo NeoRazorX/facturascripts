@@ -84,6 +84,12 @@ class Variante extends Base\ModelClass
     public $idvariante;
 
     /**
+     *
+     * @var float
+     */
+    public $margen;
+
+    /**
      * Price of the variant. Without tax.
      *
      * @var int|float
@@ -111,6 +117,7 @@ class Variante extends Base\ModelClass
     {
         parent::clear();
         $this->coste = 0.0;
+        $this->margen = 0.0;
         $this->precio = 0.0;
         $this->stockfis = 0.0;
     }
@@ -259,6 +266,11 @@ class Variante extends Base\ModelClass
      */
     public function save()
     {
+        if ($this->margen > 0) {
+            $newPrice = $this->coste * (100 + $this->margen) / 100;
+            $this->precio = \round($newPrice, DinProducto::ROUND_DECIMALS);
+        }
+
         if (parent::save()) {
             $this->getProducto()->update();
             return true;

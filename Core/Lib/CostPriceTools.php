@@ -22,6 +22,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model\LineaAlbaranProveedor;
 use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
+use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Variante;
 
@@ -115,7 +116,8 @@ class CostPriceTools
             }
         }
 
-        $variant->coste = empty($buyedUnits) ? 0.0 : $totalCost / $buyedUnits;
+        $newCost = empty($buyedUnits) ? 0.0 : $totalCost / $buyedUnits;
+        $variant->coste = \round($newCost, Producto::ROUND_DECIMALS);
         $variant->save();
     }
 
@@ -133,7 +135,8 @@ class CostPriceTools
             $prices[] = $prod->neto;
         }
 
-        $variant->coste = empty($prices) ? 0.0 : \array_sum($prices) / \count($prices);
+        $newCost = empty($prices) ? 0.0 : \array_sum($prices) / \count($prices);
+        $variant->coste = \round($newCost, Producto::ROUND_DECIMALS);
         $variant->save();
     }
 
@@ -147,7 +150,7 @@ class CostPriceTools
         $supplierProduct = new ProductoProveedor();
         $where = [new DataBaseWhere('referencia', $variant->referencia)];
         foreach ($supplierProduct->all($where, ['actualizado' => 'DESC'], 0, 1) as $prod) {
-            $variant->coste = $prod->neto;
+            $variant->coste = \round($prod->neto, Producto::ROUND_DECIMALS);
             $variant->save();
             break;
         }
