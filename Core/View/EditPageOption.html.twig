@@ -233,7 +233,9 @@
             }}
         </td>
         <td class="d-inline-block col-1">
-            <input type="number" class="form-control" name="{{ masterName ~ 'decimal' }}" min="0" max="5" step="1" value="{{ field.decimal }}"/>
+            {% if field['children'][0].type == 'number' or field['children'][0].type == 'money' or field['children'][0].type == 'percentage'%}
+            <input type="number" class="form-control" name="{{ masterName ~ 'widget' ~ '+' ~ 'decimal' }}" min="0" max="5" step="1" value="{{ field['children'][0].decimal }}"/>
+            {% endif %}
         </td>
         <td class="d-inline-block col-{{ titleUrlColumn }}">
             <input type="text" class="form-control" name="{{ masterName ~ 'titleurl' }}" placeholder="http://" value="{{ field.titleurl }}"/>
