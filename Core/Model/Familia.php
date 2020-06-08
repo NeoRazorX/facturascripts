@@ -131,8 +131,7 @@ class Familia extends Base\ModelClass
         }
 
         if ($this->madre === $this->codfamilia) {
-            $this->toolBox()->i18nLog()->warning('parent-family-cant-be-child');
-            return false;
+            $this->madre = null;
         }
 
         return parent::test();
@@ -168,10 +167,12 @@ class Familia extends Base\ModelClass
             $model = new Familia();
         }
 
-        if (!$model->loadFromCode($code)) {
+        if (false === $model->loadFromCode($code)) {
             return '';
         }
 
-        return empty($model->{$field}) ? self::getSubaccountFromFamily($model->madre, $field, $model) : $model->{$field};
+        return empty($model->{$field}) && $model->madre != $code ?
+            self::getSubaccountFromFamily($model->madre, $field, $model) :
+            $model->{$field};
     }
 }
