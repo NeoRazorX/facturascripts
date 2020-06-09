@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -84,7 +84,7 @@ class SendMail extends Controller
         $this->newMail = new NewMail();
 
         /// Check if the email is configurate
-        if (!$this->newMail->canSendMail()) {
+        if (false === $this->newMail->canSendMail()) {
             $this->toolBox()->i18nLog()->warning('email-not-configured');
         }
 
@@ -109,7 +109,7 @@ class SendMail extends Controller
             $sendParams['modelCode'] = $this->request->get('modelCode');
         }
 
-        return parent::url() . '?' . http_build_query($sendParams);
+        return parent::url() . '?' . \http_build_query($sendParams);
     }
 
     /**
@@ -171,8 +171,7 @@ class SendMail extends Controller
      */
     protected function getEmails(string $field): array
     {
-        $string = trim($this->request->request->get($field, ''));
-        return explode(',', $string);
+        return NewMail::splitEmails($this->request->request->get($field, ''));
     }
 
     /**
@@ -181,7 +180,7 @@ class SendMail extends Controller
     protected function redirAfter()
     {
         $className = self::MODEL_NAMESPACE . $this->request->get('modelClassName');
-        if (!class_exists($className)) {
+        if (false === \class_exists($className)) {
             return;
         }
 
@@ -198,11 +197,11 @@ class SendMail extends Controller
      */
     protected function removeOld()
     {
-        foreach (glob(\FS_FOLDER . '/MyFiles/*_mail_*.pdf') as $fileName) {
-            $parts = explode('_', $fileName);
-            $time = (int) substr(end($parts), 0, -4);
-            if ($time < (time() - self::MAX_FILE_AGE)) {
-                unlink($fileName);
+        foreach (\glob(\FS_FOLDER . '/MyFiles/*_mail_*.pdf') as $fileName) {
+            $parts = \explode('_', $fileName);
+            $time = (int) \substr(end($parts), 0, -4);
+            if ($time < (\time() - self::MAX_FILE_AGE)) {
+                \unlink($fileName);
             }
         }
     }
@@ -234,9 +233,9 @@ class SendMail extends Controller
         $this->newMail->fromNick = $this->user->nick;
         $this->newMail->title = $this->request->request->get('subject', '');
         $this->newMail->text = $this->request->request->get('body', '');
-        
+
         $this->newMail->setMailbox($this->request->request->get('email-from', ''));
-        
+
         foreach ($this->getEmails('email') as $email) {
             $this->newMail->addAddress($email);
         }
@@ -255,7 +254,7 @@ class SendMail extends Controller
         if ($this->newMail->send()) {
             $fileName = $this->request->get('fileName', '');
             if (\file_exists(\FS_FOLDER . '/MyFiles/' . $fileName)) {
-                unlink(\FS_FOLDER . '/MyFiles/' . $fileName);
+                \unlink(\FS_FOLDER . '/MyFiles/' . $fileName);
             }
 
             return true;
@@ -273,31 +272,31 @@ class SendMail extends Controller
     protected function setEmailAddress()
     {
         $className = self::MODEL_NAMESPACE . $this->request->get('modelClassName', '');
-        if (!class_exists($className)) {
+        if (false === \class_exists($className)) {
             return;
         }
 
         $model = new $className();
         $model->loadFromCode($this->request->get('modelCode', ''));
-        if (property_exists($model, 'email')) {
+        if (\property_exists($model, 'email')) {
             $this->newMail->addAddress($model->email);
             return;
         }
 
         $proveedor = new Proveedor();
-        if (property_exists($model, 'codproveedor') && $proveedor->loadFromCode($model->codproveedor)) {
+        if (\property_exists($model, 'codproveedor') && $proveedor->loadFromCode($model->codproveedor)) {
             $this->newMail->addAddress($proveedor->email, $proveedor->razonsocial);
             return;
         }
 
         $contact = new Contacto();
-        if (property_exists($model, 'idcontactofact') && $contact->loadFromCode($model->idcontactofact)) {
+        if (\property_exists($model, 'idcontactofact') && $contact->loadFromCode($model->idcontactofact)) {
             $this->newMail->addAddress($contact->email, $contact->fullName());
             return;
         }
 
         $cliente = new Cliente();
-        if (property_exists($model, 'codcliente') && $cliente->loadFromCode($model->codcliente)) {
+        if (\property_exists($model, 'codcliente') && $cliente->loadFromCode($model->codcliente)) {
             $this->newMail->addAddress($cliente->email, $cliente->razonsocial);
         }
     }
@@ -308,14 +307,14 @@ class SendMail extends Controller
     protected function updateFemail()
     {
         $className = self::MODEL_NAMESPACE . $this->request->get('modelClassName');
-        if (!class_exists($className)) {
+        if (false === \class_exists($className)) {
             return;
         }
 
         $model = new $className();
         $modelCode = $this->request->get('modelCode');
-        if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
-            $model->femail = date('d-m-Y');
+        if ($model->loadFromCode($modelCode) && \property_exists($className, 'femail')) {
+            $model->femail = \date(Cliente::DATE_STYLE);
             if (!$model->save()) {
                 $this->toolBox()->i18nLog()->error('error-saving-data');
             }

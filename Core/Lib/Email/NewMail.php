@@ -39,18 +39,12 @@ class NewMail
      * @var Empresa
      */
     public $empresa;
-    
+
     /**
      *
      * @var string
      */
-    public $emailcc;
-    
-    /**
-     *
-     * @var string
-     */
-    public $emailbcc;
+    public $fromEmail;
 
     /**
      *
@@ -119,6 +113,7 @@ class NewMail
         $this->empresa = new Empresa();
         $this->empresa->loadFromCode($appSettings->get('default', 'idempresa'));
 
+        $this->fromEmail = $appSettings->get('email', 'email');
         $this->fromName = $this->empresa->nombrecorto;
 
         $this->mail = new PHPMailer();
@@ -131,36 +126,18 @@ class NewMail
         $this->mail->Port = $appSettings->get('email', 'port');
         $this->mail->Username = $appSettings->get('email', 'user') ? $appSettings->get('email', 'user') : $appSettings->get('email', 'email');
         $this->mail->Password = $appSettings->get('email', 'password');
-         
-        $this->emailCopy($appSettings);
-        
+
+        foreach (static::splitEmails($appSettings->get('email', 'emailcc')) as $email) {
+            $this->addCC($email);
+        }
+
+        foreach (static::splitEmails($appSettings->get('email', 'emailbcc')) as $email) {
+            $this->addBCC($email);
+        }
+
         $this->signature = $appSettings->get('email', 'signature', '');
         $this->template = self::DEFAULT_TEMPLATE;
         $this->verificode = $this->toolBox()->utils()->randomString(20);
-    }
-    
-    /**
-     * Add copy and blind copy emails from general settings.
-     * 
-     */
-    private function emailCopy($appSettings)
-    {
-        $this->emailcc = $appSettings->get('email', 'emailcc');
-        $this->emailbcc = $appSettings->get('email', 'emailbcc');
-        
-        if (!empty($this->emailcc)) {
-            $emails = explode(',', trim($this->emailcc));
-            foreach ($emails as $email) {
-                $this->mail->addCC($email);
-            }
-        }
-        
-        if (!empty($this->emailbcc)) {
-            $emails = explode(',', trim($this->emailbcc));
-            foreach ($emails as $email) {
-                $this->mail->addBCC($email);
-            }
-        }
     }
 
     /**
@@ -225,6 +202,16 @@ class NewMail
     }
 
     /**
+     * Check if the email is configured
+     * 
+     * @return bool
+     */
+    public function canSendMail()
+    {
+        return !empty($this->fromEmail) && !empty($this->mail->Password) && !empty($this->mail->Host);
+    }
+
+    /**
      * 
      * @return array
      */
@@ -236,6 +223,16 @@ class NewMail
         }
 
         return $names;
+    }
+
+    /**
+     * Returns an array with available email trays
+     * 
+     * @return array
+     */
+    public function getAvailableMailboxes()
+    {
+        return empty($this->fromEmail) ? [] : [$this->fromEmail];
     }
 
     /**
@@ -292,11 +289,11 @@ class NewMail
             return false;
         }
 
-        $this->mail->setFrom($appSettings->get('email', 'email'), $this->fromName);
+        $this->mail->setFrom($this->fromEmail, $this->fromName);
         $this->mail->Subject = $this->title;
         $this->mail->msgHTML($this->renderHTML());
 
-        if ('smtp' === $appSettings->get('email', 'mailer') && !$this->mail->smtpConnect($this->smtpOptions())) {
+        if ('smtp' === $this->mail->Mailer && !$this->mail->smtpConnect($this->smtpOptions())) {
             $this->toolBox()->i18nLog()->error('error', ['%error%' => $this->mail->ErrorInfo]);
             return false;
         }
@@ -309,45 +306,33 @@ class NewMail
         $this->toolBox()->i18nLog()->error('error', ['%error%' => $this->mail->ErrorInfo]);
         return false;
     }
-    
-    /**
-     * Check if the email is configured
-     * 
-     * @return bool
-     */
-    public function canSendMail()
-    {
-        if ($this->toolBox()->appSettings()->get('email', 'host', '') == "") {
-            return false;
-        } else {
-            return true;
-        }
-    }
-    
-    /**
-     * Returns an array with available email trays
-     * 
-     * @return array
-     */
-    public function getAvailableMailboxes()
-    {
-        $results = [];
-    
-        $emailSend = $this->toolBox()->appSettings()->get('email', 'email', '');
-        if ($emailSend != "") {
-            $results = [$emailSend];
-        }
-        
-        return $results;
-    }
-    
+
     /**
      * 
-     * @param type $emailFrom
+     * @param string $emailFrom
      */
     public function setMailbox($emailFrom)
     {
-        $this->mail->Email = $emailFrom;
+        ;
+    }
+
+    /**
+     * 
+     * @param string $emails
+     *
+     * @return array
+     */
+    public static function splitEmails($emails): array
+    {
+        $return = [];
+        foreach (\explode(',', $emails) as $part) {
+            $email = \trim($part);
+            if (!empty($part)) {
+                $return[] = $email;
+            }
+        }
+
+        return $return;
     }
 
     /**
@@ -374,7 +359,7 @@ class NewMail
      */
     protected function getFooterBlocks(): array
     {
-        return array_merge([new TextBlock($this->signature)], $this->footerBlocks);
+        return \array_merge([new TextBlock($this->signature)], $this->footerBlocks);
     }
 
     /**
@@ -383,7 +368,7 @@ class NewMail
      */
     protected function getMainBlocks(): array
     {
-        return array_merge([new TextBlock($this->text)], $this->mainBlocks);
+        return \array_merge([new TextBlock($this->text)], $this->mainBlocks);
     }
 
     /**
@@ -407,10 +392,10 @@ class NewMail
     protected function saveMailSent()
     {
         /// get all email address
-        $addresses = array_merge($this->getToAddresses(), $this->getCcAddresses(), $this->getBccAddresses());
+        $addresses = \array_merge($this->getToAddresses(), $this->getCcAddresses(), $this->getBccAddresses());
 
         /// save email sent
-        foreach (array_unique($addresses) as $address) {
+        foreach (\array_unique($addresses) as $address) {
             $emailSent = new EmailSent();
             $emailSent->addressee = $address;
             $emailSent->body = $this->text;

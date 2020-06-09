@@ -21,7 +21,7 @@
 -->
 <view>
     <columns>
-        <group name="email" numcolumns="12" icon="fas fa-envelope">
+        <group name="email" icon="fas fa-envelope" numcolumns="12">
             <column name="name" display="none" order="0">
                 <widget type="text" fieldname="name" readonly="true" required="true" />
             </column>
@@ -31,17 +31,11 @@
             <column name="password" order="110">
                 <widget type="password" fieldname="password" icon="fas fa-key" />
             </column>
-            <column name="emailcc" title="email-cc-separated" numcolumns="12" order="120">
-                <widget type="text" fieldname="emailcc" icon="fas fa-envelope" />
-            </column>
-            <column name="emailbcc" title="email-bcc-separated" numcolumns="12" order="130">
-                <widget type="text" fieldname="emailbcc" icon="fas fa-envelope" />
-            </column>
-            <column name="email-signature" numcolumns="12" order="140">
+            <column name="email-signature" numcolumns="12" order="130">
                 <widget type="textarea" fieldname="signature" />
             </column>
         </group>
-        <group name="advanced" title="advanced" numcolumns="12" icon="fas fa-server">
+        <group name="advanced" title="advanced" icon="fas fa-server" numcolumns="12">
             <column name="user" numcolumns="2" order="100">
                 <widget type="text" fieldname="user" />
             </column>
@@ -57,7 +51,7 @@
                     <values title="TLS">tls</values>
                 </widget>
             </column>
-            <column name="mailer" title="mailer" numcolumns="3" order="140">
+            <column name="mailer" numcolumns="3" order="140">
                 <widget type="select" fieldname="mailer" required="true">
                     <values title="Mail">mail</values>
                     <values title="SendMail">sendmail</values>
@@ -66,6 +60,14 @@
             </column>
             <column name="lowsecure" title="low-security" order="150">
                 <widget type="checkbox" fieldname="lowsecure" />
+            </column>
+        </group>
+        <group name="copy" title="email-cc" icon="fas fa-mail-bulk" numcolumns="12">
+            <column name="email-cc" description="accepts-emails-commas" order="100">
+                <widget type="text" fieldname="emailcc" icon="fas fa-envelope" />
+            </column>
+            <column name="email-bcc" description="accepts-emails-commas" order="110">
+                <widget type="text" fieldname="emailbcc" icon="fas fa-envelope" />
             </column>
         </group>
     </columns>
