@@ -39,6 +39,18 @@ class NewMail
      * @var Empresa
      */
     public $empresa;
+    
+    /**
+     *
+     * @var string
+     */
+    public $emailcc;
+    
+    /**
+     *
+     * @var string
+     */
+    public $emailbcc;
 
     /**
      *
@@ -119,10 +131,36 @@ class NewMail
         $this->mail->Port = $appSettings->get('email', 'port');
         $this->mail->Username = $appSettings->get('email', 'user') ? $appSettings->get('email', 'user') : $appSettings->get('email', 'email');
         $this->mail->Password = $appSettings->get('email', 'password');
-
+         
+        $this->emailCopy($appSettings);
+        
         $this->signature = $appSettings->get('email', 'signature', '');
         $this->template = self::DEFAULT_TEMPLATE;
         $this->verificode = $this->toolBox()->utils()->randomString(20);
+    }
+    
+    /**
+     * Add copy and blind copy emails from general settings.
+     * 
+     */
+    private function emailCopy($appSettings)
+    {
+        $this->emailcc = $appSettings->get('email', 'emailcc');
+        $this->emailbcc = $appSettings->get('email', 'emailbcc');
+        
+        if (!empty($this->emailcc)) {
+            $emails = explode(',', trim($this->emailcc));
+            foreach ($emails as $email) {
+                $this->mail->addCC($email);
+            }
+        }
+        
+        if (!empty($this->emailbcc)) {
+            $emails = explode(',', trim($this->emailbcc));
+            foreach ($emails as $email) {
+                $this->mail->addBCC($email);
+            }
+        }
     }
 
     /**

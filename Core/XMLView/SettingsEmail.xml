@@ -31,7 +31,13 @@
             <column name="password" order="110">
                 <widget type="password" fieldname="password" icon="fas fa-key" />
             </column>
-            <column name="email-signature" numcolumns="12" order="120">
+            <column name="emailcc" title="email-cc-separated" numcolumns="12" order="120">
+                <widget type="text" fieldname="emailcc" icon="fas fa-envelope" />
+            </column>
+            <column name="emailbcc" title="email-bcc-separated" numcolumns="12" order="130">
+                <widget type="text" fieldname="emailbcc" icon="fas fa-envelope" />
+            </column>
+            <column name="email-signature" numcolumns="12" order="140">
                 <widget type="textarea" fieldname="signature" />
             </column>
         </group>
