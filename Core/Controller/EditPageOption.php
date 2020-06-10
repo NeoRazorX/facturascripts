@@ -225,7 +225,7 @@ class EditPageOption extends Controller
 
     /**
      * 
-     * @param arry   $column
+     * @param array  $column
      * @param string $name
      * @param string $key
      * @param bool   $isWidget
