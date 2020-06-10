@@ -378,7 +378,7 @@ class Wizard extends Controller
 
     private function saveStep1()
     {
-        $codpais = $this->request->request->get('codpais', '');
+        $codpais = $this->request->request->get('codpais', $this->empresa->codpais);
         $this->preSetAppSettings($codpais);
 
         $appSettings = $this->toolBox()->appSettings();
