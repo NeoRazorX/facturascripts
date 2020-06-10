@@ -150,7 +150,7 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th class="d-inline-block col-3">
+                    <th class="d-inline-block col-2">
                         {{ i18n.trans('title') }}
                     </th>
                     <th class="d-inline-block col-2">
@@ -167,6 +167,8 @@
                     {% endif %}
                     <th class="d-inline-block col-1">
                         {{ i18n.trans('width') }}
+                    </th><th class="d-inline-block col-1">
+                        {{ i18n.trans('decimals') }}
                     </th>
                     <th class="d-inline-block col-{{ titleUrlColumn }}">
                         {{ i18n.trans('title-url') }}
@@ -189,7 +191,7 @@
     {% from 'Macro/Forms.html.twig' import simpleSelect as simpleSelect %}
     {% set masterName = key1 ~ '+' ~ key2 ~ '+' %}
     <tr>
-        <td class="d-inline-block col-3">
+        <td class="d-inline-block col-2">
             {{ field.title is empty ? i18n.trans(field.name) : i18n.trans(field.title) }}
         </td>
         <td class="d-inline-block col-2">
@@ -229,6 +231,11 @@
                 FALSE,
                 {})
             }}
+        </td>
+        <td class="d-inline-block col-1">
+            {% if field['children'][0].type == 'number' or field['children'][0].type == 'money' or field['children'][0].type == 'percentage'%}
+            <input type="number" class="form-control" name="{{ masterName ~ 'widget' ~ '+' ~ 'decimal' }}" min="0" max="5" step="1" value="{{ field['children'][0].decimal }}"/>
+            {% endif %}
         </td>
         <td class="d-inline-block col-{{ titleUrlColumn }}">
             <input type="text" class="form-control" name="{{ masterName ~ 'titleurl' }}" placeholder="http://" value="{{ field.titleurl }}"/>

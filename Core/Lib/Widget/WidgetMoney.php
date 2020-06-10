@@ -85,7 +85,7 @@ class WidgetMoney extends WidgetNumber
      */
     protected function show()
     {
-        return \is_null($this->value) ? '-' : static::$divisaTools->format($this->value);
+        return \is_null($this->value) ? '-' : static::$divisaTools->format($this->value, $this->decimal);
     }
 
     /**
