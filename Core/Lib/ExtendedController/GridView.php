@@ -427,10 +427,11 @@ class GridView extends EditView
                 $item['data-source'] = $this->getAutocompleteSource($column->widget);
                 break;
 
-            case 'number':
             case 'money':
+            case 'number':
+            case 'percentage':
                 $item['type'] = 'numeric';
-                $item['numericFormat'] = $this->toolBox()->coins()->gridMoneyFormat();
+                $item['numericFormat'] = $column->widget->gridFormat();
                 break;
 
             case 'select':

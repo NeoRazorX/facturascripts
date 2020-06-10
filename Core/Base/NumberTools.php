@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,25 +28,25 @@ class NumberTools
 
     public function __construct()
     {
-        if (!defined('FS_NF1')) {
-            define('FS_NF1', ',');
+        if (false === \defined('FS_NF1')) {
+            \define('FS_NF1', ',');
         }
 
-        if (!defined('FS_NF2')) {
-            define('FS_NF2', ' ');
+        if (false === \defined('FS_NF2')) {
+            \define('FS_NF2', ' ');
         }
     }
 
     /**
      * Returns the number format with the number of decimals indicated.
      *
-     * @param float|string $number
-     * @param int|string   $decimals
+     * @param mixed $number
+     * @param mixed $decimals
      *
      * @return string
      */
-    public static function format($number, $decimals = FS_NF0)
+    public static function format($number, $decimals = \FS_NF0)
     {
-        return number_format((float) $number, (int) $decimals, FS_NF1, FS_NF2);
+        return \number_format((float) $number, (int) $decimals, \FS_NF1, \FS_NF2);
     }
 }

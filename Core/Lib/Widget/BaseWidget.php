@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Description of BaseWidget
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class BaseWidget extends VisualItem
 {
@@ -136,6 +136,15 @@ class BaseWidget extends VisualItem
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public function gridFormat()
+    {
+        return [];
     }
 
     /**

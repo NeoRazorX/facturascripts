@@ -41,7 +41,7 @@ class WidgetNumber extends BaseWidget
      *
      * @var int
      */
-    protected $decimal;
+    public $decimal;
 
     /**
      * Indicates the min value
@@ -79,6 +79,20 @@ class WidgetNumber extends BaseWidget
         $this->min = $data['min'] ?? '';
         $this->max = $data['max'] ?? '';
         $this->step = $data['step'] ?? 'any';
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public function gridFormat(): array
+    {
+        $format = '0.';
+        for ($num = 0; $num < $this->decimal; $num++) {
+            $format .= '0';
+        }
+
+        return ['pattern' => $format];
     }
 
     /**

@@ -131,14 +131,14 @@ class BusinessDocumentView extends BaseView
                 'readOnly' => ($col->widget->readonly == 'true' || !$this->model->editable)
             ];
 
-            if ($item['type'] === 'number' || $item['type'] === 'money') {
-                $item['type'] = 'numeric';
-                $item['numericFormat'] = $this->toolBox()->coins()->gridMoneyFormat();
-            } elseif ($item['type'] === 'autocomplete') {
+            if ($item['type'] === 'autocomplete') {
                 $item['source'] = $col->widget->getDataSource();
                 $item['strict'] = false;
                 $item['visibleRows'] = 5;
                 $item['trimDropdown'] = false;
+            } elseif (\in_array($item['type'], ['money', 'number', 'percentage'], true)) {
+                $item['type'] = 'numeric';
+                $item['numericFormat'] = $col->widget->gridFormat();
             }
 
             $data['columns'][] = $item;

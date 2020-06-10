@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,8 +47,9 @@ class DivisaTools extends NumberTools
     public function __construct()
     {
         parent::__construct();
-        if (!defined('FS_CURRENCY_POS')) {
-            define('FS_CURRENCY_POS', 'right');
+
+        if (false === \defined('FS_CURRENCY_POS')) {
+            \define('FS_CURRENCY_POS', 'right');
         }
 
         if (!isset(self::$divisas)) {
@@ -93,9 +94,9 @@ class DivisaTools extends NumberTools
     /**
      * Returns the value of the formatted currency.
      *
-     * @param float|string $number
-     * @param int|string   $decimals
-     * @param string       $decoration
+     * @param mixed  $number
+     * @param mixed  $decimals
+     * @param string $decoration
      *
      * @return string
      */
@@ -121,23 +122,6 @@ class DivisaTools extends NumberTools
     public static function getSymbol()
     {
         return isset(self::$selectedDivisa) ? (string) self::$selectedDivisa->simbolo : '?';
-    }
-
-    /**
-     * Return format mask for edit grid
-     *
-     * @param int $decimals
-     * 
-     * @return array
-     */
-    public static function gridMoneyFormat($decimals = FS_NF0)
-    {
-        $moneyFormat = '0.';
-        for ($num = 0; $num < $decimals; $num++) {
-            $moneyFormat .= '0';
-        }
-
-        return ['pattern' => $moneyFormat];
     }
 
     /**

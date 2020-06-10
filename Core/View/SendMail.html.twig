@@ -113,6 +113,15 @@
     </div>
 {% endblock %}
 
+{% block css %}
+    {{ parent() }}
+    <style>
+        body {
+            background-color: #FAFBFC;
+        }
+    </style>
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript">

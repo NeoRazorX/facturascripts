@@ -18,6 +18,128 @@
      */
 #}
 {% extends "Master/MenuTemplate.html.twig" %}
+{% from 'Macro/Forms.html.twig' import simpleSelect as simpleSelect %}
+
+{% block bodyHeaderOptions %}
+    {{ parent() }}
+    <div class="container-fluid mb-3">
+        {{ parent() }}
+        <div class="row">
+            <div class="col-4 d-print-none">
+                <div class="btn-group bg-white">
+                    <a href="{{ fsc.backPage }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
+                        <span class="d-none d-md-inline-block">{{ i18n.trans('back') }} </span>
+                    </a>
+                    <a href="{{ fsc.url() ~ '?code=' ~ fsc.selectedViewName }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
+                        <i class="fas fa-redo" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col text-right">
+                <h1 class="h4">
+                    {{ fsc.title }} <i class="{{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
+                </h1>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <span class="text-info">{{ fsc.selectedViewName }}</span>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            <input type="hidden" name="code" value="{{ fsc.selectedViewName }}" />
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-users"></i>
+                                            </span>
+                                        </div>
+                                        {% set userList = {'': i18n.trans('all')} | merge(fsc.getUserList()) %}
+                                        {{ simpleSelect(
+                                            'nick',
+                                            'nick',
+                                            fsc.selectedUser,
+                                            userList,
+                                            FALSE,
+                                            FALSE,
+                                            {'onChange': 'this.form.submit()'})
+                                        }}
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <form method="post" name="main_form">
+                        <input type="hidden" name="action" value="save"/>
+                        <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
+                        <input type="hidden" name="nick" value="{{ fsc.selectedUser }}"/>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>{{ i18n.trans('title') }}</th>
+                                        <th class="text-center">{{ i18n.trans('display') }}</th>
+                                        <th>{{ i18n.trans('level') }}</th>
+                                        <th>{{ i18n.trans('readonly') }}</th>
+                                        <th width="150">{{ i18n.trans('decimals') }}</th>
+                                        <th>{{ i18n.trans('width') }}</th>
+                                        <th class="text-right" width="130">{{ i18n.trans('sort') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for group in fsc.columns %}
+                                        {% for col in group.columns %}
+                                            {{ _self.editGroupColumn(col, i18n) }}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                {% if fsc.model.exists() %}
+                                    <div class="col">
+                                        <button class="btn btn-sm btn btn-danger" type="button" onclick="deleteOptions();">
+                                            <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i> {{ i18n.trans('delete') }}
+                                        </button>
+                                    </div>
+                                {% endif %}
+                                <div class="col text-right">
+                                    <button class="btn btn-sm btn btn-secondary" type="reset">
+                                        <i class="fas fa-undo fa-fw" aria-hidden="true"></i> {{ i18n.trans('undo') }}
+                                    </button>
+                                    <button class="btn btn-sm btn-primary" type="submit">
+                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        body {
+            background-color: #FAFBFC;
+        }
+    </style>
+{% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
@@ -47,201 +169,98 @@
     </script>
 {% endblock %}
 
-{% block bodyHeaderOptions %}
-    {{ parent() }}
-    <div class="container-fluid">
-        {{ parent() }}
-        <div class="row">
-            <div class="col-4 d-print-none">
-                <div class="btn-group">
-                    <a href="{{ fsc.backPage }}" class="btn btn-sm btn-outline-secondary">
-                        <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">{{ i18n.trans('back') }} </span>
-                    </a>
-                    <a href="{{ fsc.url() ~ '?code=' ~ fsc.selectedViewName }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
-                        <i class="fas fa-redo" aria-hidden="true"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-7 text-right">
-                <h1 class="h4">
-                    {{ fsc.title }}<br/>
-                    <small class="text-info">{{ fsc.selectedViewName }}</small>
-                </h1>
-            </div>
-            <div class="col-1 text-center">
-                <i class="{{ fsc.getPageData()['icon'] }} fa-3x" aria-hidden="true"></i>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
-{% block body %}
-    <!-- Visual macros -->
-    {% from 'Macro/Forms.html.twig' import simpleSelect as simpleSelect %}
-
-    <!-- Main Body -->
-    <div class="container-fluid">
-        {{ parent() }}
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">{{ i18n.trans('configure-columns') }}</span>
-                        {% if fsc.user.admin %}
-                            <div class="float-right text-danger">
-                                <form action="#" method="post" class="form-inline" role="form" name="select_user">
-                                    <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
-                                    <label>{{ i18n.trans('select-user') }}</label>
-                                    &nbsp;&nbsp;
-                                    {% set userList = {'':i18n.trans('all')}|merge(fsc.getUserList()) %}
-                                    {{ simpleSelect(
-                                        'nick',
-                                        'nick',
-                                        fsc.selectedUser,
-                                        userList,
-                                        FALSE,
-                                        FALSE,
-                                        {'class': 'text-danger bg-white', 'onChange': 'this.form.submit()'})
-                                    }}
-                                </form>
-                            </div>
-                        {% endif %}
-                    </div>
-                    <form action="#" method="post" class="form" role="form" name="main_form">
-                        <input type="hidden" name="action" value="save"/>
-                        <input type="hidden" name="code" value="{{ fsc.selectedViewName }}"/>
-                        <input type="hidden" name="nick" value="{{ fsc.selectedUser }}"/>
-                        {% for key1, group in fsc.model.columns %}
-                            {{ _self.editGroup(key1, group, i18n, fsc) }}
-                        {% endfor %}
-                        <div class="card-footer">
-                            <div class="row">
-                                {% if fsc.model.exists() %}
-                                    <div class="col">
-                                        <button class="btn btn-sm btn btn-danger" type="button" onclick="deleteOptions();">
-                                            <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i> {{ i18n.trans('delete') }}
-                                        </button>
-                                    </div>
-                                {% endif %}
-                                <div class="col text-right">
-                                    <button class="btn btn-sm btn btn-secondary" type="reset">
-                                        <i class="fas fa-undo fa-fw" aria-hidden="true"></i> {{ i18n.trans('undo') }}
-                                    </button>
-                                    <button class="btn btn-sm btn-primary" type="submit">
-                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
-{% macro editGroup(key1, group, i18n, fsc) %}
-    {% if group.title is not empty %}
-        <h4 class="text-info">{{ i18n.trans(group.title) }}</h4>
-    {% endif %}
-    {% set titleUrlColumn = 5 %}
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th class="d-inline-block col-2">
-                        {{ i18n.trans('title') }}
-                    </th>
-                    <th class="d-inline-block col-2">
-                        {{ i18n.trans('display') }}
-                    </th>
-                    {% if fsc.user.admin %}
-                        {% set titleUrlColumn = 3 %}
-                        <th class="d-inline-block col-1">
-                            {{ i18n.trans('level') }}
-                        </th>
-                        <th class="d-inline-block col-1">
-                            {{ i18n.trans('readonly') }}
-                        </th>
-                    {% endif %}
-                    <th class="d-inline-block col-1">
-                        {{ i18n.trans('width') }}
-                    </th><th class="d-inline-block col-1">
-                        {{ i18n.trans('decimals') }}
-                    </th>
-                    <th class="d-inline-block col-{{ titleUrlColumn }}">
-                        {{ i18n.trans('title-url') }}
-                    </th>
-                    <th class="d-inline-block col-1">
-                        {{ i18n.trans('sort') }}
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for key2, field in group.children %}
-                    {{ _self.editColumn(key1, key2, field, titleUrlColumn, i18n, fsc) }}
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-{% endmacro %}
-
-{% macro editColumn(key1, key2, field, titleUrlColumn, i18n, fsc) %}
-    {% from 'Macro/Forms.html.twig' import simpleSelect as simpleSelect %}
-    {% set masterName = key1 ~ '+' ~ key2 ~ '+' %}
+{% macro editGroupColumn(col, i18n) %}
     <tr>
-        <td class="d-inline-block col-2">
-            {{ field.title is empty ? i18n.trans(field.name) : i18n.trans(field.title) }}
+        <td title="{{ i18n.trans('title') }}">
+            <input type="text" class="form-control" name="{{ col.name }}-title" placeholder="{{ i18n.trans(col.title) }}" autocomplete="off" />
         </td>
-        <td class="d-inline-block col-2">
+        <td class="text-center">
+            {{ _self.editGroupColumnDisplay(col, i18n) }}
+        </td>
+        <td title="{{ i18n.trans('level') }}">
+            <input type="number" class="form-control" name="{{ col.name }}-level" min="0" max="99" step="1" value="{{ col.level }}" />
+        </td>
+        <td title="{{ i18n.trans('readonly') }}">
             {{ simpleSelect(
-                masterName ~ 'display',
-                masterName ~ 'display',
-                field.display,
-                {'left':i18n.trans('left'), 'right':i18n.trans('right'), 'center':i18n.trans('center'), 'none':i18n.trans('none')},
+                col.name ~ '-readonly',
+                col.name ~ '-readonly',
+                col.widget.readonly,
+                {'true':i18n.trans('yes'), 'false':i18n.trans('no'), 'dinamic':i18n.trans('auto')},
                 FALSE,
                 FALSE,
                 {})
             }}
         </td>
-        {% if fsc.user.admin %}
-            <td class="d-inline-block col-1">
-                <input type="number" class="form-control" name="{{ masterName ~ 'level' }}" min="0" max="99" step="1" value="{{ field.level }}"/>
-            </td>
-            <td class="d-inline-block col-1">
-                {{ simpleSelect(
-                    masterName ~ 'widget' ~ '+' ~ 'readonly',
-                    masterName ~ 'widget' ~ '+' ~ 'readonly',
-                    field['children'][0].readonly,
-                    {'true':i18n.trans('yes'), 'false':i18n.trans('no'), 'dinamic':i18n.trans('auto')},
-                    FALSE,
-                    FALSE,
-                    {})
-                }}
-            </td>
-        {% endif %}
-        <td class="d-inline-block col-1">
+        <td title="{{ i18n.trans('decimal') }}">
+            {% if col.widget.gridFormat() is not empty %}
+                <input type="number" name="{{ col.name }}-decimal" min="0" max="7" step="1" value="{{ col.widget.decimal }}" class="form-control" />
+            {% endif %}
+        </td>
+        <td title="{{ i18n.trans('width') }}">
             {{ simpleSelect(
-                masterName ~ 'numcolumns',
-                masterName ~ 'numcolumns',
-                field.numcolumns,
+                col.name ~ '-numcolumns',
+                col.name ~ '-numcolumns',
+                col.numcolumns,
                 {'0':i18n.trans('auto'), '1':'1', '2':'2', '3':'3', '4':'4', '5':'5', '6':'6', '7':'7', '8':'8', '9':'9', '10':'10', '11':'11', '12':'12'},
                 FALSE,
                 FALSE,
                 {})
             }}
         </td>
-        <td class="d-inline-block col-1">
-            {% if field['children'][0].type == 'number' or field['children'][0].type == 'money' or field['children'][0].type == 'percentage'%}
-            <input type="number" class="form-control" name="{{ masterName ~ 'widget' ~ '+' ~ 'decimal' }}" min="0" max="5" step="1" value="{{ field['children'][0].decimal }}"/>
-            {% endif %}
-        </td>
-        <td class="d-inline-block col-{{ titleUrlColumn }}">
-            <input type="text" class="form-control" name="{{ masterName ~ 'titleurl' }}" placeholder="http://" value="{{ field.titleurl }}"/>
-        </td>
-        <td class="d-inline-block col-1">
-            <input type="number" class="form-control" name="{{ masterName ~ 'order' }}" placeholder="Auto" value="{{ field.order }}"/>
+        <td title="{{ i18n.trans('sort') }}">
+            <input type="number" name="{{ col.name }}-order" value="{{ col.order }}" class="form-control text-right" />
         </td>
     </tr>
+{% endmacro %}
+
+{% macro editGroupColumnDisplay(col, i18n) %}
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+        {% if col.display == 'left' %}
+            <label class="btn btn-outline-secondary active" title="{{ i18n.trans('left') }}">
+                <input type="radio" name="{{ col.name }}-display" value="left" checked="">
+                <i class="fas fa-align-left"></i>
+            </label>
+        {% else %}
+            <label class="btn btn-outline-secondary" title="{{ i18n.trans('left') }}">
+                <input type="radio" name="{{ col.name }}-display" value="left">
+                <i class="fas fa-align-left"></i>
+            </label>
+        {% endif %}
+
+        {% if col.display == 'center' %}
+            <label class="btn btn-outline-secondary active" title="{{ i18n.trans('center') }}">
+                <input type="radio" name="{{ col.name }}-display" value="center" checked="">
+                <i class="fas fa-align-center"></i>
+            </label>
+        {% else %}
+            <label class="btn btn-outline-secondary" title="{{ i18n.trans('center') }}">
+                <input type="radio" name="{{ col.name }}-display" value="center">
+                <i class="fas fa-align-center"></i>
+            </label>
+        {% endif %}
+
+        {% if col.display == 'right' %}
+            <label class="btn btn-outline-secondary active" title="{{ i18n.trans('right') }}">
+                <input type="radio" name="{{ col.name }}-display" value="right" checked="">
+                <i class="fas fa-align-right"></i>
+            </label>
+        {% else %}
+            <label class="btn btn-outline-secondary" title="{{ i18n.trans('right') }}">
+                <input type="radio" name="{{ col.name }}-display" value="right">
+                <i class="fas fa-align-right"></i>
+            </label>
+        {% endif %}
+
+        {% if col.display == 'none' %}
+            <label class="btn btn-outline-secondary active" title="{{ i18n.trans('hide') }}">
+                <input type="radio" name="{{ col.name }}-display" value="none" checked="">
+                <i class="fas fa-eye-slash"></i>
+            </label>
+        {% else %}
+            <label class="btn btn-outline-secondary" title="{{ i18n.trans('hide') }}">
+                <input type="radio" name="{{ col.name }}-display" value="none">
+                <i class="fas fa-eye-slash"></i>
+            </label>
+        {% endif %}
+    </div>
 {% endmacro %}
