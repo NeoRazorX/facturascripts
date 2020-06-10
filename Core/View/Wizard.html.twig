@@ -73,8 +73,13 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
-                        {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'),
+                        {% if constant('FS_INITIAL_CODPAIS') is defined %}
+                            {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'),
+                            i18n.trans('country'), 'fas fa-globe-americas', {'disabled': ''}) }}
+                        {% else %}
+                            {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'),
                             i18n.trans('country'), 'fas fa-globe-americas') }}
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col-sm-4">
