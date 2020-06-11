@@ -37,7 +37,7 @@
         <div class="container-fluid mt-3">
             <div class="row">
                 {# -- Left buttons -- #}
-                <div class="col-8 col-md mb-2">
+                <div class="col mb-2">
                     <div class="btn-group">
                         {% if currentView.settings.btnNew %}
                             {% if currentView.settings.modalInsert %}
@@ -66,17 +66,15 @@
                     {# -- Row statistics -- #}
                     {{ currentView.getRow('statistics').render(fsc) | raw }}
                 </div>
-                <div class="col-4 col-md-2 mb-2">
+                <div class="col-sm mb-2">
                     {# -- Search field -- #}
                     {{ _self.searchControl(currentView, i18n) }}
                 </div>
-                <div class="col-6 col-md-3 mb-2">
+                <div class="col-md text-right mb-2">
                     {# -- Filters button -- #}
                     {{ _self.filterButton(currentView, i18n) }}
                     {# -- Legend button -- #}
                     {{ _self.legendButton(currentView, i18n) }}
-                </div>
-                <div class="col-6 col-md-2 text-right mb-2">
                     {# -- OrderBy button -- #}
                     {{ _self.sortButton(currentView) }}
                 </div>
@@ -206,7 +204,7 @@
         <div class="btn-group">
             <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
                 <i class="fas fa-filter fa-fw" aria-hidden="true"></i>
-                <span class="d-none d-lg-inline">{{ i18n.trans('filters') }}</span>
+                <span class="d-none d-xl-inline">{{ i18n.trans('filters') }}</span>
             </button>
         </div>
     {% endif %}
@@ -219,7 +217,7 @@
         <div class="btn-group">
             <button type="button" class="btn btn-light" data-toggle="modal" data-target="#statuslegend{{ viewName }}">
                 <i class="fas fa-info fa-fw" aria-hidden="true"></i>
-                <span class="d-none d-lg-inline">{{ i18n.trans('colors') }}</span>
+                <span class="d-none d-xl-inline">{{ i18n.trans('colors') }}</span>
             </button>
         </div>
         <div class="modal fade" id="statuslegend{{ viewName }}" tabindex="-1" role="dialog">
@@ -282,23 +280,21 @@
 
 {% macro sortButton(currentView) %}
     {% if currentView.orderOptions is not empty %}
-        <div class="form-group">
-            <div class="btn-group">
-                <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fas fa-arrow-up' : 'fas fa-arrow-down' %}
-                    <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
-                    {{ currentView.orderOptions[currentView.orderKey]['label'] }}
-                    <span class="caret"></span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right">
-                    {% for key, orderby in currentView.orderOptions %}
-                        {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
-                        {% set icon = (orderby.type == 'ASC') ? 'fas fa-arrow-up' : 'fas fa-arrow-down' %}
-                        <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetOrder('{{ currentView.getViewName() }}', '{{ key }}');">
-                            <i class="{{ icon }} fa-fw" aria-hidden="true"></i> {{ orderby.label }}
-                        </a>
-                    {% endfor %}
-                </div>
+        <div class="btn-group">
+            <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fas fa-arrow-up' : 'fas fa-arrow-down' %}
+                <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
+                <span class="d-none d-lg-inline">{{ currentView.orderOptions[currentView.orderKey]['label'] }}</span>
+                <span class="caret"></span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+                {% for key, orderby in currentView.orderOptions %}
+                    {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
+                    {% set icon = (orderby.type == 'ASC') ? 'fas fa-arrow-up' : 'fas fa-arrow-down' %}
+                    <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetOrder('{{ currentView.getViewName() }}', '{{ key }}');">
+                        <i class="{{ icon }} fa-fw" aria-hidden="true"></i> {{ orderby.label }}
+                    </a>
+                {% endfor %}
             </div>
         </div>
     {% endif %}

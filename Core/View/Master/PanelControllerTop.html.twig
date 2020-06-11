@@ -21,29 +21,35 @@
 
 {% block bodyHeaderOptions %}
     {{ parent() }}
-    <ul class="nav nav-tabs mb-3 d-print-none" id="mainTabs" role="tablist">
-        {% for viewName, view in fsc.views %}
-            <li class="nav-item">
-                {% set active = (viewName == fsc.active) ? ' active' : '' %}
-                {% set disable = view.settings.active ? '' : ' disabled' %}
-                <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
-                    <i class="{{ view.icon }}" aria-hidden="true"></i>
-                    <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
-                    {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>{% endif %}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="container-fluid mb-3 d-print-none">
+        <div class="row">
+            <div class="col">
+                <ul class="nav nav-tabs" role="tablist">
+                    {% for viewName, view in fsc.views %}
+                        <li class="nav-item">
+                            {% set active = (viewName == fsc.active) ? ' active' : '' %}
+                            {% set disable = view.settings.active ? '' : ' disabled' %}
+                            <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
+                                <i class="{{ view.icon }}" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
+                                {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>{% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block body %}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12">
-                <div class="tab-content" id="mainTabsContent">
+            <div class="col">
+                <div class="tab-content">
                     {% for viewName, view in fsc.views %}
-                        {% set active = (viewName == fsc.active) ? ' show active' : '' %}
-                        <div class="tab-pane{{ active }}" id="{{ viewName }}" role="tabpanel">
+                        {% set active = (viewName == fsc.active) ? 'tab-pane show active' : 'tab-pane' %}
+                        <div class="{{ active }}" id="{{ viewName }}" role="tabpanel">
                             {% do fsc.setCurrentView(viewName) %}
                             {{ include(view.template) }}
                         </div>

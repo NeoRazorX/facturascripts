@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -39,8 +39,8 @@
         <input type="hidden" name="action" value="insert"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
-        <div class="card bg-light shadow mb-2">
-            <div class="card-header">
+        <div class="card border-success shadow mb-2">
+            <div class="card-body">
                 <button class="btn btn-outline-success" type="button" data-toggle="collapse" data-target="#{{ formName }}Collapse" aria-expanded="false" aria-controls="collapseExample">
                     <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                     {{ i18n.trans('new') }}
@@ -49,7 +49,7 @@
                 {{ currentView.title }}
             </div>
             <div class="collapse" id="{{ formName }}Collapse">
-                <div class="card-body">
+                <div class="card-body border-top">
                     <div class="row">
                         {% for group in currentView.getColumns() %}
                             {{ group.edit(currentView.model) | raw }}
@@ -57,7 +57,7 @@
                     </div>
                     <div class="row">
                         <div class="col-12 text-right">
-                            <button class="btn btn-sm btn-primary" type="submit">
+                            <button class="btn btn-sm btn-success" type="submit">
                                 <i class="fas fa-save fa-fw" aria-hidden="true"></i>
                                 <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
                             </button>
@@ -135,15 +135,10 @@
         <div class="text-center">
             <div class="btn-group">
                 {% for page in currentView.getPagination() %}
-                    {% if page.active %}
-                        <button type="button" class="btn btn-light active" onclick="editListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
-                            {{ page.num }}
-                        </button>
-                    {% else %}
-                        <button type="button" class="btn btn-light" onclick="editListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
-                            {{ page.num }}
-                        </button>
-                    {% endif %}
+                    {% set btnClass = page.active ? 'btn btn-light active' : 'btn btn-light' %}
+                    <button type="button" class="{{ btnClass }}" onclick="editListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
+                        {{ page.num }}
+                    </button>
                 {% endfor %}
             </div>
         </div>
