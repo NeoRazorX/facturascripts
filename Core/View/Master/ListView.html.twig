@@ -190,6 +190,10 @@
             {{ currentView.getRow('footer').render(currentView.getViewName(), 'listViewSetAction', fsc) | raw }}
         </div>
     </div>
+    {# -- Save Filter modal window -- #}
+    {% if currentView.showFilters %}
+        {{ _self.filterSaveModal(currentView, i18n) }}
+    {% endif %}
 </form>
 
 {# -- Modals -- #}
@@ -201,13 +205,77 @@
 {% macro filterButton(currentView, i18n) %}
     {% if currentView.filters is not empty %}
         {% set viewName = currentView.getViewName() %}
+        {% set saveFilters = currentView.pageFilters %}
         <div class="btn-group">
             <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
-                <i class="fas fa-filter fa-fw" aria-hidden="true"></i>
-                <span class="d-none d-xl-inline">{{ i18n.trans('filters') }}</span>
+                <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
             </button>
+            {% if saveFilters is not empty %}
+                <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="sr-only"></span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    {% for pageFilter in saveFilters %}
+                        {% set activeClass = (pageFilter.id == currentView.pageFilterKey) ? ' active' : '' %}
+                        {% set icon = (pageFilter.nick is empty) ? 'fa-users' : 'fa-user' %}
+                        <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetLoadFilter('{{ viewName }}', '{{ pageFilter.id }}');">
+                            <i class="fas {{ icon }} fa-fw" aria-hidden="true"></i> {{ pageFilter.description }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
+        {% if currentView.pageFilterKey %}
+            <div class="btn-group ml-1">
+                <button type="button" class="btn btn-warning" onclick="listViewSetLoadFilter('{{ viewName }}', '');">
+                    <i class="fas fa-times fa-fw"></i>
+                </button>
+                <button type="button" class="btn btn-danger" title="{{ i18n.trans('remove-filter') }}" onclick="listViewSetAction('{{ viewName }}', 'delete-filter');">
+                    <i class="fas fa-trash-alt fa-fw"></i>
+                </button>
+            </div>
+        {% elseif currentView.showFilters %}
+            <button type="button" class="btn btn-info ml-1" data-toggle="modal" data-target="#savefilter{{ viewName }}" title="{{ i18n.trans('save-filter') }}">
+                <i class="fas fa-save fa-fw"></i>
+            </button>
+        {% endif %}
     {% endif %}
+{% endmacro %}
+
+{% macro filterSaveModal(currentView, i18n) %}
+    {% set viewName = currentView.getViewName() %}
+    <div class="modal" id="savefilter{{ viewName }}" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-filter fa-fw"></i> {{ i18n.trans('save-filter') }}
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label>{{ i18n.trans('description') }}</label>
+                                <input type="text" name="filter-description" class="form-control noEnterKey" autofocus=""/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        {{ i18n.trans('cancel') }}
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="listViewSetAction('{{ viewName }}', 'save-filter');">
+                        {{ i18n.trans('accept') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endmacro %}
 
 {% macro legendButton(currentView, i18n) %}
