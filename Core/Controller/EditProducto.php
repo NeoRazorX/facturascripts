@@ -80,6 +80,9 @@ class EditProducto extends EditController
 
         /// change new button settings
         $this->setSettings($viewName, 'modalInsert', 'new-supplier');
+
+        /// disable clickable row
+        $this->setSettings($viewName, 'clickable', false);
     }
 
     /**

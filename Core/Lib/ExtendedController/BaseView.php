@@ -183,7 +183,9 @@ abstract class BaseView
             'btnSave' => true,
             'btnUndo' => true,
             'card' => true,
-            'checkBoxes' => true
+            'checkBoxes' => true,
+            'clickable' => true,
+            'megasearch' => false
         ];
         $this->template = 'Master/BaseView.html.twig';
         $this->title = $this->toolBox()->i18n()->trans($title);
