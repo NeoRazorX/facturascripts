@@ -44,7 +44,7 @@
         <input type="hidden" name="action" value="new-refund"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <input type="hidden" name="idfactura" value="{{ currentView.model.primaryColumnValue() }}"/>
-        <div class="card">
+        <div class="card shadow">
             <div class="card-body text-right">
                 <button type="button" class="btn btn-outline-secondary" onClick="return refundNone();">
                     {{ i18n.trans('select-none') }}

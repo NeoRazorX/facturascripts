@@ -39,7 +39,7 @@
         <input type="hidden" name="action" value="insert"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
-        <div class="card bg-light mb-2">
+        <div class="card bg-light shadow mb-2">
             <div class="card-header">
                 <button class="btn btn-outline-success" type="button" data-toggle="collapse" data-target="#{{ formName }}Collapse" aria-expanded="false" aria-controls="collapseExample">
                     <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
@@ -83,7 +83,7 @@
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
         <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
-        <div class="card mb-2">
+        <div class="card shadow mb-2">
             <div class="card-body">
                 <div class="row">
                     {% for group in currentView.getColumns() %}
