@@ -58,8 +58,8 @@
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="code" value="{{ currentView.model.primaryColumnValue() }}"/>
     <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
-    <div class="card shadow">
-        <div class="card-body">
+    <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
+        <div class="{{ currentView.settings.card ? 'card-body' : '' }}">
             <div class="row">
                 <div class="col-12 text-right">
                     {# -- Row statistics -- #}

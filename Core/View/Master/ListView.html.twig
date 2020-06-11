@@ -33,7 +33,7 @@
     <input type="hidden" name="loadfilter" value="{{ currentView.pageFilterKey }}"/>
     <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
-    <div class="card shadow">
+    <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
         <div class="container-fluid mt-3">
             <div class="row">
                 {# -- Left buttons -- #}
@@ -176,9 +176,9 @@
         {% set pages = currentView.getPagination() %}
         {% if pages | length > 0 %}
             <div class="card-footer text-center">
-                <div class="btn-group">
+                <div class="btn-group bg-white">
                     {% for page in currentView.getPagination() %}
-                        {% set btnClass = page.active ? 'btn btn-light active' : 'btn btn-light' %}
+                        {% set btnClass = page.active ? 'btn btn-outline-dark active' : 'btn btn-outline-dark' %}
                         <button type="button" class="{{ btnClass }}" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
                     {% endfor %}
                 </div>

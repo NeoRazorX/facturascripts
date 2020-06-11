@@ -1,3 +1,5 @@
 <script src="{{ asset('node_modules/chart.js/dist/Chart.min.js') }}"></script>
 
-{{ fsc.getChart().render() | raw }}
+<div class="bg-white shadow">
+    {{ fsc.getChart().render() | raw }}
+</div>

@@ -164,6 +164,9 @@ abstract class PanelController extends BaseController
     protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-edit')
     {
         $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
+        if ($this->tabsPosition === 'top') {
+            $view->settings['card'] = false;
+        }
         $this->addCustomView($viewName, $view);
     }
 
@@ -217,6 +220,9 @@ abstract class PanelController extends BaseController
     protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-bars')
     {
         $view = new ListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
+        if ($this->tabsPosition === 'top') {
+            $view->settings['card'] = false;
+        }
         $this->addCustomView($viewName, $view);
     }
 

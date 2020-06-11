@@ -38,7 +38,6 @@ class ListView extends BaseView
     use ListViewFiltersTrait;
 
     const DEFAULT_TEMPLATE = 'Master/ListView.html.twig';
-    const MINI_TEMPLATE = 'Master/ListViewMin.html.twig';
 
     /**
      *

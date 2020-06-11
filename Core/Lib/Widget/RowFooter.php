@@ -132,7 +132,7 @@ class RowFooter extends VisualItem
         $class = isset($group['class']) ? ' ' . $group['class'] : '';
         $divID = empty($group['id']) ? '' : ' id="' . $group['id'] . '"';
         $html = '<div' . $divID . ' class="' . $colClass . $class . '">'
-            . '<div class="card">'
+            . '<div class="card shadow">'
             . $this->renderCardHeader($group)
             . '<div class="card-body">';
 

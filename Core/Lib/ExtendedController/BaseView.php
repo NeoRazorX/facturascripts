@@ -182,6 +182,7 @@ abstract class BaseView
             'btnPrint' => false,
             'btnSave' => true,
             'btnUndo' => true,
+            'card' => true,
             'checkBoxes' => true
         ];
         $this->template = 'Master/BaseView.html.twig';
