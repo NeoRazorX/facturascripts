@@ -178,11 +178,8 @@
             <div class="card-footer text-center">
                 <div class="btn-group">
                     {% for page in currentView.getPagination() %}
-                        {% if page.active %}
-                            <button type="button" class="btn btn-light active" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
-                        {% else %}
-                            <button type="button" class="btn btn-light" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
-                        {% endif %}
+                        {% set btnClass = page.active ? 'btn btn-light active' : 'btn btn-light' %}
+                        <button type="button" class="{{ btnClass }}" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
                     {% endfor %}
                 </div>
             </div>
@@ -208,8 +205,37 @@
         {% set viewName = currentView.getViewName() %}
         <div class="btn-group">
             <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
-                <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
+                <i class="fas fa-filter fa-fw" aria-hidden="true"></i>
+                <span class="d-none d-lg-inline">{{ i18n.trans('filters') }}</span>
             </button>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro legendButton(currentView, i18n) %}
+    {% set legend = currentView.getRow('status').legend() %}
+    {% if legend %}
+        {% set viewName = currentView.getViewName() %}
+        <div class="btn-group">
+            <button type="button" class="btn btn-light" data-toggle="modal" data-target="#statuslegend{{ viewName }}">
+                <i class="fas fa-info fa-fw" aria-hidden="true"></i>
+                <span class="d-none d-lg-inline">{{ i18n.trans('colors') }}</span>
+            </button>
+        </div>
+        <div class="modal fade" id="statuslegend{{ viewName }}" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-info-circle fa-fw"></i> {{ i18n.trans('colors') }}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    {{ legend | raw }}
+                </div>
+            </div>
         </div>
     {% endif %}
 {% endmacro %}
@@ -272,44 +298,6 @@
                             <i class="{{ icon }} fa-fw" aria-hidden="true"></i> {{ orderby.label }}
                         </a>
                     {% endfor %}
-                </div>
-            </div>
-        </div>
-    {% endif %}
-{% endmacro %}
-
-{% macro legendButton(currentView, i18n) %}
-    {% set legend = currentView.getRow('status').legend() %}
-    {% if legend %}
-        {% set viewName = currentView.getViewName() %}
-        <div class="btn-group">
-            <button type="button" class="btn btn-light" data-toggle="modal" data-target="#statuslegend{{ viewName }}">
-                <i class="fas fa-info fa-fw" aria-hidden="true"></i> {{ i18n.trans('legend') }}
-            </button>
-        </div>
-        <div class="modal" id="statuslegend{{ viewName }}" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            <i class="fas fa-info-circle fa-fw"></i> {{ i18n.trans('legend') }}
-                        </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col">
-                                {{ legend | raw }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">
-                            {{ i18n.trans('accept') }}
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
