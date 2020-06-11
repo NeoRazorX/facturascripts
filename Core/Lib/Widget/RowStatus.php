@@ -51,6 +51,25 @@ class RowStatus extends VisualItem
 
     /**
      *
+     * @return string
+     */
+    public function legend(): string
+    {
+        $html = '';
+        foreach ($this->options as $opt) {
+            $title = $opt['title'] ?? '';
+            if (empty($title)) {
+                continue;
+            }
+
+            $color = $this->colorToClass($opt['color'], 'badge-');
+            $html .= '<p><span class="badge ' . $color . '">&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;' . static::$i18n->trans($title) . '</p>';
+        }
+        return $html;
+    }
+
+    /**
+     *
      * @param object $model
      * @param string $classPrefix
      *
