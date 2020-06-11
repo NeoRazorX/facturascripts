@@ -111,6 +111,18 @@ class FormaPago extends Base\ModelClass
     }
 
     /**
+     * Return the the banck account.
+     *
+     * @return CuentaBanco
+     */
+    public function getBankAccount()
+    {
+        $account = new CuentaBanco();
+        $account->loadFromCode($this->codcuentabanco);
+        return $account;
+    }
+
+    /**
      * Returns the date with the expiration term applied.
      * 
      * @param string $date
