@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -49,9 +49,9 @@
             <div class="col-sm-3 col-xl-2">
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
                     {% for key, result in fsc.results  %}
-                        {% set active = (loop.index == 1) ? ' active' : '' %}
-                        <a class="nav-link{{ active }}" data-toggle="pill" href="#v-pills-{{ key }}" role="tab" aria-controls="v-pills-{{ key }}" aria-expanded="true">
-                            <span class='badge badge-secondary float-right'>{{ result.results | length }}</span>
+                        {% set active = (loop.index == 1) ? 'nav-link active' : 'nav-link' %}
+                        <a class="{{ active }}" data-toggle="pill" href="#v-pills-{{ key }}" role="tab" aria-controls="v-pills-{{ key }}" aria-expanded="true">
+                            <span class="badge badge-secondary float-right">{{ result.results | length }}</span>
                             <i class="{{ result.icon }} fa-fw"></i>
                             {{ i18n.trans(result.title) }}
                         </a>
@@ -63,7 +63,7 @@
                     {% for key, result in fsc.results  %}
                         {% set active = (loop.index == 1) ? ' show active' : '' %}
                         <div class="tab-pane fade{{ active }}" id="v-pills-{{ key }}" role="tabpanel" aria-labelledby="v-pills-{{ key }}-tab">
-                            <div class="card">
+                            <div class="card shadow">
                                 {{ _self.showSearchResults(result, i18n) }}
                             </div>
                         </div>
@@ -72,6 +72,15 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        body {
+            background-color: #FAFBFC;
+        }
+    </style>
 {% endblock %}
 
 {% macro showSearchResults(result, i18n) %}

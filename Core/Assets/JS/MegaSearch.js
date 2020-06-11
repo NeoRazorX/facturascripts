@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -85,7 +85,7 @@ function searchOnSection(url) {
                     tableHTML += val3;
                 });
                 $("#v-pills-tabContent").append("<div class='tab-pane fade' id='v-pills-" + key + "' role='tabpanel' aria-labelledby='v-pills-" + key + "-tab'>\n\
-                    <div class='card'><div class='table-responsive'>\n\
+                    <div class='card shadow'><div class='table-responsive'>\n\
                     <table class='table table-striped table-hover'>" + tableHTML + "</table>\n\
                     </div>\n\</div>\n\</div>");
                 $("#v-pills-tab a:first").tab("show");
