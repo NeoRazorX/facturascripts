@@ -157,6 +157,12 @@
     <div class="form-row mb-2">
         {{ thisView.getRow('business').edit(thisView.model) | raw }}
     </div>
+    <div class="form-row mb-2 text-center">
+        <div class="col">
+            {% set row = thisView.getRow('actions') %}
+            {{ row.render(false, thisView.getViewName()) | raw }}
+        </div>
+    </div>
     <div class="form-row">
         {% if thisView.getMaxLines() < 200 %}
             <div class="col-12">
