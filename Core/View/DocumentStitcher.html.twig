@@ -32,8 +32,11 @@
                         <i class="{{ pageData.icon }}" aria-hidden="true"></i>
                         {{ i18n.trans(pageData.title) }}
                     </h1>
+                    <p>{{ i18n.trans('group-or-split-p') }}</p>
                 </div>
-                <div class="col">
+            </div>
+            <div class="row align-items-end">
+                <div class="col-2 mb-2">
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">
@@ -42,6 +45,12 @@
                         </div>
                         <input type="text" name="fecha" value="{{ task.end | date('d-m-Y') }}" class="form-control datepicker" autocomplete="off"/>
                     </div>
+                </div>
+                <div class="col-2 mb-2">
+                    <select name="extralines" class="form-control">
+                        <option value="true">{{ i18n.trans('add-extra-lines') }}</option>
+                        <option value="false">{{ i18n.trans('no-extra-lines') }}</option>
+                    </select>
                 </div>
                 <div class="col mb-2">
                     <div class="dropdown">
@@ -58,13 +67,10 @@
                     </div>
                 </div>
                 <div class="col text-right mb-2">
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#remainingDocsModal">
-                        {{ i18n.trans('select-remaining') }}
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary" onClick="return selectNone();">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onClick="return selectNone();">
                         {{ i18n.trans('select-none') }}
                     </button>
-                    <button type="button" class="btn btn-outline-secondary" onClick="return selectAll();">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onClick="return selectAll();">
                         {{ i18n.trans('select-all') }}
                     </button>
                 </div>
@@ -81,6 +87,13 @@
                     {% endfor %}
                 </div>
             </div>
+            <div class="row">
+                <div class="col">
+                    <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#remainingDocsModal">
+                        <i class="fas fa-folder-plus fa-fw"></i> {{ i18n.trans('more') }}
+                    </button>
+                </div>
+            </div>
         </div>
     </form>
     {{ _self.remainingDocsModal(fsc, i18n) }}
@@ -90,7 +103,7 @@
     {{ parent() }}
     <style>
         .td-quantity {
-            width: 200px;
+            width: 165px;
         }
     </style>
 {% endblock %}
@@ -123,21 +136,22 @@
 {% endblock %}
 
 {% macro documentCard(doc, fsc, i18n) %}
-    <div class="card mb-2">
+    <div class="card shadow-sm mb-3">
         <div class="card-header">
-            <div class="row mb-2 align-items-center">
+            <div class="row">
                 <div class="col">
+                    <span class="float-right">
+                        <i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}
+                        <i class="far fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
+                    </span>
                     <a href="{{ doc.url() }}">
                         <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ i18n.trans(fsc.modelName) }} {{ doc.codigo }}
                     </a>
-                    &nbsp;
-                    <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}
-                    <i class="fas fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
                 </div>
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-sm table-hover mb-0">
                 <thead>
                     <tr>
                         <th>{{ i18n.trans('reference') }}</th>
@@ -151,7 +165,7 @@
                     {% for line in doc.getLines() %}
                         <tr>
                             <td>{{ line.referencia }}</td>
-                            <td>{{ fsc.fixDescription(line.descripcion) | raw }}</td>
+                            <td>{{ line.descripcion | raw | nl2br }}</td>
                             <td>
                                 <input type="number" value="{{ line.cantidad }}" class="form-control text-right" readonly="true"/>
                             </td>
@@ -161,7 +175,8 @@
                             {% set newQuantity = line.cantidad - line.servido %}
                             <td class="{{ newQuantity == 0 ? 'table-warning' : 'table-success' }}">
                                 <input type="hidden" class="to_serve" value="{{ newQuantity }}"/>
-                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}" value="{{ newQuantity }}" step="any" class="form-control text-right to_be_served" autocomplete="off"/>
+                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}" value="{{ newQuantity }}" step="any"
+                                       class="form-control text-right to_be_served" autocomplete="off"/>
                             </td>
                         </tr>
                     {% endfor %}
@@ -173,49 +188,56 @@
 
 {% macro remainingDocsModal(fsc, i18n) %}
     <div class="modal fade" id="remainingDocsModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <form method="GET">
                 <input type="hidden" name="model" value="{{ fsc.modelName }}">
-                <input type="hidden" name="codes" value="{{ fsc.codes|join(',') }}">
+                <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">{{ i18n.trans('remaining-docs') }}</h5>
+                        <h5 class="modal-title">
+                            <i class="fas fa-folder-plus fa-fw"></i> {{ i18n.trans('more') }}
+                        </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <table class="table search-table table-striped">
-                            <thead>
+                    <table class="table table-hover mb-0">
+                        <thead>
                             <tr>
-                                <th scope="col"><i class="fas fa-check-square"></i></th>
-                                <th scope="col">{{ i18n.trans('code') }}</th>
-                                <th scope="col">{{ i18n.trans('total') }}</th>
-                                <th scope="col">{{ i18n.trans('date') }}</th>
+                                <th></th>
+                                <th>{{ i18n.trans('code') }}</th>
+                                <th>{{ i18n.trans('observations') }}</th>
+                                <th class="text-right">{{ i18n.trans('total') }}</th>
+                                <th class="text-right">{{ i18n.trans('date') }}</th>
                             </tr>
-                            </thead>
-                            <tbody>
+                        </thead>
+                        <tbody>
                             {% for doc in fsc.getRemainingDocs() %}
                                 <tr>
                                     <td>
                                         <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" name="newcodes[]" value="{{doc.primaryColumnValue()}}">
-                                            <label class="form-check-label" for="exampleCheck1">{{ i18n.trans('select') }}</label>
+                                            <input type="checkbox" class="form-check-input" name="newcodes[]" value="{{ doc.primaryColumnValue() }}">
                                         </div>
                                     </td>
-                                    <td>{{doc.codigo}}</td>
-                                    <td>{{doc.total}}</td>
-                                    <td>{{doc.fecha}}</td>
+                                    <td>
+                                        <a href="{{ doc.url() }}">
+                                            {{ doc.codigo }}
+                                        </a>
+                                    </td>
+                                    <td>{{ doc.observaciones | slice(0, 60) | raw }}</td>
+                                    <td class="text-right text-nowrap">{{ fsc.toolBox().coins().format(doc.total) }}</td>
+                                    <td class="text-right text-nowrap">{{ doc.fecha }}</td>
                                 </tr>
                             {% else %}
-                                <tr><td colspan="4">{{ i18n.trans('no-remaining-docs') }}</td></tr>
+                                <tr>
+                                    <td colspan="5">{{ i18n.trans('no-data') }}</td>
+                                </tr>
                             {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                        </tbody>
+                    </table>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ i18n.trans('cancel') }}</button>
-                        <button type="submit" class="btn btn-primary" id="saveCashupButton">{{ i18n.trans('continue') }}</button>
+                        <button type="submit" class="btn btn-primary" id="saveCashupButton">{{ i18n.trans('add') }}</button>
                     </div>
                 </div>
             </form>

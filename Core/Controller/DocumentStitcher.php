@@ -21,8 +21,10 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
-use FacturaScripts\Dinamic\Model;
+use FacturaScripts\Dinamic\Model\EstadoDocumento;
+use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -34,6 +36,8 @@ use Symfony\Component\HttpFoundation\Response;
 class DocumentStitcher extends Controller
 {
 
+    const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
+
     /**
      * Array of document primary keys.
      *
@@ -43,7 +47,7 @@ class DocumentStitcher extends Controller
 
     /**
      *
-     * @var Model\Base\TransformerDocument[]
+     * @var TransformerDocument[]
      */
     public $documents = [];
 
@@ -55,18 +59,6 @@ class DocumentStitcher extends Controller
     public $modelName;
 
     /**
-     * Fix escaped html from description.
-     * 
-     * @param string $description
-     *
-     * @return string
-     */
-    public function fixDescription($description)
-    {
-        return \nl2br($this->toolBox()->utils()->fixHtml($description));
-    }
-
-    /**
      * Returns avaliable status to group this model.
      * 
      * @return array
@@ -74,8 +66,7 @@ class DocumentStitcher extends Controller
     public function getAvaliableStatus()
     {
         $status = [];
-
-        $documentState = new Model\EstadoDocumento();
+        $documentState = new EstadoDocumento();
         $where = [new DataBaseWhere('tipodoc', $this->modelName)];
         foreach ($documentState->all($where) as $docState) {
             if (!empty($docState->generadoc)) {
@@ -101,20 +92,27 @@ class DocumentStitcher extends Controller
         return $data;
     }
 
+    /**
+     * 
+     * @return TransformerDocument[]
+     */
     public function getRemainingDocs()
     {
-        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $this->modelName;
-        $reference = $this->documents[0];
-        $list = [];
+        if (empty($this->documents)) {
+            return [];
+        }
 
+
+        $list = [];
+        $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         $model = new $modelClass();
         $where = [
             new DataBaseWhere('editable', true),
-            new DataBaseWhere($model->subjectColumn(), $reference->subjectColumnValue())
+            new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
         ];
-
-        foreach ($model->all($where) as $doc) {
-            if (!in_array($doc->primaryColumnValue(), $this->getCodes())) {
+        $order = ['fecha' => 'DESC', 'hora' => 'DESC'];
+        foreach ($model->all($where, $order) as $doc) {
+            if (false === \in_array($doc->primaryColumnValue(), $this->getCodes())) {
                 $list[] = $doc;
             }
         }
@@ -126,7 +124,7 @@ class DocumentStitcher extends Controller
      * Runs the controller's private logic.
      *
      * @param Response              $response
-     * @param Model\User            $user
+     * @param User                  $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -151,8 +149,8 @@ class DocumentStitcher extends Controller
 
     /**
      * 
-     * @param array                          $newLines
-     * @param Model\Base\TransformerDocument $doc
+     * @param array               $newLines
+     * @param TransformerDocument $doc
      */
     protected function addBlankLine(array &$newLines, $doc)
     {
@@ -163,7 +161,7 @@ class DocumentStitcher extends Controller
 
     /**
      * 
-     * @param Model\Base\TransformerDocument $newDoc
+     * @param TransformerDocument $newDoc
      *
      * @return bool
      */
@@ -182,8 +180,8 @@ class DocumentStitcher extends Controller
 
     /**
      * 
-     * @param array                          $newLines
-     * @param Model\Base\TransformerDocument $doc
+     * @param array               $newLines
+     * @param TransformerDocument $doc
      */
     protected function addInfoLine(array &$newLines, $doc)
     {
@@ -199,7 +197,7 @@ class DocumentStitcher extends Controller
      * @param BusinessDocumentGenerator $generator
      * @param int                       $idestado
      */
-    protected function endGenerationAndRedit(&$generator, $idestado)
+    protected function endGenerationAndRedir(&$generator, $idestado)
     {
         /// save new document status if no pending quantity
         foreach ($this->documents as $doc) {
@@ -241,11 +239,11 @@ class DocumentStitcher extends Controller
         foreach ($this->documents as $doc) {
             if (null === $prototype) {
                 $prototype = $doc;
-            } else {
+            } elseif ('true' === $this->request->request->get('extralines', '')) {
                 $this->addBlankLine($newLines, $doc);
             }
 
-            if (count($this->documents) > 1) {
+            if (\count($this->documents) > 1 && 'true' === $this->request->request->get('extralines', '')) {
                 $this->addInfoLine($newLines, $doc);
             }
 
@@ -267,12 +265,12 @@ class DocumentStitcher extends Controller
         /// generate new document
         $generator = new BusinessDocumentGenerator();
         $newClass = $this->getGenerateClass($idestado);
-        if (!$generator->generate($prototype, $newClass, $newLines, $quantities, $properties)) {
+        if (false === $generator->generate($prototype, $newClass, $newLines, $quantities, $properties)) {
             $this->toolBox()->i18nLog()->error('record-save-error');
             return;
         }
 
-        $this->endGenerationAndRedit($generator, $idestado);
+        $this->endGenerationAndRedir($generator, $idestado);
     }
 
     /**
@@ -287,15 +285,9 @@ class DocumentStitcher extends Controller
             return $code;
         }
 
-        $codes = $this->request->get('codes', '');
-        $codes = \explode(',', $codes);
-
+        $codes = \explode(',', $this->request->get('codes', ''));
         $newcodes = $this->request->get('newcodes', []);
-        if (!empty($newcodes)) {
-            return \array_merge($codes, $newcodes);
-        }
-
-        return $codes;
+        return empty($newcodes) ? $codes : \array_merge($codes, $newcodes);
     }
 
     /**
@@ -307,7 +299,7 @@ class DocumentStitcher extends Controller
      */
     protected function getGenerateClass($idestado)
     {
-        $estado = new Model\EstadoDocumento();
+        $estado = new EstadoDocumento();
         $estado->loadFromCode($idestado);
         return $estado->generadoc;
     }
@@ -328,7 +320,7 @@ class DocumentStitcher extends Controller
      */
     protected function loadDocuments()
     {
-        $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $this->modelName;
+        $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         foreach ($this->codes as $code) {
             $doc = new $modelClass();
             if ($doc->loadFromCode($code)) {
