@@ -293,6 +293,10 @@ class AccountingAccounts
      */
     public function getSupplierAccount($supplier, string $specialAccount = self::SPECIAL_SUPPLIER_ACCOUNT)
     {
+        if ($supplier->acreedor) {
+            $specialAccount = self::SPECIAL_CREDITOR_ACCOUNT;
+        }
+
         /// defined sub-account code?
         if (!empty($supplier->codsubcuenta)) {
             $subaccount = $this->getSubAccount($supplier->codsubcuenta);
