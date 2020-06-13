@@ -123,8 +123,7 @@ abstract class PanelController extends BaseController
     public function setTabsPosition($position)
     {
         $this->tabsPosition = $position;
-
-        switch ($position) {
+        switch ($this->tabsPosition) {
             case 'bottom':
                 $this->setTemplate('Master/PanelControllerBottom');
                 break;
@@ -136,6 +135,10 @@ abstract class PanelController extends BaseController
             default:
                 $this->tabsPosition = 'left';
                 $this->setTemplate('Master/PanelController');
+        }
+
+        foreach (\array_keys($this->views) as $viewName) {
+            $this->views[$viewName]->settings['card'] = $this->tabsPosition !== 'top';
         }
     }
 
@@ -164,9 +167,7 @@ abstract class PanelController extends BaseController
     protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-edit')
     {
         $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
-        if ($this->tabsPosition === 'top') {
-            $view->settings['card'] = false;
-        }
+        $view->settings['card'] = $this->tabsPosition !== 'top';
         $this->addCustomView($viewName, $view);
     }
 
@@ -220,9 +221,7 @@ abstract class PanelController extends BaseController
     protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-bars')
     {
         $view = new ListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
-        if ($this->tabsPosition === 'top') {
-            $view->settings['card'] = false;
-        }
+        $view->settings['card'] = $this->tabsPosition !== 'top';
         $this->addCustomView($viewName, $view);
     }
 

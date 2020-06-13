@@ -40,10 +40,11 @@
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
         <div class="card border-success shadow mb-2">
-            <div class="card-body">
-                <button class="btn btn-outline-success" type="button" data-toggle="collapse" data-target="#{{ formName }}Collapse" aria-expanded="false" aria-controls="collapseExample">
-                    <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
-                    {{ i18n.trans('new') }}
+            <div class="card-body p-2">
+                <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse"
+                        data-target="#{{ formName }}Collapse" aria-expanded="false" aria-controls="collapseExample">
+                    <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
+                    {{ i18n.trans('add') }}
                 </button>
                 &nbsp;
                 {{ currentView.title }}
