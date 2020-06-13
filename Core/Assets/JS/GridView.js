@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -170,7 +170,7 @@ function getColumnSelected() {
 
 /* Set Read Only to Grid View */
 function setReadOnly(value) {
-    gridObject.updateSettings({ readOnly: value });
+    gridObject.updateSettings({readOnly: value});
 }
 
 /*
@@ -305,5 +305,9 @@ $(document).ready(function () {
 
         Handsontable.hooks.add("afterSelection", eventAfterSelection);
         Handsontable.hooks.add("beforeChange", eventBeforeChange);
+
+        $("#mainTabs li:first-child a").on('shown.bs.tab', function (e) {
+            gridObject.render();
+        });
     }
 });

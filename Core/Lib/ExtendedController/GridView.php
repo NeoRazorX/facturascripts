@@ -377,6 +377,26 @@ class GridView extends EditView
     }
 
     /**
+     * 
+     * @param string $code
+     *
+     * @return string
+     */
+    private function getCellAlign($code): string
+    {
+        switch ($code) {
+            case 'center':
+                return 'htCenter';
+
+            case 'right':
+                return 'htRight';
+
+            default:
+                return 'htLeft';
+        }
+    }
+
+    /**
      * Return grid columns configuration
      * from pages_options of columns
      *
@@ -415,7 +435,9 @@ class GridView extends EditView
     private function getItemForColumn($column): array
     {
         $item = [
+            'className' => $this->getCellAlign($column->display),
             'data' => $column->widget->fieldname,
+            'readOnly' => ($column->widget->readonly == 'true' || $this->readOnly()),
             'type' => $column->widget->getType()
         ];
         switch ($item['type']) {
@@ -435,6 +457,7 @@ class GridView extends EditView
                 break;
 
             case 'select':
+                $item['type'] = 'text';
                 $item['editor'] = 'select';
                 $item['selectOptions'] = $this->getSelectSource($column->widget);
                 break;
@@ -496,6 +519,15 @@ class GridView extends EditView
         }
 
         return false;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    private function readOnly()
+    {
+        return isset($this->model->editable) ? !$this->model->editable : false;
     }
 
     /**
