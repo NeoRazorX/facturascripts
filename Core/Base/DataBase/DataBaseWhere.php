@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -86,6 +86,37 @@ class DataBaseWhere
         } elseif (null === $value && $operator === '!=') {
             $this->operator = 'IS NOT';
         }
+    }
+
+    /**
+     * Given a list of fields with operators:
+     * '|' for OR operations
+     * ',' for AND operations
+     * Returns an array with the field (key) and the operation (value).
+     *
+     * @param string $fields
+     *
+     * @return array
+     */
+    public static function applyOperation(string $fields)
+    {
+        if (empty($fields)) {
+            return [];
+        }
+
+        $result = [];
+        foreach (\explode(',', $fields) as $field) {
+            if ($field !== '' && \strpos($field, '|') === false) {
+                $result[$field] = 'AND';
+            }
+        }
+        foreach (\explode('|', $fields) as $field) {
+            if ($field !== '' && strpos($field, ',') === false) {
+                $result[$field] = 'OR';
+            }
+        }
+
+        return $result;
     }
 
     /**

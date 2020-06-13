@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -53,52 +52,5 @@ class EditFormaPago extends EditController
         $data['title'] = 'payment-method';
         $data['icon'] = 'fas fa-credit-card';
         return $data;
-    }
-
-    /**
-     * Run the autocomplete action with exercise filter
-     * Returns a JSON string for the searched values.
-     *
-     * @return array
-     */
-    protected function autocompleteAction(): array
-    {
-        $source = $this->request->get('source', '');
-        switch ($source) {
-            case 'cuentasbanco':
-                return $this->autocompleteWithFilter('idempresa');
-
-            case 'subcuentas':
-                return $this->autocompleteWithFilter('codejercicio');
-
-            default:
-                return parent::autocompleteAction();
-        }
-    }
-
-    /**
-     * 
-     * @param string $filterField
-     *
-     * @return array
-     */
-    protected function autocompleteWithFilter($filterField)
-    {
-        $results = [];
-        $data = $this->requestGet(['field', 'source', 'fieldcode', 'fieldtitle', 'term', $filterField]);
-        $fields = $data['fieldcode'] . '|' . $data['fieldtitle'];
-        $where = [
-            new DataBaseWhere($filterField, $data[$filterField]),
-            new DataBaseWhere($fields, mb_strtolower($data['term'], 'UTF8'), 'LIKE')
-        ];
-
-        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $row) {
-            $results[] = ['key' => $row->code, 'value' => $row->description];
-        }
-
-        if (empty($results)) {
-            $results[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-value')];
-        }
-        return $results;
     }
 }

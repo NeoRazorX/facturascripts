@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,6 +31,7 @@ $(document).ready(function () {
         var data = {
             field: $(this).attr("data-field"),
             fieldcode: $(this).attr("data-fieldcode"),
+            fieldfilter: $(this).attr("data-fieldfilter"),
             fieldtitle: $(this).attr("data-fieldtitle"),
             source: $(this).attr("data-source"),
             strict: $(this).attr("data-strict")

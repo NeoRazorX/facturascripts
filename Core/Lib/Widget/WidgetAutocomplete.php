@@ -23,10 +23,24 @@ use FacturaScripts\Dinamic\Lib\AssetManager;
 /**
  * Description of WidgetAutocomplete
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class WidgetAutocomplete extends WidgetSelect
 {
+
+    /**
+     * Name of the field by which it is filtered.
+     *
+     * @var string
+     */
+    protected $fieldfilter;
+
+    /**
+     * Descriptive text of the selected value
+     * 
+     * @var string 
+     */
+    protected $selected = null;
 
     /**
      * Indicates whether a value should be selected strictly from the list
@@ -36,13 +50,6 @@ class WidgetAutocomplete extends WidgetSelect
      * @var bool
      */
     public $strict = true;
-
-    /**
-     * Descriptive text of the selected value
-     * 
-     * @var string 
-     */
-    protected $selected = null;
 
     /**
      *
@@ -142,9 +149,14 @@ class WidgetAutocomplete extends WidgetSelect
     protected function inputHtml($type = 'text', $extraClass = 'widget-autocomplete')
     {
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
-        return '<input type="' . $type . '" value="' . $this->getSelected() . '" class="' . $class . '" data-field="' . $this->fieldname
-            . '" data-source="' . $this->source . '" data-fieldcode="' . $this->fieldcode . '" data-fieldtitle="' . $this->fieldtitle
-            . '" data-strict="' . $this->strictStr() . '" autocomplete="off"' . $this->inputHtmlExtraParams() . '/>';
+        return '<input type="' . $type . '" value="' . $this->getSelected() . '" class="' . $class . '"'
+            . ' data-field="' . $this->fieldname . '"'
+            . ' data-source="' . $this->source . '"'
+            . ' data-fieldcode="' . $this->fieldcode . '"'
+            . ' data-fieldtitle="' . $this->fieldtitle . '"'
+            . ' data-fieldfilter="' . $this->fieldfilter . '"'
+            . ' data-strict="' . $this->strictStr() . '"'
+            . ' autocomplete="off"' . $this->inputHtmlExtraParams() . '/>';
     }
 
     /**
@@ -155,6 +167,7 @@ class WidgetAutocomplete extends WidgetSelect
         // The values are filled in automatically by the view controller
         // according to the information entered by the user.
         parent::setSourceData($child, false);
+        $this->fieldfilter = $child['fieldfilter'] ?? '';
         $this->strict = isset($child['strict']) ? ($child['strict'] == 'true') : true;
     }
 

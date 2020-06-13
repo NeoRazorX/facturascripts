@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
@@ -227,14 +228,20 @@ abstract class BaseController extends Controller
      */
     protected function autocompleteAction(): array
     {
-        $data = $this->requestGet(['field', 'fieldcode', 'fieldtitle', 'formname', 'source', 'strict', 'term']);
+        $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'strict', 'term']);
         if ($data['source'] == '') {
             return $this->getAutocompleteValues($data['formname'], $data['field']);
         }
 
+        $where = [];
+        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
+            $value = $this->request->get($field);
+            $where[] = new DataBaseWhere($field, $value, '=', $operation);
+        }
+
         $results = [];
         $utils = $this->toolBox()->utils();
-        foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term']) as $value) {
+        foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
             $results[] = ['key' => $utils->fixHtml($value->code), 'value' => $utils->fixHtml($value->description)];
         }
 

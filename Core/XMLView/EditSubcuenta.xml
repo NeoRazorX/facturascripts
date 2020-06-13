@@ -37,7 +37,9 @@
         </group>
         <group name="seccondary-data" numcolumns="12">
             <column name="account" order="100">
-                <widget type="text" fieldname="codcuenta" readonly="dinamic" required="true" />
+                <widget type="autocomplete" fieldname="idcuenta" onclick="EditCuenta">
+                    <values source="cuentas" fieldcode="idcuenta" fieldtitle="codcuenta" fieldfilter="codejercicio" />
+                </widget>
             </column>
             <column name="special-account" titleurl="ListCuenta?activetab=ListCuentaEspecial" order="110">
                 <widget type="select" fieldname="codcuentaesp" onclick="EditCuentaEspecial">

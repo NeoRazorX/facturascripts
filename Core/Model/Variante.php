@@ -124,12 +124,13 @@ class Variante extends Base\ModelClass
 
     /**
      * 
-     * @param string $query
-     * @param string $fieldcode
+     * @param string          $query
+     * @param string          $fieldcode
+     * @param DataBaseWhere[] $where
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldcode = '')
+    public function codeModelSearch(string $query, string $fieldcode = '', $where = [])
     {
         $results = [];
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
@@ -141,7 +142,7 @@ class Variante extends Base\ModelClass
             . " WHERE LOWER(v.referencia) LIKE '" . $find . "%'"
             . " OR v.codbarras = '" . $find . "'"
             . " OR LOWER(p.descripcion) LIKE '%" . $find . "%'"
-            . " ORDER BY v." . $field . " asc";
+            . " ORDER BY v." . $field . " ASC";
 
         foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $data) {
             $data['description'] = $this->getAttributeDescription(

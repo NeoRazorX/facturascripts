@@ -133,24 +133,25 @@ class CodeModel
     /**
      * Load a CodeModel list (code and description) for the indicated table and search.
      *
-     * @param string $tableName
-     * @param string $fieldCode
-     * @param string $fieldDescription
-     * @param string $query
+     * @param string          $tableName
+     * @param string          $fieldCode
+     * @param string          $fieldDescription
+     * @param string          $query
+     * @param DataBaseWhere[] $where
      *
      * @return static[]
      */
-    public static function search($tableName, $fieldCode, $fieldDescription, $query)
+    public static function search($tableName, $fieldCode, $fieldDescription, $query, $where = [])
     {
         /// is a table or a model?
         $modelClass = self::MODEL_NAMESPACE . $tableName;
-        if (class_exists($modelClass)) {
+        if (\class_exists($modelClass)) {
             $model = new $modelClass();
-            return $model->codeModelSearch($query, $fieldCode);
+            return $model->codeModelSearch($query, $fieldCode, $where);
         }
 
         $fields = $fieldCode . '|' . $fieldDescription;
-        $where = [new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE')];
+        $where[] = new DataBaseWhere($fields, \mb_strtolower($query, 'UTF8'), 'LIKE');
         return self::all($tableName, $fieldCode, $fieldDescription, false, $where);
     }
 
