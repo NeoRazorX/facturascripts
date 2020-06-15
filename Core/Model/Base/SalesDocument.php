@@ -278,9 +278,12 @@ abstract class SalesDocument extends TransformerDocument
         }
 
         if (parent::save()) {
+            /// reload customer after save
+            $updatedCustomer = $this->getSubject();
+
             /// update customer risk
-            $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->primaryColumnValue());
-            $customer->save();
+            $updatedCustomer->riesgoalcanzado = CustomerRiskTools::getCurrent($updatedCustomer->primaryColumnValue());
+            $updatedCustomer->save();
 
             return true;
         }
