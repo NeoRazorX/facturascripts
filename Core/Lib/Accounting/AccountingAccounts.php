@@ -202,12 +202,14 @@ class AccountingAccounts
      */
     public function getPaymentAccount(string $codpago, string $specialAccount = self::SPECIAL_PAYMENT_ACCOUNT)
     {
+        $bankAccount = new CuentaBanco();
         $paymentMethod = new FormaPago();
-        if ($paymentMethod->loadFromCode($codpago) && $paymentMethod->codcuentabanco) {
-            $bankAccount = new CuentaBanco();
-            if ($bankAccount->loadFromCode($paymentMethod->codcuentabanco) && !empty($bankAccount->codsubcuenta)) {
-                return $this->getSubAccount($bankAccount->codsubcuenta);
-            }
+        if ($paymentMethod->loadFromCode($codpago) &&
+            $paymentMethod->codcuentabanco &&
+            $bankAccount->loadFromCode($paymentMethod->codcuentabanco) &&
+            !empty($bankAccount->codsubcuenta)) {
+            $subaccount = $this->getSubAccount($bankAccount->codsubcuenta);
+            return $subaccount->exists() ? $subaccount : $this->getSpecialSubAccount($specialAccount);
         }
 
         return $this->getSpecialSubAccount($specialAccount);
