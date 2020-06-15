@@ -35,8 +35,8 @@
                     <p>{{ i18n.trans('group-or-split-p') }}</p>
                 </div>
             </div>
-            <div class="row align-items-end">
-                <div class="col-2 mb-2">
+            <div class="row">
+                <div class="col-lg-2 col-sm-6 mb-2">
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">
@@ -46,7 +46,7 @@
                         <input type="text" name="fecha" value="{{ task.end | date('d-m-Y') }}" class="form-control datepicker" autocomplete="off"/>
                     </div>
                 </div>
-                <div class="col-2 mb-2">
+                <div class="col-lg-2 col-sm-6 mb-2">
                     <select name="extralines" class="form-control">
                         <option value="true">{{ i18n.trans('add-extra-lines') }}</option>
                         <option value="false">{{ i18n.trans('no-extra-lines') }}</option>
@@ -229,8 +229,9 @@
                                     <td class="text-right text-nowrap">{{ doc.fecha }}</td>
                                 </tr>
                             {% else %}
-                                <tr>
-                                    <td colspan="5">{{ i18n.trans('no-data') }}</td>
+                                <tr class="table-warning">
+                                    <td></td>
+                                    <td colspan="4">{{ i18n.trans('no-data') }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
