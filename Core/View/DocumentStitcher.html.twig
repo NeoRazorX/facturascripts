@@ -36,7 +36,7 @@
                 </div>
             </div>
             <div class="row align-items-end">
-                <div class="col-2 mb-2">
+                <div class="col-2">
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">
@@ -46,14 +46,16 @@
                         <input type="text" name="fecha" value="{{ task.end | date('d-m-Y') }}" class="form-control datepicker" autocomplete="off"/>
                     </div>
                 </div>
-                <div class="col-2 mb-2">
-                    <select name="extralines" class="form-control">
-                        <option value="true">{{ i18n.trans('add-extra-lines') }}</option>
-                        <option value="false">{{ i18n.trans('no-extra-lines') }}</option>
-                    </select>
+                <div class="col-2">
+                    <div class="input-group">
+                        <select name="extralines" class="form-control">
+                            <option value="true">{{ i18n.trans('add-extra-lines') }}</option>
+                            <option value="false">{{ i18n.trans('no-extra-lines') }}</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col mb-2">
-                    <div class="dropdown">
+                <div class="col">
+                    <div class="dropdown input-group">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-magic fa-fw"></i> {{ i18n.trans('generate') }}
                         </button>
@@ -167,10 +169,10 @@
                             <td>{{ line.referencia }}</td>
                             <td>{{ line.descripcion | raw | nl2br }}</td>
                             <td>
-                                <input type="number" value="{{ line.cantidad }}" class="form-control text-right" readonly="true"/>
+                                <input type="number" value="{{ line.cantidad }}" class="form-control text-right" readonly/>
                             </td>
                             <td class="{{ servido == 0 ? '' : 'table-warning' }}">
-                                <input type="number" value="{{ line.servido }}" class="form-control text-right" readonly="true"/>
+                                <input type="number" value="{{ line.servido }}" class="form-control text-right" readonly/>
                             </td>
                             {% set newQuantity = line.cantidad - line.servido %}
                             <td class="{{ newQuantity == 0 ? 'table-warning' : 'table-success' }}">
