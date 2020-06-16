@@ -437,7 +437,7 @@
     "filter-records-containing-indicated-value": "Filtrar els registres que contenen el valor indicat",
     "filters": "Filtres",
     "finalize": "Finalitzar",
-    "finished-cron": "S'ha finalitzat l'execució cron de FacturaScripts, el temps necessari:% timeNeded%",
+    "finished-cron": "S'ha finalitzat l'execució cron de FacturaScripts, el temps necessari: %timeNeded%",
     "first-trimester": "Primer trimestre",
     "fiscal-data": "Dades fiscals",
     "fiscal-exercise": "Exercici fiscal",
