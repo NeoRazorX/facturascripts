@@ -785,6 +785,7 @@
     "phone2": "Téléphone 2",
     "phones": "phones",
     "php-extension-not-found": "Vous n'avez pas installé l'extension %extension% de PHP.",
+    "php-support-end": "php-support-end",
     "physical-stock": "Stock physique",
     "plan": "Plan",
     "please-enter-value": "Entrer un nombre, SVP",

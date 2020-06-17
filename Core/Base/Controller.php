@@ -132,6 +132,8 @@ class Controller
 
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
+
+        $this->checkPHPversion(7.1);
     }
 
     /**
@@ -271,6 +273,18 @@ class Controller
     public function url()
     {
         return $this->className;
+    }
+
+    /**
+     * 
+     * @param float $min
+     */
+    private function checkPHPversion(float $min)
+    {
+        $current = (float) \substr(\phpversion(), 0, 3);
+        if ($current < $min) {
+            $this->toolBox()->i18nLog()->warning('php-support-end', ['%current%' => $current, '%min%' => $min]);
+        }
     }
 
     /**
