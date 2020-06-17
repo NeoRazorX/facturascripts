@@ -90,9 +90,8 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="secondary" fieldname="codproveedor">null:</option>
-            <option color="success" fieldname="idestado">19</option>
-            <option color="danger" fieldname="idestado">20</option>
+            <option color="success" title="approved" fieldname="idestado">19</option>
+            <option color="danger" title="cancelled" fieldname="idestado">20</option>
             <option color="warning" title="non-editable-document" fieldname="editable">0</option>
             <option color="info" title="email-sent" fieldname="femail">notnull:</option>
         </row>
