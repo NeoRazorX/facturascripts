@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Model\Base;
 
-use IBAN;
+use PHP_IBAN\IBAN;
 
 /**
  * This class groups the data and bank calculation methods
