@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\ProductoProveedor;
 
@@ -63,9 +64,23 @@ class EditProducto extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->addEditListView('EditVariante', 'Variante', 'variants', 'fas fa-project-diagram');
-        $this->addEditListView('EditStock', 'Stock', 'stock', 'fas fa-dolly');
+        $this->createViewsVariants();
+        $this->createViewsStock();
         $this->createViewsSuppliers();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsStock(string $viewName = 'EditStock')
+    {
+        $this->addEditListView($viewName, 'Stock', 'stock', 'fas fa-dolly');
+
+        $almacen = new Almacen();
+        if ($almacen->count() <= 1) {
+            $this->views[$viewName]->disableColumn('warehouse');
+        }
     }
 
     /**
@@ -83,6 +98,15 @@ class EditProducto extends EditController
 
         /// disable clickable row
         $this->setSettings($viewName, 'clickable', false);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsVariants(string $viewName = 'EditVariante')
+    {
+        $this->addEditListView($viewName, 'Variante', 'variants', 'fas fa-project-diagram');
     }
 
     /**

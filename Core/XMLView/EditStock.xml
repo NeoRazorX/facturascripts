@@ -34,7 +34,7 @@
             </widget>
         </column>
         <column name="warehouse" titleurl="ListAlmacen" numcolumns="2" order="120">
-            <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" readonly="dinamic" required="true">
+            <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
             </widget>
         </column>

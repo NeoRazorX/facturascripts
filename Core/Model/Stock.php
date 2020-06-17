@@ -106,6 +106,7 @@ class Stock extends Base\ModelClass
     {
         parent::clear();
         $this->cantidad = 0.0;
+        $this->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
         $this->disponible = 0.0;
         $this->pterecibir = 0.0;
         $this->reservada = 0.0;
