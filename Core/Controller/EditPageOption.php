@@ -127,7 +127,7 @@ class EditPageOption extends Controller
         $this->model = new PageOption();
         $this->selectedViewName = $this->request->get('code', '');
         $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
-        $this->selectedUser = $this->user->admin ? $this->request->get('nick', '') : $this->user->nick;
+        $this->selectedUser = $this->user->admin ? $this->request->get('nick', $this->user->nick) : $this->user->nick;
         $this->loadPageOptions();
 
         $action = $this->request->get('action', '');
