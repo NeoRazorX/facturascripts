@@ -51,6 +51,12 @@ class FacturaCliente extends Base\SalesDocument
     public $codsubtipodoc;
 
     /**
+     *
+     * @var int
+     */
+    public $idliquidacion;
+
+    /**
      * This function is called when creating the model's table. Returns the SQL
      * that will be executed after the creation of the table. Useful to insert
      * default values.
@@ -149,7 +155,7 @@ class FacturaCliente extends Base\SalesDocument
         $whereOld = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codserie', $this->codserie),
-            new DataBaseWhere($numColumn, (int) $this->numero, '<'),
+            new DataBaseWhere($numColumn, (int) $this->numero, '<')
         ];
         foreach ($this->all($whereOld, ['fecha' => 'DESC'], 0, 1) as $old) {
             if (\strtotime($old->fecha) > \strtotime($this->fecha)) {
@@ -162,7 +168,7 @@ class FacturaCliente extends Base\SalesDocument
         $whereNew = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codserie', $this->codserie),
-            new DataBaseWhere($numColumn, (int) $this->numero, '>'),
+            new DataBaseWhere($numColumn, (int) $this->numero, '>')
         ];
         foreach ($this->all($whereNew, ['fecha' => 'ASC'], 0, 1) as $old) {
             if (\strtotime($old->fecha) < \strtotime($this->fecha)) {
