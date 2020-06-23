@@ -125,6 +125,13 @@ class ListAgente extends ListController
 
         $agents = $this->codeModel->all('agentes', 'codagente', 'nombre');
         $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
+
+        $this->addButton($viewName, [
+            'action' => 'gen-settlements',
+            'icon' => 'fas fa-magic',
+            'label' => 'generate',
+            'type' => 'modal'
+        ]);
     }
 
     /**

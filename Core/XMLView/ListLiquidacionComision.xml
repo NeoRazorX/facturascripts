@@ -75,9 +75,6 @@
         </group>
     </modals>
     <rows>
-        <row type="actions">
-            <button type="modal" icon="fas fa-magic" label="generate" action="gen-settlements" />
-        </row>
         <row type="status">
             <option color="warning" title="no-invoice" fieldname="idfactura">null:</option>
             <option color="success" title="generated-invoice" fieldname="idfactura">notnull:</option>

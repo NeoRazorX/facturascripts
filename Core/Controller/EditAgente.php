@@ -78,10 +78,11 @@ class EditAgente extends ComercialContactController
      *
      * @param string $viewName
      */
-    protected function createCommissionsView($viewName = 'ListComision')
+    protected function createCommissionsView(string $viewName = 'ListComision')
     {
         $this->addListView($viewName, 'Comision', 'commissions', 'fas fa-percentage');
         $this->views[$viewName]->addOrderBy(['prioridad'], 'priority', 2);
+        $this->views[$viewName]->addOrderBy(['porcentaje'], 'percentage');
 
         /// disable columns
         $this->views[$viewName]->disableColumn('agent', true);
@@ -91,7 +92,7 @@ class EditAgente extends ComercialContactController
      *
      * @param string $viewName
      */
-    protected function createContactView($viewName = 'EditContacto')
+    protected function createContactView(string $viewName = 'EditContacto')
     {
         $this->addEditView($viewName, 'Contacto', 'contact', 'fa fa-address-book');
 
@@ -112,7 +113,7 @@ class EditAgente extends ComercialContactController
      * @param string $model
      * @param string $label
      */
-    protected function createDocumentView($viewName, $model, $label)
+    protected function createDocumentView(string $viewName, string $model, string $label)
     {
         $this->createCustomerListView($viewName, $model, $label);
         $this->addButtonGroupDocument($viewName);
@@ -123,7 +124,7 @@ class EditAgente extends ComercialContactController
      *
      * @param string $viewName
      */
-    protected function createInvoiceView($viewName)
+    protected function createInvoiceView(string $viewName)
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
         $this->addButtonLockInvoice($viewName);
@@ -133,9 +134,11 @@ class EditAgente extends ComercialContactController
      *
      * @param string $viewName
      */
-    protected function createSettlementView($viewName = 'ListLiquidacionComision')
+    protected function createSettlementView(string $viewName = 'ListLiquidacionComision')
     {
         $this->addListView($viewName, 'LiquidacionComision', 'settlements', 'fas fa-chalkboard-teacher');
+        $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['total'], 'amount');
     }
 
     /**
@@ -197,7 +200,7 @@ class EditAgente extends ComercialContactController
 
             default:
                 parent::loadData($viewName, $view);
-                if (!$view->model->exists()) {
+                if (false === $view->model->exists()) {
                     $view->disableColumn('contact');
                 }
                 break;
