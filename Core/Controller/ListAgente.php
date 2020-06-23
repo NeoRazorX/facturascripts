@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Dinamic\Lib\CommissionTools;
 use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
@@ -179,13 +180,7 @@ class ListAgente extends ListController
                 $where[] = new DataBaseWhere('fecha', $dateTo, '<=');
             }
 
-            $invoices = [];
-            foreach ($invoiceModel->all($where, [], 0, 0) as $invoice) {
-                if ($invoice->totalcomision > 0.0) {
-                    $invoices[] = $invoice;
-                }
-            }
-
+            $invoices = $invoiceModel->all($where, [], 0, 0);
             if (\count($invoices)) {
                 $this->newSettlement($agente->codagente, $idempresa, $codserie, $invoices);
                 $generated++;
@@ -209,14 +204,17 @@ class ListAgente extends ListController
         $newSettlement->codserie = $codserie;
         $newSettlement->idempresa = $idempresa;
         if ($newSettlement->save()) {
+            $commissionTools = new CommissionTools();
             foreach ($invoices as $invoice) {
+                /// recalculate commissions
+                $lines = $invoice->getLines();
+                $commissionTools->recalculate($invoice, $lines);
+
                 $invoice->idliquidacion = $newSettlement->idliquidacion;
                 $invoice->save();
-
-                $newSettlement->total += $invoice->totalcomision;
             }
 
-            $newSettlement->save();
+            $newSettlement->calculateTotalCommission($newSettlement->idliquidacion);
         }
     }
 }
