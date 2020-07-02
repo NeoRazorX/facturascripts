@@ -43,20 +43,14 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col">
-                <div class="tab-content">
-                    {% for viewName, view in fsc.views %}
-                        {% set active = (viewName == fsc.active) ? 'tab-pane show active' : 'tab-pane' %}
-                        <div class="{{ active }}" id="{{ viewName }}" role="tabpanel">
-                            {% do fsc.setCurrentView(viewName) %}
-                            {{ include(view.template) }}
-                        </div>
-                    {% endfor %}
-                </div>
+    <div class="tab-content">
+        {% for viewName, view in fsc.views %}
+            {% set active = (viewName == fsc.active) ? 'tab-pane show active' : 'tab-pane' %}
+            <div class="{{ active }}" id="{{ viewName }}" role="tabpanel">
+                {% do fsc.setCurrentView(viewName) %}
+                {{ include(view.template) }}
             </div>
-        </div>
+        {% endfor %}
     </div>
 {% endblock %}
 

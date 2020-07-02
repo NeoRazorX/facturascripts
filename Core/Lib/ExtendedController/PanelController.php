@@ -139,7 +139,7 @@ abstract class PanelController extends BaseController
 
         foreach (\array_keys($this->views) as $viewName) {
             $this->views[$viewName]->settings['card'] = $this->tabsPosition !== 'top';
-        }
+    }
     }
 
     /**
@@ -153,6 +153,7 @@ abstract class PanelController extends BaseController
     protected function addEditListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-bars')
     {
         $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
+        $view->settings['card'] = $this->tabsPosition !== 'top';
         $this->addCustomView($viewName, $view);
     }
 
@@ -218,7 +219,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-bars')
+    protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-list')
     {
         $view = new ListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';

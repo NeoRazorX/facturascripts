@@ -44,13 +44,17 @@
         <input type="hidden" name="action" value="new-refund"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <input type="hidden" name="idfactura" value="{{ currentView.model.primaryColumnValue() }}"/>
-        <div class="text-right">
-            <button type="button" class="btn btn-sm btn-outline-secondary" onClick="return refundNone();">
-                {{ i18n.trans('select-none') }}
-            </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary" onClick="return refundAll();">
-                {{ i18n.trans('select-all') }}
-            </button>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col text-right">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onClick="return refundNone();">
+                        {{ i18n.trans('select-none') }}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onClick="return refundAll();">
+                        {{ i18n.trans('select-all') }}
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="table-responsive">
             <table class="table table-striped table-hover">
@@ -76,26 +80,29 @@
                                 <div class="form-control text-right refundable">{{ line.cantidad }}</div>
                             </td>
                             <td class="table-warning">
-                                <input type="number" name="refund_{{ line.primaryColumnValue() }}" value="0" min="0" max="{{ line.cantidad - refunded }}" step="any" class="form-control text-right to_refund" autocomplete="off"/>
+                                <input type="number" name="refund_{{ line.primaryColumnValue() }}" value="0" min="0" max="{{ line.cantidad - refunded }}"
+                                       step="any" class="form-control text-right to_refund" autocomplete="off"/>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        <div class="form-row">
-            <div class="col mb-2">
-                <textarea name="observaciones" class="form-control" placeholder="{{ i18n.trans('observations') }}"></textarea>
+        <div class="container-fluid">
+            <div class="form-row">
+                <div class="col mb-2">
+                    <textarea name="observaciones" class="form-control" placeholder="{{ i18n.trans('observations') }}"></textarea>
+                </div>
             </div>
-        </div>
-        <div class="form-row">
-            {{ _self.customSelect('codserie', 'codserie', appSettings.get('default', 'codserierec', 'R'), fsc.views[mainViewName].getSelectValues('Serie')) }}
-            {{ _self.customInput('fecha', 'fecha', fsc.toolBox().today(), 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
-            {{ _self.customInput('numproveedor', 'numproveedor', '', 'text', 'fas fa-hashtag') }}
-            <div class="col text-right">
-                <button type="submit" class="btn btn-sm btn-primary">
-                    <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
-                </button>
+            <div class="form-row">
+                {{ _self.customSelect('codserie', 'codserie', appSettings.get('default', 'codserierec', 'R'), fsc.views[mainViewName].getSelectValues('Serie')) }}
+                {{ _self.customInput('fecha', 'fecha', fsc.toolBox().today(), 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
+                {{ _self.customInput('numproveedor', 'numproveedor', '', 'text', 'fas fa-hashtag') }}
+                <div class="col text-right">
+                    <button type="submit" class="btn btn-sm btn-primary">
+                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
+                    </button>
+                </div>
             </div>
         </div>
     </form>
