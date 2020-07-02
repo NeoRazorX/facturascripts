@@ -34,7 +34,7 @@
     <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
     <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
-        <div class="container-fluid mt-3">
+        <div class="{{ currentView.settings.card ? 'container-fluid pt-3' : 'container-fluid' }}">
             <div class="row">
                 {# -- Left buttons -- #}
                 <div class="col mb-2">
@@ -137,7 +137,7 @@
         {# -- Totals -- #}
         {% if currentView.totalAmounts is not empty %}
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover mb-0">
                     <thead>
                         <tr>
                             <th>

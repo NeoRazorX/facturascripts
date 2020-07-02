@@ -21,10 +21,10 @@
 
 {% block bodyHeaderOptions %}
     {{ parent() }}
-    <div class="container-fluid mb-3 d-print-none">
+    <div class="container-fluid d-print-none">
         <div class="row">
             <div class="col">
-                <ul class="nav nav-tabs" role="tablist">
+                <ul class="nav nav-tabs" id="mainTabs" role="tablist">
                     {% for viewName, view in fsc.views %}
                         <li class="nav-item">
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
@@ -43,7 +43,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="tab-content">
+    <div class="tab-content pt-3" id="mainTabsContent">
         {% for viewName, view in fsc.views %}
             {% set active = (viewName == fsc.active) ? 'tab-pane show active' : 'tab-pane' %}
             <div class="{{ active }}" id="{{ viewName }}" role="tabpanel">

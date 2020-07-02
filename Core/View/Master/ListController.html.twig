@@ -78,7 +78,7 @@
         </div>
     </div>
     {# -- Tabs -- #}
-    <ul class="nav nav-tabs mb-3 d-print-none" id="mainTabs" role="tablist">
+    <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
         {% for viewName, view in fsc.views %}
             <li class="nav-item">
                 {% set active = (viewName == fsc.active) ? ' active' : '' %}
@@ -95,7 +95,7 @@
 {% block body %}
     {{ parent() }}
     {# -- Tab content -- #}
-    <div class="tab-content" id="mainTabsContent">
+    <div class="tab-content pt-3" id="mainTabsContent">
         {% for viewName, view in fsc.views %}
             {% set active = (viewName == fsc.active) ? ' show active' : '' %}
             <div class="tab-pane fade{{ active }}" id="{{ viewName }}" role="tabpanel">

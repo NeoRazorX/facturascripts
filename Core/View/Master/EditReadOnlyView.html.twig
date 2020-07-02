@@ -30,7 +30,7 @@
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="code" value="{{ currentView.model.primaryColumnValue() }}"/>
     <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
-        <div class="{{ currentView.settings.card ? 'card-body' : '' }}">
+        <div class="{{ currentView.settings.card ? 'card-body' : 'container-fluid' }}">
             <div class="row">
                 <div class="col-12 text-right">
                     {# -- Row statistics -- #}
