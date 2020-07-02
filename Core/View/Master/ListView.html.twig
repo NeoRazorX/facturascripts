@@ -173,11 +173,13 @@
         {# -- Pagination -- #}
         {% set pages = currentView.getPagination() %}
         {% if pages | length > 0 %}
-            <div class="card-footer text-center">
+            <div class="{{ currentView.settings.card ? 'card-footer text-center' : 'pt-3 text-center' }}">
                 <div class="btn-group bg-white">
                     {% for page in currentView.getPagination() %}
                         {% set btnClass = page.active ? 'btn btn-outline-dark active' : 'btn btn-outline-dark' %}
-                        <button type="button" class="{{ btnClass }}" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">{{ page.num }}</button>
+                        <button type="button" class="{{ btnClass }}" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
+                            {{ page.num }}
+                        </button>
                     {% endfor %}
                 </div>
             </div>
