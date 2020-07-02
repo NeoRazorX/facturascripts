@@ -139,7 +139,7 @@ abstract class PanelController extends BaseController
 
         foreach (\array_keys($this->views) as $viewName) {
             $this->views[$viewName]->settings['card'] = $this->tabsPosition !== 'top';
-    }
+        }
     }
 
     /**
