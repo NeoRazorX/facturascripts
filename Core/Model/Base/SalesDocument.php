@@ -223,7 +223,7 @@ abstract class SalesDocument extends TransformerDocument
             $newLine->descripcion = $variant->description();
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $product->getTax()->iva;
-            $newLine->pvpunitario = isset($this->tarifa) ? $this->tarifa->apply($variant->coste, $variant->precio) : $variant->precio;
+            $newLine->pvpunitario = isset($this->tarifa) ? $this->tarifa->applyTo($variant, $product) : $variant->precio;
             $newLine->recargo = $product->getTax()->recargo;
             $newLine->referencia = $variant->referencia;
 

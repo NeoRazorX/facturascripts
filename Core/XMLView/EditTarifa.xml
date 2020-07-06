@@ -28,7 +28,7 @@
             <column name="name" order="110">
                 <widget type="text" fieldname="nombre" required="true" />
             </column>
-            <column name="aplicar" title="formula-to-apply" order="120">
+            <column name="formula" title="formula-to-apply" order="120">
                 <widget type="select" fieldname="aplicar" translate="true" required="true">
                     <values title="formula-sale-price">pvp</values>
                     <values title="formula-cost-price">coste</values>
