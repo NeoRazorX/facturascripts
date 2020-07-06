@@ -144,7 +144,7 @@ class EditGrupoClientes extends EditController
             'action' => 'remove-customer',
             'color' => 'danger',
             'confirm' => true,
-            'icon' => 'fas fa-user-minus',
+            'icon' => 'fas fa-folder-minus',
             'label' => 'remove-from-list'
         ]);
     }
@@ -162,7 +162,7 @@ class EditGrupoClientes extends EditController
         $this->addButton($viewName, [
             'action' => 'add-customer',
             'color' => 'success',
-            'icon' => 'fas fa-user-plus',
+            'icon' => 'fas fa-folder-plus',
             'label' => 'add'
         ]);
     }
