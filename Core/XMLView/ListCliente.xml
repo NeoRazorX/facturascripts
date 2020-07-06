@@ -85,6 +85,15 @@
             <widget type="text" fieldname="fechabaja" />
         </column>
     </columns>
+    <modals>
+        <group name="setcustomerrate" title="add" icon="fas fa-folder-plus">
+            <column name="setcustomerrate" title="customer" order="100">
+                <widget type="autocomplete" fieldname="setcustomerrate" required="true">
+                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre" />
+                </widget>
+            </column>
+        </group>
+    </modals>
     <rows>
         <row type="status">
             <option color="danger" title="suspended" fieldname="debaja">1</option>

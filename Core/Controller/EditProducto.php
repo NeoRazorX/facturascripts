@@ -22,6 +22,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Almacen;
+use FacturaScripts\Dinamic\Model\Atributo;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\ProductoProveedor;
 
@@ -107,6 +108,21 @@ class EditProducto extends EditController
     protected function createViewsVariants(string $viewName = 'EditVariante')
     {
         $this->addEditListView($viewName, 'Variante', 'variants', 'fas fa-project-diagram');
+
+        $attribute = new Atributo();
+        $attCount = $attribute->count();
+        if ($attCount < 4) {
+            $this->views[$viewName]->disableColumn('attribute-value-4');
+        }
+        if ($attCount < 3) {
+            $this->views[$viewName]->disableColumn('attribute-value-3');
+        }
+        if ($attCount < 2) {
+            $this->views[$viewName]->disableColumn('attribute-value-2');
+        }
+        if ($attCount < 1) {
+            $this->views[$viewName]->disableColumn('attribute-value-1');
+        }
     }
 
     /**
