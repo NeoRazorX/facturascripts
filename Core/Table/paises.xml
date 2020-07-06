@@ -12,7 +12,7 @@
     </column>
     <column>
         <name>codpais</name>
-        <type>character varying(20)</type>
+        <type>character varying(3)</type>
         <null>NO</null>
     </column>
     <column>
