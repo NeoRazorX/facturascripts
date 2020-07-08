@@ -124,10 +124,10 @@ class SubcuentaSaldo extends ModelView
     public function setSubAccountBalance($idSubAccount, $channel, &$detail): float
     {
         $result = 0;
-        $where = [
-            new DataBaseWhere('partidas.idsubcuenta', $idSubAccount),
-            new DataBaseWhere('asientos.canal', $channel)
-        ];
+        $where = [new DataBaseWhere('partidas.idsubcuenta', $idSubAccount)];
+        if (!empty($channel)) {
+            $where[] = new DataBaseWhere('asientos.canal', $channel);
+        }
         foreach ($this->all($where, ['mes' => 'ASC']) as $values) {
             $detail[$values->mes - 1] = round($values->saldo, (int) FS_NF0);
             $result += $values->saldo;
