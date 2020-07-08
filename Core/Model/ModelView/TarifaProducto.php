@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,8 +30,13 @@ use FacturaScripts\Dinamic\Model\Variante;
  * 
  * @property string $codtarifa
  * @property float  $coste
+ * @property string $descripcion
  * @property int    $idproducto
+ * @property int    $idvariante
+ * @property float  $margen
  * @property float  $precio
+ * @property string $referencia
+ * @property float  $stockfis
  */
 class TarifaProducto extends ModelView
 {
@@ -114,8 +119,10 @@ class TarifaProducto extends ModelView
             'descripcion' => 'productos.descripcion',
             'idproducto' => 'productos.idproducto',
             'idvariante' => 'variantes.idvariante',
+            'margen' => 'variantes.margen',
             'precio' => 'variantes.precio',
             'referencia' => 'variantes.referencia',
+            'stockfis' => 'variantes.stockfis'
         ];
     }
 
