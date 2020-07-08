@@ -32,7 +32,7 @@ use XLSXWriter;
 class XLSExport extends ExportBase
 {
 
-    const LIST_LIMIT = 1000;
+    const LIST_LIMIT = 10000;
 
     /**
      *
