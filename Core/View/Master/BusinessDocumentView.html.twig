@@ -67,7 +67,8 @@
             {{ _self.customSelect('doc_codserie', 'codserie', thisView.model.codserie, thisView.getSelectValues('Serie')) }}
             {{ _self.customInput('doc_fecha', 'fecha', thisView.model.fecha, 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
             {% for field in fsc.getCustomFields() %}
-                {{ _self.customInput('doc_' ~ field.name, field.name, fsc.getViewModelValue(thisView.getViewName(), field.name), 'text', field.icon, {placeholder: i18n.trans(field.label)}) }}
+                {{ _self.customInput('doc_' ~ field.name, field.name, fsc.getViewModelValue(thisView.getViewName(), field.name),
+                    'text', field.icon, {placeholder: i18n.trans(field.label)}) }}
             {% endfor %}
             {{ _self.customSelect('doc_codpago', 'codpago', thisView.model.codpago, thisView.getSelectValues('FormaPago')) }}
             {{ _self.customSelect('doc_coddivisa', 'coddivisa', thisView.model.coddivisa, thisView.getSelectValues('Divisa')) }}
@@ -86,73 +87,73 @@
             {{ _self.statusSelect(thisView.model, thisView, i18n) }}
         </div>
         {% if thisView.model.exists() %}
-            <div class="row d-block d-md-flex">
-                {{ _self.relatedDocuments(thisView.model.parentDocuments(), 'parentsModal', 'parents-docs', fsc, i18n) }}
+            <div class="row">
+                {{ _self.parentDocuments(thisView.model.parentDocuments(), fsc, i18n) }}
                 {% if thisView.model.femail %}
-                    <div class="col">
+                    <div class="col-sm">
                         <div class="alert alert-info text-center">
                             <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ thisView.model.femail }}
                         </div>
                     </div>
                 {% endif %}
                 {% if thisView.model.paid() %}
-                    <div class="col">
+                    <div class="col-sm">
                         <div class="alert alert-success text-center">
                             <i class="fas fa-check fa-fw" aria-hidden="true"></i> {{ i18n.trans('paid') }}
                         </div>
                     </div>
                 {% endif %}
                 {% if thisView.model.editable == false %}
-                    <div class="col">
+                    <div class="col-sm">
                         <div class="alert alert-danger text-center">
                             <i class="fas fa-lock fa-fw"></i> {{ i18n.trans('non-editable-document') }}
                         </div>
                     </div>
                 {% endif %}
-                {{ _self.relatedDocuments(thisView.model.childrenDocuments(), 'childrenModal', 'children-docs', fsc, i18n) }}
+                {{ _self.childrenDocuments(thisView.model.childrenDocuments(), fsc, i18n) }}
             </div>
         {% endif %}
         <div id="document-lines"></div>
         <div class="form-row mt-2">
             {% if fsc.showDocSubType %}
                 {{ _self.customSelect('doc_codsubtipodoc', 'codsubtipodoc', thisView.model.codsubtipodoc,
-                thisView.getSelectValues('BusinessDocSubType'), true, i18n.trans('doc-subtype')) }}
+                    thisView.getSelectValues('BusinessDocSubType'), true, i18n.trans('doc-subtype')) }}
             {% endif %}
             {% if fsc.showDocOperation %}
                 {{ _self.customSelect('doc_codoperaciondoc', 'codoperaciondoc', thisView.model.codoperaciondoc,
-                thisView.getSelectValues('BusinessDocTypeOperation'), true, i18n.trans('doc-operation')) }}
+                    thisView.getSelectValues('BusinessDocTypeOperation'), true, i18n.trans('doc-operation')) }}
             {% endif %}
             {{ _self.customInput('doc_netosindto', 'netosindto', thisView.model.netosindto, 'text', '',
-            {class: 'form-control', disabled: ''}, i18n.trans('subtotal')) }}
+                {class: 'form-control', disabled: ''}, i18n.trans('subtotal')) }}
             {% if thisView.model.editable %}
                 {{ _self.customInput('doc_dtopor1', 'dtopor1', thisView.model.dtopor1, 'number', 'fas fa-percentage',
-                {class: 'form-control'}, i18n.trans('global-dto')) }}
+                    {class: 'form-control'}, i18n.trans('global-dto')) }}
                 {{ _self.customInput('doc_dtopor2', 'dtopor2', thisView.model.dtopor2, 'number', 'fas fa-percentage',
-                {class: 'form-control'}, i18n.trans('global-dto-2')) }}
+                    {class: 'form-control'}, i18n.trans('global-dto-2')) }}
             {% else %}
                 {{ _self.customInput('doc_dtopor1', 'dtopor1', thisView.model.dtopor1, 'number', 'fas fa-percentage',
-                {class: 'form-control', disabled: ''}, i18n.trans('global-dto')) }}
+                    {class: 'form-control', disabled: ''}, i18n.trans('global-dto')) }}
                 {{ _self.customInput('doc_dtopor2', 'dtopor2', thisView.model.dtopor2, 'number', 'fas fa-percentage',
-                {class: 'form-control', disabled: ''}, i18n.trans('global-dto-2')) }}
+                    {class: 'form-control', disabled: ''}, i18n.trans('global-dto-2')) }}
             {% endif %}
             {{ _self.customInput('doc_neto', 'neto', thisView.model.neto, 'text', '',
-            {class: 'form-control', disabled: ''}, i18n.trans('net')) }}
+                {class: 'form-control', disabled: ''}, i18n.trans('net')) }}
             {{ _self.customInput('doc_totaliva', 'totaliva', thisView.model.totaliva, 'text', '',
-            {class: 'form-control', disabled: ''}, i18n.trans('taxes')) }}
+                {class: 'form-control', disabled: ''}, i18n.trans('taxes')) }}
             {% if thisView.model.totalrecargo != 0 %}
                 {{ _self.customInput('doc_totalrecargo', 'totalrecargo', thisView.model.totalrecargo, 'text', '',
-                {class: 'form-control', disabled: ''}, i18n.trans('re')) }}
+                    {class: 'form-control', disabled: ''}, i18n.trans('re')) }}
             {% endif %}
             {% if thisView.model.totalirpf != 0 %}
                 {{ _self.customInput('doc_totalirpf', 'totalirpf', thisView.model.totalirpf, 'text', '',
-                {class: 'form-control', disabled: ''}, i18n.trans('irpf')) }}
+                    {class: 'form-control', disabled: ''}, i18n.trans('irpf')) }}
             {% endif %}
             {% if thisView.model.totalsuplidos != 0 %}
                 {{ _self.customInput('doc_totalsuplidos', 'totalsuplidos', thisView.model.totalsuplidos, 'text', '',
-                {class: 'form-control', disabled: ''}, i18n.trans('supplied-amount')) }}
+                    {class: 'form-control', disabled: ''}, i18n.trans('supplied-amount')) }}
             {% endif %}
             {{ _self.customInput('doc_total2', 'total', thisView.model.total, 'text', '',
-            {class: 'form-control', disabled: ''}, i18n.trans('total')) }}
+                {class: 'form-control', disabled: ''}, i18n.trans('total')) }}
         </div>
         <div class="form-row mb-2">
             {{ thisView.getRow('business').edit(thisView.model) | raw }}
@@ -327,18 +328,50 @@
     </div>
 {% endmacro %}
 
-{% macro relatedDocuments(relatedDocuments, id, title, fsc, i18n) %}
-    {% if relatedDocuments|length > 1 %}
-        <div class="col">
-            <div class="alert alert-success text-center">
-                <i class="fas fa-forward fa-fw" aria-hidden="true"></i>
-                <a href="#" data-toggle="modal" data-target="#{{ id }}">{{ i18n.trans(title) }}</a>
+{% macro parentDocuments(relatedDocuments, fsc, i18n) %}
+    {% if relatedDocuments | length > 2 %}
+        <div class="col-sm">
+            <div class="alert alert-warning text-center">
+                <i class="fas fa-backward fa-fw" aria-hidden="true"></i>
+                <a href="#" data-toggle="modal" data-target="#parentsModal">{{ i18n.trans('previous-documents') }}</a>
             </div>
         </div>
-        {{ _self.relatedDocumentsModal(relatedDocuments, id, title, fsc, i18n) }}
+        <div class="modal fade" id="parentsModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-backward fa-fw" aria-hidden="true"></i>
+                            {{ i18n.trans('previous-documents') }}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <tbody>
+                                {% for doc in relatedDocuments %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ doc.url() }}">
+                                                {{ i18n.trans(doc.modelClassName()) }}
+                                                {{ doc.primaryDescription() }}
+                                            </a>
+                                        </td>
+                                        <td class="text-right">{{ fsc.toolBox().coins().format(doc.total) }}</td>
+                                        <td class="text-right">{{ doc.fecha }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% else %}
         {% for relatedDoc in relatedDocuments %}
-            <div class="col">
+            <div class="col-sm">
                 <div class="alert alert-warning text-center">
                     <i class="fas fa-backward fa-fw" aria-hidden="true"></i> {{ i18n.trans(relatedDoc.modelClassName()) }}
                     <a href="{{ relatedDoc.url() }}">{{ relatedDoc.primaryDescription() }}</a>
@@ -348,43 +381,55 @@
     {% endif %}
 {% endmacro %}
 
-{% macro relatedDocumentsModal(documents, id, title, fsc, i18n) %}
-    <div class="modal fade" id="{{ id }}" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">{{ i18n.trans(title) }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
+{% macro childrenDocuments(relatedDocuments, fsc, i18n) %}
+    {% if relatedDocuments | length > 2 %}
+        <div class="col-sm">
+            <div class="alert alert-success text-center">
+                <i class="fas fa-forward fa-fw" aria-hidden="true"></i>
+                <a href="#" data-toggle="modal" data-target="#childrenModal">{{ i18n.trans('documents-generated') }}</a>
+            </div>
+        </div>
+        <div class="modal fade" id="childrenModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-forward fa-fw" aria-hidden="true"></i>
+                            {{ i18n.trans('documents-generated') }}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
                     <div class="table-responsive">
-                        <table class="table search-table table-striped">
-                            <thead>
-                            <tr>
-                                <th scope="col">{{ i18n.trans('code') }}</th>
-                                <th scope="col">{{ i18n.trans('total') }}</th>
-                                <th scope="col">{{ i18n.trans('date') }}</th>
-                            </tr>
-                            </thead>
+                        <table class="table table-hover mb-0">
                             <tbody>
-                            {% for document in documents %}
-                                <tr>
-                                    <td>{{ document.codigo }}</td>
-                                    <td class="text-right">{{ fsc.toolBox().coins().format(document.total) }}</td>
-                                    <td>{{ document.fecha }}</td>
-                                </tr>
-                            {% endfor %}
+                                {% for doc in relatedDocuments %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ doc.url() }}">
+                                                {{ i18n.trans(doc.modelClassName()) }}
+                                                {{ doc.primaryDescription() }}
+                                            </a>
+                                        </td>
+                                        <td class="text-right">{{ fsc.toolBox().coins().format(doc.total) }}</td>
+                                        <td class="text-right">{{ doc.fecha }}</td>
+                                    </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{ i18n.trans('close') }}</button>
-                </div>
             </div>
         </div>
-    </div>
+    {% else %}
+        {% for relatedDoc in relatedDocuments %}
+            <div class="col-sm">
+                <div class="alert alert-success text-center">
+                    <i class="fas fa-forward fa-fw" aria-hidden="true"></i> {{ i18n.trans(relatedDoc.modelClassName()) }}
+                    <a href="{{ relatedDoc.url() }}">{{ relatedDoc.primaryDescription() }}</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
 {% endmacro %}
-
