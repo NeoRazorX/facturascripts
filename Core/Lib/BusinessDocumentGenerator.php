@@ -48,7 +48,7 @@ class BusinessDocumentGenerator
      *
      * @var array
      */
-    public $excludeLineFields = ['idlinea', 'orden'];
+    public $excludeLineFields = ['idlinea', 'orden', 'servido'];
 
     /**
      *

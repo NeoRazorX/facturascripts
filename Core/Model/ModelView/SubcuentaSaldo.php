@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,9 +30,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * @property double $debe
  * @property double $haber
  * @property double $saldo
- * @property int $idsubcuenta
- * @property int $mes
- * @property int $canal
+ * @property int    $idsubcuenta
+ * @property int    $mes
+ * @property int    $canal
  */
 class SubcuentaSaldo extends ModelView
 {
@@ -62,7 +62,7 @@ class SubcuentaSaldo extends ModelView
             'canal' => 'asientos.canal',
             'mes' => 'EXTRACT(MONTH FROM asientos.fecha)',
             'debe' => 'SUM(partidas.debe)',
-            'haber' => 'SUM(partidas.haber)',
+            'haber' => 'SUM(partidas.haber)'
         ];
     }
 
@@ -124,15 +124,15 @@ class SubcuentaSaldo extends ModelView
     public function setSubAccountBalance($idSubAccount, $channel, &$detail): float
     {
         $result = 0;
-        $where = [new DataBaseWhere('partidas.idsubcuenta', $idSubAccount)];
-        if (!empty($channel)) {
-            $where[] = new DataBaseWhere('asientos.canal', $channel);
-        }
+        $where = [
+            new DataBaseWhere('partidas.idsubcuenta', $idSubAccount),
+            new DataBaseWhere('asientos.canal', empty($channel) ? null : $channel)
+        ];
         foreach ($this->all($where, ['mes' => 'ASC']) as $values) {
-            $detail[$values->mes - 1] = round($values->saldo, (int) FS_NF0);
+            $detail[$values->mes - 1] = \round($values->saldo, (int) FS_NF0);
             $result += $values->saldo;
         }
 
-        return round($result, (int) FS_NF0);
+        return \round($result, (int) FS_NF0);
     }
 }
