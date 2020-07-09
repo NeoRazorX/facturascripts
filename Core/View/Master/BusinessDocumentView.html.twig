@@ -86,15 +86,8 @@
             {{ _self.statusSelect(thisView.model, thisView, i18n) }}
         </div>
         {% if thisView.model.exists() %}
-            <div class="row">
-                {% for parentDoc in thisView.model.parentDocuments() %}
-                    <div class="col">
-                        <div class="alert alert-warning text-center">
-                            <i class="fas fa-backward fa-fw" aria-hidden="true"></i> {{ i18n.trans(parentDoc.modelClassName()) }}
-                            <a href="{{ parentDoc.url() }}">{{ parentDoc.primaryDescription() }}</a>
-                        </div>
-                    </div>
-                {% endfor %}
+            <div class="row d-block d-md-flex">
+                {{ _self.relatedDocuments(thisView.model.parentDocuments(), 'parentsModal', 'parents-docs', fsc, i18n) }}
                 {% if thisView.model.femail %}
                     <div class="col">
                         <div class="alert alert-info text-center">
@@ -116,14 +109,7 @@
                         </div>
                     </div>
                 {% endif %}
-                {% for childrenDoc in thisView.model.childrenDocuments() %}
-                    <div class="col">
-                        <div class="alert alert-success text-center">
-                            <i class="fas fa-forward fa-fw" aria-hidden="true"></i> {{ i18n.trans(childrenDoc.modelClassName()) }}
-                            <a href="{{ childrenDoc.url() }}">{{ childrenDoc.primaryDescription() }}</a>
-                        </div>
-                    </div>
-                {% endfor %}
+                {{ _self.relatedDocuments(thisView.model.childrenDocuments(), 'childrenModal', 'children-docs', fsc, i18n) }}
             </div>
         {% endif %}
         <div id="document-lines"></div>
@@ -340,3 +326,65 @@
         </div>
     </div>
 {% endmacro %}
+
+{% macro relatedDocuments(relatedDocuments, id, title, fsc, i18n) %}
+    {% if relatedDocuments|length > 1 %}
+        <div class="col">
+            <div class="alert alert-success text-center">
+                <i class="fas fa-forward fa-fw" aria-hidden="true"></i>
+                <a href="#" data-toggle="modal" data-target="#{{ id }}">{{ i18n.trans(title) }}</a>
+            </div>
+        </div>
+        {{ _self.relatedDocumentsModal(relatedDocuments, id, title, fsc, i18n) }}
+    {% else %}
+        {% for relatedDoc in relatedDocuments %}
+            <div class="col">
+                <div class="alert alert-warning text-center">
+                    <i class="fas fa-backward fa-fw" aria-hidden="true"></i> {{ i18n.trans(relatedDoc.modelClassName()) }}
+                    <a href="{{ relatedDoc.url() }}">{{ relatedDoc.primaryDescription() }}</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% macro relatedDocumentsModal(documents, id, title, fsc, i18n) %}
+    <div class="modal fade" id="{{ id }}" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ i18n.trans(title) }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table search-table table-striped">
+                            <thead>
+                            <tr>
+                                <th scope="col">{{ i18n.trans('code') }}</th>
+                                <th scope="col">{{ i18n.trans('total') }}</th>
+                                <th scope="col">{{ i18n.trans('date') }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for document in documents %}
+                                <tr>
+                                    <td>{{ document.codigo }}</td>
+                                    <td class="text-right">{{ fsc.toolBox().coins().format(document.total) }}</td>
+                                    <td>{{ document.fecha }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{ i18n.trans('close') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
