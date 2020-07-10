@@ -86,7 +86,7 @@ class EditUser extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->setTabsPosition('top');
+        $this->setTabsPosition('bottom');
 
         if ($this->user->admin) {
             $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fas fa-address-card');
