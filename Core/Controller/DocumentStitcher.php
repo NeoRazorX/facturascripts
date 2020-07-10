@@ -258,8 +258,12 @@ class DocumentStitcher extends Controller
                 $newLines[] = $line;
             }
         }
-
         if (null === $prototype || empty($newLines)) {
+            return;
+        }
+
+        /// allow plugins to do stuff on the prototype before save
+        if (false === $this->pipe('checkPrototype', $prototype, $newLines)) {
             return;
         }
 
