@@ -77,6 +77,9 @@
             <column name="email" order="150">
                 <widget type="text" fieldname="email" maxlength="100" icon="fas fa-envelope" />
             </column>
+            <column name="observations" display="none" numcolumns="12" order="160">
+                <widget type="textarea" fieldname="observaciones" />
+            </column>
         </group>
     </columns>
 </view>
