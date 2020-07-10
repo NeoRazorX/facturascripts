@@ -289,14 +289,17 @@
 {% endmacro %}
 
 {% macro statusSelect(model, view, i18n) %}
-    <div class="col mb-2">
-        <div class="dropdown">
-            {% set status = model.getStatus() %}
-            {% if status.generadoc %}
-                <button class="btn btn-block btn-secondary" type="button">
-                    <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
-                </button>
-            {% else %}
+    {% set status = model.getStatus() %}
+    {% if model.exists() == false %}
+    {% elseif status.generadoc %}
+        <div class="col mb-2">
+            <button class="btn btn-block btn-secondary" type="button">
+                <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
+            </button>
+        </div>
+    {% else %}
+        <div class="col mb-2">
+            <div class="dropdown">
                 <button class="btn btn-block btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="{{ status.icon() }} fa-fw" aria-hidden="true"></i> {{ status.nombre }}
                 </button>
@@ -323,9 +326,9 @@
                         </a>
                     {% endif %}
                 </div>
-            {% endif %}
+            </div>
         </div>
-    </div>
+    {% endif %}
 {% endmacro %}
 
 {% macro parentDocuments(relatedDocuments, fsc, i18n) %}
