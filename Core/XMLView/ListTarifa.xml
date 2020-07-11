@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,7 +37,7 @@
             <widget type="number" fieldname="valorx" />
         </column>
         <column name="value-y" display="right" order="140">
-            <widget type="money" fieldname="valory" />
+            <widget type="number" fieldname="valory" />
         </column>
         <column name="mincost" title="dont-sell-below-cost" display="center" order="150">
             <widget type="checkbox" fieldname="mincoste" />
