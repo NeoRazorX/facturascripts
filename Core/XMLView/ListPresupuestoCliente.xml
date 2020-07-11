@@ -37,7 +37,7 @@
         </column>
         <column name="customer" order="130">
             <widget type="text" fieldname="nombrecliente" />
-        </column>        
+        </column>
         <column name="fiscal-number" display="none" order="140">
             <widget type="text" fieldname="cifnif" />
         </column>
