@@ -275,6 +275,8 @@ abstract class SalesDocument extends TransformerDocument
         if (!empty($customer->riesgomax) && $customer->riesgoalcanzado > $customer->riesgomax) {
             $this->toolBox()->i18nLog()->warning('customer-reached-maximum-risk');
             return false;
+        } elseif (empty($customer->primaryColumnValue())) {
+            return parent::save();
         }
 
         if (parent::save()) {
