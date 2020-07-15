@@ -207,7 +207,8 @@ class AccountingCreation
             return '';
         }
 
-        $numbers = array_merge([$subject->primaryColumnValue()], range(1, 999));
+        $code = preg_replace('/[^0-9]/', '', $subject->primaryColumnValue());
+        $numbers = array_merge([$code], range(1, 999));
         foreach ($numbers as $num) {
             $newCode = $this->fillToLength($this->exercise->longsubcuenta, $num, $account->codcuenta);
 
