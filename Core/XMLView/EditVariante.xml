@@ -25,22 +25,22 @@
             <column name="product" display="none" order="100">
                 <widget type="text" fieldname="idproducto" required="true" />
             </column>
-            <column name="reference" order="110">
+            <column name="reference" numcolumns="2" order="110">
                 <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag" required="true" />
             </column>
-            <column name="attribute-value-1" titleurl="ListAtributo" order="120">
+            <column name="attribute-value-1" titleurl="ListAtributo" numcolumns="2" order="120">
                 <widget type="select" fieldname="idatributovalor1" onclick="EditAtributo" />
             </column>
-            <column name="attribute-value-2" titleurl="ListAtributo" order="130">
+            <column name="attribute-value-2" titleurl="ListAtributo" numcolumns="2" order="130">
                 <widget type="select" fieldname="idatributovalor2" onclick="EditAtributo" />
             </column>
-            <column name="attribute-value-3" titleurl="ListAtributo" order="140">
+            <column name="attribute-value-3" titleurl="ListAtributo" numcolumns="2" order="140">
                 <widget type="select" fieldname="idatributovalor3" onclick="EditAtributo" />
             </column>
-            <column name="attribute-value-4" titleurl="ListAtributo" order="150">
+            <column name="attribute-value-4" titleurl="ListAtributo" numcolumns="2" order="150">
                 <widget type="select" fieldname="idatributovalor4" onclick="EditAtributo" />
             </column>
-            <column name="barcode" order="160">
+            <column name="barcode" numcolumns="2" order="160">
                 <widget type="text" fieldname="codbarras" icon="fas fa-barcode" />
             </column>
             <column name="cost-price" display="right" numcolumns="2" order="170">
@@ -52,7 +52,7 @@
             <column name="price" display="right" numcolumns="2" order="190">
                 <widget type="money" decimal="2" fieldname="precio" class="calc-price" />
             </column>
-            <column name="stock" display="right" order="200">
+            <column name="stock" display="right" numcolumns="2" order="200">
                 <widget type="number" fieldname="stockfis" readonly="true"/>
             </column>
         </group>

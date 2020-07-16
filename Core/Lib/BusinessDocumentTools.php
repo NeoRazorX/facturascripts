@@ -25,6 +25,7 @@ use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\ImpuestoZona;
 use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Lib\RegimenIVA as DinRegimenIVA;
 use FacturaScripts\Dinamic\Model\Serie;
 
 /**
@@ -236,11 +237,11 @@ class BusinessDocumentTools
     protected function loadRegimenIva($reg)
     {
         switch ($reg) {
-            case RegimenIVA::TAX_SYSTEM_EXEMPT:
+            case DinRegimenIVA::TAX_SYSTEM_EXEMPT:
                 $this->siniva = true;
                 break;
 
-            case RegimenIVA::TAX_SYSTEM_SURCHARGE:
+            case DinRegimenIVA::TAX_SYSTEM_SURCHARGE:
                 $this->recargo = true;
                 break;
         }
