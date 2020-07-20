@@ -336,8 +336,12 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      * @param float $quantity
      * @param float $served
      */
-    private function applyStockChanges(&$stock, int $mode, float $quantity, float $served = 0)
+    private function applyStockChanges(&$stock, int $mode, float $quantity, float $served)
     {
+        if ($quantity < 0 && $served < $quantity) {
+            $served = $quantity;
+        }
+
         switch ($mode) {
             case 1:
             case -1:
