@@ -423,6 +423,10 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     protected function updateStock()
     {
+        if (empty($this->actualizastock) && empty($this->previousData['actualizastock'])) {
+            return true;
+        }
+
         /// find the variant
         $variante = new Variante();
         $where = [new DataBaseWhere('referencia', $this->referencia)];
