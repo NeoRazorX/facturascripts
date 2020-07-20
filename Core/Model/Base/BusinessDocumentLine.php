@@ -290,7 +290,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             new DataBaseWhere('referencia', $this->referencia)
         ];
         if ($fromStock->loadFromCode('', $where)) {
-            $this->applyStockChanges($this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $fromStock);
+            $this->applyStockChanges($fromStock, $this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $this->previousData['servido'] * -1);
             $fromStock->save();
         } else {
             /// no need to transfer
@@ -310,7 +310,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             $toStock->referencia = $this->referencia;
         }
 
-        $this->applyStockChanges($this->actualizastock, $this->cantidad, $toStock);
+        $this->applyStockChanges($toStock, $this->actualizastock, $this->cantidad, $this->servido);
         $toStock->save();
     }
 
@@ -325,21 +325,18 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public function url(string $type = 'auto', string $list = 'List')
     {
         $name = \str_replace('Linea', '', $this->modelClassName());
-        if ($type === 'new') {
-            return 'Edit' . $name;
-        }
-
-        return parent::url($type, 'List' . $name . '?activetab=List');
+        return $type === 'new' ? 'Edit' . $name : parent::url($type, 'List' . $name . '?activetab=List');
     }
 
     /**
      * Apply stock modifications according to $mode.
-     *
+     * 
+     * @param Stock $stock
      * @param int   $mode
      * @param float $quantity
-     * @param Stock $stock
+     * @param float $served
      */
-    private function applyStockChanges(int $mode, float $quantity, Stock $stock)
+    private function applyStockChanges(&$stock, int $mode, float $quantity, float $served = 0)
     {
         switch ($mode) {
             case 1:
@@ -348,11 +345,11 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
                 break;
 
             case 2:
-                $stock->pterecibir += $quantity;
+                $stock->pterecibir += $quantity - $served;
                 break;
 
             case -2:
-                $stock->reservada += $quantity;
+                $stock->reservada += $quantity - $served;
                 break;
         }
     }
@@ -370,6 +367,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         switch ($field) {
             case 'actualizastock':
             case 'cantidad':
+            case 'servido':
                 return $this->updateStock();
         }
 
@@ -393,11 +391,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     protected function saveInsert(array $values = [])
     {
-        if ($this->updateStock()) {
-            return parent::saveInsert($values);
-        }
-
-        return false;
+        return $this->updateStock() ? parent::saveInsert($values) : false;
     }
 
     /**
@@ -406,7 +400,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     protected function setPreviousData(array $fields = [])
     {
-        $more = ['actualizastock', 'cantidad'];
+        $more = ['actualizastock', 'cantidad', 'servido'];
         parent::setPreviousData(\array_merge($more, $fields));
 
         if (null === $this->previousData['actualizastock']) {
@@ -452,8 +446,8 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             $stock->referencia = $this->referencia;
         }
 
-        $this->applyStockChanges($this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $stock);
-        $this->applyStockChanges($this->actualizastock, $this->cantidad, $stock);
+        $this->applyStockChanges($stock, $this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $this->previousData['servido'] * -1);
+        $this->applyStockChanges($stock, $this->actualizastock, $this->cantidad, $this->servido);
 
         /// enough stock?
         if (false === $producto->ventasinstock && $this->actualizastock === -1 && $stock->cantidad < 0) {
