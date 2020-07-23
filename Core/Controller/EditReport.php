@@ -116,4 +116,43 @@ class EditReport extends EditController
             $ycolColumn->widget->setValuesFromArray($columns, false, true);
         }
     }
+
+    protected function getTableFieldsAction(){
+        $this->setTemplate(false);
+
+        $tableName = $this->request->request->get('value');
+        $fieldCode = $this->request->request->get('fieldcode');
+        $fieldtitle = $this->request->request->get('fieldtitle');
+
+        $columns = empty($tableName) || !$this->dataBase->tableExists($tableName) ? [] : array_keys($this->dataBase->getColumns($tableName));
+        sort($columns);
+        
+        $result=[];
+        foreach($columns as $v){
+            $result[]=[$fieldCode=>$v,$fieldtitle=>$v];
+        }
+
+        $this->response->setContent(\json_encode($result));
+
+    }
+
+     /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'get-table-fields':
+                 $this->getTableFieldsAction();
+                 return false;
+                break;
+         
+        }
+
+        return parent::execPreviousAction($action);
+    }
 }
