@@ -42,10 +42,10 @@
             <widget type="number" fieldname="cantidad" />
         </column>
         <column name="stockmin" display="right" numcolumns="1" order="140">
-            <widget type="number" fieldname="stockmin" />
+            <widget type="number" fieldname="stockmin" min="0" />
         </column>
         <column name="stockmax" display="right" numcolumns="1" order="150">
-            <widget type="number" fieldname="stockmax" />
+            <widget type="number" fieldname="stockmax" min="0" />
         </column>
         <column name="reserved" display="right" order="160">
             <widget type="number" fieldname="reservada" readonly="true"/>
