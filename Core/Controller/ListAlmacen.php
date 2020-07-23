@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,15 +48,14 @@ class ListAlmacen extends ListController
      */
     protected function createViews()
     {
-        $this->createViewAlmacen();
-        $this->createViewTransfer();
+        $this->createViewWarehouse();
     }
 
     /**
      * 
      * @param string $name
      */
-    protected function createViewAlmacen($name = 'ListAlmacen')
+    protected function createViewWarehouse(string $name = 'ListAlmacen')
     {
         $this->addView($name, 'Almacen', 'warehouses', 'fas fa-warehouse');
         $this->addSearchFields($name, ['nombre', 'codalmacen']);
@@ -66,24 +65,5 @@ class ListAlmacen extends ListController
         /// Filters
         $selectValues = $this->codeModel->all('empresas', 'idempresa', 'nombre');
         $this->addFilterSelect($name, 'idempresa', 'company', 'idempresa', $selectValues);
-    }
-
-    /**
-     * 
-     * @param string $name
-     */
-    protected function createViewTransfer($name = 'ListTransferenciaStock')
-    {
-        $this->addView($name, 'TransferenciaStock', 'stock-transfers', 'fas fa-exchange-alt');
-        $this->addSearchFields($name, ['observaciones']);
-        $this->addOrderBy($name, ['codalmacenorigen'], 'origin-warehouse');
-        $this->addOrderBy($name, ['codalmacendestino'], 'destination-warehouse');
-        $this->addOrderBy($name, ['fecha'], 'date');
-        $this->addOrderBy($name, ['usuario'], 'user');
-
-        /// Filters
-        $this->addFilterDatePicker($name, 'fromfecha', 'from-date', 'fecha', '>=');
-        $this->addFilterDatePicker($name, 'untilfecha', 'until-date', 'fecha', '<=');
-        $this->addFilterAutocomplete($name, 'nick', 'user', 'nick', 'users', 'nick', 'nick');
     }
 }
