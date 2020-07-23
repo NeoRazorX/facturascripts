@@ -48,13 +48,15 @@
             </column>
             <column name="city" order="160">
                 <widget type="text" fieldname="ciudad" />
-            </column>
-            <column name="province" order="170">
-                <widget type="text" fieldname="provincia" />
-            </column>
-            <column name="country" titleurl="ListPais" order="180">
+            </column>          
+            <column name="country" titleurl="ListPais" order="170">
                 <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
+                </widget>
+            </column>
+              <column name="province" order="180">
+                 <widget type="select" fieldname="provincia"  required="true">
+                    <values asyncsource="autoselect" source="provincias"  filter="codpais" fieldcode="provincia" fieldtitle="provincia" />
                 </widget>
             </column>
         </group>
