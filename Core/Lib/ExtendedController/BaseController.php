@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -253,6 +254,44 @@ abstract class BaseController extends Controller
 
         return $results;
     }
+
+     /**
+     * Run the autoselect action.
+     * Returns a JSON string for the searched values.
+     *
+     * @return array
+     */
+    protected function autoselectAction(): array
+    {
+        $data = $this->requestGet(['source', 'filter', 'fieldcode', 'fieldtitle','value']);
+
+        $filterVal = $this->request->request->get('value');
+        
+         $dataBase = new DataBase();
+
+         $wherevalue="{$data['value']}";
+
+         if(!is_numeric($data['value'])){
+            $wherevalue="'{$data['value']}'";
+         }
+
+         $sql="SELECT  {$data['fieldtitle']} as fieldtitle, {$data['fieldcode']} as fieldcode FROM {$data['source']} WHERE {$data['filter']} =  $wherevalue";
+
+         $result=$dataBase->select($sql);
+       
+         foreach ($result as $value) {
+              $results[] = [$data['fieldcode']=>$value['fieldcode'],$data['fieldtitle'] => $value['fieldtitle']];
+         }
+
+
+        if (empty($results)) {
+            $results[] = [];
+        }
+
+        return $results;
+    }
+
+
 
     /**
      * Action to delete data.

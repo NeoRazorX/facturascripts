@@ -304,6 +304,11 @@ abstract class PanelController extends BaseController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'autoselect':
+                $this->setTemplate(false);
+                $results = $this->autoselectAction();
+                $this->response->setContent(json_encode($results));
+                return false;
             case 'autocomplete':
                 $this->setTemplate(false);
                 $results = $this->autocompleteAction();
