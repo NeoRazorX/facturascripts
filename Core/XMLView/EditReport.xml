@@ -31,7 +31,9 @@
                 <widget type="select" fieldname="table" required="true" />
             </column>
             <column name="x-column" order="140">
-                <widget type="select" fieldname="xcolumn" />
+                <widget type="select" fieldname="xcolumn" required="true" >
+                    <values asyncsource="get-table-fields" filter="table" fieldcode="id" fieldtitle="name"/>
+                </widget>
             </column>
             <column name="x-operation" order="150">
                 <widget type="select" fieldname="xoperation" translate="true">
@@ -46,7 +48,9 @@
                 </widget>
             </column>
             <column name="y-column" order="160">
-                <widget type="select" fieldname="ycolumn" />
+                <widget type="select" fieldname="ycolumn">
+                      <values asyncsource="get-table-fields" filter="table" fieldcode="id" fieldtitle="name"/>
+                </widget>
             </column>
         </group>
         <group name="compare" numcolumns="12">
