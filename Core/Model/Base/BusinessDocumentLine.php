@@ -280,6 +280,8 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      * 
      * @param string $fromCodalmacen
      * @param string $toCodalmacen
+     *
+     * @return bool
      */
     public function transfer($fromCodalmacen, $toCodalmacen)
     {
@@ -289,13 +291,12 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             new DataBaseWhere('codalmacen', $fromCodalmacen),
             new DataBaseWhere('referencia', $this->referencia)
         ];
-        if ($fromStock->loadFromCode('', $where)) {
-            $this->applyStockChanges($fromStock, $this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $this->previousData['servido'] * -1);
-            $fromStock->save();
-        } else {
+        if (empty($this->referencia) || false === $fromStock->loadFromCode('', $where)) {
             /// no need to transfer
-            return;
+            return true;
         }
+        $this->applyStockChanges($fromStock, $this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $this->previousData['servido'] * -1);
+        $fromStock->save();
 
         /// find the new stock
         $toStock = new Stock();
@@ -311,7 +312,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         }
 
         $this->applyStockChanges($toStock, $this->actualizastock, $this->cantidad, $this->servido);
-        $toStock->save();
+        return $toStock->save();
     }
 
     /**
@@ -383,7 +384,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     protected function onDelete()
     {
-        $this->cantidad = 0;
+        $this->cantidad = 0.0;
         $this->updateStock();
     }
 
@@ -395,7 +396,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     protected function saveInsert(array $values = [])
     {
-        return $this->updateStock() ? parent::saveInsert($values) : false;
+        return $this->updateStock() && parent::saveInsert($values);
     }
 
     /**
