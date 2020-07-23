@@ -67,8 +67,8 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="warning" fieldname="stockfis">lte:0</option>
-            <option color="success" fieldname="stockfis">gt:0</option>
+            <option color="warning" fieldname="stockfis" title="out-of-stock">lte:0</option>
+            <option color="success" fieldname="stockfis" title="in-stock">gt:0</option>
         </row>
     </rows>
 </view>
