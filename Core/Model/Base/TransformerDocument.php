@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -67,7 +67,6 @@ abstract class TransformerDocument extends BusinessDocument
     public function childrenDocuments()
     {
         $children = [];
-
         $keys = [];
         $docTransformation = new DocTransformation();
         $where = [
@@ -75,8 +74,9 @@ abstract class TransformerDocument extends BusinessDocument
             new DataBaseWhere('iddoc1', $this->primaryColumnValue())
         ];
         foreach ($docTransformation->all($where, [], 0, 0) as $docTrans) {
+            /// we use this key to load documents only once
             $key = $docTrans->model2 . '|' . $docTrans->iddoc2;
-            if (in_array($key, $keys, true)) {
+            if (\in_array($key, $keys, true)) {
                 continue;
             }
 
@@ -116,19 +116,24 @@ abstract class TransformerDocument extends BusinessDocument
      */
     public function delete()
     {
-        $children = $this->childrenDocuments();
-        if (count($children) > 0) {
+        if (\count($this->childrenDocuments()) > 0) {
             return false;
         }
 
-        $lines = $this->getLines();
-        if (!parent::delete()) {
-            return false;
+        self::$dataBase->beginTransaction();
+
+        /// remove lines to update stock
+        foreach ($this->getLines() as $line) {
+            if (false === $line->delete()) {
+                self::$dataBase->rollback();
+                return false;
+            }
         }
 
-        /// update stock
-        foreach ($lines as $line) {
-            $line->delete();
+        /// remove this model
+        if (false === parent::delete()) {
+            self::$dataBase->rollback();
+            return false;
         }
 
         /// change parent doc status
@@ -145,6 +150,8 @@ abstract class TransformerDocument extends BusinessDocument
         /// remove data from DocTransformation
         $docTransformation = new DocTransformation();
         $docTransformation->deleteFrom($this->modelClassName(), $this->primaryColumnValue());
+
+        self::$dataBase->commit();
         return true;
     }
 
@@ -205,7 +212,6 @@ abstract class TransformerDocument extends BusinessDocument
     public function parentDocuments()
     {
         $parents = [];
-
         $keys = [];
         $docTransformation = new DocTransformation();
         $where = [
@@ -213,8 +219,9 @@ abstract class TransformerDocument extends BusinessDocument
             new DataBaseWhere('iddoc2', $this->primaryColumnValue())
         ];
         foreach ($docTransformation->all($where, [], 0, 0) as $docTrans) {
+            /// we use this key to load documents only once
             $key = $docTrans->model1 . '|' . $docTrans->iddoc1;
-            if (in_array($key, $keys, true)) {
+            if (\in_array($key, $keys, true)) {
                 continue;
             }
 
@@ -237,9 +244,7 @@ abstract class TransformerDocument extends BusinessDocument
     public function save()
     {
         /// match editable with status
-        $status = $this->getStatus();
-        $this->editable = $status->editable;
-
+        $this->editable = $this->getStatus()->editable;
         return parent::save();
     }
 
@@ -289,6 +294,6 @@ abstract class TransformerDocument extends BusinessDocument
     protected function setPreviousData(array $fields = [])
     {
         $more = ['editable', 'idestado'];
-        parent::setPreviousData(array_merge($more, $fields));
+        parent::setPreviousData(\array_merge($more, $fields));
     }
 }

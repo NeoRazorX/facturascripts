@@ -312,7 +312,12 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         }
 
         $this->applyStockChanges($toStock, $this->actualizastock, $this->cantidad, $this->servido);
-        return $toStock->save();
+        if ($toStock->save()) {
+            $this->pipe('transfer', $fromCodalmacen, $toCodalmacen);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -443,14 +448,14 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
         /// find the stock
         $stock = new Stock();
-        $codalmacen = $this->getDocument()->codalmacen;
+        $doc = $this->getDocument();
         $where2 = [
-            new DataBaseWhere('codalmacen', $codalmacen),
+            new DataBaseWhere('codalmacen', $doc->codalmacen),
             new DataBaseWhere('referencia', $this->referencia)
         ];
         if (false === $stock->loadFromCode('', $where2)) {
             /// stock not found, then create one
-            $stock->codalmacen = $codalmacen;
+            $stock->codalmacen = $doc->codalmacen;
             $stock->idproducto = $this->idproducto;
             $stock->referencia = $this->referencia;
         }
@@ -465,7 +470,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         }
 
         if ($stock->save()) {
-            $this->pipe('updateStock');
+            $this->pipe('updateStock', $doc);
             return true;
         }
 
