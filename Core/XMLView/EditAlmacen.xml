@@ -25,37 +25,35 @@
             <column name="code" description="optional" numcolumns="2" order="100">
                 <widget type="text" fieldname="codalmacen" icon="fas fa-hashtag" maxlength="4" readonly="dinamic" />
             </column>
-            <column name="name" order="110">
+            <column name="name" numcolumns="4" order="110">
                 <widget type="text" fieldname="nombre" maxlength="100" required="true" />
             </column>
-            <column name="phone" numcolumns="2" order="120">
-                <widget type="text" fieldname="telefono" maxlength="30" icon="fas fa-phone" />
-            </column>
-            <column name="company" numcolumns="2" order="130">
-                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
-                </widget>
-            </column>
-        </group>
-        <group name="contact-data" title="contact-data" numcolumns="12">
-            <column name="address" numcolumns="6" order="100">
+            <column name="address" numcolumns="6" order="120">
                 <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked" />
             </column>
-            <column name="post-office-box" numcolumns="3" order="110">
+            <column name="phone" numcolumns="2" order="130">
+                <widget type="text" fieldname="telefono" maxlength="30" icon="fas fa-phone" />
+            </column>
+            <column name="post-office-box" numcolumns="2" order="140">
                 <widget type="text" fieldname="apartado" maxlength="10" />
             </column>
-            <column name="zip-code" numcolumns="3" order="120">
+            <column name="zip-code" numcolumns="2" order="150">
                 <widget type="text" fieldname="codpostal" maxlength="10" />
             </column>
-            <column name="city" numcolumns="4" order="130">
+            <column name="city" numcolumns="2" order="160">
                 <widget type="text" fieldname="ciudad" />
             </column>
-            <column name="province" numcolumns="4" order="140">
+            <column name="province" numcolumns="2" order="170">
                 <widget type="text" fieldname="provincia" />
             </column>
-            <column name="country" titleurl="ListPais" numcolumns="4" order="150">
+            <column name="country" titleurl="ListPais" numcolumns="2" order="180">
                 <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
+                </widget>
+            </column>
+            <column name="company" numcolumns="2" order="190">
+                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
         </group>

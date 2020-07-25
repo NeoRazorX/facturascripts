@@ -82,6 +82,11 @@ class EditAlmacen extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
+        /// disable company column if there is only one company
+        if ($this->empresa->count() < 2) {
+            $this->views[$this->getMainViewName()]->disableColumn('company');
+        }
+
         $this->createStockView();
     }
 

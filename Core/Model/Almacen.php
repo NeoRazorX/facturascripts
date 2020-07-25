@@ -141,6 +141,10 @@ class Almacen extends Base\Address
             return false;
         }
 
+        if (empty($this->idempresa)) {
+            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+        }
+
         $utils = $this->toolBox()->utils();
         $this->nombre = $utils->noHtml($this->nombre);
         $this->telefono = $utils->noHtml($this->telefono);
