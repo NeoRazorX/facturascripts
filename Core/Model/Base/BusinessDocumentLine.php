@@ -313,7 +313,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
         $this->applyStockChanges($toStock, $this->actualizastock, $this->cantidad, $this->servido);
         if ($toStock->save()) {
-            $this->pipe('transfer', $fromCodalmacen, $toCodalmacen);
+            $this->pipe('transfer', $fromCodalmacen, $toCodalmacen, $this->getDocument());
             return true;
         }
 
