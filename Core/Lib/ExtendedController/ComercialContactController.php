@@ -72,8 +72,8 @@ abstract class ComercialContactController extends EditController
     protected function createEmailsView($viewName = 'ListEmailSent')
     {
         $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
-        $this->views[$viewName]->searchFields = ['subject', 'text', 'addressee'];
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
+        $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
 
         /// disable column
         $this->views[$viewName]->disableColumn('to');

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -70,25 +70,21 @@ class EditContacto extends EditController
     protected function addConversionButtons($viewName)
     {
         if (empty($this->views[$viewName]->model->codcliente)) {
-            $customerButton = [
+            $this->addButton($viewName, [
                 'action' => 'convert-into-customer',
                 'color' => 'success',
                 'icon' => 'fas fa-user-check',
-                'label' => 'convert-into-customer',
-                'type' => 'action',
-            ];
-            $this->addButton($viewName, $customerButton);
+                'label' => 'convert-into-customer'
+            ]);
         }
 
         if (empty($this->views[$viewName]->model->codproveedor)) {
-            $supplierButton = [
+            $this->addButton($viewName, [
                 'action' => 'convert-into-supplier',
                 'color' => 'success',
                 'icon' => 'fas fa-user-cog',
-                'label' => 'convert-into-supplier',
-                'type' => 'action',
-            ];
-            $this->addButton($viewName, $supplierButton);
+                'label' => 'convert-into-supplier'
+            ]);
         }
     }
 
@@ -100,7 +96,7 @@ class EditContacto extends EditController
     {
         $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
-        $this->views[$viewName]->searchFields = ['subject', 'text', 'addressee'];
+        $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
 
         /// disable column
         $this->views[$viewName]->disableColumn('to');
