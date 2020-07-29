@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -60,11 +60,12 @@ class EditAlmacen extends EditController
      * 
      * @param string $viewName
      */
-    protected function createStockView($viewName = 'ListStock')
+    protected function createStockView(string $viewName = 'ListStock')
     {
         $this->addListView($viewName, 'Stock', 'stock', 'fas fa-cubes');
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
         $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
+        $this->views[$viewName]->searchFields = ['referencia'];
 
         /// disable column
         $this->views[$viewName]->disableColumn('warehouse');
@@ -80,6 +81,11 @@ class EditAlmacen extends EditController
     {
         parent::createViews();
         $this->setTabsPosition('bottom');
+
+        /// disable company column if there is only one company
+        if ($this->empresa->count() < 2) {
+            $this->views[$this->getMainViewName()]->disableColumn('company');
+        }
 
         $this->createStockView();
     }

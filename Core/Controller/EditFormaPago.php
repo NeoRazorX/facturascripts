@@ -53,4 +53,14 @@ class EditFormaPago extends EditController
         $data['icon'] = 'fas fa-credit-card';
         return $data;
     }
+
+    protected function createViews()
+    {
+        parent::createViews();
+
+        /// disable company column if there is only one company
+        if ($this->empresa->count() < 2) {
+            $this->views[$this->getMainViewName()]->disableColumn('company');
+        }
+    }
 }

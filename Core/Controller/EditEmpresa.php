@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -72,7 +72,7 @@ class EditEmpresa extends EditController
      * 
      * @param string $viewName
      */
-    protected function createViewBankAccounts($viewName = 'ListCuentaBanco')
+    protected function createViewBankAccounts(string $viewName = 'ListCuentaBanco')
     {
         $this->addListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
         $this->views[$viewName]->disableColumn('company');
@@ -82,7 +82,7 @@ class EditEmpresa extends EditController
      * 
      * @param string $viewName
      */
-    protected function createViewExercises($viewName = 'ListEjercicio')
+    protected function createViewExercises(string $viewName = 'ListEjercicio')
     {
         $this->addListView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
         $this->views[$viewName]->disableColumn('company');
@@ -92,7 +92,7 @@ class EditEmpresa extends EditController
      * 
      * @param string $viewName
      */
-    protected function createViewPaymentMethods($viewName = 'ListFormaPago')
+    protected function createViewPaymentMethods(string $viewName = 'ListFormaPago')
     {
         $this->addListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card');
         $this->views[$viewName]->disableColumn('company');
@@ -102,7 +102,7 @@ class EditEmpresa extends EditController
      * 
      * @param string $viewName
      */
-    protected function createViewWarehouse($viewName = 'ListAlmacen')
+    protected function createViewWarehouse(string $viewName = 'EditAlmacen')
     {
         $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse');
         $this->views[$viewName]->disableColumn('company');
@@ -117,7 +117,7 @@ class EditEmpresa extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'ListAlmacen':
+            case 'EditAlmacen':
             case 'ListCuentaBanco':
             case 'ListEjercicio':
             case 'ListFormaPago':
@@ -140,6 +140,8 @@ class EditEmpresa extends EditController
     {
         $mainViewName = $this->getMainViewName();
         $columnVATType = $this->views[$mainViewName]->columnForName('vat-regime');
-        $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
+        if ($columnVATType) {
+            $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
+        }
     }
 }

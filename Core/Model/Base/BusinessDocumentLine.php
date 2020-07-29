@@ -280,6 +280,8 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      * 
      * @param string $fromCodalmacen
      * @param string $toCodalmacen
+     *
+     * @return bool
      */
     public function transfer($fromCodalmacen, $toCodalmacen)
     {
@@ -289,13 +291,12 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             new DataBaseWhere('codalmacen', $fromCodalmacen),
             new DataBaseWhere('referencia', $this->referencia)
         ];
-        if ($fromStock->loadFromCode('', $where)) {
-            $this->applyStockChanges($fromStock, $this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $this->previousData['servido'] * -1);
-            $fromStock->save();
-        } else {
+        if (empty($this->referencia) || false === $fromStock->loadFromCode('', $where)) {
             /// no need to transfer
-            return;
+            return true;
         }
+        $this->applyStockChanges($fromStock, $this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $this->previousData['servido'] * -1);
+        $fromStock->save();
 
         /// find the new stock
         $toStock = new Stock();
@@ -311,7 +312,12 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         }
 
         $this->applyStockChanges($toStock, $this->actualizastock, $this->cantidad, $this->servido);
-        $toStock->save();
+        if ($toStock->save()) {
+            $this->pipe('transfer', $fromCodalmacen, $toCodalmacen, $this->getDocument());
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -383,7 +389,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     protected function onDelete()
     {
-        $this->cantidad = 0;
+        $this->cantidad = 0.0;
         $this->updateStock();
     }
 
@@ -395,7 +401,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     protected function saveInsert(array $values = [])
     {
-        return $this->updateStock() ? parent::saveInsert($values) : false;
+        return $this->updateStock() && parent::saveInsert($values);
     }
 
     /**
@@ -442,14 +448,14 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
         /// find the stock
         $stock = new Stock();
-        $codalmacen = $this->getDocument()->codalmacen;
+        $doc = $this->getDocument();
         $where2 = [
-            new DataBaseWhere('codalmacen', $codalmacen),
+            new DataBaseWhere('codalmacen', $doc->codalmacen),
             new DataBaseWhere('referencia', $this->referencia)
         ];
         if (false === $stock->loadFromCode('', $where2)) {
             /// stock not found, then create one
-            $stock->codalmacen = $codalmacen;
+            $stock->codalmacen = $doc->codalmacen;
             $stock->idproducto = $this->idproducto;
             $stock->referencia = $this->referencia;
         }
@@ -464,7 +470,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         }
 
         if ($stock->save()) {
-            $this->pipe('updateStock');
+            $this->pipe('updateStock', $doc);
             return true;
         }
 

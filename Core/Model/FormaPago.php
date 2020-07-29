@@ -186,7 +186,7 @@ class FormaPago extends Base\ModelClass
     public function test()
     {
         $this->codpago = \trim($this->codpago);
-        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codpago)) {
+        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-\s]{1,10}$/i', $this->codpago)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codpago, '%column%' => 'codpago', '%min%' => '1', '%max%' => '10']
@@ -195,6 +195,10 @@ class FormaPago extends Base\ModelClass
         } elseif ($this->plazovencimiento < 0) {
             $this->toolBox()->i18nLog()->warning('number-expiration-invalid');
             return false;
+        }
+
+        if (empty($this->idempresa)) {
+            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         }
 
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);

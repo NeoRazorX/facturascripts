@@ -57,8 +57,8 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="success" fieldname="pagado">1</option>
-            <option color="info" fieldname="domiciliado">1</option>
+            <option color="success" fieldname="pagado" title="paid">1</option>
+            <option color="info" fieldname="domiciliado" title="domiciled">1</option>
         </row>
     </rows>
 </view>
