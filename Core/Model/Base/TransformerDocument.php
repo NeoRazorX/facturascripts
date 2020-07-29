@@ -136,8 +136,13 @@ abstract class TransformerDocument extends BusinessDocument
             return false;
         }
 
+        /// load parents and remove relations from DocTransformation
+        $parents = $this->parentDocuments();
+        $docTransformation = new DocTransformation();
+        $docTransformation->deleteFrom($this->modelClassName(), $this->primaryColumnValue());
+
         /// change parent doc status
-        foreach ($this->parentDocuments() as $parent) {
+        foreach ($parents as $parent) {
             foreach ($parent->getAvaliableStatus() as $status) {
                 if ($status->predeterminado) {
                     $parent->idestado = $status->idestado;
@@ -146,10 +151,6 @@ abstract class TransformerDocument extends BusinessDocument
                 }
             }
         }
-
-        /// remove data from DocTransformation
-        $docTransformation = new DocTransformation();
-        $docTransformation->deleteFrom($this->modelClassName(), $this->primaryColumnValue());
 
         self::$dataBase->commit();
         return true;
