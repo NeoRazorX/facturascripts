@@ -222,7 +222,7 @@ class Updater extends Controller
         }
 
         $downloader = new DownloadTools();
-        $json = json_decode($downloader->getContents(self::UPDATE_CORE_URL, 3), true);
+        $json = json_decode($downloader->getContents(self::UPDATE_CORE_URL), true);
         if (empty($json)) {
             return [];
         }
