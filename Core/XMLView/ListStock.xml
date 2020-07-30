@@ -53,9 +53,9 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="danger" fieldname="cantidad" title="out-of-stock">lt:0</option>
-            <option color="warning" fieldname="cantidad" title="out-of-stock">0</option>
-            <option color="success" fieldname="cantidad" title="in-stock">gt:0</option>
+            <option color="danger" fieldname="disponible" title="out-of-stock">lt:0</option>
+            <option color="warning" fieldname="disponible" title="out-of-stock">0</option>
+            <option color="success" fieldname="disponible" title="in-stock">gt:0</option>
         </row>
     </rows>
 </view>
