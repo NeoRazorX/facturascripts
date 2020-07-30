@@ -148,7 +148,7 @@ class MysqlQueries implements DataBaseQueries
     {
         return 'SELECT t1.constraint_name as name,'
             . ' t1.constraint_type as type,'
-            . ' t2.column_name,'
+            . ' t2.column_name as column_name,'
             . ' t2.referenced_table_name AS foreign_table_name,'
             . ' t2.referenced_column_name AS foreign_column_name,'
             . ' t3.update_rule AS on_update,'
