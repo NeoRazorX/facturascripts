@@ -38,6 +38,7 @@ class Wizard extends Controller
 {
 
     const ITEM_SELECT_LIMIT = 500;
+    const NEW_DEFAULT_PAGE = 'ListFacturaCliente';
 
     /**
      * 
@@ -474,7 +475,7 @@ class Wizard extends Controller
         }
 
         /// change user homepage
-        $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : 'ListFacturaCliente';
+        $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : static::NEW_DEFAULT_PAGE;
         $this->user->save();
 
         /// redirect to the home page
