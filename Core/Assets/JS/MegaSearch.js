@@ -86,7 +86,7 @@ function searchOnSection(url) {
                 });
                 $("#v-pills-tabContent").append("<div class='tab-pane fade' id='v-pills-" + key + "' role='tabpanel' aria-labelledby='v-pills-" + key + "-tab'>\n\
                     <div class='card shadow'><div class='table-responsive'>\n\
-                    <table class='table table-striped table-hover'>" + tableHTML + "</table>\n\
+                    <table class='table table-striped table-hover mb-0'>" + tableHTML + "</table>\n\
                     </div>\n\</div>\n\</div>");
                 $("#v-pills-tab a:first").tab("show");
                 reloadClickableRow();
