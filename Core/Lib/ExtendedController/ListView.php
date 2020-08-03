@@ -82,7 +82,7 @@ class ListView extends BaseView
     public function __construct($name, $title, $modelName, $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
-        $this->template = self::DEFAULT_TEMPLATE;
+        $this->template = static::DEFAULT_TEMPLATE;
     }
 
     /**

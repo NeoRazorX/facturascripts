@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,7 +45,7 @@ class EditView extends BaseView
     public function __construct($name, $title, $modelName, $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
-        $this->template = self::EDIT_TEMPLATE;
+        $this->template = static::EDIT_TEMPLATE;
     }
 
     /**
@@ -101,7 +101,7 @@ class EditView extends BaseView
             case 'load':
                 $exclude = ['action', 'code', 'option'];
                 foreach ($request->query->all() as $key => $value) {
-                    if (!in_array($key, $exclude)) {
+                    if (false === \in_array($key, $exclude)) {
                         $this->model->{$key} = $value;
                     }
                 }
@@ -116,6 +116,6 @@ class EditView extends BaseView
      */
     public function setReadOnly(bool $readOnly)
     {
-        $this->template = $readOnly ? self::READONLY_TEMPLATE : self::EDIT_TEMPLATE;
+        $this->template = $readOnly ? static::READONLY_TEMPLATE : static::EDIT_TEMPLATE;
     }
 }

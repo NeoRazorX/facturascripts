@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,6 +32,8 @@ use Symfony\Component\HttpFoundation\Request;
 class EditListView extends BaseView
 {
 
+    const DEFAULT_TEMPLATE = 'Master/EditListView.html.twig';
+
     /**
      * Class constructor and initialization
      *
@@ -43,7 +45,7 @@ class EditListView extends BaseView
     public function __construct($name, $title, $modelName, $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
-        $this->template = 'Master/EditListView.html.twig';
+        $this->template = static::DEFAULT_TEMPLATE;
     }
 
     /**
@@ -55,13 +57,13 @@ class EditListView extends BaseView
      */
     public function export(&$exportManager): bool
     {
-        if ($this->count > 0) {
-            return $exportManager->addListModelPage(
-                    $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
-            );
+        if ($this->count <= 0) {
+            return true;
         }
 
-        return true;
+        return $exportManager->addListModelPage(
+                $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
+        );
     }
 
     /**
@@ -80,7 +82,7 @@ class EditListView extends BaseView
         $this->order = empty($order) ? $this->order : $order;
 
         $finalWhere = empty($where) ? $this->where : $where;
-        $this->count = is_null($this->model) ? 0 : $this->model->count($finalWhere);
+        $this->count = \is_null($this->model) ? 0 : $this->model->count($finalWhere);
 
         if ($this->count > 0) {
             $this->cursor = $this->model->all($finalWhere, $this->order, $this->offset, $limit);
