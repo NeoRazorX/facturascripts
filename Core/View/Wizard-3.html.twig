@@ -24,10 +24,14 @@
     {% import 'Macro/Forms.html.twig' as forms %}
     {% set plugins = fsc.getAvaliablePlugins() %}
 
-    <br/>
     <form action="#" method="post" class="form">
         <input type="hidden" name="action" value="step3" />
-        <div class="container card">
+        <div class="bg-primary pt-5 pb-5">
+            <br/>
+            <br/>
+            <br/>
+        </div>
+        <div class="container card shadow" style="margin-top: -100px;">
             <div class="row">
                 <div class="col-12">
                     <h1 class="h3 mt-3">
@@ -61,13 +65,4 @@
             </div>
         </div>
     </form>
-{% endblock %}
-
-{% block css %}
-    {{ parent() }}
-    <style>
-        body {
-            background-color: #3A414B;
-        }
-    </style>
 {% endblock %}

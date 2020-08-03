@@ -75,13 +75,11 @@
                                 {% endfor %}
                             </ul>
                             <ul class="navbar-nav flex-row ml-auto">
-                                {% if template != 'MegaSearch.html.twig' %}
-                                    <li class="nav-item" title="{{ i18n.trans('search') }}">
-                                        <a class="nav-link" href="MegaSearch">
-                                            <i class="fas fa-search" aria-hidden="true"></i>
-                                        </a>
-                                    </li>
-                                {% endif %}
+                                <li class="nav-item{{ template == 'MegaSearch.html.twig' ? ' active' : '' }}" title="{{ i18n.trans('search') }}">
+                                    <a class="nav-link" href="MegaSearch">
+                                        <i class="fas fa-search" aria-hidden="true"></i>
+                                    </a>
+                                </li>
                                 <li class="nav-item" title="{{ i18n.trans('help') }}">
                                     <a class="nav-link" href="https://facturascripts.com/doc" target="_blank">
                                         <i class="fas fa-question-circle" aria-hidden="true"></i>

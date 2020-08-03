@@ -27,7 +27,12 @@
     {% set codpais = fsc.empresa ? fsc.empresa.codpais : appSettings.get('default', 'codpais', 'ESP') %}
     {% set provincia = fsc.empresa ? fsc.empresa.provincia : '' %}
 
-    <div class="container card mt-3">
+    <div class="bg-primary pt-5 pb-5">
+        <br/>
+        <br/>
+        <br/>
+    </div>
+    <div class="container card shadow" style="margin-top: -100px;">
         <div class="row">
             <div class="col-12">
                 <h1 class="h3 mt-3">
@@ -166,13 +171,4 @@
             </div>
         </form>
     </div>
-{% endblock %}
-
-{% block css %}
-    {{ parent() }}
-    <style>
-        body {
-            background-color: #3A414B;
-        }
-    </style>
 {% endblock %}
