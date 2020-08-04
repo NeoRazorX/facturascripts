@@ -24,7 +24,7 @@
     {% import 'Macro/Forms.html.twig' as forms %}
     {% set plugins = fsc.getAvaliablePlugins() %}
 
-    <form action="#" method="post" class="form">
+    <form action="#" method="post" id="formWizard" class="form">
         <input type="hidden" name="action" value="step3" />
         <div class="bg-primary pt-5 pb-5">
             <br/>
@@ -58,11 +58,30 @@
             {% endfor %}
             <div class="row mb-3 mt-2">
                 <div class="col text-right">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" id="btnWizard" class="btn btn-primary">
                         {{ i18n.trans('continue') }}
                     </button>
                 </div>
             </div>
         </div>
     </form>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('node_modules/pace-js/pace.min.js') }}"></script>
+    <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $("#formWizard").submit(function () {
+                $("#btnWizard").prop('disabled', true);
+                $("#btnWizard").html('<i class="fas fa-spinner fa-spin"></i>');
+            });
+        });
+    </script>
 {% endblock %}

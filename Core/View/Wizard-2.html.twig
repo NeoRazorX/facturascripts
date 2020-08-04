@@ -43,7 +43,7 @@
                 <hr/>
             </div>
         </div>
-        <form action="#" method="post" class="form">
+        <form action="#" method="post" id="formWizard" class="form">
             <input type="hidden" name="action" value="step2" />
             <div class="row">
                 <div class="col-sm-4">
@@ -70,11 +70,30 @@
             </div>
             <div class="row mb-3 mt-2">
                 <div class="col text-right">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" id="btnWizard" class="btn btn-primary">
                         {{ i18n.trans('continue') }}
                     </button>
                 </div>
             </div>
         </form>
     </div>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('node_modules/pace-js/pace.min.js') }}"></script>
+    <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $("#formWizard").submit(function () {
+                $("#btnWizard").prop('disabled', true);
+                $("#btnWizard").html('<i class="fas fa-spinner fa-spin"></i>');
+            });
+        });
+    </script>
 {% endblock %}
