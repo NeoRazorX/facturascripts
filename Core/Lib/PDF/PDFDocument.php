@@ -65,10 +65,10 @@ abstract class PDFDocument extends PDFCore
             'pvpunitario' => ['type' => 'number', 'title' => $this->i18n->trans('price')],
             'dtopor' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto')],
             'dtopor2' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto-2')],
+            'pvptotal' => ['type' => 'number', 'title' => $this->i18n->trans('net')],
             'iva' => ['type' => 'percentage', 'title' => $this->i18n->trans('tax')],
             'recargo' => ['type' => 'percentage', 'title' => $this->i18n->trans('re')],
-            'irpf' => ['type' => 'percentage', 'title' => $this->i18n->trans('irpf')],
-            'pvptotal' => ['type' => 'number', 'title' => $this->i18n->trans('total')]
+            'irpf' => ['type' => 'percentage', 'title' => $this->i18n->trans('irpf')]
         ];
     }
 

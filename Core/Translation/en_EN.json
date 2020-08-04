@@ -414,6 +414,7 @@
     "exercise-date-range-exists": "There is already an exercise in that date range (%start% - %end%)",
     "exercise-not-found": "Exercise not found.",
     "exercises": "Exercises",
+    "exit": "Exit",
     "expense-subaccount": "Expense subaccount",
     "expenses": "Expenses",
     "expiration": "Expiration",

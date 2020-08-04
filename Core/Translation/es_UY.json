@@ -414,6 +414,7 @@
     "exercise-date-range-exists": "Ya existe un ejercicio en ese rango de fechas (%start% - %end%)",
     "exercise-not-found": "Ejercicio no encontrado.",
     "exercises": "Ejercicios",
+    "exit": "Salir",
     "expense-subaccount": "Subcuenta de gastos",
     "expenses": "Gastos",
     "expiration": "Vencimiento",

@@ -414,6 +414,7 @@
     "exercise-date-range-exists": "Ya n'hi ha un eixercici entre les dates (%start% - %end%)",
     "exercise-not-found": "No s'ha trobat l'eixercici.",
     "exercises": "Eixercicis",
+    "exit": "exit",
     "expense-subaccount": "Subconte de despeses",
     "expenses": "Despeses",
     "expiration": "Venciment",

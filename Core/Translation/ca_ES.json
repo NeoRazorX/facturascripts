@@ -414,6 +414,7 @@
     "exercise-date-range-exists": "Ja existeix un exercici en aquest rang de dates (%start% - %end%)",
     "exercise-not-found": "L'exercici no s'ha trobat.",
     "exercises": "Exercicis",
+    "exit": "exit",
     "expense-subaccount": "Subcompte de despeses",
     "expenses": "despeses",
     "expiration": "Caducitat",

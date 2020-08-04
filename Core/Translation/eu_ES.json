@@ -414,6 +414,7 @@
     "exercise-date-range-exists": "(%start% - %end%) data-tarte horretan ekitaldi bat dago dagoeneko",
     "exercise-not-found": "Ekitaldia ez da aurkitu.",
     "exercises": "Ekitaldiak",
+    "exit": "exit",
     "expense-subaccount": "Gastuen azpikontua",
     "expenses": "Gastuak",
     "expiration": "Iraungitzea",
