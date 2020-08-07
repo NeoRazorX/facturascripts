@@ -64,12 +64,16 @@ class ControllerPermissions
      */
     public function __construct($user = false, $pageName = null)
     {
-        if ($user->admin) {
+        if (empty($user) || empty($pageName)) {
+            /// no dothing
+        } elseif ($user->admin) {
+            /// admin user
             $this->allowAccess = true;
             $this->allowDelete = true;
             $this->allowUpdate = true;
             $this->level = 99;
-        } elseif ($user !== false && $pageName !== null) {
+        } else {
+            /// normal user
             foreach (RoleAccess::allFromUser($user->nick, $pageName) as $access) {
                 $this->allowAccess = true;
                 $this->allowDelete = $access->allowdelete ? true : $this->allowDelete;
