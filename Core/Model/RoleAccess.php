@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2016       Joe Nilson          <joenilson at gmail.com>
- * Copyright (C) 2017-2019  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2016       Joe Nilson          <joenilson@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -20,12 +20,15 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Page as DinPage;
+use FacturaScripts\Dinamic\Model\Role as DinRole;
+use FacturaScripts\Dinamic\Model\User as DinUser;
 
 /**
  * Defines the individual permissions for each page within a user role.
  *
- * @author Joe Nilson           <joenilson at gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Joe Nilson           <joenilson@gmail.com>
  */
 class RoleAccess extends Base\ModelClass
 {
@@ -70,8 +73,8 @@ class RoleAccess extends Base\ModelClass
     /**
      * Add the indicated page list to the Role group
      *
-     * @param string $codrole
-     * @param Page[] $pages
+     * @param string    $codrole
+     * @param DinPage[] $pages
      *
      * @return bool
      */
@@ -83,7 +86,6 @@ class RoleAccess extends Base\ModelClass
                 new DataBaseWhere('codrole', $codrole),
                 new DataBaseWhere('pagename', $page->name)
             ];
-
             if ($roleAccess->loadFromCode('', $where)) {
                 continue;
             }
@@ -92,7 +94,7 @@ class RoleAccess extends Base\ModelClass
             $roleAccess->pagename = $page->name;
             $roleAccess->allowdelete = true;
             $roleAccess->allowupdate = true;
-            if (!$roleAccess->save()) {
+            if (false === $roleAccess->save()) {
                 return false;
             }
         }
@@ -102,11 +104,29 @@ class RoleAccess extends Base\ModelClass
 
     /**
      * 
+     * @param string $nick
+     * @param string $pageName
+     *
+     * @return static[]
+     */
+    public static function allFromUser($nick, $pageName)
+    {
+        $sqlIn = 'SELECT codrole FROM ' . RoleUser::tableName() . ' WHERE nick = ' . self::$dataBase->var2str($nick);
+        $where = [
+            new DataBaseWhere('codrole', $sqlIn, 'IN'),
+            new DataBaseWhere('pagename', $pageName)
+        ];
+        $roleAccess = new static();
+        return $roleAccess->all($where, [], 0, 0);
+    }
+
+    /**
+     * 
      * @return Page
      */
     public function getPage()
     {
-        $page = new Page();
+        $page = new DinPage();
         $page->loadFromCode($this->pagename);
         return $page;
     }
@@ -118,8 +138,8 @@ class RoleAccess extends Base\ModelClass
     public function install()
     {
         /// needed dependencies
-        new Role();
-        new User();
+        new DinRole();
+        new DinUser();
 
         return parent::install();
     }
