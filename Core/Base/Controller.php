@@ -222,6 +222,7 @@ class Controller
      */
     public function publicCore(&$response)
     {
+        $this->permissions = new ControllerPermissions();
         $this->response = &$response;
         $this->template = 'Login/Login.html.twig';
 
