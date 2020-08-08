@@ -30,6 +30,12 @@ class ControllerPermissions
 {
 
     /**
+     *
+     * @var int
+     */
+    public $accessMode = 1;
+
+    /**
      * Have permission to access data.
      *
      * @var bool
@@ -51,12 +57,6 @@ class ControllerPermissions
     public $allowUpdate = false;
 
     /**
-     *
-     * @var int
-     */
-    public $level = 1;
-
-    /**
      * ControllerPermissions constructor.
      *
      * @param User|false  $user
@@ -68,10 +68,10 @@ class ControllerPermissions
             /// no dothing
         } elseif ($user->admin) {
             /// admin user
+            $this->accessMode = 99;
             $this->allowAccess = true;
             $this->allowDelete = true;
             $this->allowUpdate = true;
-            $this->level = 99;
         } else {
             /// normal user
             foreach (RoleAccess::allFromUser($user->nick, $pageName) as $access) {
@@ -85,15 +85,15 @@ class ControllerPermissions
     /**
      * 
      * @param bool $access
+     * @param int  $accessMode
      * @param bool $delete
      * @param bool $update
-     * @param int  $level
      */
-    public function set(bool $access, bool $delete, bool $update, int $level = 1)
+    public function set(bool $access, int $accessMode, bool $delete, bool $update)
     {
+        $this->accessMode = $accessMode;
         $this->allowAccess = $access;
         $this->allowDelete = $delete;
         $this->allowUpdate = $update;
-        $this->level = $level;
     }
 }
