@@ -13,7 +13,7 @@ services:
   - memcached
 
 addons:
-  mariadb: '10.4'
+  mariadb: '10.3'
 
 before_script:
   - mysql -e 'DROP DATABASE IF EXISTS facturascripts;'
