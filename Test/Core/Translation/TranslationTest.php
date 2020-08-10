@@ -22,6 +22,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class to verify that all JSON files from translation are correct.
+ * 
+ * @author Carlos Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 class TranslationTest extends TestCase
 {
@@ -36,10 +38,6 @@ class TranslationTest extends TestCase
      */
     protected $mainLang;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
     protected function setUp()
     {
         $this->basePath = \FS_FOLDER . '/Core/Translation/';
