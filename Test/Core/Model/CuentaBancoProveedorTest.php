@@ -18,56 +18,56 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Model\Cliente;
-use FacturaScripts\Core\Model\CuentaBancoCliente;
+use FacturaScripts\Core\Model\CuentaBancoProveedor;
+use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * Description of CuentaBancoClienteTest
+ * Description of CuentaBancoProveedorTest
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- * @covers \FacturaScripts\Core\Model\CuentaBancoCliente
+ * @covers \FacturaScripts\Core\Model\CuentaBancoProveedor
  */
-class CuentaBancoClienteTest extends CustomTest
+class CuentaBancoProveedorTest extends CustomTest
 {
 
     protected function setUp()
     {
-        $this->model = new CuentaBancoCliente();
+        $this->model = new CuentaBancoProveedor();
     }
 
     public function testSaveInsert()
     {
-        /// save customer
-        $customer = new Cliente();
-        $customer->cifnif = '1234';
-        $customer->nombre = 'Test';
-        $this->assertTrue($customer->save());
+        /// save supplier
+        $supplier = new Proveedor();
+        $supplier->cifnif = '1234';
+        $supplier->nombre = 'Test';
+        $this->assertTrue($supplier->save());
 
         /// save bank account
-        $account = new CuentaBancoCliente();
-        $account->codcliente = $customer->primaryColumnValue();
+        $account = new CuentaBancoProveedor();
+        $account->codproveedor = $supplier->primaryColumnValue();
         $account->descripcion = 'test';
         $this->assertTrue($account->save());
 
         /// delete bank account
         $this->assertTrue($account->delete());
 
-        /// delete customer
-        $this->assertTrue($customer->delete());
+        /// delete supplier
+        $this->assertTrue($supplier->delete());
     }
 
     public function testIBAN()
     {
-        /// save customer
-        $customer = new Cliente();
-        $customer->cifnif = '1234';
-        $customer->nombre = 'Test';
-        $this->assertTrue($customer->save());
+        /// save supplier
+        $supplier = new Proveedor();
+        $supplier->cifnif = '1234';
+        $supplier->nombre = 'Test';
+        $this->assertTrue($supplier->save());
 
         /// save valid iban
-        $account = new CuentaBancoCliente();
-        $account->codcliente = $customer->primaryColumnValue();
+        $account = new CuentaBancoProveedor();
+        $account->codproveedor = $supplier->primaryColumnValue();
         $account->descripcion = 'test';
         $account->iban = 'ES91 2100 0418 4502 0005 1332';
         $this->assertTrue($account->save());
@@ -79,7 +79,7 @@ class CuentaBancoClienteTest extends CustomTest
         /// delete bank account
         $this->assertTrue($account->delete());
 
-        /// delete customer
-        $this->assertTrue($customer->delete());
+        /// delete supplier
+        $this->assertTrue($supplier->delete());
     }
 }
