@@ -40,6 +40,7 @@ class CuentaBancoClienteTest extends CustomTest
     {
         /// save customer
         $customer = new Cliente();
+        $customer->cifnif = '1234';
         $customer->nombre = 'Test';
         $this->assertFalse($customer->save());
 
@@ -60,6 +61,7 @@ class CuentaBancoClienteTest extends CustomTest
     {
         /// save customer
         $customer = new Cliente();
+        $customer->cifnif = '1234';
         $customer->nombre = 'Test';
         $this->assertTrue($customer->save());
 
