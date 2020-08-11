@@ -23,12 +23,12 @@ use FacturaScripts\Core\Model\CuentaBancoCliente;
 use FacturaScripts\Test\Core\CustomTest;
 
 /**
- * Description of CuentaBancoCliente
+ * Description of CuentaBancoClienteTest
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @covers \FacturaScripts\Core\Model\CuentaBancoCliente
  */
-class CuentaBancoCliente extends CustomTest
+class CuentaBancoClienteTest extends CustomTest
 {
 
     protected function setUp()
@@ -41,7 +41,7 @@ class CuentaBancoCliente extends CustomTest
         /// save customer
         $customer = new Cliente();
         $customer->nombre = 'Test';
-        $this->assertTrue($customer->save());
+        $this->assertFalse($customer->save());
 
         /// save bank account
         $account = new CuentaBancoCliente();
@@ -71,8 +71,8 @@ class CuentaBancoCliente extends CustomTest
         $this->assertTrue($account->save());
 
         /// now save invalid iban
-        $account->iban = 'ES91 9999 0418 4502 0005 1332';
-        $this->assertTrue($account->save());
+        $account->iban = '1234';
+        $this->assertFalse($account->save());
 
         /// delete bank account
         $this->assertTrue($account->delete());

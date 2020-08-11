@@ -52,7 +52,7 @@ class CuentaBancoTest extends CustomTest
         $this->assertTrue($account->save());
 
         /// now save invalid iban
-        $account->iban = 'ES91 9999 0418 4502 0005 1332';
+        $account->iban = '1234';
         $this->assertFalse($account->save());
 
         /// delete
