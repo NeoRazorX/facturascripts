@@ -261,7 +261,7 @@ abstract class BaseController extends Controller
      */
     protected function deleteAction()
     {
-        if (!$this->permissions->allowDelete) {
+        if (false === $this->permissions->allowDelete || false === $this->views[$this->active]->settings['btnDelete']) {
             $this->toolBox()->i18nLog()->warning('not-allowed-delete');
             return false;
         }
