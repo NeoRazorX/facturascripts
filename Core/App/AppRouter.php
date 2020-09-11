@@ -43,8 +43,8 @@ class AppRouter
      */
     public function __construct()
     {
-        if (!defined('FS_ROUTE')) {
-            define('FS_ROUTE', '');
+        if (false === \defined('FS_ROUTE')) {
+            \define('FS_ROUTE', '');
         }
 
         $this->routes = $this->loadFromFile();
@@ -67,7 +67,7 @@ class AppRouter
     public function getApp()
     {
         $uri = $this->getUri();
-        if ('/api' === $uri || '/api/' === substr($uri, 0, 5)) {
+        if ('/api' === $uri || '/api/' === \substr($uri, 0, 5)) {
             return new AppAPI($uri);
         }
 
@@ -84,11 +84,11 @@ class AppRouter
                 return $this->newAppController($uri, $data['controller']);
             }
 
-            if ('*' !== substr($key, -1)) {
+            if ('*' !== \substr($key, -1)) {
                 continue;
             }
 
-            if (0 === strncmp($uri, $key, strlen($key) - 1)) {
+            if (0 === \strncmp($uri, $key, \strlen($key) - 1)) {
                 return $this->newAppController($uri, $data['controller']);
             }
         }
@@ -109,27 +109,44 @@ class AppRouter
         /// favicon.ico
         if ('/favicon.ico' == $uri) {
             $filePath = \FS_FOLDER . '/Dinamic/Assets/Images/favicon.ico';
-            header('Content-Type: ' . $this->getMime($filePath));
-            readfile($filePath);
+            \header('Content-Type: ' . $this->getMime($filePath));
+            \readfile($filePath);
             return true;
         }
 
         /// Not a file? Not a safe file?
-        if (!is_file($filePath) || !$this->isFileSafe($filePath)) {
+        if (false === \is_file($filePath) || false === $this->isFileSafe($filePath)) {
             return false;
         }
 
         /// Allowed folder?
         $allowedFolders = ['node_modules', 'vendor', 'Dinamic', 'Core', 'Plugins', 'MyFiles/Public'];
         foreach ($allowedFolders as $folder) {
-            if ('/' . $folder === substr($uri, 0, 1 + strlen($folder))) {
-                header('Content-Type: ' . $this->getMime($filePath));
-                readfile($filePath);
+            if ('/' . $folder === \substr($uri, 0, 1 + \strlen($folder))) {
+                \header('Content-Type: ' . $this->getMime($filePath));
+                \readfile($filePath);
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * 
+     * @param string $filePath
+     *
+     * @return bool
+     */
+    public static function isFileSafe(string $filePath): bool
+    {
+        $parts = \explode('.', $filePath);
+        $safe = [
+            'css', 'csv', 'eot', 'gif', 'gz', 'ico', 'jpeg', 'jpg', 'js', 'json',
+            'map', 'pdf', 'png', 'sql', 'svg', 'ttf', 'woff', 'woff2', 'xls',
+            'xlsx', 'zip'
+        ];
+        return \in_array(\end($parts), $safe, true);
     }
 
     /**
@@ -163,7 +180,7 @@ class AppRouter
      */
     private function deploy()
     {
-        if (!file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic')) {
+        if (false === \file_exists(\FS_FOLDER . \DIRECTORY_SEPARATOR . 'Dinamic')) {
             $pluginManager = new \FacturaScripts\Core\Base\PluginManager();
             $pluginManager->deploy();
         }
@@ -178,15 +195,15 @@ class AppRouter
      */
     private function getMime(string $filePath)
     {
-        if (substr($filePath, -4) === '.css') {
+        if ('.css' === \substr($filePath, -4)) {
             return 'text/css';
         }
 
-        if (substr($filePath, -3) === '.js') {
+        if ('.js' === \substr($filePath, -3)) {
             return 'application/javascript';
         }
 
-        return mime_content_type($filePath);
+        return \mime_content_type($filePath);
     }
 
     /**
@@ -197,23 +214,10 @@ class AppRouter
     private function getUri()
     {
         $uri = \filter_input(\INPUT_SERVER, 'REQUEST_URI');
-        $uri2 = is_null($uri) ? \filter_var($_SERVER['REQUEST_URI'], \FILTER_SANITIZE_URL) : $uri;
-        $uriArray = explode('?', $uri2);
+        $uri2 = \is_null($uri) ? \filter_var($_SERVER['REQUEST_URI'], \FILTER_SANITIZE_URL) : $uri;
+        $uriArray = \explode('?', $uri2);
 
-        return substr($uriArray[0], strlen(FS_ROUTE));
-    }
-
-    /**
-     * 
-     * @param string $filePath
-     *
-     * @return bool
-     */
-    private function isFileSafe(string $filePath): bool
-    {
-        $parts = explode('.', $filePath);
-        $safe = ['css', 'eot', 'gif', 'ico', 'jpg', 'js', 'map', 'png', 'svg', 'ttf', 'woff', 'woff2'];
-        return in_array(end($parts), $safe, true);
+        return \substr($uriArray[0], \strlen(FS_ROUTE));
     }
 
     /**
@@ -223,10 +227,10 @@ class AppRouter
      */
     private function loadFromFile(): array
     {
-        if (file_exists(self::ROUTE_LIST_FILE)) {
-            $content = file_get_contents(self::ROUTE_LIST_FILE);
+        if (\file_exists(self::ROUTE_LIST_FILE)) {
+            $content = \file_get_contents(self::ROUTE_LIST_FILE);
             if ($content !== false) {
-                return json_decode($content, true);
+                return \json_decode($content, true);
             }
         }
 
@@ -252,7 +256,7 @@ class AppRouter
      */
     private function save(): bool
     {
-        $content = json_encode($this->routes);
-        return file_put_contents(self::ROUTE_LIST_FILE, $content) !== false;
+        $content = \json_encode($this->routes);
+        return \file_put_contents(self::ROUTE_LIST_FILE, $content) !== false;
     }
 }

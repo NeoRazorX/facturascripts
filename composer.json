@@ -9,6 +9,11 @@
             "email": "carlos@facturascripts.com"
         }
     ],
+    "config": {
+        "platform": {
+            "php": "7.1.3"
+        }
+    },
     "require": {
         "php": ">=7.1.3",
         "mk-j/php_xlsxwriter": "0.38",
