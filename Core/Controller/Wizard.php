@@ -427,11 +427,13 @@ class Wizard extends Controller
         $this->empresa->save();
 
         $appSettings = $this->toolBox()->appSettings();
-        foreach (['codimpuesto', 'codretencion'] as $key) {
+        foreach (['codimpuesto', 'codretencion', 'costpricepolicy'] as $key) {
             $value = $this->request->request->get($key);
             $finalValue = empty($value) ? null : $value;
             $appSettings->set('default', $key, $finalValue);
         }
+        $ventasinstock = (bool) $this->request->request->get('ventasinstock', '0');
+        $appSettings->set('default', 'ventasinstock', $ventasinstock);
         $appSettings->save();
 
         if ((bool) $this->request->request->get('defaultplan', '0')) {

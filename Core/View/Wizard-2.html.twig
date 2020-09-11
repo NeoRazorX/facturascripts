@@ -45,7 +45,7 @@
         </div>
         <form action="#" method="post" id="formWizard" class="form">
             <input type="hidden" name="action" value="step2" />
-            <div class="row">
+            <div class="row align-items-end">
                 <div class="col-sm-4">
                     <div class="form-group">
                         {{ forms.simpleSelect('regimeniva', 'regimeniva', fsc.empresa.regimeniva, fsc.getRegimenIva(), i18n.trans('vat-regime')) }}
@@ -61,15 +61,32 @@
                         {{ forms.simpleSelect('codretencion', 'codretencion', codretencion, fsc.getSelectValues('Retencion', true), i18n.trans('default-retention')) }}
                     </div>
                 </div>
-                <div class="col-sm-12">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        {{ i18n.trans('cost-price-policy') }}
+                        <select name="costpricepolicy" class="form-control">
+                            <option value="">------</option>
+                            <option value="last-price">{{ i18n.trans('last-purchase-price') }}</option>
+                            <option value="average-price">{{ i18n.trans('average-purchase-price') }}</option>
+                            <option value="actual-price">{{ i18n.trans('actual-cost-price') }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="form-group form-check">
+                        <input type="checkbox" name="ventasinstock" value="1" id="cbNoStock" class="form-check-input" />
+                        <label for="cbNoStock">{{ i18n.trans('allow-sale-without-stock') }}</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-sm">
                     <div class="form-group form-check">
                         <input type="checkbox" name="defaultplan" value="1" id="checkboxPlan" class="form-check-input" checked="" />
                         <label for="checkboxPlan">{{ i18n.trans('load-def-acc-plan') }}</label>
                     </div>
                 </div>
-            </div>
-            <div class="row mb-3 mt-2">
-                <div class="col text-right">
+                <div class="col-sm text-right">
                     <button type="submit" id="btnWizard" class="btn btn-primary">
                         {{ i18n.trans('continue') }}
                     </button>
