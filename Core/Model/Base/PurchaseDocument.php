@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\User;
@@ -60,11 +59,8 @@ abstract class PurchaseDocument extends TransformerDocument
         parent::clear();
 
         /// select default currency
-        $divisa = new Divisa();
-        if ($divisa->loadFromCode($this->toolBox()->appSettings()->get('default', 'coddivisa'))) {
-            $this->coddivisa = $divisa->coddivisa;
-            $this->tasaconv = $divisa->tasaconvcompra;
-        }
+        $coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
+        $this->setCurrency($coddivisa, true);
     }
 
     /**
@@ -208,16 +204,8 @@ abstract class PurchaseDocument extends TransformerDocument
      */
     public function updateSubject()
     {
-        if (empty($this->codproveedor)) {
-            return false;
-        }
-
         $proveedor = new Proveedor();
-        if (!$proveedor->loadFromCode($this->codproveedor)) {
-            return false;
-        }
-
-        return $this->setSubject($proveedor);
+        return $this->codproveedor && $proveedor->loadFromCode($this->codproveedor) ? $this->setSubject($proveedor) : false;
     }
 
     /**
@@ -246,6 +234,6 @@ abstract class PurchaseDocument extends TransformerDocument
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codproveedor'];
-        parent::setPreviousData(array_merge($more, $fields));
+        parent::setPreviousData(\array_merge($more, $fields));
     }
 }

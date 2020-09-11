@@ -22,7 +22,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
-use FacturaScripts\Dinamic\Model\Divisa;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Tarifa;
@@ -152,11 +151,8 @@ abstract class SalesDocument extends TransformerDocument
         $this->totalcomision = 0.0;
 
         /// select default currency
-        $divisa = new Divisa();
-        if ($divisa->loadFromCode($this->toolBox()->appSettings()->get('default', 'coddivisa'))) {
-            $this->coddivisa = $divisa->coddivisa;
-            $this->tasaconv = $divisa->tasaconv;
-        }
+        $coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
+        $this->setCurrency($coddivisa, false);
     }
 
     /**

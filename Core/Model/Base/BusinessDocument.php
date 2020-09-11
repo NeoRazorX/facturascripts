@@ -33,6 +33,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 {
 
     use CompanyRelationTrait;
+    use CurrencyRelationTrait;
     use ExerciseRelationTrait;
     use PaymentRelationTrait;
     use SerieRelationTrait;
@@ -50,13 +51,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
      * @var string
      */
     public $codalmacen;
-
-    /**
-     * Currency of the document.
-     *
-     * @var string
-     */
-    public $coddivisa;
 
     /**
      * Unique identifier for humans.
@@ -141,13 +135,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
      * @var string
      */
     public $observaciones;
-
-    /**
-     * Rate of conversion to Euros of the selected currency.
-     *
-     * @var float|int
-     */
-    public $tasaconv;
 
     /**
      * Total sum of the document, with taxes.
