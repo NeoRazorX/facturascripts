@@ -136,12 +136,6 @@ abstract class SalesDocument extends TransformerDocument
     public $provincia;
 
     /**
-     *
-     * @var Tarifa
-     */
-    protected $tarifa;
-
-    /**
      * % commission of the agent.
      *
      * @var float|int
@@ -223,7 +217,7 @@ abstract class SalesDocument extends TransformerDocument
             $newLine->descripcion = $variant->description();
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $product->getTax()->iva;
-            $newLine->pvpunitario = isset($this->tarifa) ? $this->tarifa->applyTo($variant, $product) : $variant->precio;
+            $newLine->pvpunitario = $this->getRate()->applyTo($variant, $product);
             $newLine->recargo = $product->getTax()->recargo;
             $newLine->referencia = $variant->referencia;
 
@@ -232,6 +226,26 @@ abstract class SalesDocument extends TransformerDocument
         }
 
         return $newLine;
+    }
+
+    /**
+     * 
+     * @return Tarifa
+     */
+    public function getRate()
+    {
+        $rate = new Tarifa();
+        $subject = $this->getSubject();
+        if ($subject->codtarifa && $rate->loadFromCode($subject->codtarifa)) {
+            return $rate;
+        }
+
+        $group = new GrupoClientes();
+        if ($subject->codgrupo && $group->loadFromCode($subject->codgrupo) && $group->codtarifa) {
+            $rate->loadFromCode($group->codtarifa);
+        }
+
+        return $rate;
     }
 
     /**
@@ -272,7 +286,7 @@ abstract class SalesDocument extends TransformerDocument
 
         /// check if the customer has exceeded the maximum risk
         $customer = $this->getSubject();
-        if (!empty($customer->riesgomax) && $customer->riesgoalcanzado > $customer->riesgomax) {
+        if ($customer->riesgomax && $customer->riesgoalcanzado > $customer->riesgomax) {
             $this->toolBox()->i18nLog()->warning('customer-reached-maximum-risk');
             return false;
         } elseif (empty($customer->primaryColumnValue())) {
@@ -381,16 +395,8 @@ abstract class SalesDocument extends TransformerDocument
      */
     public function updateSubject()
     {
-        if (empty($this->codcliente)) {
-            return false;
-        }
-
         $cliente = new Cliente();
-        if (!$cliente->loadFromCode($this->codcliente)) {
-            return false;
-        }
-
-        return $this->setSubject($cliente);
+        return $this->codcliente && $cliente->loadFromCode($this->codcliente) ? $this->setSubject($cliente) : false;
     }
 
     /**
@@ -401,7 +407,7 @@ abstract class SalesDocument extends TransformerDocument
      */
     protected function onChange($field)
     {
-        if (!parent::onChange($field)) {
+        if (false === parent::onChange($field)) {
             return false;
         }
 
@@ -491,27 +497,7 @@ abstract class SalesDocument extends TransformerDocument
         /// shipping address
         $shippingAddress = $subject->getDefaultAddress('shipping');
         $this->idcontactoenv = $shippingAddress->idcontacto;
-
-        $this->setRate($subject);
         return true;
-    }
-
-    /**
-     * 
-     * @param Cliente $subject
-     */
-    protected function setRate($subject)
-    {
-        $group = new GrupoClientes();
-        $this->tarifa = new Tarifa();
-
-        if ($subject->codtarifa) {
-            $this->tarifa->loadFromCode($subject->codtarifa);
-        } elseif ($subject->codgrupo && $group->loadFromCode($subject->codgrupo) && $group->codtarifa) {
-            $this->tarifa->loadFromCode($group->codtarifa);
-        } else {
-            $this->tarifa->clear();
-        }
     }
 
     /**
@@ -521,6 +507,6 @@ abstract class SalesDocument extends TransformerDocument
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codcliente', 'direccion', 'idcontactofact'];
-        parent::setPreviousData(array_merge($more, $fields));
+        parent::setPreviousData(\array_merge($more, $fields));
     }
 }
