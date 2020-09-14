@@ -125,7 +125,7 @@ class EditPageOption extends Controller
     {
         parent::privateCore($response, $user, $permissions);
         $this->model = new PageOption();
-        $this->selectedViewName = $this->request->get('code', '');
+        $this->loadSelectedViewName();
         $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
         $this->selectedUser = $this->user->admin ? $this->request->get('nick', $this->user->nick) : $this->user->nick;
         $this->loadPageOptions();
@@ -147,7 +147,7 @@ class EditPageOption extends Controller
      */
     protected function deleteAction()
     {
-        if (!$this->permissions->allowDelete) {
+        if (false === $this->permissions->allowDelete) {
             $this->toolBox()->i18nLog()->warning('not-allowed-delete');
             return;
         }
@@ -179,12 +179,24 @@ class EditPageOption extends Controller
         VisualItemLoadEngine::loadArray($this->columns, $this->modals, $this->rows, $this->model);
     }
 
+    protected function loadSelectedViewName()
+    {
+        $code = $this->request->get('code', '');
+        if (false === \strpos($code, '-')) {
+            $this->selectedViewName = $code;
+            return;
+        }
+
+        $parts = \explode('-', $code);
+        $this->selectedViewName = empty($parts) ? $code : $parts[0];
+    }
+
     /**
      * Save new configuration for view
      */
     protected function saveAction()
     {
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return;
         }
