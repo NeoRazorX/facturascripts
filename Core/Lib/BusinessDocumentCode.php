@@ -68,13 +68,13 @@ class BusinessDocumentCode
      */
     protected static function getNewNumber(&$sequence, &$document)
     {
-        // get previous
+        /// get previous
         $order = \strtolower(\FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
         $where = [
             new DataBaseWhere('codserie', $sequence->codserie),
             new DataBaseWhere('idempresa', $sequence->idempresa)
         ];
-        if (!empty($sequence->codejercicio)) {
+        if ($sequence->codejercicio) {
             $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
         }
         $previous = $document->all($where, $order, 0, self::GAP_LIMIT);
@@ -91,21 +91,28 @@ class BusinessDocumentCode
         /// use gaps?
         if ($sequence->usarhuecos) {
             /// we look for holes back
-            $expectedNumber = (int) $sequence->numero - 1;
-            foreach ($previous as $lastDoc) {
-                if ($expectedNumber != $lastDoc->numero) {
-                    $document->fecha = $lastDoc->fecha;
-                    $document->hora = $lastDoc->hora;
-                    break;
+            $expectedNumber = $sequence->numero - 1;
+            $preDate = $document->fecha;
+            $preHour = $document->hora;
+            foreach ($previous as $preDoc) {
+                if ($expectedNumber != $preDoc->numero) {
+                    $document->fecha = $preDate;
+                    $document->hora = $preHour;
+                    return (string) $expectedNumber;
                 }
 
                 $expectedNumber--;
+                $preDate = $preDoc->fecha;
+                $preHour = $preDoc->hora;
             }
 
             if (empty($previous)) {
                 /// no previous document, then use initial number
                 $sequence->numero = $sequence->inicio;
-            } elseif ($expectedNumber >= $sequence->inicio && $expectedNumber > (int) $sequence->numero - self::GAP_LIMIT - 1) {
+            } elseif ($expectedNumber === $sequence->inicio) {
+                /// the hole is the first in the sequence
+                $document->fecha = $preDate;
+                $document->hora = $preHour;
                 return (string) $expectedNumber;
             }
         }
@@ -135,7 +142,7 @@ class BusinessDocumentCode
         $where = [
             new DataBaseWhere('codserie', $document->codserie),
             new DataBaseWhere('idempresa', $document->idempresa),
-            new DataBaseWhere('tipodoc', $document->modelClassName()),
+            new DataBaseWhere('tipodoc', $document->modelClassName())
         ];
         foreach ($sequence->all($where) as $seq) {
             if (empty($seq->codejercicio)) {
@@ -148,7 +155,7 @@ class BusinessDocumentCode
         }
 
         /// sequence not found? Then create
-        if (!$selectedSequence->exists()) {
+        if (false === $selectedSequence->exists()) {
             $selectedSequence->codejercicio = $document->codejercicio;
             $selectedSequence->codserie = $document->codserie;
             $selectedSequence->idempresa = $document->idempresa;
