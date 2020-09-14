@@ -47,12 +47,15 @@ class BusinessDocumentCode
         }
 
         $document->codigo = \strtr($sequence->patron, [
+            '{ANYO}' => \date('Y', \strtotime($document->fecha)),
+            '{DIA}' => \date('d', \strtotime($document->fecha)),
             '{EJE}' => $document->codejercicio,
             '{EJE2}' => \substr($document->codejercicio, -2),
-            '{SERIE}' => $document->codserie,
-            '{0SERIE}' => \str_pad($document->codserie, 2, '0', \STR_PAD_LEFT),
+            '{MES}' => \date('m', \strtotime($document->fecha)),
             '{NUM}' => $document->numero,
-            '{0NUM}' => \str_pad($document->numero, $sequence->longnumero, '0', \STR_PAD_LEFT)
+            '{SERIE}' => $document->codserie,
+            '{0NUM}' => \str_pad($document->numero, $sequence->longnumero, '0', \STR_PAD_LEFT),
+            '{0SERIE}' => \str_pad($document->codserie, 2, '0', \STR_PAD_LEFT)
         ]);
     }
 
