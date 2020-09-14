@@ -248,10 +248,18 @@ trait InvoiceTrait
         switch ($field) {
             case 'codcliente':
             case 'codproveedor':
-            case 'codpago':
-                /// remove receipts
+                /// prevent from removing paid receipts
                 foreach ($this->getReceipts() as $receipt) {
-                    if (false === $receipt->delete()) {
+                    if ($receipt->pagado) {
+                        $this->toolBox()->i18nLog()->warning('paid-receipts-prevent-action');
+                        return false;
+                    }
+                }
+            /// no break
+            case 'codpago':
+                /// remove unpaid receipts
+                foreach ($this->getReceipts() as $receipt) {
+                    if (false === $receipt->pagado && false === $receipt->delete()) {
                         $this->toolBox()->i18nLog()->warning('cant-remove-receipt');
                         return false;
                     }
