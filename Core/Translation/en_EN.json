@@ -763,6 +763,7 @@
     "pagename": "Page name",
     "pages": "pages",
     "paid": "Paid",
+    "paid-receipts-prevent-action": "Paid receipts prevent this action",
     "parent": "Parent",
     "parent-account": "Parent Account",
     "parent-family-cant-be-child": "The parent family cann't be the same as the child.",

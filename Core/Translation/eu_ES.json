@@ -763,6 +763,7 @@
     "pagename": "Orriaren izena",
     "pages": "Orriak",
     "paid": "Ordaindua",
+    "paid-receipts-prevent-action": "Ekintza hau ezin da egin ordaindutako ordainagiriak dauden bitartean",
     "parent": "Guraso",
     "parent-account": "'Guraso' kontua",
     "parent-family-cant-be-child": "Familia gurasoa ezin du seme-alaba izan.",

@@ -763,6 +763,7 @@
     "pagename": "Nome da páxina",
     "pages": "páxinas",
     "paid": "Pagado",
+    "paid-receipts-prevent-action": "Non se pode executar esta acción habendo recibos pagados",
     "parent": "Pai",
     "parent-account": "Conta Pai",
     "parent-family-cant-be-child": "A familia primaria non pode ser o mesmo que o neno.",

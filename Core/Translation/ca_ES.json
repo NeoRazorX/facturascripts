@@ -763,6 +763,7 @@
     "pagename": "Nom de la pàgina",
     "pages": "Pàgines",
     "paid": "Pagat",
+    "paid-receipts-prevent-action": "No es pot executar aquesta acció havent rebuts pagats",
     "parent": "Pare",
     "parent-account": "Compte Pare",
     "parent-family-cant-be-child": "La família pare no pot ser la mateixa que la filla.",
