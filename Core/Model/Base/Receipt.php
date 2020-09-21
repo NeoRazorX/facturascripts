@@ -40,6 +40,12 @@ abstract class Receipt extends ModelOnChangeClass
 
     /**
      *
+     * @var string
+     */
+    public $codigofactura;
+
+    /**
+     *
      * @var bool
      */
     protected $disableInvoiceUpdate = false;
@@ -220,6 +226,11 @@ abstract class Receipt extends ModelOnChangeClass
     {
         $this->observaciones = $this->toolBox()->utils()->noHtml($this->observaciones);
 
+        /// set invoice code
+        if (empty($this->codigofactura)) {
+            $this->codigofactura = $this->getInvoice()->codigo;
+        }
+
         /// check payment date
         if ($this->pagado === false) {
             $this->fechapago = null;
@@ -303,7 +314,7 @@ abstract class Receipt extends ModelOnChangeClass
      */
     protected function setPreviousData(array $fields = [])
     {
-        parent::setPreviousData(array_merge(['importe', 'pagado'], $fields));
+        parent::setPreviousData(\array_merge(['importe', 'pagado'], $fields));
     }
 
     protected function updateInvoice()

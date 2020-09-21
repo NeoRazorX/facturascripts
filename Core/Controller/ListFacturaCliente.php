@@ -80,7 +80,7 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addOrderBy($viewName, ['fechapago'], 'payment-date');
         $this->addOrderBy($viewName, ['vencimiento'], 'expiration');
         $this->addOrderBy($viewName, ['importe'], 'amount');
-        $this->addSearchFields($viewName, ['observaciones']);
+        $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
 
         /// filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');

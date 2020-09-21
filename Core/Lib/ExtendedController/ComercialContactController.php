@@ -125,6 +125,7 @@ abstract class ComercialContactController extends EditController
         $this->views[$viewName]->addOrderBy(['importe'], 'amount');
 
         /// search columns
+        $this->views[$viewName]->searchFields[] = 'codigofactura';
         $this->views[$viewName]->searchFields[] = 'observaciones';
 
         /// add pay button
