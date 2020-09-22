@@ -47,7 +47,7 @@ class APIModel extends APIResourceClass
      */
     public function doDELETE(): bool
     {
-        if (empty($this->params) || !$this->model->loadFromCode($this->params[0])) {
+        if (empty($this->params) || false === $this->model->loadFromCode($this->params[0])) {
             $this->setError($this->toolBox()->i18n()->trans('record-not-found'));
             return false;
         }
@@ -267,7 +267,7 @@ class APIModel extends APIResourceClass
             if (\substr($key, -5) == '_like') {
                 $field = \substr($key, 0, -5);
                 $operator = 'LIKE';
-            } else if (\substr($key, -6) == '_isnot') {
+            } elseif (\substr($key, -6) == '_isnot') {
                 $field = \substr($key, 0, -6);
                 $operator = 'IS NOT';
             }

@@ -100,7 +100,7 @@ class MysqlEngine extends DataBaseEngine
      */
     public function columnFromData($colData)
     {
-        $result = array_change_key_case($colData);
+        $result = \array_change_key_case($colData);
         $result['is_nullable'] = $result['null'];
         $result['name'] = $result['field'];
         unset($result['null'], $result['field']);
@@ -117,7 +117,7 @@ class MysqlEngine extends DataBaseEngine
     public function commit($link)
     {
         $result = $this->exec($link, 'COMMIT;');
-        if ($result && in_array($link, $this->transactions, false)) {
+        if ($result && \in_array($link, $this->transactions, false)) {
             $this->unsetTransaction($link);
         }
 
@@ -136,18 +136,18 @@ class MysqlEngine extends DataBaseEngine
     {
         if (parent::compareDataTypes($dbType, $xmlType)) {
             return true;
-        } else if ($dbType == 'tinyint(1)' && $xmlType == 'boolean') {
+        } elseif ($dbType == 'tinyint(1)' && $xmlType == 'boolean') {
             return true;
-        } else if (substr($dbType, 0, 3) == 'int' && strtolower($xmlType) == 'integer') {
+        } elseif (\substr($dbType, 0, 3) == 'int' && \strtolower($xmlType) == 'integer') {
             return true;
-        } else if (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision') {
+        } elseif (\substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision') {
             return true;
-        } else if (substr($dbType, 0, 8) == 'varchar(' && substr($xmlType, 0, 18) == 'character varying(') {
+        } elseif (\substr($dbType, 0, 8) == 'varchar(' && \substr($xmlType, 0, 18) == 'character varying(') {
             /// check length
-            return (substr($dbType, 8, -1) == substr($xmlType, 18, -1));
-        } else if (substr($dbType, 0, 5) == 'char(' && substr($xmlType, 0, 18) == 'character varying(') {
+            return \substr($dbType, 8, -1) == \substr($xmlType, 18, -1);
+        } elseif (\substr($dbType, 0, 5) == 'char(' && \substr($xmlType, 0, 18) == 'character varying(') {
             /// check length
-            return (substr($dbType, 5, -1) == substr($xmlType, 18, -1));
+            return \substr($dbType, 5, -1) == \substr($xmlType, 18, -1);
         }
 
         return false;
@@ -162,7 +162,7 @@ class MysqlEngine extends DataBaseEngine
      */
     public function connect(&$error)
     {
-        if (!class_exists('mysqli')) {
+        if (false === \class_exists('mysqli')) {
             $error = $this->i18n->trans('php-mysql-not-found');
             return null;
         }
@@ -179,7 +179,7 @@ class MysqlEngine extends DataBaseEngine
         $result->autocommit(false);
 
         /// disable foreign keys
-        if (\defined('FS_DB_FOREIGN_KEYS') && !\FS_DB_FOREIGN_KEYS) {
+        if (\defined('FS_DB_FOREIGN_KEYS') && false === \FS_DB_FOREIGN_KEYS) {
             $this->exec($result, 'SET foreign_key_checks = 0;');
         }
 
@@ -237,16 +237,15 @@ class MysqlEngine extends DataBaseEngine
         try {
             if ($link->multi_query($sql)) {
                 do {
-                    $more = ($link->more_results() && $link->next_result());
+                    $more = $link->more_results() && $link->next_result();
                 } while ($more);
             }
-            $result = ($link->errno === 0);
+            return $link->errno === 0;
         } catch (Exception $err) {
             $this->lastErrorMsg = $err->getMessage();
-            $result = false;
         }
 
-        return $result;
+        return false;
     }
 
     /**
@@ -268,7 +267,7 @@ class MysqlEngine extends DataBaseEngine
      */
     public function inTransaction($link)
     {
-        return in_array($link, $this->transactions, false);
+        return \in_array($link, $this->transactions, false);
     }
 
     /**
@@ -301,7 +300,7 @@ class MysqlEngine extends DataBaseEngine
     public function rollback($link)
     {
         $result = $this->exec($link, 'ROLLBACK;');
-        if (in_array($link, $this->transactions, false)) {
+        if (\in_array($link, $this->transactions, false)) {
             $this->unsetTransaction($link);
         }
 
@@ -369,7 +368,7 @@ class MysqlEngine extends DataBaseEngine
         $count = 0;
         foreach ($this->transactions as $trans) {
             if ($trans === $link) {
-                array_splice($this->transactions, $count, 1);
+                \array_splice($this->transactions, $count, 1);
                 break;
             }
             ++$count;

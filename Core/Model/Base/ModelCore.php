@@ -199,7 +199,7 @@ abstract class ModelCore
         foreach ($data as $key => $value) {
             if (\in_array($key, $exclude)) {
                 continue;
-            } else if (!isset($fields[$key])) {
+            } elseif (!isset($fields[$key])) {
                 $this->{$key} = $value;
                 continue;
             }
@@ -272,25 +272,23 @@ abstract class ModelCore
      */
     private function checkTable()
     {
-        $dbTools = new DataBaseTools();
         $sql = '';
         $xmlCols = [];
         $xmlCons = [];
-
-        if (!$dbTools->getXmlTable(static::tableName(), $xmlCols, $xmlCons)) {
+        if (false === DataBaseTools::getXmlTable(static::tableName(), $xmlCols, $xmlCons)) {
             $this->toolBox()->i18nLog()->critical('error-on-xml-file', ['%fileName%' => static::tableName() . '.xml']);
             return false;
         }
 
         if (self::$dataBase->tableExists(static::tableName())) {
-            $sql .= $dbTools->checkTable(static::tableName(), $xmlCols, $xmlCons);
+            $sql .= DataBaseTools::checkTable(static::tableName(), $xmlCols, $xmlCons);
         } else {
             /// we generate the sql to create the table
-            $sql .= $dbTools->generateTable(static::tableName(), $xmlCols, $xmlCons);
+            $sql .= DataBaseTools::generateTable(static::tableName(), $xmlCols, $xmlCons);
             $sql .= $this->install();
         }
 
-        if ($sql !== '' && !self::$dataBase->exec($sql)) {
+        if ($sql !== '' && false === self::$dataBase->exec($sql)) {
             $this->toolBox()->i18nLog()->critical('check-table', ['%tableName%' => static::tableName()]);
             $this->toolBox()->cache()->clear();
             return false;
@@ -311,7 +309,7 @@ abstract class ModelCore
     {
         if (\in_array(\strtolower($value), ['true', 't', '1'], false)) {
             return true;
-        } else if (\in_array(\strtolower($value), ['false', 'f', '0'], false)) {
+        } elseif (\in_array(\strtolower($value), ['false', 'f', '0'], false)) {
             return false;
         }
 

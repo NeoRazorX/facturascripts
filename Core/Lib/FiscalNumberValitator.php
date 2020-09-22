@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,7 +44,7 @@ class FiscalNumberValitator
     {
         /// does this fiscal identifier need validation?
         $fiscalId = new IdentificadorFiscal();
-        if (!empty($type) && $fiscalId->loadFromCode($type) && !$fiscalId->validar) {
+        if (empty($type) || false === $fiscalId->loadFromCode($type) || false === $fiscalId->validar) {
             return true;
         }
 
@@ -108,16 +108,16 @@ class FiscalNumberValitator
         $pattern = '/^[0-9]{3}-[0-9]{5}-[0-9]{1}+$/';
         $pattern2 = '/^[0-9]+$/';
 
-        if (!preg_match($pattern2, $number) && preg_match($pattern, $number)) {
-            $number = str_replace('-', '', $number);
+        if (1 !== \preg_match($pattern2, $number) && \preg_match($pattern, $number)) {
+            $number = \str_replace('-', '', $number);
         }
 
-        if (strlen($number) != 9) {
+        if (\strlen($number) != 9) {
             return false;
         }
 
         $seed = ['7', '9', '8', '6', '5', '4', '3', '2'];
-        $validate = str_split($number);
+        $validate = \str_split($number);
         $step = 0;
         foreach ($seed as $key => $value) {
             $step += $value * $validate[$key];
@@ -127,7 +127,7 @@ class FiscalNumberValitator
 
         if ($rest == 0) {
             $crc = 2;
-        } else if ($rest == 1) {
+        } elseif ($rest == 1) {
             $crc = 1;
         } else {
             $crc = 11 - $rest;
