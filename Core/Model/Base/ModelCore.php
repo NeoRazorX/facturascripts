@@ -219,6 +219,7 @@ abstract class ModelCore
                     $this->{$key} = $this->getIntergerValueForField($field, $value);
                     break;
 
+                case 'decimal':
                 case 'double':
                 case 'double precision':
                 case 'float':

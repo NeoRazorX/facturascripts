@@ -192,15 +192,15 @@ abstract class BusinessDocumentController extends PanelController
                     break;
                 }
 
-                $view->loadData($code);
-
                 /// data not found?
+                $view->loadData($code);
                 $action = $this->request->request->get('action', '');
-                if ('' === $action && !$view->model->exists()) {
+                if ('' === $action && false === $view->model->exists()) {
                     $this->toolBox()->i18nLog()->warning('record-not-found');
-                } else {
-                    $this->title .= ' ' . $view->model->primaryDescription();
+                    break;
                 }
+
+                $this->title .= ' ' . $view->model->primaryDescription();
                 break;
         }
     }
@@ -216,11 +216,11 @@ abstract class BusinessDocumentController extends PanelController
 
         /// loads model
         $data = $this->getBusinessFormData();
-        $merged = array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
+        $merged = \array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
         $this->views[$this->active]->loadFromData($merged);
 
         /// update subject data?
-        if (!$this->views[$this->active]->model->exists()) {
+        if (false === $this->views[$this->active]->model->exists()) {
             $this->views[$this->active]->model->updateSubject();
         }
 
@@ -238,12 +238,12 @@ abstract class BusinessDocumentController extends PanelController
     protected function saveDocumentAction()
     {
         $this->setTemplate(false);
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->response->setContent($this->toolBox()->i18n()->trans('not-allowed-modify'));
             return false;
         }
 
-        // duplicated request?
+        /// duplicated request?
         if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
             $this->response->setContent($this->toolBox()->i18n()->trans('duplicated-request'));
             return false;
@@ -259,7 +259,7 @@ abstract class BusinessDocumentController extends PanelController
         $result = $this->saveDocumentResult($this->views[$this->active], $data);
         $this->response->setContent($result);
 
-        // Event finish
+        /// event finish
         $this->views[$this->active]->model->pipe('finish');
         return false;
     }
@@ -302,13 +302,14 @@ abstract class BusinessDocumentController extends PanelController
 
         /// custom data fields
         $view->model->loadFromData($data['custom']);
-
         if ($view->model->save() && $this->saveLines($view, $data['lines'])) {
             /// final data fields
             $view->model->loadFromData($data['final']);
 
             $this->documentTools->recalculate($view->model);
-            return $view->model->save() && $this->dataBase->commit() ? 'OK:' . $view->model->url() : $this->saveDocumentError('ERROR');
+            return $view->model->save() && $this->dataBase->commit() ?
+                'OK:' . $view->model->url() :
+                $this->saveDocumentError('ERROR');
         }
 
         return $this->saveDocumentError('ERROR');
@@ -324,7 +325,7 @@ abstract class BusinessDocumentController extends PanelController
      */
     protected function saveLines(BusinessDocumentView &$view, array &$newLines)
     {
-        if (!$view->model->editable) {
+        if (false === $view->model->editable) {
             return true;
         }
 
@@ -337,26 +338,25 @@ abstract class BusinessDocumentController extends PanelController
                 }
 
                 $found = true;
-                if (!$this->updateLine($oldLine, $newLine)) {
+                if (false === $this->updateLine($oldLine, $newLine)) {
                     $this->toolBox()->log()->warning('ERROR IN LINE: ' . $oldLine->idlinea);
                     return false;
                 }
                 break;
             }
 
-            if (!$found) {
+            if (false === $found) {
                 $oldLine->delete();
             }
         }
 
         /// add new lines
-        foreach (array_reverse($newLines) as $fLine) {
-            if (empty($fLine['idlinea'])) {
-                $newDocLine = $view->model->getNewLine($fLine);
-                if ($newDocLine->save()) {
-                    continue;
-                }
+        foreach (\array_reverse($newLines) as $fLine) {
+            if ($fLine['idlinea']) {
+                continue;
+            }
 
+            if (false === $view->model->getNewLine($fLine)->save()) {
                 $this->toolBox()->log()->warning('ERROR IN NEW LINE');
                 return false;
             }
@@ -375,15 +375,15 @@ abstract class BusinessDocumentController extends PanelController
 
         /// loads model
         $data = $this->getBusinessFormData();
-        $merged = array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
+        $merged = \array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
         $this->views[$this->active]->loadFromData($merged);
 
         /// update subject data?
-        if (!$this->views[$this->active]->model->exists()) {
+        if (false === $this->views[$this->active]->model->exists()) {
             $this->views[$this->active]->model->updateSubject();
         }
 
-        $this->response->setContent(json_encode($this->views[$this->active]->model));
+        $this->response->setContent(\json_encode($this->views[$this->active]->model));
         return false;
     }
 
