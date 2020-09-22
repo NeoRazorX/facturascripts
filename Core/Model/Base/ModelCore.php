@@ -266,13 +266,12 @@ abstract class ModelCore
     }
 
     /**
-     * Check and update the structure of the table if necessary.
+     * Checks and updates the structure of the table if necessary.
      *
      * @return bool
      */
     private function checkTable()
     {
-        $sql = '';
         $xmlCols = [];
         $xmlCons = [];
         if (false === DataBaseTools::getXmlTable(static::tableName(), $xmlCols, $xmlCons)) {
@@ -280,6 +279,7 @@ abstract class ModelCore
             return false;
         }
 
+        $sql = '';
         if (self::$dataBase->tableExists(static::tableName())) {
             $sql .= DataBaseTools::checkTable(static::tableName(), $xmlCols, $xmlCons);
         } else {

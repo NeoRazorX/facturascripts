@@ -37,7 +37,8 @@ class DataBaseTools
     private static $dataBase;
 
     /**
-     * Checks and compare the database table structure with the xml definition
+     * Checks and compares the database table structure with the xml definition.
+     * Returns a SQL statement if there are differences.
      *
      * @param $tableName
      * @param $xmlCols
@@ -69,7 +70,7 @@ class DataBaseTools
     }
 
     /**
-     * Creates the database table with the provided structure
+     * Creates the database table with the provided structure.
      *
      * @param string $tableName
      * @param array  $xmlCols
@@ -83,7 +84,7 @@ class DataBaseTools
     }
 
     /**
-     * Extracts columns and constraints form the XML definition
+     * Extracts columns and constraints form the XML definition.
      *
      * @param string $tableName
      * @param array  $columns
@@ -118,7 +119,24 @@ class DataBaseTools
     }
 
     /**
-     * Updates names and types for each column
+     * Returns the full file path for table XML file.
+     *
+     * @param string $tableName
+     *
+     * @return string
+     */
+    public static function getXmlTableLocation($tableName)
+    {
+        $fileName = \FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
+        if (\FS_DEBUG && false === \file_exists($fileName)) {
+            return \FS_FOLDER . '/Core/Table/' . $tableName . '.xml';
+        }
+
+        return $fileName;
+    }
+
+    /**
+     * Updates names and types for each column.
      *
      * @param array             $columns
      * @param \SimpleXMLElement $xml
@@ -136,7 +154,7 @@ class DataBaseTools
     }
 
     /**
-     * Updates names and constraints for each constraint
+     * Updates names and constraints for each constraint.
      *
      * @param array             $constraints
      * @param \SimpleXMLElement $xml
@@ -152,7 +170,7 @@ class DataBaseTools
     }
 
     /**
-     * Compares two arrays of columns, returns a SQL statement if there are differences
+     * Compares two arrays of columns, returns a SQL statement if there are differences.
      *
      * @param string $tableName
      * @param array  $xmlCols
@@ -187,7 +205,7 @@ class DataBaseTools
     }
 
     /**
-     * Compares two arrays of constraints, returns a SQL statement if there are differences
+     * Compares two arrays of constraints, returns a SQL statement if there are differences.
      *
      * @param string $tableName
      * @param array  $xmlCons
@@ -198,16 +216,11 @@ class DataBaseTools
      */
     private static function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
     {
-        /// remove unnecesary constraints
+        /// remove unnecesary constraints (except primary keys and uniques)
         $sql = '';
         foreach ($dbCons as $dbCon) {
-            if (false !== \strpos('PRIMARY;UNIQUE', $dbCon['name'])) {
-                /// exclude primary keys and uniques
-                continue;
-            }
-
             $column = static::searchInArray($xmlCons, 'name', $dbCon['name']);
-            if (empty($column)) {
+            if (empty($column) && false === \strpos('PRIMARY;UNIQUE', $dbCon['name'])) {
                 $sql .= static::sql()->sqlDropConstraint($tableName, $dbCon);
             }
         }
@@ -233,7 +246,7 @@ class DataBaseTools
     }
 
     /**
-     * Compares data types from a column. Returns True if they are the same
+     * Compares data types from a column. Returns True if they are the same.
      *
      * @param string $dbType
      * @param string $xmlType
@@ -259,24 +272,7 @@ class DataBaseTools
     }
 
     /**
-     * Returns the full file path for table XML file
-     *
-     * @param string $tableName
-     *
-     * @return string
-     */
-    private static function getXmlTableLocation($tableName)
-    {
-        $fileName = \FS_FOLDER . '/Dinamic/Table/' . $tableName . '.xml';
-        if (\FS_DEBUG && false === \file_exists($fileName)) {
-            return \FS_FOLDER . '/Core/Table/' . $tableName . '.xml';
-        }
-
-        return $fileName;
-    }
-
-    /**
-     * Look for a column with a value by his name in array
+     * Look for a column with a value by his name in array.
      *
      * @param array  $items
      * @param string $index
