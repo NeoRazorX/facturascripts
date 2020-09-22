@@ -70,7 +70,7 @@
         <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_productosprov</name>
-        <type>UNIQUE (codproveedor, refproveedor)</type>
+        <name>uniq_productosprov_ref</name>
+        <type>UNIQUE (codproveedor,refproveedor,referencia)</type>
     </constraint>
 </table>
