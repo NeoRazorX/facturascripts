@@ -280,14 +280,9 @@ abstract class ModelCore
             return false;
         }
 
-        $sql = '';
-        if (self::$dataBase->tableExists(static::tableName())) {
-            $sql .= DataBaseTools::checkTable(static::tableName(), $xmlCols, $xmlCons);
-        } else {
-            /// we generate the sql to create the table
-            $sql .= DataBaseTools::generateTable(static::tableName(), $xmlCols, $xmlCons);
-            $sql .= $this->install();
-        }
+        $sql = self::$dataBase->tableExists(static::tableName()) ?
+            DataBaseTools::checkTable(static::tableName(), $xmlCols, $xmlCons) :
+            DataBaseTools::generateTable(static::tableName(), $xmlCols, $xmlCons) . $this->install();
 
         if ($sql !== '' && false === self::$dataBase->exec($sql)) {
             $this->toolBox()->i18nLog()->critical('check-table', ['%tableName%' => static::tableName()]);

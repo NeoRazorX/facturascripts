@@ -48,23 +48,9 @@ class DataBaseTools
      */
     public static function checkTable($tableName, $xmlCols, $xmlCons)
     {
-        /**
-         * If we have to make changes to the restrictions, we first eliminate them all.
-         * Then we will add the correct ones. We do it like this because it avoids problems in MySQL.
-         */
-        $dbCons = static::dataBase()->getConstraints($tableName);
-        $sql = static::compareConstraints($tableName, $xmlCons, $dbCons, true);
-        if ($sql !== '') {
-            if (false === static::dataBase()->exec($sql)) {
-                static::toolBox()->i18nLog()->critical('check-table', ['%tableName%' => $tableName]);
-            }
-
-            /// reload table constraints after changes
-            $dbCons = static::dataBase()->getConstraints($tableName);
-        }
-
         /// compare table columns and constraints against xml definition
         $dbCols = static::dataBase()->getColumns($tableName);
+        $dbCons = static::dataBase()->getConstraints($tableName);
         return static::compareColumns($tableName, $xmlCols, $dbCols) .
             static::compareConstraints($tableName, $xmlCons, $dbCons);
     }
@@ -210,26 +196,38 @@ class DataBaseTools
      * @param string $tableName
      * @param array  $xmlCons
      * @param array  $dbCons
-     * @param bool   $deleteOnly
      *
      * @return string
      */
-    private static function compareConstraints($tableName, $xmlCons, $dbCons, $deleteOnly = false)
+    private static function compareConstraints($tableName, $xmlCons, $dbCons)
     {
-        /// remove unnecesary constraints (except primary keys and uniques)
-        $sql = '';
+        if (empty($xmlCons) || false === \FS_DB_FOREIGN_KEYS) {
+            return '';
+        }
+
+        /// if you have to delete a constraint, it is better to delete them all
+        $deleteCons = false;
+        $sqlDelete = '';
+        $sqlDeleteFK = '';
         foreach ($dbCons as $dbCon) {
+            if ($dbCon['type'] === 'PRIMARY KEY') {
+                /// exclude primary key
+                continue;
+            } elseif ($dbCon['type'] === 'FOREIGN KEY') {
+                /// it is better to delete the foreign keys before the rest
+                $sqlDeleteFK .= static::sql()->sqlDropConstraint($tableName, $dbCon);
+            } else {
+                $sqlDelete .= static::sql()->sqlDropConstraint($tableName, $dbCon);
+            }
+
             $column = static::searchInArray($xmlCons, 'name', $dbCon['name']);
-            if (empty($column) && false === \strpos('PRIMARY;UNIQUE', $dbCon['name'])) {
-                $sql .= static::sql()->sqlDropConstraint($tableName, $dbCon);
+            if (empty($column)) {
+                $deleteCons = true;
             }
         }
 
-        if (empty($xmlCons) || $deleteOnly || false === \FS_DB_FOREIGN_KEYS) {
-            return $sql;
-        }
-
         /// add new constraints
+        $sql = '';
         foreach ($xmlCons as $xmlCon) {
             /// exclude primary keys on mysql because of fail
             if (\strpos($xmlCon['constraint'], 'PRIMARY') === 0 && \strtolower(\FS_DB_TYPE) === 'mysql') {
@@ -242,7 +240,7 @@ class DataBaseTools
             }
         }
 
-        return $sql;
+        return $deleteCons ? $sqlDeleteFK . $sqlDelete . $sql : $sql;
     }
 
     /**
