@@ -518,6 +518,7 @@
     "hash": "Hash",
     "heading-account-group-id": "Gruppo ID dell'account di intestazioni",
     "heading-account-id-root": "Radice dell'account di intestazione",
+    "health": "health",
     "help": "aiutare",
     "help-server-accepts-filesize": "Questo server supporta una dimensione massima di %1$s MB. Se il plugin prende il sopravvento, si sarà in grado di caricare, anche non si può lasciare nulla.",
     "hide": "hide",

@@ -518,6 +518,7 @@
     "hash": "Hash",
     "heading-account-group-id": "Heading-ID-Gruppe",
     "heading-account-id-root": "Überweisungskonto root",
+    "health": "health",
     "help": "Hilfe",
     "help-server-accepts-filesize": "Dieser Server unterstützt eine maximale Größe von %1$s MB. Wenn das Plugin übernimmt, wird fehlschlagen, es zu laden, auch kann man nichts verlassen.",
     "hide": "hide",
