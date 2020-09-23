@@ -25,8 +25,8 @@
             <column name="code" description="optional" numcolumns="2" order="100">
                 <widget type="text" fieldname="codgrupo" icon="fas fa-hashtag" maxlength="6" readonly="dinamic" />
             </column>
-            <column name="description" order="110">
-                <widget type="text" fieldname="nombre" required="true" />
+            <column name="name" order="110">
+                <widget type="text" fieldname="nombre" maxlength="100" required="true" />
             </column>
             <column name="rate" titleurl="ListTarifa" numcolumns="2" order="120">
                 <widget type="select" fieldname="codtarifa" onclick="EditTarifa">
