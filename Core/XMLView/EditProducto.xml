@@ -81,7 +81,7 @@
             <column name="creation-date" numcolumns="12" order="100">
                 <widget type="date" fieldname="fechaalta" readonly="true" />
             </column>
-            <column name="update-time" numcolumns="12" order="110">
+            <column name="last-update" numcolumns="12" order="110">
                 <widget type="datetime" fieldname="actualizado" readonly="true" />
             </column>
         </group>

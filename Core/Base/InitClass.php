@@ -65,10 +65,37 @@ abstract class InitClass
         $className = \substr($namespace, \strlen($findNamespace));
         switch ($className) {
             case 'Model\\Base\\BusinessDocument':
-                return $this->loadBusinessDocumentExtension($extension);
+                return $this->loadBusinessDocumentExtension($extension, [
+                        'AlbaranCliente', 'AlbaranProveedor', 'FacturaCliente', 'FacturaProveedor',
+                        'PedidoCliente', 'PedidoProveedor', 'PresupuestoCliente', 'PresupuestoProveedor'
+                ]);
 
             case 'Model\\Base\\BusinessDocumentLine':
-                return $this->loadBusinessDocumentLineExtension($extension);
+                return $this->loadBusinessDocumentExtension($extension, [
+                        'LineaAlbaranCliente', 'LineaAlbaranProveedor', 'LineaFacturaCliente',
+                        'LineaFacturaProveedor', 'LineaPedidoCliente', 'LineaPedidoProveedor',
+                        'LineaPresupuestoCliente', 'LineaPresupuestoProveedor'
+                ]);
+
+            case 'Model\\Base\\PurchaseDocument':
+                return $this->loadBusinessDocumentExtension($extension, [
+                        'AlbaranProveedor', 'FacturaProveedor', 'PedidoProveedor', 'PresupuestoProveedor'
+                ]);
+
+            case 'Model\\Base\\PurchaseDocumentLine':
+                return $this->loadBusinessDocumentExtension($extension, [
+                        'LineaAlbaranProveedor', 'LineaFacturaProveedor', 'LineaPedidoProveedor', 'LineaPresupuestoProveedor'
+                ]);
+
+            case 'Model\\Base\\SalesDocument':
+                return $this->loadBusinessDocumentExtension($extension, [
+                        'AlbaranCliente', 'FacturaCliente', 'PedidoCliente', 'PresupuestoCliente'
+                ]);
+
+            case 'Model\\Base\\SalesDocumentLine':
+                return $this->loadBusinessDocumentExtension($extension, [
+                        'LineaAlbaranCliente', 'LineaFacturaCliente', 'LineaPedidoCliente', 'LineaPresupuestoCliente'
+                ]);
 
             default:
                 $targetClass = '\\FacturaScripts\\Dinamic\\' . $className;
@@ -81,36 +108,12 @@ abstract class InitClass
     /**
      * 
      * @param mixed $extension
+     * @param array $models
      *
      * @return bool
      */
-    private function loadBusinessDocumentExtension($extension): bool
+    private function loadBusinessDocumentExtension($extension, $models): bool
     {
-        $models = [
-            'AlbaranCliente', 'AlbaranProveedor', 'FacturaCliente', 'FacturaProveedor',
-            'PedidoCliente', 'PedidoProveedor', 'PresupuestoCliente', 'PresupuestoProveedor'
-        ];
-        foreach ($models as $model) {
-            $targetClass = '\\FacturaScripts\\Dinamic\\Model\\' . $model;
-            $targetClass::addExtension($extension);
-        }
-
-        return true;
-    }
-
-    /**
-     * 
-     * @param mixed $extension
-     *
-     * @return bool
-     */
-    private function loadBusinessDocumentLineExtension($extension): bool
-    {
-        $models = [
-            'LineaAlbaranCliente', 'LineaAlbaranProveedor', 'LineaFacturaCliente',
-            'LineaFacturaProveedor', 'LineaPedidoCliente', 'LineaPedidoProveedor',
-            'LineaPresupuestoCliente', 'LineaPresupuestoProveedor'
-        ];
         foreach ($models as $model) {
             $targetClass = '\\FacturaScripts\\Dinamic\\Model\\' . $model;
             $targetClass::addExtension($extension);
@@ -135,7 +138,7 @@ abstract class InitClass
     protected function updateTableData(string $tableName)
     {
         $sql = CSVImport::updateTableSQL($tableName);
-        if (!empty($sql)) {
+        if ($sql) {
             $dataBase = new DataBase();
             $dataBase->exec($sql);
         }
