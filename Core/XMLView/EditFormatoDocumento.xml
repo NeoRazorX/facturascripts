@@ -26,7 +26,7 @@
                 <widget type="text" fieldname="id" onclick="EditFormatoDocumento" />
             </column>
             <column name="name" order="100">
-                <widget type="text" fieldname="nombre" />
+                <widget type="text" fieldname="nombre" maxlength="30" />
             </column>
             <column name="doc-type" order="110">
                 <widget type="select" fieldname="tipodoc" translate="true">

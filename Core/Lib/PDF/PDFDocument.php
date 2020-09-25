@@ -399,6 +399,9 @@ abstract class PDFDocument extends PDFCore
             ['key' => $tipoidfiscal, 'value' => $model->cifnif],
             ['key' => $this->i18n->trans('serie'), 'value' => $model->codserie]
         ];
+        if (empty($model->cifnif)) {
+            unset($tableData[3]);
+        }
 
         if (!empty($model->direccion)) {
             $tableData[] = ['key' => $this->i18n->trans('address'), 'value' => $this->combineAddress($model)];
