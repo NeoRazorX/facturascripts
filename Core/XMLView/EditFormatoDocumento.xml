@@ -51,7 +51,7 @@
                 </widget>
             </column>
             <column name="title" order="140" >
-                <widget type="text" fieldname="titulo" />
+                <widget type="text" fieldname="titulo" maxlength="30" />
             </column>
             <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" order="150">
                 <widget type="select" fieldname="idlogo" onclick="EditAttachedFile">
