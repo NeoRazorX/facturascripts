@@ -65,7 +65,7 @@
                     {% block navbarContent %}
                         <a class="navbar-brand d-none d-sm-inline" href="{{ asset('') }}" title="{{ i18n.trans('homepage') }}">
                             <img src="{{ asset('Dinamic/Assets/Images/logo-white.png') }}" width="30" height="30" class="d-inline-block align-top" alt="FacturaScripts"/>
-                            <span class="d-none d-xl-inline">{{ fsc.empresa.nombrecorto }}</span>
+                            <span class="d-none d-xl-inline">{{ fsc.empresa.nombrecorto | raw }}</span>
                         </a>
                         <div class="navbar-collapse collapse">
                             <ul class="navbar-nav pt-1">
