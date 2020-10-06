@@ -69,7 +69,7 @@ class DocumentStitcher extends Controller
         $documentState = new EstadoDocumento();
         $where = [new DataBaseWhere('tipodoc', $this->modelName)];
         foreach ($documentState->all($where) as $docState) {
-            if (!empty($docState->generadoc)) {
+            if ($docState->generadoc) {
                 $status[] = $docState;
             }
         }
@@ -136,13 +136,13 @@ class DocumentStitcher extends Controller
 
         // duplicated request?
         $token = $this->request->request->get('multireqtoken', '');
-        if (!empty($token) && $this->multiRequestProtection->tokenExist($token)) {
+        if ($token && $this->multiRequestProtection->tokenExist($token)) {
             $this->toolBox()->i18nLog()->warning('duplicated-request');
             return false;
         }
 
         $status = $this->request->request->get('status', '');
-        if (!empty($status)) {
+        if ($status) {
             $this->generateNewDocument((int) $status);
         }
     }
@@ -156,6 +156,9 @@ class DocumentStitcher extends Controller
     {
         $blankLine = $doc->getNewLine();
         $blankLine->cantidad = 0;
+        $blankLine->iva = 0.0;
+        $blankLine->irpf = 0.0;
+        $blankLine->recargo = 0.0;
         $newLines[] = $blankLine;
     }
 
@@ -189,6 +192,9 @@ class DocumentStitcher extends Controller
         $infoLine->cantidad = 0;
         $infoLine->descripcion = $this->toolBox()->i18n()->trans($doc->modelClassName() . '-min')
             . ' ' . $doc->codigo . "\n--------------------";
+        $infoLine->iva = 0.0;
+        $infoLine->irpf = 0.0;
+        $infoLine->recargo = 0.0;
         $newLines[] = $infoLine;
     }
 
@@ -285,7 +291,7 @@ class DocumentStitcher extends Controller
     protected function getCodes()
     {
         $code = $this->request->request->get('code', []);
-        if (!empty($code)) {
+        if ($code) {
             return $code;
         }
 
