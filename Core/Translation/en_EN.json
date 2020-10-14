@@ -884,6 +884,7 @@
     "registered-installation-p": "This installation has already been registered.",
     "rejected": "Rejected",
     "reloading": "Reloading...",
+    "remove-filter": "Remove filter",
     "remove-from-list": "Remove",
     "renew": "Renew",
     "renumber-accounting": "Renumber Accounting",

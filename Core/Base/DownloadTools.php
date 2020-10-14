@@ -101,7 +101,7 @@ class DownloadTools
         \curl_setopt($ch, \CURLOPT_RETURNTRANSFER, 1);
 
         /// this function is called by curl for each header received
-        \curl_setopt($ch, \CURLOPT_HEADERFUNCTION, function($curl, $header) use (&$headers) {
+        \curl_setopt($ch, \CURLOPT_HEADERFUNCTION, function ($curl, $header) use (&$headers) {
             $len = \strlen($header);
             $header = \explode(':', $header, 2);
             if (\count($header) < 2) {
