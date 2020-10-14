@@ -229,8 +229,8 @@ class DataBaseTools
         /// add new constraints
         $sql = '';
         foreach ($xmlCons as $xmlCon) {
-            /// exclude primary keys on mysql because of fail
-            if (\strpos($xmlCon['constraint'], 'PRIMARY') === 0 && \strtolower(\FS_DB_TYPE) === 'mysql') {
+            /// exclude primary keys because they have no name
+            if (0 === \strpos($xmlCon['constraint'], 'PRIMARY')) {
                 continue;
             }
 
