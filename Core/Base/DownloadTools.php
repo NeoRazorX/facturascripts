@@ -87,6 +87,38 @@ class DownloadTools
 
     /**
      * 
+     * @param string $url
+     * @param int    $timeout
+     *
+     * @return array
+     */
+    public static function getHeaders(string $url, int $timeout = self::TIMEOUT)
+    {
+        $headers = [];
+
+        $ch = \curl_init();
+        \curl_setopt($ch, \CURLOPT_URL, $url);
+        \curl_setopt($ch, \CURLOPT_RETURNTRANSFER, 1);
+
+        /// this function is called by curl for each header received
+        \curl_setopt($ch, \CURLOPT_HEADERFUNCTION, function($curl, $header) use (&$headers) {
+            $len = \strlen($header);
+            $header = \explode(':', $header, 2);
+            if (\count($header) < 2) {
+                /// ignore invalid headers
+                return $len;
+            }
+
+            $headers[\strtolower(\trim($header[0]))][] = \trim($header[1]);
+            return $len;
+        });
+
+        \curl_exec($ch);
+        return $headers;
+    }
+
+    /**
+     * 
      * @return int
      */
     public static function getLastHttpCode()

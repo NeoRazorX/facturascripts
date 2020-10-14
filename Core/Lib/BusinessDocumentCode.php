@@ -96,6 +96,7 @@ class BusinessDocumentCode
             $preHour = $document->hora;
             foreach ($previous as $preDoc) {
                 if ($expectedNumber != $preDoc->numero) {
+                    /// hole found
                     $document->fecha = $preDate;
                     $document->hora = $preHour;
                     return (string) $expectedNumber;
@@ -109,8 +110,8 @@ class BusinessDocumentCode
             if (empty($previous)) {
                 /// no previous document, then use initial number
                 $sequence->numero = $sequence->inicio;
-            } elseif ($expectedNumber === $sequence->inicio) {
-                /// the hole is the first in the sequence
+            } elseif ($expectedNumber >= $sequence->inicio && $expectedNumber >= (int) $sequence->numero - self::GAP_LIMIT) {
+                /// the gap is in the first positions of the range
                 $document->fecha = $preDate;
                 $document->hora = $preHour;
                 return (string) $expectedNumber;

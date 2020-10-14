@@ -43,7 +43,7 @@
         <type>character varying(200)</type>
     </column>
     <constraint>
-        <name>id_pkey</name>
+        <name>logs_pkey</name>
         <type>PRIMARY KEY (id)</type>
     </constraint>
 </table>
