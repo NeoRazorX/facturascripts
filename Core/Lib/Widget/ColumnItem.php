@@ -102,19 +102,24 @@ class ColumnItem extends VisualItem
     /**
      *
      * @param object $model
+     * @param bool   $onlyField
      *
      * @return string
      */
-    public function edit($model)
+    public function edit($model, $onlyField)
     {
         if ($this->hidden()) {
             return $this->widget->inputHidden($model);
         }
 
+        $editHtml = ($onlyField)
+            ? $this->widget->edit($model)
+            : $this->widget->edit($model, $this->title, $this->description, $this->titleurl);
+        
         $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css('col-md');
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
         return '<div' . $divID . ' class="' . $divClass . '">'
-            . $this->widget->edit($model, $this->title, $this->description, $this->titleurl)
+            . $editHtml
             . '</div>';
     }
 

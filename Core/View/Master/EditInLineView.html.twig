@@ -1,0 +1,148 @@
+{#
+    /**
+     * This file is part of FacturaScripts
+     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program. If not, see http://www.gnu.org/licenses/.
+     */
+#}
+{% set currentView = fsc.getCurrentView() %}
+
+<script type="text/javascript">
+    var editListViewDeleteCancel = "{{ i18n.trans('cancel') }}";
+    var editListViewDeleteConfirm = "{{ i18n.trans('confirm') }}";
+    var editListViewDeleteMessage = "{{ i18n.trans('are-you-sure') }}";
+    var editListViewDeleteTitle = "{{ i18n.trans('confirm-delete') }}";
+</script>
+
+<div class="{{ currentView.settings.card ? '' : 'container-fluid' }}">
+    {# -- Row header -- #}
+    <div class="row">
+        {% set row = currentView.getRow('header') %}
+        {{ row.render(currentView.getViewName(), '', fsc) | raw }}
+    </div>
+
+    {# -- Row statistics -- #}
+    <div>
+        {% set row = currentView.getRow('statistics') %}
+        {{ row.render(fsc) | raw }}
+    </div>
+    
+    {# -- New form -- #}
+    {% if currentView.settings.btnNew %}
+        {% set formName = 'form' ~ currentView.getViewName() ~ 'New' %}
+        <form id="{{ formName }}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="insert"/>
+            <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+            <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+            <div class="card border-success shadow mb-2">
+                <div class="card-header p-2">                
+                    {{ currentView.title }}
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="row">
+                            {% for group in currentView.getColumns() %}
+                                {{ group.edit(currentView.model) | raw }}
+                            {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-1 text-right">
+                            <button class="btn btn-sm btn-success" type="submit">
+                                <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+
+    {# -- Forms -- #}
+    <div class="card shadow mb-2">
+        <div class="card-body">
+        {% for counter, model in currentView.cursor %}
+            {% set formName = 'form' ~ currentView.getViewName() ~ counter %}
+            <form id="{{ formName }}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="action" value="edit"/>
+                <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+                <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
+                <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="row">
+                        {% for group in currentView.getColumns() %}
+                            {{ group.edit(model, false, true) | raw }}
+                        {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-1 text-right">
+                        {# -- Row actions -- #}
+                        {% set row = currentView.getRow('actions') %}
+                        {{ row.render(false, currentView.getViewName() ~ counter) | raw }}
+                        {# -- Delete Button -- #}
+                        {% if currentView.settings.btnDelete %}
+                            <button type="button" class="btn btn-sm btn-danger" onclick="editListViewDelete('{{ currentView.getViewName() ~ counter }}');">
+                                <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+                            </button>
+                        {% endif %}
+                        {% if currentView.settings.btnUndo %}
+                            <button class="btn btn-sm btn-secondary" type="reset">
+                                <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
+                            </button>
+                        {% endif %}
+                        {% if currentView.settings.btnSave %}
+                            <button class="btn btn-sm btn-primary" type="submit">
+                                <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        {% endfor %}           
+        </div>
+    </div>
+
+    {# -- Pagination -- #}
+    {% if currentView.getPagination() | length > 0 %}
+        {% set formName = 'form' ~ currentView.getViewName() ~ 'Offset' %}
+        <form id="{{ formName }}" method="post">
+            <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+            <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
+            <div class="text-center pt-3">
+                <div class="btn-group bg-white">
+                    {% for page in currentView.getPagination() %}
+                        {% set btnClass = page.active ? 'btn btn-outline-dark active' : 'btn btn-outline-dark' %}
+                        <button type="button" class="{{ btnClass }}" onclick="editListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
+                            {{ page.num }}
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </form>
+    {% endif %}
+
+    {# -- Row footer -- #}
+    <div class="row">
+        {% set row = currentView.getRow('footer') %}
+        {{ row.render(currentView.getViewName(), '', fsc) | raw }}
+    </div>
+</div>
+
+{# -- Modals -- #}
+{% for group in currentView.getModals() %}
+    {{ group.modal(currentView.model, currentView.getViewName()) | raw }}
+{% endfor %}

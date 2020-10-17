@@ -93,10 +93,11 @@ class GroupItem extends VisualItem
      *
      * @param object $model
      * @param bool   $forceReadOnly
+     * @param bool   $onlyField
      *
      * @return string
      */
-    public function edit($model, $forceReadOnly = false)
+    public function edit($model, $forceReadOnly = false, $onlyField = false)
     {
         $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css('col');
         $divId = empty($this->id) ? '' : ' id="' . $this->id . '"';
@@ -111,7 +112,7 @@ class GroupItem extends VisualItem
             if ($forceReadOnly) {
                 $col->widget->readonly = 'true';
             }
-            $html .= $col->edit($model);
+            $html .= $col->edit($model, $onlyField);
         }
 
         return $html . '</div></div>';
