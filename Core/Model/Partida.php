@@ -370,6 +370,7 @@ class Partida extends Base\ModelOnChangeClass
     {
         /// update account balance
         $this->updateBalance($this->idsubcuenta);
+        parent::onDelete();
     }
 
     /**
@@ -379,6 +380,7 @@ class Partida extends Base\ModelOnChangeClass
     {
         /// update account balance
         $this->updateBalance($this->idsubcuenta);
+        parent::onInsert();
     }
 
     /**
@@ -392,6 +394,8 @@ class Partida extends Base\ModelOnChangeClass
         if ($this->previousData['idsubcuenta'] != $this->idsubcuenta) {
             $this->updateBalance($this->previousData['idsubcuenta']);
         }
+
+        parent::onUpdate();
     }
 
     /**

@@ -391,6 +391,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     {
         $this->cantidad = 0.0;
         $this->updateStock();
+        parent::onDelete();
     }
 
     /**

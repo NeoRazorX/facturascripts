@@ -270,6 +270,7 @@ abstract class Receipt extends ModelOnChangeClass
     protected function onDelete()
     {
         $this->updateInvoice();
+        parent::onDelete();
     }
 
     /**

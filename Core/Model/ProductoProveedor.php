@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\CostPriceTools;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
+use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 use FacturaScripts\Dinamic\Model\Variante as DinVariante;
 
@@ -29,7 +30,7 @@ use FacturaScripts\Dinamic\Model\Variante as DinVariante;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class ProductoProveedor extends Base\ModelClass
+class ProductoProveedor extends Base\ModelOnChangeClass
 {
 
     use Base\ModelTrait;
@@ -167,20 +168,6 @@ class ProductoProveedor extends Base\ModelClass
 
     /**
      * 
-     * @return bool
-     */
-    public function save()
-    {
-        if (parent::save()) {
-            CostPriceTools::update($this->getVariant());
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * 
      * @return string
      */
     public static function tableName(): string
@@ -198,7 +185,7 @@ class ProductoProveedor extends Base\ModelClass
             $this->refproveedor = $this->referencia;
         }
 
-        $this->neto = $this->precio * $this->getEUDiscount();
+        $this->neto = \round($this->precio * $this->getEUDiscount(), DinProducto::ROUND_DECIMALS);
         return parent::test();
     }
 
@@ -212,5 +199,38 @@ class ProductoProveedor extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getVariant()->url($type);
+    }
+
+    /**
+     * 
+     * @param string $field
+     *
+     * @return bool
+     */
+    protected function onChange($field)
+    {
+        switch ($field) {
+            case 'neto':
+                CostPriceTools::update($this->getVariant());
+                return true;
+
+            default:
+                return parent::onChange($field);
+        }
+    }
+
+    protected function onInsert()
+    {
+        CostPriceTools::update($this->getVariant());
+        parent::onInsert();
+    }
+
+    /**
+     * 
+     * @param array $fields
+     */
+    protected function setPreviousData(array $fields = [])
+    {
+        parent::setPreviousData(\array_merge(['neto'], $fields));
     }
 }
