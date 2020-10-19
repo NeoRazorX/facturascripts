@@ -106,7 +106,7 @@ class ColumnItem extends VisualItem
      *
      * @return string
      */
-    public function edit($model, $onlyField)
+    public function edit($model, $onlyField = false)
     {
         if ($this->hidden()) {
             return $this->widget->inputHidden($model);
@@ -115,7 +115,7 @@ class ColumnItem extends VisualItem
         $editHtml = ($onlyField)
             ? $this->widget->edit($model)
             : $this->widget->edit($model, $this->title, $this->description, $this->titleurl);
-        
+
         $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css('col-md');
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
         return '<div' . $divID . ' class="' . $divClass . '">'
@@ -125,7 +125,7 @@ class ColumnItem extends VisualItem
 
     /**
      * Returns CSS percentage width
-     * 
+     *
      * @return string
      */
     public function htmlWidth()
