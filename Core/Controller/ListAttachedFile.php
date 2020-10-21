@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -52,7 +52,7 @@ class ListAttachedFile extends ListController
         $this->addView($viewName, 'AttachedFile', 'attached-files', 'fas fa-paperclip');
         $this->addSearchFields($viewName, ['filename', 'mimetype']);
         $this->addOrderBy($viewName, ['idfile'], 'code');
-        $this->addOrderBy($viewName, ['date'], 'date', 2);
+        $this->addOrderBy($viewName, ['date', 'hour'], 'date', 2);
         $this->addOrderBy($viewName, ['filename'], 'file-name');
         $this->addOrderBy($viewName, ['size'], 'size');
 
