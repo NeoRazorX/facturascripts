@@ -53,10 +53,10 @@
         </group>
         <group name="other" numcolumns="12">
             <column name="concept" order="310">
-                <widget type="text" fieldname="concepto" required="true" />
+                <widget type="text" fieldname="concepto" maxlength="255" required="true" />
             </column>
             <column name="document" numcolumns="4" order="320">
-                <widget type="text" fieldname="documento" />
+                <widget type="text" fieldname="documento" maxlength="50" />
             </column>
         </group>
     </columns>

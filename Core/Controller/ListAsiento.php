@@ -93,7 +93,7 @@ class ListAsiento extends ListController
         $this->addOrderBy($viewName, ['fecha', 'idasiento'], 'date', 2);
         $this->addOrderBy($viewName, ['numero', 'idasiento'], 'number');
         $this->addOrderBy($viewName, ['importe', 'idasiento'], 'amount');
-        $this->addSearchFields($viewName, ['numero', 'concepto']);
+        $this->addSearchFields($viewName, ['concepto', 'documento', 'numero']);
 
         /// filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
