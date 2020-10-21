@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -103,7 +103,7 @@ class DataBase
      */
     public function close(): bool
     {
-        if (!$this->connected()) {
+        if (false === $this->connected()) {
             return true;
         }
 
@@ -115,7 +115,7 @@ class DataBase
             self::$link = null;
         }
 
-        return !$this->connected();
+        return false === $this->connected();
     }
 
     /**
@@ -264,7 +264,7 @@ class DataBase
     {
         $sql = $extended ? self::$engine->getSQL()->sqlConstraintsExtended($tableName) : self::$engine->getSQL()->sqlConstraints($tableName);
         $data = $this->select($sql);
-        return $data ? array_values($data) : [];
+        return $data ? \array_values($data) : [];
     }
 
     /**
@@ -314,7 +314,9 @@ class DataBase
      */
     public function getTables()
     {
-        if (empty(self::$tables)) {
+        if (false === $this->connected()) {
+            return [];
+        } elseif (empty(self::$tables)) {
             self::$tables = self::$engine->listTables(self::$link);
         }
 
@@ -380,7 +382,7 @@ class DataBase
      */
     public function selectLimit($sql, $limit = \FS_ITEM_LIMIT, $offset = 0)
     {
-        if (!$this->connected()) {
+        if (false === $this->connected()) {
             return [];
         }
 
@@ -419,7 +421,7 @@ class DataBase
             $list = $this->getTables();
         }
 
-        return in_array($tableName, $list, false);
+        return \in_array($tableName, $list, false);
     }
 
     /**
@@ -445,18 +447,18 @@ class DataBase
             return 'NULL';
         }
 
-        if (is_bool($val)) {
+        if (\is_bool($val)) {
             return $val ? 'TRUE' : 'FALSE';
         }
 
         /// If its a date
-        if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
-            return "'" . date(self::$engine->dateStyle(), strtotime($val)) . "'";
+        if (\preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
+            return "'" . \date(self::$engine->dateStyle(), \strtotime($val)) . "'";
         }
 
         /// It its a date time
-        if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
-            return "'" . date(self::$engine->dateStyle() . ' H:i:s', strtotime($val)) . "'";
+        if (\preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
+            return "'" . \date(self::$engine->dateStyle() . ' H:i:s', \strtotime($val)) . "'";
         }
 
         return "'" . $this->escapeString($val) . "'";
