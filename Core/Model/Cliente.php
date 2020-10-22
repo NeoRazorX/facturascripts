@@ -249,15 +249,18 @@ class Cliente extends Base\ComercialContact
 
         $return = parent::saveInsert($values);
         if ($return && empty($this->idcontactofact)) {
+            $parts = \explode(' ', $this->nombre);
+
             /// creates new contact
             $contact = new DinContacto();
+            $contact->apellidos = \count($parts) > 1 ? \implode(' ', \array_slice($parts, 1)) : '';
             $contact->cifnif = $this->cifnif;
             $contact->codcliente = $this->codcliente;
             $contact->descripcion = $this->nombre;
             $contact->email = $this->email;
             $contact->empresa = $this->razonsocial;
             $contact->fax = $this->fax;
-            $contact->nombre = $this->nombre;
+            $contact->nombre = $parts[0];
             $contact->personafisica = $this->personafisica;
             $contact->telefono1 = $this->telefono1;
             $contact->telefono2 = $this->telefono2;
