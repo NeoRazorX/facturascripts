@@ -136,7 +136,7 @@ class EditTarifa extends EditController
         $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
         $this->views[$viewName]->addOrderBy(['precio'], 'price');
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
-        $this->views[$viewName]->searchFields = ['referencia', 'descripcion'];
+        $this->views[$viewName]->addSearchFields(['variantes.referencia', 'descripcion']);
 
         /// disable buttons
         $this->setSettings($viewName, 'btnDelete', false);

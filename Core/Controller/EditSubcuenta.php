@@ -69,7 +69,7 @@ class EditSubcuenta extends EditController
      *
      * @param string $viewName
      */
-    protected function addLedgerReport($viewName)
+    protected function addLedgerReport(string $viewName)
     {
         $this->addButton($viewName, Ledger::getButton('modal'));
         $this->setLedgerReportExportOptions($viewName);
@@ -80,11 +80,11 @@ class EditSubcuenta extends EditController
      *
      * @param string $viewName
      */
-    protected function createDepartureView($viewName = 'ListPartidaAsiento')
+    protected function createDepartureView(string $viewName = 'ListPartidaAsiento')
     {
         $this->addListView($viewName, 'ModelView\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->views[$viewName]->searchFields[] = 'concepto';
         $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date', 2);
+        $this->views[$viewName]->addSearchFields(['partidas.concepto']);
 
         /// disable column
         $this->views[$viewName]->disableColumn('subaccount');
