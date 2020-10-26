@@ -81,7 +81,7 @@ class EditAsiento extends EditController
     }
 
     /**
-     * Block/Unblock edit data of accounting entry
+     * Lock/Unlock accounting entry
      */
     protected function changeLockStatus()
     {
@@ -107,7 +107,7 @@ class EditAsiento extends EditController
 
         // prepare source document structure
         $accounting = new Asiento();
-        if (!$accounting->loadFromCode($sourceCode)) {
+        if (false === $accounting->loadFromCode($sourceCode)) {
             return true; // continue default view load
         }
 
@@ -116,7 +116,7 @@ class EditAsiento extends EditController
 
         // init target document data
         $accounting->idasiento = null;
-        $accounting->fecha = date('d-m-Y');
+        $accounting->fecha = \date(Asiento::DATE_STYLE);
         $accounting->numero = $accounting->newCode('numero');
 
         // start transaction
@@ -125,14 +125,14 @@ class EditAsiento extends EditController
         // main save process
         $cloneOk = true;
         try {
-            if (!$accounting->save()) {
+            if (false === $accounting->save()) {
                 throw new Exception($this->toolBox()->i18n()->trans('clone-document-error'));
             }
 
             foreach ($entries as $line) {
                 $line->idpartida = null;
                 $line->idasiento = $accounting->idasiento;
-                if (!$line->save()) {
+                if (false === $line->save()) {
                     throw new Exception($this->toolBox()->i18n()->trans('clone-line-document-error'));
                 }
             }
@@ -170,6 +170,20 @@ class EditAsiento extends EditController
     }
 
     /**
+     * 
+     * @param string $action
+     */
+    protected function execAfterAction($action)
+    {
+        if ($action === 'save-ok' && false === $this->getModel()->isBalanced()) {
+            $this->toolBox()->i18nLog()->warning('mismatched-accounting-entry');
+            return;
+        }
+
+        parent::execAfterAction($action);
+    }
+
+    /**
      * Run the actions that alter data before reading it
      *
      * @param string $action
@@ -193,13 +207,38 @@ class EditAsiento extends EditController
             case 'recalculate-document':
                 $this->recalculateDocument();
                 return false;
-
-            case 'save-ok':
-                return true;
-
-            default:
-                return parent::execPreviousAction($action);
         }
+
+        return parent::execPreviousAction($action);
+    }
+
+    /**
+     * Get account data from request data
+     */
+    private function getAccountData()
+    {
+        $this->setTemplate(false);
+        $subaccount = $this->request->get('codsubcuenta', '');
+        $exercise = $this->request->get('codejercicio', '');
+        $channel = $this->request->get('canal', 0);
+
+        $tools = new AccountingEntryTools();
+        $data = $tools->getAccountData($exercise, $subaccount, $channel);
+        $this->response->setContent(\json_encode($data));
+    }
+
+    /**
+     * Recalculate document amounts
+     */
+    private function recalculateDocument()
+    {
+        $this->setTemplate(false);
+        $data = $this->request->request->all();
+
+        $tools = new AccountingEntryTools();
+        $this->response->setContent(
+            \json_encode($tools->recalculate($this->views['EditAsiento'], $data))
+        );
     }
 
     /**
@@ -218,42 +257,21 @@ class EditAsiento extends EditController
 
         if ($accounting->loadFromCode('', $where)) {
             $search = ['%document%', '%date%', '%date-entry%', '%month%'];
-            $replace = [$accounting->documento, date('d-m-Y'), $accounting->fecha, $this->toolBox()->i18n()->trans(date('F', strtotime($accounting->fecha)))];
+            $replace = [
+                $accounting->documento,
+                \date(Asiento::DATE_STYLE),
+                $accounting->fecha,
+                $this->toolBox()->i18n()->trans(\date('F', \strtotime($accounting->fecha)))
+            ];
             foreach ($results as $result) {
-                $finalValue = array('key' => str_replace($search, $replace, $result['key']), 'value' => $result['value']);
+                $finalValue = [
+                    'key' => \str_replace($search, $replace, $result['key']),
+                    'value' => $result['value']
+                ];
                 $finalResults[] = $finalValue;
             }
         }
 
         return $finalResults;
-    }
-
-    /**
-     * Get account data from request data
-     */
-    private function getAccountData()
-    {
-        $this->setTemplate(false);
-        $subaccount = $this->request->get('codsubcuenta', '');
-        $exercise = $this->request->get('codejercicio', '');
-        $channel = $this->request->get('canal', 0);
-
-        $tools = new AccountingEntryTools();
-        $data = $tools->getAccountData($exercise, $subaccount, $channel);
-        $this->response->setContent(json_encode($data));
-    }
-
-    /**
-     * Recalculate document amounts
-     */
-    private function recalculateDocument()
-    {
-        $this->setTemplate(false);
-        $data = $this->request->request->all();
-
-        $tools = new AccountingEntryTools();
-        $this->response->setContent(
-            json_encode($tools->recalculate($this->views['EditAsiento'], $data))
-        );
     }
 }

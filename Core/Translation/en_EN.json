@@ -685,6 +685,7 @@
     "method-payment": "Method of payment",
     "mime-type": "Mime Type",
     "minimum-stock": "Minimum stock",
+    "mismatched-accounting-entry": "Mismatched accounting entry",
     "missing-data-epigraph-group": "Missing data in the group epigraph.",
     "missing-data-subaccount": "Data is missing from the subaccount.",
     "missing-epigraph-data": "Data are missing from the epigraph.",

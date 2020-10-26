@@ -685,6 +685,7 @@
     "method-payment": "Forma de pagament",
     "mime-type": "Mime Type",
     "minimum-stock": "Estoc mínim",
+    "mismatched-accounting-entry": "mismatched-accounting-entry",
     "missing-data-epigraph-group": "Falten senyes en el grup.",
     "missing-data-subaccount": "Falten senyes en el subconte.",
     "missing-epigraph-data": "Falten senyes en el grup.",

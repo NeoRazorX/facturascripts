@@ -685,6 +685,7 @@
     "method-payment": "Mètode de pagament",
     "mime-type": "Mime Type",
     "minimum-stock": "Stock mínim",
+    "mismatched-accounting-entry": "mismatched-accounting-entry",
     "missing-data-epigraph-group": "Falten dades en el grup d'epígrafs.",
     "missing-data-subaccount": "Falten dades en el subcompte.",
     "missing-epigraph-data": "Falten dades en l'epígraf.",
