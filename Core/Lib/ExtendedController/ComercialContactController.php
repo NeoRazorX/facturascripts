@@ -150,7 +150,7 @@ abstract class ComercialContactController extends EditController
         /// sort options
         $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code');
         $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'descripcion');
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
         $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
 
         /// search columns

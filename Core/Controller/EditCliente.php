@@ -180,14 +180,14 @@ class EditCliente extends ComercialContactController
     protected function loadData($viewName, $view)
     {
         $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $where = [new DataBaseWhere('codcliente', $codcliente)];
+
         switch ($viewName) {
             case 'EditCuentaBancoCliente':
-                $where = [new DataBaseWhere('codcliente', $codcliente)];
                 $view->loadData('', $where, ['codcuenta' => 'DESC']);
                 break;
 
             case 'EditDireccionContacto':
-                $where = [new DataBaseWhere('codcliente', $codcliente)];
                 $view->loadData('', $where, ['idcontacto' => 'DESC']);
                 break;
 
@@ -196,7 +196,6 @@ class EditCliente extends ComercialContactController
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
             case 'ListReciboCliente':
-                $where = [new DataBaseWhere('codcliente', $codcliente)];
                 $view->loadData('', $where);
                 break;
 

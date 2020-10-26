@@ -188,14 +188,14 @@ class EditProveedor extends ComercialContactController
     protected function loadData($viewName, $view)
     {
         $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $where = [new DataBaseWhere('codproveedor', $codproveedor)];
+
         switch ($viewName) {
             case 'EditCuentaBancoProveedor':
-                $where = [new DataBaseWhere('codproveedor', $codproveedor)];
                 $view->loadData('', $where, ['codcuenta' => 'DESC']);
                 break;
 
             case 'EditDireccionContacto':
-                $where = [new DataBaseWhere('codproveedor', $codproveedor)];
                 $view->loadData('', $where, ['idcontacto' => 'DESC']);
                 break;
 
@@ -205,7 +205,6 @@ class EditProveedor extends ComercialContactController
             case 'ListPresupuestoProveedor':
             case 'ListProductoProveedor':
             case 'ListReciboProveedor':
-                $where = [new DataBaseWhere('codproveedor', $codproveedor)];
                 $view->loadData('', $where);
                 break;
 
