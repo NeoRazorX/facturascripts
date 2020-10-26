@@ -99,8 +99,7 @@ abstract class ComercialContactController extends EditController
         $this->views[$viewName]->addOrderBy(['pvptotal'], 'amount');
 
         /// search columns
-        $this->views[$viewName]->searchFields[] = 'referencia';
-        $this->views[$viewName]->searchFields[] = 'descripcion';
+        $this->views[$viewName]->addSearchFields(['referencia', 'descripcion']);
 
         /// disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
@@ -125,8 +124,7 @@ abstract class ComercialContactController extends EditController
         $this->views[$viewName]->addOrderBy(['importe'], 'amount');
 
         /// search columns
-        $this->views[$viewName]->searchFields[] = 'codigofactura';
-        $this->views[$viewName]->searchFields[] = 'observaciones';
+        $this->views[$viewName]->addSearchFields(['codigofactura', 'observaciones']);
 
         /// add pay button
         $this->addButtonPayReceipt($viewName);
@@ -150,14 +148,13 @@ abstract class ComercialContactController extends EditController
         $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-book');
 
         /// sort options
-        $this->views[$viewName]->addOrderBy(['codigo'], 'code');
+        $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code');
         $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
         $this->views[$viewName]->addOrderBy(['descripcion'], 'descripcion');
         $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
 
         /// search columns
-        $this->views[$viewName]->searchFields[] = 'codigo';
-        $this->views[$viewName]->searchFields[] = 'description';
+        $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
 
         /// disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
@@ -197,8 +194,7 @@ abstract class ComercialContactController extends EditController
         $this->views[$viewName]->addOrderBy(['total'], 'amount');
 
         /// search columns
-        $this->views[$viewName]->searchFields[] = $fields['numfield'];
-        $this->views[$viewName]->searchFields[] = 'observaciones';
+        $this->views[$viewName]->addSearchFields([$fields['numfield'], 'observaciones']);
 
         /// disable columns
         $this->views[$viewName]->disableColumn($fields['linkfield'], true);

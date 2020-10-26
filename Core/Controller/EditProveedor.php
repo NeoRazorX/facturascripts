@@ -116,7 +116,7 @@ class EditProveedor extends ComercialContactController
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference');
         $this->views[$viewName]->addOrderBy(['refproveedor'], 'supplier-reference');
         $this->views[$viewName]->addOrderBy(['neto'], 'net');
-        $this->views[$viewName]->searchFields = ['referencia', 'refproveedor'];
+        $this->views[$viewName]->addSearchFields(['referencia', 'refproveedor']);
 
         /// disable columns
         $this->views[$viewName]->disableColumn('supplier');
