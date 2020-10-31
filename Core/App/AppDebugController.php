@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,7 +36,21 @@ class AppDebugController extends AppController
     public function __construct(string $uri = '/', string $pageName = '')
     {
         DebugBar::start();
+        DebugBar::start('__construct');
         parent::__construct($uri, $pageName);
+        DebugBar::end('__construct');
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function connect(): bool
+    {
+        DebugBar::start('connect');
+        $return = parent::connect();
+        DebugBar::end('connect');
+        return $return;
     }
 
     /**
@@ -65,8 +79,8 @@ class AppDebugController extends AppController
      */
     protected function renderHtml(string $template, string $controllerName = '')
     {
-        $parts = explode('\\', $controllerName);
-        DebugBar::end(end($parts));
+        $parts = \explode('\\', $controllerName);
+        DebugBar::end(\end($parts));
         DebugBar::start($template);
         parent::renderHtml($template, $controllerName);
     }

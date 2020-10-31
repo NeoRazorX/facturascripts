@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -104,7 +104,7 @@ class AppController extends App
      */
     public function run(): bool
     {
-        if (!parent::run()) {
+        if (false === parent::run()) {
             return false;
         } elseif ($this->request->query->get('logout')) {
             $this->userLogout();
@@ -138,7 +138,7 @@ class AppController extends App
             $content .= empty($content) ? $log["message"] : "\n" . $log["message"];
         }
 
-        $this->response->setContent(nl2br($content));
+        $this->response->setContent(\nl2br($content));
         $this->response->setStatusCode($status);
     }
 
@@ -152,7 +152,7 @@ class AppController extends App
     private function getControllerFullName(string $pageName)
     {
         $controllerName = '\\FacturaScripts\\Dinamic\\Controller\\' . $pageName;
-        return class_exists($controllerName) ? $controllerName : '\\FacturaScripts\\Core\\Controller\\' . $pageName;
+        return \class_exists($controllerName) ? $controllerName : '\\FacturaScripts\\Core\\Controller\\' . $pageName;
     }
 
     /**
@@ -188,7 +188,7 @@ class AppController extends App
         $template = 'Error/ControllerNotFound.html.twig';
 
         /// If we found a controller, load it
-        if (class_exists($controllerName)) {
+        if (\class_exists($controllerName)) {
             $this->toolBox()->i18nLog()->debug('loading-controller', ['%controllerName%' => $controllerName]);
             $this->menuManager->setUser($this->user);
             $permissions = new ControllerPermissions($this->user, $pageName);
@@ -252,7 +252,7 @@ class AppController extends App
             'debugBarRender' => $this->debugBar(),
             'fsc' => $this->controller,
             'menuManager' => $this->menuManager,
-            'template' => $template,
+            'template' => $template
         ];
 
         $webRender = new WebRender();

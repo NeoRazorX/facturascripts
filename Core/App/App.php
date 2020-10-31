@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -89,7 +89,7 @@ abstract class App
         $this->uri = $uri;
 
         /// timezone
-        date_default_timezone_set(\FS_TIMEZONE);
+        \date_default_timezone_set(\FS_TIMEZONE);
 
         $this->toolBox()->log()->debug('URI: ' . $this->uri);
     }
@@ -142,7 +142,7 @@ abstract class App
      */
     public function run(): bool
     {
-        if (!$this->dataBase->connected()) {
+        if (false === $this->dataBase->connected()) {
             $this->toolBox()->i18nLog()->critical('cant-connect-database');
             $this->die(Response::HTTP_INTERNAL_SERVER_ERROR);
             return false;
@@ -164,7 +164,7 @@ abstract class App
      */
     protected function getUriParam(string $num): string
     {
-        $params = explode('/', substr($this->uri, 1));
+        $params = \explode('/', \substr($this->uri, 1));
         return isset($params[$num]) ? $params[$num] : '';
     }
 
@@ -195,7 +195,7 @@ abstract class App
     {
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             $initClass = '\\FacturaScripts\\Plugins\\' . $pluginName . '\\Init';
-            if (class_exists($initClass)) {
+            if (\class_exists($initClass)) {
                 $initObject = new $initClass();
                 $initObject->init();
             }
