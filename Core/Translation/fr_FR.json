@@ -170,6 +170,7 @@
     "change": "Changer",
     "channel": "canal",
     "chart": "Graphique",
+    "charts": "charts",
     "check-table": "Erreur lors de la vérification de la table '%tableName%'",
     "children-accounts": "Comptes enfants",
     "choose-currency": "Choisissez la devise",

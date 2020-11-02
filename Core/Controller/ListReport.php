@@ -36,7 +36,7 @@ class ListReport extends ListController
     {
         $data = parent::getPageData();
         $data['menu'] = 'reports';
-        $data['title'] = 'all';
+        $data['title'] = 'charts';
         $data['icon'] = 'fas fa-chart-pie';
         return $data;
     }
