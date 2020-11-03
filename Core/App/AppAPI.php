@@ -44,30 +44,14 @@ class AppAPI extends App
     protected $apiKey;
 
     /**
-     * 
-     * @param string $uri
-     */
-    public function __construct(string $uri = '/')
-    {
-        parent::__construct($uri);
-        \header('Access-Control-Allow-Headers: Token, X-Auth-Token');
-        \header('Access-Control-Allow-Origin: *');
-        \header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    }
-
-    /**
      * Returns the data into the standard output.
      */
     public function render()
     {
+        $this->response->headers->set('Access-Control-Allow-Origin', '*');
+        $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
         $this->response->headers->set('Content-Type', 'application/json');
-
-        $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
-        if ($this->request->server->get('REQUEST_METHOD') == "OPTIONS" && null !== $allowHeaders) {
-            $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
-        } else {
-            parent::render();
-        }
+        parent::render();
     }
 
     /**
@@ -82,6 +66,9 @@ class AppAPI extends App
         } elseif ($this->isDisabled()) {
             $this->die(Response::HTTP_NOT_FOUND, 'api-disabled');
             return false;
+        } elseif ($this->request->server->get('REQUEST_METHOD') == 'OPTIONS') {
+            $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
+            $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
         } elseif (false === $this->checkAuthToken()) {
             $this->ipWarning();
             $this->die(Response::HTTP_FORBIDDEN, 'auth-token-invalid');
