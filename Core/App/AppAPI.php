@@ -69,6 +69,7 @@ class AppAPI extends App
         } elseif ($this->request->server->get('REQUEST_METHOD') == 'OPTIONS') {
             $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
             $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
+            return false;
         } elseif (false === $this->checkAuthToken()) {
             $this->ipWarning();
             $this->die(Response::HTTP_FORBIDDEN, 'auth-token-invalid');
