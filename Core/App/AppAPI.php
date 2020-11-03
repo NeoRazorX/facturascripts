@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,9 +27,9 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * AppAPI is the class used for API.
  *
- * @author Carlos García Gómez                                  <carlos@facturascripts.com>
- * @author Ángel Guzmán Maeso                                   <angel@guzmanmaeso.com>
- * @author Rafael San José Tovar (http://www.x-netdigital.com)  <info@rsanjoseo.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Ángel Guzmán Maeso       <angel@guzmanmaeso.com>
+ * @author Rafael San José Tovar    <info@rsanjoseo.com>
  */
 class AppAPI extends App
 {
@@ -44,16 +44,26 @@ class AppAPI extends App
     protected $apiKey;
 
     /**
+     * 
+     * @param string $uri
+     */
+    public function __construct(string $uri = '/')
+    {
+        parent::__construct($uri);
+        \header('Access-Control-Allow-Headers: Token, X-Auth-Token');
+        \header('Access-Control-Allow-Origin: *');
+        \header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    }
+
+    /**
      * Returns the data into the standard output.
      */
     public function render()
     {
-        $this->response->headers->set('Access-Control-Allow-Origin', '*');
-        $this->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
         $this->response->headers->set('Content-Type', 'application/json');
 
         $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
-        if ($this->request->server->get('REQUEST_METHOD') == "OPTIONS" && !is_null($allowHeaders)) {
+        if ($this->request->server->get('REQUEST_METHOD') == "OPTIONS" && null !== $allowHeaders) {
             $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
         } else {
             parent::render();
@@ -67,16 +77,16 @@ class AppAPI extends App
      */
     public function run(): bool
     {
-        if (!parent::run()) {
+        if (false === parent::run()) {
             return false;
         } elseif ($this->isDisabled()) {
             $this->die(Response::HTTP_NOT_FOUND, 'api-disabled');
             return false;
-        } elseif (!$this->checkAuthToken()) {
+        } elseif (false === $this->checkAuthToken()) {
             $this->ipWarning();
             $this->die(Response::HTTP_FORBIDDEN, 'auth-token-invalid');
             return false;
-        } elseif (!$this->isAllowed()) {
+        } elseif (false === $this->isAllowed()) {
             $this->ipWarning();
             $this->die(Response::HTTP_FORBIDDEN, 'forbidden');
             return false;
