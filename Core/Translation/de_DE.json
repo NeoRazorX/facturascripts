@@ -145,6 +145,7 @@
     "cant-assign-date-already-regularized": "Sie können das Datum 0 nicht zuordnen, da für diesen Zeitraum bereits eine Regularisierung von 1 vorliegt.",
     "cant-assing-subaccount-supplier": "Unterkonto für Anbieter 0 kann nicht zugeordnet werden",
     "cant-associate-customer-subaccount": "Unterkonto für Client 0 kann nicht zugeordnet werden",
+    "cant-change-agent-in-settlement": "cant-change-agent-in-settlement",
     "cant-connect-database": "Unmöglich zu der Datenbank zu verbinden!",
     "cant-convert-to-innodb": "Unmöglich, die Tabelle %1$s to'InnoDB Essentiell für FacturaScripts zu konvertieren.",
     "cant-create-customer-subaccount": "Kann Kundenunterkonto nicht erstellen",

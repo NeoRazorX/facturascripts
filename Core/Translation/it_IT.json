@@ -145,6 +145,7 @@
     "cant-assign-date-already-regularized": "Non si può assegnare la data 0 perché esiste già una regolarizzazione di 1 per quel periodo.",
     "cant-assing-subaccount-supplier": "Impossibile associare il subaccount al provider 0",
     "cant-associate-customer-subaccount": "Impossibile associare il subaccount per il client 0",
+    "cant-change-agent-in-settlement": "cant-change-agent-in-settlement",
     "cant-connect-database": "Impossibile connettersi al database!",
     "cant-convert-to-innodb": "Impossibile convertire la tabella %1$s to'InnoDB Essenziale per FacturaScripts.",
     "cant-create-customer-subaccount": "Impossibile creare il subaccount cliente",

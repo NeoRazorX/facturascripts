@@ -404,20 +404,17 @@ abstract class SalesDocument extends TransformerDocument
      */
     protected function onChange($field)
     {
+        /// before parent checks
+        if ('codagente' === $field) {
+            return $this->onChangeAgent();
+        }
+
         if (false === parent::onChange($field)) {
             return false;
         }
 
+        /// after parent checks
         switch ($field) {
-            case 'codagente':
-                /// recalculate commission
-                if (null !== $this->codagente && $this->editable && $this->total > 0) {
-                    $lines = $this->getLines();
-                    $commissions = new CommissionTools();
-                    $commissions->recalculate($this, $lines);
-                }
-                break;
-
             case 'direccion':
                 $contact = new Contacto();
                 /// if address is changed and customer billing address is empty, then save new values
@@ -445,6 +442,21 @@ abstract class SalesDocument extends TransformerDocument
                     return true;
                 }
                 return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function onChangeAgent()
+    {
+        if (null !== $this->codagente && $this->total > 0) {
+            $lines = $this->getLines();
+            $commissions = new CommissionTools();
+            $commissions->recalculate($this, $lines);
         }
 
         return true;

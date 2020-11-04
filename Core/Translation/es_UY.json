@@ -145,6 +145,7 @@
     "cant-assign-date-already-regularized": "No se puede asignar la fecha %date% porque ya hay una regularización de %tax% para ese periodo.",
     "cant-assing-subaccount-supplier": "Imposible asociar la subcuenta para el proveedor %supplierCode%",
     "cant-associate-customer-subaccount": "Imposible asociar la subcuenta para el cliente %customerCode%",
+    "cant-change-agent-in-settlement": "No puede cambiar el agente. La comisión ya está liquidada.",
     "cant-connect-database": "Imposible conectar a la base de datos",
     "cant-convert-to-innodb": "Imposible convertir la tabla '%tableName%' a InnoDB. Imprescindible para el Sistema.",
     "cant-create-customer-subaccount": "Imposible crear la subcuenta para el cliente %customerCode%",

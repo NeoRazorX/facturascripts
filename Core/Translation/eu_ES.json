@@ -145,6 +145,7 @@
     "cant-assign-date-already-regularized": "Ezin duzu %date% data esleitu, dagoeneko %tax%(e)ko erregularizazioa dagoelako epe horrentzat.",
     "cant-assing-subaccount-supplier": "Ezin da azpikontua lotu %supplierCode% hornitzaileari",
     "cant-associate-customer-subaccount": "Ezin da azpikontua lotu %customerCode% bezeroari",
+    "cant-change-agent-in-settlement": "cant-change-agent-in-settlement",
     "cant-connect-database": "Ezinezkoa datu basera konektatzea",
     "cant-convert-to-innodb": "'%tableName%' taula ezin bihurtu InnoDB-ra, ezinbestekoa FacturaScripts-rako.",
     "cant-create-customer-subaccount": "Ezin da %customerCode% bezeroaren azpikontua sortu",

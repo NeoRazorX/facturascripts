@@ -141,7 +141,7 @@ class FacturaCliente extends Base\SalesDocument
      */
     public function test()
     {
-        if (!parent::test()) {
+        if (false === parent::test()) {
             return false;
         }
 
@@ -178,5 +178,19 @@ class FacturaCliente extends Base\SalesDocument
         }
 
         return true;
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    protected function onChangeAgent()
+    {
+        if ($this->idliquidacion) {
+            $this->toolBox()->i18nLog()->warning('cant-change-agent-in-settlement');
+            return false;
+        }
+
+        return parent::onChangeAgent();
     }
 }

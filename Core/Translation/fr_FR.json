@@ -145,6 +145,7 @@
     "cant-assign-date-already-regularized": "Vous ne pouvez pas attribuer la date %date% car il y a déjà une régularisation de %tax% pour cette période.",
     "cant-assing-subaccount-supplier": "Impossible d'associer le sous-compte au fournisseur %supplierCode%",
     "cant-associate-customer-subaccount": "Impossible d'associer le sous-compte au client %customerCode%",
+    "cant-change-agent-in-settlement": "cant-change-agent-in-settlement",
     "cant-connect-database": "Impossible de se connecter à la base de données!",
     "cant-convert-to-innodb": "Impossible de convertir la table %tableName% en InnoDB. Indispensable pour FacturaScripts.",
     "cant-create-customer-subaccount": "Impossible de créer le sous-compte client %customerCode%",

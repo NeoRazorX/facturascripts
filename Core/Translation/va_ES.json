@@ -145,6 +145,7 @@
     "cant-assign-date-already-regularized": "No pots assignar la data %date% perque ya n'hi ha una regularisació %tax% per ad eixe periodo.",
     "cant-assing-subaccount-supplier": "No es pot associar el subconte per al proveïdor %supplierCode%",
     "cant-associate-customer-subaccount": "No es pot assignar el subconte per al client %customerCode%",
+    "cant-change-agent-in-settlement": "cant-change-agent-in-settlement",
     "cant-connect-database": "No es pot conectar en la base de senyes",
     "cant-convert-to-innodb": "No es pot convertir la taula '%tableName%' a InnoDB. Necessari per a FacturaScripts.",
     "cant-create-customer-subaccount": "No es pot crear el subconte del client %customerCode%",
