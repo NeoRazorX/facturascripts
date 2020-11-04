@@ -203,6 +203,10 @@
         <type>PRIMARY KEY (idpedido)</type>
     </constraint>
     <constraint>
+        <name>ca_pedidoscli_agentes</name>
+        <type>FOREIGN KEY (codagente) REFERENCES agentes (codagente) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
         <name>ca_pedidoscli_almacenes</name>
         <type>FOREIGN KEY (codalmacen) REFERENCES almacenes (codalmacen) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
