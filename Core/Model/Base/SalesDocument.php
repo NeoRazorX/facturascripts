@@ -198,11 +198,14 @@ abstract class SalesDocument extends TransformerDocument
      *
      * @param string $reference
      *
-     * @return BusinessDocumentLine
+     * @return SalesDocumentLine
      */
     public function getNewProductLine($reference)
     {
         $newLine = $this->getNewLine();
+        if (empty($reference)) {
+            return $newLine;
+        }
 
         $variant = new Variante();
         $where1 = [new DataBaseWhere('referencia', $this->toolBox()->utils()->noHtml($reference))];
