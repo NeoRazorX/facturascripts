@@ -58,7 +58,7 @@
                 </widget>
             </column>
             <column name="supplier-reference" description="optional" numcolumns="12" order="110">
-                <widget type="text" fieldname="newrefproveedor" />
+                <widget type="text" fieldname="newrefproveedor" maxlength="30" />
             </column>
             <column name="price" description="optional" numcolumns="12" order="120">
                 <widget type="money" fieldname="newprecio" />
