@@ -302,7 +302,7 @@ abstract class ExportBase
     protected function setFileName(string $name)
     {
         if (empty($this->fileName)) {
-            $this->fileName = \str_replace([' ', '"', "'"], ['_', '_', '_'], $name);
+            $this->fileName = \str_replace([' ', '"', "'", '/', '\\'], ['_', '_', '_', '_', '_'], $name);
         }
     }
 
