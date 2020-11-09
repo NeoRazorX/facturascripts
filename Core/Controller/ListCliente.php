@@ -120,7 +120,7 @@ class ListCliente extends ListController
         $this->addOrderBy($viewName, ['codcliente'], 'code');
         $this->addOrderBy($viewName, ['nombre'], 'name', 1);
         $this->addOrderBy($viewName, ['cifnif'], 'fiscal-number');
-        $this->addOrderBy($viewName, ['fechaalta', 'codcliente'], 'date');
+        $this->addOrderBy($viewName, ['fechaalta', 'codcliente'], 'creation-date');
         $this->addOrderBy($viewName, ['riesgoalcanzado'], 'current-risk');
 
         /// filters

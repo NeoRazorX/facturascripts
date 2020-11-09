@@ -105,7 +105,7 @@ class ListProveedor extends ListController
         $this->addOrderBy($viewName, ['codproveedor'], 'code');
         $this->addOrderBy($viewName, ['cifnif'], 'fiscal-number');
         $this->addOrderBy($viewName, ['nombre'], 'name', 1);
-        $this->addOrderBy($viewName, ['fecha'], 'date');
+        $this->addOrderBy($viewName, ['fechaalta'], 'creation-date');
 
         /// filters
         $values = [
