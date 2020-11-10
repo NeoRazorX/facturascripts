@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,7 +69,10 @@ class Atributo extends Base\ModelClass
      */
     public function test()
     {
-        if (!empty($this->codatributo) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codatributo)) {
+        $this->codatributo = $this->toolBox()->utils()->noHtml($this->codatributo);
+        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
+
+        if ($this->codatributo && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codatributo)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codatributo, '%column%' => 'codatributo', '%min%' => '1', '%max%' => '20']
@@ -77,7 +80,6 @@ class Atributo extends Base\ModelClass
             return false;
         }
 
-        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
         return parent::test();
     }
 
