@@ -114,7 +114,7 @@ class Familia extends Base\ModelClass
         $this->codfamilia = $utils->noHtml($this->codfamilia);
         $this->descripcion = $utils->noHtml($this->descripcion);
 
-        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
+        if ($this->codfamilia && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codfamilia, '%column%' => 'codfamilia', '%min%' => '1', '%max%' => '8']
@@ -174,5 +174,20 @@ class Familia extends Base\ModelClass
         return empty($model->{$field}) && $model->madre != $code ?
             self::getSubaccountFromFamily($model->madre, $field, $model) :
             $model->{$field};
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->codfamilia)) {
+            $this->codfamilia = $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 }

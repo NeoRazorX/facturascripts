@@ -74,7 +74,7 @@ class Fabricante extends Base\ModelClass
         $this->codfabricante = $utils->noHtml($this->codfabricante);
         $this->nombre = $utils->noHtml($this->nombre);
 
-        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfabricante)) {
+        if ($this->codfabricante && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfabricante)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codfabricante, '%column%' => 'codfabricante', '%min%' => '1', '%max%' => '8']
@@ -91,5 +91,20 @@ class Fabricante extends Base\ModelClass
         }
 
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->codfabricante)) {
+            $this->codfabricante = $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 }

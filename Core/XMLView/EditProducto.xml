@@ -22,9 +22,6 @@
 <view>
     <columns>
         <group name="main" numcolumns="12">
-            <column name="idproducto" display="none" order="90">
-                <widget type="text" fieldname="idproducto" />
-            </column>
             <column name="reference" numcolumns="3" order="100">
                 <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag" required="true" readonly="dinamic" />
             </column>

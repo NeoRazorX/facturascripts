@@ -556,7 +556,7 @@
     "integrity-check": "Verificación de integridad",
     "integrity-check-help": "Esta es una verificación de la integridad del sistema, descrita como",
     "international-identifier": "Identificación internacional",
-    "invalid-alphanumeric-code": "El código introducido (%value%) no es válido. (%column%) debe tener entre %min% y %max% números o letras.",
+    "invalid-alphanumeric-code": "El código introducido (%value%) no es válido. (%column%) debe tener entre %min% y %max% números o letras, sin espacios ni otros caracteres.",
     "invalid-column-lenght": "%column% ha de tener entre %min% y %max% caracteres.",
     "invalid-date": "Fecha %date% no válida.",
     "invalid-date-there-are-invoices-after": "Fecha no válida. Ya hay facturas con fecha posterior a %date%",
