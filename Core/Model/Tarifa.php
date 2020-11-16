@@ -170,7 +170,7 @@ class Tarifa extends Base\ModelClass
     public function test()
     {
         $this->codtarifa = \trim($this->codtarifa);
-        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codtarifa)) {
+        if ($this->codtarifa && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codtarifa)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codtarifa, '%column%' => 'codtarifa', '%min%' => '1', '%max%' => '6']
@@ -180,5 +180,20 @@ class Tarifa extends Base\ModelClass
 
         $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->codtarifa)) {
+            $this->codtarifa = $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 }
