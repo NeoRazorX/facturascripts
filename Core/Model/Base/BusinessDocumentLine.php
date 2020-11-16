@@ -56,6 +56,12 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     public $descripcion;
 
     /**
+     *
+     * @var bool
+     */
+    private $disableUpdateStock = false;
+
+    /**
      * Percentage of discount.
      *
      * @var float|int
@@ -184,6 +190,15 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
         $this->iva = $this->getTax()->iva;
         $this->recargo = $this->getTax()->recargo;
+    }
+
+    /**
+     * 
+     * @param bool $value
+     */
+    public function disableUpdateStock(bool $value)
+    {
+        $this->disableUpdateStock = $value;
     }
 
     /**
@@ -430,7 +445,9 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     protected function updateStock()
     {
-        if (empty($this->actualizastock) && empty($this->previousData['actualizastock'])) {
+        if ($this->disableUpdateStock) {
+            return true;
+        } elseif (empty($this->actualizastock) && empty($this->previousData['actualizastock'])) {
             return true;
         }
 
