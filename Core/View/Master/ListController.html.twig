@@ -114,3 +114,20 @@
         }
     </style>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            if (document.location.hash) {
+                $(".nav-tabs a[href=\\" + document.location.hash + "]").tab('show');
+            }
+            $('.nav-tabs a').click(function (e) {
+                $(this).tab('show');
+                var scrollmem = $('body').scrollTop();
+                window.location.hash = this.hash;
+                $('html,body').scrollTop(scrollmem);
+            });
+        });
+    </script>
+{% endblock %}
