@@ -50,11 +50,13 @@ $(document).ready(function () {
         }
     });
     $(".clickableRow").mousedown(function (event) {
-        if (event.which === 1) {
+        if (event.which === 1 || event.which === 2) {
             var href = $(this).attr("data-href");
             var target = $(this).attr("data-target");
             if (typeof href !== typeof undefined && href !== false) {
                 if (typeof target !== typeof undefined && target === "_blank") {
+                    window.open($(this).attr("data-href"));
+                } else if (event.which === 2) {
                     window.open($(this).attr("data-href"));
                 } else {
                     parent.document.location = $(this).attr("data-href");
