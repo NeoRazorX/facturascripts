@@ -120,7 +120,10 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addGoodsPurchaseLine($accountEntry)
     {
-        $purchaseAccount = $this->getSpecialSubAccount('COMPRA');
+        $rectifAccount = $this->getSpecialSubAccount('DEVCOM');
+        $purchaseAccount = (bool) $this->document->idfacturarect && $rectifAccount->exists() ? $rectifAccount :
+            $this->getSpecialSubAccount('COMPRA');
+
         $tool = new PurchasesDocLineAccount();
         foreach ($tool->getTotalsForDocument($this->document, $purchaseAccount->codsubcuenta) as $code => $total) {
             $subaccount = $this->getSubAccount($code);
@@ -151,7 +154,10 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addGoodsSalesLine($accountEntry)
     {
-        $salesAccount = $this->getSpecialSubAccount('VENTAS');
+        $rectifAccount = $this->getSpecialSubAccount('DEVVEN');
+        $salesAccount = (bool) $this->document->idfacturarect && $rectifAccount->exists() ? $rectifAccount :
+            $this->getSpecialSubAccount('VENTAS');
+
         $tool = new SalesDocLineAccount();
         foreach ($tool->getTotalsForDocument($this->document, $salesAccount->codsubcuenta) as $code => $total) {
             $subaccount = $this->getSubAccount($code);
