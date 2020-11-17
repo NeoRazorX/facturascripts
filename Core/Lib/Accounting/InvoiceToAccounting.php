@@ -399,8 +399,12 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function purchaseAccountingEntry()
     {
+        $concept = $this->toolBox()->i18n()->trans('supplier-invoice') . ' ' . $this->document->codigo;
+        $concept .= $this->document->numproveedor ? ' (' . $this->document->numproveedor . ') - ' . $this->document->nombre :
+            ' - ' . $this->document->nombre;
+
         $accountEntry = new Asiento();
-        $this->setAccountingData($accountEntry, $this->toolBox()->i18n()->trans('supplier-invoice') . ' ' . $this->document->codigo);
+        $this->setAccountingData($accountEntry, $concept);
         if (false === $accountEntry->save()) {
             $this->toolBox()->i18nLog()->warning('accounting-entry-error');
             return;
@@ -425,9 +429,12 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function salesAccountingEntry()
     {
-        $accountEntry = new Asiento();
-        $this->setAccountingData($accountEntry, $this->toolBox()->i18n()->trans('customer-invoice') . ' ' . $this->document->codigo);
+        $concept = $this->toolBox()->i18n()->trans('customer-invoice') . ' ' . $this->document->codigo;
+        $concept .= $this->document->numero2 ? ' (' . $this->document->numero2 . ') - ' . $this->document->nombrecliente :
+            ' - ' . $this->document->nombrecliente;
 
+        $accountEntry = new Asiento();
+        $this->setAccountingData($accountEntry, $concept);
         if (false === $accountEntry->save()) {
             $this->toolBox()->i18nLog()->warning('accounting-entry-error');
             return;
