@@ -66,10 +66,10 @@
         <column name="tax" display="right" order="220">
             <widget type="percentage" fieldname="iva" />
         </column>
-        <column name="surcharge" display="right" order="230">
+        <column name="surcharge" display="none" order="230">
             <widget type="percentage" fieldname="recargo" />
         </column>
-        <column name="irpf" display="right" order="240">
+        <column name="irpf" display="none" order="240">
             <widget type="percentage" fieldname="irpf" />
         </column>
         <column name="show-quantity" display="none" order="250">
