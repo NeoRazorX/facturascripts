@@ -58,7 +58,7 @@
                 </div>
                 <div class="collapse" id="{{ formName }}Collapse">
                     <div class="card-body border-top">
-                        <div class="row align-items-center">
+                        <div class="row align-items-end">
                             <div class="col">
                                 {% for group in currentView.getColumns() %}
                                     {{ group.edit(currentView.model) | raw }}
@@ -85,14 +85,14 @@
             <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
             <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
             <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
-            <div class="card shadow mb-2 p-2">
+            <div class="card shadow mb-2">
                 <div class="form-row align-items-end">
-                    <div class="col">
+                    <div class="col pt-2">
                         {% for group in currentView.getColumns() %}
                             {{ group.edit(model) | raw }}
                         {% endfor %}
                     </div>
-                    <div class="col-2 text-right">
+                    <div class="col-2 text-right pb-2 pr-3">
                         {% if currentView.settings.btnDelete %}
                             <button type="button" class="btn btn-sm btn-danger" title="{{ i18n.trans('delete') }}"
                                     onclick="editListViewDelete('{{ currentView.getViewName() ~ counter }}');">
