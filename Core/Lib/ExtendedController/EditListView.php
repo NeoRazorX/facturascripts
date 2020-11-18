@@ -33,6 +33,7 @@ class EditListView extends BaseView
 {
 
     const DEFAULT_TEMPLATE = 'Master/EditListView.html.twig';
+    const INLINE_TEMPLATE = 'Master/EditInLineView.html.twig';
 
     /**
      * Class constructor and initialization
@@ -115,6 +116,16 @@ class EditListView extends BaseView
         }
     }
 
+    /**
+     * Sets edit mode to single line.
+     * 
+     * @param bool $editInLine
+     */
+    public function setEditInLine($editInLine) {
+        $template = ($editInLine) ? static::INLINE_TEMPLATE : static::DEFAULT_TEMPLATE;        
+        $this->template = $template;
+    }
+    
     /**
      * Adds assets to the asset manager.
      */
