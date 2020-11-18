@@ -30,7 +30,7 @@
                 </widget>
             </column>
             <column name="pagename" order="120">
-                <widget type="select" fieldname="pagename" required="true">
+                <widget type="select" fieldname="pagename" readonly="dinamic" required="true">
                     <values source="pages" fieldcode="name" fieldtitle="name" />
                 </widget>
             </column>
