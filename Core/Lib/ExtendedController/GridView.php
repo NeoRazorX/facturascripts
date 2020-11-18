@@ -37,7 +37,7 @@ use FacturaScripts\Dinamic\Lib\Widget\WidgetSelect;
 class GridView extends EditView
 {
 
-    const GRIDVIEW_TEMPLATE = 'Master/GridView.html.twig';
+    const DEFAUL_TEMPLATE = 'Master/GridView.html.twig';
 
     /**
      *
@@ -83,9 +83,6 @@ class GridView extends EditView
         // Create detail view
         $this->detailView = new EditView($detail['name'], $title, $detail['model'], $icon);
         $this->detailModel = $this->detailView->model;
-
-        // custom template
-        $this->template = self::GRIDVIEW_TEMPLATE;
     }
 
     /**

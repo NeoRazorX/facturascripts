@@ -58,12 +58,10 @@
                 </div>
                 <div class="collapse" id="{{ formName }}Collapse">
                     <div class="card-body border-top">
-                        <div class="row">
+                        <div class="form-row">
                             {% for group in currentView.getColumns() %}
                                 {{ group.edit(currentView.model) | raw }}
                             {% endfor %}
-                        </div>
-                        <div class="row">
                             <div class="col-12 text-right">
                                 <button class="btn btn-sm btn-success" type="submit">
                                     <i class="fas fa-save fa-fw" aria-hidden="true"></i>
@@ -87,7 +85,7 @@
             <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
             <div class="card shadow mb-2">
                 <div class="card-body">
-                    <div class="row">
+                    <div class="form-row">
                         {% for group in currentView.getColumns() %}
                             {{ group.edit(model) | raw }}
                         {% endfor %}

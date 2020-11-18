@@ -67,7 +67,7 @@
                     {{ row.render(fsc) | raw }}
                 </div>
             </div>
-            <div class="row">
+            <div class="form-row">
                 {% for group in currentView.getColumns() %}
                     {{ group.edit(currentView.model) | raw }}
                 {% endfor %}

@@ -34,6 +34,7 @@ use Symfony\Component\HttpFoundation\Request;
 class BusinessDocumentView extends BaseView
 {
 
+    const DEFAULT_TEMPLATE = 'Master/BusinessDocumentView.html.twig';
     const ITEM_SELECT_LIMIT = 500;
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
     const MODEL_NAMESPACE_LIB = '\\FacturaScripts\\Dinamic\\Lib\\';
@@ -69,7 +70,6 @@ class BusinessDocumentView extends BaseView
     {
         parent::__construct($name, $title, $modelName, $icon);
         $this->documentStatus = $this->model->getAvaliableStatus();
-        $this->template = 'Master/BusinessDocumentView.html.twig';
     }
 
     /**

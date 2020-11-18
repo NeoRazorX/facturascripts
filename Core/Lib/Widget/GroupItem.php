@@ -104,7 +104,7 @@ class GroupItem extends VisualItem
         $rowClass = $this->css('form-row') . ' ' . $this->valign();
 
         $html = '<div' . $divId . ' class="' . $divClass . '"><div class="' . $rowClass . '">';
-        if (!empty($this->title)) {
+        if ($this->title) {
             $html .= $this->legend();
         }
 
@@ -200,7 +200,7 @@ class GroupItem extends VisualItem
     protected function legend()
     {
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
-        return '<legend class="text-info">' . $icon . static::$i18n->trans($this->title) . '</legend>';
+        return '<legend class="text-info mt-3">' . $icon . static::$i18n->trans($this->title) . '</legend>';
     }
 
     /**

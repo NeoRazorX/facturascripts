@@ -72,20 +72,6 @@ class ListView extends BaseView
     public $totalAmounts = [];
 
     /**
-     * ListView constructor and initialization.
-     *
-     * @param string $name
-     * @param string $title
-     * @param string $modelName
-     * @param string $icon
-     */
-    public function __construct($name, $title, $modelName, $icon)
-    {
-        parent::__construct($name, $title, $modelName, $icon);
-        $this->template = static::DEFAULT_TEMPLATE;
-    }
-
-    /**
      * Adds a field to the Order By list
      *
      * @param array  $fields

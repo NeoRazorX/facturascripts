@@ -58,7 +58,7 @@
                 </div>
                 <div class="collapse" id="{{ formName }}Collapse">
                     <div class="card-body border-top">
-                        <div class="row align-items-end">
+                        <div class="form-row align-items-end">
                             <div class="col">
                                 {% for group in currentView.getColumns() %}
                                     {{ group.edit(currentView.model) | raw }}
