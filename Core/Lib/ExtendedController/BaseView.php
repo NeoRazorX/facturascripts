@@ -37,6 +37,8 @@ use FacturaScripts\Dinamic\Model\User;
 abstract class BaseView
 {
 
+    const DEFAULT_TEMPLATE = 'Master/BaseView.html.twig';
+
     /**
      *
      * @var GroupItem[]
@@ -166,7 +168,7 @@ abstract class BaseView
      */
     public function __construct($name, $title, $modelName, $icon)
     {
-        if (class_exists($modelName)) {
+        if (\class_exists($modelName)) {
             $this->model = new $modelName();
         } else {
             $this->toolBox()->i18nLog()->critical('model-not-found', ['%model%' => $modelName]);
@@ -187,7 +189,7 @@ abstract class BaseView
             'clickable' => true,
             'megasearch' => false
         ];
-        $this->template = 'Master/BaseView.html.twig';
+        $this->template = static::DEFAULT_TEMPLATE;
         $this->title = $this->toolBox()->i18n()->trans($title);
         $this->assets();
     }
@@ -246,7 +248,7 @@ abstract class BaseView
     public function disableColumn($columnName, $disabled = true, $readOnly = '')
     {
         $column = $this->columnForName($columnName);
-        if (!empty($column)) {
+        if ($column) {
             $column->display = $disabled ? 'none' : 'left';
             $column->widget->readonly = empty($readOnly) ? $column->widget->readonly : $readOnly;
         }
@@ -297,8 +299,8 @@ abstract class BaseView
         }
 
         /// now descarting pages
-        foreach (array_keys($pages) as $key2) {
-            $middle = intval($key1 / 2);
+        foreach (\array_keys($pages) as $key2) {
+            $middle = \intval($key1 / 2);
 
             /**
              * We discard everything except the first page, the last one, the middle one,
@@ -309,7 +311,7 @@ abstract class BaseView
             }
         }
 
-        return (count($pages) > 1) ? $pages : [];
+        return \count($pages) > 1 ? $pages : [];
     }
 
     /**
@@ -356,14 +358,14 @@ abstract class BaseView
      */
     public function loadPageOptions($user = false)
     {
-        if (!is_bool($user)) {
+        if (false === \is_bool($user)) {
             /// sets user security level for use in render
             VisualItem::setLevel($user->level);
         }
 
         $orderby = ['nick' => 'ASC'];
         $where = $this->getPageWhere($user);
-        if (!$this->pageOption->loadFromCode('', $where, $orderby)) {
+        if (false === $this->pageOption->loadFromCode('', $where, $orderby)) {
             $viewName = explode('-', $this->name)[0];
             VisualItemLoadEngine::installXML($viewName, $this->pageOption);
         }

@@ -149,8 +149,8 @@ class CSVImport
             case 'mysql':
                 $sql .= ' ON DUPLICATE KEY UPDATE '
                     . \implode(', ', \array_map(function ($value) {
-                        return "{$value} = VALUES({$value})";
-                    }, $csv->titles, \array_keys($csv->titles)));
+                            return "{$value} = VALUES({$value})";
+                        }, $csv->titles, \array_keys($csv->titles)));
                 break;
 
             case 'postgresql':
@@ -158,8 +158,8 @@ class CSVImport
                     . $csv->titles[0]
                     . ') DO UPDATE SET '
                     . \implode(', ', \array_map(function ($value) {
-                        return "{$value} = EXCLUDED.{$value}";
-                    }, $csv->titles, \array_keys($csv->titles)));
+                            return "{$value} = EXCLUDED.{$value}";
+                        }, $csv->titles, \array_keys($csv->titles)));
                 break;
         }
 

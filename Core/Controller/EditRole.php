@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -68,8 +68,7 @@ class EditRole extends EditController
      */
     protected function addRoleAccess($codrole, $pages)
     {
-        // add Pages to Rol
-        if (!RoleAccess::addPagesToRole($codrole, $pages)) {
+        if (false === RoleAccess::addPagesToRole($codrole, $pages)) {
             throw new Exception($this->toolBox()->i18n()->trans('cancel-process'));
         }
     }
@@ -81,13 +80,34 @@ class EditRole extends EditController
     {
         parent::createViews();
         $this->setTabsPosition('bottom');
+        $this->createViewsAccess();
+        $this->createViewsUsers();
+    }
 
-        $this->addEditListView('EditRoleAccess', 'RoleAccess', 'rules', 'fas fa-check-square');
-        $this->addEditListView('EditRoleUser', 'RoleUser', 'users', 'fas fa-address-card');
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsAccess(string $viewName = 'EditRoleAccess')
+    {
+        $this->addEditListView($viewName, 'RoleAccess', 'rules', 'fas fa-check-square');
+        $this->views[$viewName]->setInLine(true);
 
-        /// Disable columns
-        $this->views['EditRoleAccess']->disableColumn('role', true);
-        $this->views['EditRoleUser']->disableColumn('role', true);
+        /// Disable column
+        $this->views[$viewName]->disableColumn('role', true);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsUsers(string $viewName = 'EditRoleUser')
+    {
+        $this->addEditListView($viewName, 'RoleUser', 'users', 'fas fa-address-card');
+        $this->views[$viewName]->setInLine(true);
+
+        /// Disable column
+        $this->views[$viewName]->disableColumn('role', true);
     }
 
     /**

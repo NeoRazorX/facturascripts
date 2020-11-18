@@ -38,7 +38,7 @@
         {% set row = currentView.getRow('statistics') %}
         {{ row.render(fsc) | raw }}
     </div>
-    
+
     {# -- New form -- #}
     {% if currentView.settings.btnNew %}
         {% set formName = 'form' ~ currentView.getViewName() ~ 'New' %}
@@ -47,23 +47,29 @@
             <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
             <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
             <div class="card border-success shadow mb-2">
-                <div class="card-header p-2">                
+                <div class="card-body p-2">
+                    <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse"
+                            data-target="#{{ formName }}Collapse" aria-expanded="false" aria-controls="collapseExample">
+                        <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
+                        {{ i18n.trans('add') }}
+                    </button>
+                    &nbsp;
                     {{ currentView.title }}
                 </div>
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <div class="row">
-                            {% for group in currentView.getColumns() %}
-                                {{ group.edit(currentView.model) | raw }}
-                            {% endfor %}
+                <div class="collapse" id="{{ formName }}Collapse">
+                    <div class="card-body border-top">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                {% for group in currentView.getColumns() %}
+                                    {{ group.edit(currentView.model) | raw }}
+                                {% endfor %}
                             </div>
-                        </div>
-                        <div class="col-1 text-right">
-                            <button class="btn btn-sm btn-success" type="submit">
-                                <i class="fas fa-save fa-fw" aria-hidden="true"></i>
-                                <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
-                            </button>
+                            <div class="col-2 text-right">
+                                <button class="btn btn-sm btn-success" type="submit">
+                                    <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                                    <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -72,49 +78,45 @@
     {% endif %}
 
     {# -- Forms -- #}
-    <div class="card shadow mb-2">
-        <div class="card-body">
-        {% for counter, model in currentView.cursor %}
-            {% set formName = 'form' ~ currentView.getViewName() ~ counter %}
-            <form id="{{ formName }}" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="action" value="edit"/>
-                <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-                <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
-                <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
-                <div class="row align-items-center">
+    {% for counter, model in currentView.cursor %}
+        {% set formName = 'form' ~ currentView.getViewName() ~ counter %}
+        <form id="{{ formName }}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="edit"/>
+            <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+            <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
+            <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+            <div class="card shadow mb-2 p-2">
+                <div class="form-row align-items-end">
                     <div class="col">
-                        <div class="row">
                         {% for group in currentView.getColumns() %}
-                            {{ group.edit(model, false, true) | raw }}
+                            {{ group.edit(model) | raw }}
                         {% endfor %}
-                        </div>
                     </div>
-                    <div class="col-1 text-right">
-                        {# -- Row actions -- #}
-                        {% set row = currentView.getRow('actions') %}
-                        {{ row.render(false, currentView.getViewName() ~ counter) | raw }}
-                        {# -- Delete Button -- #}
+                    <div class="col-2 text-right">
                         {% if currentView.settings.btnDelete %}
-                            <button type="button" class="btn btn-sm btn-danger" onclick="editListViewDelete('{{ currentView.getViewName() ~ counter }}');">
+                            <button type="button" class="btn btn-sm btn-danger" title="{{ i18n.trans('delete') }}"
+                                    onclick="editListViewDelete('{{ currentView.getViewName() ~ counter }}');">
                                 <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
                             </button>
                         {% endif %}
+                        {# -- Row actions -- #}
+                        {% set row = currentView.getRow('actions') %}
+                        {{ row.render(false, currentView.getViewName() ~ counter) | raw }}
                         {% if currentView.settings.btnUndo %}
-                            <button class="btn btn-sm btn-secondary" type="reset">
+                            <button class="btn btn-sm btn-secondary" type="reset" title="{{ i18n.trans('undo') }}">
                                 <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
                             </button>
                         {% endif %}
                         {% if currentView.settings.btnSave %}
-                            <button class="btn btn-sm btn-primary" type="submit">
+                            <button class="btn btn-sm btn-primary" type="submit" title="{{ i18n.trans('save') }}">
                                 <i class="fas fa-save fa-fw" aria-hidden="true"></i>
                             </button>
                         {% endif %}
                     </div>
                 </div>
-            </form>
-        {% endfor %}           
-        </div>
-    </div>
+            </div>
+        </form>
+    {% endfor %}
 
     {# -- Pagination -- #}
     {% if currentView.getPagination() | length > 0 %}

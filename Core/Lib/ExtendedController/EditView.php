@@ -31,22 +31,8 @@ use Symfony\Component\HttpFoundation\Request;
 class EditView extends BaseView
 {
 
-    const EDIT_TEMPLATE = 'Master/EditView.html.twig';
-    const READONLY_TEMPLATE = 'Master/EditReadOnlyView.html.twig';
-
-    /**
-     * EditView constructor and initialization.
-     *
-     * @param string $name
-     * @param string $title
-     * @param string $modelName
-     * @param string $icon
-     */
-    public function __construct($name, $title, $modelName, $icon)
-    {
-        parent::__construct($name, $title, $modelName, $icon);
-        $this->template = static::EDIT_TEMPLATE;
-    }
+    const DEFAULT_TEMPLATE = 'Master/EditView.html.twig';
+    const READONLY_TEMPLATE = 'Master/EditViewReadOnly.html.twig';
 
     /**
      * Method to export the view data.
@@ -112,10 +98,10 @@ class EditView extends BaseView
     /**
      * Allows you to set the view as read only
      *
-     * @param bool $readOnly
+     * @param bool $value
      */
-    public function setReadOnly(bool $readOnly)
+    public function setReadOnly(bool $value)
     {
-        $this->template = $readOnly ? static::READONLY_TEMPLATE : static::EDIT_TEMPLATE;
+        $this->template = $value ? static::READONLY_TEMPLATE : static::DEFAULT_TEMPLATE;
     }
 }

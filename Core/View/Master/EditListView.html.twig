@@ -33,6 +33,12 @@
         {{ row.render(currentView.getViewName(), '', fsc) | raw }}
     </div>
 
+    {# -- Row statistics -- #}
+    <div>
+        {% set row = currentView.getRow('statistics') %}
+        {{ row.render(fsc) | raw }}
+    </div>
+
     {# -- New form -- #}
     {% if currentView.settings.btnNew %}
         {% set formName = 'form' ~ currentView.getViewName() ~ 'New' %}
@@ -70,12 +76,6 @@
             </div>
         </form>
     {% endif %}
-
-    {# -- Row statistics -- #}
-    <div>
-        {% set row = currentView.getRow('statistics') %}
-        {{ row.render(fsc) | raw }}
-    </div>
 
     {# -- Forms -- #}
     {% for counter, model in currentView.cursor %}
