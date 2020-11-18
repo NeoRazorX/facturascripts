@@ -26,10 +26,10 @@
                 <widget type="text" fieldname="codcuenta"/>
             </column>
             <column name="description" order="110">
-                <widget type="text" fieldname="descripcion" required="true" />
+                <widget type="text" fieldname="descripcion" maxlength="100" required="true" />
             </column>
             <column name="swift" numcolumns="2" order="120">
-                <widget type="text" fieldname="swift"/>
+                <widget type="text" fieldname="swift" maxlength="11" />
             </column>
             <column name="iban" order="130">
                 <widget type="text" fieldname="iban" maxlength="34" />

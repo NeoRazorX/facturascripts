@@ -556,7 +556,7 @@
     "integrity-check": "Verificació d'integritat",
     "integrity-check-help": "Aquesta és una verificació de la integritat del sistema, descrita com",
     "international-identifier": "Identificador internacional",
-    "invalid-alphanumeric-code": "El codi introduït (% value%) no és vàlid. (% column%) ha de tenir entre % min% i % max% nombres o lletres.",
+    "invalid-alphanumeric-code": "El codi introduït (% value%) no és vàlid. (% column%) ha de tenir entre % min% i % max% nombres o lletres, sense espais, accents, ni altres caràcters.",
     "invalid-column-lenght": "%column% ha de tenir entre %min% i %max% caràcters.",
     "invalid-date": "Data %date% no vàlida.",
     "invalid-date-there-are-invoices-after": "Data no vàlida. Ja hi ha factures amb data posterior a %date%",

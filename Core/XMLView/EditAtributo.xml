@@ -26,7 +26,7 @@
                 <widget type="text" fieldname="codatributo" icon="fas fa-hashtag" maxlength="20" readonly="dinamic" />
             </column>
             <column name="name" numcolumns="8" order="110">
-                <widget type="text" fieldname="nombre" required="true" />
+                <widget type="text" fieldname="nombre" maxlength="100" required="true" />
             </column>
         </group>
     </columns>

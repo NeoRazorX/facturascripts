@@ -556,7 +556,7 @@
     "integrity-check": "Integrity check",
     "integrity-check-help": "This is a check of system integrity, described as",
     "international-identifier": "International identifier",
-    "invalid-alphanumeric-code": "The alphanumeric code entered (%value%) is not valid. (%column%) must have between %min% and %max% numbers or letters, no spaces or any other chraracter.",
+    "invalid-alphanumeric-code": "The alphanumeric code entered (%value%) is not valid. (%column%) must have between %min% and %max% numbers or letters, no spaces, accents or any other chraracter.",
     "invalid-column-lenght": "%column% must have between %min% and %max% characters.",
     "invalid-date": "Invalid date %date%.",
     "invalid-date-there-are-invoices-after": "Invalid Date. There are already invoices dated after %date%",

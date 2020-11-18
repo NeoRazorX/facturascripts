@@ -29,7 +29,7 @@
                 <widget type="text" fieldname="codcuenta" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" required="true" />
             </column>
             <column name="description" order="120">
-                <widget type="text" fieldname="descripcion" required="true" />
+                <widget type="text" fieldname="descripcion" maxlength="255" required="true" />
             </column>
         </group>
         <group name="seccondary-data" numcolumns="12">

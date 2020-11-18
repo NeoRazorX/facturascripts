@@ -24,7 +24,7 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="3" order="100">
-                <widget type="text" fieldname="codbalance" icon="fas fa-hashtag" required="true" />
+                <widget type="text" fieldname="codbalance" icon="fas fa-hashtag" maxlength="15" required="true" />
             </column>
             <column name="nature" numcolumns="3" order="110">
                 <widget type="select" fieldname="naturaleza" translate="true" required="true">
@@ -35,19 +35,19 @@
                 </widget>
             </column>
             <column name="description-1" numcolumns="6" order="120">
-                <widget type="text" fieldname="descripcion1" />
+                <widget type="text" fieldname="descripcion1" maxlength="255" />
             </column>
             <column name="description-2" numcolumns="6" order="130">
-                <widget type="text" fieldname="descripcion2" />
+                <widget type="text" fieldname="descripcion2" maxlength="255" />
             </column>
             <column name="description-3" numcolumns="6" order="140">
-                <widget type="text" fieldname="descripcion3" />
+                <widget type="text" fieldname="descripcion3" maxlength="255" />
             </column>
             <column name="description-4" numcolumns="6" order="150">
-                <widget type="text" fieldname="descripcion4" />
+                <widget type="text" fieldname="descripcion4" maxlength="255" />
             </column>
             <column name="description-4ba" numcolumns="6" order="160">
-                <widget type="text" fieldname="descripcion4ba" />
+                <widget type="text" fieldname="descripcion4ba" maxlength="255" />
             </column>
         </group>
     </columns>

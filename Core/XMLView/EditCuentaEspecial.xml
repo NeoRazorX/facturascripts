@@ -26,7 +26,7 @@
                 <widget type="text" fieldname="codcuentaesp" icon="fas fa-hashtag" maxlength="6" readonly="dinamic" required="true" />
             </column>
             <column name="description" order="110">
-                <widget type="text" fieldname="descripcion" />
+                <widget type="text" fieldname="descripcion" maxlength="255" required="true" />
             </column>
         </group>
     </columns>

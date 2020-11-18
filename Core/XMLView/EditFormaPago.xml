@@ -27,7 +27,7 @@
                 <widget type="text" fieldname="codpago" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" required="true" />
             </column>
             <column name="description" order="110">
-                <widget type="text" fieldname="descripcion" required="true" />
+                <widget type="text" fieldname="descripcion" required="true" maxlength="100" />
             </column>
             <column name="expiration" numcolumns="2" order="120">
                 <widget type="number" fieldname="plazovencimiento" decimal="0" min="0" />

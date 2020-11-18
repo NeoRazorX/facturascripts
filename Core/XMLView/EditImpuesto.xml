@@ -28,7 +28,7 @@
                 <widget type="text" fieldname="codimpuesto" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" required="true" />
             </column>
             <column name="description" numcolumns="10" order="110">
-                <widget type="text" fieldname="descripcion" required="true" />
+                <widget type="text" fieldname="descripcion" maxlength="50" required="true" />
             </column>
             <column name="type" order="120">
                 <widget type="select" fieldname="tipo" translate="true" required="true">

@@ -23,10 +23,10 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codretencion" icon="fas fa-hashtag" required="true" />
+                <widget type="text" fieldname="codretencion" icon="fas fa-hashtag" maxlength="10" required="true" />
             </column>
             <column name="description" numcolumns="8" order="110">
-                <widget type="text" fieldname="descripcion" required="true" />
+                <widget type="text" fieldname="descripcion" maxlength="50" required="true" />
             </column>
             <column name="percentage" numcolumns="2" order="120">
                 <widget type="percentage" decimal="2" fieldname="porcentaje" required="true" />
