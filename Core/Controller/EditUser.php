@@ -89,11 +89,21 @@ class EditUser extends EditController
         $this->setTabsPosition('bottom');
 
         if ($this->user->admin) {
-            $this->addEditListView('EditRoleUser', 'RoleUser', 'roles', 'fas fa-address-card');
-
-            /// Disable column
-            $this->views['EditRoleUser']->disableColumn('user', true);
+            $this->createViewsRole();
         }
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsRole(string $viewName = 'EditRoleUser')
+    {
+        $this->addEditListView($viewName, 'RoleUser', 'roles', 'fas fa-address-card');
+        $this->views[$viewName]->setInLine('true');
+
+        /// Disable column
+        $this->views[$viewName]->disableColumn('user', true);
     }
 
     /**

@@ -64,7 +64,7 @@
                                     {{ group.edit(currentView.model) | raw }}
                                 {% endfor %}
                             </div>
-                            <div class="col-2 text-right">
+                            <div class="col-sm-2 text-right">
                                 <button class="btn btn-sm btn-success" type="submit">
                                     <i class="fas fa-save fa-fw" aria-hidden="true"></i>
                                     <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
@@ -92,7 +92,7 @@
                             {{ group.edit(model) | raw }}
                         {% endfor %}
                     </div>
-                    <div class="col-2 text-right pb-2 pr-3">
+                    <div class="col-sm-2 text-right pb-2 pr-3">
                         {% if currentView.settings.btnDelete %}
                             <button type="button" class="btn btn-sm btn-danger" title="{{ i18n.trans('delete') }}"
                                     onclick="editListViewDelete('{{ currentView.getViewName() ~ counter }}');">
