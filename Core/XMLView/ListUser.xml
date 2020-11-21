@@ -33,12 +33,12 @@
         <column name="language" order="130">
             <widget type="text" fieldname="langcode" />
         </column>
-        <column name="company" order="140">
+        <column name="company" display="none" order="140">
             <widget type="select" fieldname="idempresa" onclick="EditEmpresa">
                 <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
             </widget>
         </column>
-        <column name="warehouse" order="150">
+        <column name="warehouse" display="none" order="150">
             <widget type="select" fieldname="codalmacen" onclick="EditAlmacen">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
             </widget>

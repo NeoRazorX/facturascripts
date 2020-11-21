@@ -123,6 +123,7 @@ class User extends Base\ModelClass
     public function clear()
     {
         parent::clear();
+        $this->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
         $this->enabled = true;
         $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa', 1);
         $this->langcode = \FS_LANG;
@@ -227,7 +228,7 @@ class User extends Base\ModelClass
         }
 
         $this->email = $this->toolBox()->utils()->noHtml(\mb_strtolower($this->email, 'UTF8'));
-        if (!empty($this->email) && false === \filter_var($this->email, \FILTER_VALIDATE_EMAIL)) {
+        if ($this->email && false === \filter_var($this->email, \FILTER_VALIDATE_EMAIL)) {
             $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
             $this->email = null;
             return false;
