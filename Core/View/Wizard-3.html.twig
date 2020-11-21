@@ -24,7 +24,7 @@
     {% import 'Macro/Forms.html.twig' as forms %}
     {% set plugins = fsc.getAvaliablePlugins() %}
 
-    <form action="#" method="post" id="formWizard" class="form">
+    <form action="#" method="post" class="form" id="formWizard">
         <input type="hidden" name="action" value="step3" />
         <div class="bg-primary pt-5 pb-5">
             <br/>
@@ -58,7 +58,7 @@
             {% endfor %}
             <div class="row mb-3 mt-2">
                 <div class="col text-right">
-                    <button type="submit" id="btnWizard" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" id="btnWizard">
                         {{ i18n.trans('continue') }}
                     </button>
                 </div>
