@@ -284,19 +284,19 @@ class SendMail extends Controller
         }
 
         $proveedor = new Proveedor();
-        if (\property_exists($model, 'codproveedor') && $proveedor->loadFromCode($model->codproveedor)) {
+        if (\property_exists($model, 'codproveedor') && $proveedor->loadFromCode($model->codproveedor) && $proveedor->email) {
             $this->newMail->addAddress($proveedor->email, $proveedor->razonsocial);
             return;
         }
 
         $contact = new Contacto();
-        if (\property_exists($model, 'idcontactofact') && $contact->loadFromCode($model->idcontactofact)) {
+        if (\property_exists($model, 'idcontactofact') && $contact->loadFromCode($model->idcontactofact) && $contact->email) {
             $this->newMail->addAddress($contact->email, $contact->fullName());
             return;
         }
 
         $cliente = new Cliente();
-        if (\property_exists($model, 'codcliente') && $cliente->loadFromCode($model->codcliente)) {
+        if (\property_exists($model, 'codcliente') && $cliente->loadFromCode($model->codcliente) && $cliente->email) {
             $this->newMail->addAddress($cliente->email, $cliente->razonsocial);
         }
     }
@@ -315,7 +315,7 @@ class SendMail extends Controller
         $modelCode = $this->request->get('modelCode');
         if ($model->loadFromCode($modelCode) && \property_exists($className, 'femail')) {
             $model->femail = \date(Cliente::DATE_STYLE);
-            if (!$model->save()) {
+            if (false === $model->save()) {
                 $this->toolBox()->i18nLog()->error('error-saving-data');
             }
         }
