@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,50 +43,54 @@ class ListUser extends ListController
     }
 
     /**
-     * 
-     * @param string $name
-     */
-    protected function createViewRoles($name = 'ListRole')
-    {
-        $this->addView($name, 'Role', 'roles', 'fas fa-address-card');
-        $this->addSearchFields($name, ['codrole', 'descripcion']);
-        $this->addOrderBy($name, ['descripcion'], 'description');
-        $this->addOrderBy($name, ['codrole'], 'code');
-    }
-
-    /**
      * Load views
      */
     protected function createViews()
     {
-        $this->createViewUsers();
-        $this->createViewRoles();
+        $this->createViewsUsers();
+        $this->createViewsRoles();
     }
 
     /**
      * 
-     * @param string $name
+     * @param string $viewName
      */
-    protected function createViewUsers($name = 'ListUser')
+    protected function createViewsRoles(string $viewName = 'ListRole')
     {
-        $this->addView($name, 'User', 'users', 'fas fa-users');
-        $this->addSearchFields($name, ['nick', 'email']);
-        $this->addOrderBy($name, ['nick'], 'nick', 1);
-        $this->addOrderBy($name, ['email'], 'email');
-        $this->addOrderBy($name, ['level'], 'level');
-        $this->addOrderBy($name, ['lastactivity'], 'last-activity');
+        $this->addView($viewName, 'Role', 'roles', 'fas fa-address-card');
+        $this->addSearchFields($viewName, ['codrole', 'descripcion']);
+        $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addOrderBy($viewName, ['codrole'], 'code');
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsUsers(string $viewName = 'ListUser')
+    {
+        $this->addView($viewName, 'User', 'users', 'fas fa-users');
+        $this->addSearchFields($viewName, ['nick', 'email']);
+        $this->addOrderBy($viewName, ['nick'], 'nick', 1);
+        $this->addOrderBy($viewName, ['email'], 'email');
+        $this->addOrderBy($viewName, ['level'], 'level');
+        $this->addOrderBy($viewName, ['lastactivity'], 'last-activity');
 
         /// filters
         $levels = $this->codeModel->all('users', 'level', 'level');
-        $this->addFilterSelect($name, 'level', 'level', 'level', $levels);
+        $this->addFilterSelect($viewName, 'level', 'level', 'level', $levels);
 
         $languages = $this->codeModel->all('users', 'langcode', 'langcode');
-        $this->addFilterSelect($name, 'langcode', 'language', 'langcode', $languages);
-
-        $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect($name, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
+        $this->addFilterSelect($viewName, 'langcode', 'language', 'langcode', $languages);
 
         $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-        $this->addFilterSelect($name, 'idempresa', 'company', 'idempresa', $companies);
+        if (\count($companies) > 2) {
+            $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
+        }
+
+        $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        if (\count($warehouses) > 2) {
+            $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
+        }
     }
 }

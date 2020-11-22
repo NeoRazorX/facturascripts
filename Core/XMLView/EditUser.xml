@@ -26,7 +26,7 @@
                 <widget type="text" fieldname="nick" icon="fas fa-hashtag" maxlength="50" required="true" readonly="dinamic" />
             </column>
             <column name="email" order="110">
-                <widget type="email" fieldname="email" icon="fas fa-envelope" />
+                <widget type="email" fieldname="email" icon="fas fa-envelope" required="true" />
             </column>
             <column name="new-password" order="120">
                 <widget type="password" fieldname="newPassword" icon="fas fa-key" />
