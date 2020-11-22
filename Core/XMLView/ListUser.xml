@@ -43,6 +43,9 @@
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
             </widget>
         </column>
+        <column name="creation-date" order="160">
+            <widget type="text" fieldname="creationdate"/>
+        </column>
         <column name="last-ip" order="160">
             <widget type="text" fieldname="lastip" />
         </column>
