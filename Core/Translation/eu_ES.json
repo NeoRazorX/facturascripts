@@ -556,7 +556,7 @@
     "integrity-check": "Integritate egiaztatzea",
     "integrity-check-help": "Hau sistemaren integritate egiaztatze bat da, honela deskribatua",
     "international-identifier": "Nazioarteko identifikatzailea",
-    "invalid-alphanumeric-code": "(%value%) sartutako kodea baliogabea da. (%column%) %min% eta %max% bitarteko zenbaki edo letra kopurua eduki behar du.",
+    "invalid-alphanumeric-code": "(%value%) sartutako kodea baliogabea da. (%column%) %min% eta %max% bitarteko zenbaki edo letra kopurua eduki behar du espazio, azentu edo beste karaktere gabe.",
     "invalid-column-lenght": "%column%  %min% eta %max% karaktere artean egon behar du.",
     "invalid-date": "%date% data ez da zuzena.",
     "invalid-date-there-are-invoices-after": "Data baliogabea. Ba daude fakturak %date% ondorengo datarekin",
