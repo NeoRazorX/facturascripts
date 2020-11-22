@@ -31,6 +31,10 @@
         <default>true</default>
     </column>
     <column>
+        <name>creationdate</name>
+        <type>date</type>
+    </column>
+    <column>
         <name>homepage</name>
         <type>character varying(30)</type>
     </column>
