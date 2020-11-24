@@ -22,18 +22,18 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" description="optional" numcolumns="2" order="100">
+            <column name="code" description="optional" display="none" numcolumns="2" order="100">
                 <widget type="text" fieldname="codgrupo" icon="fas fa-hashtag" maxlength="6" readonly="dinamic" />
             </column>
             <column name="name" order="110">
                 <widget type="text" fieldname="nombre" maxlength="100" required="true" />
             </column>
-            <column name="rate" titleurl="ListTarifa" numcolumns="2" order="120">
+            <column name="rate" titleurl="ListTarifa" numcolumns="3" order="120">
                 <widget type="select" fieldname="codtarifa" onclick="EditTarifa">
                     <values source="tarifas" fieldcode="codtarifa" fieldtitle="nombre" />
                 </widget>
             </column>
-            <column name="subaccount" titleurl="ListCuenta" numcolumns="2" order="130">
+            <column name="subaccount" titleurl="ListCuenta" numcolumns="3" order="130">
                 <widget type="text" fieldname="codsubcuenta" icon="fas fa-balance-scale" />
             </column>
         </group>
