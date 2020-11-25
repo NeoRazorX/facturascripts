@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -138,11 +138,17 @@ class RowButton extends VisualItem
     protected function asset($url)
     {
         $path = \FS_ROUTE . '/';
-        if (substr($url, 0, strlen($path)) == $path) {
+        if (\substr($url, 0, \strlen($path)) == $path) {
             return $url;
         }
 
-        return str_replace('//', '/', $path . $url);
+        /// external link?
+        $parts = \explode(':', $url);
+        if (\in_array($parts[0], ['http', 'https'])) {
+            return $url;
+        }
+
+        return \str_replace('//', '/', $path . $url);
     }
 
     /**
