@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -161,7 +161,7 @@ class ExportManager
      */
     public static function defaultOption()
     {
-        foreach (array_keys(static::$options) as $key) {
+        foreach (\array_keys(static::$options) as $key) {
             return $key;
         }
 
@@ -235,8 +235,13 @@ class ExportManager
      */
     private function getExportClassName($option)
     {
-        $className = '\\FacturaScripts\\Dinamic\\Lib\\Export\\' . $option . 'Export';
-        return class_exists($className) ? $className : '\\FacturaScripts\\Core\\Lib\\Export\\' . $option . 'Export';
+        $dinClassName = '\\FacturaScripts\\Dinamic\\Lib\\Export\\' . $option . 'Export';
+        if (\class_exists($dinClassName)) {
+            return $dinClassName;
+        }
+
+        $className = '\\FacturaScripts\\Core\\Lib\\Export\\' . $option . 'Export';
+        return \class_exists($className) ? $className : '\\FacturaScripts\\Core\\Lib\\Export\\PDFExport';
     }
 
     /**
@@ -249,7 +254,7 @@ class ExportManager
                 'PDF' => ['description' => 'print', 'icon' => 'fas fa-print'],
                 'XLS' => ['description' => 'spreadsheet-xls', 'icon' => 'fas fa-file-excel'],
                 'CSV' => ['description' => 'structured-data-csv', 'icon' => 'fas fa-file-csv'],
-                'MAIL' => ['description' => 'email', 'icon' => 'fas fa-envelope'],
+                'MAIL' => ['description' => 'email', 'icon' => 'fas fa-envelope']
             ];
         }
 

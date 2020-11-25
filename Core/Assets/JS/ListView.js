@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,11 +62,13 @@ function listViewSetLoadFilter(viewName, value) {
 }
 
 function listViewSetOffset(viewName, value) {
+    $("#form" + viewName + " :input[name=\"action\"]").val('');
     $("#form" + viewName + " :input[name=\"offset\"]").val(value);
     $("#form" + viewName).submit();
 }
 
 function listViewSetOrder(viewName, value) {
+    $("#form" + viewName + " :input[name=\"action\"]").val('');
     $("#form" + viewName + " :input[name=\"order\"]").val(value);
     $("#form" + viewName).submit();
 }
