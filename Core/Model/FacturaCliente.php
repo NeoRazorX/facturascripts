@@ -40,6 +40,7 @@ class FacturaCliente extends Base\SalesDocument
      * Code business documen type operation
      *
      * @var string
+     * @deprecated since version 2020.82
      */
     public $codoperaciondoc;
 
@@ -47,6 +48,7 @@ class FacturaCliente extends Base\SalesDocument
      * Code business Documen sub type
      *
      * @var string
+     * @deprecated since version 2020.82
      */
     public $codsubtipodoc;
 
