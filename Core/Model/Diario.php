@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,8 @@ namespace FacturaScripts\Core\Model;
 /**
  * A division of acounting entries in different journals
  *
- * @author Raul Jimenez <raul.jimenez@nazcanetworks.com>
+ * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * @author Raul Jimenez         <raul.jimenez@nazcanetworks.com>
  */
 class Diario extends Base\ModelClass
 {
@@ -71,7 +72,7 @@ class Diario extends Base\ModelClass
     public function test()
     {
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
-        if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 100) {
+        if (\strlen($this->descripcion) < 1 || \strlen($this->descripcion) > 100) {
             $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'description', '%min%' => '1', '%max%' => '100']);
             return false;
         }
@@ -90,5 +91,20 @@ class Diario extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'ListAsiento?activetab=List')
     {
         return parent::url($type, $list);
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->iddiario)) {
+            $this->iddiario = $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 }

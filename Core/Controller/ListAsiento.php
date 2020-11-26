@@ -127,7 +127,7 @@ class ListAsiento extends ListController
     {
         $this->addView($viewName, 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
         $this->addOrderBy($viewName, ['codconcepto'], 'code');
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addOrderBy($viewName, ['descripcion'], 'description', 1);
         $this->addSearchFields($viewName, ['codconcepto', 'descripcion']);
     }
 
@@ -139,7 +139,7 @@ class ListAsiento extends ListController
     {
         $this->addView($viewName, 'Diario', 'journals', 'fas fa-book');
         $this->addOrderBy($viewName, ['iddiario'], 'code');
-        $this->addOrderBy($viewName, ['descripcion'], 'description');
+        $this->addOrderBy($viewName, ['descripcion'], 'description', 1);
         $this->addSearchFields($viewName, ['descripcion']);
     }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2018  Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -94,5 +94,20 @@ class ConceptoPartida extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'ListAsiento?activetab=List')
     {
         return parent::url($type, $list);
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->codconcepto)) {
+            $this->codconcepto = $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 }
