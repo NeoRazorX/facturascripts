@@ -6,6 +6,7 @@ php:
   - 7.2
   - 7.3
   - 7.4
+  - 8.0
 
 install: travis_retry composer install --no-interaction --prefer-source
 
@@ -13,7 +14,7 @@ services:
   - memcached
 
 addons:
-  mariadb: '10.3'
+  mariadb: '10.4'
 
 before_script:
   - mysql -e 'DROP DATABASE IF EXISTS facturascripts;'

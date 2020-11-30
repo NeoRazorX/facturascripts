@@ -21,9 +21,6 @@
 -->
 <view>
     <columns>
-        <column name="product" display="none" order="90">
-            <widget type="text" fieldname="idproducto" onclick="EditProducto" />
-        </column>
         <column name="reference" order="100">
             <widget type="text" fieldname="referencia" />
         </column>
