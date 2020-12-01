@@ -47,7 +47,7 @@ trait PasswordTrait
      */
     public $password;
 
-    abstract public static function primaryColumnValue();
+    abstract public function primaryColumnValue();
 
     abstract protected function toolBox();
 
