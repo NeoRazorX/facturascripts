@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- * This file is part of CRM plugin for FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * This file is part of FacturaScripts
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -73,15 +73,8 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="danger" fieldname="habilitado">0</option>
-            <option color="warning" fieldname="email"></option>
-            <option color="warning" fieldname="email">null:</option>
-            <option color="warning" fieldname="telefono1"></option>
-            <option color="warning" fieldname="telefono1">null:</option>
-            <option color="warning" fieldname="direccion"></option>
-            <option color="warning" fieldname="direccion">null:</option>
-            <option color="warning" fieldname="verificado">0</option>
-            <option color="success" fieldname="direccion">notnull:</option>
+            <option color="danger" fieldname="habilitado" title="disabled">0</option>
+            <option color="success" fieldname="verificado" title="verified">1</option>
         </row>
     </rows>
 </view>
