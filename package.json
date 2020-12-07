@@ -32,7 +32,6 @@
     "handsontable": "6.*",
     "jquery": "3.5.*",
     "jquery-ui-dist": "1.12.*",
-    "pace-js": "1.*",
-    "popper.js": "1.*"
+    "pace-js": "1.*"
   }
 }
