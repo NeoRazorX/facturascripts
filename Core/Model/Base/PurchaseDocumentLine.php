@@ -56,7 +56,8 @@ abstract class PurchaseDocumentLine extends BusinessDocumentLine
             new DataBaseWhere('codproveedor', $doc->codproveedor),
             new DataBaseWhere('referencia', $this->referencia)
         ];
-        if (!$product->loadFromCode('', $where) || \strtotime($product->actualizado) <= \strtotime($doc->fecha . ' ' . $doc->hora)) {
+        if (false === $product->loadFromCode('', $where) ||
+            \strtotime($product->actualizado) <= \strtotime($doc->fecha . ' ' . $doc->hora)) {
             $product->actualizado = \date(self::DATETIME_STYLE, \strtotime($doc->fecha . ' ' . $doc->hora));
             $product->coddivisa = $doc->coddivisa;
             $product->codproveedor = $doc->codproveedor;
