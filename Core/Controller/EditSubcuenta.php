@@ -82,7 +82,7 @@ class EditSubcuenta extends EditController
      */
     protected function createDepartureView(string $viewName = 'ListPartidaAsiento')
     {
-        $this->addListView($viewName, 'ModelView\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['partidas.concepto']);
 

@@ -16,15 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Model\ModelView;
+namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\ModelView;
-use FacturaScripts\Dinamic\Model\FacturaProveedor;
+use FacturaScripts\Core\Model\Base\JoinModel;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\Familia;
 
 /**
- * Auxiliary model to get sub-accounts of purchases document lines
+ * Auxiliary model to get sub-accounts of sales document lines
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
@@ -33,14 +33,14 @@ use FacturaScripts\Dinamic\Model\Familia;
  * @property string $codsubcuenta
  * @property float  $total
  */
-class PurchasesDocLineAccount extends ModelView
+class SalesDocLineAccount extends JoinModel
 {
 
     /**
      * Get totals for subaccount of sale document
      *
-     * @param FacturaProveedor $document
-     * @param string           $defaultSubacode
+     * @param FacturaCliente $document
+     * @param string         $defaultSubacode
      *
      * @return array
      */
@@ -48,15 +48,15 @@ class PurchasesDocLineAccount extends ModelView
     {
         $totals = [];
         $where = [
-            new DataBaseWhere('lineasfacturasprov.idfactura', $document->idfactura),
-            new DataBaseWhere('lineasfacturasprov.suplido', false)
+            new DataBaseWhere('lineasfacturascli.idfactura', $document->idfactura),
+            new DataBaseWhere('lineasfacturascli.suplido', false)
         ];
         $order = [
-            "COALESCE(productos.codsubcuentacom, '')" => 'ASC',
+            "COALESCE(productos.codsubcuentaven, '')" => 'ASC',
             "COALESCE(productos.codfamilia, '')" => 'ASC'
         ];
         foreach ($this->all($where, $order) as $row) {
-            $codSubAccount = empty($row->codsubcuenta) ? Familia::purchaseSubAccount($row->codfamilia) : $row->codsubcuenta;
+            $codSubAccount = empty($row->codsubcuenta) ? Familia::saleSubAccount($row->codfamilia) : $row->codsubcuenta;
             if (empty($codSubAccount)) {
                 $codSubAccount = $defaultSubacode;
             }
@@ -70,9 +70,9 @@ class PurchasesDocLineAccount extends ModelView
 
     /**
      * 
-     * @param array            $totals
-     * @param FacturaProveedor $document
-     * @param string           $defaultSubacode
+     * @param array          $totals
+     * @param FacturaCliente $document
+     * @param string         $defaultSubacode
      *
      * @return array
      */
@@ -100,10 +100,10 @@ class PurchasesDocLineAccount extends ModelView
     protected function getFields(): array
     {
         return [
-            'idfactura' => 'lineasfacturasprov.idfactura',
-            'codsubcuenta' => "COALESCE(productos.codsubcuentacom, '')",
+            'idfactura' => 'lineasfacturascli.idfactura',
+            'codsubcuenta' => "COALESCE(productos.codsubcuentaven, '')",
             'codfamilia' => "COALESCE(productos.codfamilia, '')",
-            'total' => 'SUM(lineasfacturasprov.pvptotal)'
+            'total' => 'SUM(lineasfacturascli.pvptotal)'
         ];
     }
 
@@ -114,8 +114,8 @@ class PurchasesDocLineAccount extends ModelView
      */
     protected function getGroupFields(): string
     {
-        return 'lineasfacturasprov.idfactura,'
-            . "COALESCE(productos.codsubcuentacom, ''),"
+        return 'lineasfacturascli.idfactura,'
+            . "COALESCE(productos.codsubcuentaven, ''),"
             . "COALESCE(productos.codfamilia, '')";
     }
 
@@ -124,8 +124,8 @@ class PurchasesDocLineAccount extends ModelView
      */
     protected function getSQLFrom(): string
     {
-        return 'lineasfacturasprov'
-            . ' LEFT JOIN productos ON productos.idproducto = lineasfacturasprov.idproducto';
+        return 'lineasfacturascli'
+            . ' LEFT JOIN productos ON productos.idproducto = lineasfacturascli.idproducto';
     }
 
     /**
@@ -134,7 +134,7 @@ class PurchasesDocLineAccount extends ModelView
     protected function getTables(): array
     {
         return [
-            'lineasfacturasprov',
+            'lineasfacturascli',
             'productos'
         ];
     }

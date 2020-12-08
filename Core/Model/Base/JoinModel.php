@@ -35,7 +35,7 @@ use FacturaScripts\Core\Base\ToolBox;
  * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
-abstract class ModelView
+abstract class JoinModel
 {
 
     /**

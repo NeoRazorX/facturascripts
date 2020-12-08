@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Lib\CommissionTools;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
-use FacturaScripts\Dinamic\Model\ModelView\LiquidacionComisionFactura;
+use FacturaScripts\Dinamic\Model\Join\LiquidacionComisionFactura;
 
 /**
  * Description of EditCommissionSettlement
@@ -35,12 +35,12 @@ use FacturaScripts\Dinamic\Model\ModelView\LiquidacionComisionFactura;
 class EditLiquidacionComision extends EditController
 {
 
-    const VIEWNAME_SETTLEDINVOICE = 'ListLiquidacionComisionFactura';
-    const INSERT_STATUS_ALL = 'ALL';
-    const INSERT_STATUS_CHARGED = 'CHARGED';
     const INSERT_DOMICILED_ALL = 'ALL';
     const INSERT_DOMICILED_DOMICILED = 'DOMICILED';
     const INSERT_DOMICILED_WITHOUT = 'WITHOUT';
+    const INSERT_STATUS_ALL = 'ALL';
+    const INSERT_STATUS_CHARGED = 'CHARGED';
+    const VIEWNAME_SETTLEDINVOICE = 'ListLiquidacionComisionFactura';
 
     /**
      * Returns the model name.
@@ -116,9 +116,9 @@ class EditLiquidacionComision extends EditController
      *
      * @param string $viewName
      */
-    protected function createSettledInvoiceView($viewName = self::VIEWNAME_SETTLEDINVOICE)
+    protected function createSettledInvoiceView(string $viewName = self::VIEWNAME_SETTLEDINVOICE)
     {
-        $this->addListView($viewName, 'ModelView\LiquidacionComisionFactura', 'invoices', 'fas fa-file-invoice');
+        $this->addListView($viewName, 'Join\LiquidacionComisionFactura', 'invoices', 'fas fa-file-invoice');
         $this->views[$viewName]->addOrderBy(['fecha', 'idfactura'], 'date', 2);
         $this->views[$viewName]->addOrderBy(['total'], 'amount');
         $this->views[$viewName]->addOrderBy(['totalcomision'], 'commission');
@@ -355,27 +355,23 @@ class EditLiquidacionComision extends EditController
         $this->setSettings($viewName, 'btnDelete', $canInvoice);
 
         if ($canInvoice) {
-            $calcButton = [
+            $this->addButton($viewName, [
                 'action' => 'calculatecommission',
                 'confirm' => 'true',
                 'icon' => 'fas fa-percentage',
-                'label' => 'calculate',
-                'type' => 'action',
-            ];
-            $this->addButton($viewName, $calcButton);
+                'label' => 'calculate'
+            ]);
         }
 
         $total = $this->getViewModelValue($mainViewName, 'total');
         if ($canInvoice && $total > 0) {
-            $invoiceButton = [
+            $this->addButton($mainViewName, [
                 'action' => 'generateinvoice',
                 'color' => 'info',
                 'confirm' => true,
                 'icon' => 'fas fa-file-invoice',
-                'label' => 'generate-invoice',
-                'type' => 'action',
-            ];
-            $this->addButton($mainViewName, $invoiceButton);
+                'label' => 'generate-invoice'
+            ]);
         }
     }
 }

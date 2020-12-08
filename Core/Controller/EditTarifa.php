@@ -131,7 +131,7 @@ class EditTarifa extends EditController
      */
     protected function createProductView(string $viewName = 'ListTarifaProducto')
     {
-        $this->addListView($viewName, 'ModelView\\TarifaProducto', 'products', 'fas fa-cubes');
+        $this->addListView($viewName, 'Join\TarifaProducto', 'products', 'fas fa-cubes');
         $this->views[$viewName]->addOrderBy(['coste'], 'cost-price');
         $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
         $this->views[$viewName]->addOrderBy(['precio'], 'price');

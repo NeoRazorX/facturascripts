@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\GridView;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Impuesto;
-use FacturaScripts\Dinamic\Model\ModelView\SubcuentaSaldo;
+use FacturaScripts\Dinamic\Model\Join\SubcuentaSaldo;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 

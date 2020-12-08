@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Model\ModelView;
+namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Core\Model\Base\ModelView;
+use FacturaScripts\Core\Model\Base\JoinModel;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Tarifa;
 use FacturaScripts\Dinamic\Model\Variante;
@@ -38,7 +38,7 @@ use FacturaScripts\Dinamic\Model\Variante;
  * @property string $referencia
  * @property float  $stockfis
  */
-class TarifaProducto extends ModelView
+class TarifaProducto extends JoinModel
 {
 
     /**

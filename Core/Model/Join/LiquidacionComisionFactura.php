@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Model\ModelView;
+namespace FacturaScripts\Core\Model\Join;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\ModelView;
+use FacturaScripts\Core\Model\Base\JoinModel;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 
 /**
@@ -31,7 +31,7 @@ use FacturaScripts\Dinamic\Model\FacturaCliente;
  *
  * @property int $idfactura
  */
-class LiquidacionComisionFactura extends ModelView
+class LiquidacionComisionFactura extends JoinModel
 {
 
     /**

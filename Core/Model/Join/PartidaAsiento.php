@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Model\ModelView;
+namespace FacturaScripts\Core\Model\Join;
 
-use FacturaScripts\Core\Model\Base\ModelView;
+use FacturaScripts\Core\Model\Base\JoinModel;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 
@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\Partida;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class PartidaAsiento extends ModelView
+class PartidaAsiento extends JoinModel
 {
 
     /**
