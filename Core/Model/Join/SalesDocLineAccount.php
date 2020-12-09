@@ -95,7 +95,9 @@ class SalesDocLineAccount extends JoinModel
     }
 
     /**
-     * List of fields or columns to select
+     * List of fields or columns to select.
+     * 
+     * @return array
      */
     protected function getFields(): array
     {
@@ -120,7 +122,9 @@ class SalesDocLineAccount extends JoinModel
     }
 
     /**
-     * List of tables related to from sql
+     * List of tables related to from sql.
+     * 
+     * @return string
      */
     protected function getSQLFrom(): string
     {
@@ -130,6 +134,8 @@ class SalesDocLineAccount extends JoinModel
 
     /**
      * List of tables required for the execution of the view.
+     * 
+     * @return array
      */
     protected function getTables(): array
     {

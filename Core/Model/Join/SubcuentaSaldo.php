@@ -51,7 +51,9 @@ class SubcuentaSaldo extends JoinModel
     }
 
     /**
-     * List of fields or columns to select clausule
+     * List of fields or columns to select clausule.
+     * 
+     * @return array
      */
     protected function getFields(): array
     {
@@ -81,7 +83,9 @@ class SubcuentaSaldo extends JoinModel
     }
 
     /**
-     * List of tables related to from clausule
+     * List of tables related to from clausule.
+     * 
+     * @return string
      */
     protected function getSQLFrom(): string
     {
@@ -91,6 +95,8 @@ class SubcuentaSaldo extends JoinModel
 
     /**
      * List of tables required for the execution of the view.
+     * 
+     * @return array
      */
     protected function getTables(): array
     {
