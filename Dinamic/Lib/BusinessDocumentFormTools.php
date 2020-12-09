@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class BusinessDocumentFormTools extends \FacturaScripts\Core\Lib\BusinessDocumentFormTools
+final class BusinessDocumentFormTools extends \FacturaScripts\Core\Lib\BusinessDocumentFormTools
 {
 }

@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class VisualItemLoadEngine extends \FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine
+final class VisualItemLoadEngine extends \FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine
 {
 }

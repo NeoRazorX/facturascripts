@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class ReportAmount extends \FacturaScripts\Core\Model\ReportAmount
+final class ReportAmount extends \FacturaScripts\Core\Model\ReportAmount
 {
 }

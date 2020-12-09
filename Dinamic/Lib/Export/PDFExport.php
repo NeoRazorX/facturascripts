@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class PDFExport extends \FacturaScripts\Core\Lib\Export\PDFExport
+final class PDFExport extends \FacturaScripts\Core\Lib\Export\PDFExport
 {
 }

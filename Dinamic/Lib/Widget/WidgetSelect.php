@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class WidgetSelect extends \FacturaScripts\Core\Lib\Widget\WidgetSelect
+final class WidgetSelect extends \FacturaScripts\Core\Lib\Widget\WidgetSelect
 {
 }

@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class PeriodTools extends \FacturaScripts\Core\Lib\ListFilter\PeriodTools
+final class PeriodTools extends \FacturaScripts\Core\Lib\ListFilter\PeriodTools
 {
 }

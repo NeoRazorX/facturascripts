@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class InvoiceToAccounting extends \FacturaScripts\Core\Lib\Accounting\InvoiceToAccounting
+final class InvoiceToAccounting extends \FacturaScripts\Core\Lib\Accounting\InvoiceToAccounting
 {
 }

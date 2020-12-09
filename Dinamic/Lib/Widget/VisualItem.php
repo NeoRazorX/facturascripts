@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class VisualItem extends \FacturaScripts\Core\Lib\Widget\VisualItem
+final class VisualItem extends \FacturaScripts\Core\Lib\Widget\VisualItem
 {
 }

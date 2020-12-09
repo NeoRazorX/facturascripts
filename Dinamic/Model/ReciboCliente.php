@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class ReciboCliente extends \FacturaScripts\Core\Model\ReciboCliente
+final class ReciboCliente extends \FacturaScripts\Core\Model\ReciboCliente
 {
 }

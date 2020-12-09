@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class BusinessDocumentGenerator extends \FacturaScripts\Core\Lib\BusinessDocumentGenerator
+final class BusinessDocumentGenerator extends \FacturaScripts\Core\Lib\BusinessDocumentGenerator
 {
 }

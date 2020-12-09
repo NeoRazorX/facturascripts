@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Familia extends \FacturaScripts\Core\Model\Familia
+final class Familia extends \FacturaScripts\Core\Model\Familia
 {
 }

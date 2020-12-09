@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class AgenciaTransporte extends \FacturaScripts\Core\Model\AgenciaTransporte
+final class AgenciaTransporte extends \FacturaScripts\Core\Model\AgenciaTransporte
 {
 }

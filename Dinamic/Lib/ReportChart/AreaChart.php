@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class AreaChart extends \FacturaScripts\Core\Lib\ReportChart\AreaChart
+final class AreaChart extends \FacturaScripts\Core\Lib\ReportChart\AreaChart
 {
 }

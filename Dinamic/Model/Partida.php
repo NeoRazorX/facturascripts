@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Partida extends \FacturaScripts\Core\Model\Partida
+final class Partida extends \FacturaScripts\Core\Model\Partida
 {
 }

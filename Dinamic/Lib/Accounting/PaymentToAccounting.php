@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class PaymentToAccounting extends \FacturaScripts\Core\Lib\Accounting\PaymentToAccounting
+final class PaymentToAccounting extends \FacturaScripts\Core\Lib\Accounting\PaymentToAccounting
 {
 }

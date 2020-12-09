@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Impuesto extends \FacturaScripts\Core\Model\Impuesto
+final class Impuesto extends \FacturaScripts\Core\Model\Impuesto
 {
 }

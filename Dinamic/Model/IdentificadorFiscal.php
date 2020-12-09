@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class IdentificadorFiscal extends \FacturaScripts\Core\Model\IdentificadorFiscal
+final class IdentificadorFiscal extends \FacturaScripts\Core\Model\IdentificadorFiscal
 {
 }

@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class EstadoDocumento extends \FacturaScripts\Core\Model\EstadoDocumento
+final class EstadoDocumento extends \FacturaScripts\Core\Model\EstadoDocumento
 {
 }

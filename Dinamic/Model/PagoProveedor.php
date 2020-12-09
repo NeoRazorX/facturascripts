@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class PagoProveedor extends \FacturaScripts\Core\Model\PagoProveedor
+final class PagoProveedor extends \FacturaScripts\Core\Model\PagoProveedor
 {
 }

@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Diario extends \FacturaScripts\Core\Model\Diario
+final class Diario extends \FacturaScripts\Core\Model\Diario
 {
 }

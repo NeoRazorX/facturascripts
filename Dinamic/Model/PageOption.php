@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class PageOption extends \FacturaScripts\Core\Model\PageOption
+final class PageOption extends \FacturaScripts\Core\Model\PageOption
 {
 }

@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class WidgetLink extends \FacturaScripts\Core\Lib\Widget\WidgetLink
+final class WidgetLink extends \FacturaScripts\Core\Lib\Widget\WidgetLink
 {
 }

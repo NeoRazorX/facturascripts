@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Provincia extends \FacturaScripts\Core\Model\Provincia
+final class Provincia extends \FacturaScripts\Core\Model\Provincia
 {
 }

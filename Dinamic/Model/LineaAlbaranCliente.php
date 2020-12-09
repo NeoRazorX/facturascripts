@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class LineaAlbaranCliente extends \FacturaScripts\Core\Model\LineaAlbaranCliente
+final class LineaAlbaranCliente extends \FacturaScripts\Core\Model\LineaAlbaranCliente
 {
 }

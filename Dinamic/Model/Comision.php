@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Comision extends \FacturaScripts\Core\Model\Comision
+final class Comision extends \FacturaScripts\Core\Model\Comision
 {
 }

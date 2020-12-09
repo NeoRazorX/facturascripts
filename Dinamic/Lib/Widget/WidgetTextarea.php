@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class WidgetTextarea extends \FacturaScripts\Core\Lib\Widget\WidgetTextarea
+final class WidgetTextarea extends \FacturaScripts\Core\Lib\Widget\WidgetTextarea
 {
 }

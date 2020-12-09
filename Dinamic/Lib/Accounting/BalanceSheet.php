@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class BalanceSheet extends \FacturaScripts\Core\Lib\Accounting\BalanceSheet
+final class BalanceSheet extends \FacturaScripts\Core\Lib\Accounting\BalanceSheet
 {
 }

@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class BusinessDocumentView extends \FacturaScripts\Core\Lib\ExtendedController\BusinessDocumentView
+final class BusinessDocumentView extends \FacturaScripts\Core\Lib\ExtendedController\BusinessDocumentView
 {
 }

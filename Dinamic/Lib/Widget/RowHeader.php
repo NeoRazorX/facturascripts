@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class RowHeader extends \FacturaScripts\Core\Lib\Widget\RowHeader
+final class RowHeader extends \FacturaScripts\Core\Lib\Widget\RowHeader
 {
 }

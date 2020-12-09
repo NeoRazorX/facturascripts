@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class HtmlView extends \FacturaScripts\Core\Lib\ExtendedController\HtmlView
+final class HtmlView extends \FacturaScripts\Core\Lib\ExtendedController\HtmlView
 {
 }

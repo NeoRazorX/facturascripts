@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Contacto extends \FacturaScripts\Core\Model\Contacto
+final class Contacto extends \FacturaScripts\Core\Model\Contacto
 {
 }

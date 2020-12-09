@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class RegularizacionImpuesto extends \FacturaScripts\Core\Model\RegularizacionImpuesto
+final class RegularizacionImpuesto extends \FacturaScripts\Core\Model\RegularizacionImpuesto
 {
 }

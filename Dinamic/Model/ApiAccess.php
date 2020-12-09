@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class ApiAccess extends \FacturaScripts\Core\Model\ApiAccess
+final class ApiAccess extends \FacturaScripts\Core\Model\ApiAccess
 {
 }

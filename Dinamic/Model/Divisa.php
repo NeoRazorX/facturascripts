@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Divisa extends \FacturaScripts\Core\Model\Divisa
+final class Divisa extends \FacturaScripts\Core\Model\Divisa
 {
 }

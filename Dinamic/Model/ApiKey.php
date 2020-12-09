@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class ApiKey extends \FacturaScripts\Core\Model\ApiKey
+final class ApiKey extends \FacturaScripts\Core\Model\ApiKey
 {
 }

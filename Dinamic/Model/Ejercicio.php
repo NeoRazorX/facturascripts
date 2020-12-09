@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Ejercicio extends \FacturaScripts\Core\Model\Ejercicio
+final class Ejercicio extends \FacturaScripts\Core\Model\Ejercicio
 {
 }

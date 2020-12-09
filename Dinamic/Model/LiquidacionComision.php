@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class LiquidacionComision extends \FacturaScripts\Core\Model\LiquidacionComision
+final class LiquidacionComision extends \FacturaScripts\Core\Model\LiquidacionComision
 {
 }

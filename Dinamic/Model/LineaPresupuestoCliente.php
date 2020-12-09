@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class LineaPresupuestoCliente extends \FacturaScripts\Core\Model\LineaPresupuestoCliente
+final class LineaPresupuestoCliente extends \FacturaScripts\Core\Model\LineaPresupuestoCliente
 {
 }

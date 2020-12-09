@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class CodeModel extends \FacturaScripts\Core\Model\CodeModel
+final class CodeModel extends \FacturaScripts\Core\Model\CodeModel
 {
 }

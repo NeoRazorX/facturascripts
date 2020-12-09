@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class RowActions extends \FacturaScripts\Core\Lib\Widget\RowActions
+final class RowActions extends \FacturaScripts\Core\Lib\Widget\RowActions
 {
 }

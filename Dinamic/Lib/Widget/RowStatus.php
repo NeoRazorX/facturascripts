@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class RowStatus extends \FacturaScripts\Core\Lib\Widget\RowStatus
+final class RowStatus extends \FacturaScripts\Core\Lib\Widget\RowStatus
 {
 }

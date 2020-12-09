@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class MAILExport extends \FacturaScripts\Core\Lib\Export\MAILExport
+final class MAILExport extends \FacturaScripts\Core\Lib\Export\MAILExport
 {
 }

@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class TotalModel extends \FacturaScripts\Core\Model\TotalModel
+final class TotalModel extends \FacturaScripts\Core\Model\TotalModel
 {
 }

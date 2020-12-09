@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Variante extends \FacturaScripts\Core\Model\Variante
+final class Variante extends \FacturaScripts\Core\Model\Variante
 {
 }

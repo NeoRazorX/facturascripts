@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class CostPriceTools extends \FacturaScripts\Core\Lib\CostPriceTools
+final class CostPriceTools extends \FacturaScripts\Core\Lib\CostPriceTools
 {
 }

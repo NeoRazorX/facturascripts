@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class WidgetPassword extends \FacturaScripts\Core\Lib\Widget\WidgetPassword
+final class WidgetPassword extends \FacturaScripts\Core\Lib\Widget\WidgetPassword
 {
 }

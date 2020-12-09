@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class CuentaBancoProveedor extends \FacturaScripts\Core\Model\CuentaBancoProveedor
+final class CuentaBancoProveedor extends \FacturaScripts\Core\Model\CuentaBancoProveedor
 {
 }

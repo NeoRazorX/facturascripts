@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class WidgetColor extends \FacturaScripts\Core\Lib\Widget\WidgetColor
+final class WidgetColor extends \FacturaScripts\Core\Lib\Widget\WidgetColor
 {
 }

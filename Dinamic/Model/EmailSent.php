@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class EmailSent extends \FacturaScripts\Core\Model\EmailSent
+final class EmailSent extends \FacturaScripts\Core\Model\EmailSent
 {
 }

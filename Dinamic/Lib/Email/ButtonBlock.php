@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class ButtonBlock extends \FacturaScripts\Core\Lib\Email\ButtonBlock
+final class ButtonBlock extends \FacturaScripts\Core\Lib\Email\ButtonBlock
 {
 }

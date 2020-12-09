@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class GridModelInterface extends \FacturaScripts\Core\Model\Base\GridModelInterface
+final class GridModelInterface extends \FacturaScripts\Core\Model\Base\GridModelInterface
 {
 }

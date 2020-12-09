@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class FormatoDocumento extends \FacturaScripts\Core\Model\FormatoDocumento
+final class FormatoDocumento extends \FacturaScripts\Core\Model\FormatoDocumento
 {
 }

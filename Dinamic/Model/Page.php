@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class Page extends \FacturaScripts\Core\Model\Page
+final class Page extends \FacturaScripts\Core\Model\Page
 {
 }

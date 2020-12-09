@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class ColumnItem extends \FacturaScripts\Core\Lib\Widget\ColumnItem
+final class ColumnItem extends \FacturaScripts\Core\Lib\Widget\ColumnItem
 {
 }

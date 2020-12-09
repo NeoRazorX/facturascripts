@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class LineaPedidoProveedor extends \FacturaScripts\Core\Model\LineaPedidoProveedor
+final class LineaPedidoProveedor extends \FacturaScripts\Core\Model\LineaPedidoProveedor
 {
 }

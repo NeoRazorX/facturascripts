@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class WidgetPercentage extends \FacturaScripts\Core\Lib\Widget\WidgetPercentage
+final class WidgetPercentage extends \FacturaScripts\Core\Lib\Widget\WidgetPercentage
 {
 }
