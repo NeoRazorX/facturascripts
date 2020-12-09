@@ -6,3 +6,5 @@ build:
           version: 7.1
       services:
         postgres: 10
+checks:
+  php: true
