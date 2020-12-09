@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author Ángel Guzmán Maeso       <angel@guzmanmaeso.com>
  * @author Rafael San José Tovar    <info@rsanjoseo.com>
  */
-class AppAPI extends App
+final class AppAPI extends App
 {
 
     const API_VERSION = 3;

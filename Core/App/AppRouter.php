@@ -23,7 +23,7 @@ namespace FacturaScripts\Core\App;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AppRouter
+final class AppRouter
 {
 
     /**

@@ -28,7 +28,7 @@ use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class DataBase
+final class DataBase
 {
 
     const CHANNEL = 'database';

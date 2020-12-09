@@ -32,7 +32,7 @@ use FacturaScripts\Dinamic\Model\Variante;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class TelemetryManager
+final class TelemetryManager
 {
 
     const TELEMETRY_URL = 'https://facturascripts.com/Telemetry';

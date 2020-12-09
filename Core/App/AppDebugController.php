@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\Debug\DebugBar;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class AppDebugController extends AppController
+final class AppDebugController extends AppController
 {
 
     /**

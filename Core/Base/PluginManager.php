@@ -25,7 +25,7 @@ use ZipArchive;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class PluginManager
+final class PluginManager
 {
 
     /**
