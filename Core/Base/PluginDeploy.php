@@ -163,7 +163,7 @@ class PluginDeploy
         $path .= empty($pluginName) ? $folder : $pluginName . DIRECTORY_SEPARATOR . $folder;
 
         $txt = file_get_contents($path . DIRECTORY_SEPARATOR . $fileName);
-        return strpos($txt, 'abstract class ') === false ? 'class' : 'abstract class';
+        return strpos($txt, 'abstract class ') === false ? 'final class' : 'abstract class';
     }
 
     /**
@@ -188,6 +188,8 @@ class PluginDeploy
                 $this->createFolder(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $fileName);
                 continue;
             } elseif ($fileInfo['filename'] === '' || !is_file($path . DIRECTORY_SEPARATOR . $fileName)) {
+                continue;
+            } elseif ('Trait.php' === substr($fileName, -9)) {
                 continue;
             }
 

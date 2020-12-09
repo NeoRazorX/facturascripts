@@ -21,14 +21,13 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
-use FacturaScripts\Dinamic\Lib\BusinessDocumentTools as DinBusinessDocumentTools;
 
 /**
  * Description of BusinessDocumentFormTools
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class BusinessDocumentFormTools extends DinBusinessDocumentTools
+class BusinessDocumentFormTools extends BusinessDocumentTools
 {
 
     /**
