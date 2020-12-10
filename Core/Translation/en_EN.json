@@ -1079,6 +1079,7 @@
     "type-error": "Type error",
     "type-info": "Type info",
     "type-notice": "Type notice",
+    "type-success": "Type success",
     "type-warning": "Type warning",
     "unbalance": "Unbalance",
     "under-minimums": "Under minimums",

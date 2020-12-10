@@ -18,9 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use Exception;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
-use FacturaScripts\Dinamic\Model\LogMessage;
 
 /**
  * Controller to list the items in the LogMessage model
@@ -130,63 +128,5 @@ class ListLogMessage extends ListController
 
         /// settings
         $this->setSettings($viewName, 'btnNew', false);
-    }
-
-    /**
-     * Run the actions that alter data before reading it.
-     *
-     * @param string $action
-     *
-     * @return bool
-     */
-    protected function execPreviousAction($action)
-    {
-        switch ($action) {
-            case 'delete-selected-filters':
-                $this->deleteWithFilters();
-                return true;
-
-            default:
-                return parent::execPreviousAction($action);
-        }
-    }
-
-    /**
-     * Delete logs based on active filters.
-     */
-    protected function deleteWithFilters()
-    {
-        // start transaction
-        $this->dataBase->beginTransaction();
-
-        try {
-            $logMessage = new LogMessage();
-
-            $this->views['ListLogMessage']->processFormData($this->request, 'load');
-            $where = $this->views['ListLogMessage']->where;
-            $allFilteredLogs = $logMessage->all($where, [], 0, 0);
-            $counter = 0;
-            foreach ($allFilteredLogs as $log) {
-                if (!$log->delete()) {
-                    $this->toolBox()->i18nLog()->error('record-deleted-error');
-                    break;
-                }
-
-                $counter++;
-            }
-
-            // confirm data
-            $this->dataBase->commit();
-
-            if ($counter > 0) {
-                $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
-            }
-        } catch (Exception $exc) {
-            $this->toolBox()->log()->error($exc->getMessage());
-        } finally {
-            if ($this->dataBase->inTransaction()) {
-                $this->dataBase->rollback();
-            }
-        }
     }
 }

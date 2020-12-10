@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,15 +48,11 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="seccondary" fieldname="level">debug</option>
-            <option color="info" fieldname="level">info</option>
-            <option color="success" fieldname="level">notice</option>
-            <option color="warning" fieldname="level">warning</option>
-            <option color="danger" fieldname="level">error</option>
-            <option color="dark" fieldname="level">critical</option>
-        </row>
-        <row type="actions">
-            <button type="action" label="delete-all" color="warning" action="delete-selected-filters" icon="fas fa-trash-alt" confirm="true" />
+            <option color="info" fieldname="level" title="type-info">info</option>
+            <option color="success" fieldname="level" title="type-success">notice</option>
+            <option color="warning" fieldname="level" title="type-warning">warning</option>
+            <option color="danger" fieldname="level" title="type-error">error</option>
+            <option color="dark" fieldname="level" title="type-critical">critical</option>
         </row>
     </rows>
 </view>
