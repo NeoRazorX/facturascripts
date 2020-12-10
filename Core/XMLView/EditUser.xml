@@ -78,6 +78,9 @@
             <column name="last-ip" order="140">
                 <widget type="text" fieldname="lastip" readonly="true" />
             </column>
+            <column name="creation-date" order="150">
+                <widget type="date" fieldname="creationdate" icon="fas fa-calendar-alt" readonly="true" />
+            </column>
         </group>
     </columns>
 </view>

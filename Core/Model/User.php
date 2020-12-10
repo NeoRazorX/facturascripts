@@ -128,6 +128,7 @@ class User extends Base\ModelClass
         $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa', 1);
         $this->langcode = \FS_LANG;
         $this->level = self::DEFAULT_LEVEL;
+        $this->creationdate = \date(self::DATE_STYLE);
     }
 
     /**
