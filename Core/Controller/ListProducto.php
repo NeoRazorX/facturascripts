@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
@@ -99,11 +100,11 @@ class ListProducto extends ListController
         $this->addSearchFields($viewName, ['referencia', 'codbarras']);
 
         /// filters
-        $attributeValues = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
-        $this->addFilterSelect($viewName, 'idatributovalor1', 'attribute-value-1', 'idatributovalor1', $attributeValues);
-        $this->addFilterSelect($viewName, 'idatributovalor2', 'attribute-value-2', 'idatributovalor2', $attributeValues);
-        $this->addFilterSelect($viewName, 'idatributovalor3', 'attribute-value-3', 'idatributovalor3', $attributeValues);
-        $this->addFilterSelect($viewName, 'idatributovalor4', 'attribute-value-4', 'idatributovalor4', $attributeValues);
+        $attributes = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
+        $this->addFilterSelect($viewName, 'idatributovalor1', 'attribute-value-1', 'idatributovalor1', $attributes);
+        $this->addFilterSelect($viewName, 'idatributovalor2', 'attribute-value-2', 'idatributovalor2', $attributes);
+        $this->addFilterSelect($viewName, 'idatributovalor3', 'attribute-value-3', 'idatributovalor3', $attributes);
+        $this->addFilterSelect($viewName, 'idatributovalor4', 'attribute-value-4', 'idatributovalor4', $attributes);
 
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
@@ -124,8 +125,24 @@ class ListProducto extends ListController
         $this->addSearchFields($viewName, ['referencia']);
 
         /// filters
-        $selectValues = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $selectValues);
+        $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
+
+        $values = [
+            [
+                'label' => $this->toolBox()->i18n()->trans('all'),
+                'where' => []
+            ],
+            [
+                'label' => $this->toolBox()->i18n()->trans('under-minimums'),
+                'where' => [new DataBaseWhere('disponible', 'field:stockmin', '<')]
+            ],
+            [
+                'label' => $this->toolBox()->i18n()->trans('excess'),
+                'where' => [new DataBaseWhere('disponible', 'field:stockmax', '>')]
+            ]
+        ];
+        $this->addFilterSelectWhere($viewName, 'type', $values);
 
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
