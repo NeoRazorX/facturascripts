@@ -340,7 +340,7 @@ abstract class JoinModel
      *
      * @return string
      */
-    protected function getGroupBy(): string
+    private function getGroupBy(): string
     {
         $fields = $this->getGroupFields();
         return empty($fields) ? '' : ' GROUP BY ' . $fields;
