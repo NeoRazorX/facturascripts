@@ -28,5 +28,4 @@ class AlbaranProveedorProducto extends FacturaProveedorProducto
 
     const DOC_JOIN = ' LEFT JOIN albaranesprov ON albaranesprov.idalbaran = lineasalbaranesprov.idalbaran';
     const MAIN_TABLE = 'lineasalbaranesprov';
-
 }
