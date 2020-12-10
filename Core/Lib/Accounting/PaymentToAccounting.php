@@ -85,8 +85,11 @@ class PaymentToAccounting extends AccountingClass
         /// Create account entry header
         $accEntry = new Asiento();
         $concept = $this->toolBox()->i18n()->trans('customer-payment-concept', ['%document%' => $this->receipt->getCode()]);
-        $concept .= $this->receipt->getInvoice()->numero2 ? ' (' . $this->receipt->getInvoice()->numero2 . ') - ' . $this->receipt->getInvoice()->nombrecliente :
-            ' - ' . $this->receipt->getInvoice()->nombrecliente;
+
+        $invoice = $this->receipt->getInvoice();
+        $concept .= $invoice->numero2 ?
+            ' (' . $invoice->numero2 . ') - ' . $invoice->nombrecliente :
+            ' - ' . $invoice->nombrecliente;
 
         $this->setCommonData($accEntry, $concept);
         $accEntry->importe += $this->document->gastos;
@@ -163,8 +166,11 @@ class PaymentToAccounting extends AccountingClass
         /// Create account entry header
         $accEntry = new Asiento();
         $concept = $this->toolBox()->i18n()->trans('supplier-payment-concept', ['%document%' => $this->receipt->getCode()]);
-        $concept .= $this->receipt->getInvoice()->numproveedor ? ' (' . $this->receipt->getInvoice()->numproveedor . ') - ' . $this->receipt->getInvoice()->nombre :
-            ' - ' . $this->receipt->getInvoice()->nombre;
+
+        $invoice = $this->receipt->getInvoice();
+        $concept .= $invoice->numproveedor ?
+            ' (' . $invoice->numproveedor . ') - ' . $invoice->nombre :
+            ' - ' . $invoice->nombre;
 
         $this->setCommonData($accEntry, $concept);
         if (false === $accEntry->save()) {

@@ -55,6 +55,12 @@ class User extends Base\ModelClass
     public $codalmacen;
 
     /**
+     *
+     * @var string
+     */
+    public $creationdate;
+
+    /**
      * user's email.
      *
      * @var string
@@ -124,11 +130,11 @@ class User extends Base\ModelClass
     {
         parent::clear();
         $this->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
+        $this->creationdate = \date(self::DATE_STYLE);
         $this->enabled = true;
         $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa', 1);
         $this->langcode = \FS_LANG;
         $this->level = self::DEFAULT_LEVEL;
-        $this->creationdate = \date(self::DATE_STYLE);
     }
 
     /**

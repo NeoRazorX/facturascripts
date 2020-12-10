@@ -72,14 +72,14 @@
             <column name="level" level="99" order="120">
                 <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision" />
             </column>
-            <column name="last-activity" order="130">
-                <widget type="text" fieldname="lastactivity" readonly="true" />
+            <column name="creation-date" order="130">
+                <widget type="date" fieldname="creationdate" readonly="true" />
             </column>
-            <column name="last-ip" order="140">
+            <column name="last-activity" order="140">
+                <widget type="datetime" fieldname="lastactivity" readonly="true" />
+            </column>
+            <column name="last-ip" order="150">
                 <widget type="text" fieldname="lastip" readonly="true" />
-            </column>
-            <column name="creation-date" order="150">
-                <widget type="date" fieldname="creationdate" icon="fas fa-calendar-alt" readonly="true" />
             </column>
         </group>
     </columns>

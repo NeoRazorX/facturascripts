@@ -74,6 +74,7 @@ class ListUser extends ListController
         $this->addOrderBy($viewName, ['nick'], 'nick', 1);
         $this->addOrderBy($viewName, ['email'], 'email');
         $this->addOrderBy($viewName, ['level'], 'level');
+        $this->addOrderBy($viewName, ['creationdate'], 'creation-date');
         $this->addOrderBy($viewName, ['lastactivity'], 'last-activity');
 
         /// filters
