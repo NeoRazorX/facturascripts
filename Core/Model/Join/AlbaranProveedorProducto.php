@@ -26,6 +26,18 @@ namespace FacturaScripts\Core\Model\Join;
 class AlbaranProveedorProducto extends FacturaProveedorProducto
 {
 
-    const DOC_JOIN = ' LEFT JOIN albaranesprov ON albaranesprov.idalbaran = lineasalbaranesprov.idalbaran';
+    const DOC_TABLE = 'albaranesprov';
     const MAIN_TABLE = 'lineasalbaranesprov';
+
+    /**
+     * 
+     * @return string
+     */
+    protected function getSQLFrom(): string
+    {
+        return static::MAIN_TABLE . ''
+            . ' LEFT JOIN variantes ON ' . static::MAIN_TABLE . '.referencia = variantes.referencia'
+            . ' LEFT JOIN productos ON variantes.idproducto = productos.idproducto'
+            . ' LEFT JOIN albaranesprov ON albaranesprov.idalbaran = lineasalbaranesprov.idalbaran';
+    }
 }

@@ -26,32 +26,37 @@
         <column name="description" order="110">
             <widget type="textarea" fieldname="descripcion" />
         </column>
-        <column name="manufacturer" order="120">
+        <column name="warehouse" order="120">
+            <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true">
+                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
+            </widget>
+        </column>
+        <column name="manufacturer" order="130">
             <widget type="autocomplete" fieldname="codfabricante" onclick="EditFabricante">
                 <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre" />
             </widget>
         </column>
-        <column name="family" order="130">
+        <column name="family" order="140">
             <widget type="autocomplete" fieldname="codfamilia" onclick="EditFamilia">
                 <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion" />
             </widget>
         </column>
-        <column name="stock" display="right" order="140">
+        <column name="stock" display="right" order="150">
             <widget type="number" fieldname="stockfis" />
         </column>
-        <column name="quantity-sold" display="right" order="150">
+        <column name="quantity-sold" display="right" order="160">
             <widget type="number" fieldname="cantidad" />
         </column>
-        <column name="unit-sale-price" display="right" order="160">
+        <column name="unit-sale-price" display="right" order="170">
             <widget type="money" fieldname="avgprecio" />
         </column>
-        <column name="unit-profit" display="right" order="170">
+        <column name="unit-profit" display="right" order="180">
             <widget type="money" fieldname="avgbeneficio" />
         </column>
-        <column name="cost-price" display="right" order="180">
+        <column name="cost-price" display="right" order="190">
             <widget type="money" fieldname="coste" />
         </column>
-        <column name="price" display="right" order="190">
+        <column name="price" display="right" order="2000">
             <widget type="money" fieldname="precio" />
         </column>
     </columns>

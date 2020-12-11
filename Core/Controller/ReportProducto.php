@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Dinamic\Model\LineaFacturaCliente;
+use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
 
 /**
  * Description of ReportProducto
@@ -43,6 +45,10 @@ class ReportProducto extends ListController
 
     protected function createViews()
     {
+        /// needed dependencies
+        new LineaFacturaCliente();
+        new LineaFacturaProveedor();
+
         $this->createViewsSupplierDeliveryNotes();
         $this->createViewsSupplierInvoices();
         $this->createViewsCustomerDeliveryNotes();
@@ -129,6 +135,13 @@ class ReportProducto extends ListController
      */
     private function addCommonFilters(string $viewName)
     {
+        $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        if (\count($warehouses) > 2) {
+            $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
+        } else {
+            $this->views[$viewName]->disableColumn('warehouse');
+        }
+
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
         $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
 

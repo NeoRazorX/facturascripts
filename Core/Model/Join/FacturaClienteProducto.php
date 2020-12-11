@@ -28,7 +28,7 @@ use FacturaScripts\Core\Model\Base\JoinModel;
 class FacturaClienteProducto extends JoinModel
 {
 
-    const DOC_JOIN = ' LEFT JOIN facturascli ON facturascli.idfactura = lineasfacturascli.idfactura';
+    const DOC_TABLE = 'facturascli';
     const MAIN_TABLE = 'lineasfacturascli';
 
     /**
@@ -41,13 +41,14 @@ class FacturaClienteProducto extends JoinModel
             'avgbeneficio' => 'avg(' . static::MAIN_TABLE . '.pvptotal/' . static::MAIN_TABLE . '.cantidad - variantes.coste)',
             'avgprecio' => 'avg(' . static::MAIN_TABLE . '.pvptotal/' . static::MAIN_TABLE . '.cantidad)',
             'cantidad' => 'sum(' . static::MAIN_TABLE . '.cantidad)',
+            'codalmacen' => static::DOC_TABLE . '.codalmacen',
             'codfabricante' => 'productos.codfabricante',
             'codfamilia' => 'productos.codfamilia',
             'coste' => 'variantes.coste',
             'descripcion' => 'productos.descripcion',
-            'idproducto' => '' . static::MAIN_TABLE . '.idproducto',
+            'idproducto' => static::MAIN_TABLE . '.idproducto',
             'precio' => 'variantes.precio',
-            'referencia' => '' . static::MAIN_TABLE . '.referencia',
+            'referencia' => static::MAIN_TABLE . '.referencia',
             'stockfis' => 'variantes.stockfis'
         ];
     }
@@ -58,7 +59,7 @@ class FacturaClienteProducto extends JoinModel
      */
     protected function getGroupFields(): string
     {
-        return static::MAIN_TABLE . '.idproducto, ' . static::MAIN_TABLE . '.referencia';
+        return static::DOC_TABLE . '.codalmacen, ' . static::MAIN_TABLE . '.idproducto, ' . static::MAIN_TABLE . '.referencia';
     }
 
     /**
@@ -68,9 +69,9 @@ class FacturaClienteProducto extends JoinModel
     protected function getSQLFrom(): string
     {
         return static::MAIN_TABLE . ''
-            . ' LEFT JOIN productos ON ' . static::MAIN_TABLE . '.idproducto = productos.idproducto'
             . ' LEFT JOIN variantes ON ' . static::MAIN_TABLE . '.referencia = variantes.referencia'
-            . static::DOC_JOIN;
+            . ' LEFT JOIN productos ON variantes.idproducto = productos.idproducto'
+            . ' LEFT JOIN facturascli ON facturascli.idfactura = lineasfacturascli.idfactura';
     }
 
     /**
