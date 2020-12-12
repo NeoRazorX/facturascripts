@@ -35,7 +35,7 @@
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
     <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
         <div class="{{ currentView.settings.card ? 'container-fluid pt-3' : 'container-fluid' }}">
-            <div class="row">
+            <div class="form-row">
                 {# -- Left buttons -- #}
                 <div class="col mb-2">
                     <div class="btn-group">
@@ -81,7 +81,7 @@
             </div>
             {# -- Filters -- #}
             {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
-            <div id="form{{ currentView.getViewName() }}Filters" class="form-row align-items-center" style="{{ divFiltersStyle }}">
+            <div id="form{{ currentView.getViewName() }}Filters" class="form-row align-items-center border-bottom" style="{{ divFiltersStyle }}">
                 {% for filterName, filter in currentView.filters %}
                     {{ filter.render() | raw }}
                 {% endfor %}
