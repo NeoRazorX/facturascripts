@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class ConceptoPartida extends \FacturaScripts\Core\Model\ConceptoPartida
+class ConceptoPartida extends \FacturaScripts\Core\Model\ConceptoPartida
 {
 }

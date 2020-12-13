@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class FormaPago extends \FacturaScripts\Core\Model\FormaPago
+class FormaPago extends \FacturaScripts\Core\Model\FormaPago
 {
 }

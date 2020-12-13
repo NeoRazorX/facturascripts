@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class PageFilter extends \FacturaScripts\Core\Model\PageFilter
+class PageFilter extends \FacturaScripts\Core\Model\PageFilter
 {
 }

@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class User extends \FacturaScripts\Core\Model\User
+class User extends \FacturaScripts\Core\Model\User
 {
 }

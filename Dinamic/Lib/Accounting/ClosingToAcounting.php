@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class ClosingToAcounting extends \FacturaScripts\Core\Lib\Accounting\ClosingToAcounting
+class ClosingToAcounting extends \FacturaScripts\Core\Lib\Accounting\ClosingToAcounting
 {
 }

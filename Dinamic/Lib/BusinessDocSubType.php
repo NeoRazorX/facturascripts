@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class BusinessDocSubType extends \FacturaScripts\Core\Lib\BusinessDocSubType
+class BusinessDocSubType extends \FacturaScripts\Core\Lib\BusinessDocSubType
 {
 }

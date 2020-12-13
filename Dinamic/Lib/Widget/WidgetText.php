@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class WidgetText extends \FacturaScripts\Core\Lib\Widget\WidgetText
+class WidgetText extends \FacturaScripts\Core\Lib\Widget\WidgetText
 {
 }

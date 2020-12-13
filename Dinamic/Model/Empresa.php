@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class Empresa extends \FacturaScripts\Core\Model\Empresa
+class Empresa extends \FacturaScripts\Core\Model\Empresa
 {
 }

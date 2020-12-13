@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class PurchasesDocLineAccount extends \FacturaScripts\Core\Model\Join\PurchasesDocLineAccount
+class PurchasesDocLineAccount extends \FacturaScripts\Core\Model\Join\PurchasesDocLineAccount
 {
 }

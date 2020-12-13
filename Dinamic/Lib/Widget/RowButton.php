@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class RowButton extends \FacturaScripts\Core\Lib\Widget\RowButton
+class RowButton extends \FacturaScripts\Core\Lib\Widget\RowButton
 {
 }

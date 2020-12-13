@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class BalanceCuenta extends \FacturaScripts\Core\Model\BalanceCuenta
+class BalanceCuenta extends \FacturaScripts\Core\Model\BalanceCuenta
 {
 }

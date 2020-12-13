@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class EditListView extends \FacturaScripts\Core\Lib\ExtendedController\EditListView
+class EditListView extends \FacturaScripts\Core\Lib\ExtendedController\EditListView
 {
 }

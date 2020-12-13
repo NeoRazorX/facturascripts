@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class WidgetDate extends \FacturaScripts\Core\Lib\Widget\WidgetDate
+class WidgetDate extends \FacturaScripts\Core\Lib\Widget\WidgetDate
 {
 }

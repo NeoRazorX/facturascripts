@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class Pais extends \FacturaScripts\Core\Model\Pais
+class Pais extends \FacturaScripts\Core\Model\Pais
 {
 }

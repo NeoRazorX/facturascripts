@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class SelectFilter extends \FacturaScripts\Core\Lib\ListFilter\SelectFilter
+class SelectFilter extends \FacturaScripts\Core\Lib\ListFilter\SelectFilter
 {
 }

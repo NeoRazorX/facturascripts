@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class Settings extends \FacturaScripts\Core\Model\Settings
+class Settings extends \FacturaScripts\Core\Model\Settings
 {
 }

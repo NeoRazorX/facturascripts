@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class LogMessage extends \FacturaScripts\Core\Model\LogMessage
+class LogMessage extends \FacturaScripts\Core\Model\LogMessage
 {
 }

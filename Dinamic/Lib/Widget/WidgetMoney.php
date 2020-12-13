@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class WidgetMoney extends \FacturaScripts\Core\Lib\Widget\WidgetMoney
+class WidgetMoney extends \FacturaScripts\Core\Lib\Widget\WidgetMoney
 {
 }

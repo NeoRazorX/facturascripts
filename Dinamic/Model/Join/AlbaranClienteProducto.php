@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class SubcuentaSaldo extends \FacturaScripts\Core\Model\Join\SubcuentaSaldo
+class AlbaranClienteProducto extends \FacturaScripts\Core\Model\Join\AlbaranClienteProducto
 {
 }

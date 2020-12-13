@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class ReceiptGenerator extends \FacturaScripts\Core\Lib\ReceiptGenerator
+class ReceiptGenerator extends \FacturaScripts\Core\Lib\ReceiptGenerator
 {
 }

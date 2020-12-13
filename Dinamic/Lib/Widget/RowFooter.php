@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class RowFooter extends \FacturaScripts\Core\Lib\Widget\RowFooter
+class RowFooter extends \FacturaScripts\Core\Lib\Widget\RowFooter
 {
 }

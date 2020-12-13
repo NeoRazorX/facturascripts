@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class SupplierRiskTools extends \FacturaScripts\Core\Lib\SupplierRiskTools
+class SupplierRiskTools extends \FacturaScripts\Core\Lib\SupplierRiskTools
 {
 }

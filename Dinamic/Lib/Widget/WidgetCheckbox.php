@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class WidgetCheckbox extends \FacturaScripts\Core\Lib\Widget\WidgetCheckbox
+class WidgetCheckbox extends \FacturaScripts\Core\Lib\Widget\WidgetCheckbox
 {
 }

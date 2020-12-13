@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class Serie extends \FacturaScripts\Core\Model\Serie
+class Serie extends \FacturaScripts\Core\Model\Serie
 {
 }

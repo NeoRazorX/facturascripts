@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class WidgetAutocomplete extends \FacturaScripts\Core\Lib\Widget\WidgetAutocomplete
+class WidgetAutocomplete extends \FacturaScripts\Core\Lib\Widget\WidgetAutocomplete
 {
 }

@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class XLSExport extends \FacturaScripts\Core\Lib\Export\XLSExport
+class XLSExport extends \FacturaScripts\Core\Lib\Export\XLSExport
 {
 }

@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class Almacen extends \FacturaScripts\Core\Model\Almacen
+class Almacen extends \FacturaScripts\Core\Model\Almacen
 {
 }

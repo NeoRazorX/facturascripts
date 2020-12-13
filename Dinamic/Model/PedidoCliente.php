@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class PedidoCliente extends \FacturaScripts\Core\Model\PedidoCliente
+class PedidoCliente extends \FacturaScripts\Core\Model\PedidoCliente
 {
 }

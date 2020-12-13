@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class RoleAccess extends \FacturaScripts\Core\Model\RoleAccess
+class RoleAccess extends \FacturaScripts\Core\Model\RoleAccess
 {
 }

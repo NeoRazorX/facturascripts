@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class Agente extends \FacturaScripts\Core\Model\Agente
+class Agente extends \FacturaScripts\Core\Model\Agente
 {
 }

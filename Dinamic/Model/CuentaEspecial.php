@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class CuentaEspecial extends \FacturaScripts\Core\Model\CuentaEspecial
+class CuentaEspecial extends \FacturaScripts\Core\Model\CuentaEspecial
 {
 }

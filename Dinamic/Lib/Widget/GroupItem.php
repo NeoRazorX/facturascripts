@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class GroupItem extends \FacturaScripts\Core\Lib\Widget\GroupItem
+class GroupItem extends \FacturaScripts\Core\Lib\Widget\GroupItem
 {
 }

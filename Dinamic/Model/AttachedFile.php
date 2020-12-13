@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class AttachedFile extends \FacturaScripts\Core\Model\AttachedFile
+class AttachedFile extends \FacturaScripts\Core\Model\AttachedFile
 {
 }

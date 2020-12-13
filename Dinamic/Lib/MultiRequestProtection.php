@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class MultiRequestProtection extends \FacturaScripts\Core\Lib\MultiRequestProtection
+class MultiRequestProtection extends \FacturaScripts\Core\Lib\MultiRequestProtection
 {
 }

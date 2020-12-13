@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-final class Atributo extends \FacturaScripts\Core\Model\Atributo
+class Atributo extends \FacturaScripts\Core\Model\Atributo
 {
 }
