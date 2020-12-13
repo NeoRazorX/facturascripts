@@ -31,7 +31,7 @@ final class PluginManager
     /**
      * FacturaScripts core version.
      */
-    const CORE_VERSION = 2020.88;
+    const CORE_VERSION = 2020.89;
 
     /**
      * Path to list plugins on file.

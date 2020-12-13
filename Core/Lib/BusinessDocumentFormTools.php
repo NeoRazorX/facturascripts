@@ -21,13 +21,14 @@ namespace FacturaScripts\Core\Lib;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentTools as DinBusinessDocumentTools;
 
 /**
  * Description of BusinessDocumentFormTools
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class BusinessDocumentFormTools extends BusinessDocumentTools
+class BusinessDocumentFormTools extends DinBusinessDocumentTools
 {
 
     /**
@@ -66,7 +67,7 @@ class BusinessDocumentFormTools extends BusinessDocumentTools
         $doc->total = \round($doc->neto + $doc->totalsuplidos + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int) \FS_NF0);
         return \json_encode([
             'doc' => $doc,
-            'lines' => $lines,
+            'lines' => $lines
         ]);
     }
 

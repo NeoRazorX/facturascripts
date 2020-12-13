@@ -163,7 +163,7 @@ final class PluginDeploy
         $path .= empty($pluginName) ? $folder : $pluginName . DIRECTORY_SEPARATOR . $folder;
 
         $txt = file_get_contents($path . DIRECTORY_SEPARATOR . $fileName);
-        return strpos($txt, 'abstract class ') === false ? 'final class' : 'abstract class';
+        return strpos($txt, 'abstract class ') === false ? 'class' : 'abstract class';
     }
 
     /**
