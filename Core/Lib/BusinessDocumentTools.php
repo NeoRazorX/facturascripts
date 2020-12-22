@@ -276,7 +276,7 @@ class BusinessDocumentTools
 
         if ($this->siniva || $newCodimpuesto === null || $line->suplido) {
             $line->codimpuesto = null;
-            $line->irpf = $line->iva = $line->recargo = 0.0;
+            $line->iva = $line->recargo = 0.0;
             $save = true;
         } elseif ($newCodimpuesto !== $line->codimpuesto) {
             /// set new tax

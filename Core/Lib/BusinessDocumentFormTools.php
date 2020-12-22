@@ -102,7 +102,7 @@ class BusinessDocumentFormTools extends DinBusinessDocumentTools
         $suplido = isset($fLine['suplido']) && $fLine['suplido'] === 'true';
         if ($this->siniva || $newLine->codimpuesto === null || $suplido) {
             $newLine->codimpuesto = null;
-            $newLine->irpf = $newLine->iva = $newLine->recargo = 0.0;
+            $newLine->iva = $newLine->recargo = 0.0;
         } elseif ($this->recargo === false) {
             $newLine->recargo = 0.0;
         }
