@@ -322,7 +322,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         if (false === $toStock->loadFromCode('', $where2)) {
             /// stock not found, then create one
             $toStock->codalmacen = $toCodalmacen;
-            $toStock->idproducto = $this->idproducto;
+            $toStock->idproducto = $this->idproducto ?? $this->getProducto()->idproducto;
             $toStock->referencia = $this->referencia;
         }
 
@@ -474,7 +474,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         if (false === $stock->loadFromCode('', $where2)) {
             /// stock not found, then create one
             $stock->codalmacen = $doc->codalmacen;
-            $stock->idproducto = $this->idproducto;
+            $stock->idproducto = $this->idproducto ?? $this->getProducto()->idproducto;
             $stock->referencia = $this->referencia;
         }
 
