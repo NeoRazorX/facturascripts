@@ -301,10 +301,10 @@ class DebugBar extends DumbBar
             $html .= '<tr><td>#' . $count . '</td>';
             foreach ($row as $cell) {
                 if (is_array($cell)) {
-                    $html .= '<td>[' . implode(', ', $cell) . ']</td>';
+                    $html .= '<td>[' . var_export($cell, true) . ']</td>';
                     continue;
                 }
-
+                
                 $html .= '<td>' . $cell . '</td>';
             }
             $html .= '</tr>';
