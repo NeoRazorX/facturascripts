@@ -100,7 +100,7 @@
                         {% if (currentView.cursor | length > 0) and currentView.settings.checkBoxes %}
                             <th width="50">
                                 <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                                    <input class="form-check-input listActionCB" type="checkbox" />
+                                    <input class="form-check-input listActionCB" type="checkbox" onclick="listViewCheckboxes('{{ currentView.getViewName() }}');" />
                                 </div>
                             </th>
                         {% endif %}
