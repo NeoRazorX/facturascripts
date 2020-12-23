@@ -48,7 +48,7 @@ class DebugBar extends DumbBar
      */
     public static function end($task = '')
     {
-        self::$end[$task] = microtime(true);
+        self::$end[$task] = \microtime(true);
     }
 
     /**
@@ -84,7 +84,7 @@ class DebugBar extends DumbBar
      */
     public static function start($task = '')
     {
-        self::$init[$task] = microtime(true);
+        self::$init[$task] = \microtime(true);
     }
 
     /**
@@ -96,7 +96,7 @@ class DebugBar extends DumbBar
      */
     private function addItem(array &$items, string $label, array $data, bool $counter = false)
     {
-        $key = 1 + count($items);
+        $key = 1 + \count($items);
         $items[$key] = ['label' => $label, 'data' => $data, 'counter' => $counter];
     }
 
@@ -107,7 +107,7 @@ class DebugBar extends DumbBar
     private function addItemAssets(array &$items)
     {
         foreach (['css', 'js'] as $type) {
-            $label = '<i class="fas fa-file"></i> ' . strtoupper($type);
+            $label = '<i class="fas fa-file"></i> ' . \strtoupper($type);
             $data = AssetManager::get($type);
             if (!empty($data)) {
                 $this->addItem($items, $label, $data, true);
@@ -122,9 +122,9 @@ class DebugBar extends DumbBar
     private function addItemInputs(array &$items)
     {
         $inputs = [
-            'get' => filter_input_array(INPUT_GET),
-            'post' => filter_input_array(INPUT_POST),
-            'cookie' => filter_input_array(INPUT_COOKIE),
+            'get' => \filter_input_array(INPUT_GET),
+            'post' => \filter_input_array(INPUT_POST),
+            'cookie' => \filter_input_array(INPUT_COOKIE)
         ];
 
         foreach ($inputs as $type => $rows) {
@@ -162,7 +162,7 @@ class DebugBar extends DumbBar
 
             $diff = $log['microtime'] - $lastMicrotime;
             $channels[$log['channel']]['data'][] = [
-                'level' => $log['level'], 'message' => $log['message'], 'time' => number_format($diff * 1000) . 'ms'
+                'level' => $log['level'], 'message' => $log['message'], 'time' => \number_format($diff * 1000) . 'ms'
             ];
             $lastMicrotime = $log['microtime'];
         }
@@ -179,8 +179,8 @@ class DebugBar extends DumbBar
      */
     private function addItemMemory(array &$items)
     {
-        $usage = memory_get_usage();
-        $peak = memory_get_peak_usage();
+        $usage = \memory_get_usage();
+        $peak = \memory_get_peak_usage();
 
         $label = '<i class="fas fa-memory"></i> ' . $this->getSize(max([$usage, $peak]));
         $data = [
@@ -197,16 +197,16 @@ class DebugBar extends DumbBar
      */
     private function addItemTimer(array &$items)
     {
-        $totalTime = microtime(true) - self::$init[''];
-        $label = '<i class="fas fa-hourglass-half"></i> ' . number_format($totalTime * 1000) . 'ms';
+        $totalTime = \microtime(true) - self::$init[''];
+        $label = '<i class="fas fa-hourglass-half"></i> ' . \number_format($totalTime * 1000) . 'ms';
 
         $data = [];
         foreach (self::$init as $task => $init) {
-            $end = isset(self::$end[$task]) ? self::$end[$task] : microtime(true);
+            $end = isset(self::$end[$task]) ? self::$end[$task] : \microtime(true);
             $diff = $end - $init;
             $data[] = [
                 'task' => empty($task) ? 'Total' : $task,
-                'time' => number_format($diff * 1000) . 'ms'
+                'time' => \number_format($diff * 1000) . 'ms'
             ];
         }
 
@@ -221,7 +221,7 @@ class DebugBar extends DumbBar
     {
         $i18n = new Translator();
         $missing = $i18n->getMissingStrings();
-        if (count($missing) > 0) {
+        if (\count($missing) > 0) {
             $label = '<i class="fas fa-language"></i> Missing';
             $this->addItem($items, $label, $missing, true);
         }
@@ -236,7 +236,7 @@ class DebugBar extends DumbBar
     private function getSize($size)
     {
         $unit = ['b', 'kb', 'mb', 'gb', 'tb', 'pb'];
-        return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $unit[$i];
+        return \round($size / \pow(1024, ($i = \floor(\log($size, 1024)))), 2) . $unit[$i];
     }
 
     /**
@@ -252,7 +252,7 @@ class DebugBar extends DumbBar
             . '</li>';
 
         foreach ($items as $key => $item) {
-            $label = $item['counter'] ? $item['label'] . ' <span>' . count($item['data']) . '</span>' : $item['label'];
+            $label = $item['counter'] ? $item['label'] . ' <span>' . \count($item['data']) . '</span>' : $item['label'];
             $html .= '<li class="debugbar-item">'
                 . '<a href="#debugSection' . $key . '" id="debugbarBtn' . $key . '" onclick="return showDebugBarSection(' . $key . ');">'
                 . $label
@@ -293,19 +293,14 @@ class DebugBar extends DumbBar
         $count = 0;
         foreach ($data as $row) {
             $count++;
-            if (!is_array($row)) {
+            if (false === \is_array($row)) {
                 $html .= '<tr><td>' . $row . '</td></tr>';
                 continue;
             }
 
             $html .= '<tr><td>#' . $count . '</td>';
             foreach ($row as $cell) {
-                if (is_array($cell)) {
-                    $html .= '<td>[' . var_export($cell, true) . ']</td>';
-                    continue;
-                }
-                
-                $html .= '<td>' . $cell . '</td>';
+                $html .= \is_array($cell) ? '<td>' . \var_export($cell, true) . '</td>' : '<td>' . $cell . '</td>';
             }
             $html .= '</tr>';
         }
