@@ -1002,6 +1002,7 @@
     "summary": "Resum",
     "supplied": "Suplit",
     "supplied-amount": "Suplits",
+    "supplied-subaccount-not-found": "supplied-subaccount-not-found",
     "supplier": "Proveïdor",
     "supplier-account-not-found": "Subcompte de proveïdor no trobada",
     "supplier-delivery-note": "Albarà del proveïdor",

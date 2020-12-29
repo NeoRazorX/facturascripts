@@ -1002,6 +1002,7 @@
     "summary": "Resumo",
     "supplied": "Suplido (término de facturación)",
     "supplied-amount": "Suplidos",
+    "supplied-subaccount-not-found": "supplied-subaccount-not-found",
     "supplier": "Provedor",
     "supplier-account-not-found": "Subconta de provedor non atopada",
     "supplier-delivery-note": "Albarán de provedor",

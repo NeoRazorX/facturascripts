@@ -1002,6 +1002,7 @@
     "summary": "Resumen",
     "supplied": "Suplido",
     "supplied-amount": "Suplidos",
+    "supplied-subaccount-not-found": "Subcuenta de suplidos no encontrada",
     "supplier": "Proveedor",
     "supplier-account-not-found": "Subcuenta de proveedor no encontrada",
     "supplier-delivery-note": "Guia de Proveedor",

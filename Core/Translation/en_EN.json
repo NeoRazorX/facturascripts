@@ -1002,6 +1002,7 @@
     "summary": "Summary",
     "supplied": "Supplied",
     "supplied-amount": "Supplied amount",
+    "supplied-subaccount-not-found": "Supplied subaccount not found",
     "supplier": "Supplier",
     "supplier-account-not-found": "Supplier account not found",
     "supplier-delivery-note": "Supplier delivery note",
