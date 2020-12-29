@@ -216,6 +216,10 @@ class LiquidacionComision extends Base\ModelClass
      */
     public function test()
     {
+        if (empty($this->idempresa)) {
+            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+        }
+
         $this->observaciones = $this->toolBox()->utils()->noHtml($this->observaciones);
         return parent::test();
     }

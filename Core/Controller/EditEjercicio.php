@@ -74,7 +74,7 @@ class EditEjercicio extends EditController
                     'color' => 'warning',
                     'icon' => 'fas fa-file-import',
                     'label' => 'import-accounting-plan',
-                    'type' => 'modal',
+                    'type' => 'modal'
                 ]);
 
                 $this->addButton('EditEjercicio', [
@@ -83,7 +83,7 @@ class EditEjercicio extends EditController
                     'color' => 'danger',
                     'icon' => 'fas fa-calendar-check',
                     'label' => 'close-exercise',
-                    'type' => 'modal',
+                    'type' => 'modal'
                 ]);
 
                 $model = $this->views['EditEjercicio']->model;
@@ -97,7 +97,7 @@ class EditEjercicio extends EditController
                     'color' => 'warning',
                     'icon' => 'fas fa-calendar-plus',
                     'label' => 'open-exercise',
-                    'type' => 'modal',
+                    'type' => 'modal'
                 ]);
                 break;
         }
@@ -112,12 +112,12 @@ class EditEjercicio extends EditController
      */
     private function checkAndLoad($code): bool
     {
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
         }
 
-        if (!$this->getModel()->loadFromCode($code)) {
+        if (false === $this->getModel()->loadFromCode($code)) {
             $this->toolBox()->i18nLog()->error('record-not-found');
             return false;
         }
@@ -132,7 +132,7 @@ class EditEjercicio extends EditController
     protected function closeExercise(): bool
     {
         $code = $this->request->request->get('codejercicio');
-        if (!$this->checkAndLoad($code)) {
+        if (false === $this->checkAndLoad($code)) {
             return false;
         }
 
@@ -158,6 +158,12 @@ class EditEjercicio extends EditController
     protected function createViews()
     {
         parent::createViews();
+
+        /// disable company column if there is only one company
+        if ($this->empresa->count() < 2) {
+            $this->views[$this->getMainViewName()]->disableColumn('company');
+        }
+
         $this->createViewsAccounting();
         $this->createViewsSubaccounting();
         $this->createViewsAccountingEntries();
@@ -319,7 +325,7 @@ class EditEjercicio extends EditController
     {
         $codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
         $filePath = \FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
-        if (!file_exists($filePath)) {
+        if (false === \file_exists($filePath)) {
             $this->toolBox()->i18nLog()->warning('file-not-found', ['%fileName%' => $filePath]);
             return true;
         }
@@ -372,7 +378,7 @@ class EditEjercicio extends EditController
     protected function openExercise(): bool
     {
         $code = $this->request->request->get('codejercicio');
-        if (!$this->checkAndLoad($code)) {
+        if (false === $this->checkAndLoad($code)) {
             return false;
         }
 

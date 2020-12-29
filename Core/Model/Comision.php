@@ -134,6 +134,19 @@ class Comision extends Base\ModelClass
     }
 
     /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        if (empty($this->idempresa)) {
+            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+        }
+
+        return parent::test();
+    }
+
+    /**
      * Returns the url where to see / modify the data.
      *
      * @param string $type

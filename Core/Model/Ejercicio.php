@@ -279,11 +279,10 @@ class Ejercicio extends Base\ModelClass
         $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
 
         if (empty($this->idempresa)) {
-            $this->toolBox()->i18nLog()->warning(
-                'field-can-not-be-null',
-                ['%fieldName%' => 'idempresa', '%tableName%' => static::tableName()]
-            );
-        } elseif (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codejercicio)) {
+            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+        }
+
+        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codejercicio)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codejercicio, '%column%' => 'codejercicio', '%min%' => '1', '%max%' => '4']

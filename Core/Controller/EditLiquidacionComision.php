@@ -134,6 +134,12 @@ class EditLiquidacionComision extends EditController
     {
         parent::createViews();
         $this->setTabsPosition('bottom');
+
+        /// disable company column if there is only one company
+        if ($this->empresa->count() < 2) {
+            $this->views[$this->getMainViewName()]->disableColumn('company');
+        }
+
         $this->createSettledInvoiceView();
     }
 
@@ -230,7 +236,7 @@ class EditLiquidacionComision extends EditController
         $where = [
             new DataBaseWhere('facturascli.idempresa', $data['idempresa']),
             new DataBaseWhere('facturascli.codserie', $data['codserie']),
-            new DataBaseWhere('facturascli.codagente', $data['codagente']),
+            new DataBaseWhere('facturascli.codagente', $data['codagente'])
         ];
 
         /// Date filter

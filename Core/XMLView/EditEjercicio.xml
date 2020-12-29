@@ -21,31 +21,31 @@
 -->
 <view>
     <columns>
-        <group name="data" title="exercise" numcolumns="12">
+        <group name="data" numcolumns="12">
             <column name="code" numcolumns="2" order="100">
                 <widget type="text" fieldname="codejercicio" icon="fas fa-hashtag" maxlength="4" readonly="dinamic" required="true" />
             </column>
-            <column name="name" numcolumns="5" order="110">
+            <column name="name" numcolumns="4" order="110">
                 <widget type="text" fieldname="nombre" maxlength="100" required="true" />
             </column>
-            <column name="company" numcolumns="5" order="120">
-                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
-                </widget>
-            </column>
-            <column name="start-date" numcolumns="3" order="130">
+            <column name="start-date" numcolumns="3" order="120">
                 <widget type="date" fieldname="fechainicio" />
             </column>
-            <column name="end-date" numcolumns="3" order="140">
+            <column name="end-date" numcolumns="3" order="130">
                 <widget type="date" fieldname="fechafin" />
             </column>
-            <column name="account-length" numcolumns="3" order="150">
+            <column name="account-length" numcolumns="3" order="140">
                 <widget type="number" fieldname="longsubcuenta" decimal="0" max="15" min="4" required="true" />
             </column>
-            <column name="status" numcolumns="3" order="160">
+            <column name="status" numcolumns="3" order="150">
                 <widget type="select" fieldname="estado" translate="true" readonly="true" required="true">
                     <values title="opened">ABIERTO</values>
                     <values title="closed">CERRADO</values>
+                </widget>
+            </column>
+            <column name="company" numcolumns="3" order="160">
+                <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" required="true" readonly="dinamic">
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
                 </widget>
             </column>
         </group>
@@ -62,7 +62,7 @@
             <column name="exercise" display="none" order="100">
                 <widget type="text" fieldname="codejercicio" readonly="true" />
             </column>
-            <column name="accounting-plan" titleurl="https://facturascripts.com/doc/1/configuracion/plan-contable" description="import-accounting-plan-p" numcolumns="12" order="110">
+            <column name="accounting-plan" titleurl="https://facturascripts.com/publicaciones/importar-un-plan-contable-762" description="import-accounting-plan-p" numcolumns="12" order="110">
                 <widget type="file" fieldname="accountingfile" accept=".csv,.xml" />
             </column>
         </group>
@@ -97,4 +97,3 @@
         </group>
     </modals>
 </view>
-
