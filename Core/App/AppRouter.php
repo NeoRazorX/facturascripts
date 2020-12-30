@@ -142,9 +142,9 @@ final class AppRouter
     {
         $parts = \explode('.', $filePath);
         $safe = [
-            'css', 'csv', 'eot', 'gif', 'gz', 'ico', 'jpeg', 'jpg', 'js', 'json',
-            'map', 'pdf', 'png', 'sql', 'svg', 'ttf', 'woff', 'woff2', 'xls',
-            'xlsx', 'zip'
+            'avi', 'css', 'csv', 'eot', 'gif', 'gz', 'ico', 'jpeg', 'jpg', 'js',
+            'json', 'map', 'mkv', 'mp4', 'ogg', 'pdf', 'png', 'sql', 'svg',
+            'ttf', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'zip'
         ];
         return \in_array(\end($parts), $safe, true);
     }
