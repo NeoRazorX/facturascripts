@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\FileManager;
-use finfo;
 
 /**
  * Class to manage attached files.
@@ -27,7 +26,7 @@ use finfo;
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
-class AttachedFile extends Base\ModelClass
+class AttachedFile extends Base\ModelOnChangeClass
 {
 
     use Base\ModelTrait;
@@ -75,28 +74,11 @@ class AttachedFile extends Base\ModelClass
     public $path;
 
     /**
-     *
-     * @var string
-     */
-    private $previousPath;
-
-    /**
      * The size of the file in bytes.
      *
      * @var int
      */
     public $size;
-
-    /**
-     * Class constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        parent::__construct($data);
-        $this->previousPath = $this->path;
-    }
 
     /**
      * Reset the values of all model properties.
@@ -116,8 +98,8 @@ class AttachedFile extends Base\ModelClass
      */
     public function delete()
     {
-        $fullPath = \FS_FOLDER . DIRECTORY_SEPARATOR . $this->path;
-        if (file_exists($fullPath) && !unlink($fullPath)) {
+        $fullPath = $this->getFullPath();
+        if (\file_exists($fullPath) && false === \unlink($fullPath)) {
             $this->toolBox()->i18nLog()->warning('cant-delete-file', ['%fileName%' => $this->path]);
             return false;
         }
@@ -127,20 +109,11 @@ class AttachedFile extends Base\ModelClass
 
     /**
      * 
-     * @param string $cod
-     * @param array  $where
-     * @param array  $orderby
-     * 
-     * @return bool
+     * @return string
      */
-    public function loadFromCode($cod, array $where = [], array $orderby = [])
+    public function getFullPath()
     {
-        if (parent::loadFromCode($cod, $where, $orderby)) {
-            $this->previousPath = $this->path;
-            return true;
-        }
-
-        return false;
+        return \FS_FOLDER . DIRECTORY_SEPARATOR . $this->path;
     }
 
     /**
@@ -179,20 +152,33 @@ class AttachedFile extends Base\ModelClass
      */
     public function test()
     {
-        if (!file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $this->path)) {
-            $this->toolBox()->i18nLog()->warning('file-not-found');
-            return false;
-        }
-
         if (empty($this->idfile)) {
             $this->idfile = $this->newCode();
-        }
-
-        if ($this->path != $this->previousPath) {
-            return $this->setFile();
+            $this->setFile();
         }
 
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param string $field
+     *
+     * @return bool
+     */
+    protected function onChange($field)
+    {
+        switch ($field) {
+            case 'path':
+                if ($this->previousData['path']) {
+                    /// remove old file
+                    \unlink(\FS_FOLDER . DIRECTORY_SEPARATOR . $this->previousData['path']);
+                }
+                return $this->setFile();
+
+            default:
+                return parent::onChange($field);
+        }
     }
 
     /**
@@ -202,28 +188,33 @@ class AttachedFile extends Base\ModelClass
      */
     protected function setFile()
     {
-        /// remove old file
-        if (!empty($this->previousPath)) {
-            unlink(\FS_FOLDER . DIRECTORY_SEPARATOR . $this->previousPath);
-        }
-
         $this->filename = $this->path;
-        $path = 'MyFiles' . DIRECTORY_SEPARATOR . \date('Y' . DIRECTORY_SEPARATOR . 'm', \strtotime($this->date));
-        if (!FileManager::createFolder(\FS_FOLDER . DIRECTORY_SEPARATOR . $path, true)) {
-            $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => \FS_FOLDER . DIRECTORY_SEPARATOR . $path]);
+        $newFolder = 'MyFiles' . DIRECTORY_SEPARATOR . \date('Y' . DIRECTORY_SEPARATOR . 'm', \strtotime($this->date));
+        $newFolderPath = \FS_FOLDER . DIRECTORY_SEPARATOR . $newFolder;
+        if (false === FileManager::createFolder($newFolderPath, true)) {
+            $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => $newFolder]);
             return false;
         }
 
-        $basePath = \FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles';
-        if (!rename($basePath . DIRECTORY_SEPARATOR . $this->path, \FS_FOLDER . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR . $this->idfile)) {
+        $currentPath = \FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $this->path;
+        if (false === \rename($currentPath, $newFolderPath . DIRECTORY_SEPARATOR . $this->idfile)) {
             return false;
         }
 
-        $this->path = $path . DIRECTORY_SEPARATOR . $this->idfile;
-        $this->previousPath = $this->path;
-        $this->size = filesize(\FS_FOLDER . DIRECTORY_SEPARATOR . $this->path);
-        $finfo = new finfo();
-        $this->mimetype = $finfo->file(\FS_FOLDER . DIRECTORY_SEPARATOR . $this->path, FILEINFO_MIME_TYPE);
+        $this->path = $newFolder . DIRECTORY_SEPARATOR . $this->idfile;
+        $this->size = \filesize($this->getFullPath());
+        $finfo = new \finfo();
+        $this->mimetype = $finfo->file($this->getFullPath(), FILEINFO_MIME_TYPE);
         return true;
+    }
+
+    /**
+     * 
+     * @param array $fields
+     */
+    protected function setPreviousData(array $fields = [])
+    {
+        $more = ['path'];
+        parent::setPreviousData(\array_merge($more, $fields));
     }
 }
