@@ -60,6 +60,6 @@ class ListAttachedFile extends ListController
         $this->addFilterPeriod($viewName, 'date', 'period', 'date');
 
         $types = $this->codeModel->all('attached_files', 'mimetype', 'mimetype');
-        $this->addFilterSelect($viewName, 'mimetype', 'mime-type', 'mimetype', $types);
+        $this->addFilterSelect($viewName, 'mimetype', 'type', 'mimetype', $types);
     }
 }

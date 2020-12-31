@@ -1,0 +1,19 @@
+{% set firstView = fsc.views | first %}
+{% set file = firstView.model %}
+
+<div class="card shadow mb-3">
+    <div class="card-body">
+        <a class="btn btn-outline-primary" href="{{ asset(file.url('download')) }}">
+            <i class="fas fa-download"></i> {{ i18n.trans('download') }}
+        </a>
+    </div>
+    {% if file.getExtension() in ['gif','jpg','png'] %}
+        <img src="{{ asset(file.url('download')) }}" class="card-img-top" alt="{{ file.filename }}" />
+    {% elseif file.getExtension() == 'mp4' %}
+        <div class="embed-responsive embed-responsive-16by9">
+            <video width="320" height="240" controls>
+                <source src="{{ asset(file.url('download')) }}" type="video/mp4" />
+            </video>
+        </div>
+    {% endif %}
+</div>

@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\FileManager;
+use FacturaScripts\Core\Base\MyFilesToken;
 
 /**
  * Class to manage attached files.
@@ -111,6 +112,16 @@ class AttachedFile extends Base\ModelOnChangeClass
      * 
      * @return string
      */
+    public function getExtension()
+    {
+        $parts = \explode('.', \strtolower($this->filename));
+        return \count($parts) > 1 ? \end($parts) : '';
+    }
+
+    /**
+     * 
+     * @return string
+     */
     public function getFullPath()
     {
         return \FS_FOLDER . DIRECTORY_SEPARATOR . $this->path;
@@ -162,6 +173,27 @@ class AttachedFile extends Base\ModelOnChangeClass
 
     /**
      * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List'): string
+    {
+        switch ($type) {
+            case 'download':
+                return $this->path . '?myft=' . MyFilesToken::get($this->path, false);
+
+            case 'download-permanent':
+                return $this->path . '?myft=' . MyFilesToken::get($this->path, true);
+
+            default:
+                return parent::url($type, $list);
+        }
+    }
+
+    /**
+     * 
      * @param string $field
      *
      * @return bool
@@ -197,11 +229,11 @@ class AttachedFile extends Base\ModelOnChangeClass
         }
 
         $currentPath = \FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $this->path;
-        if (false === \rename($currentPath, $newFolderPath . DIRECTORY_SEPARATOR . $this->idfile)) {
+        if (false === \rename($currentPath, $newFolderPath . DIRECTORY_SEPARATOR . $this->idfile . '.' . $this->getExtension())) {
             return false;
         }
 
-        $this->path = $newFolder . DIRECTORY_SEPARATOR . $this->idfile;
+        $this->path = $newFolder . DIRECTORY_SEPARATOR . $this->idfile . '.' . $this->getExtension();
         $this->size = \filesize($this->getFullPath());
         $finfo = new \finfo();
         $this->mimetype = $finfo->file($this->getFullPath(), FILEINFO_MIME_TYPE);
