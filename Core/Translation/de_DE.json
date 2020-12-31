@@ -981,6 +981,7 @@
     "stock-transfers": "stock transfers",
     "stockmax": "Lager max.",
     "stockmin": "Lager min.",
+    "storage-limit-reached": "storage-limit-reached",
     "structured-data-csv": "CSV-Datei",
     "sub-account": "Unterkonto",
     "sub-type": "sub-type",

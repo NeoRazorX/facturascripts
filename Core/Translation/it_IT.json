@@ -981,6 +981,7 @@
     "stock-transfers": "stock transfers",
     "stockmax": "Magazzino max",
     "stockmin": "Scorte min.",
+    "storage-limit-reached": "storage-limit-reached",
     "structured-data-csv": "File CSV",
     "sub-account": "Account secondario",
     "sub-type": "sub-type",

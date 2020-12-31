@@ -221,7 +221,9 @@ class User extends Base\ModelClass
             $this->lastactivity = null;
         }
 
-        if ($this->level === null) {
+        if ($this->admin) {
+            $this->level = 99;
+        } elseif ($this->level === null) {
             $this->level = 0;
         }
 
