@@ -128,6 +128,34 @@ class AttachedFile extends Base\ModelOnChangeClass
     }
 
     /**
+     * 
+     * @return int
+     */
+    public function getStorageLimit(): int
+    {
+        return \defined('FS_STORAGE_LIMIT') ? (int) \FS_STORAGE_LIMIT : 0;
+    }
+
+    /**
+     * 
+     * @param array $exclude
+     *
+     * @return int
+     */
+    public function getStorageUsed(array $exclude = []): int
+    {
+        $sql = 'SELECT SUM(size) as size FROM ' . static::tableName();
+        if ($exclude) {
+            $sql .= ' WHERE idfile NOT IN (' . \implode(',', $exclude) . ')';
+        }
+        foreach (static::$dataBase->select($sql) as $row) {
+            return (int) $row ['size'];
+        }
+
+        return 0;
+    }
+
+    /**
      * Returns the name of the column that is the primary key of the model.
      *
      * @return string
@@ -165,7 +193,7 @@ class AttachedFile extends Base\ModelOnChangeClass
     {
         if (empty($this->idfile)) {
             $this->idfile = $this->newCode();
-            $this->setFile();
+            return $this->setFile() && parent::test();
         }
 
         return parent::test();
@@ -229,6 +257,13 @@ class AttachedFile extends Base\ModelOnChangeClass
         }
 
         $currentPath = \FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $this->path;
+        if ($this->getStorageLimit() > 0 &&
+            \filesize($currentPath) + $this->getStorageUsed([$this->idfile]) > $this->getStorageLimit()) {
+            $this->toolBox()->i18nLog()->critical('storage-limit-reached');
+            \unlink($currentPath);
+            return false;
+        }
+
         if (false === \rename($currentPath, $newFolderPath . DIRECTORY_SEPARATOR . $this->idfile . '.' . $this->getExtension())) {
             return false;
         }
