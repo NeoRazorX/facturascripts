@@ -14,7 +14,7 @@
     "account-balance": "Saldo de la cuenta",
     "account-code": "Código de cuenta",
     "account-data-missing": "Faltan datos en la cuenta",
-    "account-length": "Longitud de cuenta",
+    "account-length": "Longitud de subcuenta",
     "account-length-error": "Longitud de subcuenta errónea. La subcuenta %code% debe tener la longitud definida en el ejercicio.",
     "account-parent-error": "La cuenta principal es incorrecta",
     "accounting": "Contabilidad",

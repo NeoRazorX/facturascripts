@@ -14,7 +14,7 @@
     "account-balance": "Account Balance",
     "account-code": "Account code",
     "account-data-missing": "Missing data in the account",
-    "account-length": "Account length",
+    "account-length": "Subaccount length",
     "account-length-error": "Account length error. The account %code% must have the length defined in the exercise.",
     "account-parent-error": "The parent account is incorrect or does not belong to the exercise",
     "accounting": "Accounting",
