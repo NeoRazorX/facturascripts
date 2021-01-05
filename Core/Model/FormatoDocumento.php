@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -129,6 +129,11 @@ class FormatoDocumento extends Base\ModelClass
         $this->nombre = empty($this->nombre) ? $utils->noHtml($this->titulo) : $utils->noHtml($this->nombre);
         $this->texto = $utils->noHtml($this->texto);
         $this->titulo = $utils->noHtml($this->titulo);
+
+        if (empty($this->idempresa)) {
+            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+        }
+
         return parent::test();
     }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -116,6 +116,8 @@ class EditEmpresa extends EditController
      */
     protected function loadData($viewName, $view)
     {
+        $mvn = $this->getMainViewName();
+
         switch ($viewName) {
             case 'EditAlmacen':
             case 'ListCuentaBanco':
@@ -126,22 +128,34 @@ class EditEmpresa extends EditController
                 $view->loadData('', $where);
                 break;
 
+            case $mvn:
+                parent::loadData($viewName, $view);
+                $this->setCustomWidgetValues($view);
+                break;
+
             default:
                 parent::loadData($viewName, $view);
-                $this->setCustomWidgetValues();
                 break;
         }
     }
 
     /**
-     * Load values option to VAT Type select input
+     * 
+     * @param BaseView $view
      */
-    protected function setCustomWidgetValues()
+    protected function setCustomWidgetValues(&$view)
     {
-        $mainViewName = $this->getMainViewName();
-        $columnVATType = $this->views[$mainViewName]->columnForName('vat-regime');
+        $columnVATType = $view->columnForName('vat-regime');
         if ($columnVATType) {
             $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
+        }
+
+        $columnLogo = $view->columnForName('logo');
+        if ($columnLogo) {
+            $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
+                new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
+            ]);
+            $columnLogo->widget->setValuesFromCodeModel($images);
         }
     }
 }

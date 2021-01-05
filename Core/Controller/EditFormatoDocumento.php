@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -51,5 +53,45 @@ class EditFormatoDocumento extends EditController
         $data['title'] = 'printing-format';
         $data['icon'] = 'fas fa-print';
         return $data;
+    }
+
+    /**
+     * 
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        $mvn = $this->getMainViewName();
+
+        switch ($viewName) {
+            case $mvn:
+                parent::loadData($viewName, $view);
+                /// disable company column if there is only one company
+                if ($this->empresa->count() < 2) {
+                    $view->disableColumn('company');
+                }
+                $this->loadLogoWidget($view);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
+    }
+
+    /**
+     * 
+     * @param BaseView $view
+     */
+    protected function loadLogoWidget(&$view)
+    {
+        $columnLogo = $view->columnForName('logo');
+        if ($columnLogo) {
+            $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
+                new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
+            ]);
+            $columnLogo->widget->setValuesFromCodeModel($images);
+        }
     }
 }

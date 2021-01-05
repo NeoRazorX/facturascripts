@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -91,10 +91,8 @@
                     <values />
                 </widget>
             </column>
-            <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" numcolumns="3" order="120">
-                <widget type="select" fieldname="idlogo" onclick="EditAttachedFile">
-                    <values source="attached_files" fieldcode="idfile" fieldtitle="filename" />
-                </widget>
+            <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" order="120">
+                <widget type="select" fieldname="idlogo" onclick="EditAttachedFile" />
             </column>
             <column name="observations" numcolumns="12" order="130">
                 <widget type="textarea" fieldname="observaciones" />
