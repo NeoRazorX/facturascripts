@@ -264,7 +264,8 @@ class AttachedFile extends Base\ModelOnChangeClass
             return false;
         }
 
-        if (false === \rename($currentPath, $newFolderPath . DIRECTORY_SEPARATOR . $this->idfile . '.' . $this->getExtension())) {
+        if (empty($this->path) ||
+            false === \rename($currentPath, $newFolderPath . DIRECTORY_SEPARATOR . $this->idfile . '.' . $this->getExtension())) {
             return false;
         }
 

@@ -1,7 +1,7 @@
 # BEGIN FacturaScripts code
 Options -Indexes
 
-<IfModule mod_php7.c>
+<IfModule mod_php.c>
    php_value max_input_vars 10000
    php_value post_max_size 99M
    php_value upload_max_filesize 99M

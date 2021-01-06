@@ -30,6 +30,12 @@ use FacturaScripts\Core\Model\AttachedFileRelation;
 trait DocFilesTrait
 {
 
+    abstract protected function addHtmlView($viewName, $fileName, $modelName, $viewTitle, $viewIcon = 'fab fa-html5');
+
+    abstract public function getModelClassName();
+
+    abstract public static function toolBox();
+
     /**
      * 
      * @return bool
