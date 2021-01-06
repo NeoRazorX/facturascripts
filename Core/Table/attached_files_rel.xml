@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : attached_files_rel.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the attached_files_rel table.
+-->
+<table>
+    <column>
+        <name>creationdate</name>
+        <type>timestamp</type>
+    </column>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idfile</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>model</name>
+        <type>character varying(30)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>modelid</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>nick</name>
+        <type>character varying(50)</type>
+    </column>
+    <column>
+        <name>observations</name>
+        <type>text</type>
+    </column>
+    <constraint>
+        <name>attached_files_rel_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_attached_files_rel_files</name>
+        <type>FOREIGN KEY (idfile) REFERENCES attached_files (idfile) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_attached_files_rel_users</name>
+        <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>
+</table>

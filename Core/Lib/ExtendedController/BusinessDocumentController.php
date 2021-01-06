@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,6 +28,8 @@ use FacturaScripts\Dinamic\Lib\BusinessDocumentFormTools;
  */
 abstract class BusinessDocumentController extends PanelController
 {
+
+    use DocFilesTrait;
 
     /**
      *
@@ -109,6 +111,9 @@ abstract class BusinessDocumentController extends PanelController
 
         /// disable delete button
         $this->setSettings($viewName, 'btnDelete', false);
+
+        /// files tab
+        $this->createViewDocFiles();
     }
 
     /**
@@ -121,6 +126,15 @@ abstract class BusinessDocumentController extends PanelController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'add-file':
+                return $this->addFileAction();
+
+            case 'delete-file':
+                return $this->deleteFileAction();
+
+            case 'edit-file':
+                return $this->editFileAction();
+
             case 'recalculate-document':
                 return $this->recalculateDocumentAction();
 
@@ -129,6 +143,9 @@ abstract class BusinessDocumentController extends PanelController
 
             case 'subject-changed':
                 return $this->subjectChangedAction();
+
+            case 'unlink-file':
+                return $this->unlinkFileAction();
         }
 
         return parent::execPreviousAction($action);
@@ -182,6 +199,10 @@ abstract class BusinessDocumentController extends PanelController
         $code = $this->request->query->get('code', $primaryKey);
 
         switch ($viewName) {
+            case 'docfiles':
+                $this->loadDataDocFiles($view, $this->getModelClassName(), $code);
+                break;
+
             case 'Edit' . $this->getModelClassName():
                 $view->loadData($code);
                 break;
