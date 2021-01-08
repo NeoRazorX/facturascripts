@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -120,19 +120,25 @@ abstract class TransformerDocument extends BusinessDocument
             return false;
         }
 
-        self::$dataBase->beginTransaction();
+        /// we check if there is already an open transaction so as not to break it
+        $newTransation = false === static::$dataBase->inTransaction() && self::$dataBase->beginTransaction();
 
         /// remove lines to update stock
         foreach ($this->getLines() as $line) {
-            if (false === $line->delete()) {
-                self::$dataBase->rollback();
-                return false;
+            if ($line->delete()) {
+                continue;
             }
+            if ($newTransation) {
+                self::$dataBase->rollback();
+            }
+            return false;
         }
 
         /// remove this model
         if (false === parent::delete()) {
-            self::$dataBase->rollback();
+            if ($newTransation) {
+                self::$dataBase->rollback();
+            }
             return false;
         }
 
@@ -152,7 +158,9 @@ abstract class TransformerDocument extends BusinessDocument
             }
         }
 
-        self::$dataBase->commit();
+        if ($newTransation) {
+            self::$dataBase->commit();
+        }
         return true;
     }
 
