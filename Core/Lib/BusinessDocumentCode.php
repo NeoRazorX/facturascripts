@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -137,6 +137,7 @@ class BusinessDocumentCode
     protected static function getSequence(&$document)
     {
         $selectedSequence = new SecuenciaDocumento();
+        $patron = \substr(\strtoupper($document->modelClassName()), 0, 3) . '{EJE}{SERIE}{NUM}';
 
         /// find sequence for this document and serie
         $sequence = new SecuenciaDocumento();
@@ -153,6 +154,9 @@ class BusinessDocumentCode
                 /// sequence for this exercise
                 return $seq;
             }
+
+            /// use old pattern for the new sequence
+            $patron = $seq->patron;
         }
 
         /// sequence not found? Then create
@@ -160,6 +164,7 @@ class BusinessDocumentCode
             $selectedSequence->codejercicio = $document->codejercicio;
             $selectedSequence->codserie = $document->codserie;
             $selectedSequence->idempresa = $document->idempresa;
+            $selectedSequence->patron = $patron;
             $selectedSequence->tipodoc = $document->modelClassName();
             $selectedSequence->usarhuecos = ('FacturaCliente' === $document->modelClassName());
             $selectedSequence->save();
