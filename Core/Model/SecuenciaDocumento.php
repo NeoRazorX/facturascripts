@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -139,7 +139,9 @@ class SecuenciaDocumento extends Base\ModelClass
      */
     public function test()
     {
-        $this->patron = $this->toolBox()->utils()->noHtml($this->patron);
+        if (empty($this->idempresa)) {
+            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+        }
 
         if (empty($this->inicio) || $this->inicio < 1) {
             $this->inicio = 1;
@@ -149,6 +151,7 @@ class SecuenciaDocumento extends Base\ModelClass
             $this->numero = $this->inicio;
         }
 
+        $this->patron = $this->toolBox()->utils()->noHtml($this->patron);
         return parent::test();
     }
 }
