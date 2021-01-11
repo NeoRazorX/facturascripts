@@ -7,6 +7,12 @@ Options -Indexes
    php_value upload_max_filesize 99M
 </IfModule>
 
+<IfModule mod_php7.c>
+   php_value max_input_vars 10000
+   php_value post_max_size 99M
+   php_value upload_max_filesize 99M
+</IfModule>
+
 <IfModule mod_rewrite.c>
    RewriteEngine On
    RewriteCond %{REQUEST_URI} !node_modules/ [NC]
