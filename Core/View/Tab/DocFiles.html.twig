@@ -23,7 +23,9 @@
                                 </div>
                                 <div class="col">
                                     <p class="text-muted mb-0">
-                                        <i class="fas fa-user"></i> {{ docfile.nick }} &nbsp;
+                                        {% if docfile.nick %}
+                                            <i class="fas fa-user"></i> {{ docfile.nick }} &nbsp;
+                                        {% endif %}
                                         <i class="fas fa-calendar-alt"></i> {{ docfile.creationdate }}
                                     </p>
                                 </div>

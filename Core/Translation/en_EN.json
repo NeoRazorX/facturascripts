@@ -889,6 +889,7 @@
     "registered-installation": "Registered installation #%number%",
     "registered-installation-p": "This installation has already been registered.",
     "rejected": "Rejected",
+    "related": "Related",
     "reloading": "Reloading...",
     "remove-filter": "Remove filter",
     "remove-from-list": "Remove",

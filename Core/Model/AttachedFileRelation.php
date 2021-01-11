@@ -128,4 +128,24 @@ class AttachedFileRelation extends Base\ModelClass
         $this->observations = $this->toolBox()->utils()->noHtml($this->observations);
         return parent::test();
     }
+
+    /**
+     * 
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List'): string
+    {
+        if ($this->model && $this->modelid) {
+            $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $this->model;
+            $model = new $modelClass();
+            if ($model->loadFromCode($this->modelid)) {
+                return $model->url();
+            }
+        }
+
+        return parent::url($type, $list);
+    }
 }
