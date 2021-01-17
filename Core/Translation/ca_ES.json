@@ -1,5 +1,5 @@
 {
-    "Date-of-the-document": "Fecha del documento a generar",
+    "Date-of-the-document": "Data del document a generar",
     "MegaSearch": "Cerca",
     "Traceability": "Traçabilitat",
     "VAT-register": "Impostos",
@@ -889,7 +889,7 @@
     "registered-installation": "Instal·lació registrada #%number%",
     "registered-installation-p": "Aquesta instal·lació ja ha estat registrada.",
     "rejected": "Rebutjat",
-    "related": "related",
+    "related": "Relacionat",
     "reloading": "Recarregant...",
     "remove-filter": "Eliminar filtre",
     "remove-from-list": "Treure",
