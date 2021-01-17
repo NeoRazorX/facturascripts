@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,8 @@ use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 /**
  * Description of EditReportLedger
  *
- * @author Jose Antonio Cuello <jcuello@artextrading.com>
+ * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello  <jcuello@artextrading.com>
  */
 class EditReportLedger extends EditReportAccounting
 {
@@ -54,10 +55,21 @@ class EditReportLedger extends EditReportAccounting
         return $data;
     }
 
+    protected function createViews()
+    {
+        parent::createViews();
+
+        /// disable company column if there is only one company
+        if ($this->empresa->count() < 2) {
+            $this->views[$this->getMainViewName()]->disableColumn('company');
+        }
+    }
+
     /**
      * Generate Ledger data for report
      *
      * @param ReportLedger $model
+     *
      * @return array
      */
     protected function generateReport($model)
