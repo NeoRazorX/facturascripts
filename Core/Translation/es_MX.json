@@ -272,6 +272,7 @@
     "customer-orders": "Pedidos de clientes",
     "customer-payment-concept": "Cobro del recibo %document%",
     "customer-reached-maximum-risk": "El cliente ha superado su riesgo máximo",
+    "customer-subaccount-p": "Indique una subcuenta a usar o deje el campo en blanco para asignar una automáticamente",
     "customers": "Clientes",
     "customize": "Personalizar",
     "daily": "Diario",

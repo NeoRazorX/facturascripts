@@ -272,6 +272,7 @@
     "customer-orders": "Customer orders",
     "customer-payment-concept": "Receipt payment %document%",
     "customer-reached-maximum-risk": "The customer has exceeded his maximum risk",
+    "customer-subaccount-p": "Indicate a subaccount to use or leave this field blank for one to be automatically assigned",
     "customers": "Customers",
     "customize": "Customize",
     "daily": "Daily",

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -83,21 +83,21 @@
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="subaccount" titleurl="ListCuenta" numcolumns="3" order="130">
-                <widget type="text" fieldname="codsubcuenta" maxlength="15" icon="fas fa-balance-scale" />
-            </column>
-            <column name="vat-regime" numcolumns="3" order="140">
+            <column name="vat-regime" numcolumns="3" order="130">
                 <widget type="select" fieldname="regimeniva" required="true" />
             </column>
-            <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="150">
+            <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="140">
                 <widget type="select" fieldname="codretencion" onclick="EditRetencion">
                     <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion" />
                 </widget>
             </column>
+            <column name="subaccount" description="customer-subaccount-p" titleurl="ListCuenta" numcolumns="3" order="150">
+                <widget type="text" fieldname="codsubcuenta" maxlength="15" icon="fas fa-balance-scale" />
+            </column>
         </group>
         <group name="notes" numcolumns="9">
             <column name="observations" order="100">
-                <widget type="textarea" fieldname="observaciones" />
+                <widget type="textarea" fieldname="observaciones" rows="5" />
             </column>
         </group>
         <group name="other" numcolumns="3">
