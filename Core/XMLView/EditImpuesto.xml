@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,8 +24,8 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="2" order="100">
-                <widget type="text" fieldname="codimpuesto" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" required="true" />
+            <column name="code" description="optional" numcolumns="2" order="100">
+                <widget type="text" fieldname="codimpuesto" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" />
             </column>
             <column name="description" numcolumns="10" order="110">
                 <widget type="text" fieldname="descripcion" maxlength="50" required="true" />
@@ -55,4 +55,3 @@
         </group>
     </columns>
 </view>
-

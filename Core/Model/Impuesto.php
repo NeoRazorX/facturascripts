@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -171,7 +171,7 @@ class Impuesto extends Base\ModelClass
     public function test()
     {
         $this->codimpuesto = \trim($this->codimpuesto);
-        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
+        if ($this->codimpuesto && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codimpuesto, '%column%' => 'codimpuesto', '%min%' => '1', '%max%' => '10']
@@ -202,5 +202,20 @@ class Impuesto extends Base\ModelClass
 
         $result->loadFromCode($this->toolBox()->appSettings()->get('default', 'codimpuesto'));
         return $result;
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->codimpuesto)) {
+            $this->codimpuesto = (string) $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 }

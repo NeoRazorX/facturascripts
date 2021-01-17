@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -136,7 +136,7 @@ class Serie extends Base\ModelClass
     public function test()
     {
         $this->codserie = \trim($this->codserie);
-        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codserie)) {
+        if ($this->codserie && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codserie)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codserie, '%column%' => 'codserie', '%min%' => '1', '%max%' => '4']
@@ -146,5 +146,20 @@ class Serie extends Base\ModelClass
 
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->codserie)) {
+            $this->codserie = (string) $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 }
