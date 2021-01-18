@@ -237,8 +237,8 @@
                 <tbody>
                     {% for line in doc.getLines() %}
                         <tr>
-                            <td>{{ line.referencia }}</td>
-                            <td>{{ line.descripcion | raw | nl2br }}</td>
+                            <td class="align-middle">{{ line.referencia }}</td>
+                            <td class="align-middle">{{ line.descripcion | raw | nl2br }}</td>
                             <td>
                                 <input type="number" value="{{ line.cantidad }}" class="form-control text-right" readonly="true"/>
                             </td>

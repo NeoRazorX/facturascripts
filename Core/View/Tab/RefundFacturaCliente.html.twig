@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -45,13 +45,28 @@
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
         <input type="hidden" name="idfactura" value="{{ currentView.model.primaryColumnValue() }}"/>
         <div class="container-fluid">
-            <div class="row">
+            <div class="form-row">
+                {{ _self.customSelect('codserie', 'codserie', appSettings.get('default', 'codserierec', 'R'), fsc.views[mainViewName].getSelectValues('Serie')) }}
+                {{ _self.customInput('fecha', 'fecha', fsc.toolBox().today(), 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
                 <div class="col text-right">
-                    <button type="button" class="btn btn-sm btn-outline-secondary" onClick="return refundNone();">
-                        {{ i18n.trans('select-none') }}
-                    </button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" onClick="return refundAll();">
-                        {{ i18n.trans('select-all') }}
+                    <div class="btn-group">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-check-square fa-fw"></i> {{ i18n.trans('select') }}
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#" onClick="return refundNone();">
+                                    {{ i18n.trans('select-none') }}
+                                </a>
+                                <a class="dropdown-item" href="#" onClick="return refundAll();">
+                                    {{ i18n.trans('select-all') }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    &nbsp;
+                    <button type="submit" class="btn btn-sm btn-primary">
+                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
                     </button>
                 </div>
             </div>
@@ -95,8 +110,6 @@
                 </div>
             </div>
             <div class="form-row">
-                {{ _self.customSelect('codserie', 'codserie', appSettings.get('default', 'codserierec', 'R'), fsc.views[mainViewName].getSelectValues('Serie')) }}
-                {{ _self.customInput('fecha', 'fecha', fsc.toolBox().today(), 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
                 <div class="col text-right">
                     <button type="submit" class="btn btn-sm btn-primary">
                         <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
