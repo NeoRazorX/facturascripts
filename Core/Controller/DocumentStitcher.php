@@ -207,8 +207,8 @@ class DocumentStitcher extends Controller
             if (false === $doc->save()) {
                 $this->dataBase->rollback();
                 $this->toolBox()->i18nLog()->error('record-save-error');
+                return;
             }
-            return;
         }
 
         foreach ($lines as $line) {
