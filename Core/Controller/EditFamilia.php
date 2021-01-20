@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,18 +59,20 @@ class EditFamilia extends EditController
     protected function addProductAction()
     {
         $codes = $this->request->request->get('code', []);
-        if (!is_array($codes)) {
+        if (false === \is_array($codes)) {
             return;
         }
 
         $num = 0;
         foreach ($codes as $code) {
             $product = new Producto();
-            if ($product->loadFromCode($code)) {
-                $product->codfamilia = $this->request->query->get('code');
-                if ($product->save()) {
-                    $num++;
-                }
+            if (false === $product->loadFromCode($code)) {
+                continue;
+            }
+
+            $product->codfamilia = $this->request->query->get('code');
+            if ($product->save()) {
+                $num++;
             }
         }
 
@@ -117,13 +119,12 @@ class EditFamilia extends EditController
         $this->createViewProductsCommon($viewName);
 
         /// add action button
-        $newButton = [
+        $this->addButton($viewName, [
             'action' => 'add-product',
             'color' => 'success',
             'icon' => 'fas fa-folder-plus',
-            'label' => 'add',
-        ];
-        $this->addButton($viewName, $newButton);
+            'label' => 'add'
+        ]);
     }
 
     /**
@@ -136,14 +137,13 @@ class EditFamilia extends EditController
         $this->createViewProductsCommon($viewName);
 
         /// add action button
-        $newButton = [
+        $this->addButton($viewName, [
             'action' => 'remove-product',
             'color' => 'danger',
             'confirm' => true,
             'icon' => 'fas fa-folder-minus',
-            'label' => 'remove-from-list',
-        ];
-        $this->addButton($viewName, $newButton);
+            'label' => 'remove-from-list'
+        ]);
     }
 
     /**
@@ -154,7 +154,7 @@ class EditFamilia extends EditController
     {
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
         $this->views[$viewName]->addOrderBy(['precio'], 'price');
-        $this->views[$viewName]->addOrderBy(['stock'], 'stock');
+        $this->views[$viewName]->addOrderBy(['stockfis'], 'stock');
         $this->views[$viewName]->searchFields = ['referencia', 'descripcion'];
 
         /// disable columns and buttons
@@ -219,18 +219,20 @@ class EditFamilia extends EditController
     protected function removeProductAction()
     {
         $codes = $this->request->request->get('code', []);
-        if (!is_array($codes)) {
+        if (false === \is_array($codes)) {
             return;
         }
 
         $num = 0;
         foreach ($codes as $code) {
             $product = new Producto();
-            if ($product->loadFromCode($code)) {
-                $product->codfamilia = null;
-                if ($product->save()) {
-                    $num++;
-                }
+            if (false === $product->loadFromCode($code)) {
+                continue;
+            }
+
+            $product->codfamilia = null;
+            if ($product->save()) {
+                $num++;
             }
         }
 
