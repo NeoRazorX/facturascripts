@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,7 +59,13 @@ class DocumentStitcher extends Controller
     public $modelName;
 
     /**
-     * Returns avaliable status to group this model.
+     *
+     * @var TransformerDocument[]
+     */
+    public $moreDocuments = [];
+
+    /**
+     * Returns available status to group this model.
      * 
      * @return array
      */
@@ -93,34 +99,6 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * 
-     * @return TransformerDocument[]
-     */
-    public function getRemainingDocs()
-    {
-        if (empty($this->documents)) {
-            return [];
-        }
-
-        $list = [];
-        $modelClass = self::MODEL_NAMESPACE . $this->modelName;
-        $model = new $modelClass();
-        $where = [
-            new DataBaseWhere('editable', true),
-            new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa),
-            new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
-        ];
-        $order = ['fecha' => 'DESC', 'hora' => 'DESC'];
-        foreach ($model->all($where, $order) as $doc) {
-            if (false === \in_array($doc->primaryColumnValue(), $this->getCodes())) {
-                $list[] = $doc;
-            }
-        }
-
-        return $list;
-    }
-
-    /**
      * Runs the controller's private logic.
      *
      * @param Response              $response
@@ -133,17 +111,18 @@ class DocumentStitcher extends Controller
         $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
         $this->loadDocuments();
+        $this->loadMoreDocuments();
 
         // duplicated request?
         $token = $this->request->request->get('multireqtoken', '');
         if ($token && $this->multiRequestProtection->tokenExist($token)) {
             $this->toolBox()->i18nLog()->warning('duplicated-request');
-            return false;
+            return;
         }
 
-        $status = $this->request->request->get('status', '');
+        $status = (int) $this->request->request->get('status', '');
         if ($status) {
-            $this->generateNewDocument((int) $status);
+            $this->generateNewDocument($status);
         }
     }
 
@@ -200,33 +179,45 @@ class DocumentStitcher extends Controller
 
     /**
      * 
-     * @param BusinessDocumentGenerator $generator
-     * @param int                       $idestado
+     * @param TransformerDocument $doc
+     * @param array               $newLines
+     * @param array               $quantities
+     * @param int                 $idestado
      */
-    protected function endGenerationAndRedir(&$generator, $idestado)
+    protected function breakDownLines(&$doc, &$newLines, &$quantities, $idestado)
     {
-        /// save new document status if no pending quantity
-        foreach ($this->documents as $doc) {
-            $update = true;
-            foreach ($doc->getLines() as $line) {
-                if ($line->servido < $line->cantidad) {
-                    $update = false;
-                    break;
-                }
+        $full = true;
+        $lines = $doc->getLines();
+        foreach ($lines as $line) {
+            $quantity = (float) $this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
+            if (empty($quantity) && $line->cantidad) {
+                $full = $full && $line->servido >= $line->cantidad;
+                continue;
+            } elseif (($quantity + $line->servido) < $line->cantidad) {
+                $full = false;
             }
 
-            if ($update) {
-                $doc->setDocumentGeneration(false);
-                $doc->idestado = $idestado;
-                $doc->save();
-            }
+            $quantities[$line->primaryColumnValue()] = $quantity;
+            $newLines[] = $line;
         }
 
-        /// redir to new document
-        foreach ($generator->getLastDocs() as $doc) {
-            $this->redirect($doc->url());
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-            break;
+        if ($full) {
+            $doc->setDocumentGeneration(false);
+            $doc->idestado = $idestado;
+            if (false === $doc->save()) {
+                $this->dataBase->rollback();
+                $this->toolBox()->i18nLog()->error('record-save-error');
+            }
+            return;
+        }
+
+        foreach ($lines as $line) {
+            $line->servido += $quantities[$line->primaryColumnValue()];
+            if (false === $line->save()) {
+                $this->dataBase->rollback();
+                $this->toolBox()->i18nLog()->error('record-save-error');
+                return;
+            }
         }
     }
 
@@ -237,6 +228,8 @@ class DocumentStitcher extends Controller
      */
     protected function generateNewDocument($idestado)
     {
+        $this->dataBase->beginTransaction();
+
         /// group needed data
         $newLines = [];
         $properties = ['fecha' => $this->request->request->get('fecha', '')];
@@ -253,22 +246,18 @@ class DocumentStitcher extends Controller
                 $this->addInfoLine($newLines, $doc);
             }
 
-            foreach ($doc->getLines() as $line) {
-                $quantity = (float) $this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
-                if (empty($quantity) && !empty($line->cantidad)) {
-                    continue;
-                }
-
-                $quantities[$line->primaryColumnValue()] = $quantity;
-                $newLines[] = $line;
-            }
+            /// we break down quantities and lines
+            $this->breakDownLines($doc, $newLines, $quantities, $idestado);
         }
+
         if (null === $prototype || empty($newLines)) {
+            $this->dataBase->rollback();
             return;
         }
 
         /// allow plugins to do stuff on the prototype before save
         if (false === $this->pipe('checkPrototype', $prototype, $newLines)) {
+            $this->dataBase->rollback();
             return;
         }
 
@@ -276,11 +265,19 @@ class DocumentStitcher extends Controller
         $generator = new BusinessDocumentGenerator();
         $newClass = $this->getGenerateClass($idestado);
         if (false === $generator->generate($prototype, $newClass, $newLines, $quantities, $properties)) {
+            $this->dataBase->rollback();
             $this->toolBox()->i18nLog()->error('record-save-error');
             return;
         }
 
-        $this->endGenerationAndRedir($generator, $idestado);
+        $this->dataBase->commit();
+
+        /// redir to new document
+        foreach ($generator->getLastDocs() as $doc) {
+            $this->redirect($doc->url());
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            break;
+        }
     }
 
     /**
@@ -330,6 +327,10 @@ class DocumentStitcher extends Controller
      */
     protected function loadDocuments()
     {
+        if (empty($this->codes) || empty($this->modelName)) {
+            return;
+        }
+
         $modelClass = self::MODEL_NAMESPACE . $this->modelName;
         foreach ($this->codes as $code) {
             $doc = new $modelClass();
@@ -348,5 +349,26 @@ class DocumentStitcher extends Controller
 
             return 0;
         });
+    }
+
+    protected function loadMoreDocuments()
+    {
+        if (empty($this->documents) || empty($this->modelName)) {
+            return;
+        }
+
+        $modelClass = self::MODEL_NAMESPACE . $this->modelName;
+        $model = new $modelClass();
+        $where = [
+            new DataBaseWhere('editable', true),
+            new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa),
+            new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
+        ];
+        $order = ['fecha' => 'ASC', 'hora' => 'ASC'];
+        foreach ($model->all($where, $order) as $doc) {
+            if (false === \in_array($doc->primaryColumnValue(), $this->getCodes())) {
+                $this->moreDocuments[] = $doc;
+            }
+        }
     }
 }

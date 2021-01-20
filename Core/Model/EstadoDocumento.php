@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -88,6 +88,7 @@ class EstadoDocumento extends Base\ModelClass
 
     /**
      * Document type: custommer invoice, supplier order, etc...
+     *
      * @var string
      */
     public $tipodoc;
@@ -107,7 +108,7 @@ class EstadoDocumento extends Base\ModelClass
 
     /**
      * 
-     * @return boolean
+     * @return bool
      */
     public function delete()
     {
@@ -146,28 +147,26 @@ class EstadoDocumento extends Base\ModelClass
 
     /**
      * 
-     * @return boolean
+     * @return bool
      */
     public function save()
     {
         if ($this->bloquear) {
             $this->toolBox()->i18nLog()->warning('locked');
             return false;
+        } elseif (false === parent::save()) {
+            return false;
         }
 
-        if (parent::save()) {
-            if ($this->predeterminado) {
-                $sql = "UPDATE " . static::tableName() . " SET predeterminado = false"
-                    . " WHERE predeterminado = true"
-                    . " AND tipodoc = " . self::$dataBase->var2str($this->tipodoc)
-                    . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
-                return self::$dataBase->exec($sql);
-            }
-
-            return true;
+        if ($this->predeterminado) {
+            $sql = "UPDATE " . static::tableName() . " SET predeterminado = false"
+                . " WHERE predeterminado = true"
+                . " AND tipodoc = " . self::$dataBase->var2str($this->tipodoc)
+                . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
+            return self::$dataBase->exec($sql);
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -188,8 +187,7 @@ class EstadoDocumento extends Base\ModelClass
     public function test()
     {
         $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
-
-        if (empty($this->tipodoc) || empty($this->nombre)) {
+        if (empty($this->nombre) || empty($this->tipodoc)) {
             return false;
         }
 

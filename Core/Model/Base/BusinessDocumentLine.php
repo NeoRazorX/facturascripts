@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -366,7 +366,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         switch ($mode) {
             case 1:
             case -1:
-                $stock->cantidad += $mode * $quantity;
+                $stock->cantidad += $mode * ($quantity - $served);
                 break;
 
             case 2:
@@ -489,6 +489,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
 
         if ($stock->save()) {
             $this->pipe('updateStock', $doc);
+            $this->disableUpdateStock = true;
             return true;
         }
 

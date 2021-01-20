@@ -21,7 +21,7 @@
 {% set pageData = fsc.getPageData() %}
 
 {% block body %}
-    <form name="formDocStitcher" action="{{ fsc.url() }}" method="post">
+    <form action="{{ fsc.url() }}" method="post" name="formDocStitcher">
         <input type="hidden" name="model" value="{{ fsc.modelName }}"/>
         <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
         <input type="hidden" name="status"/>
@@ -97,8 +97,7 @@
         </div>
     </form>
 
-    {% set moreDocs = fsc.getRemainingDocs() %}
-    {% if moreDocs %}
+    {% if fsc.moreDocuments %}
         <div class="container-fluid">
             <div class="row">
                 <div class="col mt-3">
@@ -112,7 +111,7 @@
                             {{ i18n.trans('group-more-docs-p') }}
                         </div>
                         <div class="collapse" id="moreDocsCollapse">
-                            <form method="GET">
+                            <form action="{{ fsc.url() }}" method="post">
                                 <input type="hidden" name="model" value="{{ fsc.modelName }}">
                                 <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
                                 <div class="table-responsive">
@@ -127,7 +126,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for doc in fsc.getRemainingDocs() %}
+                                            {% for doc in fsc.moreDocuments %}
                                                 <tr>
                                                     <td class="text-center">
                                                         <div class="form-check">
@@ -209,17 +208,19 @@
     <div class="card shadow mb-3">
         <div class="card-body">
             <div class="row">
-                <div class="col">
-                    <span class="float-right small">
-                        <i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}
-                        <i class="far fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
-                    </span>
+                <div class="col-sm">
                     <a href="{{ doc.url() }}" class="h5">
                         <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ i18n.trans(fsc.modelName) }} {{ doc.codigo }}
                     </a>
                     {% if doc.observaciones %}
                         <p>{{ doc.observaciones }}</p>
                     {% endif %}
+                </div>
+                <div class="col-sm-3 text-right">
+                    <p class="small">
+                        <i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}
+                        <i class="far fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
+                    </p>
                 </div>
             </div>
         </div>

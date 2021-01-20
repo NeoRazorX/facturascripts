@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 
 /**
- * A model to manage the transformations of documents. For example aprobe order to delibery note.
+ * A model to manage the transformations of documents. For example aprove order to delivery note.
  *
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Rafael San José Tovar        <rafael.sanjose@x-netdigital.com>
@@ -95,43 +95,28 @@ class DocTransformation extends Base\ModelClass
     }
 
     /**
-     * 
-     * @return bool
-     */
-    public function delete()
-    {
-        /// update served quantity in parent line
-        $line = $this->getParentLine();
-        if ($line->exists() && isset($line->servido)) {
-            $line->servido -= $this->cantidad;
-            $line->save();
-        }
-
-        return parent::delete();
-    }
-
-    /**
      * Removes related data from this document.
      * 
      * @param string $tipoDoc
      * @param int    $idDoc
+     * @param bool   $updateServido
      */
-    public function deleteFrom($tipoDoc, $idDoc)
+    public function deleteFrom(string $tipoDoc, int $idDoc, bool $updateServido = false)
     {
-        $where = [
-            new DataBaseWhere('model1', $tipoDoc),
-            new DataBaseWhere('iddoc1', $idDoc),
+        $options = [
+            [new DataBaseWhere('model1', $tipoDoc), new DataBaseWhere('iddoc1', $idDoc)],
+            [new DataBaseWhere('model2', $tipoDoc), new DataBaseWhere('iddoc2', $idDoc)]
         ];
-        foreach ($this->all($where, [], 0, 0) as $line) {
-            $line->delete();
-        }
+        foreach ($options as $where) {
+            foreach ($this->all($where, [], 0, 0) as $line) {
+                if ($updateServido && $line->cantidad) {
+                    $parentLine = $line->getParentLine();
+                    $parentLine->servido -= $line->cantidad;
+                    $parentLine->save();
+                }
 
-        $where2 = [
-            new DataBaseWhere('model2', $tipoDoc),
-            new DataBaseWhere('iddoc2', $idDoc),
-        ];
-        foreach ($this->all($where2, [], 0, 0) as $line) {
-            $line->delete();
+                $line->delete();
+            }
         }
     }
 
@@ -142,7 +127,7 @@ class DocTransformation extends Base\ModelClass
     public function getParentLine()
     {
         $modelClass = '\\FacturaScripts\\Dinamic\\Model\\Linea' . $this->model1;
-        if (class_exists($modelClass)) {
+        if (\class_exists($modelClass)) {
             $line = new $modelClass();
             $line->loadFromCode($this->idlinea1);
             return $line;
@@ -169,27 +154,5 @@ class DocTransformation extends Base\ModelClass
     public static function tableName()
     {
         return 'doctransformations';
-    }
-
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
-    {
-        if (parent::saveInsert($values)) {
-            /// update served quantity in parent line
-            $line = $this->getParentLine();
-            if ($line->exists() && isset($line->servido)) {
-                $line->servido += $this->cantidad;
-                $line->save();
-            }
-
-            return true;
-        }
-
-        return false;
     }
 }
