@@ -117,6 +117,7 @@ abstract class TransformerDocument extends BusinessDocument
     public function delete()
     {
         if (\count($this->childrenDocuments()) > 0) {
+            $this->toolBox()->i18nLog()->warning('non-editable-document');
             return false;
         }
 
@@ -293,8 +294,15 @@ abstract class TransformerDocument extends BusinessDocument
             return parent::onChange($field);
         }
 
-        /// update lines to update stock
+        /// update lines to update stock and break down quantities
+        $newLines = [];
+        $quantities = [];
         foreach ($this->getLines() as $line) {
+            if ($line->servido < $line->cantidad) {
+                $quantities[$line->primaryColumnValue()] = $line->cantidad - $line->servido;
+                $newLines[] = $line;
+            }
+
             $line->actualizastock = $status->actualizastock;
             $line->servido = $line->cantidad;
             $line->save();
@@ -302,7 +310,7 @@ abstract class TransformerDocument extends BusinessDocument
 
         /// generate the new document
         $generator = new BusinessDocumentGenerator();
-        return $generator->generate($this, $status->generadoc) ? parent::onChange($field) : false;
+        return $generator->generate($this, $status->generadoc, $newLines, $quantities) ? parent::onChange($field) : false;
     }
 
     /**
