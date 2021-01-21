@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -217,16 +217,8 @@ class Stock extends Base\ModelClass
     {
         $this->cantidad = \round($this->cantidad, self::MAX_DECIMALS);
         $this->referencia = $this->toolBox()->utils()->noHtml($this->referencia);
-
         $this->reservada = \round($this->reservada, self::MAX_DECIMALS);
-        if ($this->reservada < 0) {
-            $this->reservada = 0;
-        }
-
         $this->pterecibir = \round($this->pterecibir, self::MAX_DECIMALS);
-        if ($this->pterecibir < 0) {
-            $this->pterecibir = 0;
-        }
 
         $this->disponible = $this->cantidad - $this->reservada;
         return parent::test();
