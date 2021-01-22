@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -115,6 +115,16 @@
         {% endif %}
         <div id="document-lines"></div>
         <div class="form-row mt-2">
+            <div class="col-sm-12">
+                <p class="text-center text-muted">
+                    {{ i18n.trans('grid-help') }}
+                    {% if thisView.getMaxLines() < 200 %}
+                        <span class="text-danger">
+                            {{ i18n.trans('max-input-vars-warning', {'%numlines%': thisView.getMaxLines()}) }}
+                        </span>
+                    {% endif %}
+                </p>
+            </div>
             {% if fsc.showDocSubType %}
                 {{ _self.customSelect('doc_codsubtipodoc', 'codsubtipodoc', thisView.model.codsubtipodoc,
                     thisView.getSelectValues('BusinessDocSubType'), true, i18n.trans('doc-subtype')) }}
@@ -159,13 +169,6 @@
             {{ thisView.getRow('business').edit(thisView.model) | raw }}
         </div>
         <div class="form-row">
-            {% if thisView.getMaxLines() < 200 %}
-                <div class="col-12">
-                    <p class="alert alert-warning" role="alert">
-                        {{ i18n.trans('max-input-vars-warning', {'%numlines%': thisView.getMaxLines()}) }}
-                    </p>
-                </div>
-            {% endif %}
             <div class="col">
                 {% if fsc.hasData and thisView.settings.btnDelete %}
                     <button type="button" class="btn btn-sm btn-danger" onclick="businessDocViewDelete('{{ thisView.getViewName() }}');">

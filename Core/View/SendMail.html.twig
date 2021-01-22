@@ -27,9 +27,12 @@
                     <input type="hidden" name="action" value="send"/>
                     <div class="card shadow">
                         <div class="card-body">
-                            <h1 class="h3 mb-3">
+                            <h1 class="h3 mb-1">
                                 <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ i18n.trans('send-mail') }}
                             </h1>
+                            <p class="text-muted">
+                                {{ i18n.trans('email-replies-to', {'%email%': fsc.user.email}) }}
+                            </p>
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -103,9 +106,6 @@
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-footer">
-                            {{ i18n.trans('email-replies-to', {'%email%': fsc.user.email}) }}
                         </div>
                     </div>
                 </form>
