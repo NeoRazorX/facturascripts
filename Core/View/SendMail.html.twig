@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -20,16 +20,16 @@
 {% extends "Master/MenuTemplate.html.twig" %}
 
 {% block body %}
-    <div class="container" style="margin-top: -50px;">
+    <div class="container" style="margin-top: -60px;">
         <div class="row">
             <div class="col-12">
                 <form action="{{ fsc.url() }}" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="send"/>
                     <div class="card shadow">
-                        <div class="card-header">
-                            <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ i18n.trans('send-mail') }}
-                        </div>
                         <div class="card-body">
+                            <h1 class="h3 mb-3">
+                                <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ i18n.trans('send-mail') }}
+                            </h1>
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -90,14 +90,12 @@
                             </div>
                             <div class="row align-items-end">
                                 <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <input type="file" name="uploads[]" multiple=""/>
-                                        {% for name in fsc.newMail.getAttachmentNames() %}
-                                            <p class="mt-2">
-                                                <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ name }}
-                                            </p>
-                                        {% endfor %}
-                                    </div>
+                                    <input type="file" name="uploads[]" multiple=""/>
+                                    {% for name in fsc.newMail.getAttachmentNames() %}
+                                        <p class="mt-2 mb-0">
+                                            <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ name }}
+                                        </p>
+                                    {% endfor %}
                                 </div>
                                 <div class="col-sm-6 text-right">
                                     <button type="submit" class="btn btn-primary">
@@ -105,6 +103,9 @@
                                     </button>
                                 </div>
                             </div>
+                        </div>
+                        <div class="card-footer">
+                            {{ i18n.trans('email-replies-to', {'%email%': fsc.user.email}) }}
                         </div>
                     </div>
                 </form>
@@ -118,7 +119,7 @@
     <style>
         .bg-header {
             background-color: #FAFBFC;
-            padding-bottom: 60px;
+            padding-bottom: 90px;
         }
     </style>
 {% endblock %}

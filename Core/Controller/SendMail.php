@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -231,6 +231,8 @@ class SendMail extends Controller
     protected function send()
     {
         $this->newMail->fromNick = $this->user->nick;
+        $this->newMail->addReplyTo($this->user->email, $this->user->nick);
+
         $this->newMail->title = $this->request->request->get('subject', '');
         $this->newMail->text = $this->request->request->get('body', '');
 
