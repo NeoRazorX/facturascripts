@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,8 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -59,8 +61,52 @@ class EditLogMessage extends EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->setTabsPosition('bottom');
 
-        /// settings
+        /// disable buttons
         $this->setSettings($this->getMainViewName(), 'btnNew', false);
+
+        /// related logs tab
+        $this->createViewsOtherLogs();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsOtherLogs(string $viewName = 'ListLogMessage')
+    {
+        $this->addListView($viewName, 'LogMessage', 'related', 'fas fa-file-medical-alt');
+        $this->views[$viewName]->addSearchFields(['ip', 'message', 'uri']);
+        $this->views[$viewName]->addOrderBy(['time', 'id'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['level'], 'level');
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    /**
+     * Load view data procedure
+     *
+     * @param string   $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListLogMessage':
+                $code = $this->getViewModelValue($this->getMainViewName(), 'id');
+                $ipAddress = $this->getViewModelValue($this->getMainViewName(), 'ip');
+                $where = [
+                    new DataBaseWhere('id', $code, '!='),
+                    new DataBaseWhere('ip', $ipAddress)
+                ];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -81,16 +81,15 @@ class EditEmailSent extends EditController
 
         /// buttons
         $mainView = $this->getMainViewName();
-        $newButton = [
+        $this->addButton($mainView, [
             'action' => 'contact',
             'color' => 'info',
             'icon' => 'fas fa-address-book',
             'label' => 'contact',
-            'type' => 'button',
-        ];
-        $this->addButton($mainView, $newButton);
+            'type' => 'button'
+        ]);
 
-        /// settings
+        /// disable buttons
         $this->setSettings($mainView, 'btnNew', false);
 
         /// other view
@@ -101,13 +100,13 @@ class EditEmailSent extends EditController
      * 
      * @param string $viewName
      */
-    protected function createViewOtherEmails($viewName = 'ListEmailSent')
+    protected function createViewOtherEmails(string $viewName = 'ListEmailSent')
     {
         $this->addListView($viewName, 'EmailSent', 'emails', 'fas fa-paper-plane');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
         $this->views[$viewName]->searchFields = ['body', 'subject'];
 
-        /// settings
+        /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }
 

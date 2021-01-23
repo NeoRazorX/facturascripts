@@ -107,7 +107,7 @@ class ListLogMessage extends ListController
     protected function createLogMessageView(string $viewName = 'ListLogMessage')
     {
         $this->addView($viewName, 'LogMessage', 'logs', 'fas fa-file-medical-alt');
-        $this->addSearchFields($viewName, ['message', 'uri']);
+        $this->addSearchFields($viewName, ['ip', 'message', 'uri']);
         $this->addOrderBy($viewName, ['time', 'id'], 'date', 2);
         $this->addOrderBy($viewName, ['level'], 'level');
 
