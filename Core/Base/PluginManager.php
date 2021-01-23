@@ -66,12 +66,12 @@ final class PluginManager
             self::$enabledPlugins = $this->loadFromFile();
         }
 
-        if (!defined('FS_DISABLE_ADD_PLUGINS')) {
-            define('FS_DISABLE_ADD_PLUGINS', false);
+        if (false === \defined('FS_DISABLE_ADD_PLUGINS')) {
+            \define('FS_DISABLE_ADD_PLUGINS', false);
         }
 
-        if (!defined('FS_DISABLE_RM_PLUGINS')) {
-            define('FS_DISABLE_RM_PLUGINS', false);
+        if (false === \defined('FS_DISABLE_RM_PLUGINS')) {
+            \define('FS_DISABLE_RM_PLUGINS', false);
         }
     }
 
@@ -119,7 +119,7 @@ final class PluginManager
             $this->disableByDependecy($pluginName);
             $this->save();
             $this->deploy(true, true);
-            $this->toolBox()->i18nLog()->notice('plugin-disabled', ['%pluginName%' => $pluginName]);
+            ToolBox::i18nLog()->notice('plugin-disabled', ['%pluginName%' => $pluginName]);
             return true;
         }
 
@@ -136,7 +136,7 @@ final class PluginManager
     public function enable(string $pluginName)
     {
         /// is pluginName enabled?
-        if (in_array($pluginName, $this->enabledPlugins())) {
+        if (\in_array($pluginName, $this->enabledPlugins())) {
             return true;
         }
 
@@ -146,11 +146,12 @@ final class PluginManager
             }
 
             if ($this->checkRequire($plugin['require'])) {
+                $plugin['enabled'] = true;
                 self::$enabledPlugins[] = $plugin;
                 $this->save();
                 $this->deploy(false, true);
                 $this->initPlugin($pluginName);
-                $this->toolBox()->i18nLog()->notice('plugin-enabled', ['%pluginName%' => $pluginName]);
+                ToolBox::i18nLog()->notice('plugin-enabled', ['%pluginName%' => $pluginName]);
                 return true;
             }
         }
@@ -185,12 +186,12 @@ final class PluginManager
     public function install(string $zipPath, string $zipName = 'plugin.zip', bool $force = false): bool
     {
         if (FS_DISABLE_ADD_PLUGINS && !$force) {
-            $this->toolBox()->i18nLog()->warning('plugin-installation-disabled');
+            ToolBox::i18nLog()->warning('plugin-installation-disabled');
             return false;
         }
 
         $zipFile = new ZipArchive();
-        if (!$this->testZipFile($zipFile, $zipPath, $zipName)) {
+        if (false === $this->testZipFile($zipFile, $zipPath, $zipName)) {
             return false;
         }
 
@@ -198,22 +199,22 @@ final class PluginManager
         $zipIndex = $zipFile->locateName('facturascripts.ini', ZipArchive::FL_NODIR);
         $pathINI = $zipFile->getNameIndex($zipIndex);
         $info = $this->getPluginInfo($zipName, $zipFile->getFromIndex($zipIndex));
-        if (!$info['compatible']) {
+        if (false === $info['compatible']) {
             $errorTag = empty($info['min_version']) ? 'plugin-unsupported-version' : 'plugin-needs-fs-version';
-            $this->toolBox()->i18nLog()->error(
+            ToolBox::i18nLog()->error(
                 $errorTag, ['%pluginName%' => $zipName, '%minVersion%' => $info['min_version'], '%version%' => self::CORE_VERSION]
             );
             return false;
         }
 
         /// Removing previous version
-        if (is_dir(self::PLUGIN_PATH . $info['name'])) {
-            $this->toolBox()->files()->delTree(self::PLUGIN_PATH . $info['name']);
+        if (\is_dir(self::PLUGIN_PATH . $info['name'])) {
+            ToolBox::files()->delTree(self::PLUGIN_PATH . $info['name']);
         }
 
         /// Extract new version
-        if (!$zipFile->extractTo(self::PLUGIN_PATH)) {
-            $this->toolBox()->log()->error('ZIP EXTRACT ERROR: ' . $zipName);
+        if (false === $zipFile->extractTo(self::PLUGIN_PATH)) {
+            ToolBox::log()->error('ZIP EXTRACT ERROR: ' . $zipName);
             $zipFile->close();
             return false;
         }
@@ -221,17 +222,17 @@ final class PluginManager
         $zipFile->close();
 
         /// Rename folder Plugin
-        $folderPluginZip = explode('/', $pathINI);
+        $folderPluginZip = \explode('/', $pathINI);
         if ($folderPluginZip[0] !== $info['name']) {
-            rename(self::PLUGIN_PATH . $folderPluginZip[0], self::PLUGIN_PATH . $info['name']);
+            \rename(self::PLUGIN_PATH . $folderPluginZip[0], self::PLUGIN_PATH . $info['name']);
         }
 
         /// Deployment required?
-        if (in_array($info['name'], $this->enabledPlugins())) {
+        if (\in_array($info['name'], $this->enabledPlugins())) {
             self::$deploymentRequired = true;
         }
 
-        $this->toolBox()->i18nLog()->notice('plugin-installed', ['%pluginName%' => $info['name']]);
+        ToolBox::i18nLog()->notice('plugin-installed', ['%pluginName%' => $info['name']]);
         return true;
     }
 
@@ -244,9 +245,9 @@ final class PluginManager
     {
         $plugins = [];
 
-        foreach ($this->toolBox()->files()->scanFolder(self::PLUGIN_PATH, false) as $folder) {
+        foreach (ToolBox::files()->scanFolder(self::PLUGIN_PATH, false) as $folder) {
             $iniPath = self::PLUGIN_PATH . $folder . DIRECTORY_SEPARATOR . 'facturascripts.ini';
-            $iniContent = file_exists($iniPath) ? file_get_contents($iniPath) : '';
+            $iniContent = \file_exists($iniPath) ? \file_get_contents($iniPath) : '';
             $plugins[] = $this->getPluginInfo($folder, $iniContent);
         }
 
@@ -263,24 +264,24 @@ final class PluginManager
     public function remove(string $pluginName): bool
     {
         if (FS_DISABLE_RM_PLUGINS) {
-            $this->toolBox()->i18nLog()->warning('plugin-removal-disabled');
+            ToolBox::i18nLog()->warning('plugin-removal-disabled');
             return false;
         }
 
         /// can't remove enabled plugins
-        if (in_array($pluginName, $this->enabledPlugins())) {
-            $this->toolBox()->i18nLog()->warning('plugin-enabled', ['%pluginName%' => $pluginName]);
+        if (\in_array($pluginName, $this->enabledPlugins())) {
+            ToolBox::i18nLog()->warning('plugin-enabled', ['%pluginName%' => $pluginName]);
             return false;
         }
 
         $pluginPath = self::PLUGIN_PATH . $pluginName;
-        if (is_dir($pluginPath) || is_file($pluginPath)) {
-            $this->toolBox()->files()->delTree($pluginPath);
-            $this->toolBox()->i18nLog()->notice('plugin-deleted', ['%pluginName%' => $pluginName]);
+        if (\is_dir($pluginPath) || \is_file($pluginPath)) {
+            ToolBox::files()->delTree($pluginPath);
+            ToolBox::i18nLog()->notice('plugin-deleted', ['%pluginName%' => $pluginName]);
             return true;
         }
 
-        $this->toolBox()->i18nLog()->error('plugin-delete-error', ['%pluginName%' => $pluginName]);
+        ToolBox::i18nLog()->error('plugin-delete-error', ['%pluginName%' => $pluginName]);
         return false;
     }
 
@@ -306,8 +307,8 @@ final class PluginManager
                 }
             }
 
-            if (!$found) {
-                $this->toolBox()->i18nLog()->warning('plugin-needed', ['%pluginName%' => $req]);
+            if (false === $found) {
+                ToolBox::i18nLog()->warning('plugin-needed', ['%pluginName%' => $req]);
                 return false;
             }
         }
@@ -323,8 +324,8 @@ final class PluginManager
     private function disableByDependecy(string $pluginDisabled)
     {
         foreach (self::$enabledPlugins as $key => $value) {
-            if (in_array($pluginDisabled, $value['require'])) {
-                $this->toolBox()->i18nLog()->warning('plugin-disabled', ['%pluginName%' => $value['name']]);
+            if (\in_array($pluginDisabled, $value['require'])) {
+                ToolBox::i18nLog()->warning('plugin-disabled', ['%pluginName%' => $value['name']]);
                 unset(self::$enabledPlugins[$key]);
                 $this->disableByDependecy($value['name']);
             }
@@ -348,27 +349,27 @@ final class PluginManager
             'min_version' => 0.0,
             'name' => $pluginName,
             'require' => [],
-            'version' => 1,
+            'version' => 1
         ];
 
-        $ini = parse_ini_string($iniContent);
+        $ini = \parse_ini_string($iniContent);
         if ($ini !== false) {
             foreach (['name', 'version', 'description', 'min_version'] as $key) {
                 $info[$key] = $ini[$key] ?? $info[$key];
             }
 
             if (isset($ini['require'])) {
-                $info['require'] = explode(',', $ini['require']);
+                $info['require'] = \explode(',', $ini['require']);
             }
 
             if ($info['min_version'] >= 2018 && $info['min_version'] <= self::CORE_VERSION) {
                 $info['compatible'] = true;
-                $info['description'] = ('Incompatible' === $info['description']) ? $this->toolBox()->i18n()->trans('compatible') : $info['description'];
+                $info['description'] = ('Incompatible' === $info['description']) ? ToolBox::i18n()->trans('compatible') : $info['description'];
             } else {
-                $info['description'] = $this->toolBox()->i18n()->trans('incompatible-with-facturascripts', ['%version%' => self::CORE_VERSION]);
+                $info['description'] = ToolBox::i18n()->trans('incompatible-with-facturascripts', ['%version%' => self::CORE_VERSION]);
             }
 
-            $info['enabled'] = in_array($info['name'], $this->enabledPlugins());
+            $info['enabled'] = \in_array($info['name'], $this->enabledPlugins());
         }
 
         return $info;
@@ -381,7 +382,7 @@ final class PluginManager
     private function initPlugin(string $pluginName)
     {
         $pluginClass = "FacturaScripts\\Plugins\\{$pluginName}\\Init";
-        if (class_exists($pluginClass)) {
+        if (\class_exists($pluginClass)) {
             $initObject = new $pluginClass();
             $initObject->update();
         }
@@ -394,10 +395,10 @@ final class PluginManager
      */
     private function loadFromFile(): array
     {
-        if (file_exists(self::PLUGIN_LIST_FILE)) {
-            $content = file_get_contents(self::PLUGIN_LIST_FILE);
+        if (\file_exists(self::PLUGIN_LIST_FILE)) {
+            $content = \file_get_contents(self::PLUGIN_LIST_FILE);
             if ($content !== false) {
-                return json_decode($content, true);
+                return \json_decode($content, true);
             }
         }
 
@@ -411,8 +412,8 @@ final class PluginManager
      */
     private function save(): bool
     {
-        $content = json_encode(self::$enabledPlugins);
-        return file_put_contents(self::PLUGIN_LIST_FILE, $content) !== false;
+        $content = \json_encode(self::$enabledPlugins);
+        return \file_put_contents(self::PLUGIN_LIST_FILE, $content) !== false;
     }
 
     /**
@@ -427,21 +428,21 @@ final class PluginManager
     {
         $result = $zipFile->open($zipPath, ZipArchive::CHECKCONS);
         if (true !== $result) {
-            $this->toolBox()->log()->error('ZIP error: ' . $result);
+            ToolBox::log()->error('ZIP error: ' . $result);
             return false;
         }
 
         /// get the facturascripts.ini file inside the zip
         $zipIndex = $zipFile->locateName('facturascripts.ini', ZipArchive::FL_NODIR);
         if (false === $zipIndex) {
-            $this->toolBox()->i18nLog()->error('plugin-not-compatible', ['%pluginName%' => $zipName, '%version%' => self::CORE_VERSION]);
+            ToolBox::i18nLog()->error('plugin-not-compatible', ['%pluginName%' => $zipName, '%version%' => self::CORE_VERSION]);
             return false;
         }
 
         /// the zip must contain the plugin folder
         $pathINI = $zipFile->getNameIndex($zipIndex);
-        if (count(explode('/', $pathINI)) !== 2) {
-            $this->toolBox()->i18nLog()->error('zip-error-wrong-structure');
+        if (\count(explode('/', $pathINI)) !== 2) {
+            ToolBox::i18nLog()->error('zip-error-wrong-structure');
             return false;
         }
 
@@ -449,27 +450,18 @@ final class PluginManager
         $folders = [];
         for ($index = 0; $index < $zipFile->numFiles; $index++) {
             $data = $zipFile->statIndex($index);
-            $path = explode('/', $data['name']);
-            if (count($path) > 1) {
+            $path = \explode('/', $data['name']);
+            if (\count($path) > 1) {
                 $folders[$path[0]] = $path[0];
             }
         }
 
         //// the zip must contain a single plugin
-        if (count($folders) != 1) {
-            $this->toolBox()->i18nLog()->error('zip-error-wrong-structure');
+        if (\count($folders) != 1) {
+            ToolBox::i18nLog()->error('zip-error-wrong-structure');
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * 
-     * @return ToolBox
-     */
-    private function toolBox()
-    {
-        return new ToolBox();
     }
 }
