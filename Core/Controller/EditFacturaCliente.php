@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -117,6 +117,11 @@ class EditFacturaCliente extends SalesDocumentController
     protected function createViews()
     {
         parent::createViews();
+
+        /// prevent users to change readonly property of numero field
+        $editViewName = 'Edit' . $this->getModelClassName();
+        $this->views[$editViewName]->disableColumn('number', false, 'true');
+
         $this->createReceiptsView();
         $this->createAccountsView();
         $this->addHtmlView('Refund', 'Tab/RefundFacturaCliente', 'FacturaCliente', 'refunds', 'fas fa-share-square');
