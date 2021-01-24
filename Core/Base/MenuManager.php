@@ -319,12 +319,12 @@ class MenuManager
             return \strcasecmp($menu1->title, $menu2->title);
         });
 
-        /// sort submenus
-        foreach ($result as $key => $value) {
-            if (!empty($value->menu)) {
-                $result[$key]->menu = $this->sortMenu($value->menu);
-            }
-        }
+        // /// sort submenus
+        // foreach ($result as $key => $value) {
+        //     if (!empty($value->menu)) {
+        //         $result[$key]->menu = $this->sortMenu($value->menu);
+        //     }
+        // }
 
         return $result;
     }
