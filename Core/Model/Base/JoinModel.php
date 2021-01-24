@@ -308,7 +308,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    private function checkTables(): bool
+    public function checkTables(): bool
     {
         foreach ($this->getTables() as $tableName) {
             if (!self::$dataBase->tableExists($tableName)) {
@@ -324,7 +324,7 @@ abstract class JoinModel
      *
      * @return string
      */
-    private function fieldsList(): string
+    public function fieldsList(): string
     {
         $result = '';
         $comma = '';
@@ -340,7 +340,7 @@ abstract class JoinModel
      *
      * @return string
      */
-    private function getGroupBy(): string
+    public function getGroupBy(): string
     {
         $fields = $this->getGroupFields();
         return empty($fields) ? '' : ' GROUP BY ' . $fields;
@@ -363,7 +363,7 @@ abstract class JoinModel
      *
      * @return string
      */
-    private function getOrderBy(array $order): string
+    public function getOrderBy(array $order): string
     {
         $result = '';
         $coma = ' ORDER BY ';
