@@ -117,8 +117,7 @@ class NewMail
         $this->fromName = $this->empresa->nombrecorto;
 
         $this->mail = new PHPMailer();
-        $this->mail->CharSet = 'UTF-8';
-        $this->mail->WordWrap = 50;
+        $this->mail->CharSet = PHPMailer::CHARSET_UTF8;
         $this->mail->Mailer = $appSettings->get('email', 'mailer');
         $this->mail->SMTPAuth = true;
         $this->mail->SMTPSecure = $appSettings->get('email', 'enc', '');
@@ -294,7 +293,7 @@ class NewMail
     public function send(): bool
     {
         $appSettings = $this->toolBox()->appSettings();
-        if (empty($appSettings->get('email', 'host'))) {
+        if (empty($appSettings->get('email', 'email'))) {
             $this->toolBox()->i18nLog()->warning('email-not-configured');
             return false;
         }
@@ -303,7 +302,7 @@ class NewMail
         $this->mail->Subject = $this->title;
         $this->mail->msgHTML($this->renderHTML());
 
-        if ('smtp' === $this->mail->Mailer && !$this->mail->smtpConnect($this->smtpOptions())) {
+        if ('smtp' === $this->mail->Mailer && false === $this->mail->smtpConnect($this->smtpOptions())) {
             $this->toolBox()->i18nLog()->error('error', ['%error%' => $this->mail->ErrorInfo]);
             return false;
         }

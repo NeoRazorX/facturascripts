@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -187,7 +187,7 @@ class EditSettings extends PanelController
      */
     protected function editAction()
     {
-        if (!parent::editAction()) {
+        if (false === parent::editAction()) {
             return false;
         }
 
@@ -212,12 +212,15 @@ class EditSettings extends PanelController
                 break;
 
             case 'testmail':
-                $email = new NewMail();
-                if ($this->editAction() && $email->test()) {
-                    $this->toolBox()->i18nLog()->notice('mail-test-ok');
-                } else {
-                    $this->toolBox()->i18nLog()->error('mail-test-error');
+                if (false === $this->editAction()) {
+                    break;
                 }
+                $email = new NewMail();
+                if ($email->test()) {
+                    $this->toolBox()->i18nLog()->notice('mail-test-ok');
+                    break;
+                }
+                $this->toolBox()->i18nLog()->error('mail-test-error');
                 break;
         }
     }
