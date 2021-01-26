@@ -30,6 +30,7 @@ class Almacen extends Base\Address
 {
 
     use Base\ModelTrait;
+    use Base\CompanyRelationTrait;
 
     /**
      * Primary key. Varchar (4).
@@ -37,13 +38,6 @@ class Almacen extends Base\Address
      * @var string
      */
     public $codalmacen;
-
-    /**
-     * Foreign Key with Empresas table.
-     *
-     * @var int
-     */
-    public $idempresa;
 
     /**
      * Store name.
