@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,17 +35,17 @@
                 <widget type="textarea" fieldname="signature" />
             </column>
         </group>
-        <group name="advanced" title="advanced" icon="fas fa-server" numcolumns="12">
-            <column name="user" numcolumns="2" order="100">
+        <group name="advanced" title="advanced" icon="fas fa-server" numcolumns="12" valign="bottom">
+            <column name="user" numcolumns="3" order="100">
                 <widget type="text" fieldname="user" />
             </column>
-            <column name="host" numcolumns="3" order="110">
+            <column name="host" numcolumns="4" order="110">
                 <widget type="text" fieldname="host" icon="fas fa-server" />
             </column>
             <column name="port" numcolumns="2" order="120">
                 <widget type="number" fieldname="port" />
             </column>
-            <column name="enc" title="encrypt" numcolumns="2" order="130">
+            <column name="enc" title="encrypt" numcolumns="3" order="130">
                 <widget type="select" fieldname="enc" icon="fas fa-shield-alt">
                     <values title="SSL">ssl</values>
                     <values title="TLS">tls</values>
@@ -58,7 +58,15 @@
                     <values title="SMTP">smtp</values>
                 </widget>
             </column>
-            <column name="lowsecure" title="low-security" order="150">
+            <column name="authentication" numcolumns="3" order="150">
+                <widget type="select" fieldname="authtype">
+                    <values title="CRAM-MD5">CRAM-MD5</values>
+                    <values title="LOGIN">LOGIN</values>
+                    <values title="PLAIN">PLAIN</values>
+                    <values title="XOAUTH2">XOAUTH2</values>
+                </widget>
+            </column>
+            <column name="lowsecure" title="low-security" order="160">
                 <widget type="checkbox" fieldname="lowsecure" />
             </column>
         </group>

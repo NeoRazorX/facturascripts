@@ -120,6 +120,7 @@ class NewMail
         $this->mail->CharSet = PHPMailer::CHARSET_UTF8;
         $this->mail->Mailer = $appSettings->get('email', 'mailer');
         $this->mail->SMTPAuth = true;
+        $this->mail->AuthType = $appSettings->get('email', 'authtype', '');
         $this->mail->SMTPSecure = $appSettings->get('email', 'enc', '');
         $this->mail->Host = $appSettings->get('email', 'host');
         $this->mail->Port = $appSettings->get('email', 'port');
