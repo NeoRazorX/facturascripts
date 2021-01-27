@@ -190,6 +190,8 @@ class DocumentStitcher extends Controller
         $lines = $doc->getLines();
         foreach ($lines as $line) {
             $quantity = (float) $this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
+            $quantities[$line->primaryColumnValue()] = $quantity;
+
             if (empty($quantity) && $line->cantidad) {
                 $full = $full && $line->servido >= $line->cantidad;
                 continue;
@@ -197,7 +199,6 @@ class DocumentStitcher extends Controller
                 $full = false;
             }
 
-            $quantities[$line->primaryColumnValue()] = $quantity;
             $newLines[] = $line;
         }
 
