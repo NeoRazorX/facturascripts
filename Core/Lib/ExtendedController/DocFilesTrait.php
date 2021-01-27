@@ -47,6 +47,12 @@ trait DocFilesTrait
             return true;
         }
 
+        /// duplicated request?
+        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+            $this->toolBox()->i18nLog()->warning('duplicated-request');
+            return true;
+        }
+
         $uploadFile = $this->request->files->get('new-file');
         if ($uploadFile && $uploadFile->move(\FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
             $newFile = new AttachedFile();
@@ -112,6 +118,12 @@ trait DocFilesTrait
     {
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        }
+
+        /// duplicated request?
+        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+            $this->toolBox()->i18nLog()->warning('duplicated-request');
             return true;
         }
 

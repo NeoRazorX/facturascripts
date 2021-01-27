@@ -213,7 +213,7 @@
                         <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ i18n.trans(fsc.modelName) }} {{ doc.codigo }}
                     </a>
                     {% if doc.observaciones %}
-                        <p>{{ doc.observaciones }}</p>
+                        <p>{{ doc.observaciones | raw }}</p>
                     {% endif %}
                 </div>
                 <div class="col-sm-3 text-right">
