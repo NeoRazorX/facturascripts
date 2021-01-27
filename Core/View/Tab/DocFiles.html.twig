@@ -8,7 +8,7 @@
             {% for docfile in currentView.cursor %}
                 <form action="{{ doc.url() }}" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}" />
-                    <input type="hidden" name="id" value="{{ currentView.model.primaryColumnValue() }}" />
+                    <input type="hidden" name="id" value="{{ docfile.id }}" />
                     <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
                     <div class="card shadow mb-3">
                         <div class="card-body">
