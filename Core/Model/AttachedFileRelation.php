@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Dinamic\Model\AttachedFile as DinFile;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Description of AttachedFileRelation
@@ -87,6 +88,16 @@ class AttachedFileRelation extends Base\ModelClass
         $file = new DinFile();
         $file->loadFromCode($this->idfile);
         return $file;
+    }
+
+    /**
+     * Return the max file size that can be uploaded.
+     *
+     * @return int
+     */
+    public function getMaxFileUpload()
+    {
+        return UploadedFile::getMaxFilesize() / 1024 / 1024;
     }
 
     /**

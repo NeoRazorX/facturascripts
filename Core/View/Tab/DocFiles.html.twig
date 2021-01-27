@@ -71,6 +71,9 @@
                         <div class="form-row align-items-end">
                             <div class="col">
                                 <input type="file" name="new-file" class="form-control-file" required="" />
+                                <p class="text-muted mb-0">
+                                    {{ i18n.trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
+                                </p>
                             </div>
                             <div class="col text-right">
                                 <button type="submit" class="btn btn-sm btn-success">
