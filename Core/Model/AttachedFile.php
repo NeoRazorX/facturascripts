@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -124,7 +124,7 @@ class AttachedFile extends Base\ModelOnChangeClass
      */
     public function getFullPath()
     {
-        return \FS_FOLDER . DIRECTORY_SEPARATOR . $this->path;
+        return \FS_FOLDER . '/' . $this->path;
     }
 
     /**
@@ -232,7 +232,7 @@ class AttachedFile extends Base\ModelOnChangeClass
             case 'path':
                 if ($this->previousData['path']) {
                     /// remove old file
-                    \unlink(\FS_FOLDER . DIRECTORY_SEPARATOR . $this->previousData['path']);
+                    \unlink(\FS_FOLDER . '/' . $this->previousData['path']);
                 }
                 return $this->setFile();
 
@@ -249,14 +249,14 @@ class AttachedFile extends Base\ModelOnChangeClass
     protected function setFile()
     {
         $this->filename = $this->path;
-        $newFolder = 'MyFiles' . DIRECTORY_SEPARATOR . \date('Y' . DIRECTORY_SEPARATOR . 'm', \strtotime($this->date));
-        $newFolderPath = \FS_FOLDER . DIRECTORY_SEPARATOR . $newFolder;
+        $newFolder = 'MyFiles/' . \date('Y/m', \strtotime($this->date));
+        $newFolderPath = \FS_FOLDER . '/' . $newFolder;
         if (false === FileManager::createFolder($newFolderPath, true)) {
             $this->toolBox()->i18nLog()->critical('cant-create-folder', ['%folderName%' => $newFolder]);
             return false;
         }
 
-        $currentPath = \FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . $this->path;
+        $currentPath = \FS_FOLDER . '/MyFiles/' . $this->path;
         if ($this->getStorageLimit() > 0 &&
             \filesize($currentPath) + $this->getStorageUsed([$this->idfile]) > $this->getStorageLimit()) {
             $this->toolBox()->i18nLog()->critical('storage-limit-reached');
@@ -265,11 +265,11 @@ class AttachedFile extends Base\ModelOnChangeClass
         }
 
         if (empty($this->path) ||
-            false === \rename($currentPath, $newFolderPath . DIRECTORY_SEPARATOR . $this->idfile . '.' . $this->getExtension())) {
+            false === \rename($currentPath, $newFolderPath . '/' . $this->idfile . '.' . $this->getExtension())) {
             return false;
         }
 
-        $this->path = $newFolder . DIRECTORY_SEPARATOR . $this->idfile . '.' . $this->getExtension();
+        $this->path = $newFolder . '/' . $this->idfile . '.' . $this->getExtension();
         $this->size = \filesize($this->getFullPath());
         $finfo = new \finfo();
         $this->mimetype = $finfo->file($this->getFullPath(), FILEINFO_MIME_TYPE);
