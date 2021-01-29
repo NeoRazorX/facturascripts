@@ -293,8 +293,7 @@ class NewMail
      */
     public function send(): bool
     {
-        $appSettings = $this->toolBox()->appSettings();
-        if (empty($appSettings->get('email', 'email'))) {
+        if (empty($this->mail->Username) || empty($this->mail->Password)) {
             $this->toolBox()->i18nLog()->warning('email-not-configured');
             return false;
         }
