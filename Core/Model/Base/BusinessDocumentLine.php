@@ -282,6 +282,10 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             $this->codimpuesto = null;
         }
 
+        if ($this->servido < 0 && $this->cantidad >= 0) {
+            $this->servido = 0.0;
+        }
+
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
         $this->pvpsindto = $this->pvpunitario * $this->cantidad;
