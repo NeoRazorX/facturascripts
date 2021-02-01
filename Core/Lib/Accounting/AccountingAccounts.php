@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -370,10 +370,16 @@ class AccountingAccounts
             return $this->creation->createFromAccount($account, $code);
         }
 
-        /// search from parent acount
+        /// search special account in sub-accounts
+        $subaccount = $this->getSpecialSubAccount($specialAccount);
+        if ($subaccount->exists()) {
+            return $subaccount;
+        }
+
+        /// search special account in accounts and return the first sub-account
         $account = $this->getSpecialAccount($specialAccount);
-        $subaccount = new Subcuenta();
-        $subaccount->loadFromCode('', [new DataBaseWhere('idcuenta', $account->idcuenta)], ['idsubcuenta' => 'ASC']);
-        return $subaccount;
+        $firstSubaccount = new Subcuenta();
+        $firstSubaccount->loadFromCode('', [new DataBaseWhere('idcuenta', $account->idcuenta)], ['idsubcuenta' => 'ASC']);
+        return $firstSubaccount;
     }
 }
