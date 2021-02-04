@@ -1,0 +1,16 @@
+{
+    "default": {
+        "coddivisa": "EUR",
+        "codimpuesto": "IGI45",
+        "codpago": "CONT",
+        "codserie": "A",
+        "codserierec": "R",
+        "tipoidfiscal": "NIF"
+    },
+    "email": {
+        "enc": "ssl",
+        "host": "smtp.gmail.com",
+        "mailer": "smtp",
+        "port": "465"
+    }
+}

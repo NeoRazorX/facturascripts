@@ -1,0 +1,4 @@
+codimpuesto;descripcion;iva;recargo;codsubcuentarep;codsubcuentasop
+"IGI0";"IGI 0%";"0";"0";;
+"IGI1";"IGI 1%";"1";"0";;
+"IGI45";"IGI 4.5%";"4.5";"0";;
