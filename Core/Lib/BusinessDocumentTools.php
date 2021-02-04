@@ -20,12 +20,12 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Dinamic\Lib\RegimenIVA as DinRegimenIVA;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\ImpuestoZona;
 use FacturaScripts\Dinamic\Model\Proveedor;
-use FacturaScripts\Dinamic\Lib\RegimenIVA as DinRegimenIVA;
 use FacturaScripts\Dinamic\Model\Serie;
 
 /**
@@ -307,7 +307,7 @@ class BusinessDocumentTools
         $newCodimpuesto = $line->codimpuesto;
 
         /// tax manually changed?
-        if (0.01 > \abs($line->getTax()->iva - $line->iva)) {
+        if (\abs($line->getTax()->iva - $line->iva) >= 0.01) {
             /// only defined tax are allowed
             $newCodimpuesto = null;
             foreach ($line->getTax()->all() as $tax) {

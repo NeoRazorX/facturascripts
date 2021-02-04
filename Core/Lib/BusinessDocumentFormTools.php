@@ -119,7 +119,7 @@ class BusinessDocumentFormTools extends DinBusinessDocumentTools
         $newCodimpuesto = $line->codimpuesto;
 
         /// tax manually changed?
-        if (0.01 > \abs($line->getTax()->iva - $line->iva)) {
+        if (\abs($line->getTax()->iva - $line->iva) >= 0.01) {
             /// only defined tax are allowed
             $newCodimpuesto = null;
             foreach ($line->getTax()->all() as $tax) {
