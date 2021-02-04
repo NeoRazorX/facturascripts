@@ -57,10 +57,13 @@ class ListReportAccounting extends ListController
         $this->createViewsLedger();
         $this->createViewsAmount();
         $this->createViewsBalance();
+        $this->createViewsSetting();
     }
 
     /**
      * Inserts the view for amount balances.
+     *
+     * @param string $viewName
      */
     protected function createViewsAmount($viewName = 'ListReportAmount')
     {
@@ -73,6 +76,8 @@ class ListReportAccounting extends ListController
 
     /**
      * Inserts the view for sheet and Profit & Loss balances.
+     *
+     * @param string $viewName
      */
     protected function createViewsBalance($viewName = 'ListReportBalance')
     {
@@ -86,6 +91,8 @@ class ListReportAccounting extends ListController
 
     /**
      * Inserts the view for ledger report.
+     *
+     * @param string $viewName
      */
     protected function createViewsLedger($viewName = 'ListReportLedger')
     {
@@ -94,6 +101,36 @@ class ListReportAccounting extends ListController
         $this->addOrderBy($viewName, ['idcompany', 'name'], 'company');
         $this->addSearchFields($viewName, ['name']);
         $this->addCommonFilter($viewName);
+    }
+
+    /**
+     * Inserts the view for setting balances report.
+     *
+     * @param string $viewName
+     */
+    protected function createViewsSetting($viewName = 'ListBalance')
+    {
+        $this->addView($viewName, 'Balance', 'preferences');
+        $this->addOrderBy($viewName, ['codbalance'], 'code');
+        $this->addOrderBy($viewName, ['descripcion1'], 'description-1');
+        $this->addOrderBy($viewName, ['descripcion2'], 'description-2');
+        $this->addOrderBy($viewName, ['descripcion3'], 'description-3');
+        $this->addOrderBy($viewName, ['descripcion4'], 'description-4');
+        $this->addOrderBy($viewName, ['descripcion4ba'], 'description-4ba');
+
+        $this->addSearchFields($viewName, [
+            'codbalance', 'naturaleza', 'descripcion1', 'descripcion2',
+            'descripcion3', 'descripcion4', 'descripcion4ba'
+        ]);
+
+        $i18n = $this->toolBox()->i18n();
+        $typeValues = [
+            ['code' => 'A', 'description' => $i18n->trans('asset')],
+            ['code' => 'P', 'description' => $i18n->trans('liabilities')],
+            ['code' => 'PG', 'description' => $i18n->trans('profit-and-loss')],
+            ['code' => 'IG', 'description' => $i18n->trans('income-and-expenses')],
+        ];
+        $this->addFilterSelect($viewName, 'type', 'type', 'naturaleza', $typeValues);
     }
 
     /**
