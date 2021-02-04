@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -75,11 +75,13 @@ class ListProducto extends ListController
         $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
         $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
 
+        $this->addFilterNumber($viewName, 'min-price', 'price', 'precio', '<=');
+        $this->addFilterNumber($viewName, 'max-price', 'price', 'precio', '>=');
+        $this->addFilterNumber($viewName, 'min-stock', 'stock', 'stockfis', '<=');
+        $this->addFilterNumber($viewName, 'max-stock', 'stock', 'stockfis', '>=');
+
         $taxes = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
         $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
-
-        $this->addFilterNumber($viewName, 'min-stock', 'stock', 'stockfis', '<=');
-        $this->addFilterNumber($viewName, 'max-stock', 'stock', 'stockfis');
 
         $this->addFilterCheckbox($viewName, 'nostock', 'no-stock', 'nostock');
         $this->addFilterCheckbox($viewName, 'bloqueado', 'locked', 'bloqueado');
@@ -108,9 +110,10 @@ class ListProducto extends ListController
         $this->addFilterSelect($viewName, 'idatributovalor2', 'attribute-value-2', 'idatributovalor2', $attributes);
         $this->addFilterSelect($viewName, 'idatributovalor3', 'attribute-value-3', 'idatributovalor3', $attributes);
         $this->addFilterSelect($viewName, 'idatributovalor4', 'attribute-value-4', 'idatributovalor4', $attributes);
-
+        $this->addFilterNumber($viewName, 'min-price', 'price', 'precio', '<=');
+        $this->addFilterNumber($viewName, 'max-price', 'price', 'precio', '>=');
         $this->addFilterNumber($viewName, 'min-stock', 'stock', 'stockfis', '<=');
-        $this->addFilterNumber($viewName, 'max-stock', 'stock', 'stockfis');
+        $this->addFilterNumber($viewName, 'max-stock', 'stock', 'stockfis', '>=');
 
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
@@ -134,7 +137,7 @@ class ListProducto extends ListController
         $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
         $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
 
-        $values = [
+        $this->addFilterSelectWhere($viewName, 'type', [
             [
                 'label' => $this->toolBox()->i18n()->trans('all'),
                 'where' => []
@@ -147,11 +150,10 @@ class ListProducto extends ListController
                 'label' => $this->toolBox()->i18n()->trans('excess'),
                 'where' => [new DataBaseWhere('disponible', 'field:stockmax', '>')]
             ]
-        ];
-        $this->addFilterSelectWhere($viewName, 'type', $values);
+        ]);
 
         $this->addFilterNumber($viewName, 'min-stock', 'quantity', 'cantidad', '<=');
-        $this->addFilterNumber($viewName, 'max-stock', 'quantity', 'cantidad');
+        $this->addFilterNumber($viewName, 'max-stock', 'quantity', 'cantidad', '>=');
 
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);

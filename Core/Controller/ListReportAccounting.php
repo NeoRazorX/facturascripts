@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,7 +57,7 @@ class ListReportAccounting extends ListController
         $this->createViewsLedger();
         $this->createViewsAmount();
         $this->createViewsBalance();
-        $this->createViewsSetting();
+        $this->createViewsPreferences();
     }
 
     /**
@@ -65,7 +65,7 @@ class ListReportAccounting extends ListController
      *
      * @param string $viewName
      */
-    protected function createViewsAmount($viewName = 'ListReportAmount')
+    protected function createViewsAmount(string $viewName = 'ListReportAmount')
     {
         $this->addView($viewName, 'ReportAmount', 'balance-amounts', 'fas fa-calculator');
         $this->addOrderBy($viewName, ['name'], 'name');
@@ -79,7 +79,7 @@ class ListReportAccounting extends ListController
      *
      * @param string $viewName
      */
-    protected function createViewsBalance($viewName = 'ListReportBalance')
+    protected function createViewsBalance(string $viewName = 'ListReportBalance')
     {
         $this->addView($viewName, 'ReportBalance', 'balances', 'fas fa-book');
         $this->addOrderBy($viewName, ['name'], 'name');
@@ -94,7 +94,7 @@ class ListReportAccounting extends ListController
      *
      * @param string $viewName
      */
-    protected function createViewsLedger($viewName = 'ListReportLedger')
+    protected function createViewsLedger(string $viewName = 'ListReportLedger')
     {
         $this->addView($viewName, 'ReportLedger', 'ledger', 'fas fa-file-alt');
         $this->addOrderBy($viewName, ['name'], 'name');
@@ -108,7 +108,7 @@ class ListReportAccounting extends ListController
      *
      * @param string $viewName
      */
-    protected function createViewsSetting($viewName = 'ListBalance')
+    protected function createViewsPreferences(string $viewName = 'ListBalance')
     {
         $this->addView($viewName, 'Balance', 'preferences');
         $this->addOrderBy($viewName, ['codbalance'], 'code');
@@ -124,13 +124,13 @@ class ListReportAccounting extends ListController
         ]);
 
         $i18n = $this->toolBox()->i18n();
-        $typeValues = [
+        $this->addFilterSelect($viewName, 'type', 'type', 'naturaleza', [
+            ['code' => '', 'description' => '------'],
             ['code' => 'A', 'description' => $i18n->trans('asset')],
             ['code' => 'P', 'description' => $i18n->trans('liabilities')],
             ['code' => 'PG', 'description' => $i18n->trans('profit-and-loss')],
-            ['code' => 'IG', 'description' => $i18n->trans('income-and-expenses')],
-        ];
-        $this->addFilterSelect($viewName, 'type', 'type', 'naturaleza', $typeValues);
+            ['code' => 'IG', 'description' => $i18n->trans('income-and-expenses')]
+        ]);
     }
 
     /**
