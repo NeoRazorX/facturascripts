@@ -155,4 +155,17 @@ class Balance extends Base\ModelClass
         $this->descripcion4ba = $utils->noHtml($this->descripcion4ba);
         return parent::test();
     }
+
+    /**
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'ListReportAccounting?activetab=List'): string
+    {
+        return parent::url($type, $list);
+    }
 }
