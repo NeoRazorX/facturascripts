@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -357,7 +357,7 @@ final class DataBase
 
     /**
      * Execute a SQL statement of type select, and return
-     * an array with the results, or false in case of failure.
+     * an array with the results, or an empty array in case of failure.
      *
      * @param string $sql
      *
@@ -370,7 +370,7 @@ final class DataBase
 
     /**
      * Execute a SQL statement of type select, but with pagination,
-     * and return an array with the results or empty array in case of failure.
+     * and return an array with the results or an empty array in case of failure.
      * Limit is the number of items you want to return. Offset is the result
      * number from which you want it to start.
      *
