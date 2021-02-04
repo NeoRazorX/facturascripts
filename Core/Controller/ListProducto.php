@@ -54,7 +54,7 @@ class ListProducto extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewProducto(string $viewName = 'ListProducto')
@@ -78,6 +78,9 @@ class ListProducto extends ListController
         $taxes = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
         $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
 
+        $this->addFilterNumber($viewName, 'min-stock', 'stock', 'stockfis', '<=');
+        $this->addFilterNumber($viewName, 'max-stock', 'stock', 'stockfis');
+
         $this->addFilterCheckbox($viewName, 'nostock', 'no-stock', 'nostock');
         $this->addFilterCheckbox($viewName, 'bloqueado', 'locked', 'bloqueado');
         $this->addFilterCheckbox($viewName, 'secompra', 'for-purchase', 'secompra');
@@ -86,7 +89,7 @@ class ListProducto extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewVariante(string $viewName = 'ListVariante')
@@ -106,12 +109,15 @@ class ListProducto extends ListController
         $this->addFilterSelect($viewName, 'idatributovalor3', 'attribute-value-3', 'idatributovalor3', $attributes);
         $this->addFilterSelect($viewName, 'idatributovalor4', 'attribute-value-4', 'idatributovalor4', $attributes);
 
+        $this->addFilterNumber($viewName, 'min-stock', 'stock', 'stockfis', '<=');
+        $this->addFilterNumber($viewName, 'max-stock', 'stock', 'stockfis');
+
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewStock(string $viewName = 'ListStock')
@@ -143,6 +149,9 @@ class ListProducto extends ListController
             ]
         ];
         $this->addFilterSelectWhere($viewName, 'type', $values);
+
+        $this->addFilterNumber($viewName, 'min-stock', 'quantity', 'cantidad', '<=');
+        $this->addFilterNumber($viewName, 'max-stock', 'quantity', 'cantidad');
 
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
