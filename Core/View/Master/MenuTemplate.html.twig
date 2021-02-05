@@ -38,7 +38,7 @@
             <link rel="stylesheet" href="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.css') }}" />
             <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}" />
         {% endblock %}
-        {# Adds custom CSS assets #}
+        {# Adds custom CSS assets #}
         {% for css in assetManager.get('css') %}
             <link rel="stylesheet" href="{{ css }}" />
         {% endfor %}
@@ -51,7 +51,7 @@
             <script src="{{ asset('node_modules/pace-js/pace.min.js') }}"></script>
             <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}"></script>
         {% endblock %}
-        {# Adds custom JS assets #}
+        {# Adds custom JS assets #}
         {% for js in assetManager.get('js') %}
             <script src="{{ js }}"></script>
         {% endfor %}

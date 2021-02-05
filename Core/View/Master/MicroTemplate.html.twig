@@ -37,7 +37,7 @@
             <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}" />
             <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}" />
         {% endblock %}
-        {# Adds custom CSS assets #}
+        {# Adds custom CSS assets #}
         {% for css in assetManager.get('css') %}
             <link rel="stylesheet" href="{{ css }}" />
         {% endfor %}
@@ -45,7 +45,7 @@
             <script type="text/javascript" src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
             <script type="text/javascript" src="{{ asset('node_modules/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
         {% endblock %}
-        {# Adds custom JS assets #}
+        {# Adds custom JS assets #}
         {% for js in assetManager.get('js') %}
             <script src="{{ js }}"></script>
         {% endfor %}

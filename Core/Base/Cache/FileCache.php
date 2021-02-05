@@ -103,7 +103,7 @@ class FileCache implements AdaptorInterface
             $content = file_get_contents($file);
 
             /**
-             * Perhaps it's possible to exploit the unserialize via: file_get_contents(...).
+             * Perhaps it's possible to exploit the unserialize via: file_get_contents(...).
              * Documentation can be found here:
              * https://github.com/kalessil/phpinspectionsea/blob/master/docs/security.md#exploiting-unserialize
              */
