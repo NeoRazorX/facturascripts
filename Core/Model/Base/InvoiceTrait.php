@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -122,6 +122,7 @@ trait InvoiceTrait
 
         /// remove receipts
         foreach ($this->getReceipts() as $receipt) {
+            $receipt->disableInvoiceUpdate(true);
             if (false === $receipt->delete()) {
                 $this->toolBox()->i18nLog()->warning('cant-remove-receipt');
                 return false;
