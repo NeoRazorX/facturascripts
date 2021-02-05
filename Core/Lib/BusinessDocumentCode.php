@@ -95,6 +95,10 @@ class BusinessDocumentCode
             $preDate = $document->fecha;
             $preHour = $document->hora;
             foreach ($previous as $preDoc) {
+				if ( $expectedNumber < $sequence->inicio  ) {
+                    break;	// we are below the initial sequence number, so skip (no hole found)
+				}
+				
                 if ($expectedNumber != $preDoc->numero) {
                     /// hole found
                     $document->fecha = $preDate;
