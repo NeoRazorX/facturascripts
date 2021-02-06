@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -85,7 +85,7 @@ abstract class ModelClass extends ModelCore
     {
         $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
         $fields = $field . '|' . $this->primaryDescriptionColumn();
-        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = new DataBaseWhere($fields, \mb_strtolower($query, 'UTF8'), 'LIKE');
         return CodeModel::all(static::tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
@@ -196,7 +196,7 @@ abstract class ModelClass extends ModelCore
         $modelFields = $this->getModelFields();
 
         /// Set Cast to Integer if field it's not
-        if (!in_array($modelFields[$field]['type'], ['integer', 'int', 'serial'])) {
+        if (false === \in_array($modelFields[$field]['type'], ['integer', 'int', 'serial'])) {
             /// Set Where to Integers values only
             $where[] = new DataBaseWhere($field, '^-?[0-9]+$', 'REGEXP');
             $field = self::$dataBase->getEngine()->getSQL()->sql2Int($field);
@@ -294,7 +294,7 @@ abstract class ModelClass extends ModelCore
         $model = $this->modelClassName();
         switch ($type) {
             case 'edit':
-                return is_null($value) ? 'Edit' . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
+                return \is_null($value) ? 'Edit' . $model : 'Edit' . $model . '?code=' . \rawurlencode($value);
 
             case 'list':
                 return $list . $model;
@@ -304,7 +304,7 @@ abstract class ModelClass extends ModelCore
         }
 
         /// default
-        return empty($value) ? $list . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
+        return empty($value) ? $list . $model : 'Edit' . $model . '?code=' . \rawurlencode($value);
     }
 
     /**
@@ -332,7 +332,7 @@ abstract class ModelClass extends ModelCore
             }
         }
 
-        $sql = 'INSERT INTO ' . static::tableName() . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
+        $sql = 'INSERT INTO ' . static::tableName() . ' (' . \implode(',', $insertFields) . ') VALUES (' . \implode(',', $insertValues) . ');';
         if (self::$dataBase->exec($sql)) {
             if ($this->primaryColumnValue() === null) {
                 $this->{static::primaryColumn()} = self::$dataBase->lastval();
@@ -414,6 +414,6 @@ abstract class ModelClass extends ModelCore
     {
         $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($code) : DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($orderby);
-        return self::$dataBase->selectLimit($sql, 1);
+        return empty($code) && empty($where) ? [] : self::$dataBase->selectLimit($sql, 1);
     }
 }
