@@ -15,7 +15,7 @@
     "account-code": "Codi de compte",
     "account-data-missing": "Falten dades en el compte",
     "account-length": "Longitud de compte",
-    "account-length-error": "Longitud de subcompte errònia. El subcompte % code% ha de tenir la longitud definida en l'exercici.",
+    "account-length-error": "Longitud de subcompte errònia. El subcompte %code% ha de tenir la longitud definida en l'exercici.",
     "account-parent-error": "El compte pare és incorrecte o no pertany a l'exercici",
     "accounting": "Comptabilitat",
     "accounting-accounts": "Comptes comptables",
