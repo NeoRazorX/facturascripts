@@ -187,8 +187,7 @@ class DocumentStitcher extends Controller
     protected function breakDownLines(&$doc, &$newLines, &$quantities, $idestado)
     {
         $full = true;
-        $lines = $doc->getLines();
-        foreach ($lines as $line) {
+        foreach ($doc->getLines() as $line) {
             $quantity = (float) $this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
             $quantities[$line->primaryColumnValue()] = $quantity;
 
@@ -212,7 +211,8 @@ class DocumentStitcher extends Controller
             }
         }
 
-        foreach ($lines as $line) {
+        /// we get the lines again in case they have been updated
+        foreach ($doc->getLines() as $line) {
             $line->servido += $quantities[$line->primaryColumnValue()];
             if (false === $line->save()) {
                 $this->dataBase->rollback();
