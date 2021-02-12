@@ -16,7 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base\Debug;
+
+namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\PluginManager;
 
@@ -44,7 +45,7 @@ class ProductionErrorHandler
     }
 
     /**
-     * 
+     *
      * @param array $error
      *
      * @return string
@@ -56,7 +57,7 @@ class ProductionErrorHandler
     }
 
     /**
-     * 
+     *
      * @param array $error
      *
      * @return string
@@ -64,21 +65,25 @@ class ProductionErrorHandler
     private function render($error)
     {
         $title = "FATAL ERROR #" . $error["type"];
+        $file = str_replace(FS_FOLDER, '', $error['file']);
         return "<html>"
             . "<head>"
             . "<title>" . $title . "</title>"
             . "<style>"
             . "body {background-color: silver;}"
-            . ".container {padding: 20px 20px 40px 20px; max-width: 900px; margin-left: auto; margin-right: auto; border-radius: 10px; background-color: snow;}"
+            . '.container{display:flex;justify-content:center;align-items:center;height:100%}'
+            . ".message-container {padding: 20px 20px 40px 20px; max-width: 900px; background-color: snow;box-shadow: 1px 1px 1px 1px #00000070}"
             . ".text-center {text-align: center;}"
             . ".btn {padding: 10px; border-radius: 5px; background-color: orange; color: white; text-decoration: none; font-weight: bold;}"
+            . 'ul{list-style:none;}li{margin-bottom:5px}'
             . "</style>"
             . "</head>"
             . "<body>"
             . "<div class='container'>"
+            . '<div class="message-container">'
             . "<h1 class='text-center'>" . $title . "</h1>"
             . "<ul>"
-            . "<li><b>File:</b> " . $error["file"] . " (<b>Line " . $error["line"] . "</b>)</li>"
+            . "<li><b>File:</b> " . $file . " (<b>Line " . $error["line"] . "</b>)</li>"
             . "<li><b>Message:</b> " . $this->cleanMessage($error) . "</li>"
             . "<li><b>FacturaScripts:</b> " . PluginManager::CORE_VERSION . "</li>"
             . "<li><b>PHP:</b> " . PHP_VERSION . "</li>"
@@ -87,6 +92,7 @@ class ProductionErrorHandler
             . "<a href='https://facturascripts.com/contacto' target='_blank' class='btn'>REPORT / INFORMAR</a>"
             . "</div>"
             . "</div>"
+            . '</div>'
             . "</body>"
             . "</html>";
     }
