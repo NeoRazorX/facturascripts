@@ -75,8 +75,17 @@
             </column>
         </group>
         <group name="shipaddresses" title="shipping-address" icon="fas fa-truck" numcolumns="4">
-            <column name="shippingaddr" title="shipping-address" order="100">
+            <column name="shippingaddr" title="shipping-address" order="100" numcolumns="12">
                 <widget type="select" fieldname="idcontactoenv" onclick="EditContacto" />
+            </column>
+            <column name="carrier" order="110" numcolumns="6">
+                <widget type="select" fieldname="codtrans" onclick="EditAgenciaTransporte">
+                    <values source="agenciastrans" fieldcode="codtrans" fieltitle="nombre" />
+                </widget>
+            </column>
+            <column name="tracking" order="120" title="tracking-code" numcolums="6">
+                <widget type="text" fieldname="tracking" />
+                    
             </column>
         </group>
         <group name="payment-method" title="payment-method" icon="fas fa-dollar-sign" numcolumns="8">
