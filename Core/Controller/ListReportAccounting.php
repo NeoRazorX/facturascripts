@@ -110,7 +110,7 @@ class ListReportAccounting extends ListController
      */
     protected function createViewsPreferences(string $viewName = 'ListBalance')
     {
-        $this->addView($viewName, 'Balance', 'preferences');
+        $this->addView($viewName, 'Balance', 'preferences', 'fas fa-cogs');
         $this->addOrderBy($viewName, ['codbalance'], 'code');
         $this->addOrderBy($viewName, ['descripcion1'], 'description-1');
         $this->addOrderBy($viewName, ['descripcion2'], 'description-2');
