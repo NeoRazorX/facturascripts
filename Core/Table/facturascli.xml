@@ -224,10 +224,7 @@
         <type>double precision</type>
         <default>0</default>
     </column>
-    <column>
-        <name>tracking</name>
-        <type>character varying(50)</type>
-    </column>
+    
     <constraint>
         <name>facturascli_pkey</name>
         <type>PRIMARY KEY (idfactura)</type>

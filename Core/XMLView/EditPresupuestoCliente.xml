@@ -86,8 +86,8 @@
                     <values source="agenciastrans" fieldcode="codtrans" fieltitle="nombre" />
                 </widget>
             </column>
-            <column name="tracking" order="120" title="tracking-code" numcolums="6">
-                <widget type="text" fieldname="tracking" />
+            <column name="codigoenv" order="120" title="tracking-code" numcolums="6">
+                <widget type="text" fieldname="codigoenv" />
                     
             </column>
         </group>
