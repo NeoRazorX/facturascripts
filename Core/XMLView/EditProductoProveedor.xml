@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * This file is part of FacturaScripts
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Carlos García Gómez <carlos@facturascripts.com>
+-->
+<view>
+    <columns>
+        <group name="main" numcolumns="12">
+            <column name="supplier" order="100">
+                <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor" readonly="dinamic" required="true">
+                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre" />
+                </widget>
+            </column>
+            <column name="reference" display="none" order="110">
+                <widget type="text" fieldname="referencia" readonly="true" required="true" />
+            </column>
+            <column name="supplier-reference" display="none" order="120">
+                <widget type="text" fieldname="refproveedor" />
+            </column>
+            <column name="price" order="130">
+                <widget type="money" fieldname="precio" />
+            </column>
+            <column name="dto" order="140">
+                <widget type="percentage" fieldname="dtopor" />
+            </column>
+            <column name="dto-2" display="none" order="150">
+                <widget type="percentage" fieldname="dtopor2" />
+            </column>
+            <column name="net" order="160">
+                <widget type="money" fieldname="neto" readonly="true" />
+            </column>
+            <column name="update-time" display="none" order="170">
+                <widget type="datetime" fieldname="actualizado" readonly="true" />
+            </column>
+        </group>
+    </columns>
+</view>
