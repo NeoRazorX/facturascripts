@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -74,7 +74,21 @@
                 </div>
                 <div class="col-sm">
                     <div class="form-group form-check">
-                        <input type="checkbox" name="ventasinstock" value="1" id="cbNoStock" class="form-check-input" />
+                        {% if appSettings.get('default', 'updatesupplierprices') %}
+                            <input type="checkbox" name="updatesupplierprices" value="1" id="cbUpdateSupplierPrices" class="form-check-input" checked="" />
+                        {% else %}
+                            <input type="checkbox" name="updatesupplierprices" value="1" id="cbUpdateSupplierPrices" class="form-check-input" />
+                        {% endif %}
+                        <label for="cbUpdateSupplierPrices">{{ i18n.trans('update-supplier-prices') }}</label>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="form-group form-check">
+                        {% if appSettings.get('default', 'ventasinstock') %}
+                            <input type="checkbox" name="ventasinstock" value="1" id="cbNoStock" class="form-check-input" checked="" />
+                        {% else %}
+                            <input type="checkbox" name="ventasinstock" value="1" id="cbNoStock" class="form-check-input" />
+                        {% endif %}
                         <label for="cbNoStock">{{ i18n.trans('allow-sale-without-stock') }}</label>
                     </div>
                 </div>

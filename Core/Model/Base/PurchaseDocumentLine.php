@@ -45,7 +45,10 @@ abstract class PurchaseDocumentLine extends BusinessDocumentLine
 
     protected function updateSupplierProduct()
     {
-        if (empty($this->referencia) || $this->cantidad <= 0 || $this->pvpunitario <= 0) {
+        if (empty($this->referencia) ||
+            $this->cantidad <= 0 ||
+            $this->pvpunitario <= 0 ||
+            false === $this->toolBox()->appSettings()->get('default', 'updatesupplierprices')) {
             return;
         }
 
