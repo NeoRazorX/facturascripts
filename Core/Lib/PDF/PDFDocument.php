@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -273,7 +273,7 @@ abstract class PDFDocument extends PDFCore
     {
         if (!empty($model->observaciones)) {
             $this->newPage();
-            $this->pdf->ezText($this->i18n->trans('notes') . "\n", self::FONT_SIZE);
+            $this->pdf->ezText($this->i18n->trans('observations') . "\n", self::FONT_SIZE);
             $this->newLine();
             $this->pdf->ezText(Utils::fixHtml($model->observaciones) . "\n", self::FONT_SIZE);
         }
@@ -509,29 +509,31 @@ abstract class PDFDocument extends PDFCore
         }
 
         $this->insertedHeader = true;
-
         $code = $idempresa ?? AppSettings::get('default', 'idempresa', '');
         $company = new Empresa();
-        if ($company->loadFromCode($code)) {
-            $this->pdf->ezText(Utils::fixHtml($company->nombre), self::FONT_SIZE + 7, ['justification' => 'right']);
-            $address = $company->direccion;
-            $address .= empty($company->codpostal) ? "\n" : "\n" . $company->codpostal . ', ';
-            $address .= empty($company->ciudad) ? '' : $company->ciudad;
-            $address .= empty($company->provincia) ? '' : ' (' . $company->provincia . ') ' . $this->getCountryName($company->codpais);
-
-            $contactData = [];
-            foreach (['telefono1', 'telefono2', 'email', 'web'] as $field) {
-                if (!empty($company->{$field})) {
-                    $contactData[] = $company->{$field};
-                }
-            }
-
-            $lineText = $company->cifnif . ' - ' . Utils::fixHtml($address) . "\n\n" . implode(' · ', $contactData);
-            $this->pdf->ezText($lineText, self::FONT_SIZE, ['justification' => 'right']);
-
-            $idlogo = $this->format->idlogo ?? $company->idlogo;
-            $this->insertCompanyLogo($idlogo);
+        if (false === $company->loadFromCode($code)) {
+            return;
         }
+
+        $size = \mb_strlen($company->nombre) > 20 ? self::FONT_SIZE + 2 : self::FONT_SIZE + 7;
+        $this->pdf->ezText(Utils::fixHtml($company->nombre), $size, ['justification' => 'right']);
+        $address = $company->direccion;
+        $address .= empty($company->codpostal) ? "\n" : "\n" . $company->codpostal . ', ';
+        $address .= empty($company->ciudad) ? '' : $company->ciudad;
+        $address .= empty($company->provincia) ? '' : ' (' . $company->provincia . ') ' . $this->getCountryName($company->codpais);
+
+        $contactData = [];
+        foreach (['telefono1', 'telefono2', 'email', 'web'] as $field) {
+            if (!empty($company->{$field})) {
+                $contactData[] = $company->{$field};
+            }
+        }
+
+        $lineText = $company->cifnif . ' - ' . Utils::fixHtml($address) . "\n\n" . implode(' · ', $contactData);
+        $this->pdf->ezText($lineText, self::FONT_SIZE, ['justification' => 'right']);
+
+        $idlogo = $this->format->idlogo ?? $company->idlogo;
+        $this->insertCompanyLogo($idlogo);
     }
 
     /**
