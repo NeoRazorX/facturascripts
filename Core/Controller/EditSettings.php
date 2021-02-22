@@ -68,7 +68,7 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function checkPaymentMethod()
@@ -99,7 +99,7 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function checkWarehouse()
@@ -130,7 +130,7 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function checkTax()
@@ -182,7 +182,7 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function editAction()
@@ -255,12 +255,28 @@ class EditSettings extends PanelController
             case 'SettingsDefault':
                 $this->loadPaymentMethodValues($viewName);
                 $this->loadWarehouseValues($viewName);
+                $this->loadLogoImageValues($viewName);
                 break;
         }
     }
 
     /**
-     * 
+     *
+     * @param string $viewName
+     */
+    protected function loadLogoImageValues($viewName)
+    {
+        $columnLogo = $this->views[$viewName]->columnForName('login-logo');
+        if ($columnLogo) {
+            $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
+                new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
+            ]);
+            $columnLogo->widget->setValuesFromCodeModel($images);
+        }
+    }
+
+    /**
+     *
      * @param string $viewName
      */
     protected function loadPaymentMethodValues($viewName)
@@ -276,7 +292,7 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function loadWarehouseValues($viewName)

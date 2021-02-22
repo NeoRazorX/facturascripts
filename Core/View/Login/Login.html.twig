@@ -8,7 +8,8 @@
                 <form action="{{ asset('') }}" method="post" class="form">
                     <div class="card mt-4">
                         <a href="{{ asset('') }}">
-                            <img class="card-img-top" src="{{ asset('Dinamic/Assets/Images/horizontal-logo.png') }}" alt="FacturaScripts"/>
+                            {% set idfile = appSettings.get('default','idloginlogo', 0) %}
+                            {{ _self.loadLogo(idfile) }}
                         </a>
                         <div class="card-body">
                             <p class="card-text text-center">{{ i18n.trans('login-text') }}</p>
@@ -140,3 +141,14 @@
         }
     </style>
 {% endblock %}
+
+{% macro loadLogo(idfile) %}
+    {% set url = 'Dinamic/Assets/Images/horizontal-logo.png' %}
+    {% if idfile > 0 %}
+        {% set attached = attachedFile(idfile) %}
+        {%  if attached.filename is not empty %}
+            {% set url = attached.url('download') %}
+        {%  endif %}
+    {%  endif %}
+    <img class="card-img-top" src="{{ asset(url) }}" alt="FacturaScripts"/>
+{% endmacro loadLogo %}

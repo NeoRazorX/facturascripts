@@ -132,6 +132,9 @@
             <column name="show-balance-graphic" numcolumns="3" order="130">
                 <widget type="checkbox" fieldname="balancegraphic" />
             </column>
+            <column name="login-logo" titleurl="ListAttachedFile" description="click-link-to-add" numcolumns="6" order="1400">
+                <widget type="select" fieldname="idloginlogo" onclick="EditAttachedFile" />
+            </column>
         </group>
         <group name="api" title="api" icon="fas fa-laptop-code" numcolumns="12">
             <column name="enable-api" numcolumns="3" order="100">
