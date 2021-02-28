@@ -900,7 +900,7 @@
     "register-installation-p": "Registri la seva instal·lació per a poder actualitzar plugins de pagament o privats.",
     "register-symbol": "#",
     "registered-installation": "Instal·lació registrada #%number%",
-    "registered-installation-p": "Aquesta instal·lació ja ha estat registrada.",
+    "registered-installation-p": "Aquesta instal·lació ja ha estat registrada. Si tens *plugins de pagament, prem el botó administrar per a vincular-los i poder actualitzar.",
     "rejected": "Rebutjat",
     "related": "Relacionat",
     "reloading": "Recarregant...",
