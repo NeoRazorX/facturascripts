@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -111,12 +111,11 @@ class Updater extends Controller
     }
 
     /**
-     * Removed downloaded file.
+     * Remove downloaded file.
      */
     private function cancelAction()
     {
-        $idItem = $this->request->get('item', '');
-        $fileName = 'update-' . $idItem . '.zip';
+        $fileName = 'update-' . $this->request->get('item', '') . '.zip';
         if (\file_exists(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName)) {
             \unlink(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName);
             $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
@@ -132,6 +131,7 @@ class Updater extends Controller
     private function downloadAction()
     {
         $idItem = $this->request->get('item', '');
+        $this->updaterItems = $this->getUpdateItems();
         foreach ($this->updaterItems as $key => $item) {
             if ($item['id'] != $idItem) {
                 continue;
@@ -163,47 +163,31 @@ class Updater extends Controller
     {
         switch ($action) {
             case 'cancel':
-                $this->cancelAction();
-                $this->updaterItems = $this->getUpdateItems();
-                break;
+                return $this->cancelAction();
 
             case 'claim-install':
-                $this->redirect($this->telemetryManager->claimUrl());
-                break;
+                return $this->redirect($this->telemetryManager->claimUrl());
 
             case 'download':
-                $this->updaterItems = $this->getUpdateItems();
-                $this->downloadAction();
-                break;
+                return $this->downloadAction();
 
             case 'post-update':
-                $this->updaterItems = $this->getUpdateItems();
-                Migrations::run();
-                $this->pluginManager->deploy(true, true);
+                $this->postUpdateAction();
                 break;
 
             case 'register':
                 if ($this->telemetryManager->install()) {
                     $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-                } else {
-                    $this->toolBox()->i18nLog()->error('record-save-error');
+                    break;
                 }
-                $this->updaterItems = $this->getUpdateItems();
+                $this->toolBox()->i18nLog()->error('record-save-error');
                 break;
 
             case 'update':
-                if ($this->updateAction()) {
-                    $this->pluginManager->deploy(true, false);
-                    $this->toolBox()->cache()->clear();
-                    $this->toolBox()->i18nLog()->notice('reloading');
-                    $this->redirect($this->getClassName() . '?action=post-update', 3);
-                }
-                break;
-
-            default:
-                $this->updaterItems = $this->getUpdateItems();
-                break;
+                return $this->updateAction();
         }
+
+        $this->updaterItems = $this->getUpdateItems();
     }
 
     /**
@@ -321,9 +305,23 @@ class Updater extends Controller
         }
     }
 
+    private function postUpdateAction()
+    {
+        $plugName = $this->request->get('init', '');
+        if (empty($plugName)) {
+            Migrations::run();
+            $this->pluginManager->deploy(true, true);
+            return;
+        }
+
+        /// run Init::update() when plugin is updated
+        $this->pluginManager->initPlugin($plugName);
+        $this->pluginManager->deploy(true, true);
+    }
+
     /**
      * Extract zip file and update all files.
-     * 
+     *
      * @return bool
      */
     private function updateAction(): bool
@@ -331,6 +329,7 @@ class Updater extends Controller
         $idItem = $this->request->get('item', '');
         $fileName = 'update-' . $idItem . '.zip';
 
+        /// open the zip file
         $zip = new ZipArchive();
         $zipStatus = $zip->open(\FS_FOLDER . DIRECTORY_SEPARATOR . $fileName, ZipArchive::CHECKCONS);
         if ($zipStatus !== true) {
@@ -338,7 +337,29 @@ class Updater extends Controller
             return false;
         }
 
-        return $idItem == self::CORE_PROJECT_ID ? $this->updateCore($zip, $fileName) : $this->updatePlugin($zip, $fileName);
+        /// get the name of the plugin to init after update (if the plugin is enabled)
+        $init = '';
+        foreach ($this->getUpdateItems() as $item) {
+            if ($idItem == self::CORE_PROJECT_ID) {
+                break;
+            }
+
+            if ($item['id'] == $idItem && \in_array($item['name'], $this->pluginManager->enabledPlugins())) {
+                $init = $item['name'];
+                break;
+            }
+        }
+
+        /// extract core/plugin zip file
+        $done = ($idItem == self::CORE_PROJECT_ID) ? $this->updateCore($zip, $fileName) : $this->updatePlugin($zip, $fileName);
+        if ($done) {
+            $this->pluginManager->deploy(true, false);
+            $this->toolBox()->cache()->clear();
+            $this->toolBox()->i18nLog()->notice('reloading');
+            $this->redirect($this->getClassName() . '?action=post-update&init=' . $init, 3);
+        }
+
+        return $done;
     }
 
     /**

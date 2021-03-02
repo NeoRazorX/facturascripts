@@ -31,7 +31,7 @@ final class PluginManager
     /**
      * FacturaScripts core version.
      */
-    const CORE_VERSION = 2021.04;
+    const CORE_VERSION = 2021.05;
 
     /**
      * Path to list plugins on file.
@@ -172,6 +172,19 @@ final class PluginManager
         }
 
         return $enabled;
+    }
+
+    /**
+     * 
+     * @param string $pluginName
+     */
+    public function initPlugin(string $pluginName)
+    {
+        $pluginClass = "FacturaScripts\\Plugins\\{$pluginName}\\Init";
+        if (\class_exists($pluginClass)) {
+            $initObject = new $pluginClass();
+            $initObject->update();
+        }
     }
 
     /**
@@ -373,19 +386,6 @@ final class PluginManager
         }
 
         return $info;
-    }
-
-    /**
-     * 
-     * @param string $pluginName
-     */
-    private function initPlugin(string $pluginName)
-    {
-        $pluginClass = "FacturaScripts\\Plugins\\{$pluginName}\\Init";
-        if (\class_exists($pluginClass)) {
-            $initObject = new $pluginClass();
-            $initObject->update();
-        }
     }
 
     /**
