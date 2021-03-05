@@ -262,6 +262,7 @@ class Cliente extends Base\ComercialContact
             $contact->fax = $this->fax;
             $contact->nombre = $parts[0];
             $contact->personafisica = $this->personafisica;
+            $contact->tipoidfiscal = $this->tipoidfiscal;
             $contact->telefono1 = $this->telefono1;
             $contact->telefono2 = $this->telefono2;
             if ($contact->save()) {
