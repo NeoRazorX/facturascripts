@@ -76,6 +76,7 @@
     "allow-post-data": "Allow POST",
     "allow-put-data": "Allow PUT",
     "allow-sale-without-stock": "Allow sale without stock",
+    "allow-sale-without-stock-n": "Allow out-of-stock sale on new products",
     "allow-update": "Allow update",
     "amount": "Amount",
     "amount-without-discount": "Amount without discount",

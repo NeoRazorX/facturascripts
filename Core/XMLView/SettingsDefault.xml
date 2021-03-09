@@ -113,7 +113,7 @@
             <column name="update-supplier-prices" numcolumns="3" order="110">
                 <widget type="checkbox" fieldname="updatesupplierprices" />
             </column>
-            <column name="allow-sale-without-stock" numcolumns="3" order="120">
+            <column name="allow-sale-without-stock-n" numcolumns="6" order="120">
                 <widget type="checkbox" fieldname="ventasinstock" />
             </column>
         </group>

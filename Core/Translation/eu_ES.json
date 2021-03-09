@@ -76,6 +76,7 @@
     "allow-post-data": "Onartu ALDATZEA",
     "allow-put-data": "Onartu GEHITZEA",
     "allow-sale-without-stock": "Baimendu stock gabeko salmenta",
+    "allow-sale-without-stock-n": "allow-sale-without-stock-n",
     "allow-update": "Onartu eguneratzea",
     "amount": "Zenbatekoa",
     "amount-without-discount": "Prezioa beherapenik gabe",

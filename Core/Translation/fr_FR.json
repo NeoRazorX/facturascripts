@@ -76,6 +76,7 @@
     "allow-post-data": "Autoriser modifier",
     "allow-put-data": "Autoriser l'ajout",
     "allow-sale-without-stock": "Autoriser la vente sans stock",
+    "allow-sale-without-stock-n": "allow-sale-without-stock-n",
     "allow-update": "Autoriser la mise",
     "amount": "Montant",
     "amount-without-discount": "Quantité sans remise",

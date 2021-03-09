@@ -76,6 +76,7 @@
     "allow-post-data": "Permitir MODIFICAR",
     "allow-put-data": "Permitir AÑADIR",
     "allow-sale-without-stock": "Permitir venta sin stock",
+    "allow-sale-without-stock-n": "Permitir la venta sin stock en nuevos productos",
     "allow-update": "Permitir modificar",
     "amount": "Subtotal",
     "amount-without-discount": "Precio sin descuento",

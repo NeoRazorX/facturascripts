@@ -76,6 +76,7 @@
     "allow-post-data": "Permetre les MODIFICACIONS",
     "allow-put-data": "Permetre els AFEGITS",
     "allow-sale-without-stock": "Permetre la venda sense estoc",
+    "allow-sale-without-stock-n": "allow-sale-without-stock-n",
     "allow-update": "Permetre l'actualisació",
     "amount": "Montant",
     "amount-without-discount": "Preu sense desconte",
