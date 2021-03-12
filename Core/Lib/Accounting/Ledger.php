@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -72,9 +72,7 @@ class Ledger extends AccountingBase
             $ledger[$account][] = $this->processLine($line, $grouped);
         }
 
-        /// every page is a table
-        $pages = $ledger;
-        return $pages;
+        return $ledger;
     }
 
     /**
@@ -82,6 +80,7 @@ class Ledger extends AccountingBase
      *
      * @param string $type
      * @param string $action
+     *
      * @return array
      */
     public static function getButton($type, $action = 'ledger')
@@ -91,7 +90,7 @@ class Ledger extends AccountingBase
             'icon' => 'fas fa-book fa-fw',
             'label' => 'ledger',
             'action' => $action,
-            'type' => $type,
+            'type' => $type
         ];
     }
 
@@ -102,11 +101,11 @@ class Ledger extends AccountingBase
      */
     protected function getData(array $params = [])
     {
-        if (!$this->dataBase->tableExists('partidas')) {
+        if (false === $this->dataBase->tableExists('partidas')) {
             return [];
         }
 
-        $sql = 'SELECT asientos.fecha, asientos.numero,'
+        $sql = 'SELECT asientos.numero, asientos.fecha,'
             . ' partidas.codsubcuenta, partidas.concepto, partidas.debe, partidas.haber, '
             . ' subcuentas.codcuenta,'
             . ' cuentas.descripcion as cuenta_descripcion'
@@ -115,7 +114,7 @@ class Ledger extends AccountingBase
             . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
             . ' INNER JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
             . ' WHERE ' . $this->getDataWhere($params)
-            . ' ORDER BY asientos.fecha, asientos.numero ASC';
+            . ' ORDER BY asientos.fecha, asientos.numero, partidas.codsubcuenta ASC';
         return $this->dataBase->select($sql);
     }
 
@@ -126,7 +125,7 @@ class Ledger extends AccountingBase
      */
     protected function getDataGrouped(array $params = [])
     {
-        if (!$this->dataBase->tableExists('partidas')) {
+        if (false === $this->dataBase->tableExists('partidas')) {
             return [];
         }
 
@@ -147,6 +146,7 @@ class Ledger extends AccountingBase
     /**
      *
      * @param array $params
+     *
      * @return string
      */
     protected function getDataWhere(array $params = [])
@@ -185,8 +185,8 @@ class Ledger extends AccountingBase
      */
     protected function processHeader(&$ledgerAccount, $line)
     {
+        $ledgerAccount['asiento'] = false;
         $ledgerAccount['fecha'] = false;
-        $ledgerAccount['numero'] = false;
         $ledgerAccount['cuenta'] = $line['codcuenta'];
         $ledgerAccount['concepto'] = $line['cuenta_descripcion'];
         if (!isset($ledgerAccount['debe'])) {
@@ -209,7 +209,7 @@ class Ledger extends AccountingBase
      */
     protected function processLine($line, $grouped)
     {
-        $item = $grouped ? [] : ['fecha' => $line['fecha'], 'numero' => $line['numero']];
+        $item = $grouped ? [] : ['asiento' => $line['numero'], 'fecha' => $line['fecha']];
         $item['cuenta'] = isset($line['cuenta']) ? $line['cuenta'] : $line['codsubcuenta'];
         $item['concepto'] = $this->toolBox()->utils()->fixHtml($line['concepto']);
         $item['debe'] = $this->toolBox()->coins()->format($line['debe'], FS_NF0, '');

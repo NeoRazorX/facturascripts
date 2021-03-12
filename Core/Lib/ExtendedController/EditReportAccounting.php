@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,7 +45,7 @@ abstract class EditReportAccounting extends EditController
         }
 
         $format = $this->request->get('option', 'PDF');
-        $title = $this->getTitle() . ' - ' . $model->name;
+        $title = $model->name;
 
         $this->setTemplate(false);
         $this->exportData($pages, $title, $format);
@@ -64,23 +64,13 @@ abstract class EditReportAccounting extends EditController
         $view = $this->views[$mainViewName];
 
         $this->exportManager->newDoc($format, $title);
-        $this->exportManager->addModelPage($view->model, $view->getColumns(), $view->title);
+        $this->exportManager->addModelPage($view->model, $view->getColumns(), $this->toolBox()->i18n()->trans('accounting-reports'));
 
         foreach ($pages as $data) {
-            $headers = empty($data) ? [] : array_keys($data[0]);
+            $headers = empty($data) ? [] : \array_keys($data[0]);
             $this->exportManager->addTablePage($headers, $data);
         }
 
         $this->exportManager->show($this->response);
-    }
-
-    /**
-     * Get Title for report
-     *
-     * @return string
-     */
-    protected function getTitle(): string
-    {
-        return $this->toolBox()->i18n()->trans($this->getPageData()['title']);
     }
 }
