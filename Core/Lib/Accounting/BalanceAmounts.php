@@ -71,12 +71,9 @@ class BalanceAmounts extends AccountingBase
         /// get amounts
         $amounts = $this->getData($params);
 
-        /// we need this multidimensional array for printing support
-        $totals = [['debe' => 0.00, 'haber' => 0.00, 'saldo' => 0.00]];
-
         $rows = [];
         foreach ($accounts as $account) {
-            $debe = $haber = 0;
+            $debe = $haber = 0.00;
             $this->combineData($account, $accounts, $amounts, $debe, $haber);
             $saldo = $debe - $haber;
             if (empty($debe) && empty($haber)) {
@@ -106,9 +103,9 @@ class BalanceAmounts extends AccountingBase
             }
         }
 
-        $totals[0]['debe'] = $this->toolBox()->coins()->format($totals[0]['debe'], FS_NF0, '');
-        $totals[0]['haber'] = $this->toolBox()->coins()->format($totals[0]['haber'], FS_NF0, '');
-        $totals[0]['saldo'] = $this->toolBox()->coins()->format($totals[0]['saldo'], FS_NF0, '');
+        /// we need this multidimensional array for printing support
+        $totals = [['debe' => 0.00, 'haber' => 0.00, 'saldo' => 0.00]];
+        $this->combineTotals($amounts, $totals);
 
         /// every page is a table
         return [$rows, $totals];
@@ -136,6 +133,25 @@ class BalanceAmounts extends AccountingBase
                 $this->combineData($account, $accounts, $amounts, $debe, $haber);
             }
         }
+    }
+
+    /**
+     * 
+     * @param array $amounts
+     * @param array $totals
+     */
+    protected function combineTotals(&$amounts, &$totals)
+    {
+        $debe = $haber = 0.00;
+        foreach ($amounts as $row) {
+            $debe += (float) $row['debe'];
+            $haber += (float) $row['haber'];
+        }
+        $saldo = $debe - $haber;
+
+        $totals[0]['debe'] = $this->toolBox()->coins()->format($debe, FS_NF0, '');
+        $totals[0]['haber'] = $this->toolBox()->coins()->format($haber, FS_NF0, '');
+        $totals[0]['saldo'] = $this->toolBox()->coins()->format($saldo, FS_NF0, '');
     }
 
     /**
