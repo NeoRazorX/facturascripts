@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -16,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Core\Model\Base\JoinModel;
@@ -27,15 +29,13 @@ use FacturaScripts\Dinamic\Model\Partida;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class PartidaAsiento extends JoinModel
-{
+class PartidaAsiento extends JoinModel {
 
     /**
      * 
      * @param array $data
      */
-    public function __construct($data = [])
-    {
+    public function __construct($data = []) {
         parent::__construct($data);
         $this->setMasterModel(new Asiento());
 
@@ -47,8 +47,7 @@ class PartidaAsiento extends JoinModel
      * 
      * @return array
      */
-    protected function getFields(): array
-    {
+    protected function getFields(): array {
         return [
             'concepto' => 'partidas.concepto',
             'debe' => 'partidas.debe',
@@ -56,7 +55,8 @@ class PartidaAsiento extends JoinModel
             'haber' => 'partidas.haber',
             'idasiento' => 'partidas.idasiento',
             'idpartida' => 'partidas.idpartida',
-            'numero' => 'asientos.numero'
+            'numero' => 'asientos.numero',
+            'punteada' => 'partidas.idpartida'
         ];
     }
 
@@ -64,8 +64,7 @@ class PartidaAsiento extends JoinModel
      * 
      * @return string
      */
-    protected function getSQLFrom(): string
-    {
+    protected function getSQLFrom(): string {
         return 'partidas LEFT JOIN asientos ON partidas.idasiento = asientos.idasiento';
     }
 
@@ -73,8 +72,8 @@ class PartidaAsiento extends JoinModel
      * 
      * @return array
      */
-    protected function getTables(): array
-    {
+    protected function getTables(): array {
         return ['asientos', 'partidas'];
     }
+
 }

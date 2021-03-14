@@ -47,8 +47,18 @@
         <column name="date" display="right" order="160">
             <widget type="date" fieldname="fecha" />
         </column>
+        <column name="revised" display="center" order="170">
+            <widget type="checkbox" fieldname="punteada" />
+        </column>
+        <column name="revised2" display="center" order="170">
+            <widget type="text" fieldname="punteada" />
+        </column>
     </columns>
     <rows>
+        <row type="actions">
+            <button type="action" label="mark-revised" color="success" action="revised"  />
+            <button type="action" label="mark-unrevised" color="secondary" action="unrevised"  />
+        </row>
         <row type="status">
             <option color="success" fieldname="debe">gt:0</option>
             <option color="warning" fieldname="haber">gt:0</option>

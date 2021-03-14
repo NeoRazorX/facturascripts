@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -16,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
@@ -28,8 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-abstract class PanelController extends BaseController
-{
+abstract class PanelController extends BaseController {
 
     /**
      * Indicates if the main view has data or is empty.
@@ -51,8 +52,7 @@ abstract class PanelController extends BaseController
      * @param string $className
      * @param string $uri
      */
-    public function __construct(string $className, string $uri = '')
-    {
+    public function __construct(string $className, string $uri = '') {
         parent::__construct($className, $uri);
         $this->setTabsPosition('left');
     }
@@ -61,8 +61,7 @@ abstract class PanelController extends BaseController
      *
      * @return string
      */
-    public function getImageUrl()
-    {
+    public function getImageUrl() {
         return '';
     }
 
@@ -73,8 +72,7 @@ abstract class PanelController extends BaseController
      * @param User                  $user
      * @param ControllerPermissions $permissions
      */
-    public function privateCore(&$response, $user, $permissions)
-    {
+    public function privateCore(&$response, $user, $permissions) {
         parent::privateCore($response, $user, $permissions);
 
         /// Get any operations that have to be performed
@@ -120,8 +118,7 @@ abstract class PanelController extends BaseController
      *
      * @param string $position
      */
-    public function setTabsPosition($position)
-    {
+    public function setTabsPosition($position) {
         $this->tabsPosition = $position;
         switch ($this->tabsPosition) {
             case 'bottom':
@@ -150,8 +147,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addEditListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-bars')
-    {
+    protected function addEditListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-bars') {
         $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
         $this->addCustomView($viewName, $view);
@@ -165,8 +161,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-edit')
-    {
+    protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-edit') {
         $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
         $this->addCustomView($viewName, $view);
@@ -182,8 +177,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addGridView($master, $detail, $viewTitle, $viewIcon = 'fas fa-list-alt')
-    {
+    protected function addGridView($master, $detail, $viewTitle, $viewIcon = 'fas fa-list-alt') {
         // Create master and detail views
         $master['model'] = self::MODEL_NAMESPACE . $master['model'];
         $detail['model'] = self::MODEL_NAMESPACE . $detail['model'];
@@ -205,8 +199,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addHtmlView($viewName, $fileName, $modelName, $viewTitle, $viewIcon = 'fab fa-html5')
-    {
+    protected function addHtmlView($viewName, $fileName, $modelName, $viewTitle, $viewIcon = 'fab fa-html5') {
         $view = new HtmlView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName, $viewIcon);
         $this->addCustomView($viewName, $view);
     }
@@ -219,8 +212,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-list')
-    {
+    protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-list') {
         $view = new ListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
         $this->addCustomView($viewName, $view);
@@ -231,8 +223,7 @@ abstract class PanelController extends BaseController
      *
      * @return bool
      */
-    protected function editAction()
-    {
+    protected function editAction() {
         if (!$this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
@@ -281,8 +272,7 @@ abstract class PanelController extends BaseController
      *
      * @param string $action
      */
-    protected function execAfterAction($action)
-    {
+    protected function execAfterAction($action) {
         switch ($action) {
             case 'export':
                 $this->exportAction();
@@ -301,8 +291,7 @@ abstract class PanelController extends BaseController
      *
      * @return bool
      */
-    protected function execPreviousAction($action)
-    {
+    protected function execPreviousAction($action) {
         switch ($action) {
             case 'autocomplete':
                 $this->setTemplate(false);
@@ -312,7 +301,8 @@ abstract class PanelController extends BaseController
 
             case 'delete':
             case 'delete-document':
-                $this->deleteAction();
+
+                // $this->deleteAction();
                 break;
 
             case 'edit':
@@ -348,8 +338,7 @@ abstract class PanelController extends BaseController
      * 
      * @return bool
      */
-    protected function insertAction()
-    {
+    protected function insertAction() {
         if (!$this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
@@ -389,8 +378,7 @@ abstract class PanelController extends BaseController
      *
      * @return string
      */
-    private function searchGridView(): string
-    {
+    private function searchGridView(): string {
         foreach ($this->views as $viewName => $view) {
             if ($view instanceof GridView) {
                 return $viewName;
@@ -399,4 +387,5 @@ abstract class PanelController extends BaseController
 
         return '';
     }
+
 }
