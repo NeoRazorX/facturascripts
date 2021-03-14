@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,19 +34,31 @@
                     <values title="income-and-expenses">IG</values>
                 </widget>
             </column>
-            <column name="description-1" numcolumns="6" order="120">
+            <column name="level1" numcolumns="2" order="120">
+                <widget type="text" fieldname="nivel1" />
+            </column>
+            <column name="description-1" numcolumns="4" order="130">
                 <widget type="text" fieldname="descripcion1" maxlength="255" />
             </column>
-            <column name="description-2" numcolumns="6" order="130">
+            <column name="level2" numcolumns="2" order="140">
+                <widget type="text" fieldname="nivel2" />
+            </column>
+            <column name="description-2" numcolumns="4" order="150">
                 <widget type="text" fieldname="descripcion2" maxlength="255" />
             </column>
-            <column name="description-3" numcolumns="6" order="140">
+            <column name="level3" numcolumns="2" order="160">
+                <widget type="text" fieldname="nivel3" />
+            </column>
+            <column name="description-3" numcolumns="4" order="170">
                 <widget type="text" fieldname="descripcion3" maxlength="255" />
             </column>
-            <column name="description-4" numcolumns="6" order="150">
+            <column name="level4" numcolumns="2" order="180">
+                <widget type="text" fieldname="nivel4" />
+            </column>
+            <column name="description-4" numcolumns="4" order="190">
                 <widget type="text" fieldname="descripcion4" maxlength="255" />
             </column>
-            <column name="description-4ba" numcolumns="6" order="160">
+            <column name="description-4ba" numcolumns="6" order="200">
                 <widget type="text" fieldname="descripcion4ba" maxlength="255" />
             </column>
         </group>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Cuenta;
+use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Abbreviated detail of a balance.
@@ -59,16 +61,31 @@ class BalanceCuentaA extends Base\ModelClass
     public $id;
 
     /**
-     * Obtain all balances from the account by your balance code.
+     * 
+     * @param string $codejercicio
      *
-     * @param string $cod
-     *
-     * @return static[]
+     * @return float
      */
-    public function allFromCodbalance($cod)
+    public function calculate($codejercicio): float
     {
-        $where = [new DataBaseWhere('codbalance', $cod)];
-        return $this->all($where, ['codcuenta' => 'ASC'], 0, 0);
+        $debe = $haber = 0.00;
+        $subaccounts = $this->getSubaccounts($this->codcuenta, $codejercicio);
+        if (empty($subaccounts)) {
+            return 0.00;
+        }
+
+        $sqlIN = '';
+        foreach ($subaccounts as $subc) {
+            $sqlIN .= empty($sqlIN) ? static::$dataBase->var2str($subc->idsubcuenta) : ',' . static::$dataBase->var2str($subc->idsubcuenta);
+        }
+
+        $sql = 'SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM partidas WHERE idsubcuenta IN (' . $sqlIN . ');';
+        foreach (static::$dataBase->select($sql) as $row) {
+            $debe += (float) $row['debe'];
+            $haber += (float) $row['haber'];
+        }
+
+        return $debe - $haber;
     }
 
     /**
@@ -94,75 +111,6 @@ class BalanceCuentaA extends Base\ModelClass
     }
 
     /**
-     * Returns the balance of an exercise.
-     *
-     * @param ejercicio $ejercicio
-     * @param bool      $desde
-     * @param bool      $hasta
-     *
-     * @return float|int
-     */
-    public function saldo(&$ejercicio, $desde = false, $hasta = false)
-    {
-        $extra = '';
-        if (!empty($ejercicio->idasientopyg)) {
-            $extra = ' AND idasiento != ' . self::$dataBase->var2str($ejercicio->idasientopyg);
-            if ($ejercicio->idasientocierre !== null) {
-                $extra = ' AND idasiento NOT IN (' . self::$dataBase->var2str($ejercicio->idasientocierre)
-                    . ', ' . self::$dataBase->var2str($ejercicio->idasientopyg) . ')';
-            }
-        } elseif (!empty($ejercicio->idasientocierre)) {
-            $extra = ' AND idasiento != ' . self::$dataBase->var2str($ejercicio->idasientocierre);
-        }
-
-        if ($desde && $hasta) {
-            $extra .= ' AND idasiento IN (SELECT idasiento FROM asientos WHERE '
-                . 'fecha >= ' . self::$dataBase->var2str($desde) . ' AND '
-                . 'fecha <= ' . self::$dataBase->var2str($hasta) . ')';
-        }
-
-        if ($this->codcuenta === '129') {
-            $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM partidas
-            WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
-              WHERE (codcuenta LIKE '6%' OR codcuenta LIKE '7%')
-                AND codejercicio = " . self::$dataBase->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
-            $data = self::$dataBase->select($sql);
-        } else {
-            $sql = "SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM partidas
-            WHERE idsubcuenta IN (SELECT idsubcuenta FROM co_subcuentas
-               WHERE codcuenta LIKE '" . $this->toolBox()->utils()->noHtml($this->codcuenta) . "%'"
-                . ' AND codejercicio = ' . self::$dataBase->var2str($ejercicio->codejercicio) . ')' . $extra . ';';
-            $data = self::$dataBase->select($sql);
-        }
-
-        if (!empty($data)) {
-            return (float) $data[0]['haber'] - (float) $data[0]['debe'];
-        }
-
-        return 0;
-    }
-
-    /**
-     * Search all balances of the account by its balance code.
-     *
-     * @param string $cod
-     *
-     * @return static[]
-     */
-    public function searchByCodbalance($cod)
-    {
-        $balist = [];
-        $sql = 'SELECT * FROM ' . static::tableName()
-            . " WHERE codbalance LIKE '" . $this->toolBox()->utils()->noHtml($cod) . "%' ORDER BY codcuenta ASC;";
-
-        foreach (self::$dataBase->select($sql) as $row) {
-            $balist[] = new static($row);
-        }
-
-        return $balist;
-    }
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -180,5 +128,41 @@ class BalanceCuentaA extends Base\ModelClass
     {
         $this->desccuenta = $this->toolBox()->utils()->noHtml($this->desccuenta);
         return parent::test();
+    }
+
+    /**
+     * 
+     * @param string $codcuenta
+     * @param string $codejercicio
+     *
+     * @return Subcuenta[]
+     */
+    protected function getSubaccounts($codcuenta, $codejercicio)
+    {
+        $subaccounts = [];
+
+        /// add related subaccounts
+        $subcuentaModel = new Subcuenta();
+        $where = [
+            new DataBaseWhere('codcuenta', $codcuenta),
+            new DataBaseWhere('codejercicio', $codejercicio)
+        ];
+        foreach ($subcuentaModel->all($where, [], 0, 0) as $subc) {
+            $subaccounts[$subc->idsubcuenta] = $subc;
+        }
+
+        /// add related subaccounts from children accounts
+        $cuentaModel = new Cuenta();
+        $where2 = [
+            new DataBaseWhere('codejercicio', $codejercicio),
+            new DataBaseWhere('parent_codcuenta', $codcuenta)
+        ];
+        foreach ($cuentaModel->all($where2, [], 0, 0) as $cuenta) {
+            foreach ($this->getSubaccounts($cuenta->codcuenta, $codejercicio) as $subc) {
+                $subaccounts[$subc->idsubcuenta] = $subc;
+            }
+        }
+
+        return $subaccounts;
     }
 }
