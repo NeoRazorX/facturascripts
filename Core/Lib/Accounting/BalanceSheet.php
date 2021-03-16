@@ -144,10 +144,29 @@ class BalanceSheet extends AccountingBase
         $balAccount = new BalanceCuentaA();
         $where = [new DataBaseWhere('codbalance', $balance->codbalance)];
         foreach ($balAccount->all($where, [], 0, 0) as $model) {
-            $total += $model->calculate($codejercicio);
+            $sql = "SELECT SUM(partidas.debe) AS debe, SUM(partidas.haber) AS haber"
+                . " FROM partidas"
+                . " LEFT JOIN asientos ON partidas.idasiento = asientos.idasiento"
+                . " WHERE asientos.codejercicio = " . $this->dataBase->var2str($codejercicio)
+                . " AND partidas.codsubcuenta LIKE '" . $model->codcuenta . "%';";
+
+            if ($model->codcuenta === '129') {
+                $sql = "SELECT SUM(partidas.debe) as debe, SUM(partidas.haber) as haber"
+                    . " FROM partidas"
+                    . " LEFT JOIN subcuentas ON partidas.idsubcuenta = subcuentas.idsubcuenta"
+                    . " LEFT JOIN cuentas ON subcuentas.idcuenta = cuentas.idcuenta"
+                    . " WHERE subcuentas.codejercicio = " . $this->dataBase->var2str($codejercicio)
+                    . " AND (subcuentas.codcuenta LIKE '6%' OR subcuentas.codcuenta LIKE '7%')";
+            }
+
+            foreach ($this->dataBase->select($sql) as $row) {
+                $total += $balance->naturaleza === 'A' ?
+                    (float) $row['debe'] - (float) $row['haber'] :
+                    (float) $row['haber'] - (float) $row['debe'];
+            }
         }
 
-        return \abs($total);
+        return $total;
     }
 
     /**
@@ -165,7 +184,10 @@ class BalanceSheet extends AccountingBase
 
         /// get balance codes
         $balance = new Balance();
-        $where = [new DataBaseWhere('naturaleza', $nature)];
+        $where = [
+            new DataBaseWhere('naturaleza', $nature),
+            new DataBaseWhere('nivel1', '', '!=')
+        ];
         $order = ['nivel1' => 'ASC', 'nivel2' => 'ASC', 'nivel3' => 'ASC', 'nivel4' => 'ASC'];
         $balances = $balance->all($where, $order, 0, 0);
 
@@ -180,6 +202,7 @@ class BalanceSheet extends AccountingBase
         }
 
         /// add to table
+        $coins = $this->toolBox()->coins();
         $nivel1 = $nivel2 = $nivel3 = $nivel4 = '';
         foreach ($balances as $bal) {
             if ($bal->nivel1 != $nivel1 && !empty($bal->nivel1)) {
@@ -187,8 +210,8 @@ class BalanceSheet extends AccountingBase
                 $rows[] = ['descripcion' => '', $code1 => '', $code2 => ''];
                 $rows[] = [
                     'descripcion' => '<b>' . $bal->descripcion1 . '</b>',
-                    $code1 => '<b>' . $this->toolBox()->coins()->format($amountsNE1[$bal->nivel1], FS_NF0, '') . '</b>',
-                    $code2 => '<b>' . $this->toolBox()->coins()->format($amountsNE2[$bal->nivel1], FS_NF0, '') . '</b>'
+                    $code1 => '<b>' . $coins->format($amountsNE1[$bal->nivel1], FS_NF0, '') . '</b>',
+                    $code2 => '<b>' . $coins->format($amountsNE2[$bal->nivel1], FS_NF0, '') . '</b>'
                 ];
             }
 
@@ -196,8 +219,8 @@ class BalanceSheet extends AccountingBase
                 $nivel2 = $bal->nivel2;
                 $rows[] = [
                     'descripcion' => '  ' . $bal->descripcion2,
-                    $code1 => $this->toolBox()->coins()->format($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2], FS_NF0, ''),
-                    $code2 => $this->toolBox()->coins()->format($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2], FS_NF0, '')
+                    $code1 => $coins->format($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2], FS_NF0, ''),
+                    $code2 => $coins->format($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2], FS_NF0, '')
                 ];
             }
 
@@ -205,8 +228,8 @@ class BalanceSheet extends AccountingBase
                 $nivel3 = $bal->nivel3;
                 $rows[] = [
                     'descripcion' => '    ' . $bal->descripcion3,
-                    $code1 => $this->toolBox()->coins()->format($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3], FS_NF0, ''),
-                    $code2 => $this->toolBox()->coins()->format($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3], FS_NF0, '')
+                    $code1 => $coins->format($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3], FS_NF0, ''),
+                    $code2 => $coins->format($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3], FS_NF0, '')
                 ];
             }
 
@@ -218,8 +241,8 @@ class BalanceSheet extends AccountingBase
 
                 $rows[] = [
                     'descripcion' => '      ' . $bal->descripcion4,
-                    $code1 => $this->toolBox()->coins()->format($amountsE1[$bal->codbalance], FS_NF0, ''),
-                    $code2 => $this->toolBox()->coins()->format($amountsE2[$bal->codbalance], FS_NF0, '')
+                    $code1 => $coins->format($amountsE1[$bal->codbalance], FS_NF0, ''),
+                    $code2 => $coins->format($amountsE2[$bal->codbalance], FS_NF0, '')
                 ];
             }
         }
@@ -234,7 +257,7 @@ class BalanceSheet extends AccountingBase
      * @param array   $amountsN
      * @param Balance $balance
      * @param string  $codejercicio
-     * @param string  $params
+     * @param array   $params
      */
     protected function sumAmounts(&$amounts, &$amountsN, $balance, $codejercicio, $params)
     {

@@ -76,19 +76,19 @@ class BalanceAmounts extends AccountingBase
             $debe = $haber = 0.00;
             $this->combineData($account, $accounts, $amounts, $debe, $haber);
             $saldo = $debe - $haber;
-            if (empty($debe) && empty($haber)) {
-                continue;
-            } else if ($level > 0 && \strlen($account->codcuenta) > $level) {
+            if ($level > 0 && \strlen($account->codcuenta) > $level) {
                 continue;
             }
 
             /// add account line
+            $prefix = \strlen($account->codcuenta) > 1 ? '' : '<b>';
+            $suffix = \strlen($account->codcuenta) > 1 ? '' : '</b>';
             $rows[] = [
-                'cuenta' => $account->codcuenta,
-                'descripcion' => $this->toolBox()->utils()->fixHtml($account->descripcion),
-                'debe' => $this->toolBox()->coins()->format($debe, FS_NF0, ''),
-                'haber' => $this->toolBox()->coins()->format($haber, FS_NF0, ''),
-                'saldo' => $this->toolBox()->coins()->format($saldo, FS_NF0, '')
+                'cuenta' => $prefix . $account->codcuenta . $suffix,
+                'descripcion' => $prefix . $this->toolBox()->utils()->fixHtml($account->descripcion) . $suffix,
+                'debe' => $prefix . $this->toolBox()->coins()->format($debe, FS_NF0, '') . $suffix,
+                'haber' => $prefix . $this->toolBox()->coins()->format($haber, FS_NF0, '') . $suffix,
+                'saldo' => $prefix . $this->toolBox()->coins()->format($saldo, FS_NF0, '') . $suffix
             ];
 
             if ($level > 0) {
@@ -165,11 +165,8 @@ class BalanceAmounts extends AccountingBase
             return [];
         }
 
-        $sql = 'SELECT subcuentas.idcuenta,'
-            . 'partidas.idsubcuenta,'
-            . 'partidas.codsubcuenta,'
-            . ' SUM(partidas.debe) AS debe,'
-            . ' SUM(partidas.haber) AS haber'
+        $sql = 'SELECT subcuentas.idcuenta, partidas.idsubcuenta, partidas.codsubcuenta,'
+            . ' SUM(partidas.debe) AS debe, SUM(partidas.haber) AS haber'
             . ' FROM partidas'
             . ' LEFT JOIN asientos ON partidas.idasiento = asientos.idasiento'
             . ' LEFT JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'

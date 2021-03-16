@@ -18,10 +18,11 @@
  */
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Model\ReportBalance;
-use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Balance;
 use FacturaScripts\Dinamic\Model\BalanceCuenta;
 use FacturaScripts\Dinamic\Model\BalanceCuentaA;
+use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Partida;
 
 /**
@@ -46,6 +47,12 @@ class IncomeAndExpenditure extends AccountingBase
      * @var string
      */
     protected $dateToPrev;
+
+    /**
+     * 
+     * @var Ejercicio
+     */
+    protected $exercisePrev;
 
     /**
      * ProfitAndLoss class constructor
@@ -76,136 +83,198 @@ class IncomeAndExpenditure extends AccountingBase
         $this->dateFromPrev = $this->addToDate($dateFrom, '-1 year');
         $this->dateToPrev = $this->addToDate($dateTo, '-1 year');
 
-        $data = $this->getData($params);
-        if (empty($data)) {
-            return [];
-        }
+        $this->exercisePrev = new Ejercicio();
+        $where = [
+            new DataBaseWhere('fechainicio', $this->dateFromPrev, '<='),
+            new DataBaseWhere('fechafin', $this->dateToPrev, '>='),
+            new DataBaseWhere('idempresa', $this->exercise->idempresa)
+        ];
+        $this->exercisePrev->loadFromCode('', $where);
 
-        /// every page is a table
-        return [$this->calculate($data)];
+        return [$this->getData('IG', $params)];
     }
 
     /**
-     * Obtains the balances for each one of the sections of the balance sheet according to their assigned accounts.
-     *
-     * @return array
+     * 
+     * @param array     $rows
+     * @param Balance[] $balances
+     * @param string    $code1
+     * @param array     $amouns1
+     * @param string    $code2
+     * @param array     $amouns2
      */
-    protected function getData(array $params = [])
+    protected function addTotalsRow(&$rows, $balances, $code1, $amouns1, $code2, $amouns2)
     {
-        $dateFrom = $this->dataBase->var2str($this->dateFrom);
-        $dateTo = $this->dataBase->var2str($this->dateTo);
-        $dateFromPrev = $this->dataBase->var2str($this->dateFromPrev);
-        $dateToPrev = $this->dataBase->var2str($this->dateToPrev);
+        $rows[] = ['descripcion' => '', $code1 => '', $code2 => ''];
 
-        $entryJoin = 'asto.idempresa = ' . $this->dataBase->var2str($this->exercise->idempresa)
-            . ' AND (asto.operacion IS NULL OR asto.operacion = ' . $this->dataBase->var2str(Asiento::OPERATION_OPENING) . ')'
-            . ' AND asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateTo;
+        $levels = [];
+        $total1 = $total2 = 0.00;
+        foreach ($balances as $bal) {
+            if (isset($levels[$bal->nivel1])) {
+                continue;
+            }
 
-        $balanceSource = $params['subtype'] == ReportBalance::SUBTYPE_ABBREVIATED ? 'balancescuentasabreviadas' : 'balancescuentas';
-
-        $sql = 'SELECT cb.codbalance,cb.naturaleza,cb.descripcion1,cb.descripcion2,cb.descripcion3,cb.descripcion4,ccb.codcuenta,'
-            . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFrom . ' AND ' . $dateTo . ' THEN pa.debe - pa.haber ELSE 0 END) saldo,'
-            . ' SUM(CASE WHEN asto.fecha BETWEEN ' . $dateFromPrev . ' AND ' . $dateToPrev . ' THEN pa.debe - pa.haber ELSE 0 END) saldoprev'
-            . ' FROM balances cb '
-            . ' INNER JOIN ' . $balanceSource . ' ccb ON ccb.codbalance = cb.codbalance '
-            . ' INNER JOIN asientos asto on ' . $entryJoin
-            . ' INNER JOIN partidas pa ON pa.idasiento = asto.idasiento AND substr(pa.codsubcuenta, 1, 1) BETWEEN \'8\' AND \'9\' AND pa.codsubcuenta LIKE CONCAT(ccb.codcuenta,\'%\')'
-            . ' WHERE ' . $this->getDataWhere($params)
-            . ' GROUP BY 1, 2, 3, 4, 5, 6, 7 '
-            . ' ORDER BY cb.naturaleza, cb.nivel1, cb.nivel2, cb.orden3, cb.nivel4';
-
-        return $this->dataBase->select($sql);
-    }
-
-    /**
-     *
-     * @param array $params
-     *
-     * @return string
-     */
-    protected function getDataWhere(array $params = [])
-    {
-        $where = 'cb.naturaleza = \'IG\'';
-
-        $channel = $params['channel'] ?? '';
-        if (!empty($channel)) {
-            $where .= ' AND asto.canal = ' . $this->dataBase->var2str($channel);
+            $levels[$bal->nivel1] = $bal->nivel1;
+            $total1 += $amouns1[$bal->nivel1];
+            $total2 += $amouns2[$bal->nivel1];
         }
 
-        $subaccountFrom = $params['subaccount-from'] ?? '';
-        $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
-        if (!empty($subaccountFrom) && !empty($subaccountTo)) {
-            $where .= ' AND pa.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom)
-                . ' AND ' . $this->dataBase->var2str($subaccountTo);
-        }
-
-        return $where;
-    }
-
-    /**
-     * Process a balance values.
-     *
-     * @param array  $linea
-     * @param array  $balance
-     * @param string $description
-     */
-    protected function processDescription(&$linea, &$balance, $description)
-    {
-        $index = $linea[$description];
-        if (empty($index)) {
-            return;
-        }
-
-        if (\array_key_exists($index, $balance)) {
-            $balance[$index]['saldo'] += $linea['saldo'];
-            $balance[$index]['saldoprev'] += $linea['saldoprev'];
-            return;
-        }
-
-        $balance[$index] = [
-            'descripcion' => $index,
-            'saldo' => $linea['saldo'],
-            'saldoprev' => $linea['saldoprev']
+        $rows[] = [
+            'descripcion' => '<b>Total (' . \implode('+', $levels) . ')</b>',
+            $code1 => '<b>' . $this->toolBox()->coins()->format($total1, FS_NF0, '') . '</b>',
+            $code2 => '<b>' . $this->toolBox()->coins()->format($total2, FS_NF0, '') . '</b>'
         ];
     }
 
     /**
-     * Process the line data to use the appropiate formats.
+     * 
+     * @param Balance $balance
+     * @param string  $codejercicio
+     * @param array   $params
      *
-     * @param array $line
-     *
-     * @return array
+     * @return float
      */
-    protected function processLine($line)
+    protected function getAmounts($balance, $codejercicio, $params): float
     {
-        $line['descripcion'] = $this->toolBox()->utils()->fixHtml($line['descripcion']);
-        $line['saldo'] = $this->toolBox()->coins()->format($line['saldo'], FS_NF0, '');
-        $line['saldoprev'] = $this->toolBox()->coins()->format($line['saldoprev'], FS_NF0, '');
-        return $line;
+        $total = 0.00;
+        $balAccount = new BalanceCuentaA();
+        $where = [new DataBaseWhere('codbalance', $balance->codbalance)];
+        foreach ($balAccount->all($where, [], 0, 0) as $model) {
+            $sql = "SELECT SUM(partidas.debe) AS debe, SUM(partidas.haber) AS haber"
+                . " FROM partidas"
+                . " LEFT JOIN asientos ON partidas.idasiento = asientos.idasiento"
+                . " WHERE asientos.codejercicio = " . $this->dataBase->var2str($codejercicio)
+                . " AND partidas.codsubcuenta LIKE '" . $model->codcuenta . "%';";
+
+            if ($model->codcuenta === '129') {
+                $sql = "SELECT SUM(partidas.debe) as debe, SUM(partidas.haber) as haber"
+                    . " FROM partidas"
+                    . " LEFT JOIN subcuentas ON partidas.idsubcuenta = subcuentas.idsubcuenta"
+                    . " LEFT JOIN cuentas ON subcuentas.idcuenta = cuentas.idcuenta"
+                    . " WHERE subcuentas.codejercicio = " . $this->dataBase->var2str($codejercicio)
+                    . " AND (subcuentas.codcuenta LIKE '6%' OR subcuentas.codcuenta LIKE '7%')";
+            }
+
+            foreach ($this->dataBase->select($sql) as $row) {
+                $total += $balance->naturaleza === 'A' ?
+                    (float) $row['debe'] - (float) $row['haber'] :
+                    (float) $row['haber'] - (float) $row['debe'];
+            }
+        }
+
+        return $total;
     }
 
     /**
-     * Format de Income And Expenditure including then chapters.
-     *
-     * @param array $data
+     * 
+     * @param string $nature
+     * @param array  $params
      *
      * @return array
      */
-    protected function calculate($data)
+    protected function getData($nature = 'A', $params = [])
     {
-        $balance = [];
-        foreach ($data as $line) {
-            $this->processDescription($line, $balance, 'descripcion1');
-            $this->processDescription($line, $balance, 'descripcion2');
-            $this->processDescription($line, $balance, 'descripcion3');
-            $this->processDescription($line, $balance, 'descripcion4');
+        $rows = [];
+        $code1 = $this->exercise->codejercicio;
+        $code2 = $this->exercisePrev->codejercicio;
+
+        /// get balance codes
+        $balance = new Balance();
+        $where = [
+            new DataBaseWhere('naturaleza', $nature),
+            new DataBaseWhere('nivel1', '', '!=')
+        ];
+        $order = ['nivel1' => 'ASC', 'nivel2' => 'ASC', 'nivel3' => 'ASC', 'nivel4' => 'ASC'];
+        $balances = $balance->all($where, $order, 0, 0);
+
+        /// get amounts
+        $amountsE1 = [];
+        $amountsE2 = [];
+        $amountsNE1 = [];
+        $amountsNE2 = [];
+        foreach ($balances as $bal) {
+            $this->sumAmounts($amountsE1, $amountsNE1, $bal, $code1, $params);
+            $this->sumAmounts($amountsE2, $amountsNE2, $bal, $code2, $params);
         }
 
-        $result = [];
-        foreach ($balance as $line) {
-            $result[] = $this->processLine($line);
+        /// add to table
+        $coins = $this->toolBox()->coins();
+        $nivel1 = $nivel2 = $nivel3 = $nivel4 = '';
+        foreach ($balances as $bal) {
+            if ($bal->nivel1 != $nivel1 && !empty($bal->nivel1)) {
+                $nivel1 = $bal->nivel1;
+                $rows[] = ['descripcion' => '', $code1 => '', $code2 => ''];
+                $rows[] = [
+                    'descripcion' => '<b>' . $bal->descripcion1 . '</b>',
+                    $code1 => '<b>' . $coins->format($amountsNE1[$bal->nivel1], FS_NF0, '') . '</b>',
+                    $code2 => '<b>' . $coins->format($amountsNE2[$bal->nivel1], FS_NF0, '') . '</b>'
+                ];
+            }
+
+            if ($bal->nivel2 != $nivel2 && !empty($bal->nivel2)) {
+                $nivel2 = $bal->nivel2;
+                $rows[] = [
+                    'descripcion' => '  ' . $bal->descripcion2,
+                    $code1 => $coins->format($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2], FS_NF0, ''),
+                    $code2 => $coins->format($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2], FS_NF0, '')
+                ];
+            }
+
+            if ($bal->nivel3 != $nivel3 && !empty($bal->nivel3)) {
+                $nivel3 = $bal->nivel3;
+                $rows[] = [
+                    'descripcion' => '    ' . $bal->descripcion3,
+                    $code1 => $coins->format($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3], FS_NF0, ''),
+                    $code2 => $coins->format($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3], FS_NF0, '')
+                ];
+            }
+
+            if ($bal->nivel4 != $nivel4 && !empty($bal->nivel4)) {
+                $nivel4 = $bal->nivel4;
+                if (empty($amountsE1[$bal->codbalance]) && empty($amountsE2[$bal->codbalance])) {
+                    continue;
+                }
+
+                $rows[] = [
+                    'descripcion' => '      ' . $bal->descripcion4,
+                    $code1 => $coins->format($amountsE1[$bal->codbalance], FS_NF0, ''),
+                    $code2 => $coins->format($amountsE2[$bal->codbalance], FS_NF0, '')
+                ];
+            }
         }
 
-        return $result;
+        $this->addTotalsRow($rows, $balances, $code1, $amountsNE1, $code2, $amountsNE2);
+        return $rows;
+    }
+
+    /**
+     * 
+     * @param array   $amounts
+     * @param array   $amountsN
+     * @param Balance $balance
+     * @param string  $codejercicio
+     * @param array   $params
+     */
+    protected function sumAmounts(&$amounts, &$amountsN, $balance, $codejercicio, $params)
+    {
+        $amounts[$balance->codbalance] = $total = $this->getAmounts($balance, $codejercicio, $params);
+
+        if (isset($amountsN[$balance->nivel1])) {
+            $amountsN[$balance->nivel1] += $total;
+        } else {
+            $amountsN[$balance->nivel1] = $total;
+        }
+
+        if (isset($amountsN[$balance->nivel1 . '-' . $balance->nivel2])) {
+            $amountsN[$balance->nivel1 . '-' . $balance->nivel2] += $total;
+        } else {
+            $amountsN[$balance->nivel1 . '-' . $balance->nivel2] = $total;
+        }
+
+        if (isset($amountsN[$balance->nivel1 . '-' . $balance->nivel2 . '-' . $balance->nivel3])) {
+            $amountsN[$balance->nivel1 . '-' . $balance->nivel2 . '-' . $balance->nivel3] += $total;
+        } else {
+            $amountsN[$balance->nivel1 . '-' . $balance->nivel2 . '-' . $balance->nivel3] = $total;
+        }
     }
 }

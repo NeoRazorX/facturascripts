@@ -18,10 +18,6 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\Cuenta;
-use FacturaScripts\Dinamic\Model\Subcuenta;
-
 /**
  * Abbreviated detail of a balance.
  *
@@ -59,34 +55,6 @@ class BalanceCuentaA extends Base\ModelClass
      * @var int
      */
     public $id;
-
-    /**
-     * 
-     * @param string $codejercicio
-     *
-     * @return float
-     */
-    public function calculate($codejercicio): float
-    {
-        $debe = $haber = 0.00;
-        $subaccounts = $this->getSubaccounts($this->codcuenta, $codejercicio);
-        if (empty($subaccounts)) {
-            return 0.00;
-        }
-
-        $sqlIN = '';
-        foreach ($subaccounts as $subc) {
-            $sqlIN .= empty($sqlIN) ? static::$dataBase->var2str($subc->idsubcuenta) : ',' . static::$dataBase->var2str($subc->idsubcuenta);
-        }
-
-        $sql = 'SELECT SUM(debe) AS debe, SUM(haber) AS haber FROM partidas WHERE idsubcuenta IN (' . $sqlIN . ');';
-        foreach (static::$dataBase->select($sql) as $row) {
-            $debe += (float) $row['debe'];
-            $haber += (float) $row['haber'];
-        }
-
-        return $debe - $haber;
-    }
 
     /**
      * 
@@ -128,41 +96,5 @@ class BalanceCuentaA extends Base\ModelClass
     {
         $this->desccuenta = $this->toolBox()->utils()->noHtml($this->desccuenta);
         return parent::test();
-    }
-
-    /**
-     * 
-     * @param string $codcuenta
-     * @param string $codejercicio
-     *
-     * @return Subcuenta[]
-     */
-    protected function getSubaccounts($codcuenta, $codejercicio)
-    {
-        $subaccounts = [];
-
-        /// add related subaccounts
-        $subcuentaModel = new Subcuenta();
-        $where = [
-            new DataBaseWhere('codcuenta', $codcuenta),
-            new DataBaseWhere('codejercicio', $codejercicio)
-        ];
-        foreach ($subcuentaModel->all($where, [], 0, 0) as $subc) {
-            $subaccounts[$subc->idsubcuenta] = $subc;
-        }
-
-        /// add related subaccounts from children accounts
-        $cuentaModel = new Cuenta();
-        $where2 = [
-            new DataBaseWhere('codejercicio', $codejercicio),
-            new DataBaseWhere('parent_codcuenta', $codcuenta)
-        ];
-        foreach ($cuentaModel->all($where2, [], 0, 0) as $cuenta) {
-            foreach ($this->getSubaccounts($cuenta->codcuenta, $codejercicio) as $subc) {
-                $subaccounts[$subc->idsubcuenta] = $subc;
-            }
-        }
-
-        return $subaccounts;
     }
 }
