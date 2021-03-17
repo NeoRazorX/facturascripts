@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Balance;
 use FacturaScripts\Dinamic\Model\BalanceCuenta;
 use FacturaScripts\Dinamic\Model\BalanceCuentaA;
@@ -137,23 +138,32 @@ class IncomeAndExpenditure extends AccountingBase
     protected function getAmounts($balance, $codejercicio, $params): float
     {
         $total = 0.00;
-        $balAccount = new BalanceCuentaA();
+        $balAccount = $params['subtype'] === 'normal' ? new BalanceCuenta() : new BalanceCuentaA();
         $where = [new DataBaseWhere('codbalance', $balance->codbalance)];
         foreach ($balAccount->all($where, [], 0, 0) as $model) {
             $sql = "SELECT SUM(partidas.debe) AS debe, SUM(partidas.haber) AS haber"
                 . " FROM partidas"
                 . " LEFT JOIN asientos ON partidas.idasiento = asientos.idasiento"
                 . " WHERE asientos.codejercicio = " . $this->dataBase->var2str($codejercicio)
-                . " AND partidas.codsubcuenta LIKE '" . $model->codcuenta . "%';";
+                . " AND partidas.codsubcuenta LIKE '" . $model->codcuenta . "%'";
 
             if ($model->codcuenta === '129') {
                 $sql = "SELECT SUM(partidas.debe) as debe, SUM(partidas.haber) as haber"
                     . " FROM partidas"
+                    . " LEFT JOIN asientos ON partidas.idasiento = asientos.idasiento"
                     . " LEFT JOIN subcuentas ON partidas.idsubcuenta = subcuentas.idsubcuenta"
                     . " LEFT JOIN cuentas ON subcuentas.idcuenta = cuentas.idcuenta"
-                    . " WHERE subcuentas.codejercicio = " . $this->dataBase->var2str($codejercicio)
+                    . " WHERE asientos.codejercicio = " . $this->dataBase->var2str($codejercicio)
                     . " AND (subcuentas.codcuenta LIKE '6%' OR subcuentas.codcuenta LIKE '7%')";
             }
+
+            $channel = $params['channel'] ?? '';
+            if (!empty($channel)) {
+                $sql .= ' AND asientos.canal = ' . $this->dataBase->var2str($channel);
+            }
+
+            $sql .= ' AND (asientos.operacion IS NULL OR asientos.operacion NOT IN (' . $this->dataBase->var2str(Asiento::OPERATION_REGULARIZATION)
+                . ',' . $this->dataBase->var2str(Asiento::OPERATION_CLOSING) . '))';
 
             foreach ($this->dataBase->select($sql) as $row) {
                 $total += $balance->naturaleza === 'A' ?
@@ -176,7 +186,7 @@ class IncomeAndExpenditure extends AccountingBase
     {
         $rows = [];
         $code1 = $this->exercise->codejercicio;
-        $code2 = $this->exercisePrev->codejercicio;
+        $code2 = $this->exercisePrev->codejercicio ?? '-';
 
         /// get balance codes
         $balance = new Balance();

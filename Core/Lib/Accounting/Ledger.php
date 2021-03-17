@@ -152,7 +152,7 @@ class Ledger extends AccountingBase
 
         $channel = $params['channel'] ?? '';
         if (!empty($channel)) {
-            $where .= ' AND asientos.canal = ' . $channel;
+            $where .= ' AND asientos.canal = ' . $this->dataBase->var2str($channel);
         }
 
         $subaccountFrom = $params['subaccount-from'] ?? '';
