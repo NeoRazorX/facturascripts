@@ -44,6 +44,7 @@ class EditRetencion extends EditController
         parent::createViews();
         $this->createViewAuxiliar(self::VIEW_CUSTOMER, 'Cliente', 'customers');
         $this->createViewAuxiliar(self::VIEW_SUPPLIER, 'Proveedor', 'suppliers');
+        $this->setTabsPosition('bottom');
     }
 
     /**
