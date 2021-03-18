@@ -196,12 +196,12 @@ class BalanceAmounts extends AccountingBase
 
         $ignoreRegularization = (bool) $params['ignoreregularization'] ?? false;
         if ($ignoreRegularization) {
-            $where .= ' AND asientos.operacion != ' . $this->dataBase->var2str(Asiento::OPERATION_REGULARIZATION);
+            $where .= ' AND (asientos.operacion IS NULL OR asientos.operacion != ' . $this->dataBase->var2str(Asiento::OPERATION_REGULARIZATION) . ')';
         }
 
         $ignoreClosure = (bool) $params['ignoreclosure'] ?? false;
         if ($ignoreClosure) {
-            $where .= ' AND asientos.operacion != ' . $this->dataBase->var2str(Asiento::OPERATION_CLOSING);
+            $where .= ' AND (asientos.operacion IS NULL OR asientos.operacion != ' . $this->dataBase->var2str(Asiento::OPERATION_CLOSING) . ')';
         }
 
         $subaccountFrom = $params['subaccount-from'] ?? '';
