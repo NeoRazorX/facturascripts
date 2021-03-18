@@ -96,7 +96,7 @@ class EditRetencion extends EditController
     private function createViewAuxiliar($viewName, $model, $label)
     {
         $this->addListView($viewName, $model, $label, 'fas fa-users');
-        // $this->setSettings($viewName, 'btnNew', false);
-        // $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 }
