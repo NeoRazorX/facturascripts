@@ -180,6 +180,7 @@ class BalanceAmounts extends AccountingBase
     /**
      *
      * @param array $params
+     *
      * @return string
      */
     protected function getDataWhere(array $params = [])

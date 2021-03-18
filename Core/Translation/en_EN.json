@@ -1043,7 +1043,7 @@
     "surcharge": "Surcharge",
     "surname": "Surname",
     "suspended": "Suspended",
-    "swift": "Swift",
+    "swift": "Swift\/BIC",
     "symbol": "Symbol",
     "table": "Table",
     "table-checked": "Table %tableName% checked.",
