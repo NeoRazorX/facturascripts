@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -99,7 +99,10 @@ class PaymentToAccounting extends AccountingClass
         }
 
         /// Add lines and save accounting entry relation
-        if ($this->customerPaymentLine($accEntry) && $this->customerPaymentBankLine($accEntry) && $accEntry->isBalanced()) {
+        if ($this->customerPaymentLine($accEntry) &&
+            $this->customerPaymentBankLine($accEntry) &&
+            $this->customerPaymentExpenseLine($accEntry) &&
+            $accEntry->isBalanced()) {
             $this->document->idasiento = $accEntry->primaryColumnValue();
             return true;
         }
@@ -134,6 +137,26 @@ class PaymentToAccounting extends AccountingClass
      *
      * @return bool
      */
+    protected function customerPaymentExpenseLine(&$accEntry)
+    {
+        if (empty($this->document->gastos)) {
+            return true;
+        }
+
+        $expLine = $accEntry->getNewLine();
+        $subacountExpense = $this->getExpenseAccount($this->document->codpago);
+        $expLine->setAccount($subacountExpense);
+        $expLine->concepto = $this->toolBox()->i18n()->trans('receipt-expense-account', ['%document%' => $accEntry->documento]);
+        $expLine->haber = $this->document->gastos;
+        return $expLine->save();
+    }
+
+    /**
+     * 
+     * @param Asiento $accEntry
+     *
+     * @return bool
+     */
     protected function customerPaymentLine(&$accEntry)
     {
         $customer = $this->receipt->getSubject();
@@ -145,22 +168,13 @@ class PaymentToAccounting extends AccountingClass
         $newLine = $accEntry->getNewLine();
         $newLine->setAccount($customerSubaccount);
         $newLine->haber = $this->document->importe;
-        if (false === $newLine->save()) {
-            return false;
-        }
-
-        /// Add Expense Amount Line
-        if ($this->document->gastos != 0) {
-            $expLine = $accEntry->getNewLine();
-            $expLine->setAccount($customerSubaccount);
-            $expLine->concepto = $this->toolBox()->i18n()->trans('receipt-expense-account', ['%document%' => $accEntry->documento]);
-            $expLine->haber = $this->document->gastos;
-            return $expLine->save();
-        }
-
-        return true;
+        return $newLine->save();
     }
 
+    /**
+     * 
+     * @return bool
+     */
     protected function supplierPaymentAccountingEntry()
     {
         /// Create account entry header

@@ -151,16 +151,21 @@ class AccountingAccounts
     /**
      * Get the banking expenses sub-account for payments in the fiscal year.
      *
-     * @param string $code
+     * @param string $codpago
      * @param string $specialAccount
      *
      * @return Subcuenta
      */
-    public function getExpenseAccount(string $code, string $specialAccount = self::SPECIAL_EXPENSE_ACCOUNT)
+    public function getExpenseAccount(string $codpago, string $specialAccount = self::SPECIAL_EXPENSE_ACCOUNT)
     {
         $bankAccount = new CuentaBanco();
-        if ($bankAccount->loadFromCode($code) && !empty($bankAccount->codsubcuentagasto)) {
-            return $this->getSubAccount($bankAccount->codsubcuentagasto);
+        $paymentMethod = new FormaPago();
+        if ($paymentMethod->loadFromCode($codpago) &&
+            $paymentMethod->codcuentabanco &&
+            $bankAccount->loadFromCode($paymentMethod->codcuentabanco) &&
+            !empty($bankAccount->codsubcuentagasto)) {
+            $subaccount = $this->getSubAccount($bankAccount->codsubcuentagasto);
+            return $subaccount->exists() ? $subaccount : $this->getSpecialSubAccount($specialAccount);
         }
 
         return $this->getSpecialSubAccount($specialAccount);
