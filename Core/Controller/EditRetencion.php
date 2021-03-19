@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -29,23 +30,6 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditRetencion extends EditController
 {
-
-    /**
-     * Const for additionals views
-     */
-    private const VIEW_CUSTOMER = 'ListCliente';
-    private const VIEW_SUPPLIER = 'ListProveedor';
-
-    /**
-     * Create the view to display.
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-        $this->createViewAuxiliar(self::VIEW_CUSTOMER, 'Cliente', 'customers');
-        $this->createViewAuxiliar(self::VIEW_SUPPLIER, 'Proveedor', 'suppliers');
-        $this->setTabsPosition('bottom');
-    }
 
     /**
      * Returns the model name.
@@ -72,6 +56,47 @@ class EditRetencion extends EditController
     }
 
     /**
+     * Create the view to display.
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+        $this->createViewsCustomers();
+        $this->createViewsSuppliers();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsCustomers(string $viewName = 'ListCliente')
+    {
+        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
+        $this->views[$viewName]->addSearchFields(['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
+        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsSuppliers(string $viewName = 'ListProveedor')
+    {
+        $this->addListView($viewName, 'Proveedor', 'suppliers', 'fas fa-users');
+        $this->views[$viewName]->addSearchFields(['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
+        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
+    }
+
+    /**
      * Loads the data to display.
      *
      * @param string   $viewName
@@ -80,11 +105,10 @@ class EditRetencion extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case self::VIEW_SUPPLIER:
-            case self::VIEW_CUSTOMER:
-                $mvn = $this->getMainViewName();
-                $code = $this->getViewModelValue($mvn, 'codretencion');
-                $where = [ new DataBaseWhere('codretencion', $code) ];
+            case 'ListCliente':
+            case 'ListProveedor':
+                $codretencion = $this->getViewModelValue($this->getMainViewName(), 'codretencion');
+                $where = [new DataBaseWhere('codretencion', $codretencion)];
                 $view->loadData('', $where);
                 break;
 
@@ -92,12 +116,5 @@ class EditRetencion extends EditController
                 parent::loadData($viewName, $view);
                 break;
         }
-    }
-
-    private function createViewAuxiliar($viewName, $model, $label)
-    {
-        $this->addListView($viewName, $model, $label, 'fas fa-users');
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnDelete', false);
     }
 }
