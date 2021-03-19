@@ -109,7 +109,7 @@
                     <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="subaccount" description="customer-subaccount-p" titleurl="ListCuenta" numcolumns="3" order="200">
+            <column name="subaccount" description="customer-subaccount-p" titleurl="ListCuenta" display="none" numcolumns="3" order="200">
                 <widget type="text" fieldname="codsubcuenta" maxlength="15" icon="fas fa-balance-scale" />
             </column>
         </group>
