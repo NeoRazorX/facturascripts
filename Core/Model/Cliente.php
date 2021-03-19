@@ -104,10 +104,8 @@ class Cliente extends Base\ComercialContact
     {
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
         $fields = 'cifnif|codcliente|email|nombre|observaciones|razonsocial|telefono1|telefono2';
-        $where = [
-            new DataBaseWhere($fields, \mb_strtolower($query, 'UTF8'), 'LIKE'),
-            new DataBaseWhere('fechabaja',null,'IS' ),
-        ];
+        $where[] = new DataBaseWhere($fields, \mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = new DataBaseWhere('fechabaja', null, 'IS');
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
