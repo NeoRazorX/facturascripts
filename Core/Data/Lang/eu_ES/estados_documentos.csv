@@ -4,7 +4,10 @@
 3;"PresupuestoCliente";"Baztertua";"false";"true";"false";0;
 4;"PedidoCliente";"Berria";"true";"true";"true";-2;
 5;"PedidoCliente";"Onartua";"false";"true";"false";0;"AlbaranCliente"
+25;"PedidoCliente";"Sartu";"false";"true";"false";0;"FacturaCliente"
 6;"PedidoCliente";"Bertan behera";"false";"true";"false";0;
+23;"PresupuestoCliente";"Denbora muga";"false";"true";"false";0;
+24;"PresupuestoCliente";"Sartu";"false";"true";"false";0;"FacturaCliente"
 7;"AlbaranCliente";"Berria";"true";"true";"true";-1;
 8;"AlbaranCliente";"Onartua";"false";"true";"false";0;"FacturaCliente"
 9;"AlbaranCliente";"Itzulia";"false";"true";"false";0;
