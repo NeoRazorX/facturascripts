@@ -14,6 +14,7 @@
     "account-balance": "Kontuaren saldoa",
     "account-code": "Kontu kodea",
     "account-data-missing": "Kontuko datuak falta dira",
+    "account-dot-code": "account-dot-code",
     "account-length": "Azpikontuaren luzera",
     "account-length-error": "Azpikontuaren luzera okerra. %code% azpikontuaren luzera ekitaldian zehaztutakoa izan behar du.",
     "account-parent-error": "'guraso' kontua ez da zuzena edo ez da ekitaldikoa",

@@ -14,6 +14,7 @@
     "account-balance": "Solde du compte",
     "account-code": "Code de compte",
     "account-data-missing": "Données manquantes dans le compte",
+    "account-dot-code": "account-dot-code",
     "account-length": "Longueur du compte",
     "account-length-error": "Longueur de compte incorrecte. Le compte doit avoir la longueur définie dans l'exercice.",
     "account-parent-error": "Le compte parent est incorrect ou n'appartient pas à l'exercice",

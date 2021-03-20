@@ -14,6 +14,7 @@
     "account-balance": "Saldo del conte",
     "account-code": "Còdic del conte",
     "account-data-missing": "Falten senyes en el conte",
+    "account-dot-code": "account-dot-code",
     "account-length": "Llongitut del conte",
     "account-length-error": "Longitud de subcompte errònia. El subcompte %code% ha de tenir la longitud definida en l'exercici.",
     "account-parent-error": "El conte pare és incorrecte o no pertany a l'eixercici",

@@ -14,6 +14,7 @@
     "account-balance": "Saldo del conto",
     "account-code": "Codice dell'account",
     "account-data-missing": "Dati mancanti nell'account",
+    "account-dot-code": "account-dot-code",
     "account-length": "Lunghezza dell'account",
     "account-length-error": "account-length-error",
     "account-parent-error": "L'account principale non è corretto o non appartiene all'esercizio",

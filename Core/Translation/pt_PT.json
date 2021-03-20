@@ -14,6 +14,7 @@
     "account-balance": "Account Balance",
     "account-code": "Código de conta",
     "account-data-missing": "Faltando dados na conta",
+    "account-dot-code": "account-dot-code",
     "account-length": "Comprimento da conta",
     "account-length-error": "account-length-error",
     "account-parent-error": "The parent account is incorrect or does not belong to the exercise",

@@ -14,6 +14,7 @@
     "account-balance": "Saldo de la cuenta",
     "account-code": "Código de cuenta",
     "account-data-missing": "Faltan datos en la cuenta",
+    "account-dot-code": "Punto para autocompletar ceros. Ejemplo: 11.1 = 1100000001",
     "account-length": "Longitud de subcuenta",
     "account-length-error": "Longitud de subcuenta errónea. La subcuenta %code% debe tener la longitud definida en el ejercicio.",
     "account-parent-error": "Cuenta Principal es incorrecta o no existe.",
