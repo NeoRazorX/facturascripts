@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -96,13 +96,15 @@ abstract class InitClass
                 return $this->loadBusinessDocumentExtension($extension, [
                         'LineaAlbaranCliente', 'LineaFacturaCliente', 'LineaPedidoCliente', 'LineaPresupuestoCliente'
                 ]);
-
-            default:
-                $targetClass = '\\FacturaScripts\\Dinamic\\' . $className;
-                $targetClass::addExtension($extension);
         }
 
-        return true;
+        $targetClass = '\\FacturaScripts\\Dinamic\\' . $className;
+        if (\class_exists($targetClass)) {
+            $targetClass::addExtension($extension);
+            return true;
+        }
+
+        return false;
     }
 
     /**
