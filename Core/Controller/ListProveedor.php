@@ -1,8 +1,7 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,14 +27,16 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class ListProveedor extends ListController {
+class ListProveedor extends ListController
+{
 
     /**
      * Returns basic page attributes
      *
      * @return array
      */
-    public function getPageData() {
+    public function getPageData()
+    {
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'suppliers';
@@ -47,7 +47,8 @@ class ListProveedor extends ListController {
     /**
      * Load views
      */
-    protected function createViews() {
+    protected function createViews()
+    {
         $this->createViewSuppliers();
         $this->createViewAdresses();
     }
@@ -56,7 +57,8 @@ class ListProveedor extends ListController {
      * 
      * @param string $viewName
      */
-    protected function createViewAdresses(string $viewName = 'ListContacto') {
+    protected function createViewAdresses(string $viewName = 'ListContacto')
+    {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addSearchFields($viewName, ['nombre', 'apellidos', 'email']);
         $this->addOrderBy($viewName, ['descripcion'], 'description');
@@ -96,7 +98,8 @@ class ListProveedor extends ListController {
      * 
      * @param string $viewName
      */
-    protected function createViewSuppliers(string $viewName = 'ListProveedor') {
+    protected function createViewSuppliers(string $viewName = 'ListProveedor')
+    {
         $this->addView($viewName, 'Proveedor', 'suppliers', 'fas fa-users');
         $this->addSearchFields($viewName, ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->addOrderBy($viewName, ['codproveedor'], 'code');
@@ -105,12 +108,17 @@ class ListProveedor extends ListController {
         $this->addOrderBy($viewName, ['fechaalta'], 'creation-date');
 
         /// filters
-        $values = [
-            ['label' => $this->toolBox()->i18n()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => $this->toolBox()->i18n()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
-            ['label' => $this->toolBox()->i18n()->trans('all'), 'where' => []]
-        ];
-        $this->addFilterSelectWhere($viewName, 'status', $values);
+        $i18n = $this->toolBox()->i18n();
+        $this->addFilterSelectWhere($viewName, 'status', [
+            ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => $i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => $i18n->trans('all'), 'where' => []]
+        ]);
+        $this->addFilterSelectWhere($viewName, 'type', [
+            ['label' => $i18n->trans('all'), 'where' => []],
+            ['label' => $i18n->trans('is-creditor'), 'where' => [new DataBaseWhere('acreedor', true)]],
+            ['label' => $i18n->trans('supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
+        ]);
 
         $series = $this->codeModel->all('series', 'codserie', 'descripcion');
         $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', $series);
@@ -123,13 +131,5 @@ class ListProveedor extends ListController {
 
         $vatRegimes = $this->codeModel->all('proveedores', 'regimeniva', 'regimeniva');
         $this->addFilterSelect($viewName, 'regimeniva', 'vat-regime', 'regimeniva', $vatRegimes);
-
-        $values = [
-            ['label' => $this->toolBox()->i18n()->trans('all'), 'where' => []],
-            ['label' => $this->toolBox()->i18n()->trans('is-creditor'), 'where' => [new DataBaseWhere('acreedor', true)]],
-            ['label' => $this->toolBox()->i18n()->trans('is-supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
-        ];
-        $this->addFilterSelectWhere($viewName, 'type', $values);
     }
-
 }
