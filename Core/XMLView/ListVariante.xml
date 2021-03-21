@@ -29,6 +29,9 @@
         <column name="reference" order="100">
             <widget type="text" fieldname="referencia" />
         </column>
+        <column name="description" order="105" display="none">
+            <widget type="text" fieldname="descripcion" />
+        </column>
         <column name="barcode" order="110">
             <widget type="text" fieldname="codbarras" />
         </column>

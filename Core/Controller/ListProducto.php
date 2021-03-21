@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -16,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,16 +28,14 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class ListProducto extends ListController
-{
+class ListProducto extends ListController {
 
     /**
      * Returns basic page attributes
      *
      * @return array
      */
-    public function getPageData()
-    {
+    public function getPageData() {
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
         $data['title'] = 'products';
@@ -46,8 +46,7 @@ class ListProducto extends ListController
     /**
      * Load views
      */
-    protected function createViews()
-    {
+    protected function createViews() {
         $this->createViewProducto();
         $this->createViewVariante();
         $this->createViewStock();
@@ -57,8 +56,7 @@ class ListProducto extends ListController
      *
      * @param string $viewName
      */
-    protected function createViewProducto(string $viewName = 'ListProducto')
-    {
+    protected function createViewProducto(string $viewName = 'ListProducto') {
         $this->addView($viewName, 'Producto', 'products', 'fas fa-cubes');
         $this->addOrderBy($viewName, ['referencia'], 'reference');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
@@ -94,15 +92,14 @@ class ListProducto extends ListController
      *
      * @param string $viewName
      */
-    protected function createViewVariante(string $viewName = 'ListVariante')
-    {
-        $this->addView($viewName, 'Variante', 'variants', 'fas fa-project-diagram');
+    protected function createViewVariante(string $viewName = 'ListVariante') {
+        $this->addView($viewName, 'Join\ProductoVariante', 'variants', 'fas fa-project-diagram');
         $this->addOrderBy($viewName, ['referencia'], 'reference');
         $this->addOrderBy($viewName, ['codbarras'], 'barcode');
         $this->addOrderBy($viewName, ['precio'], 'price');
         $this->addOrderBy($viewName, ['coste'], 'cost-price');
         $this->addOrderBy($viewName, ['stockfis'], 'stock');
-        $this->addSearchFields($viewName, ['referencia', 'codbarras']);
+        $this->addSearchFields($viewName, ['referencia', 'codbarras', 'descripcion']);
 
         /// filters
         $attributes = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
@@ -123,15 +120,14 @@ class ListProducto extends ListController
      *
      * @param string $viewName
      */
-    protected function createViewStock(string $viewName = 'ListStock')
-    {
-        $this->addView($viewName, 'Stock', 'stock', 'fas fa-dolly');
+    protected function createViewStock(string $viewName = 'ListStock') {
+        $this->addView($viewName, 'Join\ProductoStock', 'stock', 'fas fa-dolly');
         $this->addOrderBy($viewName, ['referencia'], 'reference');
         $this->addOrderBy($viewName, ['cantidad'], 'quantity');
         $this->addOrderBy($viewName, ['disponible'], 'available');
         $this->addOrderBy($viewName, ['reservada'], 'reserved');
         $this->addOrderBy($viewName, ['pterecibir'], 'pending-reception');
-        $this->addSearchFields($viewName, ['referencia']);
+        $this->addSearchFields($viewName, ['referencia', 'descripcion']);
 
         /// filters
         $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
@@ -158,4 +154,5 @@ class ListProducto extends ListController
         /// disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }
+
 }
