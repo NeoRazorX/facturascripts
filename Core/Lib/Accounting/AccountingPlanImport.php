@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -68,12 +68,12 @@ class AccountingPlanImport
      */
     public function importCSV(string $filePath, string $codejercicio)
     {
-        if (!$this->exercise->loadFromCode($codejercicio)) {
+        if (false === $this->exercise->loadFromCode($codejercicio)) {
             $this->toolBox()->i18nLog()->error('exercise-not-found');
             return false;
         }
 
-        if (!file_exists($filePath)) {
+        if (false === \file_exists($filePath)) {
             $this->toolBox()->i18nLog()->warning('file-not-found', ['%fileName%' => $filePath]);
             return false;
         }
@@ -89,7 +89,7 @@ class AccountingPlanImport
             // confirm data
             $this->dataBase->commit();
         } catch (Exception $exp) {
-            $this->toolBox()->log()->error($exp->getMessage());
+            $this->toolBox()->log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
             $return = false;
         } finally {
             if ($this->dataBase->inTransaction()) {
@@ -110,7 +110,7 @@ class AccountingPlanImport
      */
     public function importXML(string $filePath, string $codejercicio)
     {
-        if (!$this->exercise->loadFromCode($codejercicio)) {
+        if (false === $this->exercise->loadFromCode($codejercicio)) {
             $this->toolBox()->i18nLog()->error('exercise-not-found');
             return false;
         }
@@ -134,7 +134,7 @@ class AccountingPlanImport
             // confirm data
             $this->dataBase->commit();
         } catch (Exception $exp) {
-            $this->toolBox()->log()->error($exp->getMessage());
+            $this->toolBox()->log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
             $return = false;
         } finally {
             if ($this->dataBase->inTransaction()) {
@@ -290,19 +290,19 @@ class AccountingPlanImport
     protected function processCsvData(string $filePath)
     {
         $csv = new Csv();
+        $csv->encoding(null, 'UTF-8');
         $csv->auto($filePath);
 
         $length = [];
         $accountPlan = [];
         foreach ($csv->data as $value) {
-            $key = $value[$csv->titles[0]];
-            if (\strlen($key) > 0) {
-                $code = $value[$csv->titles[0]];
-                $accountPlan[$code] = [
-                    'descripcion' => $value[$csv->titles[1]],
-                    'codcuentaesp' => $value[$csv->titles[2]]
+            $key0 = $value[$csv->titles[0]] ?? $value[0];
+            if (\strlen($key0) > 0) {
+                $accountPlan[$key0] = [
+                    'descripcion' => $value[$csv->titles[1]] ?? $value[1],
+                    'codcuentaesp' => $value[$csv->titles[2]] ?? $value[2]
                 ];
-                $length[] = \strlen($code);
+                $length[] = \strlen($key0);
             }
         }
 
