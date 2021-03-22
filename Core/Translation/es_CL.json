@@ -1062,6 +1062,7 @@
     "tax-debit-account": "Cuenta de débito para impuestos",
     "tax-transport": "Impuestos del transporte",
     "taxes": "Impuestos",
+    "telemetry-data-to-send": "Las instalaciones registradas notifican periódicamente la versión de FacturaScripts, PHP, país, idioma y listado de plugins.",
     "template": "Plantilla",
     "template-error": "template-error",
     "template-not-found": "Plantilla no encontrada",

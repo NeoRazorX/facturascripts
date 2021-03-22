@@ -1062,6 +1062,7 @@
     "tax-debit-account": "Debit account for taxes",
     "tax-transport": "Tax transport",
     "taxes": "Taxes",
+    "telemetry-data-to-send": "Registered installations periodically notify the version of FacturaScripts, PHP, country, language and list of plugins.",
     "template": "Template",
     "template-error": "Template error",
     "template-not-found": "Template not found",

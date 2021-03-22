@@ -1062,6 +1062,7 @@
     "tax-debit-account": "Debit account for taxes",
     "tax-transport": "Transport fiscal",
     "taxes": "Taxes",
+    "telemetry-data-to-send": "telemetry-data-to-send",
     "template": "Modèle",
     "template-error": "template-error",
     "template-not-found": "Modèle non trouvé",
