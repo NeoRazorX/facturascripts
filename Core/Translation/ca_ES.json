@@ -1062,7 +1062,7 @@
     "tax-debit-account": "Compte de dèbit per a impostos",
     "tax-transport": "Impostos del transport",
     "taxes": "Impostos",
-    "telemetry-data-to-send": "telemetry-data-to-send",
+    "telemetry-data-to-send": "Les instal·lacions registrades notifiquen periòdicament la versió de FacturaScripts, PHP, país, idioma i llistat de plugins.",
     "template": "Plantilla",
     "template-error": "Error a la plantilla",
     "template-not-found": "Template no trobat",
