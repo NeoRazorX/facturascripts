@@ -137,11 +137,13 @@ trait ListBusinessActionTrait
                 }
 
                 $model->idestado = $status->idestado;
-                if (false === $model->save()) {
-                    $this->toolBox()->i18nLog()->error('record-save-error');
-                    $dataBase->rollback();
-                    return true;
+                if ($model->save()) {
+                    break;
                 }
+
+                $this->toolBox()->i18nLog()->error('record-save-error');
+                $dataBase->rollback();
+                return true;
             }
         }
 
@@ -205,11 +207,13 @@ trait ListBusinessActionTrait
                 }
 
                 $model->idestado = $status->idestado;
-                if (false === $model->save()) {
-                    $this->toolBox()->i18nLog()->error('record-save-error');
-                    $dataBase->rollback();
-                    return true;
+                if ($model->save()) {
+                    break;
                 }
+
+                $this->toolBox()->i18nLog()->error('record-save-error');
+                $dataBase->rollback();
+                return true;
             }
         }
 

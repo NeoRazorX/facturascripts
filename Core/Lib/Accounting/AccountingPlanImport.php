@@ -290,7 +290,6 @@ class AccountingPlanImport
     protected function processCsvData(string $filePath)
     {
         $csv = new Csv();
-        $csv->encoding(null, 'UTF-8');
         $csv->auto($filePath);
 
         $length = [];

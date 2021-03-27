@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -204,33 +204,35 @@ class ClosingToAcounting
             new DataBaseWhere('editable', true),
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio)
         ];
-        foreach ($customerInvoice->all($where, [], 0, 0) as $invoice) {
-            foreach ($status1 as $stat) {
-                if ($stat->bloquear !== true) {
-                    continue;
-                }
+        foreach ($status1 as $stat) {
+            if ($stat->editable || $stat->generadoc) {
+                continue;
+            }
 
+            foreach ($customerInvoice->all($where, [], 0, 0) as $invoice) {
                 $invoice->idestado = $stat->idestado;
-                if (!$invoice->save()) {
+                if (false === $invoice->save()) {
                     return false;
                 }
             }
+            break;
         }
 
         /// apply to supplier invoices
         $supplierInvoice = new FacturaProveedor();
         $status2 = $supplierInvoice->getAvaliableStatus();
-        foreach ($supplierInvoice->all($where, [], 0, 0) as $invoice) {
-            foreach ($status2 as $stat) {
-                if ($stat->bloquear !== true) {
-                    continue;
-                }
+        foreach ($status2 as $stat) {
+            if ($stat->editable || $stat->generadoc) {
+                continue;
+            }
 
+            foreach ($supplierInvoice->all($where, [], 0, 0) as $invoice) {
                 $invoice->idestado = $stat->idestado;
-                if (!$invoice->save()) {
+                if (false === $invoice->save()) {
                     return false;
                 }
             }
+            break;
         }
 
         return true;
