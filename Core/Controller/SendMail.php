@@ -82,6 +82,7 @@ class SendMail extends Controller
         parent::privateCore($response, $user, $permissions);
         $this->codeModel = new CodeModel();
         $this->newMail = new NewMail();
+        $this->newMail->setUser($this->user);
 
         /// Check if the email is configurate
         if (false === $this->newMail->canSendMail()) {
@@ -230,8 +231,11 @@ class SendMail extends Controller
      */
     protected function send()
     {
-        $this->newMail->fromNick = $this->user->nick;
-        $this->newMail->addReplyTo($this->user->email, $this->user->nick);
+        if ($this->newMail->fromEmail === $this->user->email) {
+            /// do not add replyTo
+        } elseif ((bool) $this->request->request->get('replyto', '0')) {
+            $this->newMail->addReplyTo($this->user->email, $this->user->nick);
+        }
 
         $this->newMail->title = $this->request->request->get('subject', '');
         $this->newMail->text = $this->request->request->get('body', '');
