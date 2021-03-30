@@ -66,11 +66,20 @@ class Ledger extends AccountingBase
         }
 
         /// do not group data
+        $debe = $haber = 0.0;
         foreach ($this->getData($params) as $line) {
             $this->processLine($ledger, $line);
+            $debe += (float) $line['debe'];
+            $haber += (float) $line['debe'];
         }
 
-        return [$ledger];
+        $totals = [
+            [
+                'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
+                'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>'
+            ]
+        ];
+        return [$ledger, $totals];
     }
 
     /**
