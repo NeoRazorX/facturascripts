@@ -139,12 +139,13 @@ class EditSubcuenta extends EditController
 
         $request = $this->request->request->all();
         $params = [
-            'grouped' => ('YES' == $request['grouped']),
+            'grouped' => false,
             'channel' => $request['channel'],
             'subaccount-from' => $subAccount->codsubcuenta
         ];
 
         $ledger = new Ledger();
+        $ledger->setExercise($subAccount->codejercicio);
         $pages = $ledger->generate($request['dateFrom'], $request['dateTo'], $params);
         $this->exportManager->newDoc($request['format']);
         foreach ($pages as $data) {

@@ -63,24 +63,32 @@ class Ledger extends AccountingBase
             foreach ($this->getDataGrouped($params) as $line) {
                 $this->processLineBalance($balances, $ledger, $line);
                 $debe += (float) $line['debe'];
-                $haber += (float) $line['debe'];
+                $haber += (float) $line['haber'];
             }
+            $ledger['totals'] = [
+                [
+                    'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
+                    'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>',
+                    'saldo' => '<b>' . $this->toolBox()->coins()->format($debe - $haber, FS_NF0, '') . '</b>'
+                ]
+            ];
         } else {
             /// do not group data
             foreach ($this->getData($params) as $line) {
                 $this->processLine($ledger['lines'], $line);
                 $debe += (float) $line['debe'];
-                $haber += (float) $line['debe'];
+                $haber += (float) $line['haber'];
             }
+            $ledger['lines'][] = [
+                'asiento' => '',
+                'fecha' => '',
+                'cuenta' => '',
+                'concepto' => '',
+                'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
+                'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>'
+            ];
         }
 
-        $ledger['totals'] = [
-            [
-                'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
-                'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>',
-                'saldo' => '<b>' . $this->toolBox()->coins()->format($debe - $haber, FS_NF0, '') . '</b>'
-            ]
-        ];
         return $ledger;
     }
 
@@ -115,7 +123,9 @@ class Ledger extends AccountingBase
         }
 
         $sql = 'SELECT asientos.numero, asientos.fecha, partidas.codsubcuenta,'
-            . ' partidas.concepto, partidas.debe, partidas.haber'
+            . ' partidas.concepto, partidas.debe, partidas.haber,'
+            . ' subcuentas.codcuenta, subcuentas.descripcion as subcuentadesc,'
+            . ' cuentas.descripcion as cuentadesc'
             . ' FROM partidas'
             . ' LEFT JOIN asientos ON partidas.idasiento = asientos.idasiento'
             . ' LEFT JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
