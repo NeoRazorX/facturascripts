@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -73,9 +73,9 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="info" fieldname="predeterminado">1</option>
-            <option color="success" fieldname="generadoc">neq:</option>
-            <option color="warning" fieldname="editable">0</option>
+            <option color="info" fieldname="predeterminado" title="default">1</option>
+            <option color="success" fieldname="generadoc" title="generate-doc-type">neq:</option>
+            <option color="warning" fieldname="editable" title="non-editable-document">0</option>
         </row>
     </rows>
 </view>
