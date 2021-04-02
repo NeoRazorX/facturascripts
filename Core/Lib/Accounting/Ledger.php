@@ -183,11 +183,11 @@ class Ledger extends AccountingBase
                 . ' AND ' . $this->dataBase->var2str($subaccountTo);
         }
 
-        $accountFrom = $params['account-from'] ?? '';
-        $accountTo = $params['account-to'] ?? $accountFrom;
-        if (!empty($accountFrom) || !empty($accountTo)) {
-            $where .= ' AND subcuentas.codcuenta BETWEEN ' . $this->dataBase->var2str($accountFrom)
-                . ' AND ' . $this->dataBase->var2str($accountTo);
+        $entryFrom = $params['entry-from'] ?? '';
+        $entryTo = $params['entry-to'] ?? $entryFrom;
+        if (!empty($entryFrom) || !empty($entryTo)) {
+            $where .= ' AND asientos.numero BETWEEN ' . $this->dataBase->var2str($entryFrom)
+                . ' AND ' . $this->dataBase->var2str($entryTo);
         }
 
         return $where;
