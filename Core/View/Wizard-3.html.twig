@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -31,10 +31,10 @@
             <br/>
             <br/>
         </div>
-        <div class="container card shadow" style="margin-top: -100px;">
-            <div class="row">
-                <div class="col-12">
-                    <h1 class="h3 mt-3">
+        <div class="container" style="margin-top: -100px;">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h1 class="h3">
                         <i class="fas fa-plug" aria-hidden="true"></i> {{ i18n.trans('plugins') }}
                         <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
                             <i class="fas fa-redo" aria-hidden="true"></i>
@@ -42,25 +42,19 @@
                     </h1>
                     <p>{{ i18n.trans('wizard-plugins') }}</p>
                     <hr/>
-                </div>
-            </div>
-            {% for plugin in plugins %}
-                <div class="row">
-                    <div class="col mb-3">
-                        <div class="form-check">
+                    {% for plugin in plugins %}
+                        <div class="form-check mb-3">
                             <label class="form-check-label">
                                 <input class="form-check-input" type="checkbox" name="plugins[]" value="{{ plugin.name }}" checked=""/>
                                 <b>{{ plugin.name }}</b><br/>{{ plugin.description }}
                             </label>
                         </div>
+                    {% endfor %}
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary" id="btnWizard">
+                            {{ i18n.trans('continue') }}
+                        </button>
                     </div>
-                </div>
-            {% endfor %}
-            <div class="row mb-3 mt-2">
-                <div class="col text-right">
-                    <button type="submit" class="btn btn-primary" id="btnWizard">
-                        {{ i18n.trans('continue') }}
-                    </button>
                 </div>
             </div>
         </div>
@@ -74,6 +68,7 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('node_modules/pace-js/pace.min.js') }}"></script>
     <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}"></script>
     <script>

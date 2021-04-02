@@ -30,10 +30,10 @@
         <br/>
         <br/>
     </div>
-    <div class="container card shadow" style="margin-top: -100px;">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="h3 mt-3">
+    <div class="container" style="margin-top: -100px;">
+        <div class="card shadow">
+            <div class="card-body">
+                <h1 class="h3">
                     <i class="fas fa-magic" aria-hidden="true"></i> {{ i18n.trans('wizard') }}
                     <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
@@ -41,72 +41,70 @@
                 </h1>
                 <p>{{ i18n.trans('wizard-p') }}</p>
                 <hr/>
+                <form action="#" method="post" class="form" id="formWizard">
+                    <input type="hidden" name="action" value="step2" />
+                    <div class="form-row align-items-end">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                {{ forms.simpleSelect('regimeniva', 'regimeniva', fsc.empresa.regimeniva, fsc.getRegimenIva(), i18n.trans('vat-regime')) }}
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                {{ forms.simpleSelect('codimpuesto', 'codimpuesto', codimpuesto, fsc.getSelectValues('Impuesto', true), i18n.trans('default-tax')) }}
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                {{ forms.simpleSelect('codretencion', 'codretencion', codretencion, fsc.getSelectValues('Retencion', true), i18n.trans('default-retention')) }}
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                {{ i18n.trans('cost-price-policy') }}
+                                <select name="costpricepolicy" class="form-control">
+                                    <option value="">------</option>
+                                    <option value="last-price">{{ i18n.trans('last-purchase-price') }}</option>
+                                    <option value="average-price">{{ i18n.trans('average-purchase-price') }}</option>
+                                    <option value="actual-price">{{ i18n.trans('actual-cost-price') }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group form-check">
+                                {% if appSettings.get('default', 'updatesupplierprices') %}
+                                    <input type="checkbox" name="updatesupplierprices" value="1" id="cbUpdateSupplierPrices" class="form-check-input" checked="" />
+                                {% else %}
+                                    <input type="checkbox" name="updatesupplierprices" value="1" id="cbUpdateSupplierPrices" class="form-check-input" />
+                                {% endif %}
+                                <label for="cbUpdateSupplierPrices">{{ i18n.trans('update-supplier-prices') }}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group form-check">
+                                {% if appSettings.get('default', 'ventasinstock') %}
+                                    <input type="checkbox" name="ventasinstock" value="1" id="cbNoStock" class="form-check-input" checked="" />
+                                {% else %}
+                                    <input type="checkbox" name="ventasinstock" value="1" id="cbNoStock" class="form-check-input" />
+                                {% endif %}
+                                <label for="cbNoStock">{{ i18n.trans('allow-sale-without-stock-n') }}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group form-check">
+                                <input type="checkbox" name="defaultplan" value="1" id="checkboxPlan" class="form-check-input" checked="" />
+                                <label for="checkboxPlan">{{ i18n.trans('load-def-acc-plan') }}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 text-right">
+                            <button type="submit" class="btn btn-primary" id="btnWizard">
+                                {{ i18n.trans('continue') }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-        <form action="#" method="post" class="form" id="formWizard">
-            <input type="hidden" name="action" value="step2" />
-            <div class="row align-items-end">
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        {{ forms.simpleSelect('regimeniva', 'regimeniva', fsc.empresa.regimeniva, fsc.getRegimenIva(), i18n.trans('vat-regime')) }}
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        {{ forms.simpleSelect('codimpuesto', 'codimpuesto', codimpuesto, fsc.getSelectValues('Impuesto', true), i18n.trans('default-tax')) }}
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        {{ forms.simpleSelect('codretencion', 'codretencion', codretencion, fsc.getSelectValues('Retencion', true), i18n.trans('default-retention')) }}
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        {{ i18n.trans('cost-price-policy') }}
-                        <select name="costpricepolicy" class="form-control">
-                            <option value="">------</option>
-                            <option value="last-price">{{ i18n.trans('last-purchase-price') }}</option>
-                            <option value="average-price">{{ i18n.trans('average-purchase-price') }}</option>
-                            <option value="actual-price">{{ i18n.trans('actual-cost-price') }}</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm">
-                    <div class="form-group form-check">
-                        {% if appSettings.get('default', 'updatesupplierprices') %}
-                            <input type="checkbox" name="updatesupplierprices" value="1" id="cbUpdateSupplierPrices" class="form-check-input" checked="" />
-                        {% else %}
-                            <input type="checkbox" name="updatesupplierprices" value="1" id="cbUpdateSupplierPrices" class="form-check-input" />
-                        {% endif %}
-                        <label for="cbUpdateSupplierPrices">{{ i18n.trans('update-supplier-prices') }}</label>
-                    </div>
-                </div>
-                <div class="col-sm">
-                    <div class="form-group form-check">
-                        {% if appSettings.get('default', 'ventasinstock') %}
-                            <input type="checkbox" name="ventasinstock" value="1" id="cbNoStock" class="form-check-input" checked="" />
-                        {% else %}
-                            <input type="checkbox" name="ventasinstock" value="1" id="cbNoStock" class="form-check-input" />
-                        {% endif %}
-                        <label for="cbNoStock">{{ i18n.trans('allow-sale-without-stock-n') }}</label>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-sm">
-                    <div class="form-group form-check">
-                        <input type="checkbox" name="defaultplan" value="1" id="checkboxPlan" class="form-check-input" checked="" />
-                        <label for="checkboxPlan">{{ i18n.trans('load-def-acc-plan') }}</label>
-                    </div>
-                </div>
-                <div class="col-sm text-right">
-                    <button type="submit" class="btn btn-primary" id="btnWizard">
-                        {{ i18n.trans('continue') }}
-                    </button>
-                </div>
-            </div>
-        </form>
     </div>
 {% endblock %}
 
@@ -117,6 +115,7 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('node_modules/pace-js/pace.min.js') }}"></script>
     <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}"></script>
     <script>
