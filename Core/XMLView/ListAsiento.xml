@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,12 +35,12 @@
         <column name="exercise" order="120">
             <widget type="text" fieldname="codejercicio" />
         </column>
-        <column name="journal" order="130">
+        <column name="journal" display="none" order="130">
             <widget type="select" fieldname="iddiario" onclick="EditDiario">
                 <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion" />
             </widget>
         </column>
-        <column name="channel" order="140">
+        <column name="channel" display="none" order="140">
             <widget type="number" decimal="0" fieldname="canal" />
         </column>
         <column name="accounting-concept" order="150">

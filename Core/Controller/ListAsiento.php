@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
@@ -78,6 +79,7 @@ class ListAsiento extends ListController
     protected function createViews()
     {
         $this->createViewsAccountEntries();
+        $this->createViewsNotBalanced();
         $this->createViewsConcepts();
         $this->createViewsJournals();
     }
@@ -99,20 +101,25 @@ class ListAsiento extends ListController
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
+        $this->addFilterCheckbox($viewName, 'editable');
 
         $selectCompany = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $selectCompany);
+        if (\count($selectCompany) > 2) {
+            $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $selectCompany);
+        }
 
         $selectExercise = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
-        $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
+        if (\count($selectExercise) > 2) {
+            $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
+        }
 
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
         $this->addFilterSelect($viewName, 'iddiario', 'journals', 'iddiario', $selectJournals);
 
         $selectChannel = $this->codeModel->all('asientos', 'canal', 'canal');
-        $this->addFilterSelect($viewName, 'canal', 'channel', 'canal', $selectChannel);
-
-        $this->addFilterCheckbox($viewName, 'editable');
+        if (\count($selectChannel) > 2) {
+            $this->addFilterSelect($viewName, 'canal', 'channel', 'canal', $selectChannel);
+        }
 
         /// buttons
         $this->addLockButton($viewName);
@@ -141,6 +148,36 @@ class ListAsiento extends ListController
         $this->addOrderBy($viewName, ['iddiario'], 'code');
         $this->addOrderBy($viewName, ['descripcion'], 'description', 1);
         $this->addSearchFields($viewName, ['descripcion']);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsNotBalanced(string $viewName = 'ListAsiento-not')
+    {
+        $idasientos = [];
+        $sql = 'SELECT partidas.idasiento, ABS(SUM(partidas.debe) - SUM(partidas.haber)) AS diff'
+            . ' FROM partidas GROUP BY 1 HAVING diff > 0.001';
+        foreach ($this->dataBase->select($sql) as $row) {
+            $idasientos[] = $row['idasiento'];
+        }
+
+        if (\count($idasientos) > 0) {
+            $this->addView($viewName, 'Asiento', 'unbalance', 'fas fa-exclamation-circle');
+            $this->addOrderBy($viewName, ['fecha', 'idasiento'], 'date', 2);
+            $this->addOrderBy($viewName, ['numero', 'idasiento'], 'number');
+            $this->addOrderBy($viewName, ['importe', 'idasiento'], 'amount');
+            $this->addSearchFields($viewName, ['concepto', 'documento', 'numero']);
+
+            /// filter
+            $this->addFilterSelectWhere($viewName, 'status', [
+                [
+                    'label' => $this->toolBox()->i18n()->trans('unbalance'),
+                    'where' => [new DataBaseWhere('idasiento', \join(',', $idasientos), 'IN')]
+                ]
+            ]);
+        }
     }
 
     /**
