@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -75,6 +75,17 @@ class LineaFacturaCliente extends Base\SalesDocumentLine
     public static function tableName()
     {
         return 'lineasfacturascli';
+    }
+
+    /**
+     * 
+     * @return bool
+     */
+    public function test()
+    {
+        /// servido will always be 0 to prevent stock problems when removing rectified invoices
+        $this->servido = 0.0;
+        return parent::test();
     }
 
     /**
