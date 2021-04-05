@@ -30,7 +30,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  * Description of AccountingClossing
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class AccountingClosingBase
 {
@@ -71,15 +71,9 @@ abstract class AccountingClosingBase
     abstract protected function getOperation(): string;
 
     /**
-     * Get the sub accounts filter for obtain balance.
+     * Get the sql with balance data for operation.
      */
-    abstract protected function getSubAccountsFilter(): string;
-
-    /**
-     * Add accounting entry line with balance override.
-     * Return true without doing anything, if you do not need balance override.
-     */
-    abstract protected function saveBalanceLine($accountEntry, $debit, $credit): bool;
+    abstract protected function getSQL(): string;
 
     /**
      * Class Constructor
@@ -92,8 +86,25 @@ abstract class AccountingClosingBase
     }
 
     /**
+     * Delete special accounting entry from exercise.
+     *
+     * @param Ejercicio $exercise
+     *
+     * @return bool
+     */
+    public function delete($exercise): bool
+    {
+        return $this->deleteAccountEntry($exercise, $this->getOperation());
+    }
+
+    /**
      * Execute main process.
      * Create a new account entry for channel with a one line by account balance.
+     * For each channel:
+     *      - Create an account
+     *      - Create the lines with balance
+     *      - Create a line to canceling the balance (if necessary)
+     *      - Update account totals
      *
      * @param Ejercicio $exercise
      * @param int       $idjournal
@@ -127,100 +138,6 @@ abstract class AccountingClosingBase
     }
 
     /**
-     * Delete accounting entry of type indicated.
-     *
-     * @param Ejercicio $exercise
-     * @param string    $type
-     */
-    protected function deleteAccountEntry($exercise, $type): bool
-    {
-        $where = [
-            new DataBaseWhere('codejercicio', $exercise->codejercicio),
-            new DataBaseWhere('operacion', $type),
-        ];
-
-        $accountEntry = new Asiento();
-        $accountEntry->clearExerciseCache();
-        foreach ($accountEntry->all($where) as $row) {
-            $row->editable = true;
-            if (!$row->delete()) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Returns an array with the balances of the accounting
-     * sub-accounts for each channel.
-     *
-     * Structure:
-     *  [channel]
-     *      ['id' => value, 'code' => value, 'debit' => amount, 'credit' => amount]
-     *      ['id' => value, 'code' => value, 'debit' => amount, 'credit' => amount]
-     *
-     * @return array
-     */
-    protected function getBalance()
-    {
-        $result = [];
-        foreach (self::$dataBase->selectLimit($this->getSQL(), 0) as $data) {
-            $channel = $data['channel'];
-            unset($data['channel']);
-            $result[$channel][] = $data;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get the special operation filter for obtain balance.
-     *
-     * @return string
-     */
-    protected function getOperationFilter(): string
-    {
-        return $this->getOperation();
-    }
-
-    /**
-     * Get Balance SQL sentence
-     *
-     * @return string
-     */
-    protected function getSQL(): string
-    {
-        return "SELECT " . $this->getSQLFields()
-            . " FROM asientos t1"
-            . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento " . $this->getSubAccountsFilter()
-            . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
-            . " AND (t1.operacion IS NULL OR t1.operacion <> '" . $this->getOperationFilter() . "')"
-            . " GROUP BY 1, 2, 3"
-            . " HAVING ROUND(SUM(t2.debe) - SUM(t2.haber), 4) <> 0.0000"
-            . " ORDER BY 1, 3, 2";
-    }
-
-    /**
-     * Get column fields of balance:
-     * - channel: (int)
-     * - id     : (string) sub-account id
-     * - code   : (string) sub-account code
-     * - debit  : (float)  total debit balance
-     * - credit : (float)  total credit balance
-     *
-     * @return string
-     */
-    protected function getSQLFields(): string
-    {
-        return "COALESCE(t1.canal, 0) AS channel,"
-            . "t2.idsubcuenta AS id,"
-            . "t2.codsubcuenta AS code,"
-            . "ROUND(SUM(t2.debe), 4) AS debit,"
-            . "ROUND(SUM(t2.haber), 4) AS credit";
-    }
-
-    /**
      * Search and load data account from a special account code
      *
      * @param Ejercicio $exercise
@@ -238,23 +155,6 @@ abstract class AccountingClosingBase
         }
 
         return true;
-    }
-
-    /**
-     *
-     * @param Asiento $accountEntry
-     * @param int     $channel
-     * @param int     $idjournal
-     *
-     * @return bool
-     */
-    protected function newAccountEntry(&$accountEntry, $channel, $idjournal): bool
-    {
-        $accountEntry = new Asiento();
-        $this->setData($accountEntry);
-        $accountEntry->canal = empty($channel) ? null : $channel;
-        $accountEntry->iddiario = empty($idjournal) ? null : $idjournal;
-        return $accountEntry->save();
     }
 
     /**
@@ -286,6 +186,21 @@ abstract class AccountingClosingBase
         $line->concepto = $this->getConcept();
         $line->debe = 0.00;
         $line->haber = 0.00;
+    }
+
+    /**
+     * Add accounting entry line with balance override.
+     * Return true without doing anything, if you do not need balance override.
+     *
+     * @param Asiento $accountEntry
+     * @param float   $debit
+     * @param float   $credit
+     *
+     * @return bool
+     */
+    protected function saveBalanceLine($accountEntry, $debit, $credit): bool
+    {
+        return true;
     }
 
     /**
@@ -321,5 +236,72 @@ abstract class AccountingClosingBase
     protected function toolBox()
     {
         return new ToolBox();
+    }
+
+    /**
+     * Delete accounting entry of type indicated.
+     *
+     * @param Ejercicio $exercise
+     * @param string    $type
+     */
+    private function deleteAccountEntry($exercise, $type): bool
+    {
+        $where = [
+            new DataBaseWhere('codejercicio', $exercise->codejercicio),
+            new DataBaseWhere('operacion', $type),
+        ];
+
+        $accountEntry = new Asiento();
+        $accountEntry->clearExerciseCache();
+        foreach ($accountEntry->all($where) as $row) {
+            $row->editable = true;
+            if (!$row->delete()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns an array with the balances of the accounting
+     * sub-accounts for each channel.
+     *
+     * Structure:
+     *  [channel]
+     *      ['id' => value, 'code' => value, 'debit' => amount, 'credit' => amount]
+     *      ['id' => value, 'code' => value, 'debit' => amount, 'credit' => amount]
+     *
+     * @return array
+     */
+    private function getBalance()
+    {
+        $result = [];
+        foreach (self::$dataBase->selectLimit($this->getSQL(), 0) as $data) {
+            $channel = $data['channel'];
+            unset($data['channel']);
+            $result[$channel][] = $data;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Create new accounting entry for channel and journal.
+     * New accounting it's set into accountEntry param.
+     *
+     * @param Asiento $accountEntry
+     * @param int     $channel
+     * @param int     $idjournal
+     *
+     * @return bool
+     */
+    private function newAccountEntry(&$accountEntry, $channel, $idjournal): bool
+    {
+        $accountEntry = new Asiento();
+        $this->setData($accountEntry);
+        $accountEntry->canal = empty($channel) ? null : $channel;
+        $accountEntry->iddiario = empty($idjournal) ? null : $idjournal;
+        return $accountEntry->save();
     }
 }

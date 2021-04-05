@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  * Perform opening of account balances for the exercise.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class AccountingClosingOpening extends AccountingClosingBase
 {
@@ -60,7 +60,7 @@ class AccountingClosingOpening extends AccountingClosingBase
     {
         $this->exercise = $exercise;
         $this->loadNewExercise();
-        return $this->deleteAccountEntry($this->newExercise, Asiento::OPERATION_OPENING);
+        return parent::delete($this->newExercise);
     }
 
     /**
@@ -168,68 +168,26 @@ class AccountingClosingOpening extends AccountingClosingBase
     }
 
     /**
-     * Get the special operation filter for obtain balance.
-     *
-     * @return string
-     */
-    protected function getOperationFilter(): string
-    {
-        return Asiento::OPERATION_CLOSING;
-    }
-
-    /**
      * Get Balance SQL sentence
      *
      * @return string
      */
     protected function getSQL(): string
     {
-        return "SELECT " . $this->getSQLFields() . ", t3.idsubcuenta AS id_new"
+        return "SELECT COALESCE(t1.canal, 0) AS channel,"
+            .       "t2.idsubcuenta AS id,"
+            .       "t2.codsubcuenta AS code,"
+            .       "t3.idsubcuenta AS id_new,"
+            .       "ROUND(SUM(t2.debe), 4) AS debit,"
+            .       "ROUND(SUM(t2.haber), 4) AS credit"
             . " FROM asientos t1"
-            . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento " . $this->getSubAccountsFilter()
+            . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento AND t2.codsubcuenta BETWEEN '1' AND '599999999999999'"
             . " INNER JOIN subcuentas t3 ON t3.codsubcuenta = t2.codsubcuenta AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
             . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
-            . " AND (t1.operacion IS NULL OR t1.operacion <> '" . $this->getOperationFilter() . "')"
-            . " GROUP BY 1, 2, 3, t3.idsubcuenta"
+            . " AND (t1.operacion IS NULL OR t1.operacion <> '" . Asiento::OPERATION_CLOSING . "')"
+            . " GROUP BY 1, 2, 3, 4"
             . " HAVING ROUND(SUM(t2.debe) - SUM(t2.haber), 4) <> 0.0000"
-            . " ORDER BY 1, 3, 2";
-    }
-
-    /**
-     * Get the sub accounts filter for obtain balance.
-     *
-     * @return string
-     */
-    protected function getSubAccountsFilter(): string
-    {
-        return "AND t2.codsubcuenta BETWEEN '1' AND '599999999999999'";
-    }
-
-    /**
-     * Search and load next exercise of indicated exercise.
-     */
-    private function loadNewExercise()
-    {
-        $date = \date('d-m-Y', \strtotime($this->exercise->fechainicio . ' +1 year'));
-
-        $this->newExercise = new Ejercicio();
-        $this->newExercise->idempresa = $this->exercise->idempresa;
-        $this->newExercise->loadFromDate($date, true, true);
-    }
-
-    /**
-     * Add accounting entry line with balance override.
-     * Return true without doing anything, if you do not need balance override.
-     *
-     * @param Asiento $accountEntry
-     * @param float   $debit
-     * @param float   $credit
-     *
-     * @return bool
-     */
-    protected function saveBalanceLine($accountEntry, $debit, $credit): bool
-    {
-        return true;
+            . " ORDER BY 1, 3";
     }
 
     /**
@@ -276,6 +234,18 @@ class AccountingClosingOpening extends AccountingClosingBase
     private function isProfitLossAccount(string $subaccount): bool
     {
         return isset($this->subAccount) && $this->subAccount->codsubcuenta == $subaccount;
+    }
+
+    /**
+     * Search and load next exercise of indicated exercise.
+     */
+    private function loadNewExercise()
+    {
+        $date = \date('d-m-Y', \strtotime($this->exercise->fechainicio . ' +1 year'));
+
+        $this->newExercise = new Ejercicio();
+        $this->newExercise->idempresa = $this->exercise->idempresa;
+        $this->newExercise->loadFromDate($date, true, true);
     }
 
     /**
