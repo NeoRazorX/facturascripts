@@ -99,42 +99,6 @@ class AccountingClosingOpening extends AccountingClosingBase
     }
 
     /**
-     * Copy accounts and subaccounts from exercise to new exercise
-     *
-     * @return bool
-     */
-    protected function copyAccounts(): bool
-    {
-        $accounting = new AccountingCreation();
-
-        /// update exercise configuration
-        $this->newExercise->longsubcuenta = $this->exercise->longsubcuenta;
-        $this->newExercise->save();
-
-        /// copy accounts
-        $accountModel = new Cuenta();
-        $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
-        foreach ($accountModel->all($where, ['codcuenta' => 'ASC'], 0, 0) as $account) {
-            $newAccount = $accounting->copyAccountToExercise($account, $this->newExercise->codejercicio);
-            if (!$newAccount->exists()) {
-                return false;
-            }
-        }
-
-        /// copy subaccounts
-        $subaccountModel = new Subcuenta();
-        $subaccountModel->clearExerciseCache();
-        foreach ($subaccountModel->all($where, ['codsubcuenta' => 'ASC'], 0, 0) as $subaccount) {
-            $newSubaccount = $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
-            if (!$newSubaccount->exists()) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Get the concept for the accounting entry and its lines.
      *
      * @return string
@@ -182,7 +146,7 @@ class AccountingClosingOpening extends AccountingClosingBase
             .       "ROUND(SUM(t2.haber), 4) AS credit"
             . " FROM asientos t1"
             . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento AND t2.codsubcuenta BETWEEN '1' AND '599999999999999'"
-            . " INNER JOIN subcuentas t3 ON t3.codsubcuenta = t2.codsubcuenta AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
+            . " LEFT JOIN subcuentas t3 ON t3.codsubcuenta = t2.codsubcuenta AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
             . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
             . " AND (t1.operacion IS NULL OR t1.operacion <> '" . Asiento::OPERATION_CLOSING . "')"
             . " GROUP BY 1, 2, 3, 4"
@@ -216,13 +180,65 @@ class AccountingClosingOpening extends AccountingClosingBase
 
         parent::setDataLine($line, $data);
 
-        $line->idsubcuenta = $data['id_new'];
+        $line->idsubcuenta = empty($data['id_new']) ? $this->copySubAccount($data['id']) : $data['id_new'];
         if ($data['debit'] > $data['credit']) {
             $line->debe = $data['debit'] - $data['credit'];
             return;
         }
 
         $line->haber = $data['credit'] - $data['debit'];
+    }
+
+    /**
+     * Copy existing subaccount into new exercise.
+     *
+     * @param int $idSubAccount
+     * @return int
+     */
+    private function copySubAccount($idSubAccount): int
+    {
+        $subAccount = new Subcuenta();
+        $subAccount->loadFromCode($idSubAccount);
+
+        $accounting = new AccountingCreation();
+        $newSubaccount = $accounting->copySubAccountToExercise($subAccount, $this->newExercise->codejercicio);
+        return $newSubaccount->idsubcuenta;
+    }
+
+    /**
+     * Copy accounts and subaccounts from exercise to new exercise
+     *
+     * @return bool
+     */
+    private function copyAccounts(): bool
+    {
+        $accounting = new AccountingCreation();
+
+        /// update exercise configuration
+        $this->newExercise->longsubcuenta = $this->exercise->longsubcuenta;
+        $this->newExercise->save();
+
+        /// copy accounts
+        $accountModel = new Cuenta();
+        $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
+        foreach ($accountModel->all($where, ['codcuenta' => 'ASC'], 0, 0) as $account) {
+            $newAccount = $accounting->copyAccountToExercise($account, $this->newExercise->codejercicio);
+            if (!$newAccount->exists()) {
+                return false;
+            }
+        }
+
+        /// copy subaccounts
+        $subaccountModel = new Subcuenta();
+        $subaccountModel->clearExerciseCache();
+        foreach ($subaccountModel->all($where, ['codsubcuenta' => 'ASC'], 0, 0) as $subaccount) {
+            $newSubaccount = $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
+            if (!$newSubaccount->exists()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
