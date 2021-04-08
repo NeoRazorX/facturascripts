@@ -26,23 +26,10 @@ use FacturaScripts\Dinamic\Model\Partida;
  * Perform regularization of account balances for the exercise.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class AccountingClosingRegularization extends AccountingClosingBase
 {
-
-    /**
-     * Delete main process.
-     * Delete closing regularization accounting entry from exercise.
-     *
-     * @param Ejercicio $exercise
-     *
-     * @return bool
-     */
-    public function delete($exercise): bool
-    {
-        return $this->deleteAccountEntry($exercise, Asiento::OPERATION_REGULARIZATION);
-    }
 
     /**
      * Execute main process.
@@ -61,28 +48,6 @@ class AccountingClosingRegularization extends AccountingClosingBase
         }
 
         return $this->delete($exercise) && parent::exec($exercise, $idjournal);
-    }
-
-    /**
-     *
-     * @param Asiento $accountEntry
-     * @param float   $debit
-     * @param float   $credit
-     *
-     * @return bool
-     */
-    private function addLine($accountEntry, $debit, $credit): bool
-    {
-        $data = [
-            'id' => $this->subAccount->idsubcuenta,
-            'code' => $this->subAccount->codsubcuenta,
-            'debit' => $debit,
-            'credit' => $credit
-        ];
-
-        $line = $accountEntry->getNewLine();
-        $this->setDataLine($line, $data);
-        return $line->save();
     }
 
     /**
@@ -119,13 +84,24 @@ class AccountingClosingRegularization extends AccountingClosingBase
     }
 
     /**
-     * Get the sub accounts filter for obtain balance.
+     * Get Balance SQL sentence
      *
      * @return string
      */
-    protected function getSubAccountsFilter(): string
+    protected function getSQL(): string
     {
-        return "AND t2.codsubcuenta BETWEEN '6' AND '799999999999999'";
+        return "SELECT COALESCE(t1.canal, 0) AS channel,"
+            .       "t2.idsubcuenta AS id,"
+            .       "t2.codsubcuenta AS code,"
+            .       "ROUND(SUM(t2.debe), 4) AS debit,"
+            .       "ROUND(SUM(t2.haber), 4) AS credit"
+            . " FROM asientos t1"
+            . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento AND t2.codsubcuenta BETWEEN '6' AND '799999999999999'"
+            . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
+            . " AND (t1.operacion IS NULL OR t1.operacion <> '" . $this->getOperation() . "')"
+            . " GROUP BY 1, 2, 3"
+            . " HAVING ROUND(SUM(t2.debe) - SUM(t2.haber), 4) <> 0.0000"
+            . " ORDER BY 1, 3, 2";
     }
 
     /**
@@ -161,5 +137,27 @@ class AccountingClosingRegularization extends AccountingClosingBase
         }
 
         $line->debe = $data['credit'] - $data['debit'];
+    }
+
+    /**
+     *
+     * @param Asiento $accountEntry
+     * @param float   $debit
+     * @param float   $credit
+     *
+     * @return bool
+     */
+    private function addLine($accountEntry, $debit, $credit): bool
+    {
+        $data = [
+            'id' => $this->subAccount->idsubcuenta,
+            'code' => $this->subAccount->codsubcuenta,
+            'debit' => $debit,
+            'credit' => $credit
+        ];
+
+        $line = $accountEntry->getNewLine();
+        $this->setDataLine($line, $data);
+        return $line->save();
     }
 }

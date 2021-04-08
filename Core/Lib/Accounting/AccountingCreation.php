@@ -32,8 +32,8 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  *   - Customer
  *   - Supplier
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class AccountingCreation
 {
@@ -110,6 +110,12 @@ class AccountingCreation
 
     /**
      * Create a subaccount into informed exercise.
+     *    - Check exercise is open.
+     *    - Check subaccount exists.
+     *
+     * For new subaccount:
+     *    - Search acount and copy from source subacount if dont exists.
+     *    - Save new subaccount.
      *
      * @param Subcuenta $subAccount
      * @param string    $codejercicio
@@ -123,6 +129,14 @@ class AccountingCreation
         }
 
         $newSubaccount = new Subcuenta();
+        $where = [
+            new DataBaseWhere('codsubcuenta', $subAccount->codsubcuenta),
+            new DataBaseWhere('codejercicio', $codejercicio)
+        ];
+        if ($newSubaccount->loadFromCode('', $where)) {
+            return $newSubaccount;
+        }
+
         $newSubaccount->codcuenta = $subAccount->codcuenta;
         $newSubaccount->codejercicio = $this->exercise->codejercicio;
         $newSubaccount->codsubcuenta = $subAccount->codsubcuenta;
