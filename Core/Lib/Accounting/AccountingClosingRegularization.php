@@ -91,10 +91,10 @@ class AccountingClosingRegularization extends AccountingClosingBase
     protected function getSQL(): string
     {
         return "SELECT COALESCE(t1.canal, 0) AS channel,"
-            .       "t2.idsubcuenta AS id,"
-            .       "t2.codsubcuenta AS code,"
-            .       "ROUND(SUM(t2.debe), 4) AS debit,"
-            .       "ROUND(SUM(t2.haber), 4) AS credit"
+            . "t2.idsubcuenta AS id,"
+            . "t2.codsubcuenta AS code,"
+            . "ROUND(SUM(t2.debe), 4) AS debit,"
+            . "ROUND(SUM(t2.haber), 4) AS credit"
             . " FROM asientos t1"
             . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento AND t2.codsubcuenta BETWEEN '6' AND '799999999999999'"
             . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
