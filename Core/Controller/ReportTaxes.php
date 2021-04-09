@@ -111,7 +111,7 @@ class ReportTaxes extends Controller
                 'serie' => $hide ? '' : $row['codserie'],
                 'codigo' => $hide ? '' : $row['codigo'],
                 'numero2' => $hide ? '' : $row['numero2'],
-                'fecha' => $hide ? '' : $row['fecha'],
+                'fecha' => $hide ? '' : \date(User::DATE_STYLE, \strtotime($row['fecha'])),
                 'nombre' => $hide ? '' : $this->toolBox()->utils()->fixHtml($row['nombre']),
                 'cifnif' => $hide ? '' : $row['cifnif'],
                 'neto' => $this->toolBox()->numbers()->format($row['neto']),
@@ -209,6 +209,15 @@ class ReportTaxes extends Controller
                 'totalirpf' => (float) $row['irpf'] * $row['pvptotal'] / 100,
                 'suplidos' => (float) $row['suplido'] * $row['pvptotal']
             ];
+        }
+
+        /// round
+        foreach ($data as $key => $value) {
+            $data[$key]['neto'] = \round($value['neto'], FS_NF0);
+            $data[$key]['totaliva'] = \round($value['totaliva'], FS_NF0);
+            $data[$key]['totalrecargo'] = \round($value['totalrecargo'], FS_NF0);
+            $data[$key]['totalirpf'] = \round($value['totalirpf'], FS_NF0);
+            $data[$key]['suplidos'] = \round($value['suplidos'], FS_NF0);
         }
 
         return $data;
