@@ -158,7 +158,7 @@ class ReportTaxes extends Controller
         $sql = '';
         switch ($this->source) {
             case 'purchases':
-                $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor, f.fecha, f.nombre, f.cifnif, l.pvptotal, l.iva, l.recargo, l.irpf, l.suplido'
+                $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor AS numero2, f.fecha, f.nombre, f.cifnif, l.pvptotal, l.iva, l.recargo, l.irpf, l.suplido'
                     . ' FROM lineasfacturasprov AS l'
                     . ' LEFT JOIN facturasprov AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
@@ -168,7 +168,7 @@ class ReportTaxes extends Controller
                 break;
 
             case 'sales':
-                $sql .= 'SELECT f.codserie, f.codigo, f.numero2, f.fecha, f.nombrecliente, f.cifnif, l.pvptotal, l.iva, l.recargo, l.irpf, l.suplido'
+                $sql .= 'SELECT f.codserie, f.codigo, f.numero2, f.fecha, f.nombrecliente AS nombre, f.cifnif, l.pvptotal, l.iva, l.recargo, l.irpf, l.suplido'
                     . ' FROM lineasfacturascli AS l'
                     . ' LEFT JOIN facturascli AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
@@ -196,9 +196,9 @@ class ReportTaxes extends Controller
             $data[$code] = [
                 'codserie' => $row['codserie'],
                 'codigo' => $row['codigo'],
-                'numero2' => $row['numero2'] ?? $row['numproveedor'],
+                'numero2' => $row['numero2'],
                 'fecha' => $row['fecha'],
-                'nombre' => $row['nombrecliente'] ?? $row['nombre'],
+                'nombre' => $row['nombre'],
                 'cifnif' => $row['cifnif'],
                 'neto' => (float) $row['pvptotal'],
                 'iva' => (float) $row['iva'],
