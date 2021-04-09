@@ -60,7 +60,10 @@ class ListProveedor extends ListController
     protected function createViewAdresses(string $viewName = 'ListContacto')
     {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
-        $this->addSearchFields($viewName, ['nombre', 'apellidos', 'email']);
+        $this->addSearchFields($viewName, [
+            'apellidos', 'codpostal', 'descripcion', 'direccion', 'email', 'empresa',
+            'nombre', 'observaciones', 'telefono1', 'telefono2'
+        ]);
         $this->addOrderBy($viewName, ['descripcion'], 'description');
         $this->addOrderBy($viewName, ['direccion'], 'address');
         $this->addOrderBy($viewName, ['nombre'], 'name');

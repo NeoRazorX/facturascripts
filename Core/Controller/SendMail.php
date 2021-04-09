@@ -38,8 +38,8 @@ use Symfony\Component\HttpFoundation\Response;
 class SendMail extends Controller
 {
 
-    /// 2 hours
-    const MAX_FILE_AGE = 7200;
+    /// 30 days
+    const MAX_FILE_AGE = 2592000;
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
