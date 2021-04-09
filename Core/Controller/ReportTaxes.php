@@ -106,7 +106,7 @@ class ReportTaxes extends Controller
         $lastcode = '';
         $lines = [];
         foreach ($data as $row) {
-            $hide = $row['codigo'] === $lastcode && $this->format === 'pdf';
+            $hide = $row['codigo'] === $lastcode && $this->format === 'PDF';
             $lines[] = [
                 'serie' => $hide ? '' : $row['codserie'],
                 'codigo' => $hide ? '' : $row['codigo'],
