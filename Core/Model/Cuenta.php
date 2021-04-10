@@ -231,9 +231,11 @@ class Cuenta extends Base\ModelClass
         }
 
         /// prevent loops
-        if ($this->parent_codcuenta === $this->codcuenta || $this->parent_idcuenta === $this->idcuenta) {
-            $this->parent_codcuenta = null;
+        if (!empty($this->parent_idcuenta) && $this->parent_idcuenta === $this->idcuenta) {
             $this->parent_idcuenta = null;
+        }
+        if (!empty($this->parent_codcuenta) && $this->parent_codcuenta === $this->codcuenta) {
+            $this->parent_codcuenta = null;
         }
 
         /// uncomplete parent account data?
