@@ -36,7 +36,11 @@
                                         {{ i18n.trans('company') }}
                                         <select name="idempresa" class="form-control">
                                             {% for empresa in fsc.empresa.all() %}
-                                                <option value="{{ empresa.idempresa }}">{{ empresa.nombrecorto }}</option>
+                                                {% if empresa.idempresa == fsc.idempresa %}
+                                                    <option value="{{ empresa.idempresa }}" selected="">{{ empresa.nombrecorto | raw }}</option>
+                                                {% else %}
+                                                    <option value="{{ empresa.idempresa }}">{{ empresa.nombrecorto | raw }}</option>
+                                                {% endif %}
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -45,8 +49,13 @@
                                     <div class="form-group">
                                         {{ i18n.trans('invoices') }}
                                         <select name="source" class="form-control">
-                                            <option value="sales">{{ i18n.trans('customers') }}</option>
-                                            <option value="purchases">{{ i18n.trans('suppliers') }}</option>
+                                            {% if fsc.source == 'purchases' %}
+                                                <option value="sales">{{ i18n.trans('customers') }}</option>
+                                                <option value="purchases" selected="">{{ i18n.trans('suppliers') }}</option>
+                                            {% else %}
+                                                <option value="sales" selected="">{{ i18n.trans('customers') }}</option>
+                                                <option value="purchases">{{ i18n.trans('suppliers') }}</option>
+                                            {% endif %}
                                         </select>
                                     </div>
                                 </div>

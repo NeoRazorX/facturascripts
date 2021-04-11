@@ -262,7 +262,7 @@ class ReportTaxes extends Controller
     {
         $this->datefrom = $this->request->request->get('datefrom', \date('Y-m-01'));
         $this->dateto = $this->request->request->get('dateto', \date('Y-m-t'));
-        $this->idempresa = (int) $this->request->request->get('idempresa');
+        $this->idempresa = (int) $this->request->request->get('idempresa', $this->empresa->idempresa);
         $this->format = $this->request->request->get('format');
         $this->source = $this->request->request->get('source');
     }
