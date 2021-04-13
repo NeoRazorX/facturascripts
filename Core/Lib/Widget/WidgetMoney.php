@@ -71,6 +71,9 @@ class WidgetMoney extends WidgetNumber
                 case '€':
                     $this->icon = 'fas fa-euro-sign';
                     break;
+                case 'Q':
+                    $this->icon = 'fab fa-quora';
+                    break;     
 
                 default:
                     $this->icon = 'fas fa-dollar-sign';
