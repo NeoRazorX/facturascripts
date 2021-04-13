@@ -156,6 +156,7 @@ class ReportTaxes extends Controller
     protected function getReportData(): array
     {
         $sql = '';
+        $numCol = \strtolower(\FS_DB_TYPE) == 'postgresql' ? 'CAST(f.numero as integer)' : 'CAST(f.numero as unsigned)';
         switch ($this->source) {
             case 'purchases':
                 $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor AS numero2, f.fecha, f.nombre, f.cifnif, l.pvptotal, l.iva, l.recargo, l.irpf, l.suplido'
@@ -164,7 +165,7 @@ class ReportTaxes extends Controller
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
                     . ' AND f.fecha >= ' . $this->dataBase->var2str($this->datefrom)
                     . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto)
-                    . ' ORDER BY f.fecha, f.codigo ASC;';
+                    . ' ORDER BY f.fecha, ' . $numCol . ' ASC;';
                 break;
 
             case 'sales':
@@ -174,7 +175,7 @@ class ReportTaxes extends Controller
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
                     . ' AND f.fecha >= ' . $this->dataBase->var2str($this->datefrom)
                     . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto)
-                    . ' ORDER BY f.fecha, f.codigo ASC;';
+                    . ' ORDER BY f.fecha, ' . $numCol . ' ASC;';
                 break;
 
             default:
