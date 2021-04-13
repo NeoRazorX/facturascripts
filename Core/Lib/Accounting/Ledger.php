@@ -176,6 +176,13 @@ class Ledger extends AccountingBase
             $where .= ' AND asientos.canal = ' . $this->dataBase->var2str($channel);
         }
 
+        $accountFrom = $params['account-from'] ?? '';
+        $accountTo = $params['account-to'] ?? $accountFrom;
+        if (!empty($accountFrom) || !empty($accountTo)) {
+            $where .= ' AND subcuentas.codcuenta BETWEEN ' . $this->dataBase->var2str($accountFrom)
+                . ' AND ' . $this->dataBase->var2str($accountTo);
+        }
+
         $subaccountFrom = $params['subaccount-from'] ?? '';
         $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
         if (!empty($subaccountFrom) || !empty($subaccountTo)) {
