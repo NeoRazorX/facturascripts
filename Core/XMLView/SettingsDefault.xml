@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -110,7 +110,10 @@
                     <values title="actual-cost-price">actual-price</values>
                 </widget>
             </column>
-            <column name="allow-sale-without-stock" numcolumns="3" order="110">
+            <column name="update-supplier-prices" numcolumns="3" order="110">
+                <widget type="checkbox" fieldname="updatesupplierprices" />
+            </column>
+            <column name="allow-sale-without-stock-n" numcolumns="6" order="120">
                 <widget type="checkbox" fieldname="ventasinstock" />
             </column>
         </group>

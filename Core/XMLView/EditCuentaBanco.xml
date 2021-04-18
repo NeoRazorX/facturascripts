@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@
     <columns>
         <group name="bankaccount" numcolumns="12">
             <column name="code" display="none" order="100">
-                <widget type="text" fieldname="codcuenta"/>
+                <widget type="number" fieldname="codcuenta" decimal="0" readonly="true" />
             </column>
             <column name="description" order="110">
                 <widget type="text" fieldname="descripcion" maxlength="100" required="true" />
@@ -39,12 +39,12 @@
             <column name="sepa-suffix" numcolumns="2" order="100">
                 <widget type="text" fieldname="sufijosepa" maxlength="3" />
             </column>
-            <column name="subaccount" titleurl="ListCuenta" order="110">
+            <column name="subaccount" description="optional" titleurl="ListCuenta" order="110">
                 <widget type="autocomplete" fieldname="codsubcuenta">
                     <values source="subcuentas" fieldcode="codsubcuenta" />
                 </widget>
             </column>
-            <column name="expense-subaccount" titleurl="ListCuenta" order="120">
+            <column name="expense-subaccount" description="optional" titleurl="ListCuenta" order="120">
                 <widget type="autocomplete" fieldname="codsubcuentagasto">
                     <values source="subcuentas" fieldcode="codsubcuenta" />
                 </widget>

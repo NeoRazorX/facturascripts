@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,7 +31,7 @@ foreach (scandir(__DIR__, SCANDIR_SORT_ASCENDING) as $filename) {
 
 /// download json from facturascripts.com
 foreach ($files as $filename) {
-    $url = "https://facturascripts.com/EditLanguage?action=json&code=";
+    $url = "https://facturascripts.com/EditLanguage?action=json&idproject=1&code=";
     $json = file_get_contents($url . substr($filename, 0, -5));
     if (empty($json) || strlen($json) < 10) {
         unlink($filename);

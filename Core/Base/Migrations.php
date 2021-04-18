@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Dinamic\Model\Agente;
 
 /**
  * Description of Migrations
@@ -37,8 +36,6 @@ class Migrations
     private static function fixCodagente()
     {
         $dataBase = new DataBase();
-        new Agente();
-
         $tables = ['albaranescli', 'facturascli', 'pedidoscli', 'presupuestoscli'];
         foreach ($tables as $table) {
             if (false === $dataBase->tableExists($table)) {

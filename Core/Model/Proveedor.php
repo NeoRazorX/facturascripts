@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -77,6 +77,7 @@ class Proveedor extends Base\ComercialContact
         $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
         $fields = 'cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2';
         $where[] = new DataBaseWhere($fields, \mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = new DataBaseWhere('fechabaja', null, 'IS');
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
@@ -190,6 +191,7 @@ class Proveedor extends Base\ComercialContact
             $contact->personafisica = $this->personafisica;
             $contact->telefono1 = $this->telefono1;
             $contact->telefono2 = $this->telefono2;
+            $contact->tipoidfiscal = $this->tipoidfiscal;
             if ($contact->save()) {
                 $this->idcontacto = $contact->idcontacto;
                 return $this->save();

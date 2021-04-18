@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,6 +27,12 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class BaseWidget extends VisualItem
 {
+
+    /**
+     * 
+     * @var bool
+     */
+    public $autocomplete;
 
     /**
      *
@@ -83,6 +89,7 @@ class BaseWidget extends VisualItem
     public function __construct($data)
     {
         parent::__construct($data);
+        $this->autocomplete = false;
         $this->fieldname = $data['fieldname'];
         $this->icon = $data['icon'] ?? '';
         $this->onclick = $data['onclick'] ?? '';
@@ -244,6 +251,7 @@ class BaseWidget extends VisualItem
     {
         $params = $this->required ? ' required=""' : '';
         $params .= $this->readonly() ? ' readonly=""' : '';
+        $params .= $this->autocomplete ? '' : ' autocomplete="off"';
 
         return $params;
     }

@@ -33,7 +33,7 @@ class EditBalance extends EditController
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -64,7 +64,10 @@ class EditBalance extends EditController
         $this->setTabsPosition('bottom');
 
         $this->addEditListView('EditBalanceCuenta', 'BalanceCuenta', 'balance-account', 'fas fa-book');
+        $this->views['EditBalanceCuenta']->setInLine(true);
+
         $this->addEditListView('EditBalanceCuentaA', 'BalanceCuentaA', 'balance-account-abreviated', 'fas fa-clipboard-list');
+        $this->views['EditBalanceCuentaA']->setInLine(true);
     }
 
     /**

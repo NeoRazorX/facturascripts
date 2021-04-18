@@ -273,6 +273,10 @@ class AttachedFile extends Base\ModelOnChangeClass
         $this->size = \filesize($this->getFullPath());
         $finfo = new \finfo();
         $this->mimetype = $finfo->file($this->getFullPath(), FILEINFO_MIME_TYPE);
+        if (\strlen($this->mimetype) > 100) {
+            $this->mimetype = \substr($this->mimetype, 0, 100);
+        }
+
         return true;
     }
 

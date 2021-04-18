@@ -22,6 +22,7 @@ use FacturaScripts\Core\App\WebRender;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
+use FacturaScripts\Dinamic\Model\User;
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
@@ -63,6 +64,12 @@ class NewMail
      * @var BaseBlock[]
      */
     protected $footerBlocks = [];
+
+    /**
+     * 
+     * @var bool
+     */
+    protected $lowsecure;
 
     /**
      *
@@ -126,6 +133,7 @@ class NewMail
         $this->mail->Port = $appSettings->get('email', 'port');
         $this->mail->Username = $appSettings->get('email', 'user') ? $appSettings->get('email', 'user') : $appSettings->get('email', 'email');
         $this->mail->Password = $appSettings->get('email', 'password');
+        $this->lowsecure = (bool) $appSettings->get('email', 'lowsecure');
 
         foreach (static::splitEmails($appSettings->get('email', 'emailcc')) as $email) {
             $this->addCC($email);
@@ -327,6 +335,15 @@ class NewMail
 
     /**
      * 
+     * @param User $user
+     */
+    public function setUser($user)
+    {
+        $this->fromNick = $user->nick;
+    }
+
+    /**
+     * 
      * @param string $emails
      *
      * @return array
@@ -351,7 +368,7 @@ class NewMail
      */
     public function test(): bool
     {
-        switch ($this->toolBox()->appSettings()->get('email', 'mailer', '')) {
+        switch ($this->mail->Mailer) {
             case 'smtp':
                 $this->mail->SMTPDebug = 3;
                 return $this->mail->smtpConnect($this->smtpOptions());
@@ -422,7 +439,7 @@ class NewMail
      */
     protected function smtpOptions(): array
     {
-        if ($this->toolBox()->appSettings()->get('email', 'lowsecure')) {
+        if ($this->lowsecure) {
             return [
                 'ssl' => [
                     'verify_peer' => false,

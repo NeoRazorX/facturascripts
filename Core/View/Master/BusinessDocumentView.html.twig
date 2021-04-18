@@ -230,7 +230,7 @@
                 </span>
             {% endif %}
 
-            <input type="{{ type }}" id="{{ id }}" name="{{ name }}" value="{{ value | raw }}"
+            <input type="{{ type }}" id="{{ id }}" name="{{ name }}" value="{{ value | raw }}" autocomplete="off"
                    {% if attributes.class is not defined %}
                        class="form-control"
                    {% endif %}

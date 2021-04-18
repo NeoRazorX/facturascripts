@@ -174,7 +174,7 @@ abstract class TransformerDocument extends BusinessDocument
     {
         if (null === self::$estados) {
             $statusModel = new EstadoDocumento();
-            self::$estados = $statusModel->all([], [], 0, 0);
+            self::$estados = $statusModel->all([], ['idestado' => 'ASC'], 0, 0);
         }
 
         $avaliables = [];

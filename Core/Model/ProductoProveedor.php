@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -181,8 +181,15 @@ class ProductoProveedor extends Base\ModelOnChangeClass
      */
     public function test()
     {
-        if (empty($this->refproveedor) && !empty($this->referencia)) {
+        if (empty($this->referencia)) {
+            $this->toolBox()->i18nLog()->warning('field-can-not-be-null', ['%fieldName%' => 'referencia', '%tableName%' => static::tableName()]);
+            return false;
+        } elseif (empty($this->refproveedor)) {
             $this->refproveedor = $this->referencia;
+        }
+
+        if (empty($this->idproducto)) {
+            $this->idproducto = $this->getProducto()->idproducto;
         }
 
         $this->neto = \round($this->precio * $this->getEUDiscount(), DinProducto::ROUND_DECIMALS);

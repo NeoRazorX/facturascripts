@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -82,12 +82,6 @@ class Cuenta extends Base\ModelClass
      * @var integer
      */
     public $parent_idcuenta;
-
-    public function clear()
-    {
-        parent::clear();
-        $this->codejercicio = $this->getExercise()->codejercicio;
-    }
 
     /**
      * Removes this account from the database.
@@ -240,7 +234,6 @@ class Cuenta extends Base\ModelClass
         if (!empty($this->parent_idcuenta) && $this->parent_idcuenta === $this->idcuenta) {
             $this->parent_idcuenta = null;
         }
-
         if (!empty($this->parent_codcuenta) && $this->parent_codcuenta === $this->codcuenta) {
             $this->parent_codcuenta = null;
         }
@@ -250,6 +243,18 @@ class Cuenta extends Base\ModelClass
             $parent = $this->getParent();
             $this->parent_codcuenta = $parent->codcuenta;
             $this->parent_idcuenta = $parent->idcuenta;
+
+            /// code length must be bigger than the parent
+            if (\strlen($this->codcuenta) <= \strlen($parent->codcuenta)) {
+                $this->toolBox()->i18nLog()->warning('account-code-lower-than-parent');
+                return false;
+            }
+        }
+
+        /// code lenght must be lower than subaccounts
+        if (\strlen($this->codcuenta) >= $this->getExercise()->longsubcuenta) {
+            $this->toolBox()->i18nLog()->warning('account-code-bigger-than-subaccounts');
+            return false;
         }
 
         return parent::test();
