@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -59,16 +59,41 @@ class EditImpuesto extends EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->createViewsZones();
+        $this->createViewsProducts();
         $this->setTabsPosition('bottom');
+    }
 
-        $this->addListView('ListImpuestoZona', 'ImpuestoZona', 'zone-tax', 'fas fa-percent');
-        $this->views['ListImpuestoZona']->addOrderBy(['id'], 'code');
-        $this->views['ListImpuestoZona']->addOrderBy(['prioridad'], 'priority', 2);
-        $this->views['ListImpuestoZona']->disableColumn('tax');
-        
-        $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
-        $this->setSettings('ListProducto', 'btnNew', false);
-        $this->setSettings('ListProducto', 'btnDelete', false);
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsProducts(string $viewName = 'ListProducto')
+    {
+        $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
+        $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
+        $this->views[$viewName]->addOrderBy(['precio'], 'price');
+        $this->views[$viewName]->addOrderBy(['stockfis'], 'stock');
+        $this->views[$viewName]->addSearchFields(['referencia', 'descripcion', 'observaciones']);
+
+        /// disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    Protected function createViewsZones(string $viewName = 'ListImpuestoZona')
+    {
+        $this->addListView($viewName, 'ImpuestoZona', 'tax-areas', 'fas fa-globe-americas');
+        $this->views[$viewName]->addOrderBy(['id'], 'code');
+        $this->views[$viewName]->addOrderBy(['prioridad'], 'priority', 2);
+        $this->views[$viewName]->addSearchFields(['codpais']);
+
+        /// disable tax column
+        $this->views[$viewName]->disableColumn('tax');
     }
 
     /**
@@ -80,11 +105,6 @@ class EditImpuesto extends EditController
     {
         switch ($viewName) {
             case 'ListImpuestoZona':
-                $codimpuesto = $this->getViewModelValue('EditImpuesto', 'codimpuesto');
-                $where = [new DataBaseWhere('codimpuesto', $codimpuesto)];
-                $view->loadData('', $where);
-                break;
-            
             case 'ListProducto':
                 $codimpuesto = $this->getViewModelValue('EditImpuesto', 'codimpuesto');
                 $where = [new DataBaseWhere('codimpuesto', $codimpuesto)];
