@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,7 +34,7 @@
         </group>
         <group name="seccondary-data" numcolumns="12">
             <column name="parent-account" numcolumns="3" order="100">
-                <widget type="autocomplete" fieldname="parent_idcuenta" onclick="EditCuenta" icon="fas fa-book">
+                <widget type="autocomplete" fieldname="parent_idcuenta" onclick="EditCuenta" icon="fas fa-book" readonly="dinamic">
                     <values source="cuentas" fieldcode="idcuenta" fieldtitle="codcuenta" fieldfilter="codejercicio" />
                 </widget>
             </column>
@@ -51,23 +51,17 @@
         </group>
     </columns>
     <modals>
-        <group name="ledger" title="ledger" class="modal-lg" icon="fas fa-book fa-fw">
-            <column name="date-from" title="from-date" numcolumns="4">
+        <group name="ledger" title="ledger" icon="fas fa-book fa-fw">
+            <column name="date-from" title="from-date" numcolumns="12">
                 <widget type="date" fieldname="dateFrom" required="true" />
             </column>
-            <column name="date-to" title="until-date" numcolumns="4">
+            <column name="date-to" title="until-date" numcolumns="12">
                 <widget type="date" fieldname="dateTo" required="true" />
             </column>
-            <column name="channel" numcolumns="4">
+            <column name="channel" numcolumns="12">
                 <widget type="number" fieldname="channel" />
             </column>
-            <column name="grouped" title="group-accounts" numcolumns="8">
-                <widget type="select" fieldname="grouped" required="true" translate="true">
-                    <values title="report-non-grouping-account">NO</values>
-                    <values title="report-grouping-account">YES</values>
-                </widget>
-            </column>
-            <column name="format" title="format" numcolumns="4">
+            <column name="format" title="format" numcolumns="12">
                 <widget type="select" fieldname="format" required="true" translate="true" />
             </column>
         </group>

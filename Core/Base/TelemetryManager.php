@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,6 @@ namespace FacturaScripts\Core\Base;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DownloadTools;
 use FacturaScripts\Core\Base\PluginManager;
-use FacturaScripts\Dinamic\Model\Cliente;
-use FacturaScripts\Dinamic\Model\FacturaCliente;
-use FacturaScripts\Dinamic\Model\User;
-use FacturaScripts\Dinamic\Model\Variante;
 
 /**
  * This class allow sending telemetry data to the master server,
@@ -36,7 +32,11 @@ final class TelemetryManager
 {
 
     const TELEMETRY_URL = 'https://facturascripts.com/Telemetry';
-    const UPDATE_INTERVAL = 86400;
+
+    /**
+     * Weekly update
+     */
+    const UPDATE_INTERVAL = 604800;
 
     /**
      *
@@ -112,7 +112,7 @@ final class TelemetryManager
     {
         $params = $this->collectData();
         $params['action'] = 'install';
-        $json = $this->getDownloader()->getContents(self::TELEMETRY_URL . '?' . \http_build_query($params), 3);
+        $json = DownloadTools::getContents(self::TELEMETRY_URL . '?' . \http_build_query($params), 3);
         $data = \json_decode($json, true);
         if ($data['idinstall']) {
             $this->idinstall = $data['idinstall'];
@@ -164,7 +164,7 @@ final class TelemetryManager
         $params['action'] = 'update';
         $this->calculateHash($params);
 
-        $json = $this->getDownloader()->getContents(self::TELEMETRY_URL . '?' . \http_build_query($params), 3);
+        $json = DownloadTools::getContents(self::TELEMETRY_URL . '?' . \http_build_query($params), 3);
         $data = \json_decode($json, true);
 
         $this->save();
@@ -197,33 +197,12 @@ final class TelemetryManager
             'randomnum' => \mt_rand()
         ];
 
-        if ($minimum) {
-            return $data;
+        if (false === $minimum) {
+            $pluginManager = new PluginManager();
+            $data['pluginlist'] = \implode(',', $pluginManager->enabledPlugins());
         }
 
-        $customer = new Cliente();
-        $invoice = new FacturaCliente();
-        $pluginManager = new PluginManager();
-        $variant = new Variante();
-        $user = new User();
-        $more = [
-            'numcustomers' => $customer->count(),
-            'numinvoices' => $invoice->count(),
-            'numusers' => $user->count(),
-            'numvariants' => $variant->count(),
-            'pluginlist' => \implode(',', $pluginManager->enabledPlugins())
-        ];
-
-        return \array_merge($data, $more);
-    }
-
-    /**
-     * 
-     * @return DownloadTools
-     */
-    private function getDownloader()
-    {
-        return new DownloadTools();
+        return $data;
     }
 
     private function save()

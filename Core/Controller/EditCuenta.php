@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -150,12 +150,13 @@ class EditCuenta extends EditController
 
         $request = $this->request->request->all();
         $params = [
-            'grouped' => ('YES' == $request['grouped']),
+            'grouped' => false,
             'channel' => $request['channel'],
             'account-from' => $account->codcuenta
         ];
 
         $ledger = new Ledger();
+        $ledger->setExercise($account->codejercicio);
         $pages = $ledger->generate($request['dateFrom'], $request['dateTo'], $params);
         $this->exportManager->newDoc($request['format']);
         foreach ($pages as $data) {

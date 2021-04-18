@@ -253,6 +253,10 @@
                                        class="form-control text-right to_be_served" autocomplete="off"/>
                             </td>
                         </tr>
+                    {% else %}
+                        <tr class="table-warning">
+                            <td colspan="5">{{ i18n.trans('no-data') }}</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>

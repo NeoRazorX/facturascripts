@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,8 +23,6 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Atributo;
-use FacturaScripts\Dinamic\Model\Producto;
-use FacturaScripts\Dinamic\Model\ProductoProveedor;
 
 /**
  * Controller to edit a single item from the EditProducto model
@@ -88,17 +86,9 @@ class EditProducto extends EditController
      *
      * @param string $viewName
      */
-    protected function createViewsSuppliers(string $viewName = 'ListProductoProveedor')
+    protected function createViewsSuppliers(string $viewName = 'EditProductoProveedor')
     {
-        $this->addListView($viewName, 'ProductoProveedor', 'suppliers', 'fas fa-users');
-        $this->views[$viewName]->addOrderBy(['actualizado'], 'update-time', 2);
-        $this->views[$viewName]->addOrderBy(['neto'], 'net');
-
-        /// change new button settings
-        $this->setSettings($viewName, 'modalInsert', 'new-supplier');
-
-        /// disable clickable row
-        $this->setSettings($viewName, 'clickable', false);
+        $this->addEditListView($viewName, 'ProductoProveedor', 'suppliers', 'fas fa-users');
     }
 
     /**
@@ -123,22 +113,6 @@ class EditProducto extends EditController
         if ($attCount < 1) {
             $this->views[$viewName]->disableColumn('attribute-value-1');
         }
-    }
-
-    /**
-     * Run the actions that alter data before reading it.
-     *
-     * @param string $action
-     * @return bool
-     */
-    protected function execPreviousAction($action)
-    {
-        switch ($action) {
-            case 'new-supplier':
-                return $this->newSupplierAction();
-        }
-
-        return parent::execPreviousAction($action);
     }
 
     /**
@@ -201,6 +175,7 @@ class EditProducto extends EditController
     protected function loadData($viewName, $view)
     {
         $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
+        $referencia = $this->getViewModelValue('EditProducto', 'referencia');
         $where = [new DataBaseWhere('idproducto', $idproducto)];
 
         switch ($viewName) {
@@ -222,54 +197,14 @@ class EditProducto extends EditController
                 $view->loadData('', $where, ['idstock' => 'DESC']);
                 break;
 
-            case 'ListProductoProveedor':
+            case 'EditProductoProveedor':
                 $where2 = [
                     new DataBaseWhere('idproducto', $idproducto),
-                    new DataBaseWhere('referencia', $this->getViewModelValue('EditProducto', 'referencia'), '=', 'OR')
+                    new DataBaseWhere('referencia', $referencia, '=', 'OR')
                 ];
-                $view->loadData('', $where2);
+                $view->loadData('', $where2, ['id' => 'DESC']);
+                $view->model->referencia = $referencia;
                 break;
         }
-    }
-
-    /**
-     * Create a new supplier for this pruduct from the modal insert.
-     *
-     * @return bool
-     */
-    protected function newSupplierAction()
-    {
-        $code = $this->request->get('code');
-        $data = $this->request->request->all();
-
-        $product = new Producto();
-        if (empty($code) || false === $product->loadFromCode($code) || empty($data['newcodproveedor'])) {
-            return true;
-        }
-
-        /// check for duplicate record
-        $productSupplier = new ProductoProveedor();
-        $where = [
-            new DataBaseWhere('idproducto', $code),
-            new DataBaseWhere('codproveedor', $data['newcodproveedor'])
-        ];
-        if ($productSupplier->loadFromCode('', $where)) {
-            $this->toolBox()->i18nLog()->error('duplicate-record');
-            return true;
-        }
-
-        /// save data
-        $productSupplier->codproveedor = $data['newcodproveedor'];
-        $productSupplier->idproducto = $product->primaryColumnValue();
-        $productSupplier->precio = (float) $data['newprecio'];
-        $productSupplier->referencia = $product->referencia;
-        $productSupplier->refproveedor = $data['newrefproveedor'];
-        if ($productSupplier->save()) {
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-            return true;
-        }
-
-        $this->toolBox()->i18nLog()->error('record-save-error');
-        return true;
     }
 }

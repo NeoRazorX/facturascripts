@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,28 +53,43 @@ class Ledger extends AccountingBase
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
-        $grouped = (bool) $params['grouped'] ?? false;
-
-        $results = $grouped ? $this->getDataGrouped($params) : $this->getData($params);
-        if (empty($results)) {
-            return [];
-        }
-
+        $debe = $haber = 0.0;
         $ledger = [];
-        $ledgerAccount = [];
-        /// Process each line of the results
-        foreach ($results as $line) {
-            $account = $grouped ? $line['codcuenta'] : 0;
-            if ($grouped) {
-                $this->processHeader($ledgerAccount[$account], $line);
-                $ledger[$account][0] = $this->processLine($ledgerAccount[$account], $grouped);
+
+        $grouped = (bool) $params['grouped'] ?? false;
+        if ($grouped) {
+            /// group data
+            $balances = [];
+            foreach ($this->getDataGrouped($params) as $line) {
+                $this->processLineBalance($balances, $ledger, $line);
+                $debe += (float) $line['debe'];
+                $haber += (float) $line['haber'];
             }
-            $ledger[$account][] = $this->processLine($line, $grouped);
+            $ledger['totals'] = [
+                [
+                    'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
+                    'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>',
+                    'saldo' => '<b>' . $this->toolBox()->coins()->format($debe - $haber, FS_NF0, '') . '</b>'
+                ]
+            ];
+        } else {
+            /// do not group data
+            foreach ($this->getData($params) as $line) {
+                $this->processLine($ledger['lines'], $line);
+                $debe += (float) $line['debe'];
+                $haber += (float) $line['haber'];
+            }
+            $ledger['lines'][] = [
+                'asiento' => '',
+                'fecha' => '',
+                'cuenta' => '',
+                'concepto' => '',
+                'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
+                'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>'
+            ];
         }
 
-        /// every page is a table
-        $pages = $ledger;
-        return $pages;
+        return $ledger;
     }
 
     /**
@@ -82,16 +97,17 @@ class Ledger extends AccountingBase
      *
      * @param string $type
      * @param string $action
+     *
      * @return array
      */
     public static function getButton($type, $action = 'ledger')
     {
         return [
+            'action' => $action,
             'color' => 'info',
             'icon' => 'fas fa-book fa-fw',
             'label' => 'ledger',
-            'action' => $action,
-            'type' => $type,
+            'type' => $type
         ];
     }
 
@@ -102,20 +118,20 @@ class Ledger extends AccountingBase
      */
     protected function getData(array $params = [])
     {
-        if (!$this->dataBase->tableExists('partidas')) {
+        if (false === $this->dataBase->tableExists('partidas')) {
             return [];
         }
 
-        $sql = 'SELECT asientos.fecha, asientos.numero,'
-            . ' partidas.codsubcuenta, partidas.concepto, partidas.debe, partidas.haber, '
-            . ' subcuentas.codcuenta,'
-            . ' cuentas.descripcion as cuenta_descripcion'
-            . ' FROM asientos'
-            . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
-            . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
-            . ' INNER JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
+        $sql = 'SELECT asientos.numero, asientos.fecha, partidas.codsubcuenta,'
+            . ' partidas.concepto, partidas.debe, partidas.haber,'
+            . ' subcuentas.codcuenta, subcuentas.descripcion as subcuentadesc,'
+            . ' cuentas.descripcion as cuentadesc'
+            . ' FROM partidas'
+            . ' LEFT JOIN asientos ON partidas.idasiento = asientos.idasiento'
+            . ' LEFT JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
+            . ' LEFT JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
             . ' WHERE ' . $this->getDataWhere($params)
-            . ' ORDER BY asientos.fecha, asientos.numero ASC';
+            . ' ORDER BY asientos.numero, partidas.codsubcuenta ASC';
         return $this->dataBase->select($sql);
     }
 
@@ -126,94 +142,138 @@ class Ledger extends AccountingBase
      */
     protected function getDataGrouped(array $params = [])
     {
-        if (!$this->dataBase->tableExists('partidas')) {
+        if (false === $this->dataBase->tableExists('partidas')) {
             return [];
         }
 
-        $sql = 'SELECT subcuentas.codcuenta, subcuentas.descripcion as concepto,'
-            . ' cuentas.descripcion as cuenta_descripcion,'
-            . ' partidas.codsubcuenta,'
-            . ' sum(partidas.debe) as debe, sum(partidas.haber) as haber '
-            . ' FROM asientos'
-            . ' INNER JOIN partidas ON partidas.idasiento = asientos.idasiento'
-            . ' INNER JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
-            . ' INNER JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
+        $sql = 'SELECT asientos.numero, asientos.fecha, partidas.codsubcuenta,'
+            . ' partidas.concepto, partidas.debe, partidas.haber,'
+            . ' subcuentas.codcuenta, subcuentas.descripcion as subcuentadesc,'
+            . ' cuentas.descripcion as cuentadesc'
+            . ' FROM partidas'
+            . ' LEFT JOIN asientos ON partidas.idasiento = asientos.idasiento'
+            . ' LEFT JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
+            . ' LEFT JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
             . ' WHERE ' . $this->getDataWhere($params)
-            . ' GROUP BY subcuentas.codcuenta, cuentas.descripcion, partidas.codsubcuenta, subcuentas.descripcion'
-            . ' ORDER BY subcuentas.codcuenta, partidas.codsubcuenta ASC';
+            . ' ORDER BY cuentas.codcuenta, asientos.numero ASC';
         return $this->dataBase->select($sql);
     }
 
     /**
      *
      * @param array $params
+     *
      * @return string
      */
     protected function getDataWhere(array $params = [])
     {
-        $where = 'asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom)
+        $where = 'asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio)
+            . ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom)
             . ' AND ' . $this->dataBase->var2str($this->dateTo);
 
         $channel = $params['channel'] ?? '';
         if (!empty($channel)) {
-            $where .= ' AND asientos.canal = ' . $channel;
-        }
-
-        $subaccountFrom = $params['subaccount-from'] ?? '';
-        $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
-        if (!empty($subaccountFrom) || (!empty($subaccountTo))) {
-            $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom)
-                . ' AND ' . $this->dataBase->var2str($subaccountTo);
+            $where .= ' AND asientos.canal = ' . $this->dataBase->var2str($channel);
         }
 
         $accountFrom = $params['account-from'] ?? '';
         $accountTo = $params['account-to'] ?? $accountFrom;
-        if (!empty($accountFrom) || (!empty($accountTo))) {
+        if (!empty($accountFrom) || !empty($accountTo)) {
             $where .= ' AND subcuentas.codcuenta BETWEEN ' . $this->dataBase->var2str($accountFrom)
                 . ' AND ' . $this->dataBase->var2str($accountTo);
+        }
+
+        $subaccountFrom = $params['subaccount-from'] ?? '';
+        $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
+        if (!empty($subaccountFrom) || !empty($subaccountTo)) {
+            $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom)
+                . ' AND ' . $this->dataBase->var2str($subaccountTo);
+        }
+
+        $entryFrom = $params['entry-from'] ?? '';
+        $entryTo = $params['entry-to'] ?? $entryFrom;
+        if (!empty($entryFrom) || !empty($entryTo)) {
+            $where .= ' AND asientos.numero BETWEEN ' . $this->dataBase->var2str($entryFrom)
+                . ' AND ' . $this->dataBase->var2str($entryTo);
         }
 
         return $where;
     }
 
     /**
-     * Process the header data to use the appropiate formats.
+     * 
+     * @param string $codcuenta
      *
-     * @param array $line
-     *
-     * @return array
+     * @return float
      */
-    protected function processHeader(&$ledgerAccount, $line)
+    protected function getCuentaBlanace($codcuenta): float
     {
-        $ledgerAccount['fecha'] = false;
-        $ledgerAccount['numero'] = false;
-        $ledgerAccount['cuenta'] = $line['codcuenta'];
-        $ledgerAccount['concepto'] = $line['cuenta_descripcion'];
-        if (!isset($ledgerAccount['debe'])) {
-            $ledgerAccount['debe'] = 0;
-            $ledgerAccount['haber'] = 0;
+        $sql = 'SELECT SUM(partidas.debe) as debe, SUM(partidas.haber) as haber'
+            . ' FROM partidas'
+            . ' LEFT JOIN asientos ON partidas.idasiento = asientos.idasiento'
+            . ' LEFT JOIN subcuentas ON subcuentas.idsubcuenta = partidas.idsubcuenta'
+            . ' LEFT JOIN cuentas ON cuentas.idcuenta = subcuentas.idcuenta'
+            . ' WHERE cuentas.codcuenta = ' . $this->dataBase->var2str($codcuenta)
+            . ' AND asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio)
+            . ' AND asientos.fecha < ' . $this->dataBase->var2str($this->dateFrom);
+        foreach ($this->dataBase->select($sql) as $row) {
+            return (float) $row['debe'] - (float) $row['haber'];
         }
-        $ledgerAccount['debe'] += $line['debe'];
-        $ledgerAccount['haber'] += $line['haber'];
+
+        return 0.00;
     }
 
     /**
-     * Process the line data to use the appropiate formats.
-     * If the $grouped variable is not equal to non-group
-     * then we dont return the 'fecha' and 'numero' fields
-     *
+     * 
+     * @param array $ledger
      * @param array $line
-     * @param bool  $grouped
-     *
-     * @return array
      */
-    protected function processLine($line, $grouped)
+    protected function processLine(&$ledger, $line)
     {
-        $item = $grouped ? [] : ['fecha' => $line['fecha'], 'numero' => $line['numero']];
-        $item['cuenta'] = isset($line['cuenta']) ? $line['cuenta'] : $line['codsubcuenta'];
-        $item['concepto'] = $this->toolBox()->utils()->fixHtml($line['concepto']);
-        $item['debe'] = $this->toolBox()->coins()->format($line['debe'], FS_NF0, '');
-        $item['haber'] = $this->toolBox()->coins()->format($line['haber'], FS_NF0, '');
-        return $item;
+        $ledger[] = [
+            'asiento' => $line['numero'],
+            'fecha' => \date(Partida::DATE_STYLE, \strtotime($line['fecha'])),
+            'cuenta' => $line['codsubcuenta'],
+            'concepto' => $this->toolBox()->utils()->fixHtml($line['concepto']),
+            'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),
+            'haber' => $this->toolBox()->coins()->format($line['haber'], FS_NF0, '')
+        ];
+    }
+
+    /**
+     * 
+     * @param array $balances
+     * @param array $ledger
+     * @param array $line
+     */
+    protected function processLineBalance(&$balances, &$ledger, $line)
+    {
+        $codcuenta = $line['codcuenta'];
+        if (!isset($balances[$codcuenta])) {
+            $balances[$codcuenta] = $this->getCuentaBlanace($codcuenta);
+        }
+
+        if (!isset($ledger[$codcuenta])) {
+            $ledger[$codcuenta][] = [
+                'asiento' => '',
+                'fecha' => \date(Partida::DATE_STYLE, \strtotime($this->dateFrom)),
+                'cuenta' => $codcuenta,
+                'concepto' => $this->toolBox()->utils()->fixHtml($line['cuentadesc']),
+                'debe' => $this->toolBox()->coins()->format(0, FS_NF0, ''),
+                'haber' => $this->toolBox()->coins()->format(0, FS_NF0, ''),
+                'saldo' => $this->toolBox()->coins()->format($balances[$codcuenta], FS_NF0, '')
+            ];
+        }
+
+        $balances[$codcuenta] += (float) $line['debe'] - (float) $line['haber'];
+        $ledger[$codcuenta][] = [
+            'asiento' => $line['numero'],
+            'fecha' => \date(Partida::DATE_STYLE, \strtotime($line['fecha'])),
+            'cuenta' => $codcuenta,
+            'concepto' => $this->toolBox()->utils()->fixHtml($line['concepto']),
+            'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),
+            'haber' => $this->toolBox()->coins()->format($line['haber'], FS_NF0, ''),
+            'saldo' => $this->toolBox()->coins()->format($balances[$codcuenta], FS_NF0, '')
+        ];
     }
 }

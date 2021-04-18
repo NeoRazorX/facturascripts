@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,7 +36,7 @@ class Utils
      */
     public static function bin2str($val)
     {
-        return $val === null ? 'NULL' : "'" . base64_encode($val) . "'";
+        return $val === null ? 'NULL' : "'" . \base64_encode($val) . "'";
     }
 
     /**
@@ -75,12 +75,12 @@ class Utils
     public static function dateRange($first, $last, $step = '+1 day', $format = 'd-m-Y')
     {
         $dates = [];
-        $start = strtotime($first);
-        $end = strtotime($last);
+        $start = \strtotime($first);
+        $end = \strtotime($last);
 
         while ($start <= $end) {
-            $dates[] = date($format, $start);
-            $start = strtotime($step, $start);
+            $dates[] = \date($format, $start);
+            $start = \strtotime($step, $start);
         }
 
         return $dates;
@@ -98,7 +98,7 @@ class Utils
         $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
         $final = ['<', '>', '"', "'"];
 
-        return $txt === null ? null : trim(str_replace($original, $final, $txt));
+        return $txt === null ? null : \trim(\str_replace($original, $final, $txt));
     }
 
     /**
@@ -114,11 +114,11 @@ class Utils
      */
     public static function floatcmp($f1, $f2, $precision = 10, $round = false)
     {
-        if ($round || !function_exists('bccomp')) {
-            return abs($f1 - $f2) < 6 / 10 ** ($precision + 1);
+        if ($round || false === \function_exists('bccomp')) {
+            return \abs($f1 - $f2) < 6 / 10 ** ($precision + 1);
         }
 
-        return bccomp((string) $f1, (string) $f2, $precision) === 0;
+        return \bccomp((string) $f1, (string) $f2, $precision) === 0;
     }
 
     /**
@@ -150,11 +150,35 @@ class Utils
      */
     public static function noHtml($txt)
     {
-        $newt = str_replace(
+        $newt = \str_replace(
             ['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&#39;'], $txt
         );
 
-        return $txt === null ? null : trim($newt);
+        return $txt === null ? null : \trim($newt);
+    }
+
+    /**
+     * Normalizes a string replacing accented characters to 
+     * their normalized counterparts.
+     *
+     * @param string $string
+     * 
+     * @return string
+     */
+    public static function normalize($string)
+    {
+        $table = [
+            'Š' => 'S', 'š' => 's', 'Đ' => 'Dj', 'đ' => 'dj', 'Ž' => 'Z', 'ž' => 'z', 'Č' => 'C', 'č' => 'c', 'Ć' => 'C', 'ć' => 'c',
+            'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'A', 'Ç' => 'C', 'È' => 'E', 'É' => 'E',
+            'Ê' => 'E', 'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I', 'Ñ' => 'N', 'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O',
+            'Õ' => 'O', 'Ö' => 'O', 'Ø' => 'O', 'Ù' => 'U', 'Ú' => 'U', 'Û' => 'U', 'Ü' => 'U', 'Ý' => 'Y', 'Þ' => 'B', 'ß' => 'Ss',
+            'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a', 'æ' => 'a', 'ç' => 'c', 'è' => 'e', 'é' => 'e',
+            'ê' => 'e', 'ë' => 'e', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i', 'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o',
+            'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'ø' => 'o', 'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ý' => 'y', 'ý' => 'y', 'þ' => 'b',
+            'ÿ' => 'y', 'Ŕ' => 'R', 'ŕ' => 'r'
+        ];
+
+        return \strtr($string, $table);
     }
 
     /**
@@ -166,7 +190,7 @@ class Utils
      */
     public static function randomString($length = 10)
     {
-        return mb_substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
+        return \mb_substr(\str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
     }
 
     /**
@@ -179,7 +203,7 @@ class Utils
      */
     public static function str2bin($val)
     {
-        return $val === null ? null : base64_decode($val);
+        return $val === null ? null : \base64_decode($val);
     }
 
     /**
@@ -193,7 +217,7 @@ class Utils
      */
     public static function str2bool($val)
     {
-        return in_array(strtolower($val), ['true', 't', '1'], false);
+        return \in_array(\strtolower($val), ['true', 't', '1'], false);
     }
 
     /**
@@ -207,14 +231,14 @@ class Utils
     public static function trueTextBreak($text, $maxWidth = 500)
     {
         /// remove blank lines
-        $desc = trim(preg_replace(["/\s\s+/"], [" "], $text));
-        if (mb_strlen($desc) <= $maxWidth) {
+        $desc = \trim(\preg_replace(["/\s\s+/"], [" "], $text));
+        if (\mb_strlen($desc) <= $maxWidth) {
             return $desc;
         }
 
         $description = '';
-        foreach (explode(' ', $desc) as $aux) {
-            if (mb_strlen($description . ' ' . $aux) >= $maxWidth - 3) {
+        foreach (\explode(' ', $desc) as $aux) {
+            if (\mb_strlen($description . ' ' . $aux) >= $maxWidth - 3) {
                 break;
             } elseif ($description == '') {
                 $description = $aux;

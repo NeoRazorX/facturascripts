@@ -169,6 +169,16 @@ class ExportManager
     }
 
     /**
+     * Return generated doc.
+     * 
+     * @return mixed
+     */
+    public function getDoc()
+    {
+        return empty(static::$engine) ? null : static::$engine->getDoc();
+    }
+
+    /**
      * Create a new doc and set headers.
      *
      * @param string $option
@@ -197,7 +207,7 @@ class ExportManager
 
     /**
      * Sets default orientation.
-     * 
+     *
      * @param string $orientation
      */
     public function setOrientation(string $orientation)
@@ -218,7 +228,7 @@ class ExportManager
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public static function tools(): array

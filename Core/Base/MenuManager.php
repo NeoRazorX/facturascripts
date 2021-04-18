@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -84,11 +84,11 @@ class MenuManager
      */
     public function init()
     {
-        if (self::$pageModel === null) {
+        if (null === self::$pageModel) {
             self::$pageModel = new Page();
         }
 
-        if (self::$user !== false && self::$menu === null) {
+        if (false !== self::$user && null === self::$menu) {
             self::$menu = $this->loadUserMenu();
         }
     }
@@ -156,16 +156,20 @@ class MenuManager
     /**
      * Returns all access data from the user.
      *
-     * @param string $nick
+     * @param User|false $user
      *
      * @return RoleAccess[]
      */
-    private function getUserAccess($nick)
+    private function getUserAccess($user)
     {
+        if (empty($user)) {
+            return [];
+        }
+
         $access = [];
         $roleUserModel = new RoleUser();
-        $filter = [new DataBaseWhere('nick', $nick)];
-        foreach ($roleUserModel->all($filter, [], 0, 0) as $roleUser) {
+        $where = [new DataBaseWhere('nick', $user->nick)];
+        foreach ($roleUserModel->all($where, [], 0, 0) as $roleUser) {
             foreach ($roleUser->getRoleAccess() as $roleAccess) {
                 $access[] = $roleAccess;
             }
@@ -195,7 +199,7 @@ class MenuManager
         }
 
         $result = [];
-        $userAccess = $this->getUserAccess(self::$user->nick);
+        $userAccess = $this->getUserAccess(self::$user);
         foreach ($pages as $page) {
             foreach ($userAccess as $pageRule) {
                 if ($page->name === $pageRule->pagename) {

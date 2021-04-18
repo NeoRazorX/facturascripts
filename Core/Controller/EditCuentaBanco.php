@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -95,6 +95,10 @@ class EditCuentaBanco extends EditController
             case 'ListSubcuenta':
                 $codsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'codsubcuenta');
                 $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
+                $codsubcuenta2 = $this->getViewModelValue($this->getMainViewName(), 'codsubcuentagasto');
+                if ($codsubcuenta2 && $codsubcuenta2 != $codsubcuenta) {
+                    $where[] = new DataBaseWhere('codsubcuenta', $codsubcuenta2, '=', 'OR');
+                }
                 $view->loadData('', $where, ['codejercicio' => 'DESC']);
                 break;
 

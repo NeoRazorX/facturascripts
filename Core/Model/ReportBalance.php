@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,7 +26,9 @@ namespace FacturaScripts\Core\Model;
 class ReportBalance extends Base\ReportAccounting
 {
 
-    const TYPE_SHEET  = 'balance-sheet';
+    use Base\ModelTrait;
+
+    const TYPE_SHEET = 'balance-sheet';
     const TYPE_PROFIT = 'profit-and-loss';
     const TYPE_INCOME = 'income-and-expenses';
     const SUBTYPE_ABBREVIATED = 'abbreviated';

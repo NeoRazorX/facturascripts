@@ -45,7 +45,7 @@
         </group>
         <group name="address" numcolumns="12">
             <column name="address" numcolumns="10" order="100">
-                <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked"/>
+                <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked" required="true" />
             </column>
             <column name="post-office-box" numcolumns="2" order="110">
                 <widget type="text" fieldname="apartado" maxlength="10" />
