@@ -85,7 +85,7 @@ class EditImpuesto extends EditController
      * 
      * @param string $viewName
      */
-    Protected function createViewsZones(string $viewName = 'ListImpuestoZona')
+    protected function createViewsZones(string $viewName = 'ListImpuestoZona')
     {
         $this->addListView($viewName, 'ImpuestoZona', 'tax-areas', 'fas fa-globe-americas');
         $this->views[$viewName]->addOrderBy(['id'], 'code');
