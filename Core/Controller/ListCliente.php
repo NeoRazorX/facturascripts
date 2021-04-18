@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,14 +29,16 @@ use FacturaScripts\Dinamic\Model\CodeModel;
  * @author Artex Trading sa             <jcuello@artextrading.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
-class ListCliente extends ListController {
+class ListCliente extends ListController
+{
 
     /**
      * Returns basic page attributes
      *
      * @return array
      */
-    public function getPageData() {
+    public function getPageData()
+    {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'customers';
@@ -49,7 +49,8 @@ class ListCliente extends ListController {
     /**
      * Load views
      */
-    protected function createViews() {
+    protected function createViews()
+    {
         $this->createViewCustomers();
         $this->createViewContacts();
         $this->createViewBankAccounts();
@@ -60,7 +61,8 @@ class ListCliente extends ListController {
      * 
      * @param string $viewName
      */
-    protected function createViewBankAccounts(string $viewName = 'ListCuentaBancoCliente') {
+    protected function createViewBankAccounts(string $viewName = 'ListCuentaBancoCliente')
+    {
         $this->addView($viewName, 'CuentaBancoCliente', 'bank-accounts', 'fas fa-piggy-bank');
         $this->addSearchFields($viewName, ['codcuenta', 'descripcion', 'iban', 'swift']);
         $this->addOrderBy($viewName, ['codcuenta'], 'bank-mandate');
@@ -78,7 +80,8 @@ class ListCliente extends ListController {
      * 
      * @param string $viewName
      */
-    protected function createViewContacts(string $viewName = 'ListContacto') {
+    protected function createViewContacts(string $viewName = 'ListContacto')
+    {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addSearchFields($viewName, [
             'apellidos', 'codpostal', 'descripcion', 'direccion', 'email', 'empresa', 'lastip',
@@ -90,13 +93,10 @@ class ListCliente extends ListController {
         $this->addOrderBy($viewName, ['fechaalta'], 'creation-date', 2);
 
         /// filters
-        $values = [
-            [
-                'label' => $this->toolBox()->i18n()->trans('customers'),
-                'where' => [new DataBaseWhere('codcliente', null, 'IS NOT')]
-            ]
-        ];
-        $this->addFilterSelectWhere($viewName, 'type', $values);
+        $i18n = $this->toolBox()->i18n();
+        $this->addFilterSelectWhere($viewName, 'type', [
+            ['label' => $i18n->trans('customers'), 'where' => [new DataBaseWhere('codcliente', null, 'IS NOT')]]
+        ]);
 
         $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
         $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', $countries);
@@ -122,7 +122,8 @@ class ListCliente extends ListController {
      * 
      * @param string $viewName
      */
-    protected function createViewCustomers(string $viewName = 'ListCliente') {
+    protected function createViewCustomers(string $viewName = 'ListCliente')
+    {
         $this->addView($viewName, 'Cliente', 'customers', 'fas fa-users');
         $this->addSearchFields($viewName, ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->addOrderBy($viewName, ['codcliente'], 'code');
@@ -133,12 +134,16 @@ class ListCliente extends ListController {
 
         /// filters
         $i18n = $this->toolBox()->i18n();
-        $values = [
+        $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
             ['label' => $i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
             ['label' => $i18n->trans('all'), 'where' => []]
-        ];
-        $this->addFilterSelectWhere($viewName, 'status', $values);
+        ]);
+        $this->addFilterSelectWhere($viewName, 'type', [
+            ['label' => $i18n->trans('all'), 'where' => []],
+            ['label' => $i18n->trans('is-person'), 'where' => [new DataBaseWhere('personafisica', true)]],
+            ['label' => $i18n->trans('company'), 'where' => [new DataBaseWhere('personafisica', false)]]
+        ]);
 
         $groupValues = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
         $this->addFilterSelect($viewName, 'codgrupo', 'group', 'codgrupo', $groupValues);
@@ -154,23 +159,17 @@ class ListCliente extends ListController {
 
         $vatRegimes = $this->codeModel->all('clientes', 'regimeniva', 'regimeniva');
         $this->addFilterSelect($viewName, 'regimeniva', 'vat-regime', 'regimeniva', $vatRegimes);
-
-        $this->addFilterSelectWhere($viewName, 'type', [
-            ['label' => $i18n->trans('all'), 'where' => []],
-            ['label' => $i18n->trans('is-fisical-person'), 'where' => [new DataBaseWhere('personafisica', true)]],
-            ['label' => $i18n->trans('is-company'), 'where' => [new DataBaseWhere('personafisica', false)]],
-        ]);
     }
 
     /**
      * 
      * @param string $viewName
      */
-    protected function createViewGroups(string $viewName = 'ListGrupoClientes') {
+    protected function createViewGroups(string $viewName = 'ListGrupoClientes')
+    {
         $this->addView($viewName, 'GrupoClientes', 'groups', 'fas fa-users-cog');
         $this->addSearchFields($viewName, ['nombre', 'codgrupo']);
         $this->addOrderBy($viewName, ['codgrupo'], 'code');
         $this->addOrderBy($viewName, ['nombre'], 'name', 1);
     }
-
 }
