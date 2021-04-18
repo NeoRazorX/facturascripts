@@ -65,6 +65,10 @@ class EditImpuesto extends EditController
         $this->views['ListImpuestoZona']->addOrderBy(['id'], 'code');
         $this->views['ListImpuestoZona']->addOrderBy(['prioridad'], 'priority', 2);
         $this->views['ListImpuestoZona']->disableColumn('tax');
+        
+        $this->addListView('ListProducto', 'Producto', 'products', 'fas fa-cubes');
+        $this->setSettings('ListProducto', 'btnNew', false);
+        $this->setSettings('ListProducto', 'btnDelete', false);
     }
 
     /**
@@ -76,6 +80,12 @@ class EditImpuesto extends EditController
     {
         switch ($viewName) {
             case 'ListImpuestoZona':
+                $codimpuesto = $this->getViewModelValue('EditImpuesto', 'codimpuesto');
+                $where = [new DataBaseWhere('codimpuesto', $codimpuesto)];
+                $view->loadData('', $where);
+                break;
+            
+            case 'ListProducto':
                 $codimpuesto = $this->getViewModelValue('EditImpuesto', 'codimpuesto');
                 $where = [new DataBaseWhere('codimpuesto', $codimpuesto)];
                 $view->loadData('', $where);
