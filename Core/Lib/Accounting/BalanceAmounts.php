@@ -113,14 +113,20 @@ class BalanceAmounts extends AccountingBase
 
     /**
      * 
-     * @param Cuenta      $selAccount
-     * @param Cuenta[]    $accounts
-     * @param array       $amounts
-     * @param float       $debe
-     * @param float       $haber
+     * @param Cuenta   $selAccount
+     * @param Cuenta[] $accounts
+     * @param array    $amounts
+     * @param float    $debe
+     * @param float    $haber
      */
-    protected function combineData(&$selAccount, &$accounts, &$amounts, &$debe, &$haber)
+    protected function combineData(&$selAccount, &$accounts, &$amounts, &$debe, &$haber, $max = 7)
     {
+        $max--;
+        if ($max < 0) {
+            $this->toolBox()->log()->error('account loop on ' . $selAccount->codcuenta);
+            return;
+        }
+
         foreach ($amounts as $row) {
             if ($row['idcuenta'] == $selAccount->idcuenta) {
                 $debe += (float) $row['debe'];
@@ -130,7 +136,7 @@ class BalanceAmounts extends AccountingBase
 
         foreach ($accounts as $account) {
             if ($account->parent_idcuenta == $selAccount->idcuenta) {
-                $this->combineData($account, $accounts, $amounts, $debe, $haber);
+                $this->combineData($account, $accounts, $amounts, $debe, $haber, $max);
             }
         }
     }
