@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,8 +38,8 @@ class FacturaClienteProducto extends JoinModel
     protected function getFields(): array
     {
         return [
-            'avgbeneficio' => 'avg(' . static::MAIN_TABLE . '.pvptotal/' . static::MAIN_TABLE . '.cantidad - variantes.coste)',
-            'avgprecio' => 'avg(' . static::MAIN_TABLE . '.pvptotal/' . static::MAIN_TABLE . '.cantidad)',
+            'avgbeneficio' => 'sum(' . static::MAIN_TABLE . '.pvptotal) / sum(' . static::MAIN_TABLE . '.cantidad) - variantes.coste',
+            'avgprecio' => 'sum(' . static::MAIN_TABLE . '.pvptotal) / sum(' . static::MAIN_TABLE . '.cantidad)',
             'cantidad' => 'sum(' . static::MAIN_TABLE . '.cantidad)',
             'codalmacen' => static::DOC_TABLE . '.codalmacen',
             'codfabricante' => 'productos.codfabricante',
