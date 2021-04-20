@@ -315,7 +315,12 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         /// generate the new document, when there are children
-        return $generator->generate($this, $status->generadoc, $newLines, $quantities) ? parent::onChange($field) : false;
+        if ($newLines) {
+            return $generator->generate($this, $status->generadoc, $newLines, $quantities) ? parent::onChange($field) : false;
+        }
+
+        /// no pending lines to generate a new document
+        return true;
     }
 
     /**
