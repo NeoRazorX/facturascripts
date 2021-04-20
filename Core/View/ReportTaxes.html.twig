@@ -50,11 +50,11 @@
                                         {{ i18n.trans('invoices') }}
                                         <select name="source" class="form-control">
                                             {% if fsc.source == 'purchases' %}
-                                                <option value="sales">{{ i18n.trans('customers') }}</option>
-                                                <option value="purchases" selected="">{{ i18n.trans('suppliers') }}</option>
+                                                <option value="sales">{{ i18n.trans('sales') }}</option>
+                                                <option value="purchases" selected="">{{ i18n.trans('purchases') }}</option>
                                             {% else %}
-                                                <option value="sales" selected="">{{ i18n.trans('customers') }}</option>
-                                                <option value="purchases">{{ i18n.trans('suppliers') }}</option>
+                                                <option value="sales" selected="">{{ i18n.trans('sales') }}</option>
+                                                <option value="purchases">{{ i18n.trans('purchases') }}</option>
                                             {% endif %}
                                         </select>
                                     </div>
