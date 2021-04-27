@@ -281,7 +281,7 @@
     "customize": "customize",
     "daily": "Daily",
     "dashboard": "Cruscotto",
-    "dashboard-card": "Dashboard (oggetto)",
+    "dashboard-for": "dashboard-for",
     "data-source": "Origin data",
     "database": "Database",
     "database-name-must-be-lowercase": "database-name-must-be-lowercase",

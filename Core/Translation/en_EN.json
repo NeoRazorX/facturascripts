@@ -281,7 +281,7 @@
     "customize": "Customize",
     "daily": "Daily",
     "dashboard": "Dashboard",
-    "dashboard-card": "Dashboard (Item)",
+    "dashboard-for": "Dashboard for %company%",
     "data-source": "Origin data",
     "database": "Database",
     "database-name-must-be-lowercase": "The database name must be lowercase",

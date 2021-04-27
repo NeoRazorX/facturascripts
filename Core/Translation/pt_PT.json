@@ -281,7 +281,7 @@
     "customize": "customize",
     "daily": "Daily",
     "dashboard": "painel de controle",
-    "dashboard-card": "Painel de instrumentos (Item)",
+    "dashboard-for": "dashboard-for",
     "data-source": "Origin data",
     "database": "Base de dados",
     "database-name-must-be-lowercase": "database-name-must-be-lowercase",

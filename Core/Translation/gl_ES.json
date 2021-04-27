@@ -281,7 +281,7 @@
     "customize": "Personalizar",
     "daily": "Diario",
     "dashboard": "Taboleiro de instrumentos",
-    "dashboard-card": "Panel de control (elemento)",
+    "dashboard-for": "dashboard-for",
     "data-source": "Datos de orixe",
     "database": "Base de datos",
     "database-name-must-be-lowercase": "O nome da base de datos debe ser en minúsculas",

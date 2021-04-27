@@ -281,7 +281,7 @@
     "customize": "customize",
     "daily": "Daily",
     "dashboard": "Instrumententafel",
-    "dashboard-card": "Armaturenbrett (Artikel)",
+    "dashboard-for": "dashboard-for",
     "data-source": "Origin data",
     "database": "Datenbank",
     "database-name-must-be-lowercase": "database-name-must-be-lowercase",
