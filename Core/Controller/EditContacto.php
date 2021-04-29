@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,6 +30,8 @@ use FacturaScripts\Dinamic\Model\Contacto;
  */
 class EditContacto extends EditController
 {
+
+    use \FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 
     /**
      * 
@@ -67,7 +69,7 @@ class EditContacto extends EditController
      * 
      * @param string $viewName
      */
-    protected function addConversionButtons($viewName)
+    protected function addConversionButtons(string $viewName)
     {
         if (empty($this->views[$viewName]->model->codcliente)) {
             $this->addButton($viewName, [
@@ -92,7 +94,7 @@ class EditContacto extends EditController
      * 
      * @param string $viewName
      */
-    protected function createEmailsView($viewName = 'ListEmailSent')
+    protected function createEmailsView(string $viewName = 'ListEmailSent')
     {
         $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
@@ -106,12 +108,22 @@ class EditContacto extends EditController
     }
 
     /**
+     * 
+     * @param string $viewName
+     */
+    protected function createFilesView(string $viewName = 'files')
+    {
+        $this->addHtmlView($viewName, 'Tab/DocFiles', 'AttachedFileRelation', 'files', 'fas fa-paperclip');
+    }
+
+    /**
      * Create views.
      */
     protected function createViews()
     {
         parent::createViews();
         $this->createEmailsView();
+        $this->createFilesView();
     }
 
     /**
@@ -163,6 +175,25 @@ class EditContacto extends EditController
         }
     }
 
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'add-file':
+                return $this->addFileAction();
+
+            case 'delete-file':
+                return $this->deleteFileAction();
+
+            case 'edit-file':
+                return $this->editFileAction();
+
+            case 'unlink-file':
+                return $this->unlinkFileAction();
+        }
+
+        parent::execPreviousAction($action);
+    }
+
     /**
      * 
      * @param string   $viewName
@@ -173,6 +204,15 @@ class EditContacto extends EditController
         $mainViewName = $this->getMainViewName();
 
         switch ($viewName) {
+            case 'files':
+                $code = $this->request->get('code');
+                $where = [
+                    new DataBaseWhere('model', $this->getModelClassName()),
+                    new DataBaseWhere('modelid', $code)
+                ];
+                $view->loadData('', $where);
+                break;
+
             case 'ListEmailSent':
                 $email = $this->getViewModelValue($mainViewName, 'email');
                 $where = [new DataBaseWhere('addressee', $email)];

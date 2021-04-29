@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,20 +34,21 @@ abstract class ComercialContactController extends EditController
 {
 
     use ListBusinessActionTrait;
+    use DocFilesTrait;
 
     /**
      * Set custom configuration when load main data
      *
      * @param string $viewName
      */
-    abstract protected function setCustomWidgetValues($viewName);
+    abstract protected function setCustomWidgetValues(string $viewName);
 
     /**
      * Add a Contact List View.
      *
      * @param string $viewName
      */
-    protected function createContactsView($viewName = 'EditDireccionContacto')
+    protected function createContactsView(string $viewName = 'EditDireccionContacto')
     {
         $this->addEditListView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
     }
@@ -59,7 +60,7 @@ abstract class ComercialContactController extends EditController
      * @param string $model
      * @param string $label
      */
-    protected function createCustomerListView($viewName, $model, $label)
+    protected function createCustomerListView(string $viewName, string $model, string $label)
     {
         $this->createListView($viewName, $model, $label, $this->getCustomerFields());
     }
@@ -69,7 +70,7 @@ abstract class ComercialContactController extends EditController
      *
      * @param string $viewName
      */
-    protected function createEmailsView($viewName = 'ListEmailSent')
+    protected function createEmailsView(string $viewName = 'ListEmailSent')
     {
         $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
@@ -83,13 +84,22 @@ abstract class ComercialContactController extends EditController
     }
 
     /**
+     * 
+     * @param string $viewName
+     */
+    protected function createFilesView(string $viewName = 'files')
+    {
+        $this->addHtmlView($viewName, 'Tab/DocFiles', 'AttachedFileRelation', 'files', 'fas fa-paperclip');
+    }
+
+    /**
      * Add Product Lines from documents.
      *
      * @param string $viewName
      * @param string $model
      * @param string $label
      */
-    protected function createLineView($viewName, $model, $label = 'products')
+    protected function createLineView(string $viewName, string $model, string $label = 'products')
     {
         $this->addListView($viewName, $model, $label, 'fas fa-cubes');
 
@@ -108,12 +118,38 @@ abstract class ComercialContactController extends EditController
     }
 
     /**
+     * Add a document List View
+     *
+     * @param string $viewName
+     * @param string $model
+     * @param string $label
+     * @param array  $fields
+     */
+    private function createListView(string $viewName, string $model, string $label, array $fields)
+    {
+        $this->addListView($viewName, $model, $label, 'fas fa-copy');
+
+        /// sort options
+        $this->views[$viewName]->addOrderBy(['codigo'], 'code');
+        $this->views[$viewName]->addOrderBy(['fecha', 'hora'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['numero'], 'number');
+        $this->views[$viewName]->addOrderBy([$fields['numfield']], $fields['numtitle']);
+        $this->views[$viewName]->addOrderBy(['total'], 'amount');
+
+        /// search columns
+        $this->views[$viewName]->addSearchFields([$fields['numfield'], 'observaciones']);
+
+        /// disable columns
+        $this->views[$viewName]->disableColumn($fields['linkfield'], true);
+    }
+
+    /**
      * Add a receipt list view.
      *
      * @param string $viewName
      * @param string $model
      */
-    protected function createReceiptView($viewName, $model)
+    protected function createReceiptView(string $viewName, string $model)
     {
         $this->addListView($viewName, $model, 'receipts', 'fas fa-dollar-sign');
 
@@ -143,7 +179,7 @@ abstract class ComercialContactController extends EditController
      *
      * @param string $viewName
      */
-    protected function createSubaccountsView($viewName = 'ListSubcuenta')
+    protected function createSubaccountsView(string $viewName = 'ListSubcuenta')
     {
         $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-book');
 
@@ -169,35 +205,9 @@ abstract class ComercialContactController extends EditController
      * @param string $model
      * @param string $label
      */
-    protected function createSupplierListView($viewName, $model, $label)
+    protected function createSupplierListView(string $viewName, string $model, string $label)
     {
         $this->createListView($viewName, $model, $label, $this->getSupplierFields());
-    }
-
-    /**
-     * Add a document List View
-     *
-     * @param string $viewName
-     * @param string $model
-     * @param string $label
-     * @param array  $fields
-     */
-    private function createListView($viewName, $model, $label, $fields)
-    {
-        $this->addListView($viewName, $model, $label, 'fas fa-copy');
-
-        /// sort options
-        $this->views[$viewName]->addOrderBy(['codigo'], 'code');
-        $this->views[$viewName]->addOrderBy(['fecha', 'hora'], 'date', 2);
-        $this->views[$viewName]->addOrderBy(['numero'], 'number');
-        $this->views[$viewName]->addOrderBy([$fields['numfield']], $fields['numtitle']);
-        $this->views[$viewName]->addOrderBy(['total'], 'amount');
-
-        /// search columns
-        $this->views[$viewName]->addSearchFields([$fields['numfield'], 'observaciones']);
-
-        /// disable columns
-        $this->views[$viewName]->disableColumn($fields['linkfield'], true);
     }
 
     /**
@@ -214,12 +224,21 @@ abstract class ComercialContactController extends EditController
         $model = $this->views[$this->active]->model;
 
         switch ($action) {
+            case 'add-file':
+                return $this->addFileAction();
+
             case 'approve-document':
                 return $this->approveDocumentAction($codes, $model, $allowUpdate, $this->dataBase);
 
             case 'approve-document-same-date':
                 BusinessDocumentGenerator::setSameDate(true);
                 return $this->approveDocumentAction($codes, $model, $allowUpdate, $this->dataBase);
+
+            case 'delete-file':
+                return $this->deleteFileAction();
+
+            case 'edit-file':
+                return $this->editFileAction();
 
             case 'group-document':
                 return $this->groupDocumentAction($codes, $model);
@@ -229,6 +248,9 @@ abstract class ComercialContactController extends EditController
 
             case 'pay-receipt':
                 return $this->payReceiptAction($codes, $model, $allowUpdate, $this->dataBase, $this->user->nick);
+
+            case 'unlink-file':
+                return $this->unlinkFileAction();
         }
 
         return parent::execPreviousAction($action);
@@ -275,6 +297,15 @@ abstract class ComercialContactController extends EditController
             case $mainViewName:
                 parent::loadData($viewName, $view);
                 $this->setCustomWidgetValues($viewName);
+                break;
+
+            case 'files':
+                $code = $this->request->get('code');
+                $where = [
+                    new DataBaseWhere('model', $this->getModelClassName()),
+                    new DataBaseWhere('modelid', $code)
+                ];
+                $view->loadData('', $where);
                 break;
 
             case 'ListSubcuenta':

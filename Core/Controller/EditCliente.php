@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -127,6 +127,7 @@ class EditCliente extends ComercialContactController
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
         $this->createSubaccountsView();
         $this->createEmailsView();
+        $this->createFilesView();
 
         $this->createInvoiceView('ListFacturaCliente');
         $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente');
@@ -224,7 +225,7 @@ class EditCliente extends ComercialContactController
         }
 
         /// Model exists?
-        if (!$this->views[$viewName]->model->exists()) {
+        if (false === $this->views[$viewName]->model->exists()) {
             $this->views[$viewName]->disableColumn('billing-address');
             $this->views[$viewName]->disableColumn('shipping-address');
             return;
