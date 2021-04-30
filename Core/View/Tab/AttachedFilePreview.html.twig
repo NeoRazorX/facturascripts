@@ -15,5 +15,9 @@
                 <source src="{{ asset(file.url('download')) }}" type="video/mp4" />
             </video>
         </div>
+    {% elseif file.getExtension() == 'pdf' %}
+        <div class="embed-responsive embed-responsive-16by9">
+            <embed src="{{ asset(file.url('download')) }}" type="application/pdf" />
+        </div>
     {% endif %}
 </div>
