@@ -135,7 +135,7 @@ class EditProveedor extends ComercialContactController
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
         $this->createSubaccountsView();
         $this->createEmailsView();
-        $this->createFilesView();
+        $this->createViewDocFiles();
 
         $this->createProductView();
         $this->createInvoiceView('ListFacturaProveedor');
@@ -234,7 +234,7 @@ class EditProveedor extends ComercialContactController
         }
 
         /// Model exists?
-        if (!$this->views[$viewName]->model->exists()) {
+        if (false === $this->views[$viewName]->model->exists()) {
             $this->views[$viewName]->disableColumn('contact');
             return;
         }

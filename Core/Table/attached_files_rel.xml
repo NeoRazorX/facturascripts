@@ -31,6 +31,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>modelcode</name>
+        <type>character varying(40)</type>
+    </column>
+    <column>
         <name>nick</name>
         <type>character varying(50)</type>
     </column>

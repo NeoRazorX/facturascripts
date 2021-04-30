@@ -65,7 +65,8 @@ trait DocFilesTrait
             $fileRelation = new AttachedFileRelation();
             $fileRelation->idfile = $newFile->idfile;
             $fileRelation->model = $this->getModelClassName();
-            $fileRelation->modelid = $this->request->query->get('code');
+            $fileRelation->modelcode = $this->request->query->get('code');
+            $fileRelation->modelid = (int) $fileRelation->modelcode;
             $fileRelation->nick = $this->user->nick;
             $fileRelation->observations = $this->request->request->get('observations');
             if (false === $fileRelation->save()) {
@@ -82,7 +83,7 @@ trait DocFilesTrait
      * 
      * @param string $viewName
      */
-    private function createViewDocFiles(string $viewName = 'docfiles')
+    protected function createViewDocFiles(string $viewName = 'docfiles')
     {
         $this->addHtmlView($viewName, 'Tab/DocFiles', 'AttachedFileRelation', 'files', 'fas fa-paperclip');
     }
@@ -148,7 +149,7 @@ trait DocFilesTrait
     {
         $where = [
             new DataBaseWhere('model', $model),
-            new DataBaseWhere('modelid', $modelid)
+            new DataBaseWhere('modelid|modelcode', $modelid)
         ];
         $view->loadData('', $where, ['creationdate' => 'DESC']);
     }

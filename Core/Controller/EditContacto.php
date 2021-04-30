@@ -108,22 +108,13 @@ class EditContacto extends EditController
     }
 
     /**
-     * 
-     * @param string $viewName
-     */
-    protected function createFilesView(string $viewName = 'files')
-    {
-        $this->addHtmlView($viewName, 'Tab/DocFiles', 'AttachedFileRelation', 'files', 'fas fa-paperclip');
-    }
-
-    /**
      * Create views.
      */
     protected function createViews()
     {
         parent::createViews();
         $this->createEmailsView();
-        $this->createFilesView();
+        $this->createViewDocFiles();
     }
 
     /**
@@ -204,13 +195,8 @@ class EditContacto extends EditController
         $mainViewName = $this->getMainViewName();
 
         switch ($viewName) {
-            case 'files':
-                $code = $this->request->get('code');
-                $where = [
-                    new DataBaseWhere('model', $this->getModelClassName()),
-                    new DataBaseWhere('modelid', $code)
-                ];
-                $view->loadData('', $where);
+            case 'docfiles':
+                $this->loadDataDocFiles($view, $this->getModelClassName(), $this->getModel()->primaryColumnValue());
                 break;
 
             case 'ListEmailSent':

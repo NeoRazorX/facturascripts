@@ -127,7 +127,7 @@ class EditCliente extends ComercialContactController
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
         $this->createSubaccountsView();
         $this->createEmailsView();
-        $this->createFilesView();
+        $this->createViewDocFiles();
 
         $this->createInvoiceView('ListFacturaCliente');
         $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente');

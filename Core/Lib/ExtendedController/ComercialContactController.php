@@ -84,15 +84,6 @@ abstract class ComercialContactController extends EditController
     }
 
     /**
-     * 
-     * @param string $viewName
-     */
-    protected function createFilesView(string $viewName = 'files')
-    {
-        $this->addHtmlView($viewName, 'Tab/DocFiles', 'AttachedFileRelation', 'files', 'fas fa-paperclip');
-    }
-
-    /**
      * Add Product Lines from documents.
      *
      * @param string $viewName
@@ -299,13 +290,8 @@ abstract class ComercialContactController extends EditController
                 $this->setCustomWidgetValues($viewName);
                 break;
 
-            case 'files':
-                $code = $this->request->get('code');
-                $where = [
-                    new DataBaseWhere('model', $this->getModelClassName()),
-                    new DataBaseWhere('modelid', $code)
-                ];
-                $view->loadData('', $where);
+            case 'docfiles':
+                $this->loadDataDocFiles($view, $this->getModelClassName(), $this->getModel()->primaryColumnValue());
                 break;
 
             case 'ListSubcuenta':
