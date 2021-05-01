@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -199,9 +199,15 @@
                     </a>
                 {% endif %}
             {% endfor %}
-            {% if fsc.exportManager.tools is not empty %}
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#advancedExportModal">
+                <i class="fas fa-tools fa-fw" aria-hidden="true"></i>
+                {{ i18n.trans('advanced') }}
+            </a>
+            {% set tools = fsc.exportManager.tools() %}
+            {% if tools is not empty %}
                 <div class="dropdown-divider"></div>
-                {% for key, tool in fsc.exportManager.tools() %}
+                {% for key, tool in tools %}
                     <a href="{{ tool.link }}" target="_blank" class="dropdown-item">
                         <i class="{{ tool.icon }} fa-fw" aria-hidden="true"></i>
                         {{ i18n.trans(tool.description) }}
@@ -210,4 +216,56 @@
             {% endif %}
         </div>
     </div>
+    <form action="{{ firstView.model.url() }}" method="post">
+        <input type="hidden" name="action" value="export" />
+        <div class="modal fade" id="advancedExportModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-tools fa-fw" aria-hidden="true"></i>
+                            {{ i18n.trans('advanced') }}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-left">
+                        <div class="form-group">
+                            <select name="option" class="form-control">
+                                {% for key, option in fsc.exportManager.options() %}
+                                    <option value="{{ key }}">{{ i18n.trans(option.description) }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            {{ i18n.trans('format') }}
+                            <select name="idformat" class="form-control">
+                                <option value="">{{ i18n.trans('default') }}</option>
+                                <option value="">------</option>
+                                {% for format in fsc.exportManager.getFormats(firstView.model) %}
+                                    <option value="{{ format.id }}">{{ format.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            {{ i18n.trans('language') }}
+                            <select name="langcode" class="form-control">
+                                <option value="">{{ i18n.trans('default') }}</option>
+                                <option value="">------</option>
+                                {% for code, lang in i18n.getAvailableLanguages() %}
+                                    <option value="{{ code }}">{{ lang }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary">
+                                {{ i18n.trans('accept') }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 {% endmacro %}

@@ -67,7 +67,7 @@ abstract class ExportBase
     /**
      * Blank document.
      */
-    abstract public function newDoc(string $title);
+    abstract public function newDoc(string $title, int $idformat, string $langcode);
 
     /**
      * Sets default orientation.

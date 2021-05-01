@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Lib\Export\ExportBase;
+use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -179,17 +180,38 @@ class ExportManager
     }
 
     /**
+     * 
+     * @param object $model
+     *
+     * @return array
+     */
+    public function getFormats($model): array
+    {
+        $return = [];
+        $formatModel = new FormatoDocumento();
+        foreach ($formatModel->all([], ['nombre' => 'ASC']) as $format) {
+            if (empty($format->tipodoc) || $format->tipodoc === $model->modelClassName()) {
+                $return[] = $format;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
      * Create a new doc and set headers.
      *
      * @param string $option
      * @param string $title
+     * @param int    $format
+     * @param string $lang
      */
-    public function newDoc(string $option, string $title = '')
+    public function newDoc(string $option, string $title = '', int $format = 0, string $lang = '')
     {
         /// calls to the appropiate engine to generate the doc
         $className = $this->getExportClassName($option);
         static::$engine = new $className();
-        static::$engine->newDoc($title);
+        static::$engine->newDoc($title, $format, $lang);
         if (!empty($this->orientation)) {
             static::$engine->setOrientation($this->orientation);
         }
