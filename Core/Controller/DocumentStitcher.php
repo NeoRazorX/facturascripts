@@ -242,7 +242,7 @@ class DocumentStitcher extends Controller
                 $this->addBlankLine($newLines, $doc);
             }
 
-            if (\count($this->documents) > 1 && 'true' === $this->request->request->get('extralines', '')) {
+            if ('true' === $this->request->request->get('extralines', '')) {
                 $this->addInfoLine($newLines, $doc);
             }
 
