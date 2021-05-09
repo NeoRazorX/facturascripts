@@ -221,7 +221,10 @@ abstract class ExportBase
     protected function getDocumentFormat($model)
     {
         $documentFormat = new FormatoDocumento();
-        $where = [new DataBaseWhere('idempresa', $model->idempresa)];
+        $where = [
+            new DataBaseWhere('autoaplicar', true),
+            new DataBaseWhere('idempresa', $model->idempresa)
+        ];
         foreach ($documentFormat->all($where, ['tipodoc' => 'DESC', 'codserie' => 'DESC']) as $format) {
             if ($format->tipodoc === $model->modelClassName() && $format->codserie === $model->codserie) {
                 return $format;
