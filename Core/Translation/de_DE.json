@@ -110,6 +110,7 @@
     "attributes": "Attribute",
     "authentication": "authentication",
     "auto": "Auto",
+    "auto-apply-to": "auto-apply-to",
     "available": "Verfügbar",
     "average-cost": "Durchschnittskosten",
     "average-purchase-price": "average-purchase-price",
