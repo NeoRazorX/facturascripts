@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Dinamic\Model\FormatoDocumento;
 
 /**
  * Description of Migrations
@@ -31,6 +32,7 @@ class Migrations
     public static function run()
     {
         static::fixCodagente();
+        new FormatoDocumento();
     }
 
     private static function fixCodagente()
