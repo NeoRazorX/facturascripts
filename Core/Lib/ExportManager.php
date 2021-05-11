@@ -131,7 +131,7 @@ class ExportManager
     public function addModelPage($model, $columns, $title = ''): bool
     {
         /// sort by priority
-        \uasort(static::$optionsModels, function($item1, $item2) {
+        \uasort(static::$optionsModels, function ($item1, $item2) {
             if ($item1['priority'] > $item2['priority']) {
                 return 1;
             } elseif ($item1['priority'] < $item2['priority']) {
