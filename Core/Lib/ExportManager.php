@@ -45,11 +45,35 @@ class ExportManager
     protected static $options = [];
 
     /**
+     * 
+     * @var array
+     */
+    protected static $optionsModels = [];
+
+    /**
      * Default document orientation.
      *
      * @var string
      */
     protected $orientation;
+
+    /**
+     * 
+     * @var string
+     */
+    protected static $selectedLang;
+
+    /**
+     * 
+     * @var string
+     */
+    protected static $selectedOption;
+
+    /**
+     * 
+     * @var string
+     */
+    protected static $selectedTitle;
 
     /**
      * Tools list.
@@ -106,6 +130,32 @@ class ExportManager
      */
     public function addModelPage($model, $columns, $title = ''): bool
     {
+        /// sort by priority
+        \uasort(static::$optionsModels, function($item1, $item2) {
+            if ($item1['priority'] > $item2['priority']) {
+                return 1;
+            } elseif ($item1['priority'] < $item2['priority']) {
+                return -1;
+            }
+
+            return 0;
+        });
+
+        /// find a custom option for this model
+        foreach (static::$optionsModels as $option) {
+            if ($option['option'] !== self::$selectedOption ||
+                $option['modelName'] !== $model->modelClassName()) {
+                continue;
+            }
+
+            $className = '\\FacturaScripts\\Dinamic\\Lib\\Export\\' . $option['class'];
+            static::$engine = new $className();
+            static::$engine->newDoc(static::$selectedTitle, 0, static::$selectedLang);
+            if (!empty($this->orientation)) {
+                static::$engine->setOrientation($this->orientation);
+            }
+        }
+
         return empty(static::$engine) ? false : static::$engine->addModelPage($model, $columns, $title);
     }
 
@@ -120,6 +170,24 @@ class ExportManager
     {
         static::init();
         static::$options[$key] = ['description' => $description, 'icon' => $icon];
+    }
+
+    /**
+     * 
+     * @param string $exportClassName
+     * @param string $optionKey
+     * @param string $modelName
+     * @param int    $priority
+     */
+    public static function addOptionModel($exportClassName, $optionKey, $modelName, $priority = 0)
+    {
+        static::init();
+        static::$optionsModels[] = [
+            'class' => $exportClassName,
+            'modelName' => $modelName,
+            'option' => $optionKey,
+            'priority' => $priority
+        ];
     }
 
     /**
@@ -208,6 +276,10 @@ class ExportManager
      */
     public function newDoc(string $option, string $title = '', int $format = 0, string $lang = '')
     {
+        static::$selectedOption = $option;
+        static::$selectedTitle = $title;
+        static::$selectedLang = $lang;
+
         /// calls to the appropiate engine to generate the doc
         $className = $this->getExportClassName($option);
         static::$engine = new $className();
