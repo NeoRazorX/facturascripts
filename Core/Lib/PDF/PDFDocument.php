@@ -44,6 +44,8 @@ use FacturaScripts\Dinamic\Model\ReciboCliente;
 abstract class PDFDocument extends PDFCore
 {
 
+    const INVOICE_TOTALS_Y = 250;
+
     /**
      *
      * @var array
@@ -106,7 +108,7 @@ abstract class PDFDocument extends PDFCore
         $cuentaBancoCli = new CuentaBancoCliente();
         $where = [new DataBaseWhere('codcliente', $receipt->codcliente)];
         if ($paymentMethod->domiciliado && $cuentaBancoCli->loadFromCode('', $where)) {
-            return $paymentMethod->descripcion . ' : ' . $cuentaBancoCli->getIban(true);
+            return $paymentMethod->descripcion . ' : ' . $cuentaBancoCli->getIban(true, true);
         }
 
         $cuentaBanco = new CuentaBanco();
@@ -279,6 +281,38 @@ abstract class PDFDocument extends PDFCore
         }
 
         $this->newPage();
+        if ($this->pdf->y > static::INVOICE_TOTALS_Y) {
+            $this->pdf->y = static::INVOICE_TOTALS_Y;
+        }
+
+        /// taxes
+        $taxHeaders = [
+            'tax' => $this->i18n->trans('tax'),
+            'taxbase' => $this->i18n->trans('tax-base'),
+            'taxp' => $this->i18n->trans('percentage'),
+            'taxamount' => $this->i18n->trans('amount'),
+            'taxsurchargep' => $this->i18n->trans('re'),
+            'taxsurcharge' => $this->i18n->trans('amount')
+        ];
+        $taxRows = $this->getTaxesRows($model);
+        $taxTableOptions = [
+            'cols' => [
+                'tax' => ['justification' => 'right'],
+                'taxbase' => ['justification' => 'right'],
+                'taxp' => ['justification' => 'right'],
+                'taxamount' => ['justification' => 'right'],
+                'taxsurchargep' => ['justification' => 'right'],
+                'taxsurcharge' => ['justification' => 'right']
+            ],
+            'shadeCol' => [0.95, 0.95, 0.95],
+            'shadeHeadingCol' => [0.95, 0.95, 0.95],
+            'width' => $this->tableWidth
+        ];
+        if (count($taxRows) > 1) {
+            $this->removeEmptyCols($taxRows, $taxHeaders, $this->numberTools->format(0));
+            $this->pdf->ezText("\n");
+            $this->pdf->ezTable($taxRows, $taxHeaders, $this->i18n->trans('taxes'), $taxTableOptions);
+        }
 
         /// subtotals
         $headers = [
@@ -329,35 +363,6 @@ abstract class PDFDocument extends PDFCore
         /// receipts
         if ($model->modelClassName() === 'FacturaCliente') {
             $this->insertInvoiceReceipts($model);
-        }
-
-        /// taxes
-        $taxHeaders = [
-            'tax' => $this->i18n->trans('tax'),
-            'taxbase' => $this->i18n->trans('tax-base'),
-            'taxp' => $this->i18n->trans('percentage'),
-            'taxamount' => $this->i18n->trans('amount'),
-            'taxsurchargep' => $this->i18n->trans('re'),
-            'taxsurcharge' => $this->i18n->trans('amount')
-        ];
-        $taxRows = $this->getTaxesRows($model);
-        $taxTableOptions = [
-            'cols' => [
-                'tax' => ['justification' => 'right'],
-                'taxbase' => ['justification' => 'right'],
-                'taxp' => ['justification' => 'right'],
-                'taxamount' => ['justification' => 'right'],
-                'taxsurchargep' => ['justification' => 'right'],
-                'taxsurcharge' => ['justification' => 'right']
-            ],
-            'shadeCol' => [0.95, 0.95, 0.95],
-            'shadeHeadingCol' => [0.95, 0.95, 0.95],
-            'width' => $this->tableWidth
-        ];
-        if (count($taxRows) > 1) {
-            $this->removeEmptyCols($taxRows, $taxHeaders, $this->numberTools->format(0));
-            $this->pdf->ezText("\n");
-            $this->pdf->ezTable($taxRows, $taxHeaders, $this->i18n->trans('taxes'), $taxTableOptions);
         }
 
         if (!empty($this->format->texto)) {

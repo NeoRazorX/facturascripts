@@ -70,18 +70,26 @@ abstract class BankAccount extends ModelClass
      * Returns the IBAN with or without spaces.
      *
      * @param bool $spaced
+     * @param bool $censure
      *
      * @return string
      */
-    public function getIban(bool $spaced = false)
+    public function getIban(bool $spaced = false, bool $censure = false)
     {
         $iban = \str_replace(' ', '', $this->iban);
+
+        /// split in groups
         $groups = [];
         for ($num = 0; $num < \strlen($iban); $num += self::GROUP_LENGTH) {
             $groups[] = \substr($iban, $num, self::GROUP_LENGTH);
         }
 
-        return $spaced ? \implode(' ', $groups) : $iban;
+        /// censore
+        if ($censure) {
+            $groups[1] = $groups[2] = $groups[3] = $groups[4] = 'XXXX';
+        }
+
+        return $spaced ? \implode(' ', $groups) : \implode('', $groups);
     }
 
     /**
