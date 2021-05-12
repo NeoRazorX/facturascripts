@@ -294,6 +294,7 @@
     "date-wildcard-info": "Data actual (data de l'ordenador)",
     "dateentry-wildcard-info": "Data indicada en la capçalera de l'assentament contable",
     "days": "Dies",
+    "days-until-expiration": "days-until-expiration",
     "db-host": "Servidor de la base de senyes",
     "db-name": "Nom de la base de senyes",
     "db-password": "Contrasenya de la base de senyes",

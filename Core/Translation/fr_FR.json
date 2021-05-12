@@ -294,6 +294,7 @@
     "date-wildcard-info": "Current date (computer date)",
     "dateentry-wildcard-info": "dateentry-wildcard-info",
     "days": "days",
+    "days-until-expiration": "days-until-expiration",
     "db-host": "Base de données du serveur",
     "db-name": "Nom de la base de données",
     "db-password": "Base de données de mots de passe",

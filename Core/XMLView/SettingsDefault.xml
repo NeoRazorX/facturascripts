@@ -117,6 +117,11 @@
                 <widget type="checkbox" fieldname="ventasinstock" />
             </column>
         </group>
+        <group name="estimations" title="estimations" icon="fas fa-copy" valign="bottom" numcolumns="12">
+            <column name="days-until-expiration" numcolumns="3" order="100">
+                <widget type="number" fieldname="finofertadays" min="0" required="true" />
+            </column>
+        </group>
         <group name="advanced" title="advanced" icon="fas fa-database" valign="bottom" numcolumns="12">
             <column name="homepage" numcolumns="3" order="100">
                 <widget type="select" fieldname="homepage" icon="fas fa-home">

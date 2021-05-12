@@ -294,6 +294,7 @@
     "date-wildcard-info": "Current date (computer date)",
     "dateentry-wildcard-info": "dateentry-wildcard-info",
     "days": "Tage",
+    "days-until-expiration": "days-until-expiration",
     "db-host": "Dades Datenbankserver",
     "db-name": "Name Datenbank",
     "db-password": "Passwort-Datenbank",

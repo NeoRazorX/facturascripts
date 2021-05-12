@@ -294,6 +294,7 @@
     "date-wildcard-info": "Current date (computer date)",
     "dateentry-wildcard-info": "Date indicated in the head of the accounting entry",
     "days": "Days",
+    "days-until-expiration": "Days until expiration",
     "db-host": "Database Server",
     "db-name": "Database name",
     "db-password": "Database password",

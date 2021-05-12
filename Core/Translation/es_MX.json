@@ -294,6 +294,7 @@
     "date-wildcard-info": "Fecha actual (fecha del ordenador)",
     "dateentry-wildcard-info": "Fecha indicada en la cabecera del asiento contable",
     "days": "Dias",
+    "days-until-expiration": "Días hasta vencimiento",
     "db-host": "Host base de datos",
     "db-name": "Nombre de base de datos",
     "db-password": "Contraseña base de datos",

@@ -294,6 +294,7 @@
     "date-wildcard-info": "Gaurko data (ordenagailukoa)",
     "dateentry-wildcard-info": "Kontabilitate idazpenaren goiburuan adierazitako data",
     "days": "Egunak",
+    "days-until-expiration": "days-until-expiration",
     "db-host": "Datu basearen ostalaria",
     "db-name": "Datu-basearen izena",
     "db-password": "Datu-basearen pasahitza",
