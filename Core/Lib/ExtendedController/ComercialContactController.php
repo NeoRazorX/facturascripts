@@ -41,7 +41,7 @@ abstract class ComercialContactController extends EditController
      *
      * @param string $viewName
      */
-    abstract protected function setCustomWidgetValues(string $viewName);
+    abstract protected function setCustomWidgetValues($viewName);
 
     /**
      * Add a Contact List View.
