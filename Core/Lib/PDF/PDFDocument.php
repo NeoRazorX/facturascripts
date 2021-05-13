@@ -94,7 +94,7 @@ abstract class PDFDocument extends PDFCore
 
     /**
      * 
-     * @param ReciboCliente $receipt
+     * @param FacturaCliente|ReciboCliente $receipt
      *
      * @return string
      */
@@ -363,6 +363,8 @@ abstract class PDFDocument extends PDFCore
         /// receipts
         if ($model->modelClassName() === 'FacturaCliente') {
             $this->insertInvoiceReceipts($model);
+        } else {
+            $this->insertInvoicePayMehtod($model);
         }
 
         if (!empty($this->format->texto)) {
@@ -539,6 +541,36 @@ abstract class PDFDocument extends PDFCore
 
         $idlogo = $this->format->idlogo ?? $company->idlogo;
         $this->insertCompanyLogo($idlogo);
+    }
+
+    /**
+     * 
+     * @param FacturaCliente $invoice
+     */
+    protected function insertInvoicePayMehtod($invoice)
+    {
+        $this->newPage();
+
+        $headers = [
+            'method' => $this->i18n->trans('payment-method'),
+            'expiration' => $this->i18n->trans('expiration')
+        ];
+
+        $expiration = isset($invoice->finoferta) ? $invoice->finoferta : '';
+        $rows = [
+            ['method' => $this->getBankData($invoice), 'expiration' => $expiration]
+        ];
+
+        $tableOptions = [
+            'cols' => [
+                'method' => ['justification' => 'left'],
+                'expiration' => ['justification' => 'right']
+            ],
+            'shadeCol' => [0.95, 0.95, 0.95],
+            'shadeHeadingCol' => [0.95, 0.95, 0.95],
+            'width' => $this->tableWidth
+        ];
+        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
     }
 
     /**
