@@ -44,7 +44,7 @@ use FacturaScripts\Dinamic\Model\ReciboCliente;
 abstract class PDFDocument extends PDFCore
 {
 
-    const INVOICE_TOTALS_Y = 250;
+    const INVOICE_TOTALS_Y = 200;
 
     /**
      *
@@ -281,9 +281,6 @@ abstract class PDFDocument extends PDFCore
         }
 
         $this->newPage();
-        if ($this->pdf->y > static::INVOICE_TOTALS_Y) {
-            $this->pdf->y = static::INVOICE_TOTALS_Y;
-        }
 
         /// taxes
         $taxHeaders = [
@@ -312,6 +309,8 @@ abstract class PDFDocument extends PDFCore
             $this->removeEmptyCols($taxRows, $taxHeaders, $this->numberTools->format(0));
             $this->pdf->ezTable($taxRows, $taxHeaders, '', $taxTableOptions);
             $this->pdf->ezText("\n");
+        } elseif ($this->pdf->y > static::INVOICE_TOTALS_Y) {
+            $this->pdf->y = static::INVOICE_TOTALS_Y;
         }
 
         /// subtotals
@@ -363,7 +362,7 @@ abstract class PDFDocument extends PDFCore
         /// receipts
         if ($model->modelClassName() === 'FacturaCliente') {
             $this->insertInvoiceReceipts($model);
-        } elseif (isset($model->cliente)) {
+        } elseif (isset($model->codcliente)) {
             $this->insertInvoicePayMehtod($model);
         }
 
@@ -549,8 +548,6 @@ abstract class PDFDocument extends PDFCore
      */
     protected function insertInvoicePayMehtod($invoice)
     {
-        $this->newPage();
-
         $headers = [
             'method' => $this->i18n->trans('payment-method'),
             'expiration' => $this->i18n->trans('expiration')
@@ -570,6 +567,7 @@ abstract class PDFDocument extends PDFCore
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'width' => $this->tableWidth
         ];
+        $this->pdf->ezText("\n");
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
     }
 
@@ -581,8 +579,6 @@ abstract class PDFDocument extends PDFCore
     {
         $receipts = $invoice->getReceipts();
         if (count($receipts) > 0) {
-            $this->newPage();
-
             $headers = [
                 'numero' => $this->i18n->trans('receipt'),
                 'bank' => $this->i18n->trans('payment-method'),
@@ -611,6 +607,7 @@ abstract class PDFDocument extends PDFCore
                 'shadeHeadingCol' => [0.95, 0.95, 0.95],
                 'width' => $this->tableWidth
             ];
+            $this->pdf->ezText("\n");
             $this->pdf->ezTable($rows, $headers, '', $tableOptions);
         }
     }
