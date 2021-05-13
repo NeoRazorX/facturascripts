@@ -81,6 +81,10 @@ abstract class TransformerDocument extends BusinessDocument
             }
 
             $newModelClass = self::MODEL_NAMESPACE . $docTrans->model2;
+            if (false === \class_exists($newModelClass)) {
+                continue;
+            }
+
             $newModel = new $newModelClass();
             if ($newModel->loadFromCode($docTrans->iddoc2)) {
                 $children[] = $newModel;
@@ -236,6 +240,10 @@ abstract class TransformerDocument extends BusinessDocument
             }
 
             $newModelClass = self::MODEL_NAMESPACE . $docTrans->model1;
+            if (false === \class_exists($newModelClass)) {
+                continue;
+            }
+
             $newModel = new $newModelClass();
             if ($newModel->loadFromCode($docTrans->iddoc1)) {
                 $parents[] = $newModel;
