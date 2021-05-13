@@ -94,14 +94,14 @@ abstract class PDFDocument extends PDFCore
 
     /**
      * 
-     * @param FacturaCliente|ReciboCliente $receipt
+     * @param BusinessDocument|ReciboCliente $receipt
      *
      * @return string
      */
     protected function getBankData($receipt): string
     {
         $paymentMethod = new FormaPago();
-        if (!$paymentMethod->loadFromCode($receipt->codpago)) {
+        if (false === $paymentMethod->loadFromCode($receipt->codpago)) {
             return '-';
         }
 
