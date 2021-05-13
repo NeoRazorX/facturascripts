@@ -107,7 +107,7 @@ abstract class PDFDocument extends PDFCore
 
         $cuentaBancoCli = new CuentaBancoCliente();
         $where = [new DataBaseWhere('codcliente', $receipt->codcliente)];
-        if ($paymentMethod->domiciliado && $cuentaBancoCli->loadFromCode('', $where)) {
+        if ($paymentMethod->domiciliado && $cuentaBancoCli->loadFromCode('', $where, ['principal' => 'DESC'])) {
             return $paymentMethod->descripcion . ' : ' . $cuentaBancoCli->getIban(true, true);
         }
 
