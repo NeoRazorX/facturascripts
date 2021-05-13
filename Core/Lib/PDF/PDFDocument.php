@@ -309,7 +309,7 @@ abstract class PDFDocument extends PDFCore
             $this->removeEmptyCols($taxRows, $taxHeaders, $this->numberTools->format(0));
             $this->pdf->ezTable($taxRows, $taxHeaders, '', $taxTableOptions);
             $this->pdf->ezText("\n");
-        } elseif ($this->pdf->y > static::INVOICE_TOTALS_Y) {
+        } elseif ($this->pdf->ezPageCount < 2 && $this->pdf->y > static::INVOICE_TOTALS_Y) {
             $this->pdf->y = static::INVOICE_TOTALS_Y;
         }
 
