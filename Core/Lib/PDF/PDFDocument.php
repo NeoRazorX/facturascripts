@@ -363,7 +363,7 @@ abstract class PDFDocument extends PDFCore
         /// receipts
         if ($model->modelClassName() === 'FacturaCliente') {
             $this->insertInvoiceReceipts($model);
-        } else {
+        } elseif (isset($model->cliente)) {
             $this->insertInvoicePayMehtod($model);
         }
 
