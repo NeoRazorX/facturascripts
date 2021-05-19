@@ -158,6 +158,14 @@ class ProfitAndLoss extends AccountingBase
                     . " AND (subcuentas.codcuenta LIKE '6%' OR subcuentas.codcuenta LIKE '7%')";
             }
 
+            if ($codejercicio === $this->exercise->codejercicio) {
+                $sql .= ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom)
+                    . ' AND ' . $this->dataBase->var2str($this->dateTo);
+            } elseif ($codejercicio === $this->exercisePrev->codejercicio) {
+                $sql .= ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFromPrev)
+                    . ' AND ' . $this->dataBase->var2str($this->dateToPrev);
+            }
+
             $channel = $params['channel'] ?? '';
             if (!empty($channel)) {
                 $sql .= ' AND asientos.canal = ' . $this->dataBase->var2str($channel);
