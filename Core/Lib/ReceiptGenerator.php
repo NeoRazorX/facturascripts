@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,6 +44,12 @@ class ReceiptGenerator
      */
     public function generate($invoice, $number = 0)
     {
+        if ($number > self::MAX_RECEIPTS) {
+            $number = self::MAX_RECEIPTS;
+        } elseif ($number < 0) {
+            $number = 0;
+        }
+
         switch ($invoice->modelClassName()) {
             case 'FacturaCliente':
                 return empty($number) ? $this->updateCustomerReceipts($invoice) : $this->generateCustomerReceipts($invoice, $number);
@@ -103,9 +109,9 @@ class ReceiptGenerator
 
         /// create new receipts
         $partialAmount = $number > 1 ? \round($amount / $number, \FS_NF0) : $amount;
-        while (!$this->isCero($amount) || $newNum > self::MAX_RECEIPTS) {
+        while (false === $this->isCero($amount)) {
             $receiptAmount = $amount > self::PARTIAL_AMOUNT_MULTIPLIER * $partialAmount ? $partialAmount : $amount;
-            if (!$this->newCustomerReceipt($invoice, $newNum, $receiptAmount)) {
+            if (false === $this->newCustomerReceipt($invoice, $newNum, $receiptAmount)) {
                 return false;
             }
 
@@ -145,9 +151,9 @@ class ReceiptGenerator
 
         /// create new receipts
         $partialAmount = $number > 1 ? \round($amount / $number, \FS_NF0) : $amount;
-        while (!$this->isCero($amount) || $newNum > self::MAX_RECEIPTS) {
+        while (false === $this->isCero($amount)) {
             $receiptAmount = $amount > self::PARTIAL_AMOUNT_MULTIPLIER * $partialAmount ? $partialAmount : $amount;
-            if (!$this->newSupplierReceipt($invoice, $newNum, $receiptAmount)) {
+            if (false === $this->newSupplierReceipt($invoice, $newNum, $receiptAmount)) {
                 return false;
             }
 
