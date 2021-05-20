@@ -32,6 +32,8 @@ class AttachedFile extends Base\ModelOnChangeClass
 
     use Base\ModelTrait;
 
+    const MAX_FILENAME_LEN = 100;
+
     /**
      * Date.
      *
@@ -222,6 +224,24 @@ class AttachedFile extends Base\ModelOnChangeClass
 
     /**
      * 
+     * @param string $orignal
+     *
+     * @return string
+     */
+    protected function fixFileName($orignal): string
+    {
+        if (\strlen($orignal) <= static::MAX_FILENAME_LEN) {
+            return $orignal;
+        }
+
+        $parts = \explode('.', \strtolower($orignal));
+        $extension = \count($parts) > 1 ? \end($parts) : '';
+        $name = \substr($orignal, 0, static::MAX_FILENAME_LEN - \strlen('.' . $extension));
+        return $name . '.' . $extension;
+    }
+
+    /**
+     * 
      * @param string $field
      *
      * @return bool
@@ -248,7 +268,7 @@ class AttachedFile extends Base\ModelOnChangeClass
      */
     protected function setFile()
     {
-        $this->filename = $this->path;
+        $this->filename = $this->fixFileName($this->path);
         $newFolder = 'MyFiles/' . \date('Y/m', \strtotime($this->date));
         $newFolderPath = \FS_FOLDER . '/' . $newFolder;
         if (false === FileManager::createFolder($newFolderPath, true)) {
