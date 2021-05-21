@@ -32,7 +32,7 @@
                 </widget>
             </column>
             <column name="date" numcolumns="4" order="120">
-                <widget type="date" fieldname="fecha" icon="fas fa-calendar-alt" required="true" />
+                <widget type="date" fieldname="fecha" required="true" />
             </column>
             <column name="number" numcolumns="4" order="130">
                 <widget type="number" fieldname="numero" decimal="0" step="1" readonly="true" />

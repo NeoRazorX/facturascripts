@@ -93,7 +93,7 @@
                 </widget>
             </column>
             <column name="payment-days" description="desc-payment-days" numcolumns="3" order="150">
-                <widget type="text" fieldname="diaspago" icon="fas fa-calendar-alt" />
+                <widget type="text" fieldname="diaspago" />
             </column>
             <column name="current-risk" numcolumns="3" order="160">
                 <widget type="money" fieldname="riesgoalcanzado" readonly="true" />
@@ -120,10 +120,10 @@
         </group>
         <group name="other" numcolumns="3">
             <column name="creation-date" numcolumns="12" order="100">
-                <widget type="date" fieldname="fechaalta" icon="fas fa-calendar-alt" readonly="true" />
+                <widget type="date" fieldname="fechaalta" readonly="true" />
             </column>
             <column name="date-of-suspension" numcolumns="12" order="110">
-                <widget type="date" fieldname="fechabaja" icon="fas fa-calendar-alt" />
+                <widget type="date" fieldname="fechabaja" />
             </column>
         </group>
     </columns>
