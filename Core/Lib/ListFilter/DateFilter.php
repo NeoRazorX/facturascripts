@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,18 +69,15 @@ class DateFilter extends BaseFilter
      */
     public function render()
     {
-        $cssClass = $this->readonly ? '' : ' datepicker';
-        $label = static::$i18n->trans($this->label);
+        $value = empty($this->value) ? '' : \date('Y-m-d', \strtotime($this->value));
         return '<div class="col-sm-3 col-lg-2">'
             . '<div class="form-group">'
-            . '<div class="input-group">'
-            . '<span class="input-group-prepend" title="' . $label . '">'
-            . '<span class="input-group-text">'
-            . '<i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>'
+            . '<div class="input-group" title="' . static::$i18n->trans($this->label) . '">'
+            . '<span class="input-group-prepend">'
+            . '<span class="input-group-text">' . $this->operation . '</span>'
             . '</span>'
-            . '</span>'
-            . '<input type="text" name="' . $this->name() . '" value="' . $this->value . '" class="form-control' . $cssClass . '"'
-            . ' placeholder="' . $label . '" autocomplete="off"' . $this->onChange() . $this->readonly() . '/>'
+            . '<input type="date" name="' . $this->name() . '" value="' . $value . '" class="form-control"'
+            . ' autocomplete="off"' . $this->onChange() . $this->readonly() . '/>'
             . '</div>'
             . '</div>'
             . '</div>';

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -78,8 +78,8 @@ class SelectFilter extends BaseFilter
         if (empty($this->icon)) {
             return '<div class="col-sm-3 col-lg-2">'
                 . '<div class="form-group">'
-                . '<select name="' . $this->name() . '" class="form-control"' . $this->onChange() . '>'
-                . $this->getHtmlOptions()
+                . '<select name="' . $this->name() . '" class="form-control"' . $this->onChange()
+                . ' title="' . static::$i18n->trans($this->label) . '">' . $this->getHtmlOptions()
                 . '</select>'
                 . '</div>'
                 . '</div>';
@@ -87,7 +87,7 @@ class SelectFilter extends BaseFilter
 
         return '<div class="col-sm-3 col-lg-2">'
             . '<div class="form-group">'
-            . '<div class="input-group">'
+            . '<div class="input-group" title="' . static::$i18n->trans($this->label) . '">'
             . '<span class="input-group-prepend">'
             . '<span class="input-group-text">'
             . '<i class="' . $this->icon . ' fa-fw" aria-hidden="true"></i>'
@@ -109,7 +109,7 @@ class SelectFilter extends BaseFilter
     {
         $html = '<option value="">' . static::$i18n->trans($this->label) . '</option>';
         foreach ($this->values as $data) {
-            if (is_array($data)) {
+            if (\is_array($data)) {
                 $extra = ('' != $this->value && $data['code'] == $this->value) ? ' selected=""' : '';
                 $html .= '<option value="' . $data['code'] . '"' . $extra . '>' . $data['description'] . '</option>';
                 continue;
