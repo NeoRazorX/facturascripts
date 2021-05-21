@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,13 +18,26 @@
  */
 namespace FacturaScripts\Core\Lib\Widget;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Description of WidgetDatetime
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class WidgetDatetime extends WidgetDate
+class WidgetDatetime extends BaseWidget
 {
+
+    /**
+     *
+     * @param object  $model
+     * @param Request $request
+     */
+    public function processFormData(&$model, $request)
+    {
+        $value = $request->request->get($this->fieldname);
+        $model->{$this->fieldname} = empty($value) ? null : $value;
+    }
 
     /**
      * 
@@ -41,5 +54,24 @@ class WidgetDatetime extends WidgetDate
         }
 
         return date('d-m-Y H:i:s', strtotime($this->value));
+    }
+
+    /**
+     * 
+     * @param string $initialClass
+     * @param string $alternativeClass
+     *
+     * @return string
+     */
+    protected function tableCellClass($initialClass = '', $alternativeClass = '')
+    {
+        $initialClass .= ' text-nowrap';
+
+        /// is today? is the future?
+        if (\strtotime($this->value) >= \strtotime(date('Y-m-d'))) {
+            $alternativeClass = 'font-weight-bold';
+        }
+
+        return parent::tableCellClass($initialClass, $alternativeClass);
     }
 }

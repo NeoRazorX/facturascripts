@@ -30,7 +30,7 @@
                 <widget type="date" fieldname="fecha" required="true" />
             </column>
             <column name="hour" order="120">
-                <widget type="text" fieldname="hora" icon="fas fa-clock" required="true" />
+                <widget type="time" fieldname="hora" required="true" />
             </column>
             <column name="number" order="130">
                 <widget type="text" fieldname="numero" icon="fas fa-hashtag" readonly="true" />
