@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -73,8 +73,8 @@
                 <div class="col-md text-right mb-2">
                     {# -- Filters button -- #}
                     {{ _self.filterButton(currentView, i18n) }}
-                    {# -- Legend button -- #}
-                    {{ _self.legendButton(currentView, i18n) }}
+                    {# -- Colors button -- #}
+                    {{ _self.colorsButton(currentView, i18n) }}
                     {# -- OrderBy button -- #}
                     {{ _self.sortButton(currentView) }}
                 </div>
@@ -280,27 +280,19 @@
     </div>
 {% endmacro %}
 
-{% macro legendButton(currentView, i18n) %}
+{% macro colorsButton(currentView, i18n) %}
     {% set legend = currentView.getRow('status').legend() %}
     {% if legend %}
         {% set viewName = currentView.getViewName() %}
         <div class="btn-group">
-            <button type="button" class="btn btn-light" data-toggle="modal" data-target="#statuslegend{{ viewName }}">
-                <i class="fas fa-info fa-fw" aria-hidden="true"></i>
-                <span class="d-none d-xl-inline">{{ i18n.trans('colors') }}</span>
-            </button>
-        </div>
-        <div class="modal fade" id="statuslegend{{ viewName }}" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            <i class="fas fa-info-circle fa-fw"></i> {{ i18n.trans('colors') }}
-                        </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-fill-drip fa-fw" aria-hidden="true"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right pb-0">
+                    <h6 class="dropdown-header">
+                        {{ i18n.trans('colors') }}
+                    </h6>
                     {{ legend | raw }}
                 </div>
             </div>
@@ -352,7 +344,7 @@
     {% if currentView.orderOptions is not empty %}
         <div class="btn-group">
             <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fas fa-arrow-up' : 'fas fa-arrow-down' %}
+                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fas fa-sort-amount-down-alt' : 'fas fa-sort-amount-down' %}
                 <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
                 <span class="d-none d-lg-inline">{{ currentView.orderOptions[currentView.orderKey]['label'] }}</span>
                 <span class="caret"></span>
@@ -360,7 +352,7 @@
             <div class="dropdown-menu dropdown-menu-right">
                 {% for key, orderby in currentView.orderOptions %}
                     {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
-                    {% set icon = (orderby.type == 'ASC') ? 'fas fa-arrow-up' : 'fas fa-arrow-down' %}
+                    {% set icon = (orderby.type == 'ASC') ? 'fas fa-sort-amount-down-alt' : 'fas fa-sort-amount-down' %}
                     <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetOrder('{{ currentView.getViewName() }}', '{{ key }}');">
                         <i class="{{ icon }} fa-fw" aria-hidden="true"></i> {{ orderby.label }}
                     </a>
