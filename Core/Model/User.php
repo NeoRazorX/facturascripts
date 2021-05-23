@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -217,16 +217,6 @@ class User extends Base\ModelClass
      */
     public function test()
     {
-        if ($this->lastactivity === '') {
-            $this->lastactivity = null;
-        }
-
-        if ($this->admin) {
-            $this->level = 99;
-        } elseif ($this->level === null) {
-            $this->level = 0;
-        }
-
         $this->nick = \trim($this->nick);
         if (1 !== \preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
             $this->toolBox()->i18nLog()->error(
@@ -241,6 +231,20 @@ class User extends Base\ModelClass
             $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
             $this->email = null;
             return false;
+        }
+
+        if (empty($this->creationdate)) {
+            $this->creationdate = \date(self::DATE_STYLE);
+        }
+
+        if (empty($this->lastactivity)) {
+            $this->lastactivity = null;
+        }
+
+        if ($this->admin) {
+            $this->level = 99;
+        } elseif ($this->level === null) {
+            $this->level = 0;
         }
 
         return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();

@@ -55,7 +55,7 @@
                         <div class="col-sm-2">
                             <div class="form-group">
                                 {{ forms.simpleSelect('tipoidfiscal', 'tipoidfiscal', fsc.empresa.tipoidfiscal,
-                            fsc.getSelectValues('IdentificadorFiscal'), i18n.trans('fiscal-id')) }}
+                            fsc.getSelectValues('IdentificadorFiscal', true), i18n.trans('fiscal-id')) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
@@ -74,27 +74,6 @@
                                 <label for="checkboxPersona">{{ i18n.trans('is-person') }}</label>
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                {% if constant('FS_INITIAL_CODPAIS') is defined %}
-                                    {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'),
-                            i18n.trans('country'), 'fas fa-globe-americas', {'disabled': ''}) }}
-                                {% else %}
-                                    {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'),
-                            i18n.trans('country'), 'fas fa-globe-americas') }}
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                {{ forms.simpleInput('provincia', 'provincia', provincia, 'text', i18n.trans('province')) }}
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', i18n.trans('city')) }}
-                            </div>
-                        </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'),
@@ -111,6 +90,27 @@
                             <div class="form-group">
                                 {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('zip-code'),
                             NULL, {'maxlength': '10'}) }}
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', i18n.trans('city')) }}
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                {{ forms.simpleInput('provincia', 'provincia', provincia, 'text', i18n.trans('province')) }}
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                {% if constant('FS_INITIAL_CODPAIS') is defined %}
+                                    {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'),
+                            i18n.trans('country'), 'fas fa-globe-americas', {'disabled': ''}) }}
+                                {% else %}
+                                    {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'),
+                            i18n.trans('country'), 'fas fa-globe-americas') }}
+                                {% endif %}
                             </div>
                         </div>
                         {% if fsc.empresa.email is empty or fsc.user.email is empty %}

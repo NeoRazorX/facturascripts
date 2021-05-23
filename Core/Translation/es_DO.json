@@ -25,7 +25,7 @@
     "accounting-concept": "Concepto contable",
     "accounting-data-missing": "Plan contable no encontrado para el ejercicio %exerciseName%",
     "accounting-date": "Fecha de asiento",
-    "accounting-entries": "Asientos contables",
+    "accounting-entries": "Asientos",
     "accounting-entry": "Asiento",
     "accounting-entry-date": "Fecha del asiento",
     "accounting-entry-macros-text": "<p>Puede usar palabras clave especiales (macros) para autocompletar información en el campo de descripción:<\/p><dl><dt>Nombre del documento<\/dt><dd>Escriba <strong>%document%<\/strong> para agregar el identificador del documento.<\/dd><dt>Fecha actual<\/dt><dd>Escriba <strong>%date%<\/strong> para agregar la fecha actual.<\/dd><dt>Fecha de entrada<\/dt><dd>Escriba <strong>%date-entry%<\/strong> para agregar la fecha del asiento contable.<\/dd><dt>Mes<\/dt><dd>Escriba <strong>%month%<\/strong> para agregar el nombre del mes de la fecha del asiento contable.<\/dd><\/dl>",
