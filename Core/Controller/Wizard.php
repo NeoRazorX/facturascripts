@@ -306,6 +306,9 @@ class Wizard extends Controller
         $this->empresa->telefono1 = $this->request->request->get('telefono1', '');
         $this->empresa->telefono2 = $this->request->request->get('telefono2', '');
         $this->empresa->tipoidfiscal = $this->request->request->get('tipoidfiscal', '');
+        if (empty($this->empresa->tipoidfiscal)) {
+            $this->empresa->tipoidfiscal = $appSettings->get('default', 'tipoidfiscal');
+        }
         $this->empresa->save();
 
         /// assignes warehouse?

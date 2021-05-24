@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,10 +57,11 @@ class RowStatus extends VisualItem
     {
         $trs = '';
         foreach ($this->options as $opt) {
-            $title = $opt['title'] ?? '?';
-            $trs .= '<tr class="' . $this->colorToClass($opt['color'], 'table-') . '">'
-                . '<td class="text-center">' . static::$i18n->trans($title) . '</td>'
-                . '</tr>';
+            if (!empty($opt['title'])) {
+                $trs .= '<tr class="' . $this->colorToClass($opt['color'], 'table-') . '">'
+                    . '<td class="text-center">' . static::$i18n->trans($opt['title']) . '</td>'
+                    . '</tr>';
+            }
         }
 
         return empty($trs) ? '' : '<table class="table mb-0">' . $trs . '</table>';
