@@ -45,8 +45,8 @@
                 <hr/>
                 <form method="post" class="form" id="formWizard">
                     <input type="hidden" name="action" value="step1" />
-                    <div class="form-row">
-                        <div class="col-sm-6">
+                    <div class="form-row align-items-end">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombre, 'text', i18n.trans('company-name'),
                             '', {'autofocus': '', 'maxlength': '100', 'required': ''}) }}
@@ -58,13 +58,13 @@
                             fsc.getSelectValues('IdentificadorFiscal', true), i18n.trans('fiscal-id')) }}
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-2">
                             <div class="form-group">
                                 {{ forms.simpleInput('cifnif', 'cifnif', fsc.empresa.cifnif, 'text', i18n.trans('fiscal-number'),
                             '', {'maxlength': '30'}) }}
                             </div>
                         </div>
-                        <div class="col-sm-12">
+                        <div class="col-sm-4">
                             <div class="form-group form-check">
                                 {% if fsc.empresa.personafisica %}
                                     <input type="checkbox" name="personafisica" value="1" id="checkboxPersona" class="form-check-input" checked="" />
