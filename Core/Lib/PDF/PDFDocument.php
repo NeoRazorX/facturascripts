@@ -400,13 +400,22 @@ abstract class PDFDocument extends PDFCore
         $tipoidfiscal = empty($subject->tipoidfiscal) ? $this->i18n->trans('cifnif') : $subject->tipoidfiscal;
         $tableData = [
             ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
+            ['key' => $this->i18n->trans('code'), 'value' => $model->codigo],
             ['key' => $headerData['subject'], 'value' => Utils::fixHtml($model->{$headerData['fieldName']})],
             ['key' => $this->i18n->trans('number'), 'value' => $model->numero],
             ['key' => $tipoidfiscal, 'value' => $model->cifnif],
             ['key' => $this->i18n->trans('serie'), 'value' => $model->codserie]
         ];
         if (empty($model->cifnif)) {
-            unset($tableData[3]);
+            unset($tableData[4]);
+        }
+
+        if (\property_exists($model, 'numproveedor') && $model->numproveedor) {
+            $tableData[1] = ['key' => $this->i18n->trans('numsupplier'), 'value' => $model->numproveedor];
+        } elseif (\property_exists($model, 'numpero2') && $model->numero2) {
+            $tableData[1] = ['key' => $this->i18n->trans('number2'), 'value' => $model->numero2];
+        } else {
+            unset($tableData[1]);
         }
 
         if (!empty($model->direccion)) {
@@ -415,7 +424,7 @@ abstract class PDFDocument extends PDFCore
 
         /// rectified invoice?
         if (isset($model->codigorect) && !empty($model->codigorect)) {
-            array_unshift($tableData, ['key' => $this->i18n->trans('original'), 'value' => $model->codigorect]);
+            \array_unshift($tableData, ['key' => $this->i18n->trans('original'), 'value' => $model->codigorect]);
         }
 
         $tableOptions = [
