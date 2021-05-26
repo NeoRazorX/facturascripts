@@ -100,23 +100,25 @@ abstract class PDFDocument extends PDFCore
      */
     protected function getBankData($receipt): string
     {
-        $paymentMethod = new FormaPago();
-        if (false === $paymentMethod->loadFromCode($receipt->codpago)) {
+        $payMethod = new FormaPago();
+        if (false === $payMethod->loadFromCode($receipt->codpago)) {
             return '-';
         }
 
-        $cuentaBancoCli = new CuentaBancoCliente();
+        $cuentaBcoCli = new CuentaBancoCliente();
         $where = [new DataBaseWhere('codcliente', $receipt->codcliente)];
-        if ($paymentMethod->domiciliado && $cuentaBancoCli->loadFromCode('', $where, ['principal' => 'DESC'])) {
-            return $paymentMethod->descripcion . ' : ' . $cuentaBancoCli->getIban(true, true);
+        if ($payMethod->domiciliado && $cuentaBcoCli->loadFromCode('', $where, ['principal' => 'DESC'])) {
+            return $payMethod->descripcion . ' : ' . $cuentaBcoCli->getIban(true, true);
         }
 
-        $cuentaBanco = new CuentaBanco();
-        if (!empty($paymentMethod->codcuentabanco) && $cuentaBanco->loadFromCode($paymentMethod->codcuentabanco)) {
-            return $paymentMethod->descripcion . ' : ' . $cuentaBanco->getIban(true);
+        $cuentaBco = new CuentaBanco();
+        if (empty($payMethod->codcuentabanco) || false === $cuentaBco->loadFromCode($payMethod->codcuentabanco) || empty($cuentaBco->iban)) {
+            return $payMethod->descripcion;
         }
 
-        return $paymentMethod->descripcion;
+        $iban = $cuentaBco->getIban(true);
+        $blocks = \explode(' ', $iban);
+        return $payMethod->descripcion . ' : ' . $iban . ' (' . $this->i18n->trans('last-block') . ' ' . \end($blocks) . ')';
     }
 
     /**
