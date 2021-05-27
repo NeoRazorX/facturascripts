@@ -1102,6 +1102,7 @@
     "totallinea-value-error": "Erro no valor total da liña de IVE do imposto %taxCode% da factura. Valor correcto: %totalLínea%",
     "town": "Cidade",
     "traceability": "Trazabilidade",
+    "tracking-code": "tracking-code",
     "transfer": "Transferencia",
     "transfers-stock": "Transferencias de stock",
     "translations": "Traducións",

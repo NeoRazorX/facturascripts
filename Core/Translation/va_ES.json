@@ -1102,6 +1102,7 @@
     "totallinea-value-error": "Erro en el valor totallinea de la llínea del IVA de l'impost %taxCode% de la factura. El valor correcte és: %totalLine%",
     "town": "Ciutat",
     "traceability": "Traçabilitat",
+    "tracking-code": "tracking-code",
     "transfer": "Transferència",
     "transfers-stock": "Transferències d'estoc",
     "translations": "Traduccions",

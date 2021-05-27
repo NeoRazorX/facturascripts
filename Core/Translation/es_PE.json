@@ -1102,6 +1102,7 @@
     "totallinea-value-error": "Error en el valor de totallinea de la línea de IGV del impuesto %taxCode% de la factura. Valor correcto: %totalLine%",
     "town": "Población",
     "traceability": "Trazabilidad",
+    "tracking-code": "Código seguimiento",
     "transfer": "Transferencia",
     "transfers-stock": "Transferencias de stock",
     "translations": "Traducciones",

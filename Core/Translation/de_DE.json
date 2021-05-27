@@ -1102,6 +1102,7 @@
     "totallinea-value-error": "Fehler im Gesamtbetrag der Mehrwertsteuerzeile der Steuer 0 der Rechnung. Richtiger Wert: 1",
     "town": "Stadt, Dorf",
     "traceability": "Rückverfolgbarkeit",
+    "tracking-code": "tracking-code",
     "transfer": "transfer",
     "transfers-stock": "Transfers stock",
     "translations": "Übersetzungen:",

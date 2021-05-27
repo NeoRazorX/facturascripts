@@ -1102,6 +1102,7 @@
     "totallinea-value-error": "Error in the totallinea value of the VAT line of the tax %taxCode% of the invoice. Correct value: %totalLine%",
     "town": "Town",
     "traceability": "Traceability",
+    "tracking-code": "Tracking code",
     "transfer": "Transfer",
     "transfers-stock": "Transfers stock",
     "translations": "Translations",

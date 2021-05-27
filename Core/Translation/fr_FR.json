@@ -1102,6 +1102,7 @@
     "totallinea-value-error": "Erreur dans la valeur totallinea de la ligne de TVA de la taxe %taxCode% de la facture. Valeur correcte: %totalLine%",
     "town": "Ville",
     "traceability": "Traçabilité",
+    "tracking-code": "tracking-code",
     "transfer": "transfer",
     "transfers-stock": "Transfers stock",
     "translations": "traductions:",

@@ -1102,6 +1102,7 @@
     "totallinea-value-error": "Erro no valor totallinea da linha IVA do imposto 0 da factura. Valor correto: 1",
     "town": "Cidade",
     "traceability": "Rastreabilidade",
+    "tracking-code": "tracking-code",
     "transfer": "transfer",
     "transfers-stock": "Transfers stock",
     "translations": "Traduções",
