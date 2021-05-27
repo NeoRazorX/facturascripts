@@ -284,6 +284,28 @@ class SendMail extends Controller
 
         $model = new $className();
         $model->loadFromCode($this->request->get('modelCode', ''));
+        switch ($model->modelClassName()) {
+            case 'AlbaranCliente':
+                $this->newMail->title = $this->toolBox()->i18n()->trans('delivery-note-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = $this->toolBox()->i18n()->trans('delivery-note-email-text', ['%code%' => $model->codigo]);
+                break;
+
+            case 'FacturaCliente':
+                $this->newMail->title = $this->toolBox()->i18n()->trans('invoice-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = $this->toolBox()->i18n()->trans('invoice-email-text', ['%code%' => $model->codigo]);
+                break;
+
+            case 'PedidoCliente':
+                $this->newMail->title = $this->toolBox()->i18n()->trans('order-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = $this->toolBox()->i18n()->trans('order-email-text', ['%code%' => $model->codigo]);
+                break;
+
+            case 'PresupuestoCliente':
+                $this->newMail->title = $this->toolBox()->i18n()->trans('estimation-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = $this->toolBox()->i18n()->trans('estimation-email-text', ['%code%' => $model->codigo]);
+                break;
+        }
+
         if (\property_exists($model, 'email')) {
             $this->newMail->addAddress($model->email);
             return;

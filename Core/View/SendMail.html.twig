@@ -86,15 +86,21 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <textarea name="body" rows="4" class="form-control">{{ fsc.newMail.text }}</textarea>
+                                <textarea name="body" rows="5" class="form-control">{{ fsc.newMail.text }}</textarea>
                             </div>
+                            {% if fsc.newMail.signature %}
+                                <div class="form-group">
+                                    {{ i18n.trans('email-signature') }}
+                                    <textarea rows="3" class="form-control" readonly="true">{{ fsc.newMail.signature }}</textarea>
+                                </div>
+                            {% endif %}
                             <div class="form-group">
-                                <input type="file" name="uploads[]" multiple=""/>
                                 {% for name in fsc.newMail.getAttachmentNames() %}
-                                    <p class="mt-2 mb-0">
-                                        <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ name }}
+                                    <p>
+                                        <i class="fas fa-paperclip fa-fw" aria-hidden="true"></i> {{ name }}
                                     </p>
                                 {% endfor %}
+                                <input type="file" name="uploads[]" multiple=""/>
                             </div>
                             <div class="row align-items-end">
                                 <div class="col-sm-6">
