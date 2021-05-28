@@ -156,7 +156,7 @@ class FormatoDocumento extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListSecuenciaDocumento?activetab=List')
+    public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
     {
         return parent::url($type, $list);
     }
