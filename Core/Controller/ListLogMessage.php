@@ -39,7 +39,6 @@ class ListLogMessage extends ListController
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
-        $data['submenu'] = 'control-panel';
         $data['title'] = 'logs';
         $data['icon'] = 'fas fa-file-medical-alt';
         return $data;

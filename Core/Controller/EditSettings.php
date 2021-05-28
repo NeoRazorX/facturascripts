@@ -44,8 +44,7 @@ class EditSettings extends PanelController
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
-        $data['submenu'] = 'control-panel';
-        $data['title'] = 'app-preferences';
+        $data['title'] = 'control-panel';
         $data['icon'] = 'fas fa-cogs';
         return $data;
     }
@@ -59,8 +58,8 @@ class EditSettings extends PanelController
     {
         $names = [];
         foreach ($this->toolBox()->files()->scanFolder(\FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
-            if (0 === strpos($fileName, self::KEY_SETTINGS)) {
-                $names[] = substr($fileName, 0, -4);
+            if (0 === \strpos($fileName, self::KEY_SETTINGS)) {
+                $names[] = \substr($fileName, 0, -4);
             }
         }
 
@@ -179,6 +178,34 @@ class EditSettings extends PanelController
             $this->setSettings($name, 'btnDelete', false);
             $this->setSettings($name, 'btnNew', false);
         }
+
+        $this->createViewsApiKeys();
+        $this->createViewsIdFiscal();
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsApiKeys(string $viewName = 'ListApiKey')
+    {
+        $this->addListView($viewName, 'ApiKey', 'api-keys', 'fas fa-key');
+        $this->views[$viewName]->addOrderBy(['id'], 'id');
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
+        $this->views[$viewName]->addOrderBy(['creationdate', 'id'], 'date', 2);
+        $this->views[$viewName]->addSearchFields(['description', 'apikey', 'nick']);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewsIdFiscal(string $viewName = 'ListIdentificadorFiscal')
+    {
+        $this->addListView($viewName, 'IdentificadorFiscal', 'fiscal-id', 'far fa-id-card');
+        $this->views[$viewName]->addSearchFields(['tipoidfiscal']);
+        $this->views[$viewName]->addOrderBy(['codeid'], 'code');
+        $this->views[$viewName]->addOrderBy(['tipoidfiscal'], 'name', 1);
     }
 
     /**
@@ -234,7 +261,7 @@ class EditSettings extends PanelController
      */
     private function getKeyFromViewName($viewName)
     {
-        return strtolower(substr($viewName, strlen(self::KEY_SETTINGS)));
+        return \strtolower(\substr($viewName, \strlen(self::KEY_SETTINGS)));
     }
 
     /**
@@ -245,16 +272,34 @@ class EditSettings extends PanelController
      */
     protected function loadData($viewName, $view)
     {
-        $code = $this->getKeyFromViewName($viewName);
-        $view->loadData($code);
-        if (empty($view->model->name)) {
-            $view->model->name = $code;
-        }
-
         switch ($viewName) {
+            case 'ListApiKey':
+                $view->loadData();
+                if (false === (bool) $this->toolBox()->appSettings()->get('default', 'enable_api', '0')) {
+                    $this->setSettings($viewName, 'active', false);
+                }
+                break;
+
+            case 'ListIdentificadorFiscal':
+                $view->loadData();
+                break;
+
             case 'SettingsDefault':
+                $code = $this->getKeyFromViewName($viewName);
+                $view->loadData($code);
+                if (empty($view->model->name)) {
+                    $view->model->name = $code;
+                }
                 $this->loadPaymentMethodValues($viewName);
                 $this->loadWarehouseValues($viewName);
+                break;
+
+            default:
+                $code = $this->getKeyFromViewName($viewName);
+                $view->loadData($code);
+                if (empty($view->model->name)) {
+                    $view->model->name = $code;
+                }
                 break;
         }
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -88,7 +88,6 @@ class AdminPlugins extends Base\Controller
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
-        $data['submenu'] = 'control-panel';
         $data['title'] = 'plugins';
         $data['icon'] = 'fas fa-plug';
         return $data;
@@ -159,7 +158,7 @@ class AdminPlugins extends Base\Controller
      */
     private function enablePlugin($pluginName)
     {
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
         }
@@ -217,7 +216,7 @@ class AdminPlugins extends Base\Controller
      */
     private function removePlugin($pluginName)
     {
-        if (!$this->permissions->allowDelete) {
+        if (false === $this->permissions->allowDelete) {
             $this->toolBox()->i18nLog()->warning('not-allowed-delete');
             return false;
         }
@@ -234,7 +233,7 @@ class AdminPlugins extends Base\Controller
     private function uploadPlugin($uploadFiles)
     {
         foreach ($uploadFiles as $uploadFile) {
-            if (!$uploadFile->isValid()) {
+            if (false === $uploadFile->isValid()) {
                 $this->toolBox()->log()->error($uploadFile->getErrorMessage());
                 continue;
             }
@@ -245,7 +244,7 @@ class AdminPlugins extends Base\Controller
             }
 
             $this->pluginManager->install($uploadFile->getPathname(), $uploadFile->getClientOriginalName());
-            unlink($uploadFile->getPathname());
+            \unlink($uploadFile->getPathname());
         }
 
         if ($this->pluginManager->deploymentRequired()) {
