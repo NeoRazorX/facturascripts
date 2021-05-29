@@ -241,6 +241,8 @@
     "conversion-rate-not-0": "A taxa de conversión non pode ser 0.",
     "convert-into-customer": "Convertir en cliente",
     "convert-into-supplier": "Convertir en provedor",
+    "copy": "copy",
+    "copy-p": "copy-p",
     "copy-subaccounts": "Copiar plan contable",
     "core-update": "Actualización do núcleo á versión %version%",
     "cost-price": "Prezo de custo",

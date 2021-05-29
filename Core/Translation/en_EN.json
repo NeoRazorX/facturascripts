@@ -241,6 +241,8 @@
     "conversion-rate-not-0": "The conversion rate can't be 0.",
     "convert-into-customer": "Convert into customer",
     "convert-into-supplier": "Convert into supplier",
+    "copy": "Copy",
+    "copy-p": "Fill in the form to make a copy of this model",
     "copy-subaccounts": "Copy account plan",
     "core-update": "Core update to version %version%",
     "cost-price": "Cost price",

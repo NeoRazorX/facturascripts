@@ -241,6 +241,8 @@
     "conversion-rate-not-0": "La taxa de conversió no pot ser 0.",
     "convert-into-customer": "Convertir en client",
     "convert-into-supplier": "Convertir en proveïdor",
+    "copy": "copy",
+    "copy-p": "copy-p",
     "copy-subaccounts": "Copiar pla de comptes",
     "core-update": "Actualisació del núcleu a la versió %version%",
     "cost-price": "Preu de cost",

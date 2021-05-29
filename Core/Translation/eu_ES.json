@@ -241,6 +241,8 @@
     "conversion-rate-not-0": "Bihurketa tasa ezin da 0 izan.",
     "convert-into-customer": "Bezero bihurtu",
     "convert-into-supplier": "Hornitzaile bihurtu",
+    "copy": "copy",
+    "copy-p": "copy-p",
     "copy-subaccounts": "Kontabilitate plana kopiatu",
     "core-update": "%version%. bertsiora muinaren eguneraketa",
     "cost-price": "Kostu prezioa",

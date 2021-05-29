@@ -241,6 +241,8 @@
     "conversion-rate-not-0": "A taxa de conversão não pode ser 0.",
     "convert-into-customer": "convert-into-customer",
     "convert-into-supplier": "convert-to-supplier",
+    "copy": "copy",
+    "copy-p": "copy-p",
     "copy-subaccounts": "copy-subaccounts",
     "core-update": "core-update",
     "cost-price": "Preço de custo",
