@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -125,6 +125,31 @@ class RowButton extends VisualItem
                 $onclick = $this->getOnClickValue($viewName, $jsFunction);
                 return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
                     . '" title="' . $this->label . '">' . $icon . $label . '</button>';
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function renderTop()
+    {
+        if ($this->getLevel() < $this->level) {
+            return '';
+        }
+
+        $cssClass = 'btn btn-sm ';
+        $cssClass .= empty($this->color) ? 'btn-outline-secondary' : $this->colorToClass($this->color, 'btn-outline-');
+        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
+        $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
+
+        switch ($this->type) {
+            case 'js':
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
+                    . '" title="' . $this->label . '">' . $icon . $this->label . '</button>';
+
+            case 'link':
+                return '<a ' . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
+                    . ' title="' . $this->label . '">' . $icon . $this->label . '</a>';
         }
     }
 

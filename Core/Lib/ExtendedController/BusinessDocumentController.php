@@ -222,6 +222,12 @@ abstract class BusinessDocumentController extends PanelController
                 }
 
                 $this->title .= ' ' . $view->model->primaryDescription();
+                $this->addButton($view->getViewName(), [
+                    'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $code,
+                    'icon' => 'fas fa-cut',
+                    'label' => 'copy',
+                    'type' => 'link'
+                ]);
                 break;
         }
     }

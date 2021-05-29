@@ -49,7 +49,7 @@
         </div>
         <div class="row">
             {# -- Top left buttons -- #}
-            <div class="col-md col-6 mb-2">
+            <div class="col-md col-8 mb-2">
                 <div class="btn-group bg-white">
                     <a href="{{ firstView.model.url('list') }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-list fa-fw" aria-hidden="true"></i>
@@ -61,15 +61,17 @@
                 </div>
                 {# -- Options button -- #}
                 {{ _self.optionsButton(fsc, firstView, i18n) }}
-            </div>
-            {# -- Top center buttons -- #}
-            <div class="col-md col-6 text-right">
+                &nbsp;
+                {# -- New button -- #}
                 {% if fsc.hasData and firstView.settings.btnNew %}
                     <a href="{{ firstView.model.url('new') }}" class="btn btn-sm btn-success">
                         <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-lg-inline-block">{{ i18n.trans('new') }}</span>
                     </a>
                 {% endif %}
+                {# -- Action buttons -- #}
+                {{ firstView.getRow('actions').renderTop() | raw }}
+                {# -- Print button -- #}
                 {% if fsc.hasData and firstView.settings.btnPrint %}
                     {{ _self.printButton(fsc, firstView, i18n) }}
                 {% endif %}
@@ -166,7 +168,7 @@
         <div class="dropdown">
             <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-wrench fa-fw" aria-hidden="true"></i>
-                <span class="d-none d-md-inline-block">{{ i18n.trans('options') }}</span>
+                <span class="d-none d-lg-inline-block">{{ i18n.trans('options') }}</span>
             </button>
             <div class="dropdown-menu">
                 {% for viewName, view in fsc.views %}
