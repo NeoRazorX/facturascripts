@@ -344,7 +344,19 @@ class SendMail extends Controller
         if ($model->loadFromCode($modelCode) && \property_exists($className, 'femail')) {
             $model->femail = \date(Cliente::DATE_STYLE);
             if (false === $model->save()) {
-                $this->toolBox()->i18nLog()->error('error-saving-data');
+                $this->toolBox()->i18nLog()->error('record-save-error');
+                return;
+            }
+
+            $subject = $model->getSubject();
+            if (!empty($subject->email)) {
+                return;
+            }
+
+            foreach ($this->newMail->getToAddresses() as $email) {
+                $subject->email = $email;
+                $subject->save();
+                return;
             }
         }
     }
