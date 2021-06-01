@@ -164,23 +164,31 @@
 {% endblock %}
 
 {% macro optionsButton(fsc, firstView, i18n) %}
-    <div class="btn-group">
-        <div class="dropdown">
-            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-wrench fa-fw" aria-hidden="true"></i>
-                <span class="d-none d-lg-inline-block">{{ i18n.trans('options') }}</span>
-            </button>
-            <div class="dropdown-menu">
-                {% for viewName, view in fsc.views %}
-                    {% if view.settings.active and view.columns is not empty %}
-                        <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
-                            <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
-                        </a>
-                    {% endif %}
-                {% endfor %}
+    {% set show = false %}
+    {% for viewName, view in fsc.views %}
+        {% if view.settings.active and view.columns is not empty %}
+            {% set show = true %}
+        {% endif %}
+    {% endfor %}
+    {% if show %}
+        <div class="btn-group">
+            <div class="dropdown">
+                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-wrench fa-fw" aria-hidden="true"></i>
+                    <span class="d-none d-lg-inline-block">{{ i18n.trans('options') }}</span>
+                </button>
+                <div class="dropdown-menu">
+                    {% for viewName, view in fsc.views %}
+                        {% if view.settings.active and view.columns is not empty %}
+                            <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
+                                <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 {% endmacro %}
 
 {% macro printButton(fsc, firstView, i18n) %}
