@@ -145,11 +145,11 @@ class RowButton extends VisualItem
         switch ($this->type) {
             case 'js':
                 return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
-                    . '" title="' . $this->label . '">' . $icon . $this->label . '</button>';
+                    . '" title="' . $this->label . '">' . $icon . $this->label . '</button> ';
 
             case 'link':
                 return '<a ' . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
-                    . ' title="' . $this->label . '">' . $icon . $this->label . '</a>';
+                    . ' title="' . $this->label . '">' . $icon . $this->label . '</a> ';
         }
     }
 
