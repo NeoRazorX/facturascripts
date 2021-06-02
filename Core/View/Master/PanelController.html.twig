@@ -41,7 +41,11 @@
                             <a href="{{ firstView.model.url('list') }}">{{ i18n.trans(pageData.title) }}</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                            {{ firstView.model.primaryDescription() | raw }}
+                            {% if fsc.hasData %}
+                                {{ firstView.model.primaryDescription() | raw }}
+                            {% else %}
+                                {{ i18n.trans('new') }}
+                            {% endif %}
                         </li>
                     </ol>
                 </nav>
