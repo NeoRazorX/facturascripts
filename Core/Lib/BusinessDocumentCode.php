@@ -60,7 +60,7 @@ class BusinessDocumentCode
     }
 
     /**
-     * 
+     *
      * @param SecuenciaDocumento $sequence
      * @param BusinessDocument   $document
      *
@@ -129,7 +129,7 @@ class BusinessDocumentCode
 
     /**
      * Finds sequence for this document.
-     * 
+     *
      * @param BusinessDocument $document
      *
      * @return SecuenciaDocumento
@@ -138,6 +138,7 @@ class BusinessDocumentCode
     {
         $selectedSequence = new SecuenciaDocumento();
         $patron = \substr(\strtoupper($document->modelClassName()), 0, 3) . '{EJE}{SERIE}{NUM}';
+        $long = $selectedSequence->longnumero;
 
         /// find sequence for this document and serie
         $sequence = new SecuenciaDocumento();
@@ -157,6 +158,7 @@ class BusinessDocumentCode
 
             /// use old pattern for the new sequence
             $patron = $seq->patron;
+            $long = $seq->longnumero;
         }
 
         /// sequence not found? Then create
@@ -165,6 +167,7 @@ class BusinessDocumentCode
             $selectedSequence->codserie = $document->codserie;
             $selectedSequence->idempresa = $document->idempresa;
             $selectedSequence->patron = $patron;
+            $selectedSequence->longnumero = $long;
             $selectedSequence->tipodoc = $document->modelClassName();
             $selectedSequence->usarhuecos = ('FacturaCliente' === $document->modelClassName());
             $selectedSequence->save();
