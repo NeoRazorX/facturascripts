@@ -26,25 +26,44 @@ use FacturaScripts\Dinamic\Model\Partida;
  * Description of PartidaAsiento
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class PartidaAsiento extends JoinModel
 {
 
     /**
-     * 
+     *
+     * @var Asiento
+     */
+    private $asiento;
+
+    /**
+     *
      * @param array $data
      */
     public function __construct($data = [])
     {
         parent::__construct($data);
-        $this->setMasterModel(new Asiento());
-
-        /// needed dependency
-        new Partida();
+        $this->setMasterModel(new Partida());
+        $this->asiento = new Asiento();
     }
 
     /**
-     * 
+     * Returns the url where to see / modify the data.
+     *
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'List')
+    {
+        $this->asiento->idasiento = $this->idasiento;
+        return $this->asiento->url($type, $list);
+    }
+
+    /**
+     *
      * @return array
      */
     protected function getFields(): array
@@ -56,12 +75,13 @@ class PartidaAsiento extends JoinModel
             'haber' => 'partidas.haber',
             'idasiento' => 'partidas.idasiento',
             'idpartida' => 'partidas.idpartida',
-            'numero' => 'asientos.numero'
+            'punteada' => 'partidas.punteada',
+            'numero' => 'asientos.numero',
         ];
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function getSQLFrom(): string
@@ -70,7 +90,7 @@ class PartidaAsiento extends JoinModel
     }
 
     /**
-     * 
+     *
      * @return array
      */
     protected function getTables(): array
