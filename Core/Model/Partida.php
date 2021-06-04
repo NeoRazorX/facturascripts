@@ -289,16 +289,15 @@ class Partida extends Base\ModelOnChangeClass
     /**
      * Set dotted status to indicated value.
      *
-     * @param bool $dotted
+     * @param bool $value
      */
-    public function setDottedStatus(bool $dotted)
+    public function setDottedStatus(bool $value)
     {
-        $sql = 'UPDATE ' . self::tableName()
-            . ' SET punteada = ' . (int)$dotted
-            . ' WHERE ' . self::primaryColumn() . ' = ' . $this->primaryColumnValue();
+        $sql = 'UPDATE ' . self::tableName() . ' SET punteada = ' . self::$dataBase->var2str($value)
+            . ' WHERE ' . self::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue());
 
-        if (self::$dataBase->exec($sql)) {
-            $this->punteada = $dotted;
+        if ($value !== $this->punteada && self::$dataBase->exec($sql)) {
+            $this->punteada = $value;
         }
     }
 

@@ -89,14 +89,16 @@ class EditSubcuenta extends EditController
 
         $this->addButton($viewName, [
             'action' => 'dot-accounting-on',
-            'icon' => 'far fa-check-circle',
-            'label' => 'dot-accounting-on',
+            'color' => 'info',
+            'icon' => 'fas fa-check-double',
+            'label' => 'checked',
         ]);
 
         $this->addButton($viewName, [
             'action' => 'dot-accounting-off',
-            'icon' => 'far fa-circle',
-            'label' => 'dot-accounting-off',
+            'color' => 'warning',
+            'icon' => 'far fa-square',
+            'label' => 'unchecked',
         ]);
 
         /// disable column
@@ -112,9 +114,8 @@ class EditSubcuenta extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->setTabsPosition('bottom');
-
         $this->createDepartureView();
+        $this->setTabsPosition('bottom');
     }
 
     /**
@@ -136,13 +137,13 @@ class EditSubcuenta extends EditController
                 return true;
 
             case 'dot-accounting-off':
-            case 'dot-accounting-on':
-                $this->dotAccountingAction( $action == 'dot-accounting-on' );
-                return true;
+                return $this->dotAccountingAction(false);
 
-            default:
-                return parent::execPreviousAction($action);
+            case 'dot-accounting-on':
+                return $this->dotAccountingAction(true);
         }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -220,20 +221,24 @@ class EditSubcuenta extends EditController
     /**
      * Set dotted status to indicated value.
      *
-     * @param bool $dotted
+     * @param bool $value
      */
-    private function dotAccountingAction(bool $dotted)
+    private function dotAccountingAction(bool $value)
     {
         $ids = $this->request->request->get('code', []);
         if (empty($ids)) {
-            return;
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            return false;
         }
 
-        $where = [ new DataBaseWhere('idpartida', \implode(',', $ids), 'IN') ];
+        $where = [new DataBaseWhere('idpartida', \implode(',', $ids), 'IN')];
         $partida = new Partida();
         foreach ($partida->all($where) as $row) {
-            $row->setDottedStatus($dotted);
+            $row->setDottedStatus($value);
         }
+
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        return true;
     }
 
     /**
