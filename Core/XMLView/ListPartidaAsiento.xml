@@ -50,8 +50,7 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="success" fieldname="debe">gt:0</option>
-            <option color="warning" fieldname="haber">gt:0</option>
+            <option color="success" title="dotted" fieldname="punteada">1</option>
         </row>
     </rows>
 </view>

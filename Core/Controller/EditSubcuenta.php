@@ -24,13 +24,14 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Controller to edit a single item from the SubCuenta model
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author PC REDNET S.L.               <luismi@pcrednet.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
@@ -86,6 +87,18 @@ class EditSubcuenta extends EditController
         $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['partidas.concepto']);
 
+        $this->addButton($viewName, [
+            'action' => 'dot-accounting-on',
+            'icon' => 'far fa-check-circle',
+            'label' => 'dot-accounting-on',
+        ]);
+
+        $this->addButton($viewName, [
+            'action' => 'dot-accounting-off',
+            'icon' => 'far fa-circle',
+            'label' => 'dot-accounting-off',
+        ]);
+
         /// disable column
         $this->views[$viewName]->disableColumn('subaccount');
 
@@ -120,6 +133,11 @@ class EditSubcuenta extends EditController
                     $this->setTemplate(false);
                     $this->ledgerReport($code);
                 }
+                return true;
+
+            case 'dot-accounting-off':
+            case 'dot-accounting-on':
+                $this->dotAccountingAction( $action == 'dot-accounting-on' );
                 return true;
 
             default:
@@ -196,6 +214,25 @@ class EditSubcuenta extends EditController
             $view->model->codcuenta = $cuenta->codcuenta;
             $view->model->codejercicio = $cuenta->codejercicio;
             $view->model->idcuenta = $cuenta->idcuenta;
+        }
+    }
+
+    /**
+     * Set dotted status to indicated value.
+     *
+     * @param bool $dotted
+     */
+    private function dotAccountingAction(bool $dotted)
+    {
+        $ids = $this->request->request->get('code', []);
+        if (empty($ids)) {
+            return;
+        }
+
+        $where = [ new DataBaseWhere('idpartida', \implode(',', $ids), 'IN') ];
+        $partida = new Partida();
+        foreach ($partida->all($where) as $row) {
+            $row->setDottedStatus($dotted);
         }
     }
 
