@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Controller that lists the data in table mode
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 abstract class ListController extends BaseController
@@ -313,7 +313,14 @@ abstract class ListController extends BaseController
      */
     protected function loadData($viewName, $view)
     {
-        $view->loadData();
+        $where = [];
+        if ($this->permissions->onlyOwnerData) {
+            $fields = $view->model->getModelFields();
+            if (isset($fields['nick'])) {
+                $where[] = new DataBaseWhere($fields['nick']['name'], $this->user->nick);
+            }
+        }
+        $view->loadData('', $where);
     }
 
     /**

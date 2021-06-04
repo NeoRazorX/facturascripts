@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
  * Controller to manage the data editing
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class EditController extends PanelController
 {
@@ -87,6 +87,15 @@ abstract class EditController extends PanelController
                 $primaryKey = $this->request->request->get($view->model->primaryColumn());
                 $code = $this->request->query->get('code', $primaryKey);
                 $view->loadData($code);
+
+                /// User can access to data?
+                if ($this->permissions->onlyOwnerData &&
+                    isset($view->model->nick) &&
+                    $view->model->nick !== $this->user->nick)
+                {
+                    $this->setTemplate('Error/AccessDenied');
+                    return;
+                }
 
                 /// Data not found?
                 $action = $this->request->request->get('action', '');
