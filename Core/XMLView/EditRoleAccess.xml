@@ -40,6 +40,9 @@
             <column name="allow-delete" order="140">
                 <widget type="checkbox" fieldname="allowdelete" />
             </column>
+            <column name="only-owner-data" order="150">
+                <widget type="checkbox" fieldname="ownerdata" />
+            </column>
         </group>
     </columns>
     <rows>

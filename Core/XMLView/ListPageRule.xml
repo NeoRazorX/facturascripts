@@ -19,7 +19,7 @@
  *
  * Initial description for the controller ListPageRule
  *
- * @author Artex Trading sa <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
 -->
 
 
@@ -39,6 +39,9 @@
         </column>
         <column name="allow-delete" order="110">
             <widget type="checkbox" fieldname="allowdelete" />
+        </column>
+        <column name="only-owner-data" order="120">
+            <widget type="checkbox" fieldname="ownerdata" />
         </column>
     </columns>
 </view>

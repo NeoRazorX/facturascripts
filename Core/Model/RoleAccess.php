@@ -64,6 +64,13 @@ class RoleAccess extends Base\ModelClass
     public $id;
 
     /**
+     * Permision for show all or owner data.
+     *
+     * @var bool
+     */
+    public $ownerdata;
+
+    /**
      * Name of the page.
      *
      * @var string
@@ -94,6 +101,7 @@ class RoleAccess extends Base\ModelClass
             $roleAccess->pagename = $page->name;
             $roleAccess->allowdelete = true;
             $roleAccess->allowupdate = true;
+            $roleAccess->ownerdata = false;
             if (false === $roleAccess->save()) {
                 return false;
             }
@@ -103,7 +111,7 @@ class RoleAccess extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param string $nick
      * @param string $pageName
      *
@@ -121,7 +129,7 @@ class RoleAccess extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return Page
      */
     public function getPage()
@@ -132,7 +140,7 @@ class RoleAccess extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function install()
