@@ -40,7 +40,7 @@
                     <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
                 </widget>
             </column>
-            <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="3" order="130">
+            <column name="fiscal-id" titleurl="EditSettings?activetab=ListIdentificadorFiscal" numcolumns="3" order="130">
                 <widget type="select" fieldname="tipoidfiscal" icon="far fa-id-card" required="true">
                     <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal" />
                 </widget>
