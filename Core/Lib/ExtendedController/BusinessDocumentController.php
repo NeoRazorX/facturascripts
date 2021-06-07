@@ -152,7 +152,7 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
-     * 
+     *
      * @return array
      */
     protected function getBusinessFormData()
@@ -215,6 +215,13 @@ abstract class BusinessDocumentController extends PanelController
 
                 /// data not found?
                 $view->loadData($code);
+
+                /// User can access to data?
+                if (!$this->checkOwnerData($view->model)) {
+                    $this->setTemplate('Error/AccessDenied');
+                    return;
+                }
+
                 $action = $this->request->request->get('action', '');
                 if ('' === $action && false === $view->model->exists()) {
                     $this->toolBox()->i18nLog()->warning('record-not-found');
@@ -292,7 +299,7 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
-     * 
+     *
      * @param string $message
      *
      * @return string
@@ -310,7 +317,7 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
-     * 
+     *
      * @param BusinessDocumentView $view
      * @param array                $data
      *
@@ -393,7 +400,7 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function subjectChangedAction()

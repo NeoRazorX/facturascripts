@@ -89,10 +89,7 @@ abstract class EditController extends PanelController
                 $view->loadData($code);
 
                 /// User can access to data?
-                if ($this->permissions->onlyOwnerData &&
-                    isset($view->model->nick) &&
-                    $view->model->nick !== $this->user->nick)
-                {
+                if (!$this->checkOwnerData($view->model)) {
                     $this->setTemplate('Error/AccessDenied');
                     return;
                 }

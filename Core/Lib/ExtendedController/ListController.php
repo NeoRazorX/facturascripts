@@ -313,13 +313,10 @@ abstract class ListController extends BaseController
      */
     protected function loadData($viewName, $view)
     {
-        $where = [];
-        if ($this->permissions->onlyOwnerData) {
-            $fields = $view->model->getModelFields();
-            if (isset($fields['nick'])) {
-                $where[] = new DataBaseWhere($fields['nick']['name'], $this->user->nick);
-            }
-        }
+        $where = ($this->permissions->onlyOwnerData)
+            ? $this->getOwnerFilter($view->model)
+            : [];
+
         $view->loadData('', $where);
     }
 
