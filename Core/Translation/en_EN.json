@@ -781,6 +781,7 @@
     "only-active": "Only active",
     "only-charged": "Only charged",
     "only-closed": "Only closed",
+    "only-owner-data": "Show only user records",
     "only-suspended": "Only suspended",
     "open-exercise": "Open exercise",
     "opened": "Opened",

@@ -29,7 +29,7 @@
         <null>NO</null>
     </column>
     <column>
-        <name>ownerdata</name>
+        <name>onlyownerdata</name>
         <type>boolean</type>
         <null>NO</null>
         <default>false</default>

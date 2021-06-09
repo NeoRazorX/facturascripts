@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -86,7 +86,7 @@ class ControllerPermissions
                 $this->allowAccess = true;
                 $this->allowDelete = $access->allowdelete ? true : $this->allowDelete;
                 $this->allowUpdate = $access->allowupdate ? true : $this->allowUpdate;
-                $this->onlyOwnerData = $access->ownerdata ? true : $this->onlyOwnerData;
+                $this->onlyOwnerData = $access->onlyownerdata ? true : $this->onlyOwnerData;
             }
         }
     }
@@ -97,14 +97,14 @@ class ControllerPermissions
      * @param int  $accessMode
      * @param bool $delete
      * @param bool $update
-     * @param bool $owner
+     * @param bool $onlyOwner
      */
-    public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $owner)
+    public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $onlyOwner)
     {
         $this->accessMode = $accessMode;
         $this->allowAccess = $access;
         $this->allowDelete = $delete;
         $this->allowUpdate = $update;
-        $this->onlyOwnerData = $owner;
+        $this->onlyOwnerData = $onlyOwner;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -89,18 +89,19 @@ abstract class EditController extends PanelController
                 $view->loadData($code);
 
                 /// User can access to data?
-                if (!$this->checkOwnerData($view->model)) {
+                if (false === $this->checkOwnerData($view->model)) {
                     $this->setTemplate('Error/AccessDenied');
-                    return;
+                    break;
                 }
 
                 /// Data not found?
                 $action = $this->request->request->get('action', '');
-                if ('' === $action && !empty($code) && !$view->model->exists()) {
+                if ('' === $action && !empty($code) && false === $view->model->exists()) {
                     $this->toolBox()->i18nLog()->warning('record-not-found');
-                } else {
-                    $this->title .= ' ' . $view->model->primaryDescription();
+                    break;
                 }
+
+                $this->title .= ' ' . $view->model->primaryDescription();
                 break;
         }
     }

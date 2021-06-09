@@ -217,9 +217,9 @@ abstract class BusinessDocumentController extends PanelController
                 $view->loadData($code);
 
                 /// User can access to data?
-                if (!$this->checkOwnerData($view->model)) {
+                if (false === $this->checkOwnerData($view->model)) {
                     $this->setTemplate('Error/AccessDenied');
-                    return;
+                    break;
                 }
 
                 $action = $this->request->request->get('action', '');
