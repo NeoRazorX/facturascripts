@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Controller;
 
-use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
@@ -33,6 +32,36 @@ use FacturaScripts\Dinamic\Model\RoleAccess;
  */
 class EditRole extends EditController
 {
+
+    /**
+     * 
+     * @return array
+     */
+    public function getAccessRules(): array
+    {
+        $rules = [];
+        $i18n = $this->toolBox()->i18n();
+        foreach ($this->getAllPages() as $page) {
+            $rules[$page->name] = [
+                'menu' => $i18n->trans($page->menu) . ' » ' . $i18n->trans($page->title),
+                'show' => false,
+                'onlyOwner' => false,
+                'update' => false,
+                'delete' => false
+            ];
+        }
+
+        $roleAccessModel = new RoleAccess();
+        $where = [new DataBaseWhere('codrole', $this->getModel()->primaryColumnValue())];
+        foreach ($roleAccessModel->all($where, [], 0, 0) as $roleAccess) {
+            $rules[$roleAccess->pagename]['show'] = true;
+            $rules[$roleAccess->pagename]['onlyOwner'] = $roleAccess->onlyownerdata;
+            $rules[$roleAccess->pagename]['update'] = $roleAccess->allowupdate;
+            $rules[$roleAccess->pagename]['delete'] = $roleAccess->allowdelete;
+        }
+
+        return $rules;
+    }
 
     /**
      * 
@@ -58,43 +87,23 @@ class EditRole extends EditController
     }
 
     /**
-     * Add the indicated page list to the Role group
-     * and all users who are in that group
-     *
-     * @param string $codrole
-     * @param Page[] $pages
-     *
-     * @throws Exception
-     */
-    protected function addRoleAccess($codrole, $pages)
-    {
-        if (false === RoleAccess::addPagesToRole($codrole, $pages)) {
-            throw new Exception($this->toolBox()->i18n()->trans('cancel-process'));
-        }
-    }
-
-    /**
      * Load views
      */
     protected function createViews()
     {
         parent::createViews();
-        $this->setTabsPosition('bottom');
         $this->createViewsAccess();
         $this->createViewsUsers();
+        $this->setTabsPosition('bottom');
     }
 
     /**
      * 
      * @param string $viewName
      */
-    protected function createViewsAccess(string $viewName = 'EditRoleAccess')
+    protected function createViewsAccess(string $viewName = 'RoleAccess')
     {
-        $this->addEditListView($viewName, 'RoleAccess', 'rules', 'fas fa-check-square');
-        $this->views[$viewName]->setInLine(true);
-
-        /// Disable column
-        $this->views[$viewName]->disableColumn('role', true);
+        $this->addHtmlView($viewName, 'Tab/RoleAccess', 'RoleAccess', 'rules', 'fas fa-check-square');
     }
 
     /**
@@ -111,6 +120,61 @@ class EditRole extends EditController
     }
 
     /**
+     * 
+     * @return bool
+     */
+    protected function editRulesAction(): bool
+    {
+        $show = $this->request->request->get('show');
+        $onlyOwner = $this->request->request->get('onlyOwner');
+        $update = $this->request->request->get('update');
+        $delete = $this->request->request->get('delete');
+
+        /// update or delete current access rules
+        $roleAccessModel = new RoleAccess();
+        $where = [new DataBaseWhere('codrole', $this->request->query->get('code'))];
+        $rules = $roleAccessModel->all($where, [], 0, 0);
+        foreach ($rules as $roleAccess) {
+            /// delete rule?
+            if (false === \is_array($show) || false === \in_array($roleAccess->pagename, $show)) {
+                $roleAccess->delete();
+                continue;
+            }
+
+            /// update
+            $roleAccess->onlyownerdata = \is_array($onlyOwner) && \in_array($roleAccess->pagename, $onlyOwner);
+            $roleAccess->allowupdate = \is_array($update) && \in_array($roleAccess->pagename, $update);
+            $roleAccess->allowdelete = \is_array($delete) && \in_array($roleAccess->pagename, $delete);
+            $roleAccess->save();
+        }
+
+        /// add new rules
+        foreach ($show as $pageName) {
+            $found = false;
+            foreach ($rules as $rule) {
+                if ($rule->pagename === $pageName) {
+                    $found = true;
+                    break;
+                }
+            }
+            if ($found) {
+                continue;
+            }
+
+            /// add
+            $newRoleAccess = new RoleAccess();
+            $newRoleAccess->codrole = $this->request->query->get('code');
+            $newRoleAccess->pagename = $pageName;
+            $newRoleAccess->onlyownerdata = \is_array($onlyOwner) && \in_array($pageName, $onlyOwner);
+            $newRoleAccess->allowupdate = \is_array($update) && \in_array($pageName, $update);
+            $newRoleAccess->allowdelete = \is_array($delete) && \in_array($pageName, $delete);
+            $newRoleAccess->save();
+        }
+
+        return true;
+    }
+
+    /**
      * Run the actions that alter data before reading it
      *
      * @param string $action
@@ -120,44 +184,23 @@ class EditRole extends EditController
     protected function execPreviousAction($action)
     {
         switch ($action) {
-            case 'add-rol-access':
-                $codrole = $this->request->get('code', '');
-                $pages = $this->getPages();
-                if (empty($pages) || empty($codrole)) {
-                    return true;
-                }
-
-                $this->dataBase->beginTransaction();
-                try {
-                    $this->addRoleAccess($codrole, $pages);
-                    $this->dataBase->commit();
-                } catch (Exception $e) {
-                    $this->dataBase->rollback();
-                    $this->toolBox()->log()->notice($e->getMessage());
-                }
-                return true;
-
-            default:
-                return parent::execPreviousAction($action);
+            case 'edit-rules':
+                return $this->editRulesAction();
         }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
-     * List of all the pages included in a menu option
-     * and, optionally, included in a submenu option
+     * List of all the pages.
      *
      * @return Page[]
      */
-    protected function getPages()
+    protected function getAllPages()
     {
-        $menu = $this->request->get('menu', '---null---');
-        if ($menu === '---null---') {
-            return [];
-        }
-
         $page = new Page();
-        $where = [new DataBaseWhere('menu', $menu)];
-        return $page->all($where);
+        $order = ['menu' => 'ASC', 'title' => 'ASC'];
+        return $page->all([], $order, 0, 0);
     }
 
     /**
@@ -169,10 +212,8 @@ class EditRole extends EditController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'EditRoleAccess':
-            /// no break
             case 'EditRoleUser':
-                $codrole = $this->getViewModelValue('EditRole', 'codrole');
+                $codrole = $this->getViewModelValue($this->getMainViewName(), 'codrole');
                 $where = [new DataBaseWhere('codrole', $codrole)];
                 $view->loadData('', $where, ['id' => 'DESC']);
                 break;

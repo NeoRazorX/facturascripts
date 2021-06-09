@@ -44,7 +44,7 @@ class Wizard extends Controller
      * 
      * @return array
      */
-    public function getAvaliablePlugins()
+    public function getAvailablePlugins()
     {
         $pluginManager = new PluginManager();
         $installedPlugins = $pluginManager->installedPlugins();
@@ -443,7 +443,7 @@ class Wizard extends Controller
             $this->loadDefaultAccountingPlan($this->empresa->codpais);
         }
 
-        if (empty($this->getAvaliablePlugins())) {
+        if (empty($this->getAvailablePlugins())) {
             $this->saveStep4();
         } else {
             /// change template
