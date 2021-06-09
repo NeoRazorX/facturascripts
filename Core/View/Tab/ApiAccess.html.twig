@@ -1,0 +1,71 @@
+<form action="" method="post">
+    <input type="hidden" name="action" value="edit-rules" />
+    <input type="hidden" name="activetab" value="{{ fsc.getCurrentView().getViewName() }}" />
+    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+    <div class="card shadow">
+        <div class="card-body text-right">
+            <button type="submit" class="btn btn-sm btn-primary">
+                <i class="fas fa-save fa-fw"></i> {{ i18n.trans('save') }}
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>{{ i18n.trans('resource') }}</th>
+                        <th class="text-center">{{ i18n.trans('allow-get-data') }}</th>
+                        <th class="text-center">{{ i18n.trans('allow-put-data') }}</th>
+                        <th class="text-center">{{ i18n.trans('allow-post-data') }}</th>
+                        <th class="text-center">{{ i18n.trans('allow-delete-data') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for resource, rule in fsc.getAccessRules() %}
+                        <tr>
+                            <td>{{ resource }}</td>
+                            <td class="text-center">
+                                {% if rule.allowget %}
+                                    <input type="checkbox" name="allowget[]" value="{{ resource }}" checked="" />
+                                {% else %}
+                                    <input type="checkbox" name="allowget[]" value="{{ resource }}" />
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if rule.allowput %}
+                                    <input type="checkbox" name="allowput[]" value="{{ resource }}" checked="" />
+                                {% else %}
+                                    <input type="checkbox" name="allowput[]" value="{{ resource }}" />
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if rule.allowpost %}
+                                    <input type="checkbox" name="allowpost[]" value="{{ resource }}" checked="" />
+                                {% else %}
+                                    <input type="checkbox" name="allowpost[]" value="{{ resource }}" />
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if rule.allowdelete %}
+                                    <input type="checkbox" name="allowdelete[]" value="{{ resource }}" checked="" />
+                                {% else %}
+                                    <input type="checkbox" name="allowdelete[]" value="{{ resource }}" />
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr class="table-warning">
+                            <td colspan="5">
+                                {{ i18n.trans('no-data') }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-body text-right">
+            <button type="submit" class="btn btn-sm btn-primary">
+                <i class="fas fa-save fa-fw"></i> {{ i18n.trans('save') }}
+            </button>
+        </div>
+    </div>
+</form>
