@@ -255,6 +255,25 @@ abstract class BaseController extends Controller
     }
 
     /**
+     * Check if the active user has permission to view the information
+     * of the active record in the informed model.
+     * 
+     * @param ModelClass|JoinModel $model
+     * @return bool
+     */
+    protected function checkOwnerData($model):bool
+    {
+        if ($this->permissions->onlyOwnerData &&
+            isset($model->nick) &&
+            $model->nick !== $this->user->nick)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Action to delete data.
      *
      * @return bool
@@ -347,6 +366,25 @@ abstract class BaseController extends Controller
             }
         }
         return $result;
+    }
+
+    /**
+     * Returns the where filter to apply to obtain the data
+     * created by the active user.
+     *
+     * @param ModelClass|JoinModel $model
+     * @return DataBaseWhere[]
+     */
+    protected function getOwnerFilter($model)
+    {
+        $fields = $model->getModelFields();
+        if (isset($fields['nick'])) {
+            return [
+                new DataBaseWhere($fields['nick']['name'], $this->user->nick),
+                new DataBaseWhere($fields['nick']['name'], null, 'IS', 'OR'),
+            ];
+        }
+        return [];
     }
 
     /**
