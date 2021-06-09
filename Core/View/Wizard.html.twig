@@ -94,12 +94,14 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', i18n.trans('city')) }}
+                                {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', i18n.trans('city'), '',
+                            {'maxlength': '100', 'required': ''}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                {{ forms.simpleInput('provincia', 'provincia', provincia, 'text', i18n.trans('province')) }}
+                                {{ forms.simpleInput('provincia', 'provincia', provincia, 'text', i18n.trans('province'),
+                            '', {'maxlength': '100', 'required': ''}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
