@@ -50,7 +50,7 @@ class PDFExport extends PDFDocument
             $this->format = $this->getDocumentFormat($model);
         }
 
-        $this->newPage();
+        $this->newFullPage();
         $this->insertHeader($model->idempresa);
         $this->insertBusinessDocHeader($model);
         $this->insertBusinessDocBody($model);
@@ -204,7 +204,7 @@ class PDFExport extends PDFDocument
 
     /**
      * Blank document.
-     * 
+     *
      * @param string $title
      * @param int    $idformat
      * @param string $langcode
