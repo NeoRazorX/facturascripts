@@ -138,6 +138,9 @@ abstract class ListBusinessDocument extends ListController
         $this->addCommonViewFilters($viewName, $modelName);
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
+
+        /// buttons
+        $this->addButtonPrintDocs($viewName);
     }
 
     /**
@@ -169,6 +172,9 @@ abstract class ListBusinessDocument extends ListController
         }
 
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
+
+        /// buttons
+        $this->addButtonPrintDocs($viewName);
     }
 
     /**
@@ -200,13 +206,16 @@ abstract class ListBusinessDocument extends ListController
 
             case 'pay-receipt':
                 return $this->payReceiptAction($codes, $model, $allowUpdate, $this->dataBase, $this->user->nick);
+
+            case 'print-docs':
+                return $this->printDocsAction($codes, $model, $this->exportManager);
         }
 
         return parent::execPreviousAction($action);
     }
 
     /**
-     * 
+     *
      * @param string $name
      *
      * @return string

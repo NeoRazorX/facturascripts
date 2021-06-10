@@ -21,12 +21,13 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Model\Base\Receipt;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Dinamic\Lib\ExportManager;
 
 /**
  * Contains common utilities for grouping and collecting documents.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 trait ListBusinessActionTrait
 {
@@ -105,8 +106,24 @@ trait ListBusinessActionTrait
     }
 
     /**
+     * Adds button to print multiple documents.
+     *
+     * @param string $viewName
+     */
+    protected function addButtonPrintDocs($viewName)
+    {
+        $this->addButton($viewName, [
+            'action' => 'print-docs',
+            'confirm' => 'true',
+            'icon' => 'fas fa-file-powerpoint',
+            'label' => 'print-docs',
+            'type' => 'action'
+        ]);
+    }
+
+    /**
      * Approves selected documents.
-     * 
+     *
      * @param mixed               $codes
      * @param TransformerDocument $model
      * @param bool                $allowUpdate
@@ -155,7 +172,7 @@ trait ListBusinessActionTrait
 
     /**
      * Group selected documents.
-     * 
+     *
      * @param mixed               $codes
      * @param TransformerDocument $model
      *
@@ -176,7 +193,7 @@ trait ListBusinessActionTrait
 
     /**
      * Locks selected invoices.
-     * 
+     *
      * @param mixed               $codes
      * @param TransformerDocument $model
      * @param bool                $allowUpdate
@@ -225,7 +242,7 @@ trait ListBusinessActionTrait
 
     /**
      * Sets selected receipts as paid.
-     * 
+     *
      * @param mixed    $codes
      * @param Receipt  $model
      * @param bool     $allowUpdate
@@ -263,6 +280,27 @@ trait ListBusinessActionTrait
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         $dataBase->commit();
         $model->clear();
+        return true;
+    }
+
+    /**
+     * Print selected documents.
+     *
+     * @param mixed            $codes
+     * @param BusinessDocument $model
+     * @param ExportManager    $exportManager
+     *
+     * @return bool
+     */
+    protected function printDocsAction($codes, $model, $exportManager)
+    {
+        $this->setTemplate(false);
+        $exportManager->newDoc('PDF');
+        foreach ($codes as $iddoc) {
+            $model->loadFromCode($iddoc);
+            $exportManager->addBusinessDocPage($model);
+        }
+        $exportManager->show($this->response);
         return true;
     }
 }
