@@ -93,11 +93,6 @@ class ListCliente extends ListController
         $this->addOrderBy($viewName, ['fechaalta'], 'creation-date', 2);
 
         /// filters
-        $i18n = $this->toolBox()->i18n();
-        $this->addFilterSelectWhere($viewName, 'type', [
-            ['label' => $i18n->trans('customers'), 'where' => [new DataBaseWhere('codcliente', null, 'IS NOT')]]
-        ]);
-
         $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
         $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', $countries);
 
