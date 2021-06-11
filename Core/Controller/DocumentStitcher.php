@@ -150,7 +150,10 @@ class DocumentStitcher extends Controller
     protected function addDocument($newDoc)
     {
         foreach ($this->documents as $doc) {
-            if ($doc->coddivisa != $newDoc->coddivisa || $doc->subjectColumnValue() != $newDoc->subjectColumnValue()) {
+            if ($doc->codalmacen != $newDoc->codalmacen ||
+                $doc->coddivisa != $newDoc->coddivisa ||
+                $doc->idempresa != $newDoc->idempresa ||
+                $doc->subjectColumnValue() != $newDoc->subjectColumnValue()) {
                 $this->toolBox()->i18nLog()->warning('incompatible-document', ['%code%' => $newDoc->codigo]);
                 return false;
             }
@@ -381,6 +384,7 @@ class DocumentStitcher extends Controller
         $model = new $modelClass();
         $where = [
             new DataBaseWhere('editable', true),
+            new DataBaseWhere('codalmacen', $this->documents[0]->codalmacen),
             new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa),
             new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
         ];
