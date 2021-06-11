@@ -18,9 +18,9 @@
      */
 #}
 {% set currentView = fsc.getCurrentView() %}
-{% set mainViewName = fsc.getMainViewName() %}
+{% set firstView = fsc.views | first %}
 
-{% if currentView.model.exists() %}
+{% if firstView.model.exists() %}
     <script>
         function refundAll() {
             var refundableQty = document.getElementsByClassName("refundable");
@@ -43,10 +43,10 @@
     <form method="post">
         <input type="hidden" name="action" value="new-refund"/>
         <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-        <input type="hidden" name="idfactura" value="{{ currentView.model.primaryColumnValue() }}"/>
+        <input type="hidden" name="idfactura" value="{{ firstView.model.primaryColumnValue() }}"/>
         <div class="container-fluid">
             <div class="form-row">
-                {{ _self.customSelect('codserie', 'codserie', appSettings.get('default', 'codserierec', 'R'), fsc.views[mainViewName].getSelectValues('Serie')) }}
+                {{ _self.customSelect('codserie', 'codserie', appSettings.get('default', 'codserierec', 'R'), firstView.getSelectValues('Serie')) }}
                 {{ _self.customInput('fecha', 'fecha', task.end | date('Y-m-d'), 'date', '', {class: 'form-control'}) }}
                 <div class="col text-right">
                     <div class="btn-group">
@@ -72,7 +72,7 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-striped table-hover">
+            <table class="table table-sm table-hover">
                 <thead>
                     <tr>
                         <th width="180">{{ i18n.trans('product') }}</th>
@@ -82,8 +82,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for line in currentView.model.getLines() %}
-                        {% set refunded = currentView.model.refundedItemAmount(line.referencia) %}
+                    {% for line in firstView.model.getLines() %}
+                        {% set refunded = firstView.model.refundedItemAmount(line.referencia) %}
                         <tr>
                             <td>
                                 <input type="text" class="form-control" value="{{ line.referencia | raw }}" readonly="true" />
@@ -107,13 +107,6 @@
             <div class="form-row">
                 <div class="col mb-2">
                     <textarea name="observaciones" class="form-control" placeholder="{{ i18n.trans('observations') }}"></textarea>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="col text-right">
-                    <button type="submit" class="btn btn-sm btn-primary">
-                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
-                    </button>
                 </div>
             </div>
         </div>

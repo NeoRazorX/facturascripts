@@ -564,7 +564,7 @@
     "in-stock": "En stock",
     "inactive": "Inactivo",
     "income-and-expenses": "Ingresos y Gastos",
-    "incompatible-document": "Documento incompatible: %code%. Distinto cliente, proveedor o divisa.",
+    "incompatible-document": "Documento incompatible: %code%. Distinto cliente, proveedor, divisa o almacén.",
     "incompatible-with-facturascripts": "Incompatible con la versión %version% de FacturaScripts",
     "incorrect-accounting-amount": "El importe del asiento es incorrecto.",
     "info": "Información",

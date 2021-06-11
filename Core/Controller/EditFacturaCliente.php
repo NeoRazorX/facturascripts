@@ -218,7 +218,6 @@ class EditFacturaCliente extends SalesDocumentController
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'Refund':
             case 'ListReciboCliente':
                 $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($this->getLineXMLView(), 'idfactura'))];
                 $view->loadData('', $where);
