@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\Request;
  * View definition for its use in ListController
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListView extends BaseView
 {
@@ -140,10 +140,21 @@ class ListView extends BaseView
      */
     public function export(&$exportManager): bool
     {
-        if ($this->count > 0) {
-            return $exportManager->addListModelPage(
-                    $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
-            );
+        if ($this->count < 1) {
+            return true;
+        }
+
+        if (false === $exportManager->addListModelPage($this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title)) {
+            return false;
+        }
+
+        if (false === empty($this->totalAmounts)) {
+            $total = [];
+            foreach ($this->totalAmounts as $key => $value) {
+                $total[$key] = $value['total'];
+            }
+
+            $exportManager->addTablePage(array_keys($total), [$total]);
         }
 
         return true;
@@ -272,7 +283,7 @@ class ListView extends BaseView
     }
 
     /**
-     * 
+     *
      * @param Request $request
      */
     private function processFormDataLoad($request)
