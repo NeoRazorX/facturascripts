@@ -23,9 +23,9 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 /**
  * Controller to list the items in the Impuesto model
  *
- * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
+ * @author Carlos García Gómez              <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
+ * @author Rafael San José Tovar            <rafael.sanjose@x-netdigital.com>
  */
 class ListImpuesto extends ListController
 {

@@ -25,9 +25,9 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 /**
  * Controller to edit a single item from the Impuesto model
  *
- * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez              <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
+ * @author Francesc Pineda Segarra          <francesc.pineda.segarra@gmail.com>
  */
 class EditImpuesto extends EditController
 {
@@ -90,7 +90,7 @@ class EditImpuesto extends EditController
      */
     protected function createViewsZones(string $viewName = 'EditImpuestoZona')
     {
-        $this->addEditListView($viewName, 'ImpuestoZona', 'tax-areas', 'fas fa-globe-americas');
+        $this->addEditListView($viewName, 'ImpuestoZona', 'exceptions', 'fas fa-globe-americas');
         $this->views[$viewName]->disableColumn('tax');
         $this->views[$viewName]->setInLine(true);
     }

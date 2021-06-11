@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2018 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -122,18 +122,5 @@ class ImpuestoZona extends Base\ModelClass
     public static function tableName()
     {
         return 'impuestoszonas';
-    }
-
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListImpuesto?activetab=List')
-    {
-        return parent::url($type, $list);
     }
 }
