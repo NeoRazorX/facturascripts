@@ -365,7 +365,7 @@ class ExportManager
         if (empty(static::$tools)) {
             static::$tools = [
                 'main' => [
-                    'link' => 'ListSecuenciaDocumento?activetab=ListFormatoDocumento',
+                    'link' => 'EditSettings?activetab=ListFormatoDocumento',
                     'description' => 'printing-formats',
                     'icon' => 'fas fa-cog'
                 ],
