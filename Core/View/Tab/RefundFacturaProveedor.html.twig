@@ -47,7 +47,7 @@
         <div class="container-fluid">
             <div class="form-row">
                 {{ _self.customSelect('codserie', 'codserie', appSettings.get('default', 'codserierec', 'R'), fsc.views[mainViewName].getSelectValues('Serie')) }}
-                {{ _self.customInput('fecha', 'fecha', fsc.toolBox().today(), 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
+                {{ _self.customInput('fecha', 'fecha', task.end | date('Y-m-d'), 'date', '', {class: 'form-control'}) }}
                 {{ _self.customInput('numproveedor', 'numproveedor', '', 'text', 'fas fa-hashtag') }}
                 <div class="col text-right">
                     <div class="btn-group">
