@@ -113,6 +113,36 @@ class Dashboard extends Controller
     }
 
     /**
+     * Gets the name of the month for the statistics.
+     *
+     * @param int $previous
+     * @return string
+     */
+    private function getStatsMonth(int $previous)
+    {
+        $mask = '-' . $previous . ' month';
+        return \date('F', \strtotime($mask));
+    }
+
+    /**
+     * Gets the where filter for calc of the statistics.
+     * 
+     * @param string $field
+     * @param int $previous
+     * @return DataBaseWhere[]
+     */
+    private function getStatsWhere(string $field, int $previous)
+    {
+        $mask = '-' . $previous . ' month';
+        $where = [new DataBaseWhere($field, \date('1-m-Y', \strtotime($mask)), '>=')];
+        if ($previous > 0) {
+            $mask = '-' . ($previous - 1) . ' month';
+            $where[] = new DataBaseWhere($field, \date('1-m-Y', \strtotime($mask)), '<');
+        }
+        return $where;
+    }
+
+    /**
      * Set the quick links for data creation.
      * Example: createLinks['EditControllerName'] = 'label'
      */
@@ -228,28 +258,22 @@ class Dashboard extends Controller
     {
         $totalModel = new TotalModel();
         $this->stats['purchases'] = [
-            'this-month' => $totalModel->sum('facturasprov', 'total', [new DataBaseWhere('fecha', \date('1-m-Y'), '>=')]),
-            'last-month' => $totalModel->sum('facturasprov', 'total', [
-                new DataBaseWhere('fecha', \date('1-m-Y'), '<'),
-                new DataBaseWhere('fecha', \date('1-m-Y', \strtotime('-1 month')), '>=')
-            ])
+            $this->getStatsMonth(0) => $totalModel->sum('facturasprov', 'total', $this->getStatsWhere('fecha', 0)),
+            $this->getStatsMonth(1) => $totalModel->sum('facturasprov', 'total', $this->getStatsWhere('fecha', 1)),
+            $this->getStatsMonth(2) => $totalModel->sum('facturasprov', 'total', $this->getStatsWhere('fecha', 2)),
         ];
 
         $this->stats['sales'] = [
-            'this-month' => $totalModel->sum('facturascli', 'total', [new DataBaseWhere('fecha', \date('1-m-Y'), '>=')]),
-            'last-month' => $totalModel->sum('facturascli', 'total', [
-                new DataBaseWhere('fecha', \date('1-m-Y'), '<'),
-                new DataBaseWhere('fecha', \date('1-m-Y', \strtotime('-1 month')), '>=')
-            ])
+            $this->getStatsMonth(0) => $totalModel->sum('facturascli', 'total', $this->getStatsWhere('fecha', 0)),
+            $this->getStatsMonth(1) => $totalModel->sum('facturascli', 'total', $this->getStatsWhere('fecha', 1)),
+            $this->getStatsMonth(2) => $totalModel->sum('facturascli', 'total', $this->getStatsWhere('fecha', 2)),
         ];
 
         $customerModel = new Cliente();
         $this->stats['new-customers'] = [
-            'this-month' => $customerModel->count([new DataBaseWhere('fechaalta', \date('1-m-Y'), '>=')]),
-            'last-month' => $customerModel->count([
-                new DataBaseWhere('fechaalta', \date('1-m-Y'), '<'),
-                new DataBaseWhere('fechaalta', \date('1-m-Y', \strtotime('-1 month')), '>=')
-            ])
+            $this->getStatsMonth(0) => $customerModel->count($this->getStatsWhere('fechaalta', 0)),
+            $this->getStatsMonth(1) => $customerModel->count($this->getStatsWhere('fechaalta', 1)),
+            $this->getStatsMonth(2) => $customerModel->count($this->getStatsWhere('fechaalta', 2)),
         ];
     }
 
