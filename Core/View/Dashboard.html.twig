@@ -76,67 +76,25 @@
     </style>
 {% endblock %}
 
-{% macro sectionNews(fsc, i18n) %}
+{% macro drawStatsBox(fsc, i18n, group, color, ismoney) %}
     <div class="card shadow mb-3">
-        <div class="card-body">
-            <h2 class="h4 mb-3">
-                <i class="fas fa-newspaper fa-fw"></i> {{ i18n.trans('news') }}
-            </h2>
-            <hr/>
-            <div class="row">
-                <ul class="list-unstyled col">
-                    {% for news in fsc.news %}
-                        <li class="media mb-5">
-                            <img src="{{ news.gravatar }}" class="align-self-start rounded shadow mr-3" alt="{{ new.autor }}">
-                            <div class="media-body">
-                                <p>{{ news.texto|raw }}&nbsp;&nbsp;<a href="{{ news.url }}">{{ i18n.trans('read-more') }}</a></p>
-                                <div class="row">
-                                    <div class="col"><i class="fas fa-restroom mr-2"></i>{{ news.autor }}</div>
-                                    <div class="col">{{ news.fecha }}</div>
-                                    <div class="col d-none d-lg-block"><i class="far fa-comments"></i> {{ news.num_comentarios }}</div>
-                                </p>
-                            </div>
-                        </li>
-                    {% else %}
-                        <div class="col-sm">
-                            <div class="alert alert-warning mb-0">
-                                {{ i18n.trans('no-data') }}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </div>
-{% endmacro %}
-
-{% macro sectionLowStock(fsc, i18n) %}
-    <div class="card shadow mb-3">
-        <div class="card-body">
-            <h2 class="h4 mb-0">
-                <i class="fas fa-pallet fa-fw"></i> {{ i18n.trans('minimum-stock') }}
+        <div class="card-body text-white {{ color }}">
+            <h2 class="h5 mb-0">
+                {{ i18n.trans(group) }}
             </h2>
         </div>
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
+            <table class="table mb-0">
+                {% for key, value in fsc.stats[group] %}
                     <tr>
-                        <th>{{ i18n.trans('reference') }}</th>
-                        <th>{{ i18n.trans('warehouse') }}</th>
-                        <th class="text-right">{{ i18n.trans('minimum-stock') }}</th>
-                        <th class="text-right">{{ i18n.trans('available') }}</th>
+                        <td>{{ i18n.trans(key) }}</td>
+                        {% if ismoney %}
+                            <td class="text-right">{{ fsc.toolBox().coins().format(value) }}</td>
+                        {% else %}
+                            <td class="text-right">{{ value }}</td>
+                        {% endif %}
                     </tr>
-                </thead>
-                <tbody>
-                    {% for stock in fsc.lowStock %}
-                        <tr class="clickableRow table-danger" data-href="{{ stock.url() }}">
-                            <td>{{ stock.referencia }}</td>
-                            <td>{{ stock.codalmacen }}</td>
-                            <td class="text-right">{{ fsc.toolBox().numbers().format(stock.stockmin) }}</td>
-                            <td class="text-right">{{ fsc.toolBox().numbers().format(stock.disponible) }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
+                {% endfor %}
             </table>
         </div>
     </div>
@@ -185,6 +143,72 @@
     </div>
 {% endmacro %}
 
+{% macro sectionLowStock(fsc, i18n) %}
+    <div class="card shadow mb-3">
+        <div class="card-body">
+            <h2 class="h4 mb-0">
+                <i class="fas fa-pallet fa-fw"></i> {{ i18n.trans('minimum-stock') }}
+            </h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>{{ i18n.trans('reference') }}</th>
+                        <th>{{ i18n.trans('warehouse') }}</th>
+                        <th class="text-right">{{ i18n.trans('minimum-stock') }}</th>
+                        <th class="text-right">{{ i18n.trans('available') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in fsc.lowStock %}
+                        <tr class="clickableRow table-danger" data-href="{{ stock.url() }}">
+                            <td>{{ stock.referencia }}</td>
+                            <td>{{ stock.codalmacen }}</td>
+                            <td class="text-right">{{ fsc.toolBox().numbers().format(stock.stockmin) }}</td>
+                            <td class="text-right">{{ fsc.toolBox().numbers().format(stock.disponible) }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro sectionNews(fsc, i18n) %}
+    <div class="card shadow mb-3">
+        <div class="card-body">
+            <h2 class="h4 mb-3">
+                <i class="fas fa-newspaper fa-fw"></i> {{ i18n.trans('news') }}
+            </h2>
+            <hr/>
+            <div class="row">
+                <ul class="list-unstyled col">
+                    {% for news in fsc.news %}
+                        <li class="media mb-5">
+                            <img src="{{ news.gravatar }}" class="align-self-start rounded shadow mr-3" alt="{{ new.autor }}">
+                            <div class="media-body">
+                                <p>{{ news.texto|raw }}&nbsp;&nbsp;<a href="{{ news.url }}">{{ i18n.trans('read-more') }}</a></p>
+                                <div class="row">
+                                    <div class="col"><i class="fas fa-restroom mr-2"></i>{{ news.autor }}</div>
+                                    <div class="col">{{ news.fecha }}</div>
+                                    <div class="col d-none d-lg-block"><i class="far fa-comments"></i> {{ news.num_comentarios }}</div>
+                                </p>
+                            </div>
+                        </li>
+                    {% else %}
+                        <div class="col-sm">
+                            <div class="alert alert-warning mb-0">
+                                {{ i18n.trans('no-data') }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
 {% macro sectionReceipts(fsc, i18n) %}
     <div class="card shadow mb-3">
         <div class="card-body">
@@ -222,61 +246,13 @@
 {% macro sectionStats(fsc, i18n) %}
     <div class="row">
         <div class="col-sm">
-            <div class="card shadow mb-3">
-                <div class="card-body text-white bg-danger">
-                    <h2 class="h5 mb-0">
-                        {{ i18n.trans('purchases') }}
-                    </h2>
-                </div>
-                <div class="table-responsive">
-                    <table class="table mb-0">
-                        {% for key, value in fsc.stats['purchases'] %}
-                            <tr>
-                                <td>{{ i18n.trans(key) }}</td>
-                                <td class="text-right">{{ fsc.toolBox().coins().format(value) }}</td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                </div>
-            </div>
+            {{ _self.drawStatsBox(fsc, i18n, 'purchases', 'bg-danger', true) }}
         </div>
         <div class="col-sm">
-            <div class="card shadow mb-3">
-                <div class="card-body text-white bg-success">
-                    <h2 class="h5 mb-0">
-                        {{ i18n.trans('sales') }}
-                    </h2>
-                </div>
-                <div class="table-responsive">
-                    <table class="table mb-0">
-                        {% for key, value in fsc.stats['sales'] %}
-                            <tr>
-                                <td>{{ i18n.trans(key) }}</td>
-                                <td class="text-right">{{ fsc.toolBox().coins().format(value) }}</td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                </div>
-            </div>
+            {{ _self.drawStatsBox(fsc, i18n, 'sales', 'bg-success', true) }}
         </div>
         <div class="col-sm">
-            <div class="card shadow mb-3">
-                <div class="card-body text-white bg-info">
-                    <h2 class="h5 mb-0">
-                        {{ i18n.trans('new-customers') }}
-                    </h2>
-                </div>
-                <div class="table-responsive">
-                    <table class="table mb-0">
-                        {% for key, value in fsc.stats['new-customers'] %}
-                            <tr>
-                                <td>{{ i18n.trans(key) }}</td>
-                                <td class="text-right">{{ value }}</td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                </div>
-            </div>
+            {{ _self.drawStatsBox(fsc, i18n, 'new-customers', 'bg-info', false) }}
         </div>
     </div>
 {% endmacro %}
