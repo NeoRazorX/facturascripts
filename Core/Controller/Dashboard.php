@@ -126,7 +126,7 @@ class Dashboard extends Controller
 
     /**
      * Gets the where filter for calc of the statistics.
-     * 
+     *
      * @param string $field
      * @param int $previous
      * @return DataBaseWhere[]
@@ -267,6 +267,20 @@ class Dashboard extends Controller
             $this->getStatsMonth(0) => $totalModel->sum('facturascli', 'total', $this->getStatsWhere('fecha', 0)),
             $this->getStatsMonth(1) => $totalModel->sum('facturascli', 'total', $this->getStatsWhere('fecha', 1)),
             $this->getStatsMonth(2) => $totalModel->sum('facturascli', 'total', $this->getStatsWhere('fecha', 2)),
+        ];
+
+        $this->stats['taxes'] = [
+            $this->getStatsMonth(0) =>
+                + $totalModel->all('facturascli', $this->getStatsWhere('fecha', 0), ['total' => 'totaliva + totalrecargo'])[0]->totals['total']
+                - $totalModel->all('facturasprov', $this->getStatsWhere('fecha', 0), ['total' => 'totaliva + totalrecargo'])[0]->totals['total'],
+
+            $this->getStatsMonth(1) =>
+                + $totalModel->all('facturascli', $this->getStatsWhere('fecha', 1), ['total' => 'totaliva + totalrecargo'])[0]->totals['total']
+                - $totalModel->all('facturasprov', $this->getStatsWhere('fecha', 1), ['total' => 'totaliva + totalrecargo'])[0]->totals['total'],
+
+            $this->getStatsMonth(2) =>
+                + $totalModel->all('facturascli', $this->getStatsWhere('fecha', 2), ['total' => 'totaliva + totalrecargo'])[0]->totals['total']
+                - $totalModel->all('facturasprov', $this->getStatsWhere('fecha', 2), ['total' => 'totaliva + totalrecargo'])[0]->totals['total'],
         ];
 
         $customerModel = new Cliente();
