@@ -188,11 +188,10 @@
                         <li class="media mb-5">
                             <img src="{{ news.gravatar }}" class="align-self-start rounded shadow mr-3" alt="{{ new.autor }}">
                             <div class="media-body">
-                                <p>{{ news.texto|raw }}&nbsp;&nbsp;<a href="{{ news.url }}">{{ i18n.trans('read-more') }}</a></p>
-                                <div class="row">
-                                    <div class="col"><i class="fas fa-restroom mr-2"></i>{{ news.autor }}</div>
-                                    <div class="col">{{ news.fecha }}</div>
-                                    <div class="col d-none d-lg-block"><i class="far fa-comments"></i> {{ news.num_comentarios }}</div>
+                                <p>
+                                    {{ news.texto|raw }}&nbsp;&nbsp;<a href="{{ news.url }}">{{ i18n.trans('read-more') }}</a>
+                                    <br>
+                                    <small>{{ news.fecha }}</small>
                                 </p>
                             </div>
                         </li>
@@ -245,13 +244,16 @@
 
 {% macro sectionStats(fsc, i18n) %}
     <div class="row">
-        <div class="col-sm">
+        <div class="col-sm-6 col-lg-3">
             {{ _self.drawStatsBox(fsc, i18n, 'purchases', 'bg-danger', true) }}
         </div>
-        <div class="col-sm">
+        <div class="col-sm-6 col-lg-3">
             {{ _self.drawStatsBox(fsc, i18n, 'sales', 'bg-success', true) }}
         </div>
-        <div class="col-sm">
+        <div class="col-sm-6 col-lg-3">
+            {{ _self.drawStatsBox(fsc, i18n, 'taxes', 'bg-warning', true) }}
+        </div>
+        <div class="col-sm-6 col-lg-3">
             {{ _self.drawStatsBox(fsc, i18n, 'new-customers', 'bg-info', false) }}
         </div>
     </div>
