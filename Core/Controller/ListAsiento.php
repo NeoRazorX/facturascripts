@@ -95,7 +95,7 @@ class ListAsiento extends ListController
         $this->addOrderBy($viewName, ['fecha', 'idasiento'], 'date', 2);
         $this->addOrderBy($viewName, ['numero', 'idasiento'], 'number');
         $this->addOrderBy($viewName, ['importe', 'idasiento'], 'amount');
-        $this->addSearchFields($viewName, ['concepto', 'documento', 'CAST(numero AS text)']);
+        $this->addSearchFields($viewName, ['concepto', 'documento', 'CAST(numero AS char(255))']);
 
         /// filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
@@ -168,7 +168,7 @@ class ListAsiento extends ListController
             $this->addOrderBy($viewName, ['fecha', 'idasiento'], 'date', 2);
             $this->addOrderBy($viewName, ['numero', 'idasiento'], 'number');
             $this->addOrderBy($viewName, ['importe', 'idasiento'], 'amount');
-            $this->addSearchFields($viewName, ['concepto', 'documento', 'CAST(numero AS text)']);
+            $this->addSearchFields($viewName, ['concepto', 'documento', 'CAST(numero AS char(255))']);
 
             /// filter
             $this->addFilterSelectWhere($viewName, 'status', [
