@@ -24,7 +24,7 @@ var hsTable = null;
 
 function beforeChange(changes, source) {
     // Check if the value has changed. Not Multiselection
-    if (changes !== null && changes[0][2] !== changes[0][3]) {
+    if (changes !== null && changes[0][2] != changes[0][3]) {
         for (var i = 0; i < businessDocViewAutocompleteColumns.length; i++) {
             if (changes[0][1] === businessDocViewAutocompleteColumns[i]) {
                 // apply for autocomplete columns
