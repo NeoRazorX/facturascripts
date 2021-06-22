@@ -19,7 +19,6 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -113,23 +112,11 @@ class CopyModel extends Controller
     protected function autocompleteAction()
     {
         $this->setTemplate(false);
-        $data = $this->request->request->all();
-        $where = [];
-        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
-            $value = $this->request->get($field);
-            $where[] = new DataBaseWhere($field, $value, '=', $operation);
-        }
-
         $results = [];
         $utils = $this->toolBox()->utils();
-        foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term'], $where) as $value) {
+        $data = $this->request->request->all();
+        foreach ($this->codeModel->search($data['source'], $data['fieldcode'], $data['fieldtitle'], $data['term']) as $value) {
             $results[] = ['key' => $utils->fixHtml($value->code), 'value' => $utils->fixHtml($value->description)];
-        }
-
-        if (empty($results) && '0' == $data['strict']) {
-            $results[] = ['key' => $data['term'], 'value' => $data['term']];
-        } elseif (empty($results)) {
-            $results[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-data')];
         }
 
         $this->response->setContent(\json_encode($results));

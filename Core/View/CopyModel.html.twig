@@ -103,7 +103,7 @@
                                     {% for line in fsc.model.getLines() %}
                                         <tr>
                                             <td>{{ line.referencia }}</td>
-                                            <td>{{ line.descripcion | nl2br | raw }}</td>
+                                            <td>{{ line.descripcion | raw | nl2br }}</td>
                                             <td class="text-right">{{ line.cantidad }}</td>
                                             <td class="text-right">{{ line.pvpunitario }}</td>
                                         </tr>
