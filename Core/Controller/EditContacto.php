@@ -166,6 +166,12 @@ class EditContacto extends EditController
         }
     }
 
+    /**
+     * 
+     * @param string  $action
+     *
+     * @return bool
+     */
     protected function execPreviousAction($action)
     {
         switch ($action) {
@@ -182,7 +188,7 @@ class EditContacto extends EditController
                 return $this->unlinkFileAction();
         }
 
-        parent::execPreviousAction($action);
+        return parent::execPreviousAction($action);
     }
 
     /**
