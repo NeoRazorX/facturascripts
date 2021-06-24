@@ -68,16 +68,7 @@ class BusinessDocumentCode
      */
     protected static function getNewNumber(&$sequence, &$document)
     {
-        /// get previous
-        $order = \strtolower(\FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
-        $where = [
-            new DataBaseWhere('codserie', $sequence->codserie),
-            new DataBaseWhere('idempresa', $sequence->idempresa)
-        ];
-        if ($sequence->codejercicio) {
-            $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
-        }
-        $previous = $document->all($where, $order, 0, self::GAP_LIMIT);
+        $previous = static::getPrevious($sequence, $document);
 
         /// find maximum number for this sequence data
         foreach ($previous as $lastDoc) {
@@ -95,11 +86,7 @@ class BusinessDocumentCode
             $preDate = $document->fecha;
             $preHour = $document->hora;
             foreach ($previous as $preDoc) {
-				if ( $expectedNumber < $sequence->inicio  ) {
-                    break;	// we are below the initial sequence number, so skip (no hole found)
-				}
-				
-                if ($expectedNumber != $preDoc->numero) {
+                if ($expectedNumber != $preDoc->numero && $expectedNumber >= $sequence->inicio) {
                     /// hole found
                     $document->fecha = $preDate;
                     $document->hora = $preHour;
@@ -129,6 +116,26 @@ class BusinessDocumentCode
         $sequence->save();
 
         return (string) $newNumber;
+    }
+
+    /**
+     *
+     * @param SecuenciaDocumento $sequence
+     * @param BusinessDocument   $document
+     *
+     * @return BusinessDocument[]
+     */
+    protected static function getPrevious(&$sequence, &$document)
+    {
+        $order = \strtolower(\FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
+        $where = [
+            new DataBaseWhere('codserie', $sequence->codserie),
+            new DataBaseWhere('idempresa', $sequence->idempresa)
+        ];
+        if ($sequence->codejercicio) {
+            $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
+        }
+        return $document->all($where, $order, 0, self::GAP_LIMIT);
     }
 
     /**
