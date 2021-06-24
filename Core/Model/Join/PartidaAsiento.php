@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,8 +25,8 @@ use FacturaScripts\Dinamic\Model\Partida;
 /**
  * Description of PartidaAsiento
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Carlos Garcia Gomez              <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
  */
 class PartidaAsiento extends JoinModel
 {
@@ -76,7 +76,7 @@ class PartidaAsiento extends JoinModel
             'idasiento' => 'partidas.idasiento',
             'idpartida' => 'partidas.idpartida',
             'punteada' => 'partidas.punteada',
-            'numero' => 'asientos.numero',
+            'numero' => 'asientos.numero'
         ];
     }
 

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Dinamic\Model\Base\JoinModel;
@@ -25,8 +24,9 @@ use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 /**
  * Model Variante with Producto data
  *
- * @author Raul Jimenez  <raul.jimenez@nazcanetworks.com>
- * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Raul Jimenez                     <raul.jimenez@nazcanetworks.com>
+ * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
+ * @author Carlos García Gómez              <carlos@facturascripts.com>
  */
 class VarianteProducto extends JoinModel
 {
@@ -40,11 +40,13 @@ class VarianteProducto extends JoinModel
     public function __construct($data = [])
     {
         parent::__construct($data);
-        $this->setMasterModel( new DinProducto() );
+        $this->setMasterModel(new DinProducto());
     }
 
     /**
-     * List of fields or columns to select clausule
+     * List of fields or columns to select clausule.
+     * 
+     * @return array
      */
     protected function getFields(): array
     {
@@ -61,27 +63,27 @@ class VarianteProducto extends JoinModel
             'precio' => 'variantes.precio',
             'referencia' => 'variantes.referencia',
             'stockfis' => 'variantes.stockfis',
-            'descripcion' => 'productos.descripcion',
+            'descripcion' => 'productos.descripcion'
         ];
     }
 
     /**
-     * List of tables related to from clausule
+     * List of tables related to from clausule.
+     * 
+     * @return string
      */
     protected function getSQLFrom(): string
     {
-        return 'variantes'
-            . ' LEFT JOIN productos ON productos.idproducto = variantes.idproducto';
+        return 'variantes LEFT JOIN productos ON productos.idproducto = variantes.idproducto';
     }
 
     /**
      * List of tables required for the execution of the view.
+     * 
+     * @return array
      */
     protected function getTables(): array
     {
-        return [
-            'productos',
-            'variantes',
-        ];
+        return ['productos', 'variantes'];
     }
 }

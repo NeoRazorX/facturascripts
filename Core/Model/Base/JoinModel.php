@@ -32,8 +32,8 @@ use FacturaScripts\Core\Base\ToolBox;
  * the data modification actions. This means that when inserting, modifying or deleting,
  * only the operation on the indicated master model is performed.
  *
- * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
+ * @author Carlos García Gómez              <carlos@facturascripts.com>
  */
 abstract class JoinModel
 {

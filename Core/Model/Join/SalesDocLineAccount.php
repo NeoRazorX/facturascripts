@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -128,8 +128,7 @@ class SalesDocLineAccount extends JoinModel
      */
     protected function getSQLFrom(): string
     {
-        return 'lineasfacturascli'
-            . ' LEFT JOIN productos ON productos.idproducto = lineasfacturascli.idproducto';
+        return 'lineasfacturascli LEFT JOIN productos ON productos.idproducto = lineasfacturascli.idproducto';
     }
 
     /**
@@ -139,9 +138,6 @@ class SalesDocLineAccount extends JoinModel
      */
     protected function getTables(): array
     {
-        return [
-            'lineasfacturascli',
-            'productos'
-        ];
+        return ['lineasfacturascli', 'productos'];
     }
 }
