@@ -45,7 +45,7 @@ class EditSettings extends PanelController
         $data = parent::getPageData();
         $data['menu'] = 'admin';
         $data['title'] = 'control-panel';
-        $data['icon'] = 'fas fa-cogs';
+        $data['icon'] = 'fas fa-tools';
         return $data;
     }
 
