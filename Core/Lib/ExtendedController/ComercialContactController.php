@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
@@ -42,23 +43,20 @@ abstract class ComercialContactController extends EditController
      * @param string $viewName
      */
     abstract protected function setCustomWidgetValues($viewName);
-    
+
     /**
      * Check that the subaccount length is correct.
      * 
      * @param  integer $lenghtsubcuenta
      */
     protected function checkLengthSubaccount($lenghtsubcuenta)
-    {   
-        $codempresa = $this->request->cookies->get('fsCompany');
-        $exercice = new \FacturaScripts\Core\Model\Ejercicio();
-        $where = [new DataBaseWhere('idempresa', $codempresa)];
-        $order = ['fechafin' => 'DESC'];
-        $lastexercice = $exercice->all($where, $order, 0, 1);
-        $longsubcuenta = $lastexercice[0]->longsubcuenta;
-        if ($lenghtsubcuenta != $longsubcuenta) {
-            $this->toolBox()->i18nLog()->warning('invalid-subaccount-lenght', ['%lenghtsubcuenta%' => $longsubcuenta]);
-        }        
+    {
+        $exercise = new DinEjercicio();
+        foreach ($exercise->all([], [], 0, 0) as $exe) {
+            if ($exe->isOpened() && $lenghtsubcuenta != $exe->longsubcuenta) {
+                $this->toolBox()->i18nLog()->warning('invalid-subaccount-lenght', ['%lenghtsubcuenta%' => $exe->longsubcuenta]);
+            }
+        }
     }
 
     /**
