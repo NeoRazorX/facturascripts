@@ -151,6 +151,7 @@ class EditApiKey extends EditController
             $newAccess->save();
         }
 
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         return true;
     }
 
