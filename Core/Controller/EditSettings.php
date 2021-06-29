@@ -221,12 +221,10 @@ class EditSettings extends PanelController
      * 
      * @param string $viewName
      */
-    protected function createViewsIdFiscal(string $viewName = 'ListIdentificadorFiscal')
+    protected function createViewsIdFiscal(string $viewName = 'EditIdentificadorFiscal')
     {
-        $this->addListView($viewName, 'IdentificadorFiscal', 'fiscal-id', 'far fa-id-card');
-        $this->views[$viewName]->addSearchFields(['tipoidfiscal']);
-        $this->views[$viewName]->addOrderBy(['codeid'], 'code');
-        $this->views[$viewName]->addOrderBy(['tipoidfiscal'], 'name', 1);
+        $this->addEditListView($viewName, 'IdentificadorFiscal', 'fiscal-id', 'far fa-id-card');
+        $this->views[$viewName]->setInLine(true);
     }
 
     /**
@@ -373,7 +371,7 @@ class EditSettings extends PanelController
                 }
                 break;
 
-            case 'ListIdentificadorFiscal':
+            case 'EditIdentificadorFiscal':
                 $view->loadData();
                 break;
 
