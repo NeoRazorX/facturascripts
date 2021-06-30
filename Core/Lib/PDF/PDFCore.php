@@ -95,6 +95,13 @@ abstract class PDFCore extends ExportBase
     protected $tableWidth = 0.0;
 
     /**
+     * Page number set identification.
+     *
+     * @var int
+     */
+    private $pageNumber;
+
+    /**
      * PDFExport constructor.
      */
     public function __construct()
@@ -106,7 +113,7 @@ abstract class PDFCore extends ExportBase
 
     /**
      * Sets default orientation.
-     * 
+     *
      * @param string $orientation
      */
     public function setOrientation(string $orientation)
@@ -115,7 +122,7 @@ abstract class PDFCore extends ExportBase
     }
 
     /**
-     * 
+     *
      * @param AttachedFile $file
      * @param int|float    $xPos
      * @param int|float    $yPos
@@ -141,7 +148,7 @@ abstract class PDFCore extends ExportBase
     }
 
     /**
-     * 
+     *
      * @param string    $filePath
      * @param int|float $xPos
      * @param int|float $yPos
@@ -195,7 +202,7 @@ abstract class PDFCore extends ExportBase
     }
 
     /**
-     * 
+     *
      * @param string $value
      *
      * @return string
@@ -279,6 +286,21 @@ abstract class PDFCore extends ExportBase
     }
 
     /**
+     * Forces a page break for a new page group.
+     */
+    protected function newFullPage()
+    {
+        if ($this->pdf === null) {
+            $this->newPage();
+            return;
+        }
+
+        $this->pdf->ezStopPageNumbers (1,1, $this->pageNumber);
+        $this->pdf->ezNewPage();
+        $this->pageNumber = $this->pdf->ezStartPageNumbers(self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, 'left', '{PAGENUM} / {TOTALPAGENUM}');
+        $this->insertedHeader = false;
+    }
+    /**
      * Adds a new page.
      *
      * @param string $orientation
@@ -294,7 +316,7 @@ abstract class PDFCore extends ExportBase
 
             $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
 
-            $this->pdf->ezStartPageNumbers(self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, 'left', '{PAGENUM} / {TOTALPAGENUM}');
+            $this->pageNumber = $this->pdf->ezStartPageNumbers(self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, 'left', '{PAGENUM} / {TOTALPAGENUM}');
         } elseif ($this->pdf->y < 200) {
             $this->pdf->ezNewPage();
             $this->insertedHeader = false;
