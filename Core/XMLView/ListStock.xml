@@ -28,7 +28,7 @@
             <widget type="textarea" fieldname="descripcion" />
         </column>
         <column name="warehouse" order="110">
-            <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true">
+            <widget type="select" fieldname="codalmacen">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
             </widget>
         </column>

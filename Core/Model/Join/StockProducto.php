@@ -19,7 +19,7 @@
 namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Dinamic\Model\Base\JoinModel;
-use FacturaScripts\Dinamic\Model\Producto as DinProducto;
+use FacturaScripts\Dinamic\Model\Producto;
 
 /**
  * Model Stock with Producto data
@@ -40,7 +40,7 @@ class StockProducto extends JoinModel
     public function __construct($data = [])
     {
         parent::__construct($data);
-        $this->setMasterModel(new DinProducto());
+        $this->setMasterModel(new Producto());
     }
 
     /**
@@ -51,37 +51,51 @@ class StockProducto extends JoinModel
     protected function getFields(): array
     {
         return [
-            'codalmacen' => 'stocks.codalmacen',
             'cantidad' => 'stocks.cantidad',
+            'codalmacen' => 'stocks.codalmacen',
+            'codfabricante' => 'productos.codfabricante',
+            'codfamilia' => 'productos.codfamilia',
+            'coste' => 'variantes.coste',
+            'descripcion' => 'productos.descripcion',
             'disponible' => 'stocks.disponible',
             'idproducto' => 'stocks.idproducto',
             'idstock' => 'stocks.idstock',
+            'precio' => 'variantes.precio',
             'pterecibir' => 'stocks.pterecibir',
             'referencia' => 'stocks.referencia',
             'reservada' => 'stocks.reservada',
             'stockmax' => 'stocks.stockmax',
             'stockmin' => 'stocks.stockmin',
-            'descripcion' => 'productos.descripcion'
+            'total' => 'sum(stocks.cantidad*variantes.coste)'
         ];
     }
 
     /**
-     * List of tables related to from clausule.
+     * 
+     * @return string
+     */
+    protected function getGroupFields(): string
+    {
+        return 'stocks.referencia, stocks.codalmacen';
+    }
+
+    /**
      * 
      * @return string
      */
     protected function getSQLFrom(): string
     {
-        return 'stocks LEFT JOIN productos on productos.idproducto = stocks.idproducto';
+        return 'stocks'
+            . ' LEFT JOIN variantes ON variantes.referencia = stocks.referencia'
+            . ' LEFT JOIN productos ON productos.idproducto = variantes.idproducto';
     }
 
     /**
-     * List of tables required for the execution of the view.
      * 
      * @return array
      */
     protected function getTables(): array
     {
-        return ['productos', 'stocks'];
+        return ['productos', 'stocks', 'variantes'];
     }
 }
