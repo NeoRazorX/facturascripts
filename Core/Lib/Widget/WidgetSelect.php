@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Dinamic\Model\CodeModel;
 use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**
  * Description of WidgetSelect
@@ -47,6 +48,18 @@ class WidgetSelect extends BaseWidget
      * @var string
      */
     protected $fieldtitle;
+
+     /**
+     *
+     * @var string
+     */
+    protected $action;
+
+     /**
+     *
+     * @var string
+     */
+    protected $filter;
 
     /**
      *
@@ -84,6 +97,10 @@ class WidgetSelect extends BaseWidget
                 continue;
             }
 
+            if(isset($child['asyncsource'])){
+                 $this->setActionData($child);
+            }
+
             if (isset($child['source'])) {
                 $this->setSourceData($child);
                 break;
@@ -92,10 +109,21 @@ class WidgetSelect extends BaseWidget
                 break;
             }
 
+
+
             $this->setValuesFromArray($data['children'], $this->translate, !$this->required, 'text');
             break;
         }
     }
+
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
+    }
+
 
     /**
      * Obtains the configuration of the datasource used in obtaining data
@@ -233,38 +261,65 @@ class WidgetSelect extends BaseWidget
      *
      * @return string
      */
-    protected function inputHtml($type = 'text', $extraClass = '')
+    protected function inputHtml($type = '', $extraClass = '')
     {
+        $dataFields='';
+
+
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
+
         if ($this->readonly()) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
                 . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>';
         }
+        if ($this->action){
+            $class = $this->combineClasses($this->css('form-control'), $this->class, 'widget-action-select');
+            $dataFields = 'data-action="' . $this->action . '" ' . 'data-filter="'. $this->filter . '" ' . 'data-fieldcode="'. $this->fieldcode . '" ' . 'data-fieldtitle="'. $this->fieldtitle . '" ' . 'data-source="'. $this->source . '" ' ;
+        }
+
 
         $found = false;
-        $html = '<select name="' . $this->fieldname . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '>';
-        foreach ($this->values as $option) {
-            $title = empty($option['title']) ? $option['value'] : $option['title'];
+        $html = '<select name="' . $this->fieldname . '" class="' . $class . '"' . $this->inputHtmlExtraParams(). $dataFields . '>';
+        
+          //El select se llena por AJAX vinculado al valor de otro select
+      
+             foreach ($this->values as $option) {
+                $title = empty($option['title']) ? $option['value'] : $option['title'];
 
-            /// don't use strict comparation (===)
-            if ($option['value'] == $this->value) {
-                $found = true;
-                $html .= '<option value="' . $option['value'] . '" selected="">' . $title . '</option>';
-                continue;
+                /// don't use strict comparation (===)
+                if ($option['value'] == $this->value) {
+                    $found = true;
+                    $html .= '<option value="' . $option['value'] . '" selected="">' . $title . '</option>';
+                    continue;
+                }
+
+                $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
             }
 
-            $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
-        }
+            /// value not found?
+            if (!$found && !empty($this->value)) {
+                $html .= '<option value="' . $this->value . '" selected="">'
+                    . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
+                    . '</option>';
+            }
+                
 
-        /// value not found?
-        if (!$found && !empty($this->value)) {
-            $html .= '<option value="' . $this->value . '" selected="">'
-                . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
-                . '</option>';
-        }
 
         $html .= '</select>';
         return $html;
+    }
+
+      /**
+     * Set datasource data and Load data from Model into values array
+     */
+    protected function setActionData(array $child, bool $loadData = true)
+    {
+        // The values are filled in automatically by the view controller
+        // according to the information entered by the user.
+        $this->fieldcode = $child['fieldcode'] ?? '';
+        $this->fieldtitle = $child['fieldtitle'] ?? '';
+        $this->action = $child['asyncsource'];
+        $this->filter = $child['filter'];
     }
 
     /**
