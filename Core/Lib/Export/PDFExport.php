@@ -176,7 +176,7 @@ class PDFExport extends PDFDocument
             'cols' => []
         ];
         foreach (\array_keys($headers) as $key) {
-            if (\in_array($key, ['debe', 'haber', 'saldo', 'saldoprev'])) {
+            if (\in_array($key, ['debe', 'haber', 'saldo', 'saldoprev', 'total'])) {
                 $tableOptions['cols'][$key]['justification'] = 'right';
             }
         }
@@ -204,7 +204,7 @@ class PDFExport extends PDFDocument
 
     /**
      * Blank document.
-     * 
+     *
      * @param string $title
      * @param int    $idformat
      * @param string $langcode
