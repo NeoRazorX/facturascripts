@@ -99,7 +99,7 @@ class ControllerPermissions
      * @param bool $update
      * @param bool $onlyOwner
      */
-    public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $onlyOwner)
+    public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $onlyOwner = false)
     {
         $this->accessMode = $accessMode;
         $this->allowAccess = $access;
