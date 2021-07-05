@@ -70,6 +70,10 @@ $(document).ready(function () {
                         ui.item.value = value[0];
                     }
                 }
+            },
+            open: function (event, ui) {
+                $(this).autocomplete('widget').css('z-index', 1500);
+                return false;
             }
         });
     });
