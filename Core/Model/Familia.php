@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -72,6 +72,16 @@ class Familia extends Base\ModelClass
     public $madre;
 
     /**
+     * Returns the name of the column that is the primary key of the model.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'codfamilia';
+    }
+
+    /**
      * Get the accounting sub-account for purchases.
      *
      * @param string $code
@@ -84,13 +94,15 @@ class Familia extends Base\ModelClass
     }
 
     /**
-     * Returns the name of the column that is the primary key of the model.
+     * Get the accounting sub-account for sales.
+     *
+     * @param string $code
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function saleSubAccount($code)
     {
-        return 'codfamilia';
+        return self::getSubaccountFromFamily($code, 'codsubcuentaven');
     }
 
     /**
@@ -122,7 +134,7 @@ class Familia extends Base\ModelClass
             return false;
         }
 
-        if (empty($this->descripcion) || strlen($this->descripcion) > 100) {
+        if (empty($this->descripcion) || \strlen($this->descripcion) > 100) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '100']
@@ -130,23 +142,11 @@ class Familia extends Base\ModelClass
             return false;
         }
 
-        if ($this->madre === $this->codfamilia) {
+        if (empty($this->madre) || $this->madre === $this->codfamilia) {
             $this->madre = null;
         }
 
         return parent::test();
-    }
-
-    /**
-     * Get the accounting sub-account for sales.
-     *
-     * @param string $code
-     *
-     * @return string
-     */
-    public static function saleSubAccount($code)
-    {
-        return self::getSubaccountFromFamily($code, 'codsubcuentaven');
     }
 
     /**
