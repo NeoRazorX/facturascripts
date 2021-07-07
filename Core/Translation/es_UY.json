@@ -13,6 +13,7 @@
     "account": "Cuenta",
     "account-balance": "Saldo de la cuenta",
     "account-code": "Código de cuenta",
+    "account-code-lower-than-parent": "Código de cuenta %code% es más corto que el del padre",
     "account-data-missing": "Faltan datos en la cuenta",
     "account-dot-code": "Punto para autocompletar ceros. Ejemplo: 11.1 = 1100000001",
     "account-length": "Longitud de subcuenta",

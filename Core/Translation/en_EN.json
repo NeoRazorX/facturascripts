@@ -13,6 +13,7 @@
     "account": "Account",
     "account-balance": "Account Balance",
     "account-code": "Account code",
+    "account-code-lower-than-parent": "Account code %code% is shorter than the parent's",
     "account-data-missing": "Missing data in the account",
     "account-dot-code": "Dot to autocomplete zeros. Example: 11.1 = 1100000001",
     "account-length": "Subaccount length",

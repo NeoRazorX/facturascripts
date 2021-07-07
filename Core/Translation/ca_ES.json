@@ -13,6 +13,7 @@
     "account": "Compte",
     "account-balance": "Saldo del compte",
     "account-code": "Codi de compte",
+    "account-code-lower-than-parent": "account-code-lower-than-parent",
     "account-data-missing": "Falten dades en el compte",
     "account-dot-code": "Punt per a autocompletar zeros. Exemple: 11.1 = 1100000001",
     "account-length": "Longitud de compte",

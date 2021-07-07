@@ -246,14 +246,14 @@ class Cuenta extends Base\ModelClass
 
             /// code length must be bigger than the parent
             if (\strlen($this->codcuenta) <= \strlen($parent->codcuenta)) {
-                $this->toolBox()->i18nLog()->warning('account-code-lower-than-parent');
+                $this->toolBox()->i18nLog()->warning('account-code-lower-than-parent', ['%code%' => $this->codcuenta]);
                 return false;
             }
         }
 
         /// code lenght must be lower than subaccounts
         if (\strlen($this->codcuenta) >= $this->getExercise()->longsubcuenta) {
-            $this->toolBox()->i18nLog()->warning('account-code-bigger-than-subaccounts');
+            $this->toolBox()->i18nLog()->warning('account-code-bigger-than-subaccounts', ['%code%' => $this->codcuenta]);
             return false;
         }
 
