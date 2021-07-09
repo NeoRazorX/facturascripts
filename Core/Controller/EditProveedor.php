@@ -153,12 +153,10 @@ class EditProveedor extends ComercialContactController
     {
         $return = parent::editAction();
         if ($return && $this->active === $this->getMainViewName()) {
+            $this->checkSubaccountLength($this->getModel()->codsubcuenta);
+
             /// update contact emal and phones when supplier email or phones are updated
             $this->updateContact($this->views[$this->active]->model);
-        }
-        
-        if (strlen($this->getViewModelValue('EditProveedor', 'codsubcuenta')) > 0){
-            $this->checkLengthSubaccount(strlen($this->getViewModelValue('EditProveedor', 'codsubcuenta')));
         }
 
         return $return;

@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\Cliente;
-use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
+use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
@@ -47,14 +47,18 @@ abstract class ComercialContactController extends EditController
     /**
      * Check that the subaccount length is correct.
      * 
-     * @param  integer $lenghtsubcuenta
+     * @param string $code
      */
-    protected function checkLengthSubaccount($lenghtsubcuenta)
+    protected function checkSubaccountLength($code)
     {
-        $exercise = new DinEjercicio();
+        if (empty($code)) {
+            return;
+        }
+
+        $exercise = new Ejercicio();
         foreach ($exercise->all([], [], 0, 0) as $exe) {
-            if ($exe->isOpened() && $lenghtsubcuenta != $exe->longsubcuenta) {
-                $this->toolBox()->i18nLog()->warning('invalid-subaccount-lenght', ['%lenghtsubcuenta%' => $exe->longsubcuenta]);
+            if ($exe->isOpened() && \strlen($code) != $exe->longsubcuenta) {
+                $this->toolBox()->i18nLog()->warning('account-length-error', ['%code%' => $code]);
             }
         }
     }
