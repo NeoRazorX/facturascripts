@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
@@ -42,6 +43,21 @@ abstract class ComercialContactController extends EditController
      * @param string $viewName
      */
     abstract protected function setCustomWidgetValues($viewName);
+
+    /**
+     * Check that the subaccount length is correct.
+     * 
+     * @param  integer $lenghtsubcuenta
+     */
+    protected function checkLengthSubaccount($lenghtsubcuenta)
+    {
+        $exercise = new DinEjercicio();
+        foreach ($exercise->all([], [], 0, 0) as $exe) {
+            if ($exe->isOpened() && $lenghtsubcuenta != $exe->longsubcuenta) {
+                $this->toolBox()->i18nLog()->warning('invalid-subaccount-lenght', ['%lenghtsubcuenta%' => $exe->longsubcuenta]);
+            }
+        }
+    }
 
     /**
      * Add a Contact List View.
