@@ -1,89 +1,88 @@
 "cuenta";"descripcion";"cuentaesp"
-"01";"Activos";""
-"0101";"Efectivo caja y banco";""
-"010101";"Banco Popular";""
-"010102";"Banreservas";""
-"010103";"Banco BHDLeon";""
-"0102";"Caja chica";""
-"0103";"Cuentas por cobrar";""
+"01";"Activos";
+"0101";"Efectivo caja y banco";
+"010101";"Banco Popular";
+"010102";"Banreservas";
+"010103";"Banco BHDLeon";
+"0102";"Caja chica";
+"0103";"Cuentas por cobrar";
 "010301";"Clientes";"CLIENT"
-"010302";"Cheques devueltos";""
-"0104";"Anticipo impuesto sobre la renta";""
-"0105";"Gastos pagado por adelantado";""
-"010501";"Seguros";""
-"010502";"Placas vehiculos";""
-"010503";"Alquiler local";""
-"0106";"Propiedad Planta y Equipo";""
-"010601";"Terreno";""
-"010602";"Edificio";""
-"010603";"Mueble y equipo de oficina";""
-"010604";"Despreciacion acumulada en equipo de oficina";""
-"010605";"Equipo de transporte";""
-"010606";"Despreciacion acumulada en equipo de transporte";""
-"010607";"Otros activos";""
-"0107";"Diferidos";""
-"010701";"Gastos organizacion";""
-"0108";"Otros Activos";""
-"010801";"Fianza y depositos";""
-"010802";"Edesur";""
-"010803";"Local";""
-"02";"Pasivos";""
-"0201";"Pasivos Corrientes";""
-"020101";"Sobregiro Bancario";""
+"010302";"Cheques devueltos";
+"0104";"Anticipo impuesto sobre la renta";
+"0105";"Gastos pagado por adelantado";
+"010501";"Seguros";
+"010502";"Placas vehiculos";
+"010503";"Alquiler local";
+"0106";"Propiedad Planta y Equipo";
+"010601";"Terreno";
+"010602";"Edificio";
+"010603";"Mueble y equipo de oficina";
+"010604";"Despreciacion acumulada en equipo de oficina";
+"010605";"Equipo de transporte";
+"010606";"Despreciacion acumulada en equipo de transporte";
+"010607";"Otros activos";
+"0107";"Diferidos";
+"010701";"Gastos organizacion";
+"0108";"Otros Activos";
+"010801";"Fianza y depositos";
+"010802";"Edesur";
+"010803";"Local";
+"02";"Pasivos";
+"0201";"Pasivos Corrientes";
+"020101";"Sobregiro Bancario";"GTORF"
 "020102";"Cuentas por pagar";"PROVEE"
-"02010201";"Proveedores";""
-"020103";"Prestamos por pagar";""
+"020103";"Prestamos por pagar";
 "020104";"Impuestos sobre la renta por pagar";"IVAREP"
-"02010401";"ITBIS";""
-"020105";"Dividendos declarado por pagar";""
-"020106";"Retenciones y acumulaciones por pagar";""
-"02010601";"ARS";""
-"02010602";"ITBIS";""
-"02010603";"Impuestos sobre la renta";""
-"02010604";"Infotep";""
-"02010605";"Regalia pascual";""
-"02010606";"Sueldos acumulados por pagar";""
-"0202";"Pasivos diferidos";""
-"020201";"Avance a clientes";""
-"020202";"Ingresos recibidos por adelantado";""
-"0203";"Pasivos a largo plazo";""
-"020301";"Hipotecas por pagar a largo plazo";""
-"020302";"Prestamos por pagar a largo plazo";""
-"03";"Capital";""
-"0301";"Cuenta de capital";""
-"030101";"Capital autorizado";""
-"030102";"Perdidas y Ganancias";""
-"03010201";"Subcuenta de Pérdidas y Ganancias";"PYG"
-"04";"Ingresos";""
-"0401";"Ventas";""
+"020105";"Dividendos declarado por pagar";
+"020106";"Retenciones y acumulaciones por pagar";
+"0202";"Pasivos diferidos";
+"020201";"Avance a clientes";
+"020202";"Ingresos recibidos por adelantado";
+"0203";"Pasivos a largo plazo";
+"020301";"Hipotecas por pagar a largo plazo";
+"020302";"Prestamos por pagar a largo plazo";
+"03";"Capital";
+"0301";"Cuenta de capital";
+"030101";"Capital autorizado";
+"030102";"Perdidas y Ganancias";"PYG"
+"04";"Ingresos";
+"0401";"Ventas";
 "040101";"Mercaderias";"VENTAS"
-"04010101";"Mercaderias propias";""
-"040102";"Servicios";""
-"0402";"Otros ingresos";""
-"0403";"Devoluciones en ventas";""
-"0404";"Descuentos en ventas";""
-"05";"Costos";""
-"0501";"Costo de ventas";""
-"050101";"Compras";""
-"05010101";"Bienes";""
-"05010102";"Servicios";""
-"050102";"Flete en compras";""
-"050103";"Descuento en compras";""
-"050104";"Devoluciones en compras";""
+"040102";"Servicios";
+"0402";"Otros ingresos";
+"0403";"Devoluciones en ventas";"DEVVEN"
+"0404";"Descuentos en ventas";
+"05";"Costos";
+"0501";"Costo de ventas";
+"050101";"Compras";
+"050102";"Flete en compras";
+"050103";"Descuento en compras";
+"050104";"Devoluciones en compras";"DEVCOM"
 "050105";"Compras Generales";"COMPRA"
-"05010501";"Compras Generales";""
-"06";"Gastos";""
-"0601";"Gastos generales y administrativos";""
-"060101";"Sueldos";""
-"060102";"Regalia pascual";""
-"060103";"Seguro medico";""
-"060104";"Impresos";""
-"060105";"Materiales de oficina";""
-"060106";"Mantenimiento equipo de transporte";""
-"060107";"Combustibles";""
-"060108";"Gastos Exentos";""
-"07";"Finanzas";""
-"0701";"Tesoreria";""
+"06";"Gastos";
+"0601";"Gastos generales y administrativos";"ACREED"
+"060101";"Sueldos";
+"060102";"Regalia pascual";
+"060103";"Seguro medico";
+"060104";"Impresos";
+"060105";"Materiales de oficina";
+"060106";"Mantenimiento equipo de transporte";
+"060107";"Combustibles";
+"060108";"Gastos Exentos";
+"07";"Finanzas";
+"0701";"Tesoreria";
 "070101";"Caja";"CAJA"
-"07010101";"Caja moneda local";""
-"07010102";"Caja moneda extranjera";""
+"02010401";"ITBIS";
+"02010601";"ARS";
+"02010602";"ITBIS";
+"02010603";"Impuestos sobre la renta";
+"02010604";"Infotep";
+"02010605";"Regalia pascual";
+"02010606";"Sueldos acumulados por pagar";
+"03010201";"Subcuenta de Pérdidas y Ganancias";
+"04010101";"Mercaderias propias";
+"05010101";"Bienes";
+"05010102";"Servicios";
+"05010501";"Compras Generales";
+"07010101";"Caja moneda local";
+"07010102";"Caja moneda extranjera";
