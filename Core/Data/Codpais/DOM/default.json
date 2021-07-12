@@ -4,7 +4,10 @@
         "codimpuesto": "ITBIS18",
         "codserie": "A",
         "codpago": "CONT",
-        "tipoidfiscal": "RNC"
+        "tipoidfiscal": "RNC",
+        "decimal_separator":".",
+        "thousands_separator":",",
+        "currency_position":"left"
     },
     "email": {
         "enc": "ssl",
