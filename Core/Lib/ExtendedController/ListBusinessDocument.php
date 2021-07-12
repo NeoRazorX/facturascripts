@@ -149,7 +149,7 @@ abstract class ListBusinessDocument extends ListController
     protected function createViewSales(string $viewName, $modelName, $label)
     {
         $this->addView($viewName, $modelName, $label, 'fas fa-copy');
-        $this->addSearchFields($viewName, ['codigo', 'nombrecliente', 'numero2', 'observaciones']);
+        $this->addSearchFields($viewName, ['codigo', 'codigoenv', 'nombrecliente', 'numero2', 'observaciones']);
         $this->addOrderBy($viewName, ['codigo'], 'code');
         $this->addOrderBy($viewName, ['codcliente'], 'customer-code');
         $this->addOrderBy($viewName, ['fecha', $this->tableColToNumber('numero')], 'date', 2);
@@ -167,6 +167,9 @@ abstract class ListBusinessDocument extends ListController
         if (\count($agents) > 1) {
             $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
         }
+
+        $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
+        $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
 
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
     }
