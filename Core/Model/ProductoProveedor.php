@@ -189,7 +189,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
         }
 
         if (empty($this->idproducto)) {
-            $this->idproducto = $this->getProducto()->idproducto;
+            $this->idproducto = $this->getVariant()->idproducto;
         }
 
         $this->neto = \round($this->precio * $this->getEUDiscount(), DinProducto::ROUND_DECIMALS);
