@@ -124,12 +124,12 @@ class ListCuenta extends ListController
         $this->addSearchFields($viewName, ['codsubcuenta', 'descripcion', 'codejercicio', 'codcuentaesp']);
 
         /// filters
-        $this->addFilterNumber($viewName, 'debit-minor', 'debit', 'debe', '<=');
         $this->addFilterNumber($viewName, 'debit-major', 'debit', 'debe', '>=');
-        $this->addFilterNumber($viewName, 'credit-minor', 'credit', 'haber', '<=');
+        $this->addFilterNumber($viewName, 'debit-minor', 'debit', 'debe', '<=');
         $this->addFilterNumber($viewName, 'credit-major', 'credit', 'haber', '>=');
-        $this->addFilterNumber($viewName, 'balance-minor', 'balance', 'saldo', '<=');
+        $this->addFilterNumber($viewName, 'credit-minor', 'credit', 'haber', '<=');
         $this->addFilterNumber($viewName, 'balance-major', 'balance', 'saldo', '>=');
+        $this->addFilterNumber($viewName, 'balance-minor', 'balance', 'saldo', '<=');
 
         $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $this->exerciseValues);
 
