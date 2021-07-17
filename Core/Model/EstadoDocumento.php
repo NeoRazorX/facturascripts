@@ -154,7 +154,9 @@ class EstadoDocumento extends Base\ModelClass
         if ($this->bloquear) {
             $this->toolBox()->i18nLog()->warning('locked');
             return false;
-        } elseif (false === parent::save()) {
+        }
+
+        if (false === parent::save()) {
             return false;
         }
 
@@ -189,6 +191,10 @@ class EstadoDocumento extends Base\ModelClass
         $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
         if (empty($this->nombre) || empty($this->tipodoc)) {
             return false;
+        }
+
+        if (!empty($this->generadoc)) {
+            $this->editable = false;
         }
 
         return parent::test();
