@@ -221,10 +221,26 @@ class XLSExport extends ExportBase
      */
     protected function getCursorRawData($cursor, $fields = []): array
     {
+        if (empty($cursor)) {
+            return [];
+        }
+
         $data = parent::getCursorRawData($cursor, $fields);
+        $modelFields = $cursor[0]->getModelFields();
         foreach ($data as $num => $row) {
             foreach ($row as $key => $value) {
-                $data[$num][$key] = $this->toolBox()->utils()->fixHtml($value);
+                switch ($modelFields[$key]['type']) {
+                    case 'date':
+                        $data[$num][$key] = empty($value) ? '' : date('Y-m-d', strtotime($value));
+                        break;
+
+                    case 'datetime':
+                        $data[$num][$key] = empty($value) ? '' : date('Y-m-d H:i:s', strtotime($value));
+                        break;
+
+                    default:
+                        $data[$num][$key] = $this->toolBox()->utils()->fixHtml($value);
+                }
             }
         }
 
@@ -249,6 +265,11 @@ class XLSExport extends ExportBase
 
                 case 'double':
                     $headers[$key] = 'price';
+                    break;
+
+                case 'date':
+                case 'datetime':
+                    $headers[$key] = $modelFields[$key]['type'];
                     break;
 
                 default:
