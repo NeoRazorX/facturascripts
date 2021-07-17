@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
 -->
 <view>
     <columns>
@@ -38,7 +38,13 @@
                 <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion" />
             </widget>
         </column>
-        <column name="balance" order="160" display="right">
+        <column name="debit" order="150" display="right">
+            <widget type="money" fieldname="debe" />
+        </column>
+        <column name="credit" order="160" display="right">
+            <widget type="money" fieldname="haber" />
+        </column>
+        <column name="balance" order="170" display="right">
             <widget type="money" fieldname="saldo" />
         </column>
     </columns>
