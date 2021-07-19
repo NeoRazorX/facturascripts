@@ -45,25 +45,6 @@ class Role extends Base\ModelClass
     public $descripcion;
 
     /**
-     * Get application default role o first role.
-     *
-     * @return Role
-     */
-    public function defaultRole()
-    {
-        $code = $this->toolBox()->appSettings()->get('default', 'codrole', '');
-        if (empty($code)) {
-            foreach ($this->all() as $role) {
-                return $role;
-            }
-        }
-
-        $role = new self();
-        $role->loadFromCode($code);
-        return $role;
-    }
-
-    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
