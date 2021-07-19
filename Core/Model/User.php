@@ -318,20 +318,6 @@ class User extends Base\ModelClass
         $this->save();
     }
 
-    public function defaultRole()
-    {
-        $code = $this->toolBox()->appSettings()->get('default', 'codrole', '');
-        if (empty($code)) {
-            foreach ($this->all() as $role) {
-                return $role;
-            }
-        }
-
-        $role = new self();
-        $role->loadFromCode($code);
-        return $role;
-    }
-
     /**
      *
      * @return bool
