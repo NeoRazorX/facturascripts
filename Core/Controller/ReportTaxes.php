@@ -32,6 +32,8 @@ use Symfony\Component\HttpFoundation\Response;
 class ReportTaxes extends Controller
 {
 
+    const MAX_TOTAL_DIFF = 0.01;
+
     /**
      * 
      * @var string
@@ -110,37 +112,67 @@ class ReportTaxes extends Controller
                 'fecha' => $hide ? '' : \date(User::DATE_STYLE, \strtotime($row['fecha'])),
                 'nombre' => $hide ? '' : $this->toolBox()->utils()->fixHtml($row['nombre']),
                 'cifnif' => $hide ? '' : $row['cifnif'],
-                'neto' => $this->toolBox()->numbers()->format($row['neto']),
-                'iva' => $this->toolBox()->numbers()->format($row['iva']),
-                'totaliva' => $this->toolBox()->numbers()->format($row['totaliva']),
-                'recargo' => $this->toolBox()->numbers()->format($row['recargo']),
-                'totalrecargo' => $this->toolBox()->numbers()->format($row['totalrecargo']),
-                'irpf' => $this->toolBox()->numbers()->format($row['irpf']),
-                'totalirpf' => $this->toolBox()->numbers()->format($row['totalirpf']),
-                'suplidos' => $this->toolBox()->numbers()->format($row['suplidos']),
-                'total' => $hide ? '' : $this->toolBox()->numbers()->format($row['total'])
+                'neto' => $this->exportFieldFormat('number', $row['neto']),
+                'iva' => $this->exportFieldFormat('number', $row['iva']),
+                'totaliva' => $this->exportFieldFormat('number', $row['totaliva']),
+                'recargo' => $this->exportFieldFormat('number', $row['recargo']),
+                'totalrecargo' => $this->exportFieldFormat('number', $row['totalrecargo']),
+                'irpf' => $this->exportFieldFormat('number', $row['irpf']),
+                'totalirpf' => $this->exportFieldFormat('number', $row['totalirpf']),
+                'suplidos' => $this->exportFieldFormat('number', $row['suplidos']),
+                'total' => $hide ? '' : $this->exportFieldFormat('number', $row['total'])
             ];
 
             $lastcode = $row['codigo'];
         }
 
+        $totalsData = $this->getTotals($data);
+        if (false === $this->validateTotals($totalsData)) {
+            $this->toolBox()->i18nLog()->error('wrong-total-tax-calculation');
+            return;
+        }
+
         /// prepare totals
         $totals = [];
-        foreach ($this->getTotals($data) as $row) {
+        foreach ($totalsData as $row) {
             $totals[] = [
-                'neto' => $this->toolBox()->coins()->format($row['neto']),
-                'iva' => $this->toolBox()->numbers()->format($row['iva']) . ' %',
-                'totaliva' => $this->toolBox()->coins()->format($row['totaliva']),
-                'recargo' => $this->toolBox()->numbers()->format($row['recargo']) . ' %',
-                'totalrecargo' => $this->toolBox()->coins()->format($row['totalrecargo']),
-                'irpf' => $this->toolBox()->numbers()->format($row['irpf']) . ' %',
-                'totalirpf' => $this->toolBox()->coins()->format($row['totalirpf']),
-                'suplidos' => $this->toolBox()->coins()->format($row['suplidos'])
+                'neto' => $this->exportFieldFormat('coins', $row['neto']),
+                'iva' => $this->exportFieldFormat('percentage', $row['iva']),
+                'totaliva' => $this->exportFieldFormat('coins', $row['totaliva']),
+                'recargo' => $this->exportFieldFormat('percentage', $row['recargo']),
+                'totalrecargo' => $this->exportFieldFormat('coins', $row['totalrecargo']),
+                'irpf' => $this->exportFieldFormat('percentage', $row['irpf']),
+                'totalirpf' => $this->exportFieldFormat('coins', $row['totalirpf']),
+                'suplidos' => $this->exportFieldFormat('coins', $row['suplidos'])
             ];
         }
 
         $this->setTemplate(false);
         $this->processLayout($lines, $totals);
+    }
+
+    /**
+     * 
+     * @param string $format
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function exportFieldFormat($format, $value)
+    {
+        switch ($format) {
+            case 'coins':
+                return $this->format === 'PDF' ? $this->toolBox()->coins()->format($value) : $value;
+
+            case 'number':
+                return $this->format === 'PDF' ? $this->toolBox()->numbers()->format($value) : $value;
+
+            case 'percentage':
+                return $this->format === 'PDF' ? $this->toolBox()->numbers()->format($value) . ' %' : $value;
+
+            default:
+                return $value;
+        }
     }
 
     /**
@@ -154,7 +186,7 @@ class ReportTaxes extends Controller
         switch ($this->source) {
             case 'purchases':
                 $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor AS numero2, f.fecha, f.nombre, f.cifnif, l.pvptotal,'
-                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.total'
+                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total'
                     . ' FROM lineasfacturasprov AS l'
                     . ' LEFT JOIN facturasprov AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
@@ -165,7 +197,7 @@ class ReportTaxes extends Controller
 
             case 'sales':
                 $sql .= 'SELECT f.codserie, f.codigo, f.numero2, f.fecha, f.nombrecliente AS nombre, f.cifnif, l.pvptotal,'
-                    . 'l.iva, l.recargo, l.irpf, l.suplido, f.total'
+                    . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total'
                     . ' FROM lineasfacturascli AS l'
                     . ' LEFT JOIN facturascli AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
@@ -180,13 +212,14 @@ class ReportTaxes extends Controller
 
         $data = [];
         foreach ($this->dataBase->select($sql) as $row) {
+            $pvptotal = \floatval($row['pvptotal']) * (100 - \floatval($row['dtopor1'])) * (100 - \floatval($row['dtopor2'])) / 10000;
             $code = $row['codigo'] . '-' . $row['iva'] . '-' . $row['recargo'] . '-' . $row['irpf'] . '-' . $row['suplido'];
             if (isset($data[$code])) {
-                $data[$code]['neto'] += (float) $row['pvptotal'];
-                $data[$code]['totaliva'] += (float) $row['iva'] * $row['pvptotal'] / 100;
-                $data[$code]['totalrecargo'] += (float) $row['recargo'] * $row['pvptotal'] / 100;
-                $data[$code]['totalirpf'] += (float) $row['irpf'] * $row['pvptotal'] / 100;
-                $data[$code]['suplidos'] += (float) $row['suplido'] * $row['pvptotal'];
+                $data[$code]['neto'] += $pvptotal;
+                $data[$code]['totaliva'] += (float) $row['iva'] * $pvptotal / 100;
+                $data[$code]['totalrecargo'] += (float) $row['recargo'] * $pvptotal / 100;
+                $data[$code]['totalirpf'] += (float) $row['irpf'] * $pvptotal / 100;
+                $data[$code]['suplidos'] += (float) $row['suplido'] * $pvptotal;
                 continue;
             }
 
@@ -197,14 +230,14 @@ class ReportTaxes extends Controller
                 'fecha' => $row['fecha'],
                 'nombre' => $row['nombre'],
                 'cifnif' => $row['cifnif'],
-                'neto' => (float) $row['pvptotal'],
+                'neto' => $pvptotal,
                 'iva' => (float) $row['iva'],
-                'totaliva' => (float) $row['iva'] * $row['pvptotal'] / 100,
+                'totaliva' => (float) $row['iva'] * $pvptotal / 100,
                 'recargo' => (float) $row['recargo'],
-                'totalrecargo' => (float) $row['recargo'] * $row['pvptotal'] / 100,
+                'totalrecargo' => (float) $row['recargo'] * $pvptotal / 100,
                 'irpf' => (float) $row['irpf'],
-                'totalirpf' => (float) $row['irpf'] * $row['pvptotal'] / 100,
-                'suplidos' => (float) $row['suplido'] * $row['pvptotal'],
+                'totalirpf' => (float) $row['irpf'] * $pvptotal / 100,
+                'suplidos' => (float) $row['suplido'] * $pvptotal,
                 'total' => (float) $row['total']
             ];
         }
@@ -305,7 +338,6 @@ class ReportTaxes extends Controller
     protected function reduceLines(&$lines)
     {
         $zero = $this->toolBox()->numbers()->format(0);
-
         $numero2 = $recargo = $totalrecargo = $irpf = $totalirpf = $suplidos = false;
         foreach ($lines as $row) {
             if (!empty($row['numero2'])) {
@@ -358,5 +390,40 @@ class ReportTaxes extends Controller
                 unset($lines[$key]['suplidos']);
             }
         }
+    }
+
+    /**
+     * 
+     * @param array $totalsData
+     *
+     * @return bool
+     */
+    protected function validateTotals(array $totalsData): bool
+    {
+        /// sum totals from the given data
+        $neto = $totaliva = $totalrecargo = 0.0;
+        foreach ($totalsData as $row) {
+            $neto += $row['neto'];
+            $totaliva += $row['totaliva'];
+            $totalrecargo += $row['totalrecargo'];
+        }
+
+        /// gets totals from the database
+        $neto2 = $totaliva2 = $totalrecargo2 = 0.0;
+        $tableName = $this->source === 'sales' ? 'facturascli' : 'facturasprov';
+        $sql = 'SELECT SUM(neto) as neto, SUM(totaliva) as t1, SUM(totalrecargo) as t2 FROM ' . $tableName
+            . ' WHERE idempresa = ' . $this->dataBase->var2str($this->idempresa)
+            . ' AND fecha >= ' . $this->dataBase->var2str($this->datefrom)
+            . ' AND fecha <= ' . $this->dataBase->var2str($this->dateto);
+        foreach ($this->dataBase->selectLimit($sql) as $row) {
+            $neto2 += (float) $row['neto'];
+            $totaliva2 += (float) $row['t1'];
+            $totalrecargo2 += (float) $row['t2'];
+        }
+
+        /// compare
+        return \abs($neto - $neto2) <= self::MAX_TOTAL_DIFF &&
+            \abs($totaliva - $totaliva2) <= self::MAX_TOTAL_DIFF &&
+            \abs($totalrecargo - $totalrecargo2) <= self::MAX_TOTAL_DIFF;
     }
 }
