@@ -294,17 +294,14 @@ class User extends Base\ModelClass
      */
     protected function setNewRole()
     {
-        $roleModel = new Role();
-        $codrole = $this->toolBox()->appSettings()->get('default', 'codrole', '');
-        if (empty($codrole)) {
-            foreach ($roleModel->all() as $role) {
-                $codrole = $role->codrole;
-                break;
-            }
+        $role = new Role();
+        $code = $this->toolBox()->appSettings()->get('default', 'codrole');
+        if (false === $role->loadFromCode($code)) {
+            return;
         }
 
         $roleUser = new RoleUser();
-        $roleUser->codrole = $codrole;
+        $roleUser->codrole = $role->code;
         $roleUser->nick = $this->nick;
         $roleUser->save();
 
