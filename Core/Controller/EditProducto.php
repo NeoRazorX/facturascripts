@@ -141,7 +141,7 @@ class EditProducto extends EditController
         $values = $this->codeModel->all('AtributoValor', 'id', '');
         foreach (['attribute-value-1', 'attribute-value-2', 'attribute-value-3', 'attribute-value-4'] as $colName) {
             $column = $this->views[$viewName]->columnForName($colName);
-            if ($column) {
+            if ($column && $column->widget->getType() === 'select') {
                 $column->widget->setValuesFromCodeModel($values);
             }
         }
@@ -161,7 +161,7 @@ class EditProducto extends EditController
         }
 
         $column = $this->views[$viewName]->columnForName('reference');
-        if ($column) {
+        if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArray($references, false);
         }
     }

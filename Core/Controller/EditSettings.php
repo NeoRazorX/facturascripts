@@ -338,7 +338,7 @@ class EditSettings extends PanelController
                     $this->toolBox()->i18nLog()->notice('mail-test-ok');
                     break;
                 }
-                $this->toolBox()->i18nLog()->error('mail-test-error');
+                $this->toolBox()->i18nLog()->warning('mail-test-error');
                 break;
         }
     }
