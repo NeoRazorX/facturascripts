@@ -46,9 +46,8 @@ class CuentaBancoTest extends CustomTest
 
     public function testIBAN()
     {
-        AppSettings::set('default', 'validate_iban', true);
-
         /// save valid iban with validate
+        AppSettings::set('default', 'validate_iban', true);
         $account = new CuentaBanco();
         $account->descripcion = 'test';
         $account->iban = 'ES91 2100 0418 4502 0005 1332';
