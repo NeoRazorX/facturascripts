@@ -157,7 +157,7 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function country()
@@ -171,7 +171,7 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function delete()
@@ -229,7 +229,7 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * 
+     *
      * @return Tarifa
      */
     public function getRate()
@@ -249,7 +249,7 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * 
+     *
      * @return Cliente
      */
     public function getSubject()
@@ -260,7 +260,7 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function install()
@@ -275,7 +275,7 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function save()
@@ -309,7 +309,7 @@ abstract class SalesDocument extends TransformerDocument
 
     /**
      * Sets the author for this document.
-     * 
+     *
      * @param User $author
      *
      * @return bool
@@ -332,9 +332,9 @@ abstract class SalesDocument extends TransformerDocument
 
     /**
      * Assign the customer to the document.
-     * 
+     *
      * @param Cliente|Contacto $subject
-     * 
+     *
      * @return bool
      */
     public function setSubject($subject)
@@ -356,7 +356,7 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function subjectColumn()
@@ -400,7 +400,7 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * 
+     *
      * @param string $field
      *
      * @return bool
@@ -451,7 +451,7 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function onChangeAgent()
@@ -466,7 +466,22 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * 
+     * This method is called after a record is updated on the database (saveUpdate).
+     */
+    protected function onUpdate()
+    {
+        if ($this->previousData['codcliente'] !== $this->codcliente) {
+            $customer = new Cliente();
+            if ($customer->loadFromCode($this->previousData['codcliente'])) {
+                $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->primaryColumnValue());
+                $customer->save();
+            }
+        }
+        parent::onUpdate();
+    }
+
+    /**
+     *
      * @param Contacto $subject
      *
      * @return bool
@@ -488,7 +503,7 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * 
+     *
      * @param Cliente $subject
      *
      * @return bool
@@ -522,7 +537,7 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * 
+     *
      * @param array $fields
      */
     protected function setPreviousData(array $fields = [])
