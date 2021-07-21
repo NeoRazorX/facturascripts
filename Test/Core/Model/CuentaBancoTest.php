@@ -46,8 +46,10 @@ class CuentaBancoTest extends CustomTest
 
     public function testIBAN()
     {
+        $settings = new AppSettings();
+
         /// save valid iban with validate
-        AppSettings::set('default', 'validate_iban', true);
+        $settings->set('default', 'validate_iban', true);
         $account = new CuentaBanco();
         $account->descripcion = 'test';
         $account->iban = 'ES91 2100 0418 4502 0005 1332';
@@ -58,7 +60,7 @@ class CuentaBancoTest extends CustomTest
         $this->assertFalse($account->save());
 
         /// now save invalid iban without validate
-        AppSettings::set('default', 'validate_iban', false);
+        $settings->set('default', 'validate_iban', false);
         $this->assertTrue($account->save());
 
         /// delete

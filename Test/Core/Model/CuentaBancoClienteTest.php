@@ -66,8 +66,10 @@ class CuentaBancoClienteTest extends CustomTest
         $customer->nombre = 'Test';
         $this->assertTrue($customer->save());
 
+        $settings = new AppSettings();
+
         /// save valid iban with validate
-        AppSettings::set('default', 'validate_iban', true);
+        $settings->set('default', 'validate_iban', true);
         $account = new CuentaBancoCliente();
         $account->codcliente = $customer->primaryColumnValue();
         $account->descripcion = 'test';
@@ -79,7 +81,7 @@ class CuentaBancoClienteTest extends CustomTest
         $this->assertFalse($account->save());
 
         /// now save invalid iban without validate
-        AppSettings::set('default', 'validate_iban', false);
+        $settings->set('default', 'validate_iban', false);
         $this->assertTrue($account->save());
 
         /// delete bank account
