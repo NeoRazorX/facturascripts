@@ -250,7 +250,7 @@ class EditUser extends EditController
     protected function loadLanguageValues()
     {
         $columnLangCode = $this->views['EditUser']->columnForName('language');
-        if ($columnLangCode) {
+        if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
             foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
                 $langs[] = ['value' => $key, 'title' => $value];
