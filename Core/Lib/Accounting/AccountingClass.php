@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Base class for creation of accounting processes
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 abstract class AccountingClass extends AccountingAccounts
@@ -64,6 +64,43 @@ abstract class AccountingClass extends AccountingAccounts
     {
         return $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount)->save();
     }
+
+    /**
+     * Add a group of lines from array of subaccounts/amount.
+     *
+     * @param Asiento    $accountEntry
+     * @param Array      $totals
+     * @param bool       $isDebit
+     * @param Subcuenta  $counterpart
+     * @param string     $accountError
+     * @param string     $saveError
+     *
+     * @return bool
+     */
+    protected function addLinesFromTotals($accountEntry, $totals, $isDebit, $counterpart, $accountError, $saveError): bool
+    {
+        foreach ($totals as $code => $total) {
+            $subaccount = $this->getSubAccount($code);
+            if (empty($subaccount->codsubcuenta)) {
+                $this->toolBox()->i18nLog()->warning($accountError);
+                return false;
+            }
+
+            $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $total);
+
+            if (!empty($counterpart)) {
+                $line->setCounterpart($counterpart);
+            }
+
+            if (false === $line->save()) {
+                $this->toolBox()->i18nLog()->warning($saveError);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
     /**
      * Add a line of taxes to the accounting entry based on the sub-account
@@ -126,7 +163,7 @@ abstract class AccountingClass extends AccountingAccounts
     }
 
     /**
-     * 
+     *
      * @return ToolBox
      */
     protected function toolBox()

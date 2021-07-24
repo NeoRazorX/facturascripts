@@ -20,11 +20,11 @@ namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\JoinModel;
-use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Familia;
 
 /**
- * Auxiliary model to get sub-accounts of sales document lines
+ * Auxiliary model to get sub-accounts of purchases document Irpf
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
@@ -33,50 +33,52 @@ use FacturaScripts\Dinamic\Model\Familia;
  * @property string $codsubcuenta
  * @property float  $total
  */
-class SalesDocLineAccount extends JoinModel
+class PurchasesDocIrpfAccount extends JoinModel
 {
 
     /**
-     * Get totals for subaccount of sale document
+     * Get totals for subaccount of irpf purchase document
      *
-     * @param FacturaCliente $document
-     * @param string         $defaultSubacode
+     * @param FacturaProveedor $document
+     * @param string           $defaultSubacode
+     * @param float            $percentage
      *
      * @return array
      */
-    public function getTotalsForDocument($document, $defaultSubacode)
+    public function getTotalsForDocument($document, $defaultSubacode, $percentage)
     {
         $totals = [];
         $where = [
-            new DataBaseWhere('lineasfacturascli.idfactura', $document->idfactura),
-            new DataBaseWhere('lineasfacturascli.suplido', false)
+            new DataBaseWhere('lineasfacturasprov.idfactura', $document->idfactura),
+            new DataBaseWhere('lineasfacturasprov.suplido', false)
         ];
         $order = [
-            "COALESCE(productos.codsubcuentaven, '')" => 'ASC',
+            "COALESCE(productos.codsubcuentairpfcom, '')" => 'ASC',
             "COALESCE(productos.codfamilia, '')" => 'ASC'
         ];
         foreach ($this->all($where, $order) as $row) {
-            $codSubAccount = empty($row->codsubcuenta) ? Familia::saleSubAccount($row->codfamilia) : $row->codsubcuenta;
+            $codSubAccount = empty($row->codsubcuenta) ? Familia::purchaseIrpfSubAccount($row->codfamilia) : $row->codsubcuenta;
             if (empty($codSubAccount)) {
                 $codSubAccount = $defaultSubacode;
             }
 
-            $amount = $row->total * $document->getEUDiscount();
+            $amount = ($row->total * $document->getEUDiscount()) * ($percentage / 100);
             $totals[$codSubAccount] = isset($totals[$codSubAccount]) ? $totals[$codSubAccount] + $amount : $amount;
         }
 
-        return $this->checkTotals($totals, $document, $defaultSubacode);
+        $quota = \round(($document->neto * $percentage / 100), \FS_NF0);
+        return $this->checkTotals($totals, $quota, $defaultSubacode);
     }
 
     /**
      *
-     * @param array          $totals
-     * @param FacturaCliente $document
-     * @param string         $defaultSubacode
+     * @param array   $totals
+     * @param float   $quota
+     * @param string  $defaultSubacode
      *
      * @return array
      */
-    protected function checkTotals(&$totals, $document, $defaultSubacode)
+    protected function checkTotals(&$totals, $quota, $defaultSubacode)
     {
         /// round and add the totals
         $sum = 0.0;
@@ -86,8 +88,8 @@ class SalesDocLineAccount extends JoinModel
         }
 
         /// fix occasional penny mismatch
-        if (!$this->toolBox()->utils()->floatcmp($document->neto, $sum, \FS_NF0, true)) {
-            $diff = \round($document->neto - $sum, \FS_NF0);
+        if (!$this->toolBox()->utils()->floatcmp($quota, $sum, \FS_NF0, true)) {
+            $diff = \round($quota - $sum, \FS_NF0);
             $totals[$defaultSubacode] = isset($totals[$defaultSubacode]) ? $totals[$defaultSubacode] + $diff : $diff;
         }
 
@@ -102,10 +104,10 @@ class SalesDocLineAccount extends JoinModel
     protected function getFields(): array
     {
         return [
-            'idfactura' => 'lineasfacturascli.idfactura',
-            'codsubcuenta' => "COALESCE(productos.codsubcuentaven, '')",
+            'idfactura' => 'lineasfacturasprov.idfactura',
+            'codsubcuenta' => "COALESCE(productos.codsubcuentairpfcom, '')",
             'codfamilia' => "COALESCE(productos.codfamilia, '')",
-            'total' => 'SUM(lineasfacturascli.pvptotal)'
+            'total' => 'SUM(lineasfacturasprov.pvptotal)'
         ];
     }
 
@@ -116,8 +118,8 @@ class SalesDocLineAccount extends JoinModel
      */
     protected function getGroupFields(): string
     {
-        return 'lineasfacturascli.idfactura,'
-            . "COALESCE(productos.codsubcuentaven, ''),"
+        return 'lineasfacturasprov.idfactura,'
+            . "COALESCE(productos.codsubcuentairpfcom, ''),"
             . "COALESCE(productos.codfamilia, '')";
     }
 
@@ -128,7 +130,7 @@ class SalesDocLineAccount extends JoinModel
      */
     protected function getSQLFrom(): string
     {
-        return 'lineasfacturascli LEFT JOIN productos ON productos.idproducto = lineasfacturascli.idproducto';
+        return 'lineasfacturasprov LEFT JOIN productos ON productos.idproducto = lineasfacturasprov.idproducto';
     }
 
     /**
@@ -138,6 +140,6 @@ class SalesDocLineAccount extends JoinModel
      */
     protected function getTables(): array
     {
-        return ['lineasfacturascli', 'productos'];
+        return ['lineasfacturasprov', 'productos'];
     }
 }
