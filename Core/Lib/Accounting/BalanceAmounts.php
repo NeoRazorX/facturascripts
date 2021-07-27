@@ -34,6 +34,12 @@ class BalanceAmounts extends AccountingBase
 {
 
     /**
+     * 
+     * @var string
+     */
+    protected $format;
+
+    /**
      * BalanceAmounts constructor.
      */
     public function __construct()
@@ -57,6 +63,7 @@ class BalanceAmounts extends AccountingBase
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
+        $this->format = $params['format'];
         $level = (int) $params['level'] ?? 0;
 
         /// get accounts
@@ -81,14 +88,13 @@ class BalanceAmounts extends AccountingBase
             }
 
             /// add account line
-            $prefix = \strlen($account->codcuenta) > 1 ? '' : '<b>';
-            $suffix = \strlen($account->codcuenta) > 1 ? '' : '</b>';
+            $bold = \strlen($account->codcuenta) <= 1;
             $rows[] = [
-                'cuenta' => $prefix . $account->codcuenta . $suffix,
-                'descripcion' => $prefix . $this->toolBox()->utils()->fixHtml($account->descripcion) . $suffix,
-                'debe' => $prefix . $this->toolBox()->coins()->format($debe, FS_NF0, '') . $suffix,
-                'haber' => $prefix . $this->toolBox()->coins()->format($haber, FS_NF0, '') . $suffix,
-                'saldo' => $prefix . $this->toolBox()->coins()->format($saldo, FS_NF0, '') . $suffix
+                'cuenta' => $this->formatValue($account->codcuenta, 'text', $bold),
+                'descripcion' => $this->formatValue($account->descripcion, 'text', $bold),
+                'debe' => $this->formatValue($debe, 'money', $bold),
+                'haber' => $this->formatValue($haber, 'money', $bold),
+                'saldo' => $this->formatValue($saldo, 'money', $bold)
             ];
 
             if ($level > 0) {
@@ -155,9 +161,36 @@ class BalanceAmounts extends AccountingBase
         }
         $saldo = $debe - $haber;
 
-        $totals[0]['debe'] = $this->toolBox()->coins()->format($debe, FS_NF0, '');
-        $totals[0]['haber'] = $this->toolBox()->coins()->format($haber, FS_NF0, '');
-        $totals[0]['saldo'] = $this->toolBox()->coins()->format($saldo, FS_NF0, '');
+        $totals[0]['debe'] = $this->formatValue($debe);
+        $totals[0]['haber'] = $this->formatValue($haber);
+        $totals[0]['saldo'] = $this->formatValue($saldo);
+    }
+
+    /**
+     * 
+     * @param string $value
+     * @param string $type
+     * @param bool   $bold
+     *
+     * @return string
+     */
+    protected function formatValue($value, $type = 'money', $bold = false)
+    {
+        $prefix = $bold ? '<b>' : '';
+        $suffix = $bold ? '</b>' : '';
+        switch ($type) {
+            case 'money':
+                if ($this->format === 'PDF') {
+                    return $prefix . $this->toolBox()->coins()->format($value, FS_NF0, ''). $suffix;
+                }
+                return \number_format($value, FS_NF0, '.', '');
+
+            default:
+                if ($this->format === 'PDF') {
+                    return $prefix . $this->toolBox()->utils()->fixHtml($value) . $suffix;
+                }
+                return $this->toolBox()->utils()->fixHtml($value);
+        }
     }
 
     /**
@@ -202,12 +235,14 @@ class BalanceAmounts extends AccountingBase
 
         $ignoreRegularization = (bool) $params['ignoreregularization'] ?? false;
         if ($ignoreRegularization) {
-            $where .= ' AND (asientos.operacion IS NULL OR asientos.operacion != ' . $this->dataBase->var2str(Asiento::OPERATION_REGULARIZATION) . ')';
+            $where .= ' AND (asientos.operacion IS NULL OR asientos.operacion != '
+                . $this->dataBase->var2str(Asiento::OPERATION_REGULARIZATION) . ')';
         }
 
         $ignoreClosure = (bool) $params['ignoreclosure'] ?? false;
         if ($ignoreClosure) {
-            $where .= ' AND (asientos.operacion IS NULL OR asientos.operacion != ' . $this->dataBase->var2str(Asiento::OPERATION_CLOSING) . ')';
+            $where .= ' AND (asientos.operacion IS NULL OR asientos.operacion != '
+                . $this->dataBase->var2str(Asiento::OPERATION_CLOSING) . ')';
         }
 
         $subaccountFrom = $params['subaccount-from'] ?? '';
@@ -237,10 +272,10 @@ class BalanceAmounts extends AccountingBase
             if ($subc->idsubcuenta == $amount['idsubcuenta']) {
                 return [
                     'cuenta' => $subc->codsubcuenta,
-                    'descripcion' => $this->toolBox()->utils()->fixHtml($subc->descripcion),
-                    'debe' => $this->toolBox()->coins()->format($debe, FS_NF0, ''),
-                    'haber' => $this->toolBox()->coins()->format($haber, FS_NF0, ''),
-                    'saldo' => $this->toolBox()->coins()->format($saldo, FS_NF0, '')
+                    'descripcion' => $this->formatValue($subc->descripcion, 'text'),
+                    'debe' => $this->formatValue($debe),
+                    'haber' => $this->formatValue($haber),
+                    'saldo' => $this->formatValue($saldo)
                 ];
             }
         }
@@ -248,9 +283,9 @@ class BalanceAmounts extends AccountingBase
         return [
             'cuenta' => '---',
             'descripcion' => '---',
-            'debe' => $this->toolBox()->coins()->format($debe, FS_NF0, ''),
-            'haber' => $this->toolBox()->coins()->format($haber, FS_NF0, ''),
-            'saldo' => $this->toolBox()->coins()->format($saldo, FS_NF0, '')
+            'debe' => $this->formatValue($debe),
+            'haber' => $this->formatValue($haber),
+            'saldo' => $this->formatValue($saldo)
         ];
     }
 }
