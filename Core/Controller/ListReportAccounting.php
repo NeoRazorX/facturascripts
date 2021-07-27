@@ -262,14 +262,14 @@ class ListReportAccounting extends ListController
      */
     protected function loadWidgetValues($viewName)
     {
-        $typeColumn = $this->views[$viewName]->columnForField('type');
-        if ($typeColumn) {
-            $typeColumn->widget->setValuesFromArray(ReportBalance::typeList());
+        $columnType = $this->views[$viewName]->columnForField('type');
+        if ($columnType && $columnType->widget->getType() === 'select') {
+            $columnType->widget->setValuesFromArray(ReportBalance::typeList());
         }
 
-        $formatColumn = $this->views[$viewName]->columnForField('subtype');
-        if ($formatColumn) {
-            $formatColumn->widget->setValuesFromArray(ReportBalance::subtypeList());
+        $columnFormat = $this->views[$viewName]->columnForField('subtype');
+        if ($columnFormat && $columnFormat->widget->getType() === 'select') {
+            $columnFormat->widget->setValuesFromArray(ReportBalance::subtypeList());
         }
     }
 }

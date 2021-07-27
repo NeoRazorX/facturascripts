@@ -240,8 +240,10 @@ class EditUser extends EditController
         }
 
         $columnHomepage = $this->views['EditUser']->columnForName('homepage');
-        $userPages = $this->getUserPages($this->views['EditUser']->model);
-        $columnHomepage->widget->setValuesFromArray($userPages);
+        if($columnHomepage && $columnHomepage->widget->getType() === 'select') {
+            $userPages = $this->getUserPages($this->views['EditUser']->model);
+            $columnHomepage->widget->setValuesFromArray($userPages);
+        }
     }
 
     /**

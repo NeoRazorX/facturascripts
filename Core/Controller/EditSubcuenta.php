@@ -249,7 +249,7 @@ class EditSubcuenta extends EditController
     private function setLedgerReportExportOptions($viewName)
     {
         $columnFormat = $this->views[$viewName]->columnModalForName('format');
-        if (isset($columnFormat)) {
+        if ($columnFormat && $columnFormat->widget->getType() === 'select') {
             $values = [];
             foreach ($this->exportManager->options() as $key => $options) {
                 $values[] = ['title' => $options['description'], 'value' => $key];
