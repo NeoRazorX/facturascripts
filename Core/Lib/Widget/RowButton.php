@@ -151,6 +151,8 @@ class RowButton extends VisualItem
                 return '<a ' . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
                     . ' title="' . $this->label . '">' . $icon . $this->label . '</a> ';
         }
+
+        return '';
     }
 
     /**
