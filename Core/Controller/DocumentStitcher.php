@@ -66,7 +66,7 @@ class DocumentStitcher extends Controller
 
     /**
      * Returns available status to group this model.
-     * 
+     *
      * @return array
      */
     public function getAvaliableStatus()
@@ -127,7 +127,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * 
+     *
      * @param array               $newLines
      * @param TransformerDocument $doc
      */
@@ -142,7 +142,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * 
+     *
      * @param TransformerDocument $newDoc
      *
      * @return bool
@@ -164,7 +164,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * 
+     *
      * @param array               $newLines
      * @param TransformerDocument $doc
      */
@@ -180,16 +180,17 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * 
-     * @param TransformerDocument $doc
-     * @param array               $newLines
-     * @param array               $quantities
-     * @param int                 $idestado
+     *
+     * @param TransformerDocument  $doc
+     * @param BusinessDocumentLine $docLines
+     * @param array                $newLines
+     * @param array                $quantities
+     * @param int                  $idestado
      */
-    protected function breakDownLines(&$doc, &$newLines, &$quantities, $idestado)
+    protected function breakDownLines(&$doc, &$docLines, &$newLines, &$quantities, $idestado)
     {
         $full = true;
-        foreach ($doc->getLines() as $line) {
+        foreach ($docLines as $line) {
             $quantity = (float) $this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
             $quantities[$line->primaryColumnValue()] = $quantity;
 
@@ -226,7 +227,7 @@ class DocumentStitcher extends Controller
 
     /**
      * Generates a new document with this data.
-     * 
+     *
      * @param int $idestado
      */
     protected function generateNewDocument($idestado)
@@ -239,18 +240,20 @@ class DocumentStitcher extends Controller
         $prototype = null;
         $quantities = [];
         foreach ($this->documents as $doc) {
+            $lines = $doc->getLines();
+
             if (null === $prototype) {
                 $prototype = clone $doc;
-            } elseif ('true' === $this->request->request->get('extralines', '')) {
+            } elseif ('true' === $this->request->request->get('extralines', '') && !empty($lines)) {
                 $this->addBlankLine($newLines, $doc);
             }
 
-            if ('true' === $this->request->request->get('extralines', '')) {
+            if ('true' === $this->request->request->get('extralines', '') && !empty($lines)) {
                 $this->addInfoLine($newLines, $doc);
             }
 
             /// we break down quantities and lines
-            $this->breakDownLines($doc, $newLines, $quantities, $idestado);
+            $this->breakDownLines($doc, $lines, $newLines, $quantities, $idestado);
         }
 
         if (null === $prototype || empty($newLines)) {
@@ -285,7 +288,7 @@ class DocumentStitcher extends Controller
 
     /**
      * Returns documents keys.
-     * 
+     *
      * @return array
      */
     protected function getCodes()
@@ -301,7 +304,7 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     * 
+     *
      * @param TransformerDocument $doc
      *
      * @return string
@@ -322,7 +325,7 @@ class DocumentStitcher extends Controller
 
     /**
      * Returns the name of the new class to generate from this status.
-     * 
+     *
      * @param int $idestado
      *
      * @return string
@@ -336,7 +339,7 @@ class DocumentStitcher extends Controller
 
     /**
      * Returns model name.
-     * 
+     *
      * @return string
      */
     protected function getModelName()
