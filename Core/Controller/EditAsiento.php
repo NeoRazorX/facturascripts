@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\Partida;
  * Controller to edit a single item from the Asiento model
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditAsiento extends EditController
 {
@@ -104,37 +104,28 @@ class EditAsiento extends EditController
     protected function cloneDocument()
     {
         $sourceCode = $this->request->get('code');
-
-        // prepare source document structure
         $accounting = new Asiento();
         if (false === $accounting->loadFromCode($sourceCode)) {
             return true; // continue default view load
         }
 
-        $entryModel = new Partida();
-        $entries = $entryModel->all([new DataBaseWhere('idasiento', $accounting->idasiento)]);
+        $idSourceEntry = $accounting->idasiento;
 
         // init target document data
         $accounting->idasiento = null;
         $accounting->fecha = \date(Asiento::DATE_STYLE);
         $accounting->numero = $accounting->newCode('numero');
 
-        // start transaction
-        $this->dataBase->beginTransaction();
-
         // main save process
+        $this->dataBase->beginTransaction();
         $cloneOk = true;
         try {
             if (false === $accounting->save()) {
                 throw new Exception($this->toolBox()->i18n()->trans('clone-document-error'));
             }
 
-            foreach ($entries as $line) {
-                $line->idpartida = null;
-                $line->idasiento = $accounting->idasiento;
-                if (false === $line->save()) {
-                    throw new Exception($this->toolBox()->i18n()->trans('clone-line-document-error'));
-                }
+            if (false === $this->cloneDocumentLines($idSourceEntry, $accounting->idasiento)) {
+                throw new Exception($this->toolBox()->i18n()->trans('clone-line-document-error'));
             }
 
             $this->dataBase->commit();
@@ -158,6 +149,28 @@ class EditAsiento extends EditController
     }
 
     /**
+     * Clone source document lines
+     *
+     * @param int $idSourceEntry
+     * @param int $idNewEntry
+     * @return bool
+     */
+    protected function cloneDocumentLines($idSourceEntry, $idNewEntry):bool
+    {
+        $lineModel = new Partida();
+        $sourceLines = $lineModel->all([new DataBaseWhere('idasiento', $idSourceEntry)]);
+        foreach ($sourceLines as $line) {
+            $line->idpartida = null;
+            $line->idasiento = $idNewEntry;
+            $line->punteada = false;
+            if (false === $line->save()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
@@ -170,7 +183,7 @@ class EditAsiento extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $action
      */
     protected function execAfterAction($action)
