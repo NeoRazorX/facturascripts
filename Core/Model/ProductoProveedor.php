@@ -108,7 +108,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
 
     /**
      * Returns the Equivalent Unified Discount.
-     * 
+     *
      * @return float
      */
     public function getEUDiscount()
@@ -122,7 +122,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return DinVariante
      */
     public function getVariant()
@@ -134,7 +134,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return DinProveedor
      */
     public function getSupplier()
@@ -145,7 +145,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function install()
@@ -158,7 +158,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public static function primaryColumn(): string
@@ -167,7 +167,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public static function tableName(): string
@@ -176,7 +176,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function test()
@@ -197,7 +197,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     *
      * @param string $type
      * @param string $list
      *
@@ -209,23 +209,17 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
-     * @param string $field
-     *
-     * @return bool
+     * This method is called after a record is deleted on the database (delete).
      */
-    protected function onChange($field)
+    protected function onDelete()
     {
-        switch ($field) {
-            case 'neto':
-                CostPriceTools::update($this->getVariant());
-                return true;
-
-            default:
-                return parent::onChange($field);
-        }
+        CostPriceTools::update($this->getVariant());
+        parent::onDelete();
     }
 
+    /**
+     * This method is called after a new record is saved on the database (saveInsert).
+     */
     protected function onInsert()
     {
         CostPriceTools::update($this->getVariant());
@@ -233,7 +227,18 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     * 
+     * This method is called after a record is updated on the database (saveUpdate).
+     */
+    protected function onUpdate()
+    {
+        if ($this->previousData['neto'] !== $this->neto) {
+            CostPriceTools::update($this->getVariant());
+        }
+        parent::onUpdate();
+    }
+
+    /**
+     *
      * @param array $fields
      */
     protected function setPreviousData(array $fields = [])
