@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
-
+use FacturaScripts\Dinamic\Lib\AssetManager;
 /**
  * Description of SendMail
  *
@@ -80,7 +80,9 @@ class SendMail extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        $this->codeModel = new CodeModel();
+        AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
+        AssetManager::add('js', \FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js');
+        $this->codeModel=new CodeModel();
         $this->newMail = new NewMail();
         $this->newMail->setUser($this->user);
 
