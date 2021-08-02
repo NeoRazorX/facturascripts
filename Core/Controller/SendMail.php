@@ -82,6 +82,7 @@ class SendMail extends Controller
         parent::privateCore($response, $user, $permissions);
         AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
         AssetManager::add('js', \FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js');
+        AssetManager::add('css', \FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css');
         $this->codeModel=new CodeModel();
         $this->newMail = new NewMail();
         $this->newMail->setUser($this->user);
