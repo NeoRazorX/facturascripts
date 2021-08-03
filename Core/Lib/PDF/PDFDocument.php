@@ -404,6 +404,7 @@ abstract class PDFDocument extends PDFCore
         $tableData = [
             ['key' => $headerData['subject'], 'value' => Utils::fixHtml($model->{$headerData['fieldName']})],
             ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
+                    // para hacer una prueba
             ['key' => $this->i18n->trans('address'), 'value' => empty($model->direccion) ? '' : $this->combineAddress($model)],
             ['key' => $this->i18n->trans('code'), 'value' => $model->codigo],
             ['key' => $tipoidfiscal, 'value' => $model->cifnif],
