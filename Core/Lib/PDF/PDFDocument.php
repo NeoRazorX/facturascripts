@@ -36,7 +36,7 @@ use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 
-use FacturaScripts\Core\Model\Proveedor; // jerofa
+use FacturaScripts\Core\Model\Proveedor;
 /**
  * PDF document data.
  *
@@ -94,21 +94,24 @@ abstract class PDFDocument extends PDFCore
         return $completeAddress;
     }
     
-    protected function TraerDireccionDelProveedor($p_model) : string // jerofa
+    /**
+     * Returns the combination of the address. 
+     * If it is a supplier invoice, it returns the supplier's default address. 
+     * If it is a a customer invoice, return the invoice address
+     *
+     * @param BusinessDocument|Subject $p_subject
+     * @param BusinessDocument|Contacto $p_model
+     *
+     * @return string
+     */
+    protected function getDocAddress($p_subject, $p_model) : string
     {
-        if (isset($p_model->codproveedor)) {
-            // Es una ftra de compras, por lo que la direccion la traemos del modelo proveedor
-            $direccion = ''; // Inicializamos la variable direccion
-            $proveedor = new Proveedor();
-            if ($proveedor->loadFromCode($p_model->codproveedor)) {
-                $contacto = $proveedor->getDefaultAddress(); // Traemos en un modelo contacto la dirección por defecto del proveedor
-                $direccion = $this->combineAddress($contacto); // Guardamos en direccion la dirección que nos devuelve combineAddress(pasándole el modelo contacto)
-            }
-            return $direccion;
-        } else {
-            // No es una ftra de compras, por lo que la direccion la traemos del modelo (factura de ventas)
-            return $this->combineAddress($p_model);
+        if (isset($p_subject->codproveedor)) { // También podríamos haber pasado $p_model->codproveedor
+            $contacto = $p_subject->getDefaultAddress(); // Traemos en un modelo contacto la dirección por defecto del proveedor
+            return $this->combineAddress($contacto); // Devolvemos la dirección usando combineAddress , pero pasándole el modelo contacto
         }
+        
+        return $this->combineAddress($p_model); // Pasamos $p_model porque $p_subject por ejemplo no tiene $p_subject->direccion
     }
 
     /**
@@ -417,16 +420,13 @@ abstract class PDFDocument extends PDFCore
         $this->pdf->ezText("\n" . $headerData['title'] . ': ' . $model->codigo . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
-        $subject = $model->getSubject();
+        $subject = $model->getSubject(); // getSubject() nos trae los datos del cliente o del proveedor,  pero no conoce por ejemplo la dirección por defecto
         $tipoidfiscal = empty($subject->tipoidfiscal) ? $this->i18n->trans('cifnif') : $subject->tipoidfiscal;
         
         $tableData = [
             ['key' => $headerData['subject'], 'value' => Utils::fixHtml($model->{$headerData['fieldName']})],
             ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
-                    
-            // ['key' => $this->i18n->trans('address'), 'value' => empty($model->direccion) ? '' : $this->combineAddress($model)], // ... Código anterior para la dirección
-            ['key' => $this->i18n->trans('address'), 'value' => $this->TraerDireccionDelProveedor($model)],
-                    
+            ['key' => $this->i18n->trans('address'), 'value' => $this->getDocAddress($subject, $model)],
             ['key' => $this->i18n->trans('code'), 'value' => $model->codigo],
             ['key' => $tipoidfiscal, 'value' => $model->cifnif],
             ['key' => $this->i18n->trans('number'), 'value' => $model->numero],
