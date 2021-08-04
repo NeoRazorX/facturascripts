@@ -96,23 +96,19 @@ abstract class PDFDocument extends PDFCore
     
     protected function TraerDireccionDelProveedor($p_model) : string // jerofa
     {
-        // $p_model ya hemos comprobado que es un cliente
-       
-        // $proveedor = new \FacturaScripts\Core\Model\Proveedor();
-        $direccion = ''; // Inicializamos la variable direccion
-        
-        // Creamos los dos modelos que vamos a usar en esta function
-        $contacto = new Contacto();
-        $proveedor = new Proveedor();
-        
-        $where = [new DataBaseWhere('codproveedor', $p_model->codproveedor)];
-        if ($proveedor->loadFromCode($p_model->codproveedor) || $proveedor->loadFromCode('', $where)) {
-            $contacto = $proveedor->getDefaultAddress(); // Traemos en un modelo contacto la dirección por defecto del proveedor
-            $direccion = $this->combineAddress($contacto); // Guardamos en direccion la dirección que nos devuelve combineAddress(pasándole el modelo contacto)
+        if (isset($p_model->codproveedor)) {
+            // Es una ftra de compras, por lo que la direccion la traemos del modelo proveedor
+            $direccion = ''; // Inicializamos la variable direccion
+            $proveedor = new Proveedor();
+            if ($proveedor->loadFromCode($p_model->codproveedor)) {
+                $contacto = $proveedor->getDefaultAddress(); // Traemos en un modelo contacto la dirección por defecto del proveedor
+                $direccion = $this->combineAddress($contacto); // Guardamos en direccion la dirección que nos devuelve combineAddress(pasándole el modelo contacto)
+            }
+            return $direccion;
+        } else {
+            // No es una ftra de compras, por lo que la direccion la traemos del modelo (factura de ventas)
+            return $this->combineAddress($p_model);
         }
-        
-
-        return $direccion;
     }
 
     /**
@@ -409,17 +405,9 @@ abstract class PDFDocument extends PDFCore
             'fieldName' => 'nombrecliente'
         ];
 
-        $direccion = '';
-        
         if (isset($model->codproveedor)) {
             $headerData['subject'] = $this->i18n->trans('supplier');
             $headerData['fieldName'] = 'nombre';
-            
-            // Es una ftra de compras, por lo que la direccion la traemos del modelo proveedor (function TraerDireccionDelProveedor)
-            $direccion = $this->TraerDireccionDelProveedor($model);
-        } else {
-            // No es una ftra de compras, por lo que la direccion la traemos del modelo (factura de ventas)
-            $direccion = $this->combineAddress($model);
         }
 
         if (!empty($this->format->titulo)) {
@@ -437,7 +425,7 @@ abstract class PDFDocument extends PDFCore
             ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
                     
             // ['key' => $this->i18n->trans('address'), 'value' => empty($model->direccion) ? '' : $this->combineAddress($model)], // ... Código anterior para la dirección
-            ['key' => $this->i18n->trans('address'), 'value' => $direccion],
+            ['key' => $this->i18n->trans('address'), 'value' => $this->TraerDireccionDelProveedor($model)],
                     
             ['key' => $this->i18n->trans('code'), 'value' => $model->codigo],
             ['key' => $tipoidfiscal, 'value' => $model->cifnif],
