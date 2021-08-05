@@ -92,6 +92,26 @@ abstract class PDFDocument extends PDFCore
         $completeAddress .= empty($model->codpais) ? '' : ', ' . $this->getCountryName($model->codpais);
         return $completeAddress;
     }
+    
+    /**
+     * Returns the combination of the address. 
+     * If it is a supplier invoice, it returns the supplier's default address. 
+     * If it is a a customer invoice, return the invoice address
+     *
+     * @param Cliente|Proveedor $subject
+     * @param BusinessDocument|Contacto $model
+     *
+     * @return string
+     */
+    protected function getDocAddress($subject, $model) : string
+    {
+        if (isset($model->codproveedor)) {
+            $contacto = $subject->getDefaultAddress(); // Traemos en un modelo contacto la dirección por defecto del proveedor
+            return $this->combineAddress($contacto); // Devolvemos la dirección usando combineAddress , pero pasándole el modelo contacto
+        }
+        
+        return $this->combineAddress($model); // Pasamos $p_model porque $p_subject por ejemplo no tiene $p_subject->direccion
+    }
 
     /**
      * 
@@ -401,10 +421,11 @@ abstract class PDFDocument extends PDFCore
 
         $subject = $model->getSubject();
         $tipoidfiscal = empty($subject->tipoidfiscal) ? $this->i18n->trans('cifnif') : $subject->tipoidfiscal;
+        
         $tableData = [
             ['key' => $headerData['subject'], 'value' => Utils::fixHtml($model->{$headerData['fieldName']})],
             ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
-            ['key' => $this->i18n->trans('address'), 'value' => empty($model->direccion) ? '' : $this->combineAddress($model)],
+            ['key' => $this->i18n->trans('address'), 'value' => $this->getDocAddress($subject, $model)],
             ['key' => $this->i18n->trans('code'), 'value' => $model->codigo],
             ['key' => $tipoidfiscal, 'value' => $model->cifnif],
             ['key' => $this->i18n->trans('number'), 'value' => $model->numero],
