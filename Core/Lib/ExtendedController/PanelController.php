@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Athos Online <info@athosonline.com>
  */
 abstract class PanelController extends BaseController
 {
@@ -304,6 +305,11 @@ abstract class PanelController extends BaseController
     protected function execPreviousAction($action)
     {
         switch ($action) {
+            case 'select':
+                $this->setTemplate(false);
+                $results = $this->selectAction();
+                $this->response->setContent(json_encode($results));
+                return false;
             case 'autocomplete':
                 $this->setTemplate(false);
                 $results = $this->autocompleteAction();

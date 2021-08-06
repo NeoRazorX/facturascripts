@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Description of BaseController
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Athos Online <info@athosonline.com>
  */
 abstract class BaseController extends Controller
 {
@@ -248,6 +249,34 @@ abstract class BaseController extends Controller
         if (empty($results) && '0' == $data['strict']) {
             $results[] = ['key' => $data['term'], 'value' => $data['term']];
         } elseif (empty($results)) {
+            $results[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-data')];
+        }
+
+        return $results;
+    }
+    
+    /**
+     * Run the seleect action.
+     * Returns a JSON string for the searched values.
+     *
+     * @return array
+     */
+    protected function selectAction(): array
+    {
+        $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
+
+        $where = [];
+        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
+            $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
+        }
+
+        $results = [];
+        $utils = $this->toolBox()->utils();
+        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $value) {
+            $results[] = ['key' => $utils->fixHtml($value->code), 'value' => $utils->fixHtml($value->description)];
+        }
+
+        if (empty($results)) {
             $results[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-data')];
         }
 

@@ -20,12 +20,14 @@ namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Dinamic\Model\CodeModel;
 use Symfony\Component\HttpFoundation\Request;
+use FacturaScripts\Core\Lib\AssetManager;
 
 /**
  * Description of WidgetSelect
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Athos Online <info@athosonline.com>
  */
 class WidgetSelect extends BaseWidget
 {
@@ -47,6 +49,18 @@ class WidgetSelect extends BaseWidget
      * @var string
      */
     protected $fieldtitle;
+    
+    /**
+     *
+     * @var string
+     */
+    protected $fieldfilter;
+    
+    /**
+     *
+     * @var string
+     */
+    protected $parent;
 
     /**
      *
@@ -78,6 +92,7 @@ class WidgetSelect extends BaseWidget
 
         parent::__construct($data);
         $this->translate = isset($data['translate']);
+        $this->parent = $data['parent'] ?? '';
 
         foreach ($data['children'] as $child) {
             if ($child['tag'] !== 'values') {
@@ -107,7 +122,8 @@ class WidgetSelect extends BaseWidget
         return [
             'source' => $this->source,
             'fieldcode' => $this->fieldcode,
-            'fieldtitle' => $this->fieldtitle
+            'fieldtitle' => $this->fieldtitle,
+            'fieldfilter' => $this->fieldfilter
         ];
     }
 
@@ -242,7 +258,19 @@ class WidgetSelect extends BaseWidget
         }
 
         $found = false;
-        $html = '<select name="' . $this->fieldname . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '>';
+        $html = '<select'
+                . ' name="' . $this->fieldname . '"'
+                . ' class="' . $class . '"'
+                . $this->inputHtmlExtraParams()
+                . ' parent="' . $this->parent . '"'
+                . ' value="' . $this->value . '"'
+                . ' data-field="' . $this->fieldname . '"'
+                . ' data-source="' . $this->source . '"'
+                . ' data-fieldcode="' . $this->fieldcode . '"'
+                . ' data-fieldtitle="' . $this->fieldtitle . '"'
+                . ' data-fieldfilter="' . $this->fieldfilter . '"'
+                . '>';
+        
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
@@ -278,6 +306,7 @@ class WidgetSelect extends BaseWidget
         $this->source = $child['source'];
         $this->fieldcode = $child['fieldcode'] ?? 'id';
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
+        $this->fieldfilter = $child['fieldfilter'] ?? $this->fieldfilter;
         if ($loadData) {
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
             $this->setValuesFromCodeModel($values, $this->translate);
@@ -312,5 +341,13 @@ class WidgetSelect extends BaseWidget
         }
 
         return $selected;
+    }
+    
+    /**
+     * Adds assets to the asset manager.
+     */
+    protected function assets()
+    {
+        AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
     }
 }
