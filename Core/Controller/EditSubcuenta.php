@@ -87,12 +87,12 @@ class EditSubcuenta extends EditController
         $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['partidas.concepto']);
         
-        $this->views[$viewName]->addFilterPeriod('porFecha', 'Fecha', 'fecha');
+        $this->views[$viewName]->addFilterPeriod('byDate', 'date', 'fecha');
         
-        $this->views[$viewName]->addFilterNumber('porDebeMayorIgual', 'Debe', 'debe', '>=');
-        $this->views[$viewName]->addFilterNumber('porDebeMenorIgual', 'Debe', 'debe', '<=');
-        $this->views[$viewName]->addFilterNumber('porHaberMayorIgual', 'Haber', 'haber', '>=');
-        $this->views[$viewName]->addFilterNumber('porHaberMenorIgual', 'Haber', 'haber', '<=');
+        $this->views[$viewName]->addFilterNumber('debit-major', 'debit', 'debe', '>=');
+        $this->views[$viewName]->addFilterNumber('debit-minor', 'debit', 'debe', '<=');
+        $this->views[$viewName]->addFilterNumber('credit-major', 'credit', 'haber', '>=');
+        $this->views[$viewName]->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
 
         $this->addButton($viewName, [
             'action' => 'dot-accounting-on',
