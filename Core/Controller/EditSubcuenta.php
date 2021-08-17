@@ -86,6 +86,13 @@ class EditSubcuenta extends EditController
         $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['partidas.concepto']);
+        
+        $this->views[$viewName]->addFilterPeriod('porFecha', 'Fecha', 'fecha');
+        
+        $this->views[$viewName]->addFilterNumber('porDebeMayorIgual', 'Debe', 'debe', '>=');
+        $this->views[$viewName]->addFilterNumber('porDebeMenorIgual', 'Debe', 'debe', '<=');
+        $this->views[$viewName]->addFilterNumber('porHaberMayorIgual', 'Haber', 'haber', '>=');
+        $this->views[$viewName]->addFilterNumber('porHaberMenorIgual', 'Haber', 'haber', '<=');
 
         $this->addButton($viewName, [
             'action' => 'dot-accounting-on',
