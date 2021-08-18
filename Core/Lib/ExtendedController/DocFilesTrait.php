@@ -37,7 +37,7 @@ trait DocFilesTrait
     abstract public static function toolBox();
 
     /**
-     * 
+     *
      * @return bool
      */
     private function addFileAction(): bool
@@ -80,16 +80,16 @@ trait DocFilesTrait
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
-    protected function createViewDocFiles(string $viewName = 'docfiles')
+    protected function createViewDocFiles(string $viewName = 'docfiles', string $template = 'Tab/DocFiles')
     {
-        $this->addHtmlView($viewName, 'Tab/DocFiles', 'AttachedFileRelation', 'files', 'fas fa-paperclip');
+        $this->addHtmlView($viewName, $template, 'AttachedFileRelation', 'files', 'fas fa-paperclip');
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     private function deleteFileAction(): bool
@@ -112,7 +112,7 @@ trait DocFilesTrait
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     private function editFileAction(): bool
@@ -140,7 +140,7 @@ trait DocFilesTrait
     }
 
     /**
-     * 
+     *
      * @param BaseView $view
      * @param string   $model
      * @param string   $modelid
@@ -155,7 +155,7 @@ trait DocFilesTrait
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     private function unlinkFileAction(): bool
