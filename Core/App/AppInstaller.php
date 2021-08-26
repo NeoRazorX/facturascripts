@@ -117,7 +117,7 @@ final class AppInstaller
     private function createFolders()
     {
         // Check each needed folder to deploy
-        foreach (['Plugins', 'Dinamic', 'MyFiles'] as $folder) {
+        foreach (['Plugins', 'Dinamic', 'MyFiles', 'MyFiles\\Translation'] as $folder) {
             if (false === ToolBox::files()->createFolder($folder)) {
                 ToolBox::i18nLog()->critical('cant-create-folders', ['%folder%' => $folder]);
                 return false;
