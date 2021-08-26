@@ -14,18 +14,21 @@ ASM;AS;Samoa Americana
 ATA;AQ;Antártida
 ATF;TF;Territorios Australes Franceses
 ATG;AG;Antigua y Barbuda
+ALA;AX;Islas Aland
 AUS;AU;Australia
 AUT;AT;Austria
 AZE;AZ;Azerbaiyán
 BDI;BI;Burundi
 BEL;BE;Bélgica
 BEN;BJ;Benín
+BES;BQ;Bonaire, San Eustaquio y Saba
 BFA;BF;Burkina Faso
 BGD;BD;Bangladesh
 BGR;BG;Bulgaria
 BHR;BH;Bahréin
 BHS;BS;Bahamas
 BIH;BA;Bosnia y Herzegovina
+BLM;BL;San Bartolomé
 BLR;BY;Bielorrusia
 BLZ;BZ;Belice
 BMU;BM;Bermudas
@@ -52,6 +55,7 @@ COM;KM;Comoras
 CPV;CV;Cabo Verde
 CRI;CR;Costa Rica
 CUB;CU;Cuba
+CUW;CW;Curazao
 CXR;CX;Isla de Navidad
 CYM;KY;Islas Caimán
 CYP;CY;Chipre
@@ -78,6 +82,7 @@ FSM;FM;Micronesia
 GAB;GA;Gabón
 GBR;GB;Reino Unido
 GEO;GE;Georgia
+GGY;GG;Guernsey
 GHA;GH;Ghana
 GIB;GI;Gibraltar
 GIN;GN;Guinea
@@ -99,6 +104,7 @@ HRV;HR;Croacia
 HTI;HT;Haití
 HUN;HU;Hungría
 IDN;ID;Indonesia
+INM;IM;Isla de Man
 IND;IN;India
 IOT;IO;Territorio Británico del Océano Índico
 IRL;IE;Irlanda
