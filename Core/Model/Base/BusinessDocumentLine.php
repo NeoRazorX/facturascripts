@@ -483,11 +483,10 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         }
 
         $this->applyStockChanges($stock, $this->previousData['actualizastock'], $this->previousData['cantidad'] * -1, $this->previousData['servido'] * -1);
-        $available_stock = $stock->cantidad - $stock->reservada >= $this->cantidad;
         $this->applyStockChanges($stock, $this->actualizastock, $this->cantidad, $this->servido);
 
         /// enough stock?
-        if (false === $producto->ventasinstock && $this->actualizastock === -1 && (!$available_stock || $stock->cantidad < 0)) {
+        if (false === $producto->ventasinstock && $this->actualizastock === -1 && ($stock->disponible < $this->cantidad  || $stock->cantidad < 0)) {
             $this->toolBox()->i18nLog()->warning('not-enough-stock', ['%reference%' => $this->referencia]);
             return false;
         }
