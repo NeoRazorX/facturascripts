@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\CuentaBancoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Test\Core\CustomTest;
@@ -65,16 +66,23 @@ class CuentaBancoProveedorTest extends CustomTest
         $supplier->nombre = 'Test';
         $this->assertTrue($supplier->save());
 
-        /// save valid iban
+        $settings = new AppSettings();
+
+        /// save valid iban with validate
+        $settings->set('default', 'validate_iban', true);
         $account = new CuentaBancoProveedor();
         $account->codproveedor = $supplier->primaryColumnValue();
         $account->descripcion = 'test';
         $account->iban = 'ES91 2100 0418 4502 0005 1332';
         $this->assertTrue($account->save());
 
-        /// now save invalid iban
+        /// now save invalid iban with validate
         $account->iban = '1234';
         $this->assertFalse($account->save());
+
+        /// now save invalid iban without validate
+        $settings->set('default', 'validate_iban', false);
+        $this->assertTrue($account->save());
 
         /// delete bank account
         $this->assertTrue($account->delete());

@@ -25,7 +25,7 @@ use PHP_IBAN\IBAN;
  * for a generic use.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal  <yopli2000@gmail.com>
  */
 abstract class BankAccount extends ModelClass
 {
@@ -93,7 +93,7 @@ abstract class BankAccount extends ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public static function primaryColumn()
@@ -102,7 +102,7 @@ abstract class BankAccount extends ModelClass
     }
 
     /**
-     * 
+     *
      * @param bool $value
      */
     public function setDisableIbanTest($value)
@@ -139,12 +139,15 @@ abstract class BankAccount extends ModelClass
      */
     public function verifyIBAN(string $iban)
     {
-        $object = new IBAN($iban);
-        return $object->Verify();
+        if (true == $this->toolBox()->appSettings()->get('default', 'validate_iban', false)) {
+            $object = new IBAN($iban);
+            return $object->Verify();
+        }
+        return true;
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool

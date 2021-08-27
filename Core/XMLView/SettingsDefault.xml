@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal  <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 <view>
@@ -74,6 +74,9 @@
                 <widget type="select" fieldname="codretencion" onclick="EditRetencion">
                     <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion" />
                 </widget>
+            </column>
+            <column name="validate-iban" order="200">
+                <widget type="checkbox" fieldname="validate_iban" />
             </column>
         </group>
         <group name="numericformat" title="numeric-formats" icon="fas fa-info-circle" numcolumns="12">

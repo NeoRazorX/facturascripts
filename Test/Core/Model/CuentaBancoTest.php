@@ -18,6 +18,7 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\CuentaBanco;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -45,15 +46,22 @@ class CuentaBancoTest extends CustomTest
 
     public function testIBAN()
     {
-        /// save valid iban
+        $settings = new AppSettings();
+
+        /// save valid iban with validate
+        $settings->set('default', 'validate_iban', true);
         $account = new CuentaBanco();
         $account->descripcion = 'test';
         $account->iban = 'ES91 2100 0418 4502 0005 1332';
         $this->assertTrue($account->save());
 
-        /// now save invalid iban
+        /// now save invalid iban with validate
         $account->iban = '1234';
         $this->assertFalse($account->save());
+
+        /// now save invalid iban without validate
+        $settings->set('default', 'validate_iban', false);
+        $this->assertTrue($account->save());
 
         /// delete
         $this->assertTrue($account->delete());
