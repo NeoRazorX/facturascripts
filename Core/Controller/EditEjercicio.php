@@ -315,9 +315,13 @@ class EditEjercicio extends EditController
      * @return bool
      */
     protected function importDefaultPlan(string $codejercicio)
-    {
-        $codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
-        $filePath = \FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
+    {        
+        $lang = \FS_LANG;
+        $filePath = \FS_FOLDER . '/Dinamic/Data/Lang/' . $lang . '/defaultPlan.csv';
+        if (false === \file_exists($filePath)) {
+            $codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
+            $filePath = \FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
+        }        
         if (false === \file_exists($filePath)) {
             $this->toolBox()->i18nLog()->warning('file-not-found', ['%fileName%' => $filePath]);
             return true;
