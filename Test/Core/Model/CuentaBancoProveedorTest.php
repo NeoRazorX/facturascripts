@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -66,9 +67,8 @@ class CuentaBancoProveedorTest extends CustomTest
         $supplier->nombre = 'Test';
         $this->assertTrue($supplier->save());
 
-        $settings = new AppSettings();
-
         /// save valid iban with validate
+        $settings = new AppSettings();
         $settings->set('default', 'validate_iban', true);
         $account = new CuentaBancoProveedor();
         $account->codproveedor = $supplier->primaryColumnValue();
