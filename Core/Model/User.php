@@ -138,7 +138,7 @@ class User extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function delete()
@@ -252,7 +252,7 @@ class User extends Base\ModelClass
 
     /**
      * Updates last ip address and last activity property.
-     * 
+     *
      * @param string $ipAddress
      */
     public function updateActivity($ipAddress)
@@ -274,7 +274,7 @@ class User extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool
@@ -294,27 +294,29 @@ class User extends Base\ModelClass
      */
     protected function setNewRole()
     {
-        $roleModel = new Role();
-        foreach ($roleModel->all() as $role) {
-            $roleUser = new RoleUser();
-            $roleUser->codrole = $role->codrole;
-            $roleUser->nick = $this->nick;
-            $roleUser->save();
-
-            /// set user homepage
-            foreach ($roleUser->getRoleAccess() as $roleAccess) {
-                $this->homepage = $roleAccess->pagename;
-                if ('List' == \substr($this->homepage, 0, 4)) {
-                    break;
-                }
-            }
-            $this->save();
-            break;
+        $role = new Role();
+        $code = $this->toolBox()->appSettings()->get('default', 'codrole');
+        if (false === $role->loadFromCode($code)) {
+            return;
         }
+
+        $roleUser = new RoleUser();
+        $roleUser->codrole = $role->code;
+        $roleUser->nick = $this->nick;
+        $roleUser->save();
+
+        /// set user homepage
+        foreach ($roleUser->getRoleAccess() as $roleAccess) {
+            $this->homepage = $roleAccess->pagename;
+            if ('List' == \substr($this->homepage, 0, 4)) {
+                break;
+            }
+        }
+        $this->save();
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function testAgent(): bool
@@ -333,7 +335,7 @@ class User extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function testWarehouse(): bool

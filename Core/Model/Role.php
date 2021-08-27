@@ -98,7 +98,7 @@ class Role extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool

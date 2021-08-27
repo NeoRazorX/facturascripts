@@ -41,7 +41,7 @@ class Wizard extends Controller
     const NEW_DEFAULT_PAGE = 'ListFacturaCliente';
 
     /**
-     * 
+     *
      * @return array
      */
     public function getAvailablePlugins()
@@ -79,7 +79,7 @@ class Wizard extends Controller
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getRegimenIva()
@@ -150,16 +150,14 @@ class Wizard extends Controller
     private function addDefaultRoleAccess(): bool
     {
         $role = new Model\Role();
-        $role->codrole = \mb_strtolower($this->toolBox()->i18n()->trans('employee'), 'UTF8');
+        $role->codrole = 'employee';
         $role->descripcion = $this->toolBox()->i18n()->trans('employee');
 
         if ($role->exists()) {
             return true;
-        } elseif ($role->save()) {
-            return $this->addPagesToRole($role->codrole);
         }
 
-        return false;
+        return $role->save() && $this->addPagesToRole($role->codrole);
     }
 
     /**
@@ -219,7 +217,7 @@ class Wizard extends Controller
 
     /**
      * Initialize required models.
-     * 
+     *
      * @param array $names
      */
     private function initModels(array $names)
@@ -232,7 +230,7 @@ class Wizard extends Controller
 
     /**
      * Loads the default accounting plan. If there is one.
-     * 
+     *
      * @param string $codpais
      *
      * @return bool
@@ -350,7 +348,7 @@ class Wizard extends Controller
     }
 
     /**
-     * 
+     *
      * @param string $email
      *
      * @return bool

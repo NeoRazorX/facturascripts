@@ -78,7 +78,12 @@
                     <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"/>
                 </widget>
             </column>
-            <column name="validate-iban" order="200">
+            <column name="role" numcolumns="3" order="200">
+                <widget type="select" fieldname="codrole" onclick="EditRole" required="true">
+                    <values source="roles" fieldcode="codrole" fieldtitle="descripcion" />
+                </widget>
+             </column>
+            <column name="validate-iban" order="210">
                 <widget type="checkbox" fieldname="validate_iban"/>
             </column>
         </group>
