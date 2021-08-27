@@ -110,6 +110,7 @@ class CSVExport extends ExportBase
         while (!empty($cursor)) {
             $data = $this->getCursorRawData($cursor);
             $this->writeData($data, $fields);
+            $fields = [];
 
             /// Advance within the results
             $offset += self::LIST_LIMIT;
@@ -187,7 +188,7 @@ class CSVExport extends ExportBase
 
     /**
      * Blank document.
-     * 
+     *
      * @param string $title
      * @param int    $idformat
      * @param string $langcode
@@ -210,7 +211,7 @@ class CSVExport extends ExportBase
     }
 
     /**
-     * 
+     *
      * @param string $orientation
      */
     public function setOrientation(string $orientation)
@@ -243,17 +244,15 @@ class CSVExport extends ExportBase
 
     /**
      * Fills an array with the CSV data.
-     * 
+     *
      * @param array $data
      * @param array $fields
      */
-    public function writeData($data, $fields)
+    public function writeData($data, $fields = [])
     {
-        $headers = [];
-        foreach ($fields as $field) {
-            $headers[] = $this->getDelimiter() . $field . $this->getDelimiter();
+        if (!empty($fields)) {
+            $this->writeHeader($fields);
         }
-        $this->csv[] = \implode($this->separator, $headers);
 
         foreach ($data as $row) {
             $line = [];
@@ -263,5 +262,18 @@ class CSVExport extends ExportBase
 
             $this->csv[] = \implode($this->separator, $line);
         }
+    }
+
+    /**
+     *
+     * @param array $fields
+     */
+    private function writeHeader($fields)
+    {
+        $headers = [];
+        foreach ($fields as $field) {
+            $headers[] = $this->getDelimiter() . $field . $this->getDelimiter();
+        }
+        $this->csv[] = \implode($this->separator, $headers);
     }
 }
