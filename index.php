@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-define('FS_FOLDER', __DIR__);
+
+use FacturaScripts\Core\App\AppCron;
+use FacturaScripts\Core\App\AppInstaller;
+use FacturaScripts\Core\App\AppRouter;
+use FacturaScripts\Core\Base\Debug\ProductionErrorHandler;
+use Whoops\Handler\PlainTextHandler;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
+
+const FS_FOLDER = __DIR__;
 
 /**
  * Preliminary checks
@@ -34,9 +43,9 @@ if (false === file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'config.php')) {
      */
     require_once __DIR__ . '/vendor/autoload.php';
 
-    $router = new \FacturaScripts\Core\App\AppRouter();
+    $router = new AppRouter();
     if (false === $router->getFile()) {
-        $app = new \FacturaScripts\Core\App\AppInstaller();
+        $app = new AppInstaller();
     }
     exit();
 }
@@ -50,21 +59,21 @@ ignore_user_abort(true);
 
 /// Register error handler
 if (FS_DEBUG) {
-    $whoops = new \Whoops\Run;
-    $whoops->prependHandler(new \Whoops\Handler\PlainTextHandler());
-    $whoops->prependHandler(new \Whoops\Handler\PrettyPageHandler());
+    $whoops = new Run;
+    $whoops->prependHandler(new PlainTextHandler());
+    $whoops->prependHandler(new PrettyPageHandler());
     $whoops->register();
 } else {
-    $errorHandler = new \FacturaScripts\Core\Base\Debug\ProductionErrorHandler();
+    $errorHandler = new ProductionErrorHandler();
 }
 
 /**
  * Initialise the application
  */
-$router = new \FacturaScripts\Core\App\AppRouter();
+$router = new AppRouter();
 if (isset($argv[1]) && $argv[1] === '-cron') {
     chdir(__DIR__);
-    $app = new \FacturaScripts\Core\App\AppCron();
+    $app = new AppCron();
     $app->connect();
     $app->run();
     $app->render();
