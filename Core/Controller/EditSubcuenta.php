@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -86,26 +87,25 @@ class EditSubcuenta extends EditController
         $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['partidas.concepto']);
-        
-        $this->views[$viewName]->addFilterPeriod('byDate', 'date', 'fecha');
-        
-        $this->views[$viewName]->addFilterNumber('debit-major', 'debit', 'debe', '>=');
+
+        $this->views[$viewName]->addFilterPeriod('date', 'date', 'fecha');
+        $this->views[$viewName]->addFilterNumber('debit-major', 'debit', 'debe');
         $this->views[$viewName]->addFilterNumber('debit-minor', 'debit', 'debe', '<=');
-        $this->views[$viewName]->addFilterNumber('credit-major', 'credit', 'haber', '>=');
+        $this->views[$viewName]->addFilterNumber('credit-major', 'credit', 'haber');
         $this->views[$viewName]->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
 
         $this->addButton($viewName, [
             'action' => 'dot-accounting-on',
             'color' => 'info',
             'icon' => 'fas fa-check-double',
-            'label' => 'checked',
+            'label' => 'checked'
         ]);
 
         $this->addButton($viewName, [
             'action' => 'dot-accounting-off',
             'color' => 'warning',
             'icon' => 'far fa-square',
-            'label' => 'unchecked',
+            'label' => 'unchecked'
         ]);
 
         /// disable column
@@ -136,7 +136,7 @@ class EditSubcuenta extends EditController
     {
         switch ($action) {
             case 'ledger':
-                $code = $this->request->query->get('code');
+                $code = (int)$this->request->query->get('code');
                 if (!empty($code)) {
                     $this->setTemplate(false);
                     $this->ledgerReport($code);
@@ -158,7 +158,7 @@ class EditSubcuenta extends EditController
      *
      * @param int $idSubAccount
      */
-    protected function ledgerReport($idSubAccount)
+    protected function ledgerReport(int $idSubAccount)
     {
         $subAccount = new Subcuenta();
         $subAccount->loadFromCode($idSubAccount);
@@ -184,7 +184,7 @@ class EditSubcuenta extends EditController
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -214,7 +214,7 @@ class EditSubcuenta extends EditController
      *
      * @param BaseView $view
      */
-    protected function prepareSubcuenta($view)
+    protected function prepareSubcuenta(BaseView $view)
     {
         $cuenta = new Cuenta();
         $idcuenta = $this->request->query->get('idcuenta', '');
@@ -229,8 +229,10 @@ class EditSubcuenta extends EditController
      * Set dotted status to indicated value.
      *
      * @param bool $value
+     *
+     * @return bool
      */
-    private function dotAccountingAction(bool $value)
+    private function dotAccountingAction(bool $value): bool
     {
         $ids = $this->request->request->get('code', []);
         if (empty($ids)) {
@@ -238,7 +240,7 @@ class EditSubcuenta extends EditController
             return false;
         }
 
-        $where = [new DataBaseWhere('idpartida', \implode(',', $ids), 'IN')];
+        $where = [new DataBaseWhere('idpartida', implode(',', $ids), 'IN')];
         $partida = new Partida();
         foreach ($partida->all($where) as $row) {
             $row->setDottedStatus($value);
@@ -253,7 +255,7 @@ class EditSubcuenta extends EditController
      *
      * @param string $viewName
      */
-    private function setLedgerReportExportOptions($viewName)
+    private function setLedgerReportExportOptions(string $viewName)
     {
         $columnFormat = $this->views[$viewName]->columnModalForName('format');
         if ($columnFormat && $columnFormat->widget->getType() === 'select') {
@@ -270,7 +272,7 @@ class EditSubcuenta extends EditController
      *
      * @param string $viewName
      */
-    private function setLedgerReportValues($viewName)
+    private function setLedgerReportValues(string $viewName)
     {
         $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
         $exercise = new Ejercicio();

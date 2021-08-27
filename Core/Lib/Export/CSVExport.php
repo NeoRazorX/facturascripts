@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -86,14 +87,14 @@ class CSVExport extends ExportBase
     }
 
     /**
-     * Adds a new page with a table listing the models data.
+     * Adds a new page with a table listing the model data.
      *
-     * @param ModelClass      $model
+     * @param ModelClass $model
      * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param array           $columns
-     * @param string          $title
+     * @param array $order
+     * @param int $offset
+     * @param array $columns
+     * @param string $title
      *
      * @return bool
      */
@@ -125,8 +126,8 @@ class CSVExport extends ExportBase
      * Adds a new page with the model data.
      *
      * @param ModelClass $model
-     * @param array      $columns
-     * @param string     $title
+     * @param array $columns
+     * @param string $title
      *
      * @return bool
      */
@@ -161,7 +162,7 @@ class CSVExport extends ExportBase
      *
      * @return string
      */
-    public function getDelimiter()
+    public function getDelimiter(): string
     {
         return $this->delimiter;
     }
@@ -173,7 +174,7 @@ class CSVExport extends ExportBase
      */
     public function getDoc()
     {
-        return \implode(PHP_EOL, $this->csv);
+        return implode(PHP_EOL, $this->csv);
     }
 
     /**
@@ -181,7 +182,7 @@ class CSVExport extends ExportBase
      *
      * @return string
      */
-    public function getSeparator()
+    public function getSeparator(): string
     {
         return $this->separator;
     }
@@ -190,7 +191,7 @@ class CSVExport extends ExportBase
      * Blank document.
      *
      * @param string $title
-     * @param int    $idformat
+     * @param int $idformat
      * @param string $langcode
      */
     public function newDoc(string $title, int $idformat, string $langcode)
@@ -205,7 +206,7 @@ class CSVExport extends ExportBase
      *
      * @param string $del
      */
-    public function setDelimiter($del)
+    public function setDelimiter(string $del)
     {
         $this->delimiter = $del;
     }
@@ -225,7 +226,7 @@ class CSVExport extends ExportBase
      *
      * @param string $sep
      */
-    public function setSeparator($sep)
+    public function setSeparator(string $sep)
     {
         $this->separator = $sep;
     }
@@ -248,7 +249,7 @@ class CSVExport extends ExportBase
      * @param array $data
      * @param array $fields
      */
-    public function writeData($data, $fields = [])
+    public function writeData(array $data, array $fields = [])
     {
         if (!empty($fields)) {
             $this->writeHeader($fields);
@@ -260,7 +261,7 @@ class CSVExport extends ExportBase
                 $line[] = is_string($cell) ? $this->getDelimiter() . $cell . $this->getDelimiter() : $cell;
             }
 
-            $this->csv[] = \implode($this->separator, $line);
+            $this->csv[] = implode($this->separator, $line);
         }
     }
 
@@ -268,12 +269,12 @@ class CSVExport extends ExportBase
      *
      * @param array $fields
      */
-    private function writeHeader($fields)
+    private function writeHeader(array $fields)
     {
         $headers = [];
         foreach ($fields as $field) {
             $headers[] = $this->getDelimiter() . $field . $this->getDelimiter();
         }
-        $this->csv[] = \implode($this->separator, $headers);
+        $this->csv[] = implode($this->separator, $headers);
     }
 }
