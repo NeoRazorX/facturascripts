@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\EditReportAccounting;
-use FacturaScripts\Core\Model\ReportLedger;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
+use FacturaScripts\Dinamic\Model\ReportLedger;
 
 /**
  * Description of EditReportLedger
@@ -69,19 +69,21 @@ class EditReportLedger extends EditReportAccounting
      * Generate Ledger data for report
      *
      * @param ReportLedger $model
+     * @param string       $format
      *
      * @return array
      */
-    protected function generateReport($model)
+    protected function generateReport($model, $format)
     {
         $params = [
-            'idcompany' => $model->idcompany,
-            'subaccount-from' => $model->startcodsubaccount,
-            'subaccount-to' => $model->endcodsubaccount,
+            'channel' => $model->channel,
             'entry-from' => $model->startentry,
             'entry-to' => $model->endentry,
-            'channel' => $model->channel,
-            'grouped' => $model->grouped
+            'format' => $format,
+            'grouped' => $model->grouped,
+            'idcompany' => $model->idcompany,
+            'subaccount-from' => $model->startcodsubaccount,
+            'subaccount-to' => $model->endcodsubaccount
         ];
 
         $ledger = new Ledger();

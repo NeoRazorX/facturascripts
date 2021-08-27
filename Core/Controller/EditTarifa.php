@@ -203,10 +203,9 @@ class EditTarifa extends EditController
             case 'setgrouprate':
                 $this->setGroupRate();
                 break;
-
-            default:
-                return parent::execPreviousAction($action);
         }
+
+        return parent::execPreviousAction($action);
     }
 
     protected function unsetCustomerRate()

@@ -231,7 +231,7 @@ class EditProveedor extends ComercialContactController
     {
         /// Load values option to VAT Type select input
         $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
-        if ($columnVATType) {
+        if ($columnVATType && $columnVATType->widget->getType() === 'select') {
             $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
         }
 
@@ -248,7 +248,7 @@ class EditProveedor extends ComercialContactController
 
         /// Load values option to default contact
         $columnBilling = $this->views[$viewName]->columnForName('contact');
-        if ($columnBilling) {
+        if ($columnBilling && $columnBilling->widget->getType() === 'select') {
             $columnBilling->widget->setValuesFromCodeModel($contacts);
         }
     }

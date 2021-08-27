@@ -87,7 +87,7 @@ class EditFormatoDocumento extends EditController
     protected function loadLogoWidget(&$view)
     {
         $columnLogo = $view->columnForName('logo');
-        if ($columnLogo) {
+        if ($columnLogo && $columnLogo->widget->getType() === 'select') {
             $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
                 new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
             ]);

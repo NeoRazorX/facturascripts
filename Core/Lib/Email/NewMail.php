@@ -66,7 +66,7 @@ class NewMail
     protected $footerBlocks = [];
 
     /**
-     * 
+     *
      * @var bool
      */
     protected $lowsecure;
@@ -149,7 +149,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param string $email
      * @param string $name
      */
@@ -160,7 +160,7 @@ class NewMail
 
     /**
      * Add attachments to the email.
-     * 
+     *
      * @param string $path
      * @param string $name
      */
@@ -170,7 +170,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param string $email
      * @param string $name
      */
@@ -180,7 +180,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param string $email
      * @param string $name
      */
@@ -190,7 +190,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param BaseBlock $block
      */
     public function addFooterBlock($block)
@@ -200,7 +200,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param BaseBlock $block
      */
     public function addMainBlock($block)
@@ -210,7 +210,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param string $address
      * @param string $name
      */
@@ -221,7 +221,7 @@ class NewMail
 
     /**
      * Check if the email is configured
-     * 
+     *
      * @return bool
      */
     public function canSendMail()
@@ -230,7 +230,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getAttachmentNames()
@@ -245,7 +245,7 @@ class NewMail
 
     /**
      * Returns an array with available email trays
-     * 
+     *
      * @return array
      */
     public function getAvailableMailboxes()
@@ -254,7 +254,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getBCCAddresses(): array
@@ -268,7 +268,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getCCAddresses(): array
@@ -282,7 +282,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function getToAddresses(): array
@@ -296,7 +296,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function send(): bool
@@ -325,7 +325,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param string $emailFrom
      */
     public function setMailbox($emailFrom)
@@ -334,7 +334,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param User $user
      */
     public function setUser($user)
@@ -343,7 +343,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @param string $emails
      *
      * @return array
@@ -380,16 +380,17 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return array
      */
     protected function getFooterBlocks(): array
     {
-        return \array_merge([new TextBlock($this->signature)], $this->footerBlocks);
+        $signature = $this->toolBox()->utils()->fixHtml($this->signature);
+        return \array_merge([new TextBlock($signature)], $this->footerBlocks);
     }
 
     /**
-     * 
+     *
      * @return array
      */
     protected function getMainBlocks(): array
@@ -398,7 +399,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return string
      */
     protected function renderHTML(): string
@@ -453,7 +454,7 @@ class NewMail
     }
 
     /**
-     * 
+     *
      * @return ToolBox
      */
     protected function toolBox()

@@ -125,14 +125,6 @@
                     {% endif %}
                 </p>
             </div>
-            {% if fsc.showDocSubType %}
-                {{ _self.customSelect('doc_codsubtipodoc', 'codsubtipodoc', thisView.model.codsubtipodoc,
-                    thisView.getSelectValues('BusinessDocSubType'), true, i18n.trans('doc-subtype')) }}
-            {% endif %}
-            {% if fsc.showDocOperation %}
-                {{ _self.customSelect('doc_codoperaciondoc', 'codoperaciondoc', thisView.model.codoperaciondoc,
-                    thisView.getSelectValues('BusinessDocTypeOperation'), true, i18n.trans('doc-operation')) }}
-            {% endif %}
             {{ _self.customInput('doc_netosindto', 'netosindto', thisView.model.netosindto, 'text', '',
                 {class: 'form-control', disabled: ''}, i18n.trans('subtotal')) }}
             {% if thisView.model.editable %}

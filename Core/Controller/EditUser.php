@@ -240,8 +240,10 @@ class EditUser extends EditController
         }
 
         $columnHomepage = $this->views['EditUser']->columnForName('homepage');
-        $userPages = $this->getUserPages($this->views['EditUser']->model);
-        $columnHomepage->widget->setValuesFromArray($userPages);
+        if($columnHomepage && $columnHomepage->widget->getType() === 'select') {
+            $userPages = $this->getUserPages($this->views['EditUser']->model);
+            $columnHomepage->widget->setValuesFromArray($userPages);
+        }
     }
 
     /**
@@ -250,7 +252,7 @@ class EditUser extends EditController
     protected function loadLanguageValues()
     {
         $columnLangCode = $this->views['EditUser']->columnForName('language');
-        if ($columnLangCode) {
+        if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
             $langs = [];
             foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
                 $langs[] = ['value' => $key, 'title' => $value];

@@ -26,11 +26,14 @@
         "skilla/validator-cif-nif-nie": "1.0.6",
         "tavo1987/ec-validador-cedula-ruc": "1.0.2",
         "filp/whoops": "2.*",
-        "globalcitizen/php-iban": "3.*"
+        "globalcitizen/php-iban": "3.*",
+        "ext-json": "*",
+        "ext-fileinfo": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "7.*",
-        "squizlabs/php_codesniffer": "3.*"
+        "squizlabs/php_codesniffer": "3.*",
+        "phpstan/phpstan": "^0.12.93"
     },
     "autoload": {
         "psr-4": {

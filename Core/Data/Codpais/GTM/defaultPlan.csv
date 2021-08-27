@@ -1,0 +1,401 @@
+"cuenta";"descripcion";"cuentaesp"
+"1";"ACTIVO";
+"101";"CORRIENTE";
+"10101";"CAJA";"CAJA"
+"10102";"BANCOS";
+"10103";"CLIENTES";"CLIENT"
+"10104";"IVA POR COBRAR";"IVASOP"
+"10105";"ISR";"IRPF"
+"10106";"PAGOS ANTICIPADOS";
+"10107";"INVENTARIOS";
+"102";"NO CORRIENTE";
+"10201";"PROPIEDAD PLANTA Y EQUIPO";
+"10202";"OTROS ACTIVOS";
+"2";"PASIVO";
+"201";"CORRIENTE";
+"20101";"PROVEEDORES";"PROVEE"
+"20102";"ACREEDORES";"ACREED"
+"20103";"CORTO PLAZO";
+"20104";"IVA POR PAGAR";"IVAREP"
+"20105";"IMPUESTOS POR PAGAR";"IRPFPR"
+"20106";"COBROS ANTICIPADOS";
+"202";"NO CORRIENTE";
+"20201";"LARGO PLAZO";
+"3";"PATRIMONIO";
+"301";"PATRIMONIO NETO";
+"30101";"CAPITAL";
+"302";"PÉRDIDAS Y GANANCIAS";
+"30201";"GANANCIAS";
+"30202";"REMANENTE";"PREVIO"
+"30203";"PÉRDIDAS";
+"30204";"DÉFICIT ACUMULADO";"PRENEG"
+"303";"RESERVAS";
+"30301";"RESERVA LEGAL";
+"4";"INGRESOS DE OPERACIÓN";
+"401";"VENTAS";
+"40101";"VENTAS LOCALES";"VENTAS"
+"40102";"VENTAS EXTERIOR";
+"402";"SERVICIOS";
+"40201";"SERVICIOS LOCALES";
+"40202";"SERVICIOS EXTERIOR";
+"403";"ARRENDAMIENTOS";
+"40301";"ARRENDAMIENTOS";
+"404";"OTROS INGRESOS DE OPERACIÓN";
+"40401";"OTRO INGRESOS";
+"5";"COSTOS Y GASTOS DE OPERACIÓN";
+"501";"COSTOS DE OPERACIÓN";
+"50101";"COSTO DE VENTAS";"COMPRA"
+"502";"GASTOS DE OPERACIÓN";
+"50201";"SUELDOS Y SALARIOS";
+"50202";"PRESTACIONES Y BENEFICIOS";
+"50203";"ALQUILERES";
+"50204";"ENERGÍA ELÉCTRICA";
+"50205";"GAS PROPANO";
+"50206";"CONSUMO AGUA";
+"50207";"SERVICIO DE VIGILANCIA";
+"50208";"IMPUESTOS Y CONTRIBUCIONES";
+"50209";"DEPRECIACIONES";
+"50210";"AMORTIZACIONES";
+"50211";"GASTOS DE FRANQUICIA";
+"50212";"VIÁTICOS";
+"50213";"GASTOS DE MANTENIMIENTO";
+"50214";"SEGUROS";
+"50215";"COMUNICACIONES";
+"50216";"PAPELERÍA Y ÚTILES";
+"50217";"LIMPIEZA E HIGIENE";
+"50218";"HONORARIOS Y SERVICIOS PROFESIONALES";
+"50219";"PUBLICIDAD Y MERCADEO";
+"50220";"GASTOS DE RECLUTAMIENTO Y SELECCIÓN";
+"50221";"GASTOS DE CAPACITACIÓN LOCAL";
+"50222";"GASTOS DE CAPACITACIÓN EXTERIOR";
+"50223";"COMBUSTIBLES Y LUBRICANTES";
+"50224";"CUOTAS Y SUSCRIPCIONES";
+"50225";"CARGOS FISCALES";
+"503";"OTROS GASTOS Y PRODUCTOS FINANCIEROS";
+"50301";"GASTOS VARIOS";
+"50302";"OTROS GASTOS DE OPERACIÓN";
+"50303";"GASTOS FINANCIEROS";
+"50304";"OTROS GASTOS";
+"50305";"INGRESOS FINANCIEROS";
+"6";"PÉRDIDAS Y GANANCIAS";
+"601";"PÉRDIDAS Y GANANCIAS";
+"60101";"PÉRDIDAS Y GANANCIAS";"PYG"
+"10101001";"Caja";"CAJA"
+"10101002";"Caja Chica";"CAJA"
+"10101003";"Caja General";"CAJA"
+"10101004";"Caja Sobrantes";"CAMPOS"
+"10102001";"Banco 1";
+"10102002";"Banco 2";
+"10102003";"Banco 3";
+"10102006";"Depósitos en transito";
+"10103000";"Consumidor final";
+"10103001";"Clientes";"CLIENT"
+"10103002";"Reserva para Cuentas Incobrables";
+"10103003";"Deudores Varios";"CLIENT"
+"10103004";"Intereses Por Cobrar";"CLIENT"
+"10103005";"Comisiones por Cobrar";
+"10103006";"Anticipo a Proveedores";
+"10103007";"Documentos Por Cobrar";
+"10103008";"Anticipo a Proveedores";
+"10103009";"CF";
+"10103010";"Delfino Alonzo";
+"10103011";"Victor Daniel Lenin";
+"10103012";"Gabriel Obvidio Hernandez Ramos";
+"10103013";"Ofelia Ramos";
+"10103014";"Luis Dardon";
+"10103015";"Luis Dardon";
+"10103016";"Fuentes";
+"10103017";"Marcos Daniel Escobar Fuentes";
+"10104009";"Crédito Fiscal";
+"10104010";"IVA por Cobrar";"IVASOP"
+"10105011";"ISR Pago Mensual";"IRPF"
+"10105012";"ISR Pago Trimestral";"IRPF"
+"10105013";"ISO Por Acreditar";
+"10105014";"IEMA Pago Trimestral";
+"10105015";"Pérdida Por Amortizar";
+"10105016";"Prestamos Empleados";
+"10105017";"ISR por Cobrar";
+"10106001";"Seguros Pagados por Anticipado";
+"10106002";"Sueldo Pagados por Anticipado";
+"10106003";"Bonificaciones Pagadas por Anticipado";
+"10106004";"Alquileres Pagados por Anticipado";
+"10106005";"Comisiones Pagadas por Anticipado";
+"10106006";"Intereses Pagados por Anticipado";
+"10106007";"Publicidad Pagada por Anticipado";
+"10106008";"Propaganda Pagada Por Anticipado";
+"10107001";"Mercadería";
+"10107002";"Materia Prima";
+"10107003";"Mercadería en Transito";
+"10107004";"Artículos Terminados";
+"10107005";"Material de Empaque";
+"10107006";"Papelería y Útiles";
+"10107007";"Repuestos y Accesorios";
+"10107008";"Grasas y Aceites";
+"10107009";"Útiles y Enseres";
+"10107010";"Envases Retornables";
+"10107011";"Especies Fiscales";
+"10107012";"Mercaderías en Consignación";
+"10107013";"Provisión de Prorrateos";
+"10201001";"Terrenos";
+"10201002";"Edificios";
+"10201003";"Depreciación Acumulada Edificios";
+"10201004";"Maquinaria";
+"10201005";"Depreciación Acumulada Maquinaria";
+"10201006";"Herramientas";
+"10201007";"Depreciación Acumulada Herramientas";
+"10201008";"Mobiliario y Equipo";
+"10201009";"Depreciación Acumulada Mobiliario y Equipo";
+"10201010";"Vehículos";
+"10201011";"Depreciación Acumulada Vehículos";
+"10201012";"Equipo de Cómputo Hardware";
+"10201013";"Depreciación Acumulada Equipo de Cómputo Hardware";
+"10201014";"Equipo de Cómputo Software";
+"10201015";"Depreciación Acumulada Equipo de Cómputo Software";
+"10202001";"Marcas y Patentes";
+"10202002";"Amortización Acumulada Marcas y Patentes";
+"10202003";"Derecho de Llave";
+"10202004";"Amortización Acumulada Derecho de Llave";
+"10202005";"Gastos de Constitución";
+"10202006";"Amortización Acumulada Gastos de Constitución";
+"10202007";"Gastos de Organización";
+"10202008";"Amortización Acumulada Gastos de Instalación";
+"10202009";"Mejoras a Inmuebles Arrendados";
+"10202010";"Amortización Acumulada Mejoras a Inmuebles Arrendados";
+"10202011";"Inversiones a Largo Plazo";
+"10202012";"Valores Mobiliarios a Largo Plazo";
+"10202013";"Seguros y Fianzas Pagados por Anticipado";
+"20101000";"3M";
+"20101001";"Proveedores Locales";"PROVEE"
+"20101002";"Proveedores Exterior";"PROVEE"
+"20101003";"BAYER";
+"20101004";"Cemaco";
+"20101005";"Concentrados Alican";
+"20101021";"UNSC";
+"20101235";"Almacenes Central";
+"20102003";"Acreedores Locales";"ACREED"
+"20102004";"Acreedores Exterior";"ACREED"
+"20103005";"Préstamos Bancarios";
+"20103006";"Hipotecas a Corto Plazo";
+"20103007";"Documentos por Pagar";
+"20103008";"Seguros por Pagar";
+"20103009";"Intereses por Pagar";
+"20103010";"Tarjeta de Crédito por Pagar";
+"20103011";"Reintegro a Cajas Chicas";
+"20103012";"Otras Cuentas por Pagar";
+"20103013";"Anticipo sobre Ventas";
+"20103014";"Comisiones por Pagar";
+"20104015";"Débito Fiscal";
+"20104016";"IVA por Pagar";"IVAREP"
+"20104017";"IVA Retenido Sobre Facturas";
+"20105018";"ISR Retenido Sobre Facturas Especiales";"IRPFPR"
+"20105019";"ISR Retenido por Pagar";"IRPFPR"
+"20105020";"ISR por Pagar";
+"20105021";"ISO por Pagar";
+"20105022";"IUSI por Pagar";
+"20105023";"ISR a Empleados por Pagar";
+"20105024";"ISR Sobre Regalías por Pagar";
+"20105025";"Constancias de Retención IVA Recibidas";
+"20105026";"Aguinaldos por Pagar";
+"20105027";"Bono 14 por Pagar";
+"20105028";"Vacaciones por Pagar";
+"20105029";"Sueldos por Pagar";
+"20105030";"Cuotas Laborales por Pagar";
+"20105031";"Cuotas Patronales por Pagar";
+"20105032";"Cuotas Patronales por Pagar";
+"20105033";"Tasa INTECAP por Pagar";
+"20105034";"IDP Retenido por Pagar";
+"20105035";"INGUAT Retenido Por Pagar";
+"20106001";"Alquileres Cobrados por Anticipado";
+"20106002";"Comisiones Cobradas por Anticipado";
+"20201001";"Acreedores Hipotecarios a Largo Plazo";
+"20201002";"Acreedores a Largo Plazo";
+"20201003";"Préstamos Bancarios a Largo Plazo";
+"20201004";"Documentos por Pagar a Largo Plazo";
+"20201005";"Otras Cuentas por Pagar a Largo Plazo";
+"20201006";"Emisión de Bonos";
+"20201007";"Reserva para Indemnizaciones";
+"20201008";"Reserva para Jubilaciones";
+"30101001";"Capital Autorizado";
+"30101002";"Acciones por Suscribir";
+"30101003";"Suscriptores de Acciones";
+"30101004";"Capital Pagado";
+"30101005";"Aportaciones por Capitalizar";
+"30201001";"Ganancia Neta del Ejercicio";
+"30201002";"Ganancia Después del Impuesto y Reserva";
+"30201003";"Utilidades Retenidas";
+"30202004";"Superávit Acumulado";"PREVIO"
+"30203001";"Pérdida Neta del Ejercicio";
+"30203002";"Pérdidas Acumuladas";
+"30203003";"DÉFICIT ACUMULADO";"PRENEG"
+"30301001";"Reserva Legal";
+"40101001";"Ventas";"VENTAS"
+"40101002";"Devoluciones y Rebajas Sobre Ventas";"DEVVEN"
+"40101003";"Cobros por Flete";
+"40102001";"Ventas";
+"40102002";"Devoluciones y Rebajas Sobre Ventas";
+"40201001";"Servicios";
+"40202001";"Servicios";
+"40301001";"Arrendamientos";
+"40401001";"Regalías Percibidas";
+"40401002";"Créditos Recuperados";
+"40401003";"Diferencial Cambiario (ganancia)";
+"50102001";"Costo de Ventas";
+"50102002";"Inventario Inicial de Mercadería";
+"50102003";"Compras de Mercaderías";"COMPRA"
+"50102004";"Fletes sobre entrega de Mercaderías";
+"50102005";"Devoluciones y Rebajas Sobre Compras de Mercaderías";"DEVCOM"
+"50102006";"Inventario Final de Mercaderías";
+"50201001";"Sueldos Ordinarios";
+"50201002";"Sueldos Extraordinarios";
+"50201003";"Bonificación Decreto 78-89";
+"50202001";"Indemnizaciones";
+"50202002";"Aguinaldo";
+"50202003";"Bono 14";
+"50202004";"Vacaciones";
+"50202005";"Cuota Patronal IGSS";
+"50202006";"Bonificaciones";
+"50202007";"Comisiones";
+"50202008";"Uniformes";
+"50202009";"Transporte Nocturno";
+"50202010";"Seguro Colectivo Vida";
+"50202011";"Seguro Vehículos";
+"50202012";"Seguro de protección Empresarial";
+"50202013";"Combustibles para Empleados";
+"50202014";"Comidas y Refrigerios";
+"50202015";"Consumibles y Desechables";
+"50202016";"Cumpleaños";
+"50202017";"Fiesta Navideña";
+"50202018";"Servicios Médicos y Medicinas";
+"50202019";"Bonificación por ventas";
+"50202020";"Comisiones por Cobro";
+"50202021";"Comisión por Venta";
+"50202022";"Suministros";
+"50203001";"Alquileres de Locales";
+"50203002";"Administración de Condominios";
+"50203003";"Alquileres de Bodegas Secas";
+"50203004";"Alquiler de Bodegas Frías";
+"50204001";"Consumo Energía Eléctrica";
+"50205001";"Gas Propano";
+"50206001";"Agua Potable";
+"50206002";"Agua Pura";
+"50207001";"Servicio y Vigilancia";
+"50208001";"IUSI Trimestral";
+"50208002";"Impuesto sobre Circulación de Vehículos";
+"50208003";"IDP Pagado";
+"50208004";"INGUAT Pagado";
+"50208005";"ITP Pagado";
+"50208006";"Tasa Municipal";
+"50209001";"Depreciación Edificios";
+"50209002";"Depreciación Maquinaria";
+"50209003";"Depreciación Herramientas";
+"50209004";"Depreciación Mobiliario y Equipo";
+"50209005";"Depreciación Vehículos";
+"50209006";"Depreciación Equipo de Cómputo";
+"50210001";"Marcas y Patentes";
+"50210002";"Derecho de Llave";
+"50210003";"Gastos de Constitución";
+"50210004";"Gastos de Instalación";
+"50210005";"Mejoras a Inmuebles Arrendados";
+"50211001";"Regalías";
+"50211002";"Licencias Software";
+"50212001";"Hospedaje";
+"50212002";"Alimentación";
+"50212003";"Depreciación de Vehículo";
+"50212004";"Combustible";
+"50212005";"Viáticos";
+"50213001";"Edificios";
+"50213002";"Maquinaria";
+"50213003";"Herramientas";
+"50213004";"Mobiliario y Equipo";
+"50213005";"Vehículos";
+"50213006";"Equipo de Cómputo";
+"50213007";"Repuestos y Accesorios";
+"50214001";"de Autos";
+"50214002";"de Incendios";
+"50214003";"Contra el Robo";
+"50214004";"de Transportes Terrestres";
+"50214005";"de Lucro Cesante";
+"50214006";"de Caución";
+"50214007";"de Crédito";
+"50214008";"de Responsabilidad Civil";
+"50214009";"de Defensa Jurídica";
+"50214010";"Deducibles Seguros";
+"50215001";"Teléfono Local";
+"50215002";"Teléfono Celular";
+"50215003";"Gastos administrativos";
+"50215004";"Acceso a Internet";
+"50215005";"Courier";
+"50216001";"Artículos de Librería";
+"50216002";"Papelería Impresa";
+"50216003";"Fotocopias y Faces";
+"50216004";"Papelería y Útiles de Oficina";
+"50216005";"Papel y Cinta Maquinas Registradoras";
+"50217001";"Implementos de Limpieza";
+"50217002";"Químicos y Desinfectantes";
+"50217003";"Papel Higiénico";
+"50217004";"Papel Toalla";
+"50217005";"Bolsa para Basura";
+"50217006";"Jabón";
+"50217007";"Insecticidas";
+"50217008";"Lavandería";
+"50217009";"Recolección Basura";
+"50218001";"Honorarios Profesionales";
+"50218002";"Servicios Profesionales";
+"50218003";"Auditoría Externa";
+"50219001";"Publicidad y Mercadeo";
+"50220001";"Anuncio Empleos";
+"50220002";"Honorarios Companías Reclutadoras";
+"50220003";"Membresía Navegación Sitios en Internet";
+"50220004";"Pruebas de Aptitud";
+"50220005";"Pruebas Antidoping";
+"50220006";"Otros Gastos de Selección";
+"50221001";"Costo de Seminario";
+"50221002";"Material Audiovisual";
+"50221003";"Material Escrito";
+"50221004";"Parqueos";
+"50222001";"Costo de Seminario";
+"50222002";"Material Escrito";
+"50222003";"Pasajes";
+"50222004";"Impuestos";
+"50222005";"Alojamiento";
+"50222006";"Alimentación";
+"50222007";"Renta Automóviles y Taxis";
+"50222008";"Parqueos";
+"50223001";"Vehículos";
+"50223002";"Motocicletas";
+"50223003";"Planta Eléctrica";
+"50224001";"Suscripciones a Periódicos y Revistas";
+"50224002";"Membresías";
+"50225001";"Multas";
+"50225002";"Intereses";
+"50225003";"Mora";
+"50301001";"Transporte Eventual";
+"50301002";"Gastos Menores de Importación";
+"50301003";"Parqueos y Pasajes";
+"50301004";"Cortesías";
+"50301005";"Recolección de Remesas";
+"50301006";"Comisiones por Tarjeta de Crédito";
+"50301007";"Estudios Micro biológicos";
+"50301008";"Desarrollo y Degustación de Productos";
+"50301009";"Muestras para Desarrollo de Proyectos";
+"50301010";"Muestras Promocionales";
+"50301011";"Gastos de Representación";
+"50301012";"Reparación y Mantenimiento Y Gastos varios";
+"50301013";"Servicio Técnico";
+"50302001";"Gastos no Deducibles";
+"50302002";"Diferencial Cambiario (pérdida)";
+"50302003";"Faltantes de Caja";"CAMNEG"
+"50303001";"Comisiones Bancarias";"GTOBAN"
+"50303002";"Descuentos sobre Ventas";
+"50303003";"Cargos por Financiamientos Tarjeta de Crédito";
+"50303004";"Intereses Sobre Préstamos";
+"50304001";"Comisiones Cobradas";
+"50304002";"Ganancias de Capital";
+"50304003";"Alquileres Cobrados";
+"50304004";"Variaciones Isr";
+"50304005";"Variaciones Iva";
+"50304006";"Otros Gastos";
+"50305001";"Descuentos sobre Compras";
+"50305002";"Dividendos Percibidos";
+"50305003";"Intereses Ganados";
+"60101001";"Pérdidas y Ganancias";"PYG"

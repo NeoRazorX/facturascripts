@@ -23,6 +23,7 @@ use FacturaScripts\Core\Model\Base\ReportAccounting;
 /**
  * Class base for accounting reports
  *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Jose Antonio Cuello <jcuello@artextrading.com>
  */
 abstract class EditReportAccounting extends EditController
@@ -30,23 +31,20 @@ abstract class EditReportAccounting extends EditController
 
     /**
      * Generate data for report
-     *
-     * @param ReportAccounting $model
      */
-    abstract protected function generateReport($model);
+    abstract protected function generateReport($model, $format);
 
     protected function exportAction()
     {
         $model = $this->getModel();
-        $pages = $this->generateReport($model);
+        $format = $this->request->get('option', 'PDF');
+        $pages = $this->generateReport($model, $format);
         if (empty($pages)) {
             $this->toolBox()->i18nLog()->warning('no-data');
             return;
         }
-
-        $format = $this->request->get('option', 'PDF');
+        
         $title = $model->name;
-
         $this->setTemplate(false);
         $this->exportData($pages, $title, $format);
     }

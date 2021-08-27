@@ -19,8 +19,8 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\EditReportAccounting;
-use FacturaScripts\Core\Model\ReportAmount;
 use FacturaScripts\Dinamic\Lib\Accounting\BalanceAmounts;
+use FacturaScripts\Dinamic\Model\ReportAmount;
 
 /**
  * Description of EditReportAmount
@@ -69,19 +69,21 @@ class EditReportAmount extends EditReportAccounting
      * Generate Balance Amounts data for report
      *
      * @param ReportAmount $model
+     * @param string       $format
      *
      * @return array
      */
-    protected function generateReport($model)
+    protected function generateReport($model, $format)
     {
         $params = [
-            'idcompany' => $model->idcompany,
-            'subaccount-from' => $model->startcodsubaccount,
-            'subaccount-to' => $model->endcodsubaccount,
             'channel' => $model->channel,
-            'level' => $model->level,
+            'format' => $format,
+            'idcompany' => $model->idcompany,
+            'ignoreclosure' => $model->ignoreclosure,
             'ignoreregularization' => $model->ignoreregularization,
-            'ignoreclosure' => $model->ignoreclosure
+            'level' => $model->level,
+            'subaccount-from' => $model->startcodsubaccount,
+            'subaccount-to' => $model->endcodsubaccount
         ];
 
         $balanceAmount = new BalanceAmounts();

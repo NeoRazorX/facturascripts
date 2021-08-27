@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use Exception;
@@ -28,8 +29,8 @@ use FacturaScripts\Dinamic\Model\Partida;
 /**
  * Controller to edit a single item from the Asiento model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditAsiento extends EditController
 {
@@ -63,13 +64,15 @@ class EditAsiento extends EditController
      *
      * @return bool
      */
-    public function showBalanceGraphic()
+    public function showBalanceGraphic(): bool
     {
-        return (bool) $this->toolBox()->appSettings()->get('default', 'balancegraphic');
+        return (bool)$this->toolBox()->appSettings()->get('default', 'balancegraphic');
     }
 
     /**
      * Overwrite autocomplete function to macro concepts in accounting concept.
+     *
+     * @return array
      */
     protected function autocompleteAction(): array
     {
@@ -99,42 +102,30 @@ class EditAsiento extends EditController
      * Clone source document
      *
      * @return bool
-     * @throws Exception
      */
-    protected function cloneDocument()
+    protected function cloneDocument(): bool
     {
         $sourceCode = $this->request->get('code');
-
-        // prepare source document structure
         $accounting = new Asiento();
         if (false === $accounting->loadFromCode($sourceCode)) {
             return true; // continue default view load
         }
 
-        $entryModel = new Partida();
-        $entries = $entryModel->all([new DataBaseWhere('idasiento', $accounting->idasiento)]);
-
         // init target document data
         $accounting->idasiento = null;
-        $accounting->fecha = \date(Asiento::DATE_STYLE);
+        $accounting->fecha = date(Asiento::DATE_STYLE);
         $accounting->numero = $accounting->newCode('numero');
 
-        // start transaction
-        $this->dataBase->beginTransaction();
-
         // main save process
+        $this->dataBase->beginTransaction();
         $cloneOk = true;
         try {
             if (false === $accounting->save()) {
                 throw new Exception($this->toolBox()->i18n()->trans('clone-document-error'));
             }
 
-            foreach ($entries as $line) {
-                $line->idpartida = null;
-                $line->idasiento = $accounting->idasiento;
-                if (false === $line->save()) {
-                    throw new Exception($this->toolBox()->i18n()->trans('clone-line-document-error'));
-                }
+            if (false === $this->cloneDocumentLines($sourceCode, $accounting->idasiento)) {
+                throw new Exception($this->toolBox()->i18n()->trans('clone-line-document-error'));
             }
 
             $this->dataBase->commit();
@@ -158,6 +149,29 @@ class EditAsiento extends EditController
     }
 
     /**
+     * Clone source document lines
+     *
+     * @param int $idSourceEntry
+     * @param int $idNewEntry
+     *
+     * @return bool
+     */
+    protected function cloneDocumentLines(int $idSourceEntry, int $idNewEntry): bool
+    {
+        $lineModel = new Partida();
+        $sourceLines = $lineModel->all([new DataBaseWhere('idasiento', $idSourceEntry)]);
+        foreach ($sourceLines as $line) {
+            $line->idpartida = null;
+            $line->idasiento = $idNewEntry;
+            $line->punteada = false;
+            if (false === $line->save()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Load views
      */
     protected function createViews()
@@ -170,7 +184,7 @@ class EditAsiento extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $action
      */
     protected function execAfterAction($action)
@@ -224,7 +238,7 @@ class EditAsiento extends EditController
 
         $tools = new AccountingEntryTools();
         $data = $tools->getAccountData($exercise, $subaccount, $channel);
-        $this->response->setContent(\json_encode($data));
+        $this->response->setContent(json_encode($data));
     }
 
     /**
@@ -237,7 +251,7 @@ class EditAsiento extends EditController
 
         $tools = new AccountingEntryTools();
         $this->response->setContent(
-            \json_encode($tools->recalculate($this->views['EditAsiento'], $data))
+            json_encode($tools->recalculate($this->views['EditAsiento'], $data))
         );
     }
 
@@ -259,13 +273,13 @@ class EditAsiento extends EditController
             $search = ['%document%', '%date%', '%date-entry%', '%month%'];
             $replace = [
                 $accounting->documento,
-                \date(Asiento::DATE_STYLE),
+                date(Asiento::DATE_STYLE),
                 $accounting->fecha,
-                $this->toolBox()->i18n()->trans(\date('F', \strtotime($accounting->fecha)))
+                $this->toolBox()->i18n()->trans(date('F', strtotime($accounting->fecha)))
             ];
             foreach ($results as $result) {
                 $finalValue = [
-                    'key' => \str_replace($search, $replace, $result['key']),
+                    'key' => str_replace($search, $replace, $result['key']),
                     'value' => $result['value']
                 ];
                 $finalResults[] = $finalValue;

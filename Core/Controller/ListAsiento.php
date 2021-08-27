@@ -99,6 +99,12 @@ class ListAsiento extends ListController
 
         /// filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
+
+        $selectExercise = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
+        if (\count($selectExercise) > 2) {
+            $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
+        }
+
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
         $this->addFilterCheckbox($viewName, 'editable');
@@ -106,11 +112,6 @@ class ListAsiento extends ListController
         $selectCompany = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
         if (\count($selectCompany) > 2) {
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $selectCompany);
-        }
-
-        $selectExercise = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
-        if (\count($selectExercise) > 2) {
-            $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
         }
 
         $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');

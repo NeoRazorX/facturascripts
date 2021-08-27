@@ -338,7 +338,7 @@ class EditSettings extends PanelController
                     $this->toolBox()->i18nLog()->notice('mail-test-ok');
                     break;
                 }
-                $this->toolBox()->i18nLog()->error('mail-test-error');
+                $this->toolBox()->i18nLog()->warning('mail-test-error');
                 break;
         }
     }
@@ -406,7 +406,7 @@ class EditSettings extends PanelController
         $methods = $this->codeModel->all('formaspago', 'codpago', 'descripcion', false, $where);
 
         $columnPayment = $this->views[$viewName]->columnForName('payment-method');
-        if ($columnPayment) {
+        if ($columnPayment && $columnPayment->widget->getType() === 'select') {
             $columnPayment->widget->setValuesFromCodeModel($methods);
         }
     }
@@ -422,7 +422,7 @@ class EditSettings extends PanelController
         $almacenes = $this->codeModel->all('almacenes', 'codalmacen', 'nombre', false, $where);
 
         $columnWarehouse = $this->views[$viewName]->columnForName('warehouse');
-        if ($columnWarehouse) {
+        if ($columnWarehouse && $columnWarehouse->widget->getType() === 'select') {
             $columnWarehouse->widget->setValuesFromCodeModel($almacenes);
         }
     }

@@ -120,7 +120,7 @@ class PaymentToAccounting extends AccountingClass
      */
     protected function customerPaymentBankLine(&$accEntry)
     {
-        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago);
+        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago ?? '');
         if (false === $paymentSubaccount->exists()) {
             return false;
         }
@@ -144,7 +144,7 @@ class PaymentToAccounting extends AccountingClass
         }
 
         $expLine = $accEntry->getNewLine();
-        $subacountExpense = $this->getExpenseAccount($this->document->codpago);
+        $subacountExpense = $this->getExpenseAccount($this->document->codpago ?? '');
         $expLine->setAccount($subacountExpense);
         $expLine->concepto = $this->toolBox()->i18n()->trans('receipt-expense-account', ['%document%' => $accEntry->documento]);
         $expLine->haber = $this->document->gastos;
@@ -211,7 +211,7 @@ class PaymentToAccounting extends AccountingClass
      */
     protected function supplierPaymentBankLine(&$accEntry)
     {
-        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago);
+        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago ?? '');
         if (false === $paymentSubaccount->exists()) {
             return false;
         }

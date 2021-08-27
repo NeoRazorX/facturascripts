@@ -19,8 +19,6 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Lib\BusinessDocSubType;
-use FacturaScripts\Dinamic\Lib\BusinessDocTypeOperation;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente as DinLineaFactura;
 use FacturaScripts\Dinamic\Model\LiquidacionComision as DinLiquidacionComision;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
@@ -35,22 +33,6 @@ class FacturaCliente extends Base\SalesDocument
 
     use Base\ModelTrait;
     use Base\InvoiceTrait;
-
-    /**
-     * Code business documen type operation
-     *
-     * @var string
-     * @deprecated since version 2020.82
-     */
-    public $codoperaciondoc;
-
-    /**
-     * Code business Documen sub type
-     *
-     * @var string
-     * @deprecated since version 2020.82
-     */
-    public $codsubtipodoc;
 
     /**
      *
@@ -79,8 +61,6 @@ class FacturaCliente extends Base\SalesDocument
     public function clear()
     {
         parent::clear();
-        $this->codoperaciondoc = BusinessDocTypeOperation::defaultValue();
-        $this->codsubtipodoc = BusinessDocSubType::defaultValue();
         $this->pagada = false;
     }
 
@@ -138,7 +118,7 @@ class FacturaCliente extends Base\SalesDocument
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function test()
@@ -183,7 +163,7 @@ class FacturaCliente extends Base\SalesDocument
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     protected function onChangeAgent()
