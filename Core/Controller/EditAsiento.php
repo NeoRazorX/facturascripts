@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use Exception;
@@ -28,7 +29,7 @@ use FacturaScripts\Dinamic\Model\Partida;
 /**
  * Controller to edit a single item from the Asiento model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditAsiento extends EditController
@@ -63,13 +64,15 @@ class EditAsiento extends EditController
      *
      * @return bool
      */
-    public function showBalanceGraphic()
+    public function showBalanceGraphic(): bool
     {
-        return (bool) $this->toolBox()->appSettings()->get('default', 'balancegraphic');
+        return (bool)$this->toolBox()->appSettings()->get('default', 'balancegraphic');
     }
 
     /**
      * Overwrite autocomplete function to macro concepts in accounting concept.
+     *
+     * @return array
      */
     protected function autocompleteAction(): array
     {
@@ -99,9 +102,8 @@ class EditAsiento extends EditController
      * Clone source document
      *
      * @return bool
-     * @throws Exception
      */
-    protected function cloneDocument()
+    protected function cloneDocument(): bool
     {
         $sourceCode = $this->request->get('code');
         $accounting = new Asiento();
@@ -109,11 +111,9 @@ class EditAsiento extends EditController
             return true; // continue default view load
         }
 
-        $idSourceEntry = $accounting->idasiento;
-
         // init target document data
         $accounting->idasiento = null;
-        $accounting->fecha = \date(Asiento::DATE_STYLE);
+        $accounting->fecha = date(Asiento::DATE_STYLE);
         $accounting->numero = $accounting->newCode('numero');
 
         // main save process
@@ -124,7 +124,7 @@ class EditAsiento extends EditController
                 throw new Exception($this->toolBox()->i18n()->trans('clone-document-error'));
             }
 
-            if (false === $this->cloneDocumentLines($idSourceEntry, $accounting->idasiento)) {
+            if (false === $this->cloneDocumentLines($sourceCode, $accounting->idasiento)) {
                 throw new Exception($this->toolBox()->i18n()->trans('clone-line-document-error'));
             }
 
@@ -153,9 +153,10 @@ class EditAsiento extends EditController
      *
      * @param int $idSourceEntry
      * @param int $idNewEntry
+     *
      * @return bool
      */
-    protected function cloneDocumentLines($idSourceEntry, $idNewEntry):bool
+    protected function cloneDocumentLines(int $idSourceEntry, int $idNewEntry): bool
     {
         $lineModel = new Partida();
         $sourceLines = $lineModel->all([new DataBaseWhere('idasiento', $idSourceEntry)]);
@@ -237,7 +238,7 @@ class EditAsiento extends EditController
 
         $tools = new AccountingEntryTools();
         $data = $tools->getAccountData($exercise, $subaccount, $channel);
-        $this->response->setContent(\json_encode($data));
+        $this->response->setContent(json_encode($data));
     }
 
     /**
@@ -250,7 +251,7 @@ class EditAsiento extends EditController
 
         $tools = new AccountingEntryTools();
         $this->response->setContent(
-            \json_encode($tools->recalculate($this->views['EditAsiento'], $data))
+            json_encode($tools->recalculate($this->views['EditAsiento'], $data))
         );
     }
 
@@ -272,13 +273,13 @@ class EditAsiento extends EditController
             $search = ['%document%', '%date%', '%date-entry%', '%month%'];
             $replace = [
                 $accounting->documento,
-                \date(Asiento::DATE_STYLE),
+                date(Asiento::DATE_STYLE),
                 $accounting->fecha,
-                $this->toolBox()->i18n()->trans(\date('F', \strtotime($accounting->fecha)))
+                $this->toolBox()->i18n()->trans(date('F', strtotime($accounting->fecha)))
             ];
             foreach ($results as $result) {
                 $finalValue = [
-                    'key' => \str_replace($search, $replace, $result['key']),
+                    'key' => str_replace($search, $replace, $result['key']),
                     'value' => $result['value']
                 ];
                 $finalResults[] = $finalValue;
