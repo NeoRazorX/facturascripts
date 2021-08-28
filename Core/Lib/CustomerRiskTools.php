@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 /**
  * Set of tools for the management of customer payment risk
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class CustomerRiskTools
@@ -38,7 +38,7 @@ class CustomerRiskTools
 
     /**
      * Returns the current customer's risk.
-     * 
+     *
      * @param string $codcliente
      * @param int    $idempresa
      *
@@ -53,7 +53,7 @@ class CustomerRiskTools
 
     /**
      * Returns the sum of the customer's pending delivery notes.
-     * 
+     *
      * @param string $codcliente
      * @param int    $idempresa
      *
@@ -77,7 +77,7 @@ class CustomerRiskTools
 
     /**
      * Returns the sum of the customer's unpaid invoices receipts.
-     * 
+     *
      * @param string $codcliente
      * @param int    $idempresa
      *
@@ -101,7 +101,7 @@ class CustomerRiskTools
 
     /**
      * Returns the sum of the customer's pending orders.
-     * 
+     *
      * @param string $codcliente
      * @param int    $idempresa
      *
