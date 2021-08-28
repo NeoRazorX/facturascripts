@@ -315,6 +315,7 @@
     "default": "Lehenetsia",
     "default-customer": "Bezero lehenetsia",
     "default-retention": "Atxikipen lehenetsia",
+    "default-role": "Default role",
     "default-tax": "Zerga lehenetsia",
     "default-warehouse": "Biltegi lehenetsia",
     "delete": "Kendu",

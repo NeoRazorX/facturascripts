@@ -315,6 +315,7 @@
     "default": "Par défaut",
     "default-customer": "default-customer",
     "default-retention": "default-retention",
+    "default-role": "Default role",
     "default-tax": "default-tax",
     "default-warehouse": "default-warehouse",
     "delete": "supprimer",

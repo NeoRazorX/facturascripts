@@ -78,11 +78,6 @@
                     <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"/>
                 </widget>
             </column>
-            <column name="role" numcolumns="3" order="200">
-                <widget type="select" fieldname="codrole" onclick="EditRole" required="true">
-                    <values source="roles" fieldcode="codrole" fieldtitle="descripcion" />
-                </widget>
-             </column>
             <column name="validate-iban" order="210">
                 <widget type="checkbox" fieldname="validate_iban"/>
             </column>
@@ -134,21 +129,26 @@
             </column>
         </group>
         <group name="advanced" title="advanced" icon="fas fa-database" valign="bottom" numcolumns="12">
-            <column name="homepage" numcolumns="3" order="100">
+            <column name="default-role" titleurl="ListUser?activetab=ListRole" numcolumns="3" order="100">
+                <widget type="select" fieldname="codrole" onclick="EditRole" required="true" icon="fas fa-users">
+                    <values source="roles" fieldcode="codrole" fieldtitle="descripcion"/>
+                </widget>
+            </column>
+            <column name="homepage" numcolumns="3" order="110">
                 <widget type="select" fieldname="homepage" icon="fas fa-home">
                     <values source="pages" fieldcode="name" fieldtitle="name"/>
                 </widget>
             </column>
-            <column name="item-limit" numcolumns="3" order="110">
+            <column name="item-limit" numcolumns="3" order="120">
                 <widget type="number" fieldname="item_limit" min="10" max="100" icon="fas fa-list" required="true"/>
             </column>
-            <column name="table-size" numcolumns="3" order="120">
+            <column name="table-size" numcolumns="3" order="130">
                 <widget type="select" fieldname="tablesize" icon="fas fa-table" required="true" translate="true">
                     <values title="big">big</values>
                     <values title="small">small</values>
                 </widget>
             </column>
-            <column name="show-balance-graphic" numcolumns="3" order="130">
+            <column name="show-balance-graphic" numcolumns="3" order="140">
                 <widget type="checkbox" fieldname="balancegraphic"/>
             </column>
         </group>

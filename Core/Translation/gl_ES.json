@@ -315,6 +315,7 @@
     "default": "Por defecto",
     "default-customer": "Cliente por defecto",
     "default-retention": "Retención predeterminada",
+    "default-role": "Default role",
     "default-tax": "Imposto predeterminado",
     "default-warehouse": "Almacén por defecto",
     "delete": "Eliminar",
