@@ -107,7 +107,7 @@ final class AppRouter
     public function getFile(): bool
     {
         $uri = $this->getUri();
-        $filePath = FS_FOLDER . $uri;
+        $filePath = FS_FOLDER . urldecode($uri);
 
         /// favicon.ico
         if ('/favicon.ico' == $uri) {
@@ -134,8 +134,10 @@ final class AppRouter
 
         /// MyFiles and token?
         $token = filter_input(INPUT_GET, 'myft');
-        if ('/MyFiles/' === substr($uri, 0, 9) && $token && MyFilesToken::validate(substr($uri, 1), $token)) {
+        $fixedFilePath = substr(urldecode($uri), 1);
+        if ('/MyFiles/' === substr($uri, 0, 9) && $token && MyFilesToken::validate($fixedFilePath, $token)) {
             header('Content-Type: ' . $this->getMime($filePath));
+            \ob_end_flush();            /// Allows downloading large files using direct buffer
             readfile($filePath);
             return true;
         }
@@ -144,7 +146,7 @@ final class AppRouter
     }
 
     /**
-     * 
+     *
      * @param string $filePath
      *
      * @return bool
@@ -249,7 +251,7 @@ final class AppRouter
     }
 
     /**
-     * 
+     *
      * @param string $uri
      * @param string $pageName
      *
