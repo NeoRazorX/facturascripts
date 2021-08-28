@@ -102,7 +102,7 @@ class Wizard extends Controller
      *
      * @return array
      */
-    public function getSelectValues(string $modelName, bool $addEmpty): array
+    public function getSelectValues(string $modelName, bool $addEmpty = false): array
     {
         $values = $addEmpty ? ['' => '------'] : [];
         $modelName = '\\FacturaScripts\\Dinamic\\Model\\' . $modelName;

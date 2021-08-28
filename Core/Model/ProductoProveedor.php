@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -37,61 +38,51 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     use Base\ProductRelationTrait;
 
     /**
-     *
      * @var string
      */
     public $actualizado;
 
     /**
-     *
      * @var string
      */
     public $coddivisa;
 
     /**
-     *
      * @var string
      */
     public $codproveedor;
 
     /**
-     *
      * @var float
      */
     public $dtopor;
 
     /**
-     *
      * @var float
      */
     public $dtopor2;
 
     /**
-     *
      * @var int
      */
     public $id;
 
     /**
-     *
      * @var float
      */
     public $neto;
 
     /**
-     *
      * @var float
      */
     public $precio;
 
     /**
-     *
      * @var string
      */
     public $referencia;
 
     /**
-     *
      * @var string
      */
     public $refproveedor;
@@ -99,7 +90,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     public function clear()
     {
         parent::clear();
-        $this->actualizado = \date(self::DATETIME_STYLE);
+        $this->actualizado = date(self::DATETIME_STYLE);
         $this->dtopor = 0.0;
         $this->dtopor2 = 0.0;
         $this->neto = 0.0;
@@ -111,7 +102,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
      *
      * @return float
      */
-    public function getEUDiscount()
+    public function getEUDiscount(): float
     {
         $eud = 1.0;
         foreach ([$this->dtopor, $this->dtopor2] as $dto) {
@@ -122,10 +113,9 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     *
      * @return DinVariante
      */
-    public function getVariant()
+    public function getVariant(): DinVariante
     {
         $variant = new DinVariante();
         $where = [new DataBaseWhere('referencia', $this->referencia)];
@@ -134,10 +124,9 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     *
      * @return DinProveedor
      */
-    public function getSupplier()
+    public function getSupplier(): DinProveedor
     {
         $supplier = new DinProveedor();
         $supplier->loadFromCode($this->codproveedor);
@@ -145,10 +134,9 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new DinDivisa();
@@ -158,7 +146,6 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     *
      * @return string
      */
     public static function primaryColumn(): string
@@ -167,7 +154,6 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     *
      * @return string
      */
     public static function tableName(): string
@@ -176,10 +162,9 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->referencia)) {
             $this->toolBox()->i18nLog()->warning('field-can-not-be-null', ['%fieldName%' => 'referencia', '%tableName%' => static::tableName()]);
@@ -192,12 +177,11 @@ class ProductoProveedor extends Base\ModelOnChangeClass
             $this->idproducto = $this->getVariant()->idproducto;
         }
 
-        $this->neto = \round($this->precio * $this->getEUDiscount(), DinProducto::ROUND_DECIMALS);
+        $this->neto = round($this->precio * $this->getEUDiscount(), DinProducto::ROUND_DECIMALS);
         return parent::test();
     }
 
     /**
-     *
      * @param string $type
      * @param string $list
      *
@@ -238,11 +222,10 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     }
 
     /**
-     *
      * @param array $fields
      */
     protected function setPreviousData(array $fields = [])
     {
-        parent::setPreviousData(\array_merge(['neto'], $fields));
+        parent::setPreviousData(array_merge(['neto'], $fields));
     }
 }
