@@ -53,7 +53,7 @@
                             <i class="fas fa-magic fa-fw"></i> {{ i18n.trans('generate') }}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            {% for status in fsc.getAvaliableStatus() %}
+                            {% for status in fsc.getAvailableStatus() %}
                                 <button type="button" onclick="sendFormData('{{ status.primaryColumnValue() }}');"
                                         class="dropdown-item">
                                     <i class="fas fa-file fa-fw"

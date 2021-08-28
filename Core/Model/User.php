@@ -314,7 +314,6 @@ class User extends Base\ModelClass
     }
 
     /**
-     *
      * @return bool
      */
     protected function testAgent(): bool
@@ -333,7 +332,6 @@ class User extends Base\ModelClass
     }
 
     /**
-     *
      * @return bool
      */
     protected function testWarehouse(): bool

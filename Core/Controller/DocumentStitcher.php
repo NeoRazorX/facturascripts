@@ -16,11 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
@@ -69,7 +71,7 @@ class DocumentStitcher extends Controller
      *
      * @return array
      */
-    public function getAvaliableStatus()
+    public function getAvailableStatus(): array
     {
         $status = [];
         $documentState = new EstadoDocumento();
@@ -101,8 +103,8 @@ class DocumentStitcher extends Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response              $response
-     * @param User                  $user
+     * @param Response $response
+     * @param User $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -120,7 +122,7 @@ class DocumentStitcher extends Controller
             return;
         }
 
-        $status = (int) $this->request->request->get('status', '');
+        $status = (int)$this->request->request->get('status', '');
         if ($status) {
             $this->generateNewDocument($status);
         }
@@ -128,7 +130,7 @@ class DocumentStitcher extends Controller
 
     /**
      *
-     * @param array               $newLines
+     * @param array $newLines
      * @param TransformerDocument $doc
      */
     protected function addBlankLine(array &$newLines, $doc)
@@ -147,7 +149,7 @@ class DocumentStitcher extends Controller
      *
      * @return bool
      */
-    protected function addDocument($newDoc)
+    protected function addDocument($newDoc): bool
     {
         foreach ($this->documents as $doc) {
             if ($doc->codalmacen != $newDoc->codalmacen ||
@@ -165,7 +167,7 @@ class DocumentStitcher extends Controller
 
     /**
      *
-     * @param array               $newLines
+     * @param array $newLines
      * @param TransformerDocument $doc
      */
     protected function addInfoLine(array &$newLines, $doc)
@@ -181,17 +183,17 @@ class DocumentStitcher extends Controller
 
     /**
      *
-     * @param TransformerDocument  $doc
+     * @param TransformerDocument $doc
      * @param BusinessDocumentLine $docLines
-     * @param array                $newLines
-     * @param array                $quantities
-     * @param int                  $idestado
+     * @param array $newLines
+     * @param array $quantities
+     * @param int $idestado
      */
     protected function breakDownLines(&$doc, &$docLines, &$newLines, &$quantities, $idestado)
     {
         $full = true;
         foreach ($docLines as $line) {
-            $quantity = (float) $this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
+            $quantity = (float)$this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
             $quantities[$line->primaryColumnValue()] = $quantity;
 
             if (empty($quantity) && $line->cantidad) {
@@ -230,7 +232,7 @@ class DocumentStitcher extends Controller
      *
      * @param int $idestado
      */
-    protected function generateNewDocument($idestado)
+    protected function generateNewDocument(int $idestado)
     {
         $this->dataBase->beginTransaction();
 
@@ -278,7 +280,7 @@ class DocumentStitcher extends Controller
 
         $this->dataBase->commit();
 
-        /// redir to new document
+        /// redirect to the new document
         foreach ($generator->getLastDocs() as $doc) {
             $this->redirect($doc->url());
             $this->toolBox()->i18nLog()->notice('record-updated-correctly');
@@ -291,16 +293,16 @@ class DocumentStitcher extends Controller
      *
      * @return array
      */
-    protected function getCodes()
+    protected function getCodes(): array
     {
         $code = $this->request->request->get('code', []);
         if ($code) {
             return $code;
         }
 
-        $codes = \explode(',', $this->request->get('codes', ''));
+        $codes = explode(',', $this->request->get('codes', ''));
         $newcodes = $this->request->get('newcodes', []);
-        return empty($newcodes) ? $codes : \array_merge($codes, $newcodes);
+        return empty($newcodes) ? $codes : array_merge($codes, $newcodes);
     }
 
     /**
@@ -330,7 +332,7 @@ class DocumentStitcher extends Controller
      *
      * @return string
      */
-    protected function getGenerateClass($idestado)
+    protected function getGenerateClass(int $idestado): string
     {
         $estado = new EstadoDocumento();
         $estado->loadFromCode($idestado);
@@ -342,7 +344,7 @@ class DocumentStitcher extends Controller
      *
      * @return string
      */
-    protected function getModelName()
+    protected function getModelName(): string
     {
         $model = $this->request->get('model', '');
         return $this->request->request->get('model', $model);
@@ -366,10 +368,10 @@ class DocumentStitcher extends Controller
         }
 
         /// sort by date
-        \uasort($this->documents, function ($doc1, $doc2) {
-            if (\strtotime($doc1->fecha . ' ' . $doc1->hora) > \strtotime($doc2->fecha . ' ' . $doc2->hora)) {
+        uasort($this->documents, function ($doc1, $doc2) {
+            if (strtotime($doc1->fecha . ' ' . $doc1->hora) > strtotime($doc2->fecha . ' ' . $doc2->hora)) {
                 return 1;
-            } elseif (\strtotime($doc1->fecha . ' ' . $doc1->hora) < \strtotime($doc2->fecha . ' ' . $doc2->hora)) {
+            } elseif (strtotime($doc1->fecha . ' ' . $doc1->hora) < strtotime($doc2->fecha . ' ' . $doc2->hora)) {
                 return -1;
             }
 
@@ -393,7 +395,7 @@ class DocumentStitcher extends Controller
         ];
         $order = ['fecha' => 'ASC', 'hora' => 'ASC'];
         foreach ($model->all($where, $order) as $doc) {
-            if (false === \in_array($doc->primaryColumnValue(), $this->getCodes())) {
+            if (false === in_array($doc->primaryColumnValue(), $this->getCodes())) {
                 $this->moreDocuments[] = $doc;
             }
         }
