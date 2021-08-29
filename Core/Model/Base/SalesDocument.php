@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -38,14 +39,14 @@ abstract class SalesDocument extends TransformerDocument
 {
 
     /**
-     * Mail box of the client.
+     * Mailbox of the client.
      *
      * @var string
      */
     public $apartado;
 
     /**
-     * Customer's city
+     * Customer's city.
      *
      * @var string
      */
@@ -157,10 +158,9 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     *
      * @return string
      */
-    public function country()
+    public function country(): string
     {
         $country = new Pais();
         if ($country->loadFromCode($this->codpais)) {
@@ -229,7 +229,6 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     *
      * @return Tarifa
      */
     public function getRate()
@@ -249,7 +248,6 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     *
      * @return Cliente
      */
     public function getSubject()
@@ -260,7 +258,6 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     *
      * @return string
      */
     public function install()
@@ -275,7 +272,6 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     *
      * @return bool
      */
     public function save()
@@ -300,7 +296,6 @@ abstract class SalesDocument extends TransformerDocument
             /// update customer risk
             $updatedCustomer->riesgoalcanzado = CustomerRiskTools::getCurrent($updatedCustomer->primaryColumnValue());
             $updatedCustomer->save();
-
             return true;
         }
 
@@ -356,7 +351,6 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     *
      * @return string
      */
     public function subjectColumn()
@@ -396,11 +390,10 @@ abstract class SalesDocument extends TransformerDocument
     public function updateSubject()
     {
         $cliente = new Cliente();
-        return $this->codcliente && $cliente->loadFromCode($this->codcliente) ? $this->setSubject($cliente) : false;
+        return $this->codcliente && $cliente->loadFromCode($this->codcliente) && $this->setSubject($cliente);
     }
 
     /**
-     *
      * @param string $field
      *
      * @return bool
@@ -451,10 +444,9 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     *
      * @return bool
      */
-    protected function onChangeAgent()
+    protected function onChangeAgent(): bool
     {
         if (null !== $this->codagente && $this->total > 0) {
             $lines = $this->getLines();
@@ -481,7 +473,6 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     *
      * @param Contacto $subject
      *
      * @return bool
@@ -503,7 +494,6 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     *
      * @param Cliente $subject
      *
      * @return bool
@@ -537,12 +527,11 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     *
      * @param array $fields
      */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codagente', 'codcliente', 'direccion', 'idcontactofact'];
-        parent::setPreviousData(\array_merge($more, $fields));
+        parent::setPreviousData(array_merge($more, $fields));
     }
 }
