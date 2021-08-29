@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,20 +17,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @author Carlos García Gómez
- */
-require_once __DIR__ . '/../vendor/autoload.php';
+const FS_FOLDER = __DIR__;
 
-define('FS_FOLDER', getcwd());
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $config = FS_FOLDER . '/config.php';
 if (__DIR__ === '/home/scrutinizer/build/Test') {
     echo 'Executing on scrutinizer ...' . "\n\n";
     $config = FS_FOLDER . '/Test/config-scrutinizer.php';
-} elseif (strpos(__DIR__, '/home/travis/build/') !== false) {
-    echo 'Executing on travis ...' . "\n\n";
-    $config = FS_FOLDER . '/Test/config-travis.php';
 } elseif (!file_exists($config)) {
     die($config . " not found!\n");
 }
