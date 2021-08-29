@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -35,7 +36,6 @@ class FacturaCliente extends Base\SalesDocument
     use Base\InvoiceTrait;
 
     /**
-     *
      * @var int
      */
     public $idliquidacion;
@@ -118,7 +118,6 @@ class FacturaCliente extends Base\SalesDocument
     }
 
     /**
-     *
      * @return bool
      */
     public function test()
@@ -133,14 +132,14 @@ class FacturaCliente extends Base\SalesDocument
         }
 
         /// prevent form using old dates
-        $numColumn = \strtolower(\FS_DB_TYPE) == 'postgresql' ? 'CAST(numero as integer)' : 'CAST(numero as unsigned)';
+        $numColumn = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(numero as integer)' : 'CAST(numero as unsigned)';
         $whereOld = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codserie', $this->codserie),
-            new DataBaseWhere($numColumn, (int) $this->numero, '<')
+            new DataBaseWhere($numColumn, (int)$this->numero, '<')
         ];
         foreach ($this->all($whereOld, ['fecha' => 'DESC'], 0, 1) as $old) {
-            if (\strtotime($old->fecha) > \strtotime($this->fecha)) {
+            if (strtotime($old->fecha) > strtotime($this->fecha)) {
                 $this->toolBox()->i18nLog()->error('invalid-date-there-are-invoices-after', ['%date%' => $this->fecha]);
                 return false;
             }
@@ -150,10 +149,10 @@ class FacturaCliente extends Base\SalesDocument
         $whereNew = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codserie', $this->codserie),
-            new DataBaseWhere($numColumn, (int) $this->numero, '>')
+            new DataBaseWhere($numColumn, (int)$this->numero, '>')
         ];
         foreach ($this->all($whereNew, ['fecha' => 'ASC'], 0, 1) as $old) {
-            if (\strtotime($old->fecha) < \strtotime($this->fecha)) {
+            if (strtotime($old->fecha) < strtotime($this->fecha)) {
                 $this->toolBox()->i18nLog()->error('invalid-date-there-are-invoices-before', ['%date%' => $this->fecha]);
                 return false;
             }
@@ -163,7 +162,6 @@ class FacturaCliente extends Base\SalesDocument
     }
 
     /**
-     *
      * @return bool
      */
     protected function onChangeAgent()

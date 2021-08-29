@@ -446,7 +446,7 @@ abstract class SalesDocument extends TransformerDocument
     /**
      * @return bool
      */
-    protected function onChangeAgent(): bool
+    protected function onChangeAgent()
     {
         if (null !== $this->codagente && $this->total > 0) {
             $lines = $this->getLines();
