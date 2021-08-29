@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
  * A family of products.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class Familia extends Base\ModelClass
 {
@@ -79,6 +79,18 @@ class Familia extends Base\ModelClass
     public static function primaryColumn()
     {
         return 'codfamilia';
+    }
+
+    /**
+     * Get the accounting sub-account for irpf purchases.
+     *
+     * @param string $code
+     *
+     * @return string
+     */
+    public static function purchaseIrpfSubAccount($code)
+    {
+        return self::getSubaccountFromFamily($code, 'codsubcuentairpfcom');
     }
 
     /**
@@ -177,7 +189,7 @@ class Familia extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool

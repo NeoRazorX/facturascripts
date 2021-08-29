@@ -26,6 +26,7 @@ use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\Join\PurchasesDocIrpfAccount;
 use FacturaScripts\Dinamic\Model\Join\PurchasesDocLineAccount;
 use FacturaScripts\Dinamic\Model\Join\SalesDocLineAccount;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -38,7 +39,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  * and the settlement of your receipts.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class InvoiceToAccounting extends AccountingClass
 {
@@ -127,23 +128,15 @@ class InvoiceToAccounting extends AccountingClass
             $this->getSpecialSubAccount('COMPRA');
 
         $tool = new PurchasesDocLineAccount();
-        foreach ($tool->getTotalsForDocument($this->document, $purchaseAccount->codsubcuenta) as $code => $total) {
-            $subaccount = $this->getSubAccount($code);
-            if (empty($subaccount->codsubcuenta)) {
-                $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
-                return false;
-            }
-
-            $line = $accountEntry->getNewLine();
-            $line->setAccount($subaccount);
-            $line->debe = $total;
-            if (false === $line->save()) {
-                $this->toolBox()->i18nLog()->warning('good-purchases-line-error');
-                return false;
-            }
-        }
-
-        return true;
+        $totals = $tool->getTotalsForDocument($this->document, $purchaseAccount->codsubcuenta);
+        return $this->addLinesFromTotals(
+            $accountEntry,
+            $totals,
+            true,
+            $this->counterpart,
+            'purchases-subaccount-not-found',
+            'good-purchases-line-error'
+        );
     }
 
     /**
@@ -161,23 +154,15 @@ class InvoiceToAccounting extends AccountingClass
             $this->getSpecialSubAccount('VENTAS');
 
         $tool = new SalesDocLineAccount();
-        foreach ($tool->getTotalsForDocument($this->document, $salesAccount->codsubcuenta) as $code => $total) {
-            $subaccount = $this->getSubAccount($code);
-            if (empty($subaccount->codsubcuenta)) {
-                $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');
-                return false;
-            }
-
-            $line = $accountEntry->getNewLine();
-            $line->setAccount($subaccount);
-            $line->haber = $total;
-            if (false === $line->save()) {
-                $this->toolBox()->i18nLog()->warning('good-sales-line-error');
-                return false;
-            }
-        }
-
-        return true;
+        $totals = $tool->getTotalsForDocument($this->document, $salesAccount->codsubcuenta);
+        return $this->addLinesFromTotals(
+            $accountEntry,
+            $totals,
+            false,
+            $this->counterpart,
+            'sales-subaccount-not-found',
+            'good-sales-line-error'
+        );
     }
 
     /**
@@ -201,15 +186,22 @@ class InvoiceToAccounting extends AccountingClass
             return false;
         }
 
-        $subaccount = $this->getIRPFPurchaseAccount($retention);
-        if (false === $subaccount->exists()) {
+        $irpfAccount = $this->getIRPFPurchaseAccount($retention);
+        if (false === $irpfAccount->exists()) {
             $this->toolBox()->i18nLog()->warning('irpfpr-subaccount-not-found');
             return false;
         }
 
-        $newLine = $this->getBasicLine($accountEntry, $subaccount, false, $this->subtotals[$key]['totalirpf']);
-        $newLine->setCounterpart($this->counterpart);
-        return $newLine->save();
+        $tool = new PurchasesDocIrpfAccount();
+        $totals = $tool->getTotalsForDocument($this->document, $irpfAccount->codsubcuenta, $retention->porcentaje);
+        return $this->addLinesFromTotals(
+            $accountEntry,
+            $totals,
+            false,
+            $this->counterpart,
+            'irpf-subaccount-not-found',
+            'irpf-purchase-line-error'
+        );
     }
 
     /**

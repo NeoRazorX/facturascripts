@@ -39,7 +39,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  *   - Supplier
  *   - Payment
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class AccountingAccounts
