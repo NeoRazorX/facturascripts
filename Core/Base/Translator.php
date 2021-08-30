@@ -287,9 +287,12 @@ class Translator
             }
         }
 
-        $myFile = \FS_FOLDER . '/MyFiles/Translation/' . $langCode . '.json';
+        $myFile = \FS_FOLDER . '/MyFiles/Translation';
         if (file_exists($myFile)) {
-            self::$translator->addResource('json', $myFile, $langCode);
+            $myFile = $myFile . '/' . $langCode . '.json';
+            if (file_exists($myFile)) {
+                self::$translator->addResource('json', $myFile, $langCode);
+            }
         }
     }
 }
