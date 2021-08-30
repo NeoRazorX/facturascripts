@@ -29,16 +29,17 @@ if (__DIR__ === '/home/scrutinizer/build/Test') {
     die($config . " not found!\n");
 }
 
-echo 'Edit "Test/bootstrap.php" if you want to use another config.php file.' . "\n";
-echo 'Using ' . $config . "\n\n";
+echo 'Edit "Test/bootstrap.php" if you want to use another config.php file.';
+echo "\n" . 'Using ' . $config . "\n";
 
 require_once $config;
 
-echo "\n" . 'Database connection details:' . "\n";
-echo "\n" . 'Host: ' . FS_DB_HOST;
-echo "\n" . 'Database: ' . FS_DB_NAME;
-echo "\n" . 'User: ' . FS_DB_USER;
-echo "\n" . 'Pass: ' . FS_DB_PASS . "\n\n";
+echo "\n" . 'Connection details:';
+echo "\n" . 'PHP: ' . phpversion();
+echo "\n" . 'DB Host: ' . FS_DB_HOST;
+echo "\n" . 'DB User: ' . FS_DB_USER;
+echo "\n" . 'DB Pass: ' . FS_DB_PASS;
+echo "\n" . 'Database: ' . FS_DB_NAME . "\n\n";
 
 /// clean cache
 $cache = new FacturaScripts\Core\Base\Cache();

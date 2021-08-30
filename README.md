@@ -27,6 +27,6 @@ https://facturascripts.com/forja
 
 ## Tests
 ```
-vendor/bin/phpunit --configuration phpunit.xml
+vendor/bin/phpunit
 vendor/bin/phpstan analyse Core
 ```
