@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -25,7 +26,7 @@ use FacturaScripts\Dinamic\Model\Partida;
 /**
  * Perform regularization of account balances for the exercise.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class AccountingClosingRegularization extends AccountingClosingBase
@@ -36,7 +37,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
      * Create a new account entry for channel with a one line by account balance.
      *
      * @param Ejercicio $exercise
-     * @param int       $idjournal
+     * @param int $idjournal
      *
      * @return bool
      */
@@ -58,8 +59,8 @@ class AccountingClosingRegularization extends AccountingClosingBase
     protected function getConcept(): string
     {
         return $this->toolBox()->i18n()->trans(
-                'closing-regularization-concept',
-                ['%exercise%' => $this->exercise->nombre]
+            'closing-regularization-concept',
+            ['%exercise%' => $this->exercise->nombre]
         );
     }
 
@@ -108,8 +109,8 @@ class AccountingClosingRegularization extends AccountingClosingBase
      * Add regularization lines to account entry.
      *
      * @param Asiento $accountEntry
-     * @param float   $debit
-     * @param float   $credit
+     * @param float $debit
+     * @param float $credit
      *
      * @return bool
      */
@@ -126,7 +127,7 @@ class AccountingClosingRegularization extends AccountingClosingBase
      * Establishes the common data of the entries of the accounting entry
      *
      * @param Partida $line
-     * @param array   $data
+     * @param array $data
      */
     protected function setDataLine(&$line, $data)
     {
@@ -142,8 +143,8 @@ class AccountingClosingRegularization extends AccountingClosingBase
     /**
      *
      * @param Asiento $accountEntry
-     * @param float   $debit
-     * @param float   $credit
+     * @param float $debit
+     * @param float $credit
      *
      * @return bool
      */

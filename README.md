@@ -19,8 +19,14 @@ https://facturascripts.com/ayuda
 ## Issues / Feedback
 https://facturascripts.com/contacto
 
+## Security Vulnerabilities
+If you discover a security vulnerability within FacturaScripts, please send an e-mail to Carlos Garcia via [carlos@facturascripts.com](mailto:carlos@facturascripts.com)
+
 ## Translations
 https://facturascripts.com/forja
 
-## Security Vulnerabilities
-If you discover a security vulnerability within FacturaScripts, please send an e-mail to Carlos Garcia via [carlos@facturascripts.com](mailto:carlos@facturascripts.com)
+## Tests
+```
+vendor/bin/phpunit --configuration phpunit.xml
+vendor/bin/phpstan analyse Core
+```

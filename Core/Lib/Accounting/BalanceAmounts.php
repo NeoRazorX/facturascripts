@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -34,7 +35,6 @@ class BalanceAmounts extends AccountingBase
 {
 
     /**
-     * 
      * @var string
      */
     protected $format;
@@ -55,7 +55,7 @@ class BalanceAmounts extends AccountingBase
      *
      * @param string $dateFrom
      * @param string $dateTo
-     * @param array  $params
+     * @param array $params
      *
      * @return array
      */
@@ -64,7 +64,7 @@ class BalanceAmounts extends AccountingBase
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
         $this->format = $params['format'];
-        $level = (int) $params['level'] ?? 0;
+        $level = (int)$params['level'] ?? 0;
 
         /// get accounts
         $cuenta = new Cuenta();
@@ -83,12 +83,12 @@ class BalanceAmounts extends AccountingBase
             $debe = $haber = 0.00;
             $this->combineData($account, $accounts, $amounts, $debe, $haber);
             $saldo = $debe - $haber;
-            if ($level > 0 && \strlen($account->codcuenta) > $level) {
+            if ($level > 0 && strlen($account->codcuenta) > $level) {
                 continue;
             }
 
             /// add account line
-            $bold = \strlen($account->codcuenta) <= 1;
+            $bold = strlen($account->codcuenta) <= 1;
             $rows[] = [
                 'cuenta' => $this->formatValue($account->codcuenta, 'text', $bold),
                 'descripcion' => $this->formatValue($account->descripcion, 'text', $bold),
@@ -118,12 +118,11 @@ class BalanceAmounts extends AccountingBase
     }
 
     /**
-     * 
-     * @param Cuenta   $selAccount
+     * @param Cuenta $selAccount
      * @param Cuenta[] $accounts
-     * @param array    $amounts
-     * @param float    $debe
-     * @param float    $haber
+     * @param array $amounts
+     * @param float $debe
+     * @param float $haber
      */
     protected function combineData(&$selAccount, &$accounts, &$amounts, &$debe, &$haber, $max = 7)
     {
@@ -135,8 +134,8 @@ class BalanceAmounts extends AccountingBase
 
         foreach ($amounts as $row) {
             if ($row['idcuenta'] == $selAccount->idcuenta) {
-                $debe += (float) $row['debe'];
-                $haber += (float) $row['haber'];
+                $debe += (float)$row['debe'];
+                $haber += (float)$row['haber'];
             }
         }
 
@@ -148,7 +147,6 @@ class BalanceAmounts extends AccountingBase
     }
 
     /**
-     * 
      * @param array $amounts
      * @param array $totals
      */
@@ -156,8 +154,8 @@ class BalanceAmounts extends AccountingBase
     {
         $debe = $haber = 0.00;
         foreach ($amounts as $row) {
-            $debe += (float) $row['debe'];
-            $haber += (float) $row['haber'];
+            $debe += (float)$row['debe'];
+            $haber += (float)$row['haber'];
         }
         $saldo = $debe - $haber;
 
@@ -167,10 +165,9 @@ class BalanceAmounts extends AccountingBase
     }
 
     /**
-     * 
      * @param string $value
      * @param string $type
-     * @param bool   $bold
+     * @param bool $bold
      *
      * @return string
      */
@@ -181,9 +178,9 @@ class BalanceAmounts extends AccountingBase
         switch ($type) {
             case 'money':
                 if ($this->format === 'PDF') {
-                    return $prefix . $this->toolBox()->coins()->format($value, FS_NF0, ''). $suffix;
+                    return $prefix . $this->toolBox()->coins()->format($value, FS_NF0, '') . $suffix;
                 }
-                return \number_format($value, FS_NF0, '.', '');
+                return number_format($value, FS_NF0, '.', '');
 
             default:
                 if ($this->format === 'PDF') {
@@ -217,12 +214,11 @@ class BalanceAmounts extends AccountingBase
     }
 
     /**
-     *
      * @param array $params
      *
      * @return string
      */
-    protected function getDataWhere(array $params = [])
+    protected function getDataWhere(array $params = []): string
     {
         $where = 'asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio)
             . ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom)
@@ -233,13 +229,13 @@ class BalanceAmounts extends AccountingBase
             $where .= ' AND asientos.canal = ' . $this->dataBase->var2str($channel);
         }
 
-        $ignoreRegularization = (bool) $params['ignoreregularization'] ?? false;
+        $ignoreRegularization = (bool)$params['ignoreregularization'] ?? false;
         if ($ignoreRegularization) {
             $where .= ' AND (asientos.operacion IS NULL OR asientos.operacion != '
                 . $this->dataBase->var2str(Asiento::OPERATION_REGULARIZATION) . ')';
         }
 
-        $ignoreClosure = (bool) $params['ignoreclosure'] ?? false;
+        $ignoreClosure = (bool)$params['ignoreclosure'] ?? false;
         if ($ignoreClosure) {
             $where .= ' AND (asientos.operacion IS NULL OR asientos.operacion != '
                 . $this->dataBase->var2str(Asiento::OPERATION_CLOSING) . ')';
@@ -256,16 +252,15 @@ class BalanceAmounts extends AccountingBase
     }
 
     /**
-     * 
      * @param Subcuenta[] $subaccounts
-     * @param array       $amount
+     * @param array $amount
      *
      * @return array
      */
     protected function processAmountLine($subaccounts, $amount): array
     {
-        $debe = (float) $amount['debe'];
-        $haber = (float) $amount['haber'];
+        $debe = (float)$amount['debe'];
+        $haber = (float)$amount['haber'];
         $saldo = $debe - $haber;
 
         foreach ($subaccounts as $subc) {

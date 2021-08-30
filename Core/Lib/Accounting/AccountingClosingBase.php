@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -29,7 +30,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Description of AccountingClossing
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class AccountingClosingBase
@@ -43,13 +44,12 @@ abstract class AccountingClosingBase
     protected static $dataBase;
 
     /**
-     *
      * @var Ejercicio
      */
     protected $exercise;
 
     /**
-     * Sub account for special process
+     * Subaccount for special process
      *
      * @var Subcuenta
      */
@@ -107,7 +107,7 @@ abstract class AccountingClosingBase
      *      - Update account totals
      *
      * @param Ejercicio $exercise
-     * @param int       $idjournal
+     * @param int $idjournal
      *
      * @return bool
      */
@@ -141,7 +141,7 @@ abstract class AccountingClosingBase
      * Search and load data account from a special account code
      *
      * @param Ejercicio $exercise
-     * @param string    $specialAccount
+     * @param string $specialAccount
      *
      * @return bool
      */
@@ -160,7 +160,7 @@ abstract class AccountingClosingBase
     /**
      * Establishes the common data of the accounting entry
      *
-     * @param Asiento $accountEntry
+     * @param Asiento $entry
      */
     protected function setData(&$entry)
     {
@@ -177,7 +177,7 @@ abstract class AccountingClosingBase
      * Establishes the common data of the entries of the accounting entry
      *
      * @param Partida $line
-     * @param array   $data
+     * @param array $data
      */
     protected function setDataLine(&$line, $data)
     {
@@ -193,8 +193,8 @@ abstract class AccountingClosingBase
      * Return true without doing anything, if you do not need balance override.
      *
      * @param Asiento $accountEntry
-     * @param float   $debit
-     * @param float   $credit
+     * @param float $debit
+     * @param float $credit
      *
      * @return bool
      */
@@ -208,9 +208,9 @@ abstract class AccountingClosingBase
      * with the accounts that have a balance.
      *
      * @param Asiento $accountEntry
-     * @param array   $balance
-     * @param float   $debit
-     * @param float   $credit
+     * @param array $balance
+     * @param float $debit
+     * @param float $credit
      *
      * @return bool
      */
@@ -230,10 +230,9 @@ abstract class AccountingClosingBase
     }
 
     /**
-     *
      * @return ToolBox
      */
-    protected function toolBox()
+    protected function toolBox(): ToolBox
     {
         return new ToolBox();
     }
@@ -242,7 +241,7 @@ abstract class AccountingClosingBase
      * Delete accounting entry of type indicated.
      *
      * @param Ejercicio $exercise
-     * @param string    $type
+     * @param string $type
      */
     private function deleteAccountEntry($exercise, $type): bool
     {
@@ -291,8 +290,8 @@ abstract class AccountingClosingBase
      * New accounting it's set into accountEntry param.
      *
      * @param Asiento $accountEntry
-     * @param int     $channel
-     * @param int     $idjournal
+     * @param int $channel
+     * @param int $idjournal
      *
      * @return bool
      */

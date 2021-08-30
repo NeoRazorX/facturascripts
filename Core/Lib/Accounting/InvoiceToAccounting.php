@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -38,20 +39,18 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  * Class for the generation of accounting entries of a sale/purchase document
  * and the settlement of your receipts.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class InvoiceToAccounting extends AccountingClass
 {
 
     /**
-     *
      * @var Subcuenta
      */
     protected $counterpart;
 
     /**
-     *
      * @var FacturaCliente|FacturaProveedor
      */
     protected $document;
@@ -124,7 +123,7 @@ class InvoiceToAccounting extends AccountingClass
     protected function addGoodsPurchaseLine($accountEntry)
     {
         $rectifAccount = $this->getSpecialSubAccount('DEVCOM');
-        $purchaseAccount = (bool) $this->document->idfacturarect && $rectifAccount->exists() ? $rectifAccount :
+        $purchaseAccount = (bool)$this->document->idfacturarect && $rectifAccount->exists() ? $rectifAccount :
             $this->getSpecialSubAccount('COMPRA');
 
         $tool = new PurchasesDocLineAccount();
@@ -150,7 +149,7 @@ class InvoiceToAccounting extends AccountingClass
     protected function addGoodsSalesLine($accountEntry)
     {
         $rectifAccount = $this->getSpecialSubAccount('DEVVEN');
-        $salesAccount = (bool) $this->document->idfacturarect && $rectifAccount->exists() ? $rectifAccount :
+        $salesAccount = (bool)$this->document->idfacturarect && $rectifAccount->exists() ? $rectifAccount :
             $this->getSpecialSubAccount('VENTAS');
 
         $tool = new SalesDocLineAccount();
@@ -166,7 +165,6 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -205,7 +203,6 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -253,7 +250,6 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -334,7 +330,6 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -391,7 +386,6 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     *
      * @return bool
      */
     protected function loadSubtotals(): bool
@@ -465,7 +459,7 @@ class InvoiceToAccounting extends AccountingClass
      * Assign the document data to the accounting entry
      *
      * @param Asiento $accountEntry
-     * @param string  $concept
+     * @param string $concept
      */
     protected function setAccountingData(&$accountEntry, $concept)
     {

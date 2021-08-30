@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Dinamic\Model\Partida;
@@ -45,7 +46,7 @@ class Ledger extends AccountingBase
      *
      * @param string $dateFrom
      * @param string $dateTo
-     * @param array  $params
+     * @param array $params
      *
      * @return array
      */
@@ -56,14 +57,14 @@ class Ledger extends AccountingBase
         $debe = $haber = 0.0;
         $ledger = [];
 
-        $grouped = (bool) $params['grouped'] ?? false;
+        $grouped = (bool)$params['grouped'] ?? false;
         if ($grouped) {
             /// group data
             $balances = [];
             foreach ($this->getDataGrouped($params) as $line) {
                 $this->processLineBalance($balances, $ledger, $line);
-                $debe += (float) $line['debe'];
-                $haber += (float) $line['haber'];
+                $debe += (float)$line['debe'];
+                $haber += (float)$line['haber'];
             }
             $ledger['totals'] = [
                 [
@@ -76,8 +77,8 @@ class Ledger extends AccountingBase
             /// do not group data
             foreach ($this->getData($params) as $line) {
                 $this->processLine($ledger['lines'], $line);
-                $debe += (float) $line['debe'];
-                $haber += (float) $line['haber'];
+                $debe += (float)$line['debe'];
+                $haber += (float)$line['haber'];
             }
             $ledger['lines'][] = [
                 'asiento' => '',
@@ -112,7 +113,7 @@ class Ledger extends AccountingBase
     }
 
     /**
-     * Return the appropiate data from database.
+     * Return the appropriate data from database.
      *
      * @return array
      */
@@ -136,7 +137,7 @@ class Ledger extends AccountingBase
     }
 
     /**
-     * Return the appropiate data from database.
+     * Return the appropriate data from database.
      *
      * @return array
      */
@@ -160,7 +161,6 @@ class Ledger extends AccountingBase
     }
 
     /**
-     *
      * @param array $params
      *
      * @return string
@@ -201,12 +201,11 @@ class Ledger extends AccountingBase
     }
 
     /**
-     * 
      * @param string $codcuenta
      *
      * @return float
      */
-    protected function getCuentaBlanace($codcuenta): float
+    protected function getCuentaBalance($codcuenta): float
     {
         $sql = 'SELECT SUM(partidas.debe) as debe, SUM(partidas.haber) as haber'
             . ' FROM partidas'
@@ -217,14 +216,13 @@ class Ledger extends AccountingBase
             . ' AND asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio)
             . ' AND asientos.fecha < ' . $this->dataBase->var2str($this->dateFrom);
         foreach ($this->dataBase->select($sql) as $row) {
-            return (float) $row['debe'] - (float) $row['haber'];
+            return (float)$row['debe'] - (float)$row['haber'];
         }
 
         return 0.00;
     }
 
     /**
-     * 
      * @param array $ledger
      * @param array $line
      */
@@ -232,7 +230,7 @@ class Ledger extends AccountingBase
     {
         $ledger[] = [
             'asiento' => $line['numero'],
-            'fecha' => \date(Partida::DATE_STYLE, \strtotime($line['fecha'])),
+            'fecha' => date(Partida::DATE_STYLE, strtotime($line['fecha'])),
             'cuenta' => $line['codsubcuenta'],
             'concepto' => $this->toolBox()->utils()->fixHtml($line['concepto']),
             'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),
@@ -241,7 +239,6 @@ class Ledger extends AccountingBase
     }
 
     /**
-     * 
      * @param array $balances
      * @param array $ledger
      * @param array $line
@@ -250,13 +247,13 @@ class Ledger extends AccountingBase
     {
         $codcuenta = $line['codcuenta'];
         if (!isset($balances[$codcuenta])) {
-            $balances[$codcuenta] = $this->getCuentaBlanace($codcuenta);
+            $balances[$codcuenta] = $this->getCuentaBalance($codcuenta);
         }
 
         if (!isset($ledger[$codcuenta])) {
             $ledger[$codcuenta][] = [
                 'asiento' => '',
-                'fecha' => \date(Partida::DATE_STYLE, \strtotime($this->dateFrom)),
+                'fecha' => date(Partida::DATE_STYLE, strtotime($this->dateFrom)),
                 'cuenta' => $codcuenta,
                 'concepto' => $this->toolBox()->utils()->fixHtml($line['cuentadesc']),
                 'debe' => $this->toolBox()->coins()->format(0, FS_NF0, ''),
@@ -265,10 +262,10 @@ class Ledger extends AccountingBase
             ];
         }
 
-        $balances[$codcuenta] += (float) $line['debe'] - (float) $line['haber'];
+        $balances[$codcuenta] += (float)$line['debe'] - (float)$line['haber'];
         $ledger[$codcuenta][] = [
             'asiento' => $line['numero'],
-            'fecha' => \date(Partida::DATE_STYLE, \strtotime($line['fecha'])),
+            'fecha' => date(Partida::DATE_STYLE, strtotime($line['fecha'])),
             'cuenta' => $codcuenta,
             'concepto' => $this->toolBox()->utils()->fixHtml($line['concepto']),
             'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),

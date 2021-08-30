@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -86,7 +87,7 @@ class ClosingToAcounting
      * and reopening exercise.
      *
      * @param Ejercicio $exercise
-     * @param array     $data
+     * @param array $data
      *
      * @return bool
      */
@@ -126,7 +127,7 @@ class ClosingToAcounting
      * of accounts.
      *
      * @param Ejercicio $exercise
-     * @param array     $data
+     * @param array $data
      *
      * @return bool
      */
@@ -192,7 +193,7 @@ class ClosingToAcounting
 
     /**
      * Lock all invoices from this exercise.
-     * 
+     *
      * @return bool
      */
     protected function execCloseInvoices(): bool
