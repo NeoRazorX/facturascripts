@@ -43,7 +43,7 @@
                 <widget type="date" fieldname="finoferta" />
             </column>
             <column name="email-sent" order="160">
-                <widget type="date" fieldname="femail" readonly="true" />
+                <widget type="date" fieldname="femail" />
             </column>
         </group>
         <group name="billingaddr" title="billing-address" icon="fas fa-file-invoice" numcolumns="12">

@@ -41,7 +41,7 @@
                 <widget type="text" fieldname="numproveedor" icon="fas fa-hashtag" />
             </column>
             <column name="email-sent" order="150">
-                <widget type="date" fieldname="femail" readonly="true" />
+                <widget type="date" fieldname="femail" />
             </column>
         </group>
         <group name="supplier" title="supplier" icon="fas fa-user" numcolumns="12">
