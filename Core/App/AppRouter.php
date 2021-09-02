@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\MyFilesToken;
+use setasign\Fpdi\PdfParser\Type\PdfBoolean;
 
 /**
  * Description of AppRouter
@@ -166,9 +167,9 @@ final class AppRouter
      * @param string $controllerName
      * @param string $optionalId
      */
-    public function setRoute(string $newRoute, string $controllerName, string $optionalId = '')
+    public function setRoute(string $newRoute, string $controllerName, string $optionalId = '', bool $checkOptionalId = true)
     {
-        if (!empty($optionalId)) {
+        if (!empty($optionalId) && $checkOptionalId) {
             /// if optionaId, then remove previous items with that data
             foreach ($this->routes as $route => $routeItem) {
                 if ($routeItem['controller'] === $controllerName && $routeItem['optionalId'] === $optionalId) {
