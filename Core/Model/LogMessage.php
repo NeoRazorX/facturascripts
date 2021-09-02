@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
- * First aprox to persist data from logs.
+ * Model to persist data from logs.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
@@ -29,8 +30,9 @@ class LogMessage extends Base\ModelClass
 
     use Base\ModelTrait;
 
+    const MAX_MESSAGE_LEN = 3000;
+
     /**
-     *
      * @var string
      */
     public $channel;
@@ -65,7 +67,7 @@ class LogMessage extends Base\ModelClass
 
     /**
      * User nick.
-     * 
+     *
      * @var string
      */
     public $nick;
@@ -78,7 +80,6 @@ class LogMessage extends Base\ModelClass
     public $time;
 
     /**
-     *
      * @var string
      */
     public $uri;
@@ -89,7 +90,7 @@ class LogMessage extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->time = \date(self::DATETIME_STYLE);
+        $this->time = date(self::DATETIME_STYLE);
     }
 
     /**
@@ -122,6 +123,10 @@ class LogMessage extends Base\ModelClass
         $utils = $this->toolBox()->utils();
         $this->channel = $utils->noHtml($this->channel);
         $this->message = $utils->noHtml($this->message);
+        if (strlen($this->message) > static::MAX_MESSAGE_LEN) {
+            $this->message = substr($this->message, 0, static::MAX_MESSAGE_LEN);
+        }
+
         $this->uri = $utils->noHtml($this->uri);
         return parent::test();
     }
