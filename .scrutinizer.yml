@@ -1,5 +1,9 @@
 build:
   nodes:
+    analysis:
+      tests:
+        override:
+          - php-scrutinizer-run
     my-tests:
       environment:
         php:
