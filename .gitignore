@@ -30,3 +30,4 @@ package-lock.json
 # vscode
 .vscode
 *.code-workspace
+.history

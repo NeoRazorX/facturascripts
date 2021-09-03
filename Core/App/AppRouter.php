@@ -169,9 +169,9 @@ final class AppRouter
      * @param string $controllerName
      * @param string $optionalId
      */
-    public function setRoute(string $newRoute, string $controllerName, string $optionalId = '')
+    public function setRoute(string $newRoute, string $controllerName, string $optionalId = '', bool $checkOptionalId = true)
     {
-        if (!empty($optionalId)) {
+        if (!empty($optionalId) && $checkOptionalId) {
             /// if optionalId, then remove previous items with that data
             foreach ($this->routes as $route => $routeItem) {
                 if ($routeItem['controller'] === $controllerName && $routeItem['optionalId'] === $optionalId) {
