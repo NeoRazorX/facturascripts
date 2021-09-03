@@ -140,10 +140,12 @@ class ListView extends BaseView
      */
     public function export(&$exportManager, $codes): bool
     {
-        if ($this->count <= 0) {
+        /// no data
+        if ($this->count < 1) {
             return true;
         }
 
+        /// selected items?
         if (is_array($codes) && count($codes) > 0) {
             foreach ($this->cursor as $model) {
                 if (false === in_array($model->primaryColumnValue(), $codes)) {
@@ -155,14 +157,26 @@ class ListView extends BaseView
                     continue;
                 }
 
-                $exportManager->addModelPage($model, $this->getColumns());
+                $exportManager->addModelPage($model, $this->getColumns(), $this->title);
             }
             return false;
         }
 
-        return $exportManager->addListModelPage(
+        /// print list
+        $exportManager->addListModelPage(
             $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
         );
+
+        /// print totals
+        if ($this->totalAmounts) {
+            $total = [];
+            foreach ($this->totalAmounts as $key => $value) {
+                $total[$key] = $value['total'];
+            }
+            $exportManager->addTablePage(array_keys($total), [$total]);
+        }
+
+        return true;
     }
 
     /**

@@ -69,7 +69,7 @@ class PDFExport extends PDFDocument
     }
 
     /**
-     * Adds a new page with a table listing the models data.
+     * Adds a new page with a table listing the model's data.
      *
      * @param ModelClass $model
      * @param DataBaseWhere[] $where
@@ -184,7 +184,7 @@ class PDFExport extends PDFDocument
             'cols' => []
         ];
         foreach (array_keys($headers) as $key) {
-            if (in_array($key, ['debe', 'haber', 'saldo', 'saldoprev'])) {
+            if (in_array($key, ['debe', 'haber', 'saldo', 'saldoprev', 'total'])) {
                 $tableOptions['cols'][$key]['justification'] = 'right';
             }
         }
