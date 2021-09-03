@@ -16,15 +16,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Dinamic\Model\Base\ModelClass;
 
 /**
  * Class to apply patterns.
  *
  * @author Jose Antonio Cuello <yopli2000@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class CodePatterns
 {
@@ -40,39 +41,37 @@ class CodePatterns
      * eg: ['date' => 'creationdate']
      *
      * @param string $text
-     * @param ModelClass $model
+     * @param object $model
      * @param array $options
+     *
      * @return string
      */
-    public static function trans($text, &$model, $options = [])
+    public static function trans(string $text, &$model, array $options = []): string
     {
         $long = $options['long'] ?? 0;
         $date = $options['fecha'] ?? 'fecha';
         $number = $options['numero'] ?? 'numero';
         $serie = $options['serie'] ?? 'codserie';
         $ejerc = $options['ejercicio'] ?? 'codejercicio';
-        $parts = \explode('|', $text);
+        $parts = explode('|', $text);
 
-        $result = \strtr($parts[0], [
-            '{FECHA}' => \date(self::DATE_STYLE),
-            '{HORA}' => \date(self::HOUR_STYLE),
-            '{FECHAHORA}' => \date(self::DATETIME_STYLE),
-            '{ANYO}' => \date('Y', \strtotime($model->{$date})),
-            '{DIA}' => \date('d', \strtotime($model->{$date})),
+        $result = strtr($parts[0], [
+            '{FECHA}' => date(self::DATE_STYLE),
+            '{HORA}' => date(self::HOUR_STYLE),
+            '{FECHAHORA}' => date(self::DATETIME_STYLE),
+            '{ANYO}' => date('Y', strtotime($model->{$date})),
+            '{DIA}' => date('d', strtotime($model->{$date})),
             '{EJE}' => $model->{$ejerc},
-            '{EJE2}' => \substr($model->{$ejerc}, -2),
-            '{MES}' => \date('m', \strtotime($model->{$date})),
+            '{EJE2}' => substr($model->{$ejerc}, -2),
+            '{MES}' => date('m', strtotime($model->{$date})),
             '{NUM}' => $model->{$number},
             '{SERIE}' => $model->{$serie},
-            '{0NUM}' => \str_pad($model->{$number}, $long, '0', \STR_PAD_LEFT),
-            '{0SERIE}' => \str_pad($model->{$serie}, 2, '0', \STR_PAD_LEFT),
-            '{NOMBREMES}' => static::toolBox()->i18n()->trans(\date('F', \strtotime($model->{$date}))),
+            '{0NUM}' => str_pad($model->{$number}, $long, '0', STR_PAD_LEFT),
+            '{0SERIE}' => str_pad($model->{$serie}, 2, '0', STR_PAD_LEFT),
+            '{NOMBREMES}' => ToolBox::i18n()->trans(date('F', strtotime($model->{$date}))),
         ]);
 
-        if (\count($parts) > 1) {
-            $result = static::format($result, $parts[1]);
-        }
-        return $result;
+        return count($parts) > 1 ? static::format($result, $parts[1]) : $result;
     }
 
     /**
@@ -84,28 +83,25 @@ class CodePatterns
      *
      * @param string $text
      * @param string $option
+     *
      * @return string
      */
-    private static function format($text, $option)
+    private static function format(string $text, string $option): string
     {
         switch ($option) {
             case 'M':
-                return \strtoupper($text);
+                return strtoupper($text);
 
             case 'm':
-                return \strtolower($text);
+                return strtolower($text);
 
             case 'P':
-                return \ucfirst($text);
+                return ucfirst($text);
 
             case 'T':
-                return \ucwords($text);
+                return ucwords($text);
         }
-        return $text;
-    }
 
-    private static function toolBox()
-    {
-        return new ToolBox();
+        return $text;
     }
 }

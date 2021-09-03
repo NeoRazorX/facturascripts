@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,18 +16,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 /**
  * Asset Manager for easy add extra assets.
  *
- * @author Carlos García Gómez
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class AssetManager
 {
 
     /**
-     *
      * @var array
      */
     protected static $list;
@@ -37,7 +37,7 @@ class AssetManager
      *
      * @param string $type
      * @param string $asset
-     * @param int    $priority
+     * @param int $priority
      */
     public static function add(string $type, string $asset, int $priority = 1)
     {
@@ -79,14 +79,14 @@ class AssetManager
     {
         $txt = '';
 
-        $fsRouteLen = strlen(\FS_ROUTE);
+        $fsRouteLen = strlen(FS_ROUTE);
         foreach (static::get($type) as $file) {
-            $path = (\FS_ROUTE == substr($file, 0, $fsRouteLen)) ? substr($file, $fsRouteLen + 1) : $file;
+            $path = (FS_ROUTE == substr($file, 0, $fsRouteLen)) ? substr($file, $fsRouteLen + 1) : $file;
 
-            $filePath = \FS_FOLDER . DIRECTORY_SEPARATOR . $path;
+            $filePath = FS_FOLDER . DIRECTORY_SEPARATOR . $path;
             if (is_file($filePath)) {
                 $content = file_get_contents($filePath) . "\n";
-                $txt .= static::fixCombineContent($content, \FS_ROUTE . DIRECTORY_SEPARATOR . $path);
+                $txt .= static::fixCombineContent($content, FS_ROUTE . DIRECTORY_SEPARATOR . $path);
             }
         }
 
@@ -100,7 +100,7 @@ class AssetManager
      *
      * @return array
      */
-    public static function get(string $type)
+    public static function get(string $type): array
     {
         static::init();
 
@@ -134,31 +134,29 @@ class AssetManager
 
         /// find js file with $name name
         $jsFile = $base . 'JS' . DIRECTORY_SEPARATOR . $name . '.js';
-        if (file_exists(\FS_FOLDER . $jsFile)) {
-            static::add('js', \FS_ROUTE . $jsFile, 0);
+        if (file_exists(FS_FOLDER . $jsFile)) {
+            static::add('js', FS_ROUTE . $jsFile, 0);
         }
 
         /// find css file with $name name
         $cssFile = $base . 'CSS' . DIRECTORY_SEPARATOR . $name . '.css';
-        if (file_exists(\FS_FOLDER . $cssFile)) {
-            static::add('css', \FS_ROUTE . $cssFile, 0);
+        if (file_exists(FS_FOLDER . $cssFile)) {
+            static::add('css', FS_ROUTE . $cssFile, 0);
         }
     }
 
     /**
-     * 
      * @param string $path
-     * @param int    $levels
+     * @param int $levels
      *
      * @return string
      */
-    protected static function dirname($path, $levels = 1)
+    protected static function dirname(string $path, int $levels = 1): string
     {
         return str_replace('\\', '/', dirname($path, $levels));
     }
 
     /**
-     *
      * @param string $data
      * @param string $url
      *
