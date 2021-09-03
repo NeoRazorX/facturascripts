@@ -43,7 +43,7 @@ class CuentaBancoClienteTest extends CustomTest
         /// save customer
         $customer = new Cliente();
         $customer->cifnif = '1234';
-        $customer->nombre = 'Test';
+        $customer->nombre = 'Test CBC';
         $this->assertTrue($customer->save());
 
         /// save bank account
@@ -55,8 +55,14 @@ class CuentaBancoClienteTest extends CustomTest
         /// delete bank account
         $this->assertTrue($account->delete());
 
+        /// get the contact
+        $contact = $customer->getDefaultAddress();
+
         /// delete customer
         $this->assertTrue($customer->delete());
+
+        /// delete the pending contact
+        $this->assertTrue($contact->delete());
     }
 
     public function testIBAN()
@@ -64,7 +70,7 @@ class CuentaBancoClienteTest extends CustomTest
         /// save customer
         $customer = new Cliente();
         $customer->cifnif = '1234';
-        $customer->nombre = 'Test';
+        $customer->nombre = 'Test CBC';
         $this->assertTrue($customer->save());
 
         /// save valid iban with validate
@@ -87,7 +93,13 @@ class CuentaBancoClienteTest extends CustomTest
         /// delete bank account
         $this->assertTrue($account->delete());
 
+        /// get the contact
+        $contact = $customer->getDefaultAddress();
+
         /// delete customer
         $this->assertTrue($customer->delete());
+
+        /// delete the pending contact
+        $this->assertTrue($contact->delete());
     }
 }

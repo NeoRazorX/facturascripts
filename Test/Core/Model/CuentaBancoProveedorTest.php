@@ -43,7 +43,7 @@ class CuentaBancoProveedorTest extends CustomTest
         /// save supplier
         $supplier = new Proveedor();
         $supplier->cifnif = '1234';
-        $supplier->nombre = 'Test';
+        $supplier->nombre = 'Test CBP';
         $this->assertTrue($supplier->save());
 
         /// save bank account
@@ -55,8 +55,14 @@ class CuentaBancoProveedorTest extends CustomTest
         /// delete bank account
         $this->assertTrue($account->delete());
 
-        /// delete supplier
+        /// get the contact
+        $contact = $supplier->getDefaultAddress();
+
+        /// delete customer
         $this->assertTrue($supplier->delete());
+
+        /// delete the pending contact
+        $this->assertTrue($contact->delete());
     }
 
     public function testIBAN()
@@ -64,7 +70,7 @@ class CuentaBancoProveedorTest extends CustomTest
         /// save supplier
         $supplier = new Proveedor();
         $supplier->cifnif = '1234';
-        $supplier->nombre = 'Test';
+        $supplier->nombre = 'Test CBP';
         $this->assertTrue($supplier->save());
 
         /// save valid iban with validate
@@ -87,7 +93,13 @@ class CuentaBancoProveedorTest extends CustomTest
         /// delete bank account
         $this->assertTrue($account->delete());
 
-        /// delete supplier
+        /// get the contact
+        $contact = $supplier->getDefaultAddress();
+
+        /// delete customer
         $this->assertTrue($supplier->delete());
+
+        /// delete the pending contact
+        $this->assertTrue($contact->delete());
     }
 }

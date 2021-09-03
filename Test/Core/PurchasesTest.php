@@ -43,7 +43,7 @@ abstract class PurchasesTest extends CustomTest
         /// create supplier
         $supplier = new Proveedor();
         $supplier->cifnif = '1234';
-        $supplier->nombre = 'Pepe';
+        $supplier->nombre = 'Paco Purchases';
         $this->assertTrue($supplier->save(), 'proveedor-save-error');
 
         /// create document
@@ -76,7 +76,13 @@ abstract class PurchasesTest extends CustomTest
         /// remove document
         $this->assertTrue($model->delete(), $model->modelClassName() . '-delete-error');
 
+        /// get the contacto to remove
+        $contact = $supplier->getDefaultAddress();
+
         /// remove supplier
         $this->assertTrue($supplier->delete(), 'proveedor-delete-error');
+
+        /// remove the pending contact
+        $this->assertTrue($contact->delete(), 'contacto-delete-error');
     }
 }
