@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 /**
  * Controller to manage the data editing
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class EditController extends PanelController

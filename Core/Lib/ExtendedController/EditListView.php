@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,10 +39,11 @@ class EditListView extends BaseView
      * Method to export the view data.
      *
      * @param ExportManager $exportManager
+     * @param mixed $codes
      *
      * @return bool
      */
-    public function export(&$exportManager): bool
+    public function export(&$exportManager, $codes): bool
     {
         if ($this->count <= 0) {
             return true;
@@ -63,13 +64,13 @@ class EditListView extends BaseView
      * @param int             $offset
      * @param int             $limit
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = \FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
     {
         $this->offset = $offset < 0 ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
 
         $finalWhere = empty($where) ? $this->where : $where;
-        $this->count = \is_null($this->model) ? 0 : $this->model->count($finalWhere);
+        $this->count = is_null($this->model) ? 0 : $this->model->count($finalWhere);
 
         if ($this->count > 0) {
             $this->cursor = $this->model->all($finalWhere, $this->order, $this->offset, $limit);
@@ -117,6 +118,6 @@ class EditListView extends BaseView
      */
     protected function assets()
     {
-        AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/EditListView.js');
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/EditListView.js');
     }
 }

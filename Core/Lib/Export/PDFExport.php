@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -50,7 +51,14 @@ class PDFExport extends PDFDocument
             $this->format = $this->getDocumentFormat($model);
         }
 
-        $this->newPage();
+        /// new page
+        if ($this->pdf === null) {
+            $this->newPage();
+        } else {
+            $this->pdf->ezNewPage();
+            $this->insertedHeader = false;
+        }
+
         $this->insertHeader($model->idempresa);
         $this->insertBusinessDocHeader($model);
         $this->insertBusinessDocBody($model);
@@ -63,12 +71,12 @@ class PDFExport extends PDFDocument
     /**
      * Adds a new page with a table listing the models data.
      *
-     * @param ModelClass      $model
+     * @param ModelClass $model
      * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param array           $columns
-     * @param string          $title
+     * @param array $order
+     * @param int $offset
+     * @param array $columns
+     * @param string $title
      *
      * @return bool
      */
@@ -117,15 +125,15 @@ class PDFExport extends PDFDocument
      * Adds a new page with the model data.
      *
      * @param ModelClass $model
-     * @param array      $columns
-     * @param string     $title
+     * @param array $columns
+     * @param string $title
      *
      * @return bool
      */
     public function addModelPage($model, $columns, $title = ''): bool
     {
         $this->newPage();
-        $idempresa = isset($model->idempresa) ? $model->idempresa : null;
+        $idempresa = $model->idempresa ?? null;
         $this->insertHeader($idempresa);
 
         $tableCols = [];
@@ -151,7 +159,7 @@ class PDFExport extends PDFDocument
         $this->pdf->ezText("\n" . $this->fixValue($title) . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
-        $this->insertParalellTable($tableDataAux, '', $tableOptions);
+        $this->insertParallelTable($tableDataAux, '', $tableOptions);
         $this->insertFooter();
         return true;
     }
@@ -175,8 +183,8 @@ class PDFExport extends PDFDocument
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'cols' => []
         ];
-        foreach (\array_keys($headers) as $key) {
-            if (\in_array($key, ['debe', 'haber', 'saldo', 'saldoprev'])) {
+        foreach (array_keys($headers) as $key) {
+            if (in_array($key, ['debe', 'haber', 'saldo', 'saldoprev'])) {
                 $tableOptions['cols'][$key]['justification'] = 'right';
             }
         }
@@ -204,9 +212,9 @@ class PDFExport extends PDFDocument
 
     /**
      * Blank document.
-     * 
+     *
      * @param string $title
-     * @param int    $idformat
+     * @param int $idformat
      * @param string $langcode
      */
     public function newDoc(string $title, int $idformat, string $langcode)

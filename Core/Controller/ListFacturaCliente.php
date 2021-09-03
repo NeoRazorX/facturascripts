@@ -61,7 +61,7 @@ class ListFacturaCliente extends ListBusinessDocument
      * @param string $modelName
      * @param string $label
      */
-    protected function createViewSales(string $viewName, $modelName, $label)
+    protected function createViewSales(string $viewName, string $modelName, string $label)
     {
         parent::createViewSales($viewName, $modelName, $label);
         $this->addFilterCheckbox('ListFacturaCliente', 'pagada', 'unpaid', 'pagada', '=', false);

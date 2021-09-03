@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Lib\ExtendedController\BusinessDocumentView;
 use FacturaScripts\Dinamic\Model\Proveedor;
 
 /**
@@ -30,10 +29,9 @@ abstract class PurchaseDocumentController extends BusinessDocumentController
 {
 
     /**
-     * 
      * @return array
      */
-    public function getCustomFields()
+    public function getCustomFields(): array
     {
         return [
             [
@@ -45,17 +43,15 @@ abstract class PurchaseDocumentController extends BusinessDocumentController
     }
 
     /**
-     * 
      * @return string
      */
-    public function getNewSubjectUrl()
+    public function getNewSubjectUrl(): string
     {
         $proveedor = new Proveedor();
         return $proveedor->url('new') . '?return=' . $this->url();
     }
 
     /**
-     * 
      * @return array
      */
     public function getPageData()
@@ -66,22 +62,20 @@ abstract class PurchaseDocumentController extends BusinessDocumentController
     }
 
     /**
-     * 
      * @return string
      */
-    protected function getLineXMLView()
+    protected function getLineXMLView(): string
     {
         return 'PurchaseDocumentLine';
     }
 
     /**
-     * 
      * @param BusinessDocumentView $view
      * @param array                $formData
      * 
      * @return string
      */
-    protected function setSubject(&$view, $formData)
+    protected function setSubject(&$view, $formData): string
     {
         if (empty($formData['codproveedor'])) {
             return 'ERROR: ' . $this->toolBox()->i18n()->trans('supplier-not-found');

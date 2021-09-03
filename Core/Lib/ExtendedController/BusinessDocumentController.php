@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
@@ -32,7 +33,6 @@ abstract class BusinessDocumentController extends PanelController
     use DocFilesTrait;
 
     /**
-     *
      * @var BusinessDocumentFormTools
      */
     protected $documentTools;
@@ -48,7 +48,7 @@ abstract class BusinessDocumentController extends PanelController
     abstract public function getModelClassName();
 
     /**
-     * Retuns an url to create a new subject.
+     * Returns an url to create a new subject.
      */
     abstract public function getNewSubjectUrl();
 
@@ -138,10 +138,9 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
-     *
      * @return array
      */
-    protected function getBusinessFormData()
+    protected function getBusinessFormData(): array
     {
         $data = ['custom' => [], 'final' => [], 'form' => [], 'lines' => [], 'subject' => []];
         foreach ($this->request->request->all() as $field => $value) {
@@ -176,7 +175,7 @@ abstract class BusinessDocumentController extends PanelController
     /**
      * Load view data procedure
      *
-     * @param string               $viewName
+     * @param string $viewName
      * @param BusinessDocumentView $view
      */
     protected function loadData($viewName, $view)
@@ -230,13 +229,13 @@ abstract class BusinessDocumentController extends PanelController
      *
      * @return bool
      */
-    protected function recalculateDocumentAction()
+    protected function recalculateDocumentAction(): bool
     {
         $this->setTemplate(false);
 
         /// loads model
         $data = $this->getBusinessFormData();
-        $merged = \array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
+        $merged = array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
         $this->views[$this->active]->loadFromData($merged);
 
         /// update subject data?
@@ -255,7 +254,7 @@ abstract class BusinessDocumentController extends PanelController
      *
      * @return bool
      */
-    protected function saveDocumentAction()
+    protected function saveDocumentAction(): bool
     {
         $this->setTemplate(false);
         if (false === $this->permissions->allowUpdate) {
@@ -285,12 +284,11 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
-     *
      * @param string $message
      *
      * @return string
      */
-    protected function saveDocumentError($message)
+    protected function saveDocumentError(string $message): string
     {
         foreach ($this->toolBox()->log()->readAll() as $msg) {
             $message .= "\n" . $msg['message'];
@@ -303,13 +301,12 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
-     *
      * @param BusinessDocumentView $view
-     * @param array                $data
+     * @param array $data
      *
      * @return string
      */
-    protected function saveDocumentResult(BusinessDocumentView &$view, array &$data)
+    protected function saveDocumentResult(BusinessDocumentView &$view, array &$data): string
     {
         /// start transaction
         $this->dataBase->beginTransaction();
@@ -339,11 +336,11 @@ abstract class BusinessDocumentController extends PanelController
      * Save the lines of the document.
      *
      * @param BusinessDocumentView $view
-     * @param array                $newLines
+     * @param array $newLines
      *
      * @return bool
      */
-    protected function saveLines(BusinessDocumentView &$view, array &$newLines)
+    protected function saveLines(BusinessDocumentView &$view, array &$newLines): bool
     {
         if (false === $view->model->editable) {
             return true;
@@ -371,7 +368,7 @@ abstract class BusinessDocumentController extends PanelController
         }
 
         /// add new lines
-        foreach (\array_reverse($newLines) as $fLine) {
+        foreach (array_reverse($newLines) as $fLine) {
             if ($fLine['idlinea']) {
                 continue;
             }
@@ -386,16 +383,15 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
-     *
      * @return bool
      */
-    protected function subjectChangedAction()
+    protected function subjectChangedAction(): bool
     {
         $this->setTemplate(false);
 
         /// loads model
         $data = $this->getBusinessFormData();
-        $merged = \array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
+        $merged = array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
         $this->views[$this->active]->loadFromData($merged);
 
         /// update subject data?
@@ -403,7 +399,7 @@ abstract class BusinessDocumentController extends PanelController
             $this->views[$this->active]->model->updateSubject();
         }
 
-        $this->response->setContent(\json_encode($this->views[$this->active]->model));
+        $this->response->setContent(json_encode($this->views[$this->active]->model));
         return false;
     }
 
@@ -411,11 +407,11 @@ abstract class BusinessDocumentController extends PanelController
      * Updates oldLine with newLine data.
      *
      * @param BusinessDocumentLine $oldLine
-     * @param array                $newLine
+     * @param array $newLine
      *
      * @return bool
      */
-    protected function updateLine($oldLine, array $newLine)
+    protected function updateLine($oldLine, array $newLine): bool
     {
         /// reload line data from database to get last changes
         $oldLine->loadFromCode($oldLine->primaryColumnValue());

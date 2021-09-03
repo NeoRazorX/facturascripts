@@ -22,6 +22,7 @@ use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Request;
+use const FS_ITEM_LIMIT;
 
 /**
  * View definition for its use in ExtendedControllers
@@ -41,7 +42,7 @@ class HtmlView extends BaseView
      * @param string $fileName
      * @param string $icon
      */
-    public function __construct($name, $title, $modelName, $fileName, $icon)
+    public function __construct(string $name, string $title, string $modelName, string $fileName, string $icon)
     {
         parent::__construct($name, $title, $modelName, $icon);
         $this->template = $fileName . '.html.twig';
@@ -51,23 +52,23 @@ class HtmlView extends BaseView
      * Method to export the view data.
      *
      * @param ExportManager $exportManager
+     * @param mixed $codes
      *
      * @return bool
      */
-    public function export(&$exportManager): bool
+    public function export(&$exportManager, $codes): bool
     {
         return true;
     }
 
     /**
-     * 
      * @param string $code
      * @param array  $where
      * @param array  $order
      * @param int    $offset
      * @param int    $limit
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = \FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         if (empty($code) && empty($where)) {
             return;
@@ -81,7 +82,6 @@ class HtmlView extends BaseView
     }
 
     /**
-     * 
      * @param User|false $user
      */
     public function loadPageOptions($user = false)
@@ -90,12 +90,10 @@ class HtmlView extends BaseView
     }
 
     /**
-     * 
      * @param Request $request
      * @param string  $case
      */
     public function processFormData($request, $case)
     {
-        ;
     }
 }

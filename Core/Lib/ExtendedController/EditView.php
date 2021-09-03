@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,10 +38,11 @@ class EditView extends BaseView
      * Method to export the view data.
      *
      * @param ExportManager $exportManager
+     * @param mixed $codes
      *
      * @return bool
      */
-    public function export(&$exportManager): bool
+    public function export(&$exportManager, $codes): bool
     {
         return $exportManager->addModelPage($this->model, $this->getColumns(), $this->title);
     }
@@ -55,7 +56,7 @@ class EditView extends BaseView
      * @param int             $offset
      * @param int             $limit
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = \FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;
@@ -87,7 +88,7 @@ class EditView extends BaseView
             case 'load':
                 $exclude = ['action', 'code', 'option'];
                 foreach ($request->query->all() as $key => $value) {
-                    if (false === \in_array($key, $exclude)) {
+                    if (false === in_array($key, $exclude)) {
                         $this->model->{$key} = $value;
                     }
                 }

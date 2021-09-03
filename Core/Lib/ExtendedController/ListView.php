@@ -16,9 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
@@ -40,7 +43,6 @@ class ListView extends BaseView
     const DEFAULT_TEMPLATE = 'Master/ListView.html.twig';
 
     /**
-     *
      * @var string
      */
     public $orderKey = '';
@@ -53,7 +55,6 @@ class ListView extends BaseView
     public $orderOptions = [];
 
     /**
-     *
      * @var string
      */
     public $query = '';
@@ -66,7 +67,6 @@ class ListView extends BaseView
     public $searchFields = [];
 
     /**
-     *
      * @var array
      */
     public $totalAmounts = [];
@@ -74,23 +74,23 @@ class ListView extends BaseView
     /**
      * Adds a field to the Order By list
      *
-     * @param array  $fields
+     * @param array $fields
      * @param string $label
-     * @param int    $default (0 = None, 1 = ASC, 2 = DESC)
+     * @param int $default (0 = None, 1 = ASC, 2 = DESC)
      */
-    public function addOrderBy(array $fields, $label, $default = 0)
+    public function addOrderBy(array $fields, string $label, int $default = 0)
     {
-        $key1 = \count($this->orderOptions);
+        $key1 = count($this->orderOptions);
         $this->orderOptions[$key1] = [
             'fields' => $fields,
-            'label' => $this->toolBox()->i18n()->trans($label),
+            'label' => ToolBox::i18n()->trans($label),
             'type' => 'ASC'
         ];
 
-        $key2 = \count($this->orderOptions);
+        $key2 = count($this->orderOptions);
         $this->orderOptions[$key2] = [
             'fields' => $fields,
-            'label' => $this->toolBox()->i18n()->trans($label),
+            'label' => ToolBox::i18n()->trans($label),
             'type' => 'DESC'
         ];
 
@@ -115,10 +115,9 @@ class ListView extends BaseView
     }
 
     /**
-     *
      * @return string
      */
-    public function btnNewUrl()
+    public function btnNewUrl(): string
     {
         $url = empty($this->model) ? '' : $this->model->url('new');
         $params = [];
@@ -128,32 +127,48 @@ class ListView extends BaseView
             }
         }
 
-        return empty($params) ? $url : $url . '?' . \implode('&', $params);
+        return empty($params) ? $url : $url . '?' . implode('&', $params);
     }
 
     /**
      * Method to export the view data.
      *
      * @param ExportManager $exportManager
+     * @param mixed $codes
      *
      * @return bool
      */
-    public function export(&$exportManager): bool
+    public function export(&$exportManager, $codes): bool
     {
-        if ($this->count > 0) {
-            return $exportManager->addListModelPage(
-                    $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
-            );
+        if ($this->count <= 0) {
+            return true;
         }
 
-        return true;
+        if (is_array($codes) && count($codes) > 0) {
+            foreach ($this->cursor as $model) {
+                if (false === in_array($model->primaryColumnValue(), $codes)) {
+                    continue;
+                }
+
+                if ($model instanceof BusinessDocument) {
+                    $exportManager->addBusinessDocPage($model);
+                    continue;
+                }
+
+                $exportManager->addModelPage($model, $this->getColumns());
+            }
+            return false;
+        }
+
+        return $exportManager->addListModelPage(
+            $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
+        );
     }
 
     /**
-     *
      * @return ColumnItem[]
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         foreach ($this->columns as $group) {
             return $group->columns;
@@ -165,18 +180,18 @@ class ListView extends BaseView
     /**
      * Loads the data in the cursor property, according to the where filter specified.
      *
-     * @param string          $code
+     * @param string $code
      * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param int             $limit
+     * @param array $order
+     * @param int $offset
+     * @param int $limit
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = \FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
     {
         $this->offset = $offset < 0 ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
-        $this->where = \array_merge($where, $this->where);
-        $this->count = \is_null($this->model) ? 0 : $this->model->count($this->where);
+        $this->where = array_merge($where, $this->where);
+        $this->count = is_null($this->model) ? 0 : $this->model->count($this->where);
 
         /// avoid overflow
         if ($this->offset > $this->count) {
@@ -192,7 +207,6 @@ class ListView extends BaseView
     }
 
     /**
-     *
      * @param User|false $user
      */
     public function loadPageOptions($user = false)
@@ -208,7 +222,7 @@ class ListView extends BaseView
      * Process form data needed.
      *
      * @param Request $request
-     * @param string  $case
+     * @param string $case
      */
     public function processFormData($request, $case)
     {
@@ -243,12 +257,12 @@ class ListView extends BaseView
      */
     protected function assets()
     {
-        AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/ListView.js');
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/ListView.js');
     }
 
     private function loadTotalAmounts()
     {
-        $tableName = \count($this->cursor) > 1 && \method_exists($this->model, 'tableName') ? $this->model->tableName() : '';
+        $tableName = count($this->cursor) > 1 && method_exists($this->model, 'tableName') ? $this->model->tableName() : '';
         if (empty($tableName)) {
             return;
         }
@@ -272,19 +286,18 @@ class ListView extends BaseView
     }
 
     /**
-     * 
      * @param Request $request
      */
-    private function processFormDataLoad($request)
+    private function processFormDataLoad(Request $request)
     {
-        $this->offset = (int) $request->request->get('offset', 0);
+        $this->offset = (int)$request->request->get('offset', 0);
         $this->setSelectedOrderBy($request->request->get('order', ''));
 
         /// query
         $this->query = $request->request->get('query', '');
         if ('' !== $this->query) {
-            $fields = \implode('|', $this->searchFields);
-            $this->where[] = new DataBaseWhere($fields, $this->toolBox()->utils()->noHtml($this->query), 'XLIKE');
+            $fields = implode('|', $this->searchFields);
+            $this->where[] = new DataBaseWhere($fields, ToolBox::utils()::noHtml($this->query), 'XLIKE');
         }
 
         /// select saved filter
@@ -313,7 +326,7 @@ class ListView extends BaseView
      *
      * @param string $orderKey
      */
-    protected function setSelectedOrderBy($orderKey)
+    protected function setSelectedOrderBy(string $orderKey)
     {
         if (isset($this->orderOptions[$orderKey])) {
             $this->order = [];

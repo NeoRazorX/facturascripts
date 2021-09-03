@@ -227,7 +227,7 @@ class EditProveedor extends ComercialContactController
      *
      * @param string $viewName
      */
-    protected function setCustomWidgetValues($viewName)
+    protected function setCustomWidgetValues(string $viewName)
     {
         /// Load values option to VAT Type select input
         $columnVATType = $this->views[$viewName]->columnForName('vat-regime');

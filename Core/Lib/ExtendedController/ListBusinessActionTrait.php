@@ -31,9 +31,9 @@ use FacturaScripts\Core\Model\Base\TransformerDocument;
 trait ListBusinessActionTrait
 {
 
-    abstract public function addButton($viewName, $params);
+    abstract public function addButton(string $viewName, array $btnArray);
 
-    abstract public function redirect($url, $delay = 0);
+    abstract public function redirect(string $url, int $delay = 0);
 
     abstract public static function toolBox();
 

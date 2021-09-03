@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,7 +40,6 @@ abstract class BaseView
     const DEFAULT_TEMPLATE = 'Master/BaseView.html.twig';
 
     /**
-     *
      * @var GroupItem[]
      */
     protected $columns = [];
@@ -60,13 +59,11 @@ abstract class BaseView
     public $cursor = [];
 
     /**
-     *
      * @var string
      */
     public $icon;
 
     /**
-     *
      * @var array
      */
     protected $modals = [];
@@ -79,7 +76,6 @@ abstract class BaseView
     public $model;
 
     /**
-     *
      * @var string
      */
     private $name;
@@ -99,7 +95,6 @@ abstract class BaseView
     public $offset = 0;
 
     /**
-     *
      * @var array
      */
     public $order = [];
@@ -112,19 +107,16 @@ abstract class BaseView
     protected $pageOption;
 
     /**
-     *
      * @var array
      */
     protected $rows = [];
 
     /**
-     *
      * @var array
      */
     public $settings;
 
     /**
-     *
      * @var string
      */
     public $template;
@@ -146,12 +138,12 @@ abstract class BaseView
     /**
      * Method to export the view data.
      */
-    abstract public function export(&$exportManager): bool;
+    abstract public function export(&$exportManager, $codes): bool;
 
     /**
      * Loads view data.
      */
-    abstract public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = \FS_ITEM_LIMIT);
+    abstract public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT);
 
     /**
      * Process form data.
@@ -166,12 +158,12 @@ abstract class BaseView
      * @param string $modelName
      * @param string $icon
      */
-    public function __construct($name, $title, $modelName, $icon)
+    public function __construct(string $name, string $title, string $modelName, string $icon)
     {
-        if (\class_exists($modelName)) {
+        if (class_exists($modelName)) {
             $this->model = new $modelName();
         } else {
-            $this->toolBox()->i18nLog()->critical('model-not-found', ['%model%' => $modelName]);
+            ToolBox::i18nLog()->critical('model-not-found', ['%model%' => $modelName]);
         }
 
         $this->icon = $icon;
@@ -190,7 +182,7 @@ abstract class BaseView
             'megasearch' => false
         ];
         $this->template = static::DEFAULT_TEMPLATE;
-        $this->title = $this->toolBox()->i18n()->trans($title);
+        $this->title = ToolBox::i18n()->trans($title);
         $this->assets();
     }
 
@@ -242,10 +234,10 @@ abstract class BaseView
      * Establishes the column's display or read only state.
      *
      * @param string $columnName
-     * @param bool   $disabled
+     * @param bool $disabled
      * @param string $readOnly
      */
-    public function disableColumn($columnName, $disabled = true, $readOnly = '')
+    public function disableColumn(string $columnName, bool $disabled = true, string $readOnly = '')
     {
         $column = $this->columnForName($columnName);
         if ($column) {
@@ -275,10 +267,9 @@ abstract class BaseView
     }
 
     /**
-     *
      * @return array
      */
-    public function getPagination()
+    public function getPagination(): array
     {
         $pages = [];
         $key1 = $key2 = 0;
@@ -289,18 +280,18 @@ abstract class BaseView
             $pages[$key1] = [
                 'active' => ($key2 == $this->offset),
                 'num' => $key1 + 1,
-                'offset' => $key1 * \FS_ITEM_LIMIT,
+                'offset' => $key1 * FS_ITEM_LIMIT,
             ];
             if ($key2 == $this->offset) {
                 $current = $key1;
             }
             $key1++;
-            $key2 += \FS_ITEM_LIMIT;
+            $key2 += FS_ITEM_LIMIT;
         }
 
         /// now descarting pages
-        foreach (\array_keys($pages) as $key2) {
-            $middle = \intval($key1 / 2);
+        foreach (array_keys($pages) as $key2) {
+            $middle = intval($key1 / 2);
 
             /**
              * We discard everything except the first page, the last one, the middle one,
@@ -311,7 +302,7 @@ abstract class BaseView
             }
         }
 
-        return \count($pages) > 1 ? $pages : [];
+        return count($pages) > 1 ? $pages : [];
     }
 
     /**
@@ -323,7 +314,7 @@ abstract class BaseView
      */
     public function getRow(string $key)
     {
-        return isset($this->rows[$key]) ? $this->rows[$key] : null;
+        return $this->rows[$key] ?? null;
     }
 
     /**
@@ -331,7 +322,7 @@ abstract class BaseView
      *
      * @return string
      */
-    public function getViewName()
+    public function getViewName(): string
     {
         return $this->name;
     }
@@ -358,7 +349,7 @@ abstract class BaseView
      */
     public function loadPageOptions($user = false)
     {
-        if (false === \is_bool($user)) {
+        if (false === is_bool($user)) {
             /// sets user security level for use in render
             VisualItem::setLevel($user->level);
         }
@@ -378,7 +369,6 @@ abstract class BaseView
      */
     protected function assets()
     {
-        ;
     }
 
     /**
@@ -409,20 +399,11 @@ abstract class BaseView
      */
     protected function getPageWhere($user = false)
     {
-        $viewName = \explode('-', $this->name)[0];
-        return \is_bool($user) ? [new DataBaseWhere('name', $viewName)] : [
+        $viewName = explode('-', $this->name)[0];
+        return is_bool($user) ? [new DataBaseWhere('name', $viewName)] : [
             new DataBaseWhere('name', $viewName),
             new DataBaseWhere('nick', $user->nick),
             new DataBaseWhere('nick', null, 'IS', 'OR')
         ];
-    }
-
-    /**
-     * 
-     * @return ToolBox
-     */
-    protected function toolBox()
-    {
-        return new ToolBox();
     }
 }

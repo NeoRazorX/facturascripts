@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
@@ -58,7 +59,6 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     *
      * @return string
      */
     public function getImageUrl()
@@ -69,8 +69,8 @@ abstract class PanelController extends BaseController
     /**
      * Runs the controller's private logic.
      *
-     * @param Response              $response
-     * @param User                  $user
+     * @param Response $response
+     * @param User $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -120,7 +120,7 @@ abstract class PanelController extends BaseController
      *
      * @param string $position
      */
-    public function setTabsPosition($position)
+    public function setTabsPosition(string $position)
     {
         $this->tabsPosition = $position;
         switch ($this->tabsPosition) {
@@ -137,7 +137,7 @@ abstract class PanelController extends BaseController
                 $this->setTemplate('Master/PanelController');
         }
 
-        foreach (\array_keys($this->views) as $viewName) {
+        foreach (array_keys($this->views) as $viewName) {
             $this->views[$viewName]->settings['card'] = $this->tabsPosition !== 'top';
         }
     }
@@ -150,7 +150,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addEditListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-bars')
+    protected function addEditListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-bars')
     {
         $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -165,7 +165,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-edit')
+    protected function addEditView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-edit')
     {
         $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -177,12 +177,14 @@ abstract class PanelController extends BaseController
      * Master/Detail params:
      *   ['name' = 'viewName', 'model' => 'modelName']
      *
-     * @param array  $master
-     * @param array  $detail
+     * @param array $master
+     * @param array $detail
      * @param string $viewTitle
      * @param string $viewIcon
+     * @deprecated will be removed in the next year
+     *
      */
-    protected function addGridView($master, $detail, $viewTitle, $viewIcon = 'fas fa-list-alt')
+    protected function addGridView(array $master, array $detail, string $viewTitle, string $viewIcon = 'fas fa-list-alt')
     {
         // Create master and detail views
         $master['model'] = self::MODEL_NAMESPACE . $master['model'];
@@ -192,7 +194,7 @@ abstract class PanelController extends BaseController
         // load columns definition for detail view
         $view->detailView->loadPageOptions($this->user);
 
-        // Add view to views container
+        // Add view to the views list
         $this->addCustomView($master['name'], $view);
     }
 
@@ -205,7 +207,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addHtmlView($viewName, $fileName, $modelName, $viewTitle, $viewIcon = 'fab fa-html5')
+    protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5')
     {
         $view = new HtmlView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName, $viewIcon);
         $this->addCustomView($viewName, $view);
@@ -219,7 +221,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-list')
+    protected function addListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-list')
     {
         $view = new ListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -345,12 +347,12 @@ abstract class PanelController extends BaseController
 
     /**
      * Runs data insert action.
-     * 
+     *
      * @return bool
      */
     protected function insertAction()
     {
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
         }

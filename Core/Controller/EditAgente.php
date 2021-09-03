@@ -211,7 +211,7 @@ class EditAgente extends ComercialContactController
      *
      * @param string $viewName
      */
-    protected function setCustomWidgetValues($viewName)
+    protected function setCustomWidgetValues(string $viewName)
     {
         ;
     }

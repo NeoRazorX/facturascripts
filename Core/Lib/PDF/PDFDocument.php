@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\AttachedFile;
+use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\CuentaBanco;
 use FacturaScripts\Dinamic\Model\CuentaBancoCliente;
@@ -34,6 +35,7 @@ use FacturaScripts\Dinamic\Model\FormaPago;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Pais;
+use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 
 /**
@@ -138,8 +140,8 @@ abstract class PDFDocument extends PDFCore
         }
 
         $iban = $cuentaBco->getIban(true);
-        $blocks = \explode(' ', $iban);
-        return $payMethod->descripcion . ' : ' . $iban . ' (' . $this->i18n->trans('last-block') . ' ' . \end($blocks) . ')';
+        $blocks = explode(' ', $iban);
+        return $payMethod->descripcion . ' : ' . $iban . ' (' . $this->i18n->trans('last-block') . ' ' . end($blocks) . ')';
     }
 
     /**
@@ -262,7 +264,7 @@ abstract class PDFDocument extends PDFCore
         /// fill headers and options with the line headers information
         foreach ($this->lineHeaders as $key => $value) {
             $headers[$key] = $value['title'];
-            if (\in_array($value['type'], ['number', 'percentage'], true)) {
+            if (in_array($value['type'], ['number', 'percentage'], true)) {
                 $tableOptions['cols'][$key] = ['justification' => 'right'];
             }
         }
@@ -332,7 +334,7 @@ abstract class PDFDocument extends PDFCore
             $this->removeEmptyCols($taxRows, $taxHeaders, $this->numberTools->format(0));
             $this->pdf->ezTable($taxRows, $taxHeaders, '', $taxTableOptions);
             $this->pdf->ezText("\n");
-        } elseif ($this->pdf->ezPageCount < 2 && \strlen($this->format->texto) < 400 && $this->pdf->y > static::INVOICE_TOTALS_Y) {
+        } elseif ($this->pdf->ezPageCount < 2 && strlen($this->format->texto) < 400 && $this->pdf->y > static::INVOICE_TOTALS_Y) {
             $this->pdf->y = static::INVOICE_TOTALS_Y;
         }
 
@@ -435,9 +437,9 @@ abstract class PDFDocument extends PDFCore
         /// rectified invoice?
         if (isset($model->codigorect) && !empty($model->codigorect)) {
             $tableData[3] = ['key' => $this->i18n->trans('original'), 'value' => $model->codigorect];
-        } elseif (\property_exists($model, 'numproveedor') && $model->numproveedor) {
+        } elseif (property_exists($model, 'numproveedor') && $model->numproveedor) {
             $tableData[3] = ['key' => $this->i18n->trans('numsupplier'), 'value' => $model->numproveedor];
-        } elseif (\property_exists($model, 'numpero2') && $model->numero2) {
+        } elseif (property_exists($model, 'numpero2') && $model->numero2) {
             $tableData[3] = ['key' => $this->i18n->trans('number2'), 'value' => $model->numero2];
         } else {
             $tableData[3] = ['key' => $this->i18n->trans('serie'), 'value' => $model->codserie];
@@ -451,7 +453,7 @@ abstract class PDFDocument extends PDFCore
             'lineCol' => [1, 1, 1],
             'cols' => []
         ];
-        $this->insertParalellTable($tableData, '', $tableOptions);
+        $this->insertParallelTable($tableData, '', $tableOptions);
         $this->pdf->ezText('');
 
         if (!empty($model->idcontactoenv) && ($model->idcontactoenv != $model->idcontactofact || !empty($model->codtrans))) {
@@ -488,7 +490,7 @@ abstract class PDFDocument extends PDFCore
                 'lineCol' => [1, 1, 1],
                 'cols' => []
             ];
-            $this->insertParalellTable($tableData, '', $tableOptions);
+            $this->insertParallelTable($tableData, '', $tableOptions);
             $this->pdf->ezText('');
         }
     }
@@ -500,7 +502,7 @@ abstract class PDFDocument extends PDFCore
      */
     protected function insertCompanyLogo($idfile = 0)
     {
-        if (!\function_exists('imagecreatefromstring')) {
+        if (!function_exists('imagecreatefromstring')) {
             die('ERROR: function imagecreatefromstring() not found. '
                 . ' Do you have installed php-gd package and enabled support to allow us render images? .'
                 . 'Note that the package name can differ between operating system or PHP version.');
@@ -514,7 +516,7 @@ abstract class PDFDocument extends PDFCore
             $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
             $this->addImageFromAttachedFile($logoFile, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
         } else {
-            $logoPath = \FS_FOLDER . '/Dinamic/Assets/Images/horizontal-logo.png';
+            $logoPath = FS_FOLDER . '/Dinamic/Assets/Images/horizontal-logo.png';
             $logoSize = $this->calcImageSize($logoPath);
             $yPos = $this->pdf->ez['pageHeight'] - $logoSize['height'] - $this->pdf->ez['topMargin'];
             $this->addImageFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
@@ -551,7 +553,7 @@ abstract class PDFDocument extends PDFCore
             return;
         }
 
-        $size = \mb_strlen($company->nombre) > 20 ? self::FONT_SIZE + 2 : self::FONT_SIZE + 7;
+        $size = mb_strlen($company->nombre) > 20 ? self::FONT_SIZE + 2 : self::FONT_SIZE + 7;
         $this->pdf->ezText(Utils::fixHtml($company->nombre), $size, ['justification' => 'right']);
         $address = $company->direccion;
         $address .= empty($company->codpostal) ? "\n" : "\n" . $company->codpostal . ', ';
@@ -583,7 +585,7 @@ abstract class PDFDocument extends PDFCore
             'expiration' => $this->i18n->trans('expiration')
         ];
 
-        $expiration = isset($invoice->finoferta) ? $invoice->finoferta : '';
+        $expiration = $invoice->finoferta ?? '';
         $rows = [
             ['method' => $this->getBankData($invoice), 'expiration' => $expiration]
         ];
