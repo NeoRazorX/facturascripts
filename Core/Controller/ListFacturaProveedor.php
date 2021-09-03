@@ -61,7 +61,7 @@ class ListFacturaProveedor extends ListBusinessDocument
      * @param string $modelName
      * @param string $label
      */
-    protected function createViewPurchases(string $viewName, $modelName, $label)
+    protected function createViewPurchases(string $viewName, string $modelName, string $label)
     {
         parent::createViewPurchases($viewName, $modelName, $label);
         $this->addFilterCheckbox('ListFacturaProveedor', 'pagada', 'unpaid', 'pagada', '=', false);

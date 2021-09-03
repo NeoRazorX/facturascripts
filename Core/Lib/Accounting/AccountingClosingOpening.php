@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -28,7 +29,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Perform opening of account balances for the exercise.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class AccountingClosingOpening extends AccountingClosingBase
@@ -43,7 +44,6 @@ class AccountingClosingOpening extends AccountingClosingBase
     protected $copySubAccounts = true;
 
     /**
-     *
      * @var Ejercicio
      */
     protected $newExercise;
@@ -69,7 +69,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      * The informed exercise must be the closed exercise.
      *
      * @param Ejercicio $exercise
-     * @param int       $idjournal
+     * @param int $idjournal
      *
      * @return bool
      */
@@ -106,8 +106,8 @@ class AccountingClosingOpening extends AccountingClosingBase
     protected function getConcept(): string
     {
         return $this->toolBox()->i18n()->trans(
-                'closing-opening-concept',
-                ['%exercise%' => $this->newExercise->nombre]
+            'closing-opening-concept',
+            ['%exercise%' => $this->newExercise->nombre]
         );
     }
 
@@ -157,7 +157,7 @@ class AccountingClosingOpening extends AccountingClosingBase
     /**
      * Establishes the common data of the accounting entry
      *
-     * @param Asiento $accountEntry
+     * @param Asiento $entry
      */
     protected function setData(&$entry)
     {
@@ -170,7 +170,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      * Set new exercise data values.
      *
      * @param Partida $line
-     * @param array   $data
+     * @param array $data
      */
     protected function setDataLine(&$line, $data)
     {
@@ -193,6 +193,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      * Copy existing subaccount into new exercise.
      *
      * @param int $idSubAccount
+     *
      * @return int
      */
     private function copySubAccount($idSubAccount): int
@@ -245,6 +246,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      * Check if subaccount is a special profit and loss account
      *
      * @param string $subaccount
+     *
      * @return bool
      */
     private function isProfitLossAccount(string $subaccount): bool
@@ -257,7 +259,7 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     private function loadNewExercise()
     {
-        $date = \date('d-m-Y', \strtotime($this->exercise->fechainicio . ' +1 year'));
+        $date = date('d-m-Y', strtotime($this->exercise->fechainicio . ' +1 year'));
 
         $this->newExercise = new Ejercicio();
         $this->newExercise->idempresa = $this->exercise->idempresa;

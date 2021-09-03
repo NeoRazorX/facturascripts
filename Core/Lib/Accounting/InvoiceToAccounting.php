@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,6 +27,7 @@ use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\Join\PurchasesDocIrpfAccount;
 use FacturaScripts\Dinamic\Model\Join\PurchasesDocLineAccount;
 use FacturaScripts\Dinamic\Model\Join\SalesDocLineAccount;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -37,20 +39,18 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  * Class for the generation of accounting entries of a sale/purchase document
  * and the settlement of your receipts.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class InvoiceToAccounting extends AccountingClass
 {
 
     /**
-     *
      * @var Subcuenta
      */
     protected $counterpart;
 
     /**
-     *
      * @var FacturaCliente|FacturaProveedor
      */
     protected $document;
@@ -123,27 +123,19 @@ class InvoiceToAccounting extends AccountingClass
     protected function addGoodsPurchaseLine($accountEntry)
     {
         $rectifAccount = $this->getSpecialSubAccount('DEVCOM');
-        $purchaseAccount = (bool) $this->document->idfacturarect && $rectifAccount->exists() ? $rectifAccount :
+        $purchaseAccount = (bool)$this->document->idfacturarect && $rectifAccount->exists() ? $rectifAccount :
             $this->getSpecialSubAccount('COMPRA');
 
         $tool = new PurchasesDocLineAccount();
-        foreach ($tool->getTotalsForDocument($this->document, $purchaseAccount->codsubcuenta) as $code => $total) {
-            $subaccount = $this->getSubAccount($code);
-            if (empty($subaccount->codsubcuenta)) {
-                $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
-                return false;
-            }
-
-            $line = $accountEntry->getNewLine();
-            $line->setAccount($subaccount);
-            $line->debe = $total;
-            if (false === $line->save()) {
-                $this->toolBox()->i18nLog()->warning('good-purchases-line-error');
-                return false;
-            }
-        }
-
-        return true;
+        $totals = $tool->getTotalsForDocument($this->document, $purchaseAccount->codsubcuenta);
+        return $this->addLinesFromTotals(
+            $accountEntry,
+            $totals,
+            true,
+            $this->counterpart,
+            'purchases-subaccount-not-found',
+            'good-purchases-line-error'
+        );
     }
 
     /**
@@ -157,31 +149,22 @@ class InvoiceToAccounting extends AccountingClass
     protected function addGoodsSalesLine($accountEntry)
     {
         $rectifAccount = $this->getSpecialSubAccount('DEVVEN');
-        $salesAccount = (bool) $this->document->idfacturarect && $rectifAccount->exists() ? $rectifAccount :
+        $salesAccount = (bool)$this->document->idfacturarect && $rectifAccount->exists() ? $rectifAccount :
             $this->getSpecialSubAccount('VENTAS');
 
         $tool = new SalesDocLineAccount();
-        foreach ($tool->getTotalsForDocument($this->document, $salesAccount->codsubcuenta) as $code => $total) {
-            $subaccount = $this->getSubAccount($code);
-            if (empty($subaccount->codsubcuenta)) {
-                $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');
-                return false;
-            }
-
-            $line = $accountEntry->getNewLine();
-            $line->setAccount($subaccount);
-            $line->haber = $total;
-            if (false === $line->save()) {
-                $this->toolBox()->i18nLog()->warning('good-sales-line-error');
-                return false;
-            }
-        }
-
-        return true;
+        $totals = $tool->getTotalsForDocument($this->document, $salesAccount->codsubcuenta);
+        return $this->addLinesFromTotals(
+            $accountEntry,
+            $totals,
+            false,
+            $this->counterpart,
+            'sales-subaccount-not-found',
+            'good-sales-line-error'
+        );
     }
 
     /**
-     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -201,19 +184,25 @@ class InvoiceToAccounting extends AccountingClass
             return false;
         }
 
-        $subaccount = $this->getIRPFPurchaseAccount($retention);
-        if (false === $subaccount->exists()) {
+        $irpfAccount = $this->getIRPFPurchaseAccount($retention);
+        if (false === $irpfAccount->exists()) {
             $this->toolBox()->i18nLog()->warning('irpfpr-subaccount-not-found');
             return false;
         }
 
-        $newLine = $this->getBasicLine($accountEntry, $subaccount, false, $this->subtotals[$key]['totalirpf']);
-        $newLine->setCounterpart($this->counterpart);
-        return $newLine->save();
+        $tool = new PurchasesDocIrpfAccount();
+        $totals = $tool->getTotalsForDocument($this->document, $irpfAccount->codsubcuenta, $retention->porcentaje);
+        return $this->addLinesFromTotals(
+            $accountEntry,
+            $totals,
+            false,
+            $this->counterpart,
+            'irpf-subaccount-not-found',
+            'irpf-purchase-line-error'
+        );
     }
 
     /**
-     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -261,7 +250,6 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -342,7 +330,6 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     *
      * @param Asiento $accountEntry
      *
      * @return bool
@@ -399,7 +386,6 @@ class InvoiceToAccounting extends AccountingClass
     }
 
     /**
-     *
      * @return bool
      */
     protected function loadSubtotals(): bool
@@ -473,7 +459,7 @@ class InvoiceToAccounting extends AccountingClass
      * Assign the document data to the accounting entry
      *
      * @param Asiento $accountEntry
-     * @param string  $concept
+     * @param string $concept
      */
     protected function setAccountingData(&$accountEntry, $concept)
     {

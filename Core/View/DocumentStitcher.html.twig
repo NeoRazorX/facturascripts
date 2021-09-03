@@ -1,21 +1,21 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
 {% extends "Master/MenuTemplate.html.twig" %}
 {% set pageData = fsc.getPageData() %}
@@ -37,7 +37,8 @@
             </div>
             <div class="row">
                 <div class="col-lg-2 col-sm-6 mb-2">
-                    <input type="date" name="fecha" value="{{ task.end | date('Y-m-d') }}" class="form-control" autocomplete="off"/>
+                    <input type="date" name="fecha" value="{{ task.end | date('Y-m-d') }}" class="form-control"
+                           autocomplete="off"/>
                 </div>
                 <div class="col-lg-2 col-sm-6 mb-2">
                     <select name="extralines" class="form-control">
@@ -47,13 +48,16 @@
                 </div>
                 <div class="col mb-2">
                     <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-magic fa-fw"></i> {{ i18n.trans('generate') }}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            {% for status in fsc.getAvaliableStatus() %}
-                                <button type="button" onclick="sendFormData('{{ status.primaryColumnValue() }}');" class="dropdown-item">
-                                    <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ i18n.trans(status.generadoc) }}
+                            {% for status in fsc.getAvailableStatus() %}
+                                <button type="button" onclick="sendFormData('{{ status.primaryColumnValue() }}');"
+                                        class="dropdown-item">
+                                    <i class="fas fa-file fa-fw"
+                                       aria-hidden="true"></i> {{ i18n.trans(status.generadoc) }}
                                 </button>
                             {% endfor %}
                         </div>
@@ -61,7 +65,8 @@
                 </div>
                 <div class="col text-right mb-2">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-check-square fa-fw"></i> {{ i18n.trans('select') }}
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
@@ -96,7 +101,8 @@
                 <div class="col mt-3">
                     <div class="card border-success shadow mb-2">
                         <div class="card-body p-2">
-                            <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse" data-target="#moreDocsCollapse" aria-expanded="false">
+                            <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse"
+                                    data-target="#moreDocsCollapse" aria-expanded="false">
                                 <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
                                 {{ i18n.trans('more') }}
                             </button>
@@ -110,37 +116,38 @@
                                 <div class="table-responsive">
                                     <table class="table table-hover mb-0">
                                         <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th>{{ i18n.trans('code') }}</th>
-                                                <th>{{ i18n.trans('observations') }}</th>
-                                                <th class="text-right">{{ i18n.trans('total') }}</th>
-                                                <th class="text-right">{{ i18n.trans('date') }}</th>
-                                            </tr>
+                                        <tr>
+                                            <th></th>
+                                            <th>{{ i18n.trans('code') }}</th>
+                                            <th>{{ i18n.trans('observations') }}</th>
+                                            <th class="text-right">{{ i18n.trans('total') }}</th>
+                                            <th class="text-right">{{ i18n.trans('date') }}</th>
+                                        </tr>
                                         </thead>
                                         <tbody>
-                                            {% for doc in fsc.moreDocuments %}
-                                                <tr>
-                                                    <td class="text-center" width="50">
-                                                        <div class="form-check">
-                                                            <input type="checkbox" class="form-check-input" name="newcodes[]" value="{{ doc.primaryColumnValue() }}">
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <a href="{{ doc.url() }}">
-                                                            {{ doc.codigo }}
-                                                        </a>
-                                                    </td>
-                                                    <td>{{ doc.observaciones | slice(0, 60) | raw }}</td>
-                                                    <td class="text-right text-nowrap">{{ fsc.toolBox().coins().format(doc.total) }}</td>
-                                                    <td class="text-right text-nowrap">{{ doc.fecha }}</td>
-                                                </tr>
-                                            {% else %}
-                                                <tr class="table-warning">
-                                                    <td></td>
-                                                    <td colspan="4">{{ i18n.trans('no-data') }}</td>
-                                                </tr>
-                                            {% endfor %}
+                                        {% for doc in fsc.moreDocuments %}
+                                            <tr>
+                                                <td class="text-center" width="50">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input"
+                                                               name="newcodes[]" value="{{ doc.primaryColumnValue() }}">
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a href="{{ doc.url() }}">
+                                                        {{ doc.codigo }}
+                                                    </a>
+                                                </td>
+                                                <td>{{ doc.observaciones | slice(0, 60) | raw }}</td>
+                                                <td class="text-right text-nowrap">{{ fsc.toolBox().coins().format(doc.total) }}</td>
+                                                <td class="text-right text-nowrap">{{ doc.fecha }}</td>
+                                            </tr>
+                                        {% else %}
+                                            <tr class="table-warning">
+                                                <td></td>
+                                                <td colspan="4">{{ i18n.trans('no-data') }}</td>
+                                            </tr>
+                                        {% endfor %}
                                         </tbody>
                                     </table>
                                 </div>
@@ -164,6 +171,7 @@
         body {
             background-color: #FAFBFC;
         }
+
         .td-quantity {
             width: 165px;
         }
@@ -182,6 +190,7 @@
 
             return false;
         }
+
         function selectNone() {
             var inputToBeServed = document.getElementsByClassName("to_be_served");
             for (i = 0; i < inputToBeServed.length; i++) {
@@ -190,6 +199,7 @@
 
             return false;
         }
+
         function sendFormData(status) {
             document.formDocStitcher.status.value = status;
             document.formDocStitcher.submit();
@@ -203,16 +213,24 @@
             <div class="row">
                 <div class="col-sm">
                     <a href="{{ doc.url() }}" class="h5">
-                        <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ i18n.trans(fsc.modelName) }} {{ doc.codigo }}
+                        <i class="fas fa-file fa-fw" aria-hidden="true"></i>
+                        {{ i18n.trans(fsc.modelName) }} {{ doc.codigo }}
                     </a>
                     {% if doc.observaciones %}
                         <p>{{ doc.observaciones | raw }}</p>
                     {% endif %}
                 </div>
                 <div class="col-sm-3 text-right">
-                    <p class="small">
+                    <p class="small mb-0">
                         <i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}
+                        &nbsp;
                         <i class="far fa-clock fa-fw" aria-hidden="true"></i> {{ doc.hora }}
+                        <br/>
+                        {{ i18n.trans('net') }}: {{ fsc.toolBox().coins().format(doc.neto) }}
+                        &nbsp;
+                        {{ i18n.trans('taxes') }}: {{ fsc.toolBox().coins().format(doc.totaliva) }}
+                        &nbsp;
+                        {{ i18n.trans('total') }}: {{ fsc.toolBox().coins().format(doc.total) }}
                     </p>
                 </div>
             </div>
@@ -220,37 +238,40 @@
         <div class="table-responsive">
             <table class="table table-sm table-hover mb-0">
                 <thead>
-                    <tr>
-                        <th>{{ i18n.trans('reference') }}</th>
-                        <th>{{ i18n.trans('description') }}</th>
-                        <th class="text-right td-quantity">{{ i18n.trans('quantity') }}</th>
-                        <th class="text-right td-quantity">{{ i18n.trans('quantity-served') }}</th>
-                        <th class="text-right td-quantity">{{ i18n.trans('selected-quantity') }}</th>
-                    </tr>
+                <tr>
+                    <th>{{ i18n.trans('reference') }}</th>
+                    <th>{{ i18n.trans('description') }}</th>
+                    <th class="text-right td-quantity">{{ i18n.trans('quantity') }}</th>
+                    <th class="text-right td-quantity">{{ i18n.trans('quantity-served') }}</th>
+                    <th class="text-right td-quantity">{{ i18n.trans('selected-quantity') }}</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {% for line in doc.getLines() %}
-                        <tr>
-                            <td class="align-middle">{{ line.referencia }}</td>
-                            <td class="align-middle">{{ line.descripcion | raw | nl2br }}</td>
-                            <td>
-                                <input type="number" value="{{ line.cantidad }}" class="form-control text-right" readonly="true"/>
-                            </td>
-                            <td class="{{ servido == 0 ? '' : 'table-warning' }}">
-                                <input type="number" value="{{ line.servido }}" class="form-control text-right" readonly="true"/>
-                            </td>
-                            {% set newQuantity = line.cantidad - line.servido %}
-                            <td class="{{ newQuantity == 0 ? 'table-warning' : 'table-success' }}">
-                                <input type="hidden" class="to_serve" value="{{ newQuantity }}"/>
-                                <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}" value="{{ newQuantity }}" step="any"
-                                       class="form-control text-right to_be_served" autocomplete="off"/>
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr class="table-warning">
-                            <td colspan="5">{{ i18n.trans('no-data') }}</td>
-                        </tr>
-                    {% endfor %}
+                {% for line in doc.getLines() %}
+                    <tr>
+                        <td class="align-middle">{{ line.referencia }}</td>
+                        <td class="align-middle">{{ line.descripcion | raw | nl2br }}</td>
+                        <td>
+                            <input type="number" value="{{ line.cantidad }}" class="form-control text-right"
+                                   readonly="true"/>
+                        </td>
+                        <td class="{{ servido == 0 ? '' : 'table-warning' }}">
+                            <input type="number" value="{{ line.servido }}" class="form-control text-right"
+                                   readonly="true"/>
+                        </td>
+                        {% set newQuantity = line.cantidad - line.servido %}
+                        <td class="{{ newQuantity == 0 ? 'table-warning' : 'table-success' }}">
+                            <input type="hidden" class="to_serve" value="{{ newQuantity }}"/>
+                            <input type="number" name="approve_quant_{{ line.primaryColumnValue() }}"
+                                   value="{{ newQuantity }}" step="any"
+                                   class="form-control text-right to_be_served" autocomplete="off"/>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr class="table-warning">
+                        <td colspan="5">{{ i18n.trans('no-data') }}</td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>

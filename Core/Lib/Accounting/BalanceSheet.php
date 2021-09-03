@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -51,13 +52,11 @@ class BalanceSheet extends AccountingBase
     protected $dateToPrev;
 
     /**
-     * 
      * @var Ejercicio
      */
     protected $exercisePrev;
 
     /**
-     * 
      * @var string
      */
     protected $format;
@@ -80,7 +79,7 @@ class BalanceSheet extends AccountingBase
      *
      * @param string $dateFrom
      * @param string $dateTo
-     * @param array  $params
+     * @param array $params
      *
      * @return array
      */
@@ -106,13 +105,12 @@ class BalanceSheet extends AccountingBase
     }
 
     /**
-     * 
-     * @param array     $rows
+     * @param array $rows
      * @param Balance[] $balances
-     * @param string    $code1
-     * @param array     $amouns1
-     * @param string    $code2
-     * @param array     $amouns2
+     * @param string $code1
+     * @param array $amouns1
+     * @param string $code2
+     * @param array $amouns2
      */
     protected function addTotalsRow(&$rows, $balances, $code1, $amouns1, $code2, $amouns2)
     {
@@ -138,10 +136,9 @@ class BalanceSheet extends AccountingBase
     }
 
     /**
-     * 
      * @param string $value
      * @param string $type
-     * @param bool   $bold
+     * @param bool $bold
      *
      * @return string
      */
@@ -152,7 +149,7 @@ class BalanceSheet extends AccountingBase
         switch ($type) {
             case 'money':
                 if ($this->format === 'PDF') {
-                    return $prefix . $this->toolBox()->coins()->format($value, FS_NF0, ''). $suffix;
+                    return $prefix . $this->toolBox()->coins()->format($value, FS_NF0, '') . $suffix;
                 }
                 return \number_format($value, FS_NF0, '.', '');
 
@@ -165,10 +162,9 @@ class BalanceSheet extends AccountingBase
     }
 
     /**
-     * 
      * @param Balance $balance
-     * @param string  $codejercicio
-     * @param array   $params
+     * @param string $codejercicio
+     * @param array $params
      *
      * @return float
      */
@@ -213,8 +209,8 @@ class BalanceSheet extends AccountingBase
 
             foreach ($this->dataBase->select($sql) as $row) {
                 $total += $balance->naturaleza === 'A' ?
-                    (float) $row['debe'] - (float) $row['haber'] :
-                    (float) $row['haber'] - (float) $row['debe'];
+                    (float)$row['debe'] - (float)$row['haber'] :
+                    (float)$row['haber'] - (float)$row['debe'];
             }
         }
 
@@ -222,9 +218,8 @@ class BalanceSheet extends AccountingBase
     }
 
     /**
-     * 
      * @param string $nature
-     * @param array  $params
+     * @param array $params
      *
      * @return array
      */
@@ -303,12 +298,11 @@ class BalanceSheet extends AccountingBase
     }
 
     /**
-     * 
-     * @param array   $amounts
-     * @param array   $amountsN
+     * @param array $amounts
+     * @param array $amountsN
      * @param Balance $balance
-     * @param string  $codejercicio
-     * @param array   $params
+     * @param string $codejercicio
+     * @param array $params
      */
     protected function sumAmounts(&$amounts, &$amountsN, $balance, $codejercicio, $params)
     {

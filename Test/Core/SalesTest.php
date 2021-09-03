@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Model\Almacen;
@@ -33,7 +34,6 @@ abstract class SalesTest extends CustomTest
 {
 
     /**
-     *
      * @var SalesDocument
      */
     public $model;
@@ -43,7 +43,7 @@ abstract class SalesTest extends CustomTest
         /// create customer
         $customer = new Cliente();
         $customer->cifnif = '1234';
-        $customer->nombre = 'Pepe';
+        $customer->nombre = 'Pepe Sales';
         $this->assertTrue($customer->save(), 'cliente-save-error');
 
         /// create document
@@ -76,7 +76,13 @@ abstract class SalesTest extends CustomTest
         /// remove document
         $this->assertTrue($model->delete(), $model->modelClassName() . '-delete-error');
 
+        /// get contact to remove
+        $contact = $customer->getDefaultAddress();
+
         /// remove customer
         $this->assertTrue($customer->delete(), 'cliente-delete-error');
+
+        /// remove the pending contact
+        $this->assertTrue($contact->delete(), 'contacto-delete-error');
     }
 }

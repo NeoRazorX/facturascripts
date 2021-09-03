@@ -1,0 +1,15 @@
+{
+    "default": {
+        "coddivisa": "GTQ",
+        "codpago": "CONT",
+        "codserie": "A",
+        "codserierec": "R",
+        "tipoidfiscal": "DPI"
+    },
+    "email": {
+        "enc": "ssl",
+        "host": "smtp.gmail.com",
+        "mailer": "smtp",
+        "port": "465"
+    }
+}

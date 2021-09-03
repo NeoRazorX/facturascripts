@@ -27,8 +27,8 @@ use FacturaScripts\Dinamic\Model\Familia;
  * Auxiliary model to get sub-accounts of sales document lines
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
- * 
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ *
  * @property string $codfamilia
  * @property string $codsubcuenta
  * @property float  $total
@@ -69,7 +69,7 @@ class SalesDocLineAccount extends JoinModel
     }
 
     /**
-     * 
+     *
      * @param array          $totals
      * @param FacturaCliente $document
      * @param string         $defaultSubacode
@@ -96,7 +96,7 @@ class SalesDocLineAccount extends JoinModel
 
     /**
      * List of fields or columns to select.
-     * 
+     *
      * @return array
      */
     protected function getFields(): array
@@ -123,7 +123,7 @@ class SalesDocLineAccount extends JoinModel
 
     /**
      * List of tables related to from sql.
-     * 
+     *
      * @return string
      */
     protected function getSQLFrom(): string
@@ -133,7 +133,7 @@ class SalesDocLineAccount extends JoinModel
 
     /**
      * List of tables required for the execution of the view.
-     * 
+     *
      * @return array
      */
     protected function getTables(): array

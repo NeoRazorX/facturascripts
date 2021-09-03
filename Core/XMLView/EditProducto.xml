@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
- * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Fco. Antonio Moreno Pérez <famphuelva@gmail.com>
+ * @author Carlos García Gómez       <carlos@facturascripts.com>
 -->
 <view>
     <columns>
@@ -93,7 +93,7 @@
                     <values source="subcuentas" fieldcode="codsubcuenta" />
                 </widget>
             </column>
-            <column name="codsubcuentairpfcom" title="subaccount-irpf" titleurl="ListCuenta" description="optional" order="120">
+            <column name="codsubcuentairpfcom" title="subaccount-irpf" titleurl="ListCuenta" description="optional" display="none" order="120">
                 <widget type="autocomplete" fieldname="codsubcuentairpfcom">
                     <values source="subcuentas" fieldcode="codsubcuenta" />
                 </widget>

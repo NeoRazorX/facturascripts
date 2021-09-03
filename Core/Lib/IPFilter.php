@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -74,11 +74,11 @@ class IPFilter
      * 
      * @return string
      */
-    public static function getClientIp()
+    public static function getClientIp(): string
     {
         foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $field) {
             if (isset($_SERVER[$field])) {
-                return $_SERVER[$field];
+                return (string)$_SERVER[$field];
             }
         }
 
@@ -92,7 +92,7 @@ class IPFilter
      *
      * @return bool
      */
-    public function isBanned($ip)
+    public function isBanned(string $ip): bool
     {
         foreach ($this->ipList as $line) {
             if ($line['ip'] === $ip && $line['count'] > self::MAX_ATTEMPTS) {
@@ -108,7 +108,7 @@ class IPFilter
      *
      * @param string $ip
      */
-    public function setAttempt($ip)
+    public function setAttempt(string $ip)
     {
         $found = false;
         foreach ($this->ipList as $key => $line) {
@@ -157,7 +157,7 @@ class IPFilter
      *
      * @param array $line
      */
-    private function readIp($line)
+    private function readIp(array $line)
     {
         /// if row is not expired
         if (count($line) === 3 && (int) $line[2] > time()) {

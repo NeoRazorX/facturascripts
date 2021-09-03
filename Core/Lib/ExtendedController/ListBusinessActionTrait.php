@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\Receipt;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 
@@ -31,18 +33,16 @@ use FacturaScripts\Core\Model\Base\TransformerDocument;
 trait ListBusinessActionTrait
 {
 
-    abstract public function addButton($viewName, $params);
+    abstract public function addButton(string $viewName, array $btnArray);
 
-    abstract public function redirect($url, $delay = 0);
-
-    abstract public static function toolBox();
+    abstract public function redirect(string $url, int $delay = 0);
 
     /**
      * Adds buttons to approve documents.
      *
      * @param string $viewName
      */
-    protected function addButtonApproveDocument($viewName)
+    protected function addButtonApproveDocument(string $viewName)
     {
         $this->addButton($viewName, [
             'action' => 'approve-document-same-date',
@@ -64,7 +64,7 @@ trait ListBusinessActionTrait
      *
      * @param string $viewName
      */
-    protected function addButtonGroupDocument($viewName)
+    protected function addButtonGroupDocument(string $viewName)
     {
         $this->addButton($viewName, [
             'action' => 'group-document',
@@ -78,7 +78,7 @@ trait ListBusinessActionTrait
      *
      * @param string $viewName
      */
-    protected function addButtonLockInvoice($viewName)
+    protected function addButtonLockInvoice(string $viewName)
     {
         $this->addButton($viewName, [
             'action' => 'lock-invoice',
@@ -93,7 +93,7 @@ trait ListBusinessActionTrait
      *
      * @param string $viewName
      */
-    protected function addButtonPayReceipt($viewName)
+    protected function addButtonPayReceipt(string $viewName)
     {
         $this->addButton($viewName, [
             'action' => 'pay-receipt',
@@ -106,28 +106,28 @@ trait ListBusinessActionTrait
 
     /**
      * Approves selected documents.
-     * 
-     * @param mixed               $codes
+     *
+     * @param mixed $codes
      * @param TransformerDocument $model
-     * @param bool                $allowUpdate
-     * @param DataBase            $dataBase
+     * @param bool $allowUpdate
+     * @param DataBase $dataBase
      *
      * @return bool
      */
-    protected function approveDocumentAction($codes, $model, $allowUpdate, $dataBase)
+    protected function approveDocumentAction($codes, $model, $allowUpdate, $dataBase): bool
     {
         if (false === $allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            ToolBox::i18nLog()->warning('not-allowed-modify');
             return true;
-        } elseif (false === \is_array($codes) || empty($model)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+        } elseif (false === is_array($codes) || empty($model)) {
+            ToolBox::i18nLog()->warning('no-selected-item');
             return true;
         }
 
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                $this->toolBox()->i18nLog()->error('record-not-found');
+                ToolBox::i18nLog()->error('record-not-found');
                 continue;
             }
 
@@ -141,13 +141,13 @@ trait ListBusinessActionTrait
                     break;
                 }
 
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                ToolBox::i18nLog()->error('record-save-error');
                 $dataBase->rollback();
                 return true;
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        ToolBox::i18nLog()->notice('record-updated-correctly');
         $dataBase->commit();
         $model->clear();
         return true;
@@ -155,49 +155,49 @@ trait ListBusinessActionTrait
 
     /**
      * Group selected documents.
-     * 
-     * @param mixed               $codes
+     *
+     * @param mixed $codes
      * @param TransformerDocument $model
      *
      * @return bool
      */
-    protected function groupDocumentAction($codes, $model)
+    protected function groupDocumentAction($codes, $model): bool
     {
         if (!empty($codes) && $model) {
-            $codes = \implode(',', $codes);
+            $codes = implode(',', $codes);
             $url = 'DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $codes;
             $this->redirect($url);
             return false;
         }
 
-        $this->toolBox()->i18nLog()->warning('no-selected-item');
+        ToolBox::i18nLog()->warning('no-selected-item');
         return true;
     }
 
     /**
      * Locks selected invoices.
-     * 
-     * @param mixed               $codes
+     *
+     * @param mixed $codes
      * @param TransformerDocument $model
-     * @param bool                $allowUpdate
-     * @param DataBase            $dataBase
+     * @param bool $allowUpdate
+     * @param DataBase $dataBase
      *
      * @return bool
      */
-    protected function lockInvoiceAction($codes, $model, $allowUpdate, $dataBase)
+    protected function lockInvoiceAction($codes, $model, $allowUpdate, $dataBase): bool
     {
         if (false === $allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            ToolBox::i18nLog()->warning('not-allowed-modify');
             return true;
-        } elseif (false === \is_array($codes) || empty($model)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+        } elseif (false === is_array($codes) || empty($model)) {
+            ToolBox::i18nLog()->warning('no-selected-item');
             return true;
         }
 
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                $this->toolBox()->i18nLog()->error('record-not-found');
+                ToolBox::i18nLog()->error('record-not-found');
                 continue;
             }
 
@@ -211,13 +211,13 @@ trait ListBusinessActionTrait
                     break;
                 }
 
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                ToolBox::i18nLog()->error('record-save-error');
                 $dataBase->rollback();
                 return true;
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        ToolBox::i18nLog()->notice('record-updated-correctly');
         $dataBase->commit();
         $model->clear();
         return true;
@@ -225,42 +225,42 @@ trait ListBusinessActionTrait
 
     /**
      * Sets selected receipts as paid.
-     * 
-     * @param mixed    $codes
-     * @param Receipt  $model
-     * @param bool     $allowUpdate
+     *
+     * @param mixed $codes
+     * @param Receipt $model
+     * @param bool $allowUpdate
      * @param DataBase $dataBase
-     * @param string   $nick
+     * @param string $nick
      *
      * @return bool
      */
-    protected function payReceiptAction($codes, $model, $allowUpdate, $dataBase, $nick)
+    protected function payReceiptAction($codes, $model, $allowUpdate, $dataBase, $nick): bool
     {
         if (false === $allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            ToolBox::i18nLog()->warning('not-allowed-modify');
             return true;
-        } elseif (false === \is_array($codes) || empty($model)) {
-            $this->toolBox()->i18nLog()->warning('no-selected-item');
+        } elseif (false === is_array($codes) || empty($model)) {
+            ToolBox::i18nLog()->warning('no-selected-item');
             return true;
         }
 
         $dataBase->beginTransaction();
         foreach ($codes as $code) {
             if (false === $model->loadFromCode($code)) {
-                $this->toolBox()->i18nLog()->error('record-not-found');
+                ToolBox::i18nLog()->error('record-not-found');
                 continue;
             }
 
             $model->nick = $nick;
             $model->pagado = true;
             if (false === $model->save()) {
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                ToolBox::i18nLog()->error('record-save-error');
                 $dataBase->rollback();
                 return true;
             }
         }
 
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        ToolBox::i18nLog()->notice('record-updated-correctly');
         $dataBase->commit();
         $model->clear();
         return true;

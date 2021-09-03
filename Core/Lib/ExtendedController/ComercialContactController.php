@@ -42,14 +42,14 @@ abstract class ComercialContactController extends EditController
      *
      * @param string $viewName
      */
-    abstract protected function setCustomWidgetValues($viewName);
+    abstract protected function setCustomWidgetValues(string $viewName);
 
     /**
      * Check that the subaccount length is correct.
      * 
      * @param string $code
      */
-    protected function checkSubaccountLength($code)
+    protected function checkSubaccountLength(string $code)
     {
         if (empty($code)) {
             return;
@@ -57,7 +57,7 @@ abstract class ComercialContactController extends EditController
 
         $exercise = new Ejercicio();
         foreach ($exercise->all([], [], 0, 0) as $exe) {
-            if ($exe->isOpened() && \strlen($code) != $exe->longsubcuenta) {
+            if ($exe->isOpened() && strlen($code) != $exe->longsubcuenta) {
                 $this->toolBox()->i18nLog()->warning('account-length-error', ['%code%' => $code]);
             }
         }

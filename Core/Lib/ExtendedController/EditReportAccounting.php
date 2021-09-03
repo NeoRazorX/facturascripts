@@ -18,8 +18,6 @@
  */
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Model\Base\ReportAccounting;
-
 /**
  * Class base for accounting reports
  *
@@ -52,11 +50,11 @@ abstract class EditReportAccounting extends EditController
     /**
      * Exports data to indicated format.
      *
-     * @param array  $pages
+     * @param array $pages
      * @param string $title
      * @param string $format
      */
-    protected function exportData(&$pages, $title, $format)
+    protected function exportData(array &$pages, string $title, string $format)
     {
         $mainViewName = $this->getMainViewName();
         $view = $this->views[$mainViewName];
@@ -65,7 +63,7 @@ abstract class EditReportAccounting extends EditController
         $this->exportManager->addModelPage($view->model, $view->getColumns(), $this->toolBox()->i18n()->trans('accounting-reports'));
 
         foreach ($pages as $data) {
-            $headers = empty($data) ? [] : \array_keys($data[0]);
+            $headers = empty($data) ? [] : array_keys($data[0]);
             $this->exportManager->addTablePage($headers, $data);
         }
 
