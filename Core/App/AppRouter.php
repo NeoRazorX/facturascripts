@@ -168,6 +168,7 @@ final class AppRouter
      * @param string $newRoute
      * @param string $controllerName
      * @param string $optionalId
+     * @param bool $checkOptionalId
      */
     public function setRoute(string $newRoute, string $controllerName, string $optionalId = '', bool $checkOptionalId = true)
     {
