@@ -138,7 +138,12 @@ final class AppRouter
         $fixedFilePath = substr(urldecode($uri), 1);
         if ('/MyFiles/' === substr($uri, 0, 9) && $token && MyFilesToken::validate($fixedFilePath, $token)) {
             header('Content-Type: ' . $this->getMime($filePath));
-            ob_end_flush(); /// disables buffer storage
+
+            /// disable the buffer if enabled
+            if (ob_get_contents()) {
+                ob_end_flush();
+            }
+
             readfile($filePath);
             return true;
         }
