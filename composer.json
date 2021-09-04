@@ -29,7 +29,9 @@
         "globalcitizen/php-iban": "3.*",
         "ext-json": "*",
         "ext-fileinfo": "*",
-        "ext-simplexml": "*"
+        "ext-simplexml": "*",
+        "ext-zip": "*",
+        "ext-dom": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "7.*",
