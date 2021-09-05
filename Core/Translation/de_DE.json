@@ -1176,6 +1176,7 @@
     "using-filecache": "Verwenden von Filecache",
     "using-memcache": "Memcache verwenden",
     "validate": "validate",
+    "validate-iban": "Validar IBAN",
     "valuation-type": "Bewertungsart",
     "value": "Value",
     "value-x": "value-x",
