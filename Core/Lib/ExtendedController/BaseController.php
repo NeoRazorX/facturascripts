@@ -278,19 +278,33 @@ abstract class BaseController extends Controller
      */
     protected function deleteAction()
     {
+        /// check user permissions
         if (false === $this->permissions->allowDelete || false === $this->views[$this->active]->settings['btnDelete']) {
             $this->toolBox()->i18nLog()->warning('not-allowed-delete');
             return false;
         }
 
+        /// valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
+            $this->toolBox()->i18nLog()->warning('invalid-request');
+            return false;
+        }
+
+        /// duplicated request?
+        if ($this->multiRequestProtection->tokenExist($token)) {
+            $this->toolBox()->i18nLog()->warning('duplicated-request');
+            return false;
+        }
+
         $model = $this->views[$this->active]->model;
         $codes = $this->request->request->get('code', '');
-
         if (empty($codes)) {
-            // no selected item
             $this->toolBox()->i18nLog()->warning('no-selected-item');
             return false;
-        } elseif (is_array($codes)) {
+        }
+
+        if (is_array($codes)) {
             $this->dataBase->beginTransaction();
 
             // deleting multiples rows

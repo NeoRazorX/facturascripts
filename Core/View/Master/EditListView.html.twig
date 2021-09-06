@@ -45,7 +45,7 @@
         <form id="{{ formName }}" method="post" enctype="multipart/form-data">
             <input type="hidden" name="action" value="insert"/>
             <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-            <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+            <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken(fsc.user.logkey) }}"/>
             <div class="card border-success shadow mb-2">
                 <div class="card-body p-2">
                     <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse" data-target="#{{ formName }}Collapse" aria-expanded="false">
@@ -81,7 +81,7 @@
             <input type="hidden" name="action" value="edit"/>
             <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
             <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
-            <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+            <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken(fsc.user.logkey) }}"/>
             <div class="card shadow mb-2">
                 <div class="card-body">
                     <div class="form-row">

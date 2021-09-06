@@ -55,7 +55,7 @@
     <input type="hidden" name="code" value="{{ thisView.model.primaryColumnValue() }}"/>
     <input type="hidden" name="{{ thisView.model.primaryColumn() }}" value="{{ thisView.model.primaryColumnValue() }}"/>
     <input type="hidden" name="idestado" value="{{ thisView.model.idestado }}" id="doc_idestado"/>
-    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken(fsc.user.logkey) }}"/>
     <div class="{{ currentView.settings.card ? '' : 'container-fluid' }}">
         <div class="form-row">
             {% if thisView.model.subjectColumn() == 'codcliente' %}

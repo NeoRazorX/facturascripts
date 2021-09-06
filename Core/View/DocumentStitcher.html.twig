@@ -23,7 +23,7 @@
 {% block body %}
     <form action="{{ fsc.url() }}" method="post" name="formDocStitcher">
         <input type="hidden" name="model" value="{{ fsc.modelName }}"/>
-        <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+        <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken(fsc.user.logkey) }}"/>
         <input type="hidden" name="status"/>
         <div class="container-fluid">
             <div class="row">

@@ -45,8 +45,15 @@ trait DocFilesTrait
             return true;
         }
 
+        /// valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
+            ToolBox::i18nLog()->warning('invalid-request');
+            return true;
+        }
+
         /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+        if ($this->multiRequestProtection->tokenExist($token)) {
             ToolBox::i18nLog()->warning('duplicated-request');
             return true;
         }
@@ -97,6 +104,19 @@ trait DocFilesTrait
             return true;
         }
 
+        /// valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
+            ToolBox::i18nLog()->warning('invalid-request');
+            return true;
+        }
+
+        /// duplicated request?
+        if ($this->multiRequestProtection->tokenExist($token)) {
+            ToolBox::i18nLog()->warning('duplicated-request');
+            return true;
+        }
+
         $fileRelation = new AttachedFileRelation();
         $id = $this->request->request->get('id');
         if ($fileRelation->loadFromCode($id)) {
@@ -120,8 +140,15 @@ trait DocFilesTrait
             return true;
         }
 
+        /// valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
+            ToolBox::i18nLog()->warning('invalid-request');
+            return true;
+        }
+
         /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+        if ($this->multiRequestProtection->tokenExist($token)) {
             ToolBox::i18nLog()->warning('duplicated-request');
             return true;
         }
@@ -160,6 +187,19 @@ trait DocFilesTrait
     {
         if (false === $this->permissions->allowUpdate) {
             ToolBox::i18nLog()->warning('not-allowed-modify');
+            return true;
+        }
+
+        /// valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
+            ToolBox::i18nLog()->warning('invalid-request');
+            return true;
+        }
+
+        /// duplicated request?
+        if ($this->multiRequestProtection->tokenExist($token)) {
+            ToolBox::i18nLog()->warning('duplicated-request');
             return true;
         }
 

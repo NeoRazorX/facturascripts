@@ -115,15 +115,20 @@ class DocumentStitcher extends Controller
         $this->loadDocuments();
         $this->loadMoreDocuments();
 
-        // duplicated request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if ($token && $this->multiRequestProtection->tokenExist($token)) {
-            $this->toolBox()->i18nLog()->warning('duplicated-request');
-            return;
-        }
-
         $status = (int)$this->request->request->get('status', '');
         if ($status) {
+            // validate form request?
+            $token = $this->request->request->get('multireqtoken', '');
+            if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
+                $this->toolBox()->i18nLog()->warning('invalid-request');
+                return;
+            }
+
+            if ($this->multiRequestProtection->tokenExist($token)) {
+                $this->toolBox()->i18nLog()->warning('duplicated-request');
+                return;
+            }
+
             $this->generateNewDocument($status);
         }
     }

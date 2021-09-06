@@ -1,7 +1,7 @@
 <form action="" method="post">
     <input type="hidden" name="action" value="edit-rules" />
     <input type="hidden" name="activetab" value="{{ fsc.getCurrentView().getViewName() }}" />
-    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken(fsc.user.logkey) }}"/>
     <div class="card shadow">
         <div class="card-body text-right">
             <button type="submit" class="btn btn-sm btn-primary">

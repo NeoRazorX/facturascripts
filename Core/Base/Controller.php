@@ -122,7 +122,7 @@ class Controller
         $this->className = $className;
         $this->dataBase = new DataBase();
         $this->empresa = new Empresa();
-        $this->multiRequestProtection = new MultiRequestProtection();
+        $this->multiRequestProtection = new MultiRequestProtection($className);
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';
         $this->uri = $uri;

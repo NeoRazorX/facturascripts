@@ -262,8 +262,15 @@ abstract class BusinessDocumentController extends PanelController
             return false;
         }
 
+        /// valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
+            $this->response->setContent($this->toolBox()->i18n()->trans('invalid-request'));
+            return false;
+        }
+
         /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+        if ($this->multiRequestProtection->tokenExist($token)) {
             $this->response->setContent($this->toolBox()->i18n()->trans('duplicated-request'));
             return false;
         }

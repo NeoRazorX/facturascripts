@@ -240,8 +240,15 @@ abstract class PanelController extends BaseController
             return false;
         }
 
+        // valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
+            $this->toolBox()->i18nLog()->warning('invalid-request');
+            return false;
+        }
+
         // duplicated request?
-        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+        if ($this->multiRequestProtection->tokenExist($token)) {
             $this->toolBox()->i18nLog()->warning('duplicated-request');
             return false;
         }
@@ -357,8 +364,15 @@ abstract class PanelController extends BaseController
             return false;
         }
 
+        // valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
+            $this->toolBox()->i18nLog()->warning('invalid-request');
+            return false;
+        }
+
         // duplicated request?
-        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+        if ($this->multiRequestProtection->tokenExist($token)) {
             $this->toolBox()->i18nLog()->warning('duplicated-request');
             return false;
         }
