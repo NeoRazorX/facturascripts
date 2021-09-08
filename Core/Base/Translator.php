@@ -274,9 +274,9 @@ class Translator
     {
         self::$languages[] = $langCode;
 
-        $file = \FS_FOLDER . '/Core/Translation/' . $langCode . '.json';
-        if (file_exists($file)) {
-            self::$translator->addResource('json', $file, $langCode);
+        $coreFile = \FS_FOLDER . '/Core/Translation/' . $langCode . '.json';
+        if (file_exists($coreFile)) {
+            self::$translator->addResource('json', $coreFile, $langCode);
         }
 
         $pluginManager = new PluginManager();
@@ -284,6 +284,14 @@ class Translator
             $file2 = \FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . $langCode . '.json';
             if (file_exists($file2)) {
                 self::$translator->addResource('json', $file2, $langCode);
+            }
+        }
+
+        $myFile = \FS_FOLDER . '/MyFiles/Translation';
+        if (file_exists($myFile)) {
+            $myFile = $myFile . '/' . $langCode . '.json';
+            if (file_exists($myFile)) {
+                self::$translator->addResource('json', $myFile, $langCode);
             }
         }
     }
