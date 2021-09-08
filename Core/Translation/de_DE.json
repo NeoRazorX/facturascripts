@@ -591,6 +591,7 @@
     "invalid-date-there-are-invoices-before": "invalid-date-there-are-invoices-before",
     "invalid-iban": "invalid-iban",
     "invalid-number": "invalid-number",
+    "invalid-request": "Petición no válida",
     "invoice": "Rechnung",
     "invoice-email-subject": "invoice-email-subject",
     "invoice-email-text": "invoice-email-text",

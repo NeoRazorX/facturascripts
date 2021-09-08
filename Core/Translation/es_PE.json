@@ -591,6 +591,7 @@
     "invalid-date-there-are-invoices-before": "Fecha no válida. La fecha %date% es posterior a la fecha de la factura siguiente.",
     "invalid-iban": "IBAN no válido: %iban%",
     "invalid-number": "Número no válido: %number%",
+    "invalid-request": "Petición no válida",
     "invoice": "Facturar",
     "invoice-email-subject": "Su factura %code%",
     "invoice-email-text": "Hola, le adjunto su factura %code%",

@@ -591,6 +591,7 @@
     "invalid-date-there-are-invoices-before": "Invalid date. The date %date% is later than that of the following invoice.",
     "invalid-iban": "Invalid IBAN: %iban%",
     "invalid-number": "Invalid number: %number%",
+    "invalid-request": "Petición no válida",
     "invoice": "Invoice",
     "invoice-email-subject": "Your invoice %code%",
     "invoice-email-text": "Hello, I am attaching your invoice %code%",
