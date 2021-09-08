@@ -257,7 +257,6 @@ final class AppRouter
     }
 
     /**
-     *
      * @param string $uri
      * @param string $pageName
      *
