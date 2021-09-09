@@ -66,8 +66,9 @@ function widgetSelectGetData(select) {
 }
 
 $(document).ready(function () {
-    $('select').each(function(){
-        if ($(this).attr('parent') !== '') {
+    $('.parentSelect').each(function(){
+        var attr = $(this).attr('parent');
+        if (attr !== 'undefined' && attr !== false && attr !== '') {
             var select = $(this);
             var parent = select.attr('parent');
             
