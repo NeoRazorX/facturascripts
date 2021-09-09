@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
 
 /**
@@ -33,6 +33,11 @@ class Migrations
     {
         static::fixCodagente();
         new FormatoDocumento();
+
+        // sets IBAN validation to TRUE, if not defined
+        $settings = new AppSettings();
+        $settings->get('default', 'validate_iban', true);
+        $settings->save();
     }
 
     private static function fixCodagente()
