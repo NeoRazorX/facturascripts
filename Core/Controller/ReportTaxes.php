@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
@@ -35,37 +36,31 @@ class ReportTaxes extends Controller
     const MAX_TOTAL_DIFF = 0.01;
 
     /**
-     * 
      * @var string
      */
     public $datefrom;
 
     /**
-     * 
      * @var string
      */
     public $dateto;
 
     /**
-     * 
      * @var string
      */
     public $format;
 
     /**
-     * 
      * @var int
      */
     public $idempresa;
 
     /**
-     * 
      * @var string
      */
     public $source;
 
     /**
-     * 
      * @return array
      */
     public function getPageData(): array
@@ -78,9 +73,8 @@ class ReportTaxes extends Controller
     }
 
     /**
-     * 
-     * @param Response              $response
-     * @param User                  $user
+     * @param Response $response
+     * @param User $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -109,7 +103,7 @@ class ReportTaxes extends Controller
                 'serie' => $hide ? '' : $row['codserie'],
                 'codigo' => $hide ? '' : $row['codigo'],
                 'numero2' => $hide ? '' : $row['numero2'],
-                'fecha' => $hide ? '' : \date(User::DATE_STYLE, \strtotime($row['fecha'])),
+                'fecha' => $hide ? '' : date(User::DATE_STYLE, strtotime($row['fecha'])),
                 'nombre' => $hide ? '' : $this->toolBox()->utils()->fixHtml($row['nombre']),
                 'cifnif' => $hide ? '' : $row['cifnif'],
                 'neto' => $this->exportFieldFormat('number', $row['neto']),
@@ -152,13 +146,12 @@ class ReportTaxes extends Controller
     }
 
     /**
-     * 
      * @param string $format
      * @param string $value
      *
      * @return string
      */
-    protected function exportFieldFormat($format, $value)
+    protected function exportFieldFormat(string $format, string $value): string
     {
         switch ($format) {
             case 'coins':
@@ -176,13 +169,12 @@ class ReportTaxes extends Controller
     }
 
     /**
-     * 
      * @return array
      */
     protected function getReportData(): array
     {
         $sql = '';
-        $numCol = \strtolower(\FS_DB_TYPE) == 'postgresql' ? 'CAST(f.numero as integer)' : 'CAST(f.numero as unsigned)';
+        $numCol = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(f.numero as integer)' : 'CAST(f.numero as unsigned)';
         switch ($this->source) {
             case 'purchases':
                 $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor AS numero2, f.fecha, f.nombre, f.cifnif, l.pvptotal,'
@@ -212,14 +204,14 @@ class ReportTaxes extends Controller
 
         $data = [];
         foreach ($this->dataBase->select($sql) as $row) {
-            $pvptotal = \floatval($row['pvptotal']) * (100 - \floatval($row['dtopor1'])) * (100 - \floatval($row['dtopor2'])) / 10000;
+            $pvptotal = floatval($row['pvptotal']) * (100 - floatval($row['dtopor1'])) * (100 - floatval($row['dtopor2'])) / 10000;
             $code = $row['codigo'] . '-' . $row['iva'] . '-' . $row['recargo'] . '-' . $row['irpf'] . '-' . $row['suplido'];
             if (isset($data[$code])) {
-                $data[$code]['neto'] += $pvptotal;
-                $data[$code]['totaliva'] += (float) $row['iva'] * $pvptotal / 100;
-                $data[$code]['totalrecargo'] += (float) $row['recargo'] * $pvptotal / 100;
-                $data[$code]['totalirpf'] += (float) $row['irpf'] * $pvptotal / 100;
-                $data[$code]['suplidos'] += (float) $row['suplido'] * $pvptotal;
+                $data[$code]['neto'] += $row['suplido'] ? 0 : $pvptotal;
+                $data[$code]['totaliva'] += (float)$row['iva'] * $pvptotal / 100;
+                $data[$code]['totalrecargo'] += (float)$row['recargo'] * $pvptotal / 100;
+                $data[$code]['totalirpf'] += (float)$row['irpf'] * $pvptotal / 100;
+                $data[$code]['suplidos'] += $row['suplido'] ? $pvptotal : 0;
                 continue;
             }
 
@@ -230,32 +222,31 @@ class ReportTaxes extends Controller
                 'fecha' => $row['fecha'],
                 'nombre' => $row['nombre'],
                 'cifnif' => $row['cifnif'],
-                'neto' => $pvptotal,
-                'iva' => (float) $row['iva'],
-                'totaliva' => (float) $row['iva'] * $pvptotal / 100,
-                'recargo' => (float) $row['recargo'],
-                'totalrecargo' => (float) $row['recargo'] * $pvptotal / 100,
-                'irpf' => (float) $row['irpf'],
-                'totalirpf' => (float) $row['irpf'] * $pvptotal / 100,
-                'suplidos' => (float) $row['suplido'] * $pvptotal,
-                'total' => (float) $row['total']
+                'neto' => $row['suplido'] ? 0 : $pvptotal,
+                'iva' => (float)$row['iva'],
+                'totaliva' => (float)$row['iva'] * $pvptotal / 100,
+                'recargo' => (float)$row['recargo'],
+                'totalrecargo' => (float)$row['recargo'] * $pvptotal / 100,
+                'irpf' => (float)$row['irpf'],
+                'totalirpf' => (float)$row['irpf'] * $pvptotal / 100,
+                'suplidos' => $row['suplido'] ? $pvptotal : 0,
+                'total' => (float)$row['total']
             ];
         }
 
         /// round
         foreach ($data as $key => $value) {
-            $data[$key]['neto'] = \round($value['neto'], FS_NF0);
-            $data[$key]['totaliva'] = \round($value['totaliva'], FS_NF0);
-            $data[$key]['totalrecargo'] = \round($value['totalrecargo'], FS_NF0);
-            $data[$key]['totalirpf'] = \round($value['totalirpf'], FS_NF0);
-            $data[$key]['suplidos'] = \round($value['suplidos'], FS_NF0);
+            $data[$key]['neto'] = round($value['neto'], FS_NF0);
+            $data[$key]['totaliva'] = round($value['totaliva'], FS_NF0);
+            $data[$key]['totalrecargo'] = round($value['totalrecargo'], FS_NF0);
+            $data[$key]['totalirpf'] = round($value['totalirpf'], FS_NF0);
+            $data[$key]['suplidos'] = round($value['suplidos'], FS_NF0);
         }
 
         return $data;
     }
 
     /**
-     * 
      * @param array $data
      *
      * @return array
@@ -291,19 +282,18 @@ class ReportTaxes extends Controller
 
     protected function initFilters()
     {
-        $this->datefrom = $this->request->request->get('datefrom', \date('Y-m-01'));
-        $this->dateto = $this->request->request->get('dateto', \date('Y-m-t'));
-        $this->idempresa = (int) $this->request->request->get('idempresa', $this->empresa->idempresa);
+        $this->datefrom = $this->request->request->get('datefrom', date('Y-m-01'));
+        $this->dateto = $this->request->request->get('dateto', date('Y-m-t'));
+        $this->idempresa = (int)$this->request->request->get('idempresa', $this->empresa->idempresa);
         $this->format = $this->request->request->get('format');
         $this->source = $this->request->request->get('source');
     }
 
     /**
-     * 
      * @param array $lines
      * @param array $totals
      */
-    protected function processLayout(&$lines, &$totals)
+    protected function processLayout(array &$lines, array &$totals)
     {
         $i18n = $this->toolBox()->i18n();
         $exportManager = new ExportManager();
@@ -314,28 +304,27 @@ class ReportTaxes extends Controller
         $exportManager->addTablePage([$i18n->trans('report'), $i18n->trans('from-date'), $i18n->trans('until-date')], [
             [
                 $i18n->trans('report') => $i18n->trans('taxes') . ' ' . $i18n->trans($this->source),
-                $i18n->trans('from-date') => \date(User::DATE_STYLE, \strtotime($this->datefrom)),
-                $i18n->trans('until-date') => \date(User::DATE_STYLE, \strtotime($this->dateto))
+                $i18n->trans('from-date') => date(User::DATE_STYLE, strtotime($this->datefrom)),
+                $i18n->trans('until-date') => date(User::DATE_STYLE, strtotime($this->dateto))
             ]
         ]);
 
         /// add lines table
         $this->reduceLines($lines);
-        $headers = empty($lines) ? [] : \array_keys(\end($lines));
+        $headers = empty($lines) ? [] : array_keys(end($lines));
         $exportManager->addTablePage($headers, $lines);
 
         /// add totals table
-        $headtotals = empty($totals) ? [] : \array_keys(\end($totals));
+        $headtotals = empty($totals) ? [] : array_keys(end($totals));
         $exportManager->addTablePage($headtotals, $totals);
 
         $exportManager->show($this->response);
     }
 
     /**
-     * 
      * @param array $lines
      */
-    protected function reduceLines(&$lines)
+    protected function reduceLines(array &$lines)
     {
         $zero = $this->toolBox()->numbers()->format(0);
         $numero2 = $recargo = $totalrecargo = $irpf = $totalirpf = $suplidos = false;
@@ -365,7 +354,7 @@ class ReportTaxes extends Controller
             }
         }
 
-        foreach (\array_keys($lines) as $key) {
+        foreach (array_keys($lines) as $key) {
             if (false === $numero2) {
                 unset($lines[$key]['numero2']);
             }
@@ -393,7 +382,6 @@ class ReportTaxes extends Controller
     }
 
     /**
-     * 
      * @param array $totalsData
      *
      * @return bool
@@ -416,14 +404,14 @@ class ReportTaxes extends Controller
             . ' AND fecha >= ' . $this->dataBase->var2str($this->datefrom)
             . ' AND fecha <= ' . $this->dataBase->var2str($this->dateto);
         foreach ($this->dataBase->selectLimit($sql) as $row) {
-            $neto2 += (float) $row['neto'];
-            $totaliva2 += (float) $row['t1'];
-            $totalrecargo2 += (float) $row['t2'];
+            $neto2 += (float)$row['neto'];
+            $totaliva2 += (float)$row['t1'];
+            $totalrecargo2 += (float)$row['t2'];
         }
 
         /// compare
-        return \abs($neto - $neto2) <= self::MAX_TOTAL_DIFF &&
-            \abs($totaliva - $totaliva2) <= self::MAX_TOTAL_DIFF &&
-            \abs($totalrecargo - $totalrecargo2) <= self::MAX_TOTAL_DIFF;
+        return abs($neto - $neto2) <= self::MAX_TOTAL_DIFF &&
+            abs($totaliva - $totaliva2) <= self::MAX_TOTAL_DIFF &&
+            abs($totalrecargo - $totalrecargo2) <= self::MAX_TOTAL_DIFF;
     }
 }
