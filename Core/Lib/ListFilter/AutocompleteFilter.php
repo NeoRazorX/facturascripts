@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,40 +32,35 @@ class AutocompleteFilter extends BaseFilter
 {
 
     /**
-     *
      * @var string
      */
     public $fieldcode;
 
     /**
-     *
      * @var string
      */
     public $fieldtitle;
 
     /**
-     *
      * @var string
      */
     public $table;
 
     /**
-     *
      * @var array
      */
     public $where;
 
     /**
-     *
      * @param string $key
      * @param string $field
      * @param string $label
      * @param string $table
      * @param string $fieldcode
      * @param string $fieldtitle
-     * @param array  $where
+     * @param array $where
      */
-    public function __construct($key, $field, $label, $table, $fieldcode = '', $fieldtitle = '', $where = [])
+    public function __construct(string $key, string $field, string $label, string $table, string $fieldcode = '', string $fieldtitle = '', array $where = [])
     {
         parent::__construct($key, $field, $label);
         $this->table = $table;
@@ -74,7 +70,6 @@ class AutocompleteFilter extends BaseFilter
     }
 
     /**
-     *
      * @param array $where
      *
      * @return bool
@@ -90,10 +85,9 @@ class AutocompleteFilter extends BaseFilter
     }
 
     /**
-     *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         $label = static::$i18n->trans($this->label);
         $html = '<div class="col-sm-3 col-lg-2">'
@@ -130,13 +124,12 @@ class AutocompleteFilter extends BaseFilter
      */
     protected function assets()
     {
-        AssetManager::add('css', \FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
-        AssetManager::add('js', \FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
-        AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/ListFilterAutocomplete.js');
+        AssetManager::add('css', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
+        AssetManager::add('js', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/ListFilterAutocomplete.js');
     }
 
     /**
-     *
      * @return string
      */
     protected function getDescription()

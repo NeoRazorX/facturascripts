@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 /**
@@ -29,17 +30,15 @@ class SelectWhereFilter extends SelectFilter
 {
 
     /**
-     *
      * @param string $key
-     * @param array  $values
+     * @param array $values
      */
-    public function __construct($key, $values = [])
+    public function __construct(string $key, array $values = [])
     {
         parent::__construct($key, '', '', $values);
     }
 
     /**
-     *
      * @param array $where
      *
      * @return bool
@@ -55,10 +54,9 @@ class SelectWhereFilter extends SelectFilter
     }
 
     /**
-     *
      * @return string
      */
-    protected function getHtmlOptions()
+    protected function getHtmlOptions(): string
     {
         $html = '';
         foreach ($this->values as $key => $data) {

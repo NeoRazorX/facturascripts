@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,32 +30,28 @@ class SelectFilter extends BaseFilter
 {
 
     /**
-     *
      * @var string
      */
     public $icon = '';
 
     /**
-     *
      * @var array
      */
     public $values;
 
     /**
-     *
      * @param string $key
      * @param string $field
      * @param string $label
-     * @param array  $values
+     * @param array $values
      */
-    public function __construct($key, $field, $label, $values = [])
+    public function __construct(string $key, string $field, string $label, array $values = [])
     {
         parent::__construct($key, $field, $label);
         $this->values = $values;
     }
 
     /**
-     *
      * @param array $where
      *
      * @return bool
@@ -70,10 +67,9 @@ class SelectFilter extends BaseFilter
     }
 
     /**
-     *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         if (empty($this->icon)) {
             return '<div class="col-sm-3 col-lg-2">'
@@ -102,14 +98,13 @@ class SelectFilter extends BaseFilter
     }
 
     /**
-     *
      * @return string
      */
-    protected function getHtmlOptions()
+    protected function getHtmlOptions(): string
     {
         $html = '<option value="">' . static::$i18n->trans($this->label) . '</option>';
         foreach ($this->values as $data) {
-            if (\is_array($data)) {
+            if (is_array($data)) {
                 $extra = ('' != $this->value && $data['code'] == $this->value) ? ' selected=""' : '';
                 $html .= '<option value="' . $data['code'] . '"' . $extra . '>' . $data['description'] . '</option>';
                 continue;

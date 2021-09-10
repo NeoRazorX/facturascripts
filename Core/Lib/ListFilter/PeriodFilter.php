@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ListFilter;
 
-use FacturaScripts\Core\Lib\ListFilter\PeriodTools;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -35,19 +35,16 @@ class PeriodFilter extends BaseFilter
     const STARTDATE_ID = 'start';
 
     /**
-     *
      * @var DateFilter
      */
     private $endDate;
 
     /**
-     *
      * @var SelectFilter
      */
     private $select;
 
     /**
-     *
      * @var DateFilter
      */
     private $startDate;
@@ -56,10 +53,10 @@ class PeriodFilter extends BaseFilter
      * Class constructor.
      *
      * @param string $key
-     * @param string $field  date field for where filter
-     * @param string $label  label to period select
+     * @param string $field date field for where filter
+     * @param string $label label to period select
      */
-    public function __construct($key, $field, $label)
+    public function __construct(string $key, string $field, string $label)
     {
         parent::__construct($key, $field, $label);
         $values = PeriodTools::getFilterOptions(static::$i18n);
@@ -70,8 +67,7 @@ class PeriodFilter extends BaseFilter
     }
 
     /**
-     *
-     * @param DataBaseWhere[] $where
+     * @param array $where
      *
      * @return bool
      */
@@ -89,9 +85,10 @@ class PeriodFilter extends BaseFilter
      * Get the filter value
      *
      * @param string $option
+     *
      * @return mixed
      */
-    public function getValue($option = self::SELECT_ID)
+    public function getValue(string $option = self::SELECT_ID)
     {
         switch ($option) {
             case self::STARTDATE_ID:
@@ -99,17 +96,15 @@ class PeriodFilter extends BaseFilter
 
             case self::ENDDATE_ID:
                 return $this->endDate->getValue();
+        }
 
-            default:
-                return $this->select->getValue();
-        };
+        return $this->select->getValue();
     }
 
     /**
-     *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         return $this->select->render()
             . $this->startDate->render()
@@ -144,7 +139,7 @@ class PeriodFilter extends BaseFilter
      *
      * @param Request $request
      */
-    public function setValueFromRequest(&$request)
+    public function setValueFromRequest(Request &$request)
     {
         $selectValue = $request->request->get($this->select->name());
         if (empty($selectValue)) {
@@ -155,9 +150,10 @@ class PeriodFilter extends BaseFilter
             /// end
             $endValue = $request->request->get($this->endDate->name());
             $this->setValue($endValue, self::ENDDATE_ID);
-        } else {
-            $this->setValue($selectValue, self::SELECT_ID);
+            return;
         }
+
+        $this->setValue($selectValue);
     }
 
     /**
@@ -166,7 +162,7 @@ class PeriodFilter extends BaseFilter
      * @param string $date
      * @param string $option
      */
-    private function setDateAndDisable($date, $option)
+    private function setDateAndDisable(string $date, string $option)
     {
         $this->setValue($date, $option);
         $this->startDate->readonly = true;
@@ -180,7 +176,7 @@ class PeriodFilter extends BaseFilter
     {
         $startdate = date('d-m-Y');
         $enddate = date('d-m-Y');
-        PeriodTools::applyPeriod($this->getValue(self::SELECT_ID), $startdate, $enddate);
+        PeriodTools::applyPeriod($this->getValue(), $startdate, $enddate);
         $this->setDateAndDisable($startdate, self::STARTDATE_ID);
         $this->setDateAndDisable($enddate, self::ENDDATE_ID);
     }

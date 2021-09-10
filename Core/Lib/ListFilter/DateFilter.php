@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,26 +30,23 @@ class DateFilter extends BaseFilter
 {
 
     /**
-     *
      * @var string
      */
     public $operation;
 
     /**
-     *
      * @param string $key
      * @param string $field
      * @param string $label
      * @param string $operation
      */
-    public function __construct($key, $field = '', $label = '', $operation = '>=')
+    public function __construct(string $key, string $field = '', string $label = '', string $operation = '>=')
     {
         parent::__construct($key, $field, $label);
         $this->operation = $operation;
     }
 
     /**
-     *
      * @param array $where
      *
      * @return bool
@@ -64,12 +62,11 @@ class DateFilter extends BaseFilter
     }
 
     /**
-     *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
-        $value = empty($this->value) ? '' : \date('Y-m-d', \strtotime($this->value));
+        $value = empty($this->value) ? '' : date('Y-m-d', strtotime($this->value));
         return '<div class="col-sm-3 col-lg-2">'
             . '<div class="form-group">'
             . '<div class="input-group" title="' . static::$i18n->trans($this->label) . '">'

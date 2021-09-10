@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,42 +30,38 @@ class CheckboxFilter extends BaseFilter
 {
 
     /**
-     *
      * @var DataBaseWhere[]
      */
     public $default;
 
     /**
-     *
      * @var mixed
      */
     public $matchValue;
 
     /**
-     *
      * @var string
      */
     public $operation;
 
     /**
-     *
      * @param string $key
      * @param string $field
      * @param string $label
      * @param string $operation
-     * @param mixed  $matchValue
+     * @param mixed $matchValue
+     * @param array $default
      */
-    public function __construct($key, $field = '', $label = '', $operation = '=', $matchValue = true, $default = [])
+    public function __construct(string $key, string $field = '', string $label = '', string $operation = '=', $matchValue = true, array $default = [])
     {
         parent::__construct($key, $field, $label);
         $this->default = $default;
         $this->matchValue = $matchValue;
         $this->operation = $operation;
-        $this->ordernum += 10;
+        $this->ordernum += 100;
     }
 
     /**
-     *
      * @param array $where
      *
      * @return bool
@@ -86,12 +83,11 @@ class CheckboxFilter extends BaseFilter
     }
 
     /**
-     *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
-        $extra = \is_null($this->value) ? '' : ' checked=""';
+        $extra = is_null($this->value) ? '' : ' checked=""';
         return '<div class="col-2">'
             . '<div class="form-group">'
             . '<div class="form-check mb-2 mb-sm-0">'

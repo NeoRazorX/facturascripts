@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\Translator;
@@ -65,34 +66,35 @@ abstract class BaseFilter
     public $label;
 
     /**
-     *
      * @var int
      */
-    public $ordernum = 100;
+    public $ordernum;
 
     /**
-     * 
      * @var bool
      */
     public $readonly = false;
 
     /**
-     *
+     * @var int
+     */
+    private static $totalnum = 0;
+
+    /**
      * @var mixed
      */
     protected $value;
 
     abstract public function getDataBaseWhere(array &$where): bool;
 
-    abstract public function render();
+    abstract public function render(): string;
 
     /**
-     *
      * @param string $key
      * @param string $field
      * @param string $label
      */
-    public function __construct($key, $field = '', $label = '')
+    public function __construct(string $key, string $field = '', string $label = '')
     {
         if (!isset(static::$i18n)) {
             static::$i18n = new Translator();
@@ -101,6 +103,7 @@ abstract class BaseFilter
         $this->key = $key;
         $this->field = empty($field) ? $this->key : $field;
         $this->label = empty($label) ? $this->field : $label;
+        $this->ordernum = ++self::$totalnum;
         $this->assets();
     }
 
@@ -115,10 +118,9 @@ abstract class BaseFilter
     }
 
     /**
-     *
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return 'filter' . $this->key;
     }
@@ -138,7 +140,7 @@ abstract class BaseFilter
      *
      * @param Request $request
      */
-    public function setValueFromRequest(&$request)
+    public function setValueFromRequest(Request &$request)
     {
         $this->setValue($request->request->get($this->name()));
     }
@@ -148,23 +150,20 @@ abstract class BaseFilter
      */
     protected function assets()
     {
-        ;
     }
 
     /**
-     *
      * @return string
      */
-    protected function onChange()
+    protected function onChange(): string
     {
         return $this->autosubmit ? ' onchange="this.form.submit();"' : '';
     }
 
     /**
-     * 
      * @return string
      */
-    protected function readonly()
+    protected function readonly(): string
     {
         return $this->readonly ? ' readonly=""' : '';
     }
