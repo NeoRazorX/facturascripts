@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core;
 
+use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Cliente;
@@ -63,18 +64,37 @@ abstract class SalesTest extends CustomTest
             $model->codserie = $serie->codserie;
         }
 
+        $model->dtopor1 = 10;
+        $model->dtopor2 = 10;
         $this->assertTrue($model->save(), $model->modelClassName() . '-save-error');
 
         /// creating line
         $newLine = $model->getNewLine();
         $newLine->descripcion = 'test';
+        $newLine->cantidad = 2;
+        $newLine->pvpunitario = 100;
+        $newLine->dtopor = 10;
+        $newLine->iva = 21;
+        $newLine->irpf = 11;
+        $newLine->recargo = 0.0;
         $this->assertTrue($newLine->save(), $newLine->modelClassName() . '-save-error');
 
-        /// remove line
-        $this->assertTrue($newLine->delete(), $newLine->modelClassName() . '-delete-error');
+        /// recalculate totals
+        $tool = new BusinessDocumentTools();
+        $tool->recalculate($model);
+        $this->assertEquals(180, $model->netosindto, $model->modelClassName() . '-netosindto-error');
+        $this->assertEquals(145.8, $model->neto, $model->modelClassName() . '-neto-error');
+        $this->assertEquals(30.62, $model->totaliva, $model->modelClassName() . '-totaliva-error');
+        $this->assertEquals(16.04, $model->totalirpf, $model->modelClassName() . '-totalirpf-error');
+        $this->assertEquals(0.0, $model->totalrecargo, $model->modelClassName() . '-totalrecargo-error');
+        $this->assertEquals(160.38, $model->total, $model->modelClassName() . '-total-error');
+        $this->assertTrue($model->save(), $model->modelClassName() . '-save2-error');
 
         /// remove document
         $this->assertTrue($model->delete(), $model->modelClassName() . '-delete-error');
+
+        /// test line deletion
+        $this->assertFalse($newLine->exists(), $newLine->modelClassName() . '-still-exists');
 
         /// get contact to remove
         $contact = $customer->getDefaultAddress();

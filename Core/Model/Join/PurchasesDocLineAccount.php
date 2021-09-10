@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,12 +27,12 @@ use FacturaScripts\Dinamic\Model\Familia;
 /**
  * Auxiliary model to get sub-accounts of purchases document lines
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  *
  * @property string $codfamilia
  * @property string $codsubcuenta
- * @property float  $total
+ * @property float $total
  */
 class PurchasesDocLineAccount extends JoinModel
 {
@@ -40,11 +41,11 @@ class PurchasesDocLineAccount extends JoinModel
      * Get totals for subaccount of sale document
      *
      * @param FacturaProveedor $document
-     * @param string           $defaultSubacode
+     * @param string $defaultSubacode
      *
      * @return array
      */
-    public function getTotalsForDocument($document, $defaultSubacode)
+    public function getTotalsForDocument($document, string $defaultSubacode): array
     {
         $totals = [];
         $where = [
@@ -69,25 +70,24 @@ class PurchasesDocLineAccount extends JoinModel
     }
 
     /**
-     *
-     * @param array            $totals
+     * @param array $totals
      * @param FacturaProveedor $document
-     * @param string           $defaultSubacode
+     * @param string $defaultSubacode
      *
      * @return array
      */
-    protected function checkTotals(&$totals, $document, $defaultSubacode)
+    protected function checkTotals(array &$totals, $document, string $defaultSubacode): array
     {
         /// round and add the totals
         $sum = 0.0;
         foreach ($totals as $key => $value) {
-            $totals[$key] = \round($value, \FS_NF0);
+            $totals[$key] = round($value, FS_NF0);
             $sum += $totals[$key];
         }
 
         /// fix occasional penny mismatch
-        if (!$this->toolBox()->utils()->floatcmp($document->neto, $sum, \FS_NF0, true)) {
-            $diff = \round($document->neto - $sum, \FS_NF0);
+        if (!$this->toolBox()->utils()->floatcmp($document->neto, $sum, FS_NF0, true)) {
+            $diff = round($document->neto - $sum, FS_NF0);
             $totals[$defaultSubacode] = isset($totals[$defaultSubacode]) ? $totals[$defaultSubacode] + $diff : $diff;
         }
 

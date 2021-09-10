@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -24,28 +25,28 @@ use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\Familia;
 
 /**
- * Auxiliary model to get sub-accounts of purchases document Irpf
+ * Auxiliary model to get sub-accounts of purchases document IRPF
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  *
  * @property string $codfamilia
  * @property string $codsubcuenta
- * @property float  $total
+ * @property float $total
  */
 class PurchasesDocIrpfAccount extends JoinModel
 {
 
     /**
-     * Get totals for subaccount of irpf purchase document
+     * Get totals for subaccount of IRPF purchase document
      *
      * @param FacturaProveedor $document
-     * @param string           $defaultSubacode
-     * @param float            $percentage
+     * @param string $defaultSubacode
+     * @param float $percentage
      *
      * @return array
      */
-    public function getTotalsForDocument($document, $defaultSubacode, $percentage)
+    public function getTotalsForDocument($document, string $defaultSubacode, float $percentage): array
     {
         $totals = [];
         $where = [
@@ -66,30 +67,28 @@ class PurchasesDocIrpfAccount extends JoinModel
             $totals[$codSubAccount] = isset($totals[$codSubAccount]) ? $totals[$codSubAccount] + $amount : $amount;
         }
 
-        $quota = \round(($document->neto * $percentage / 100), \FS_NF0);
-        return $this->checkTotals($totals, $quota, $defaultSubacode);
+        return $this->checkTotals($totals, $document, $defaultSubacode);
     }
 
     /**
-     *
-     * @param array   $totals
-     * @param float   $quota
-     * @param string  $defaultSubacode
+     * @param array $totals
+     * @param FacturaProveedor $document
+     * @param string $defaultSubacode
      *
      * @return array
      */
-    protected function checkTotals(&$totals, $quota, $defaultSubacode)
+    protected function checkTotals(array &$totals, $document, string $defaultSubacode): array
     {
         /// round and add the totals
         $sum = 0.0;
         foreach ($totals as $key => $value) {
-            $totals[$key] = \round($value, \FS_NF0);
+            $totals[$key] = round($value, FS_NF0);
             $sum += $totals[$key];
         }
 
         /// fix occasional penny mismatch
-        if (!$this->toolBox()->utils()->floatcmp($quota, $sum, \FS_NF0, true)) {
-            $diff = \round($quota - $sum, \FS_NF0);
+        if (!$this->toolBox()->utils()->floatcmp($document->totalirpf, $sum, FS_NF0, true)) {
+            $diff = round($document->totalirpf - $sum, FS_NF0);
             $totals[$defaultSubacode] = isset($totals[$defaultSubacode]) ? $totals[$defaultSubacode] + $diff : $diff;
         }
 
