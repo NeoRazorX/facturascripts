@@ -131,11 +131,11 @@ class NewMail
         $this->mail->Password = $appSettings->get('email', 'password');
         $this->lowsecure = (bool)$appSettings->get('email', 'lowsecure');
 
-        foreach (static::splitEmails($appSettings->get('email', 'emailcc')) as $email) {
+        foreach (static::splitEmails($appSettings->get('email', 'emailcc', '')) as $email) {
             $this->addCC($email);
         }
 
-        foreach (static::splitEmails($appSettings->get('email', 'emailbcc')) as $email) {
+        foreach (static::splitEmails($appSettings->get('email', 'emailbcc', '')) as $email) {
             $this->addBCC($email);
         }
 
