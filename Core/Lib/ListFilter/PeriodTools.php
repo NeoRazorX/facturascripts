@@ -29,7 +29,7 @@ use FacturaScripts\Core\Base\Translator;
  */
 class PeriodTools
 {
-    const DATE_FORMAT = 'd-m-y';
+    const DATE_FORMAT = 'd-m-Y';
 
     /**
      * Returns a date applying to the date reported
