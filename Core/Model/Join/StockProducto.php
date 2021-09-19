@@ -69,6 +69,31 @@ class StockProducto extends JoinModel
             'total' => 'sum(stocks.cantidad*variantes.coste)'
         ];
     }
+    /**
+     * List of type of fields or columns in select clausule.
+     *
+     * @return array
+     */
+    protected function getFieldsType(): array {
+        return [
+            'cantidad' => 'double',
+            'codalmacen' => 'string',
+            'codfabricante' => 'string',
+            'codfamilia' => 'string',
+            'coste' => 'double',
+            'descripcion' => 'string',
+            'disponible' => 'double',
+            'idproducto' => 'integer',
+            'idstock' => 'integer',
+            'precio' => 'double',
+            'pterecibir' => 'double',
+            'referencia' => 'string',
+            'reservada' => 'double',
+            'stockmax' => 'double',
+            'stockmin' => 'double',
+            'sum(stocks.cantidad*variantes.coste)' => 'double'
+        ];
+    }
 
     /**
      * 

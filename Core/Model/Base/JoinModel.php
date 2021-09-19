@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -16,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -35,8 +37,7 @@ use FacturaScripts\Core\Base\ToolBox;
  * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
  * @author Carlos García Gómez              <carlos@facturascripts.com>
  */
-abstract class JoinModel
-{
+abstract class JoinModel {
 
     /**
      * It provides direct access to the database.
@@ -79,8 +80,7 @@ abstract class JoinModel
      *
      * @param array $data
      */
-    public function __construct($data = [])
-    {
+    public function __construct($data = []) {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
         }
@@ -99,8 +99,7 @@ abstract class JoinModel
      *
      * @return mixed
      */
-    public function __get($name)
-    {
+    public function __get($name) {
         if (!isset($this->values[$name])) {
             $this->values[$name] = null;
         }
@@ -115,8 +114,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function __isset($name)
-    {
+    public function __isset($name) {
         return \array_key_exists($name, $this->values);
     }
 
@@ -126,8 +124,7 @@ abstract class JoinModel
      * @param string $name
      * @param mixed  $value
      */
-    public function __set($name, $value)
-    {
+    public function __set($name, $value) {
         $this->values[$name] = $value;
     }
 
@@ -141,12 +138,12 @@ abstract class JoinModel
      *
      * @return static[]
      */
-    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0)
-    {
+    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0) {
         $result = [];
         if ($this->checkTables()) {
             $sql = 'SELECT ' . $this->fieldsList() . ' FROM ' . $this->getSQLFrom()
-                . DataBaseWhere::getSQLWhere($where) . $this->getGroupBy() . $this->getOrderBy($order);
+                    . DataBaseWhere::getSQLWhere($where) . $this->getGroupBy() . $this->getOrderBy($order);
+           
             foreach (self::$dataBase->selectLimit($sql, $limit, $offset) as $row) {
                 $result[] = new static($row);
             }
@@ -158,8 +155,7 @@ abstract class JoinModel
     /**
      * Reset the values of all model properties.
      */
-    public function clear()
-    {
+    public function clear() {
         foreach (\array_keys($this->getFields()) as $field) {
             $this->values[$field] = null;
         }
@@ -172,18 +168,18 @@ abstract class JoinModel
      *
      * @return int
      */
-    public function count(array $where = [])
-    {
+    public function count(array $where = []) {
+       
         $groupFields = $this->getGroupFields();
         if (!empty($groupFields)) {
             $groupFields .= ', ';
         }
 
         $sql = 'SELECT ' . $groupFields . 'COUNT(*) count_total'
-            . ' FROM ' . $this->getSQLFrom()
-            . DataBaseWhere::getSQLWhere($where)
-            . $this->getGroupBy();
-
+                . ' FROM ' . $this->getSQLFrom()
+                . DataBaseWhere::getSQLWhere($where)
+                . $this->getGroupBy();
+        error_log('database es ' . var_export(self::$dataBase, 1), 3, './r');
         $data = self::$dataBase->select($sql);
         $count = count($data);
         return ($count == 1) ? (int) $data[0]['count_total'] : $count;
@@ -194,8 +190,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function delete()
-    {
+    public function delete() {
         if (isset($this->masterModel)) {
             $primaryColumn = $this->masterModel->primaryColumn();
             $this->masterModel->{$primaryColumn} = $this->primaryColumnValue();
@@ -210,8 +205,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function exists()
-    {
+    public function exists() {
         return isset($this->masterModel) ? $this->masterModel->exists() : $this->count() > 0;
     }
 
@@ -219,13 +213,13 @@ abstract class JoinModel
      *
      * @return array
      */
-    public function getModelFields()
-    {
+    public function getModelFields() {
         $fields = [];
+       
         foreach ($this->getFields() as $key => $field) {
             $fields[$key] = [
                 'name' => $field,
-                'type' => ''
+                'type' => $this->getFieldType($field)
             ];
         }
 
@@ -246,18 +240,17 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function loadFromCode($cod, array $where = [], array $orderby = [])
-    {
+    public function loadFromCode($cod, array $where = [], array $orderby = []) {
         if (!$this->loadFilterWhere($cod, $where)) {
             $this->clear();
             return false;
         }
 
         $sql = 'SELECT ' . $this->fieldsList()
-            . ' FROM ' . $this->getSQLFrom()
-            . DataBaseWhere::getSQLWhere($where)
-            . $this->getGroupBy()
-            . $this->getOrderBy($orderby);
+                . ' FROM ' . $this->getSQLFrom()
+                . DataBaseWhere::getSQLWhere($where)
+                . $this->getGroupBy()
+                . $this->getOrderBy($orderby);
 
         $data = self::$dataBase->selectLimit($sql, 1);
         if (empty($data)) {
@@ -274,8 +267,7 @@ abstract class JoinModel
      *
      * @return mixed
      */
-    public function primaryColumnValue()
-    {
+    public function primaryColumnValue() {
         if (isset($this->masterModel)) {
             $primaryColumn = $this->masterModel->primaryColumn();
             return $this->{$primaryColumn};
@@ -292,8 +284,7 @@ abstract class JoinModel
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
-    {
+    public function url(string $type = 'auto', string $list = 'List') {
         if (isset($this->masterModel)) {
             $primaryColumn = $this->masterModel->primaryColumn();
             $this->masterModel->{$primaryColumn} = $this->primaryColumnValue();
@@ -308,14 +299,13 @@ abstract class JoinModel
      *
      * @return bool
      */
-    private function checkTables(): bool
-    {
+    private function checkTables(): bool {
         foreach ($this->getTables() as $tableName) {
             if (!self::$dataBase->tableExists($tableName)) {
                 return false;
             }
         }
-
+       
         return true;
     }
 
@@ -324,8 +314,7 @@ abstract class JoinModel
      *
      * @return string
      */
-    private function fieldsList(): string
-    {
+    private function fieldsList(): string {
         $result = '';
         $comma = '';
         foreach ($this->getFields() as $key => $value) {
@@ -340,8 +329,7 @@ abstract class JoinModel
      *
      * @return string
      */
-    private function getGroupBy(): string
-    {
+    private function getGroupBy(): string {
         $fields = $this->getGroupFields();
         return empty($fields) ? '' : ' GROUP BY ' . $fields;
     }
@@ -351,8 +339,7 @@ abstract class JoinModel
      *
      * @return string
      */
-    protected function getGroupFields(): string
-    {
+    protected function getGroupFields(): string {
         return '';
     }
 
@@ -363,8 +350,7 @@ abstract class JoinModel
      *
      * @return string
      */
-    private function getOrderBy(array $order): string
-    {
+    private function getOrderBy(array $order): string {
         $result = '';
         $coma = ' ORDER BY ';
         foreach ($order as $key => $value) {
@@ -383,8 +369,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    private function loadFilterWhere($cod, &$where): bool
-    {
+    private function loadFilterWhere($cod, &$where): bool {
         /// If there is no search by code we use the where informed
         if (empty($cod)) {
             return true;
@@ -413,8 +398,7 @@ abstract class JoinModel
      *
      * @param array $data
      */
-    protected function loadFromData($data)
-    {
+    protected function loadFromData($data) {
         foreach ($data as $field => $value) {
             $this->values[$field] = $value;
         }
@@ -425,8 +409,7 @@ abstract class JoinModel
      *
      * @param ModelClass $model
      */
-    protected function setMasterModel($model)
-    {
+    protected function setMasterModel($model) {
         $this->masterModel = $model;
     }
 
@@ -434,8 +417,31 @@ abstract class JoinModel
      *
      * @return ToolBox
      */
-    protected function toolBox()
-    {
+    protected function toolBox() {
         return new ToolBox();
     }
+
+    /**
+     * get Type of field
+     * @param string $fieldName
+     * @return string
+     */
+    protected function getFieldType(string $fieldName): string {
+        $fieldsType = $this->getFieldsType();
+        if (array_key_exists($fieldName, $fieldsType)) {
+            error_log('Existe el campo ' . $fieldName . ' y su tipo es ' . $fieldsType[$fieldName], 3, './r');
+        } else {
+            error_log('NO existe el campo ' . $fieldName, 3, './r');
+        }
+        return array_key_exists($fieldName, $fieldsType) ? $fieldsType[$fieldName] : '';
+    }
+    /**
+     * List of type of fields or columns in select clausule.
+     *
+     * @return array
+     */
+    protected function getFieldsType(): array {
+        return [];
+    }
+
 }

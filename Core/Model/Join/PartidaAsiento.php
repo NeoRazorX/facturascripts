@@ -79,6 +79,23 @@ class PartidaAsiento extends JoinModel
             'numero' => 'asientos.numero'
         ];
     }
+    /**
+     * List of type of fields or columns in select clausule.
+     *
+     * @return array
+     */
+    protected function getFieldsType(): array {
+        return [
+            'partidas.concepto' => 'string',
+            'partidas.debe' => 'double',
+            'asientos.fecha' => 'date',
+            'partidas.haber' => 'double',
+            'partidas.idasiento' => 'integer',
+            'partidas.idpartida' => 'integer',
+            'partidas.punteada' => 'integer',
+            'asientos.numero' => 'integer'
+        ];
+    }
 
     /**
      *

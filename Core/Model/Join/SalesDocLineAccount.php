@@ -108,6 +108,19 @@ class SalesDocLineAccount extends JoinModel
             'total' => 'SUM(lineasfacturascli.pvptotal)'
         ];
     }
+    /**
+     * List of type of fields or columns in select clausule.
+     *
+     * @return array
+     */
+    protected function getFieldsType(): array {
+        return [
+            'lineasfacturascli.idfactura' => 'integer',
+            "COALESCE(productos.codsubcuentaven, '')" => "string",
+            "COALESCE(productos.codfamilia, '')" => "string",
+            'SUM(lineasfacturascli.pvptotal)' => 'double'
+        ];
+    }
 
     /**
      * Return Group By fields

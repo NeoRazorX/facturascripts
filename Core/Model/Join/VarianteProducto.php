@@ -68,6 +68,29 @@ class VarianteProducto extends JoinModel
     }
 
     /**
+     * List of type of fields or columns in select clausule.
+     *
+     * @return array
+     */
+    protected function getFieldsType(): array {
+        return [
+            'variantes.codbarras' => 'string',
+            'variantes.coste' => 'double',
+            'variantes.idatributovalor1' => 'integer',
+            'variantes.idatributovalor2' => 'integer',
+            'variantes.idatributovalor3' => 'integer',
+            'variantes.idatributovalor4' => 'integer',
+            'variantes.idproducto' => 'integer',
+            'variantes.idvariante' => 'integer',
+            'variantes.margen' => 'double',
+            'variantes.precio' => 'double',
+            'variantes.referencia' => 'string',
+            'variantes.stockfis' => 'double',
+            'productos.descripcion' => 'string'
+        ];
+    }
+
+    /**
      * List of tables related to from clausule.
      * 
      * @return string

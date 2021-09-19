@@ -53,6 +53,27 @@ class FacturaProveedorProducto extends JoinModel
     }
 
     /**
+     * List of type of fields or columns in select clausule.
+     *
+     * @return array
+     */
+    protected function getFieldsType(): array {
+        return [
+            sum(' . static::MAIN_TABLE . ' . pvptotal) / sum(' . static::MAIN_TABLE . ' . cantidad) => 'double',
+            'sum(' . static::MAIN_TABLE . '.cantidad)' => 'double',
+            static::DOC_TABLE . '.codalmacen' => 'sring',
+            'productos.codfabricante' => 'string',
+            'productos.codfamilia' => 'string',
+            'variantes.coste' => 'double',
+            'productos.descripcion' => 'string',
+            static::MAIN_TABLE . '.idproducto' => 'integer',
+            'variantes.precio' => 'double',
+            static::MAIN_TABLE . '.referencia' => 'double',
+            'variantes.stockfis' => 'double'
+        ];
+    }
+
+    /**
      * 
      * @return string
      */

@@ -125,6 +125,24 @@ class TarifaProducto extends JoinModel
             'stockfis' => 'variantes.stockfis'
         ];
     }
+    /**
+     * List of type of fields or columns in select clausule.
+     *
+     * @return array
+     */
+    protected function getFieldsType(): array {
+        return [
+            'tarifas.codtarifa' => 'string',
+            'variantes.coste' => 'double',
+            'productos.descripcion' => 'string',
+            'iproductos.dproducto' => 'integer',
+            'variantes.idvariante' => 'integer',
+            'variantes.margen' => 'double',
+            'variantes.precio' => 'double',
+            'variantes.referencia' => 'string',
+            'variantes.stockfis' => 'double'
+        ];
+    }
 
     /**
      * 

@@ -67,6 +67,22 @@ class SubcuentaSaldo extends JoinModel
             'haber' => 'SUM(partidas.haber)'
         ];
     }
+    /**
+     * List of type of fields or columns in select clausule.
+     *
+     * @return array
+     */
+    protected function getFieldsType(): array {
+        return [
+            'partidas.idsubcuenta' => 'integer',
+            'partidas.codsubcuenta' => 'string',
+            'asientos.codejercicio' => 'string',
+            'asientos.canal' => 'integer',
+            'EXTRACT(MONTH FROM asientos.fecha)' => 'integer',
+            'SUM(partidas.debe)' => 'double',
+            'SUM(partidas.haber)' => 'double'
+        ];
+    }
 
     /**
      * Return Group By fields

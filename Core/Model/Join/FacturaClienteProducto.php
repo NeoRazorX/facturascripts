@@ -52,6 +52,27 @@ class FacturaClienteProducto extends JoinModel
             'stockfis' => 'variantes.stockfis'
         ];
     }
+    /**
+     * List of type of fields or columns in select clausule.
+     *
+     * @return array
+     */
+    protected function getFieldsType(): array {
+        return [
+            'avgbeneficio' => 'double',
+            'avgprecio' => 'double',
+            'cantidad' => 'double',
+             static::DOC_TABLE . '.codalmacen'=> 'string',
+            'productos.codfabricante' => 'string',
+            'productos.codfamilia' => 'string',
+            'variantes.coste' => 'string',
+            'productos.descripcion' => 'string',
+            static::MAIN_TABLE . '.idproducto' => 'integer',
+            'variantes.precio' => 'double',
+            static::MAIN_TABLE . '.referencia' => 'string',
+            'variantes.stockfis' => 'double'
+        ];
+    }
 
     /**
      * 

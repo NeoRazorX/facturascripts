@@ -128,6 +128,33 @@ class LiquidacionComisionFactura extends JoinModel
             'totalcomision' => 'facturascli.totalcomision'
         ];
     }
+    /**
+     * List of type of fields or columns in select clausule.
+     *
+     * @return array
+     */
+    protected function getFieldsType(): array {
+        return [
+            'facturascli.codagente' => 'string',
+            'facturascli.codcliente' => 'string',
+            'facturascli.codejercicio' => 'string',
+            'facturascli.codigo' => 'string',
+            'facturascli.codpago' => 'string',
+            'facturascli.codserie' => 'string',
+            'facturascli.fecha' => 'date',
+            'facturascli.hora' => 'date',
+            'facturascli.idempresa' => 'integer',
+            'facturascli.idfactura' => 'integer',
+            'facturascli.idliquidacion' => 'integer',
+            'facturascli.nombrecliente' => 'string',
+            'facturascli.numero' => 'string',
+            'facturascli.numero2' => 'string',
+            'facturascli.neto' => 'double',
+            'facturascli.pagada' => 'integer',
+            'facturascli.total' => 'double',
+            'facturascli.totalcomision' => 'double'
+        ];
+    }
 
     /**
      * List of tables related to from clausule.
