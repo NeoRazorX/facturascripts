@@ -179,7 +179,7 @@ abstract class JoinModel {
                 . ' FROM ' . $this->getSQLFrom()
                 . DataBaseWhere::getSQLWhere($where)
                 . $this->getGroupBy();
-        error_log('database es ' . var_export(self::$dataBase, 1), 3, './r');
+        
         $data = self::$dataBase->select($sql);
         $count = count($data);
         return ($count == 1) ? (int) $data[0]['count_total'] : $count;
@@ -428,11 +428,7 @@ abstract class JoinModel {
      */
     protected function getFieldType(string $fieldName): string {
         $fieldsType = $this->getFieldsType();
-        if (array_key_exists($fieldName, $fieldsType)) {
-            error_log('Existe el campo ' . $fieldName . ' y su tipo es ' . $fieldsType[$fieldName], 3, './r');
-        } else {
-            error_log('NO existe el campo ' . $fieldName, 3, './r');
-        }
+        
         return array_key_exists($fieldName, $fieldsType) ? $fieldsType[$fieldName] : '';
     }
     /**
