@@ -119,7 +119,7 @@ class Dashboard extends Controller
     private function getStatsMonth(int $previous): string
     {
         $mask = '-' . $previous . ' month';
-        return date('F', strtotime($mask));
+        return strtolower(date('F', strtotime($mask)));
     }
 
     /**
@@ -213,8 +213,12 @@ class Dashboard extends Controller
         $this->setOpenLinksForDocument(new PedidoCliente(), 'order');
         $this->setOpenLinksForDocument(new PresupuestoCliente(), 'estimation');
 
+        $minDate = date(Producto::DATE_STYLE, strtotime('-2 days'));
+        $minDateTime = date(Producto::DATETIME_STYLE, strtotime('-2 days'));
+
         $customerModel = new Cliente();
-        foreach ($customerModel->all([], ['fechaalta' => 'DESC'], 0, 3) as $customer) {
+        $whereCustomer = [new DataBaseWhere('fechaalta', $minDate, '>=')];
+        foreach ($customerModel->all($whereCustomer, ['fechaalta' => 'DESC'], 0, 3) as $customer) {
             $this->openLinks[] = [
                 'type' => 'customer',
                 'url' => $customer->url(),
@@ -224,7 +228,8 @@ class Dashboard extends Controller
         }
 
         $contactModel = new Contacto();
-        foreach ($contactModel->all([], ['fechaalta' => 'DESC'], 0, 3) as $contact) {
+        $whereContact = [new DataBaseWhere('fechaalta', $minDate, '>=')];
+        foreach ($contactModel->all($whereContact, ['fechaalta' => 'DESC'], 0, 3) as $contact) {
             $this->openLinks[] = [
                 'type' => 'contact',
                 'url' => $contact->url(),
@@ -234,12 +239,13 @@ class Dashboard extends Controller
         }
 
         $productModel = new Producto();
-        foreach ($productModel->all([], ['actualizado' => 'DESC'], 0, 3) as $product) {
+        $whereProd = [new DataBaseWhere('actualizado', $minDateTime, '>=')];
+        foreach ($productModel->all($whereProd, ['actualizado' => 'DESC'], 0, 3) as $product) {
             $this->openLinks[] = [
                 'type' => 'product',
                 'url' => $product->url(),
                 'name' => $product->referencia,
-                'date' => $product->fechaalta
+                'date' => $product->actualizado
             ];
         }
 
@@ -310,7 +316,11 @@ class Dashboard extends Controller
      */
     private function setOpenLinksForDocument($model, $label)
     {
-        $where = [new DataBaseWhere('nick', $this->user->nick)];
+        $minDate = date(BusinessDocument::DATE_STYLE, strtotime('-2 days'));
+        $where = [
+            new DataBaseWhere('fecha', $minDate, '>='),
+            new DataBaseWhere('nick', $this->user->nick)
+        ];
         foreach ($model->all($where, [$model->primaryColumn() => 'DESC'], 0, 3) as $doc) {
             $this->openLinks[] = [
                 'type' => $label,
