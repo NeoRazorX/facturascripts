@@ -150,7 +150,8 @@ function businessDocViewSave() {
                 $("#" + businessDocViewFormName).attr('action', results.substring(3)).submit();
             } else {
                 alert(results);
-                $("#" + businessDocViewFormName + " :input[name=\"multireqtoken\"]").val(randomString(20));
+                let token = $("#" + businessDocViewFormName + " :input[name=\"multireqtoken\"]").val() + randomString(1);
+                $("#" + businessDocViewFormName + " :input[name=\"multireqtoken\"]").val(token);
             }
         },
         error: function (msg) {
