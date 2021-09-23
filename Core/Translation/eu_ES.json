@@ -1133,6 +1133,7 @@
     "total": "Guztira",
     "total-amount": "Batuketa totala",
     "total-value-error": "%docType% %docCode% zenbateko osoa ez zuzena ((%docTotal%). Zenbateko zuzena: %calcTotal%",
+    "total-with-taxes": "Totala + zergak",
     "totalirpf-value-error": "PFEZ kopurua %docType% %docCode% ez zuzena (%docTotalIRPF%). Zenbateko zuzena: %calcTotalIRPF%",
     "totaliva-value-error": "BEZ guztira  %docType% %docCode% balioa ez zuzena (%docTotalTax%). Zenbateko zuzena: %calcTotalTax%",
     "totallinea-value-error": "Fakturaren %taxCode% zergaren lerroko BEZ totala baliogabea. Balio zuzena: %totalLine%",

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -95,12 +96,11 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     *
      * @param string $viewName
      * @param string $model
      * @param string $label
      */
-    protected function createDocumentView($viewName, $model, $label)
+    protected function createDocumentView(string $viewName, string $model, string $label)
     {
         $this->createCustomerListView($viewName, $model, $label);
         $this->addButtonGroupDocument($viewName);
@@ -108,10 +108,9 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     *
      * @param string $viewName
      */
-    protected function createInvoiceView($viewName)
+    protected function createInvoiceView(string $viewName)
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
         $this->addButtonLockInvoice($viewName);
@@ -138,7 +137,6 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     *
      * @return bool
      */
     protected function editAction()
@@ -155,29 +153,28 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     *
      * @return bool
      */
     protected function insertAction()
     {
-        if (parent::insertAction()) {
-            /// redirect to returnUrl if return is defined
-            $returnUrl = $this->request->query->get('return');
-            if (!empty($returnUrl)) {
-                $model = $this->views[$this->active]->model;
-                $this->redirect($returnUrl . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
-            }
-
-            return true;
+        if (false === parent::insertAction()) {
+            return false;
         }
 
-        return false;
+        /// redirect to returnUrl if return is defined
+        $returnUrl = $this->request->query->get('return');
+        if (!empty($returnUrl)) {
+            $model = $this->views[$this->active]->model;
+            $this->redirect($returnUrl . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+        }
+
+        return true;
     }
 
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -215,7 +212,6 @@ class EditCliente extends ComercialContactController
     }
 
     /**
-     *
      * @param string $viewName
      */
     protected function setCustomWidgetValues(string $viewName)

@@ -1133,6 +1133,7 @@
     "total": "Total",
     "total-amount": "total-amount",
     "total-value-error": "Montant total de %docType% %docCode% incorrect (%docTotal%). Montant correct: %calcTotal%",
+    "total-with-taxes": "Total with taxes",
     "totalirpf-value-error": "Montant total IRPF de %docType% %docCode% incorrect (%docTotalIRPF%). Montant correct: %calcTotalIRPF%",
     "totaliva-value-error": "Montant total des taxes de %docType% %docCode% incorrect (%docTotalTax%). Montant correct: %calcTotalTax%",
     "totallinea-value-error": "Erreur dans la valeur totallinea de la ligne de TVA de la taxe %taxCode% de la facture. Valeur correcte: %totalLine%",

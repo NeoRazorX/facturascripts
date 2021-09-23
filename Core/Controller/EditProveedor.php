@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
-use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
 
 /**
  * Controller to edit a single item from the Proveedor model
@@ -83,12 +84,11 @@ class EditProveedor extends ComercialContactController
     }
 
     /**
-     *
      * @param string $viewName
      * @param string $model
      * @param string $label
      */
-    protected function createDocumentView($viewName, $model, $label)
+    protected function createDocumentView(string $viewName, string $model, string $label)
     {
         $this->createSupplierListView($viewName, $model, $label);
         $this->addButtonGroupDocument($viewName);
@@ -96,17 +96,15 @@ class EditProveedor extends ComercialContactController
     }
 
     /**
-     *
      * @param string $viewName
      */
-    protected function createInvoiceView($viewName)
+    protected function createInvoiceView(string $viewName)
     {
         $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices');
         $this->addButtonLockInvoice($viewName);
     }
 
     /**
-     *
      * @param string $viewName
      */
     protected function createProductView(string $viewName = 'ListProductoProveedor')
@@ -146,7 +144,6 @@ class EditProveedor extends ComercialContactController
     }
 
     /**
-     *
      * @return bool
      */
     protected function editAction()
@@ -155,7 +152,7 @@ class EditProveedor extends ComercialContactController
         if ($return && $this->active === $this->getMainViewName()) {
             $this->checkSubaccountLength($this->getModel()->codsubcuenta);
 
-            /// update contact emal and phones when supplier email or phones are updated
+            /// update contact email and phones when supplier email or phones are updated
             $this->updateContact($this->views[$this->active]->model);
         }
 
@@ -163,29 +160,28 @@ class EditProveedor extends ComercialContactController
     }
 
     /**
-     *
      * @return bool
      */
     protected function insertAction()
     {
-        if (parent::insertAction()) {
-            /// redirect to returnUrl if return is defined
-            $returnUrl = $this->request->query->get('return');
-            if (!empty($returnUrl)) {
-                $model = $this->views[$this->active]->model;
-                $this->redirect($returnUrl . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
-            }
-
-            return true;
+        if (false === parent::insertAction()) {
+            return false;
         }
 
-        return false;
+        /// redirect to returnUrl if return is defined
+        $returnUrl = $this->request->query->get('return');
+        if (!empty($returnUrl)) {
+            $model = $this->views[$this->active]->model;
+            $this->redirect($returnUrl . '?' . $model->primaryColumn() . '=' . $model->primaryColumnValue());
+        }
+
+        return true;
     }
 
     /**
      * Load view data
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -224,7 +220,6 @@ class EditProveedor extends ComercialContactController
     }
 
     /**
-     *
      * @param string $viewName
      */
     protected function setCustomWidgetValues(string $viewName)

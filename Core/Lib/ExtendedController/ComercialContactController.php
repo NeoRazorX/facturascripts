@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -46,7 +47,7 @@ abstract class ComercialContactController extends EditController
 
     /**
      * Check that the subaccount length is correct.
-     * 
+     *
      * @param string $code
      */
     protected function checkSubaccountLength(string $code)
@@ -134,7 +135,7 @@ abstract class ComercialContactController extends EditController
      * @param string $viewName
      * @param string $model
      * @param string $label
-     * @param array  $fields
+     * @param array $fields
      */
     private function createListView(string $viewName, string $model, string $label, array $fields)
     {
@@ -298,7 +299,7 @@ abstract class ComercialContactController extends EditController
     /**
      * Load view data
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -318,18 +319,19 @@ abstract class ComercialContactController extends EditController
                 $codsubcuenta = $this->getViewModelValue($mainViewName, 'codsubcuenta');
                 $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
                 $view->loadData('', $where);
+                $this->setSettings($viewName, 'active', $view->count > 0);
                 break;
 
             case 'ListEmailSent':
                 $addressee = $this->getViewModelValue($mainViewName, 'email');
                 $where = [new DataBaseWhere('addressee', $addressee)];
                 $view->loadData('', $where);
+                $this->setSettings($viewName, 'active', $view->count > 0);
                 break;
         }
     }
 
     /**
-     *
      * @param Cliente|Proveedor $subject
      */
     protected function updateContact($subject)

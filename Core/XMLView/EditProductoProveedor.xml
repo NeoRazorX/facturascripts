@@ -31,7 +31,7 @@
                     <values />
                 </widget>
             </column>
-            <column name="supplier-reference" display="none" order="120">
+            <column name="supplier-reference" order="120">
                 <widget type="text" fieldname="refproveedor" />
             </column>
             <column name="price" order="130">

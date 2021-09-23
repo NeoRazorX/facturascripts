@@ -1133,6 +1133,7 @@
     "total": "Gesamt",
     "total-amount": "total-amount",
     "total-value-error": "Gesamtmenge von 0 1 falsch (2). Richtige Menge: 3",
+    "total-with-taxes": "Total with taxes",
     "totalirpf-value-error": "Gesamt-IRPF-Betrag von 0 1 falsch (2). Richtige Menge: 3",
     "totaliva-value-error": "Gesamtsteuerbetrag von 0 1 falsch (2). Richtige Menge: 3",
     "totallinea-value-error": "Fehler im Gesamtbetrag der Mehrwertsteuerzeile der Steuer 0 der Rechnung. Richtiger Wert: 1",

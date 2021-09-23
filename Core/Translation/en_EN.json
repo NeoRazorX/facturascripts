@@ -1133,6 +1133,7 @@
     "total": "Total",
     "total-amount": "Total amount",
     "total-value-error": "Total amount of %docType% %docCode% incorrect (%docTotal%). Correct amount: %calcTotal%",
+    "total-with-taxes": "Total + taxes",
     "totalirpf-value-error": "Total PIT amount of %docType% %docCode% incorrect (%docTotalIRPF%). Correct amount: %calcTotalIRPF%",
     "totaliva-value-error": "Total tax amount of %docType% %docCode% incorrect (%docTotalTax%). Correct amount: %calcTotalTax%",
     "totallinea-value-error": "Error in the totallinea value of the VAT line of the tax %taxCode% of the invoice. Correct value: %totalLine%",
