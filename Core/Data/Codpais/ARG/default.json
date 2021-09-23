@@ -4,7 +4,8 @@
         "codimpuesto": "AR21",
         "codserie": "A",
         "codpago": "CONT",
-        "tipoidfiscal": "CUIT"
+        "tipoidfiscal": "CUIT",
+        "validate_iban": false
     },
     "email": {
         "enc": "ssl",
