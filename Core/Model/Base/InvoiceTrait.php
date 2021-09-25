@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -70,10 +70,14 @@ trait InvoiceTrait
     public $idfacturarect;
 
     /**
-     *
      * @var bool
      */
     public $pagada;
+
+    /**
+     * @var array
+     */
+    private $refunds;
 
     abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50);
 
@@ -110,7 +114,6 @@ trait InvoiceTrait
     }
 
     /**
-     * 
      * @return bool
      */
     public function delete()
@@ -141,7 +144,6 @@ trait InvoiceTrait
     }
 
     /**
-     * 
      * @return static[]
      */
     public function getRefunds()
@@ -150,8 +152,12 @@ trait InvoiceTrait
             return [];
         }
 
-        $where = [new DataBaseWhere('idfacturarect', $this->idfactura)];
-        return $this->all($where, ['idfactura' => 'DESC'], 0, 0);
+        if (!isset($this->refunds)) {
+            $where = [new DataBaseWhere('idfacturarect', $this->idfactura)];
+            $this->refunds = $this->all($where, ['idfactura' => 'DESC'], 0, 0);
+        }
+
+        return $this->refunds;
     }
 
     /**
@@ -170,7 +176,6 @@ trait InvoiceTrait
     }
 
     /**
-     * 
      * @return bool
      */
     public function paid()
@@ -226,7 +231,7 @@ trait InvoiceTrait
         foreach ($this->getRefunds() as $invoice) {
             foreach ($invoice->getLines() as $line) {
                 if ($line->referencia == $ref) {
-                    $amount += \abs($line->cantidad);
+                    $amount += abs($line->cantidad);
                 }
             }
         }
@@ -235,7 +240,6 @@ trait InvoiceTrait
     }
 
     /**
-     * 
      * @param string $field
      *
      * @return bool
@@ -275,7 +279,6 @@ trait InvoiceTrait
     }
 
     /**
-     * 
      * @return bool
      */
     protected function onChangeTotal()
