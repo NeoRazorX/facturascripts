@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
@@ -41,7 +42,7 @@ class ListFacturaCliente extends ListBusinessDocument
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'invoices';
-        $data['icon'] = 'fas fa-copy';
+        $data['icon'] = 'fas fa-file-invoice-dollar';
         return $data;
     }
 
@@ -56,7 +57,7 @@ class ListFacturaCliente extends ListBusinessDocument
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      * @param string $modelName
      * @param string $label
@@ -89,12 +90,12 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
 
         $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
-        if (\count($currencies) > 2) {
+        if (count($currencies) > 2) {
             $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
         }
 
         $paymethods = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        if (\count($paymethods) > 2) {
+        if (count($paymethods) > 2) {
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymethods);
         }
 
