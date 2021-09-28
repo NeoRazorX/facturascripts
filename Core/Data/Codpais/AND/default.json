@@ -5,7 +5,8 @@
         "codpago": "CONT",
         "codserie": "A",
         "codserierec": "R",
-        "tipoidfiscal": "NIF"
+        "tipoidfiscal": "NIF",
+        "validate_iban": true
     },
     "email": {
         "enc": "ssl",

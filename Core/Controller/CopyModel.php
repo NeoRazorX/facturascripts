@@ -16,13 +16,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Proveedor;
+use FacturaScripts\Dinamic\Model\User;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Description of CopyModel
@@ -35,31 +40,26 @@ class CopyModel extends Controller
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
     /**
-     * 
      * @var CodeModel
      */
     public $codeModel;
 
     /**
-     * 
      * @var object
      */
     public $model;
 
     /**
-     * 
      * @var string
      */
     public $modelClass;
 
     /**
-     * 
      * @var string
      */
     public $modelCode;
 
     /**
-     * 
      * @return array
      */
     public function getPageData(): array
@@ -73,10 +73,9 @@ class CopyModel extends Controller
     }
 
     /**
-     * 
-     * @param type $response
-     * @param type $user
-     * @param type $permissions
+     * @param Response $response
+     * @param User $user
+     * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
@@ -85,7 +84,8 @@ class CopyModel extends Controller
 
         $action = $this->request->get('action');
         if ($action === 'autocomplete') {
-            return $this->autocompleteAction();
+            $this->autocompleteAction();
+            return;
         } elseif (false === $this->loadModel()) {
             $this->toolBox()->i18nLog()->warning('record-not-found');
             return;
@@ -98,13 +98,15 @@ class CopyModel extends Controller
                 case 'FacturaCliente':
                 case 'PedidoCliente':
                 case 'PresupuestoCliente':
-                    return $this->saveSalesDocument();
+                    $this->saveSalesDocument();
+                    break;
 
                 case 'AlbaranProveedor':
                 case 'FacturaProveedor':
                 case 'PedidoProveedor':
                 case 'PresupuestoProveedor':
-                    return $this->savePurchaseDocument();
+                    $this->savePurchaseDocument();
+                    break;
             }
         }
     }
@@ -119,11 +121,10 @@ class CopyModel extends Controller
             $results[] = ['key' => $utils->fixHtml($value->code), 'value' => $utils->fixHtml($value->description)];
         }
 
-        $this->response->setContent(\json_encode($results));
+        $this->response->setContent(json_encode($results));
     }
 
     /**
-     * 
      * @return bool
      */
     protected function loadModel(): bool
@@ -140,8 +141,7 @@ class CopyModel extends Controller
     }
 
     /**
-     * 
-     * @param object $newDoc
+     * @param BusinessDocument $newDoc
      */
     protected function saveDocumentEnd($newDoc)
     {
@@ -194,7 +194,7 @@ class CopyModel extends Controller
             }
         }
 
-        return $this->saveDocumentEnd($newDoc);
+        $this->saveDocumentEnd($newDoc);
     }
 
     protected function saveSalesDocument()
@@ -233,6 +233,6 @@ class CopyModel extends Controller
             }
         }
 
-        return $this->saveDocumentEnd($newDoc);
+        $this->saveDocumentEnd($newDoc);
     }
 }

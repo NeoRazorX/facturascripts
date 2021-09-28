@@ -4,7 +4,8 @@
         "codpago": "CONT",
         "codserie": "A",
         "codserierec": "R",
-        "tipoidfiscal": "DPI"
+        "tipoidfiscal": "DPI",
+        "validate_iban": false
     },
     "email": {
         "enc": "ssl",

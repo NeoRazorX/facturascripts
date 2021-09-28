@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -43,7 +44,7 @@ class ListPresupuestoCliente extends ListBusinessDocument
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'estimations';
-        $data['icon'] = 'fas fa-copy';
+        $data['icon'] = 'far fa-file-powerpoint';
         return $data;
     }
 
@@ -64,7 +65,7 @@ class ListPresupuestoCliente extends ListBusinessDocument
     }
 
     /**
-     * 
+     *
      * @param string $action
      *
      * @return bool
@@ -82,7 +83,7 @@ class ListPresupuestoCliente extends ListBusinessDocument
     {
         $presupuestoModel = new PresupuestoCliente;
 
-        /// select the avaliable expired status
+        /// select the available expired status
         $expiredStatus = null;
         foreach ($presupuestoModel->getAvaliableStatus() as $status) {
             if ($status->idestado == 23 && !$status->editable && empty($status->generadoc)) {
@@ -101,7 +102,7 @@ class ListPresupuestoCliente extends ListBusinessDocument
             new DataBaseWhere('finoferta', null, 'IS NOT')
         ];
         foreach ($presupuestoModel->all($where, ['finoferta' => 'ASC']) as $item) {
-            if (\time() < \strtotime($item->finoferta)) {
+            if (time() < strtotime($item->finoferta)) {
                 continue;
             }
 

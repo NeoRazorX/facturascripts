@@ -16,10 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
+use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Contacto;
 
@@ -31,10 +33,9 @@ use FacturaScripts\Dinamic\Model\Contacto;
 class EditContacto extends EditController
 {
 
-    use \FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
+    use DocFilesTrait;
 
     /**
-     * 
      * @return string
      */
     public function getImageUrl()
@@ -43,7 +44,6 @@ class EditContacto extends EditController
     }
 
     /**
-     * 
      * @return string
      */
     public function getModelClassName()
@@ -66,7 +66,6 @@ class EditContacto extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function addConversionButtons(string $viewName)
@@ -91,7 +90,6 @@ class EditContacto extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createEmailsView(string $viewName = 'ListEmailSent')
@@ -118,7 +116,6 @@ class EditContacto extends EditController
     }
 
     /**
-     * 
      * @return bool
      */
     protected function editAction()
@@ -167,8 +164,7 @@ class EditContacto extends EditController
     }
 
     /**
-     * 
-     * @param string  $action
+     * @param string $action
      *
      * @return bool
      */
@@ -192,8 +188,7 @@ class EditContacto extends EditController
     }
 
     /**
-     * 
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -209,6 +204,7 @@ class EditContacto extends EditController
                 $email = $this->getViewModelValue($mainViewName, 'email');
                 $where = [new DataBaseWhere('addressee', $email)];
                 $view->loadData('', $where);
+                $this->setSettings($viewName, 'active', $view->count > 0);
                 break;
 
             case $mainViewName:
@@ -221,7 +217,6 @@ class EditContacto extends EditController
     }
 
     /**
-     * 
      * @param Contacto $contact
      */
     protected function updateRelations($contact)

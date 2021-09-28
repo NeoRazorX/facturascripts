@@ -4,7 +4,8 @@
         "codimpuesto": "IVA19",
         "codserie": "A",
         "codpago": "CONT",
-        "tipoidfiscal": "NIT"
+        "tipoidfiscal": "NIT",
+        "validate_iban": false
     },
     "email": {
         "enc": "ssl",

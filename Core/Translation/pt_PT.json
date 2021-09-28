@@ -1133,6 +1133,7 @@
     "total": "Total",
     "total-amount": "total-amount",
     "total-value-error": "Quantidade total de 0 1 incorreta (2). Valor correto: 3",
+    "total-with-taxes": "Total with taxes",
     "totalirpf-value-error": "Quantidade total de IRPF de 0 1 incorreta (2). Valor correto: 3",
     "totaliva-value-error": "Valor de imposto total de 0 1 incorreto (2). Valor correto: 3",
     "totallinea-value-error": "Erro no valor totallinea da linha IVA do imposto 0 da factura. Valor correto: 1",

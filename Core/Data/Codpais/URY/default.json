@@ -4,7 +4,8 @@
         "codimpuesto": "IVA22",
         "codserie": "A",
         "codpago": "CONT",
-        "tipoidfiscal": "RUT"
+        "tipoidfiscal": "RUT",
+        "validate_iban": false
     },
     "email": {
         "enc": "ssl",
