@@ -26,3 +26,4 @@ package-lock.json
 # Vscode config files
 .vscode
 *.code-workspace
+.history
