@@ -208,7 +208,8 @@ class GroupItem extends VisualItem
     protected function legend()
     {
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
-        $html = '<legend class="text-info mt-3 mb-0">' . $icon . static::$i18n->trans($this->title) . '</legend>';
+        $paddingBottom = (!empty($this->description)) ? 'mb-0' : '';
+        $html = '<legend class="text-info mt-3 ' . $paddingBottom  . '">' . $icon . static::$i18n->trans($this->title) . '</legend>';
         
         if (!empty($this->description)) {
             $html = $html . '<small class="form-text text-muted w-100 mb-3">' . static::$i18n->trans($this->description) . '</small>';
