@@ -70,7 +70,14 @@ class Familia extends Base\ModelClass
      * @var string
      */
     public $madre;
-
+    
+    /**
+     * Number of products
+     *
+     * @var int
+     */
+    public $numproductos;
+    
     /**
      * Returns the name of the column that is the primary key of the model.
      *

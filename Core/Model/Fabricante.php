@@ -42,6 +42,13 @@ class Fabricante extends Base\ModelClass
      * @var string
      */
     public $nombre;
+    
+    /**
+     * Number of products
+     *
+     * @var int
+     */
+    public $numproductos;
 
     /**
      * Returns the name of the column that is the primary key of the model.
