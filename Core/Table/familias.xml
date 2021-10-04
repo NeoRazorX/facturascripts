@@ -32,6 +32,12 @@
         <name>madre</name>
         <type>character varying(8)</type>
     </column>
+    <column>
+        <name>numproductos</name>
+        <type>integer</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
     <constraint>
         <name>familias_pkey</name>
         <type>PRIMARY KEY (codfamilia)</type>

@@ -16,6 +16,12 @@
         <type>character varying(100)</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>numproductos</name>
+        <type>integer</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
     <constraint>
         <name>fabricantes_pkey</name>
         <type>PRIMARY KEY (codfabricante)</type>
