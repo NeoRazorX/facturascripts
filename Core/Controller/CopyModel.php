@@ -172,11 +172,11 @@ class CopyModel extends Controller
         $newDoc = new $className();
         $newDoc->setAuthor($this->user);
         $newDoc->setSubject($subject);
-        $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
         $newDoc->codalmacen = $this->request->request->get('codalmacen');
         $newDoc->setCurrency($this->model->coddivisa);
         $newDoc->codpago = $this->request->request->get('codpago');
         $newDoc->codserie = $this->request->request->get('codserie');
+        $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
         $newDoc->numproveedor = $this->request->request->get('numproveedor');
         $newDoc->observaciones = $this->request->request->get('observaciones');
         if (false === $newDoc->save()) {
@@ -211,11 +211,11 @@ class CopyModel extends Controller
         $newDoc = new $className();
         $newDoc->setAuthor($this->user);
         $newDoc->setSubject($subject);
-        $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
         $newDoc->codalmacen = $this->request->request->get('codalmacen');
         $newDoc->setCurrency($this->model->coddivisa);
         $newDoc->codpago = $this->request->request->get('codpago');
         $newDoc->codserie = $this->request->request->get('codserie');
+        $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
         $newDoc->numero2 = $this->request->request->get('numero2');
         $newDoc->observaciones = $this->request->request->get('observaciones');
         if (false === $newDoc->save()) {
