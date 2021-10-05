@@ -34,7 +34,7 @@
             </widget>
         </column>
         <column name="number-of-products" display="right" order="125">
-            <widget type="number" fieldname="numproductos" />
+            <widget type="number" fieldname="numproductos" decimal="0" />
         </column>        
         <column name="subaccount-purchases" display="none" order="130">
             <widget type="text" fieldname="codsubcuentacom" />

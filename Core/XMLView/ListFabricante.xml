@@ -29,7 +29,7 @@
             <widget type="text" fieldname="nombre" />
         </column>
         <column name="number-of-products" display="right" order="120">
-            <widget type="number" fieldname="numproductos" />
+            <widget type="number" fieldname="numproductos" decimal="0" />
         </column>        
     </columns>
 </view>
