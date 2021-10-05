@@ -48,29 +48,6 @@ class Wizard extends Controller
     protected $appSettings;
 
     /**
-     *
-     * @return array
-     */
-    public function getAvailablePlugins(): array
-    {
-        $pluginManager = new PluginManager();
-        $installedPlugins = $pluginManager->installedPlugins();
-        if (false === defined('FS_HIDDEN_PLUGINS')) {
-            return $installedPlugins;
-        }
-
-        /// exclude hidden plugins
-        $hiddenPlugins = explode(',', FS_HIDDEN_PLUGINS);
-        foreach ($installedPlugins as $key => $plugin) {
-            if (in_array($plugin['name'], $hiddenPlugins, false)) {
-                unset($installedPlugins[$key]);
-            }
-        }
-
-        return $installedPlugins;
-    }
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -86,7 +63,6 @@ class Wizard extends Controller
     }
 
     /**
-     *
      * @return array
      */
     public function getRegimenIva(): array
@@ -128,7 +104,7 @@ class Wizard extends Controller
         parent::privateCore($response, $user, $permissions);
         $this->appSettings = self::toolBox()::appSettings();
 
-        $action = $this->request->request->get('action', '');
+        $action = $this->request->get('action', '');
         switch ($action) {
             case 'step1':
                 $this->saveStep1();
@@ -143,7 +119,7 @@ class Wizard extends Controller
                 break;
 
             default:
-                if (empty($this->empresa->email) && !empty($this->user->email)) {
+                if (empty($this->empresa->email) && $this->user->email) {
                     $this->empresa->email = $this->user->email;
                     $this->empresa->save();
                 }
@@ -183,18 +159,18 @@ class Wizard extends Controller
             $page = new Model\Page();
             $roleAccess = new Model\RoleAccess();
 
-            /// all pages not in admin menu and not yet enabled
+            // all pages not in admin menu and not yet enabled
             $inSQL = "SELECT name FROM pages WHERE menu != 'admin' AND name NOT IN "
                 . '(SELECT pagename FROM roles_access WHERE codrole = ' . $this->dataBase->var2str($codrole) . ')';
             $where = [new DataBaseWhere('name', $inSQL, 'IN')];
             $pages = $page->all($where, [], 0, 0);
 
-            /// add EditUser page
+            // add EditUser page
             if ($page->loadFromCode('EditUser')) {
                 $pages[] = $page;
             }
 
-            /// add pages to the role
+            // add pages to the role
             if (false === $roleAccess->addPagesToRole($codrole, $pages)) {
                 throw new Exception($this->toolBox()->i18n()->trans('cancel-process'));
             }
@@ -219,6 +195,12 @@ class Wizard extends Controller
         $this->appSettings->save();
     }
 
+    protected function finalRedirect()
+    {
+        // redirect to the home page
+        $this->redirect($this->user->homepage);
+    }
+
     /**
      * Initialize required models.
      *
@@ -241,13 +223,13 @@ class Wizard extends Controller
      */
     private function loadDefaultAccountingPlan(string $codpais): void
     {
-        /// Is there a default accounting plan?
+        // Is there a default accounting plan?
         $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
         if (false === file_exists($filePath)) {
             return;
         }
 
-        /// Does an accounting plan already exist?
+        // Does an accounting plan already exist?
         $cuenta = new Model\Cuenta();
         if ($cuenta->count() > 0 || $this->dataBase->tableExists('co_cuentas')) {
             return;
@@ -311,7 +293,7 @@ class Wizard extends Controller
         }
         $this->empresa->save();
 
-        /// assigns warehouse?
+        // assigns warehouse?
         $almacenModel = new Model\Almacen();
         $where = [
             new DataBaseWhere('idempresa', $this->empresa->idempresa),
@@ -322,13 +304,12 @@ class Wizard extends Controller
             return;
         }
 
-        /// no assigned warehouse? Create a new one
+        // no assigned warehouse? Create a new one
         $almacen = new Model\Almacen();
         $this->setWarehouse($almacen, $codpais);
     }
 
     /**
-     *
      * @param string $email
      *
      * @return bool
@@ -367,33 +348,22 @@ class Wizard extends Controller
             'Impuesto', 'Retencion', 'Serie', 'Provincia']);
         $this->saveAddress($codpais);
 
-        /// change password
+        // change password
         $pass = $this->request->request->get('password', '');
         if ('' !== $pass && false === $this->saveNewPassword($pass)) {
             return;
         }
 
-        /// change email
+        // change email
         $email = $this->request->request->get('email', '');
         if ('' !== $email && false === $this->saveEmail($email)) {
             return;
         }
 
-        /// change default log values to enabled
+        // change default log values to enabled
         $this->enableLogs();
 
-        /// load controllers
-        $pluginManager = new PluginManager();
-        $pluginManager->deploy(true, true);
-
-        /// add the default role for employees
-        $this->addDefaultRoleAccess();
-
-        /// clear routes
-        $appRouter = new AppRouter();
-        $appRouter->clear();
-
-        /// change template
+        // change template
         $this->setTemplate('Wizard-2');
     }
 
@@ -415,30 +385,7 @@ class Wizard extends Controller
             $this->loadDefaultAccountingPlan($this->empresa->codpais);
         }
 
-        if (empty($this->getAvailablePlugins())) {
-            $this->saveStep4();
-        } else {
-            /// change template
-            $this->setTemplate('Wizard-3');
-        }
-    }
-
-    private function saveStep3()
-    {
-        $pluginManager = new PluginManager();
-        $plugins = $this->request->request->get('plugins', []);
-        if (is_array($plugins)) {
-            foreach ($plugins as $pluginName) {
-                $pluginManager->enable($pluginName);
-            }
-        }
-
-        $this->saveStep4();
-    }
-
-    protected function saveStep4()
-    {
-        /// load all models
+        // load all models
         $modelNames = [];
         $modelsFolder = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Model';
         foreach ($this->toolBox()->files()->scanFolder($modelsFolder) as $fileName) {
@@ -447,16 +394,31 @@ class Wizard extends Controller
             }
         }
         if (false === $this->dataBase->tableExists('fs_users')) {
-            /// avoid this step in 2017 installations
+            // avoid this step in 2017 installations
             $this->initModels($modelNames);
         }
 
-        /// change user homepage
+        $this->redirect($this->url() . '?action=step3');
+    }
+
+    protected function saveStep3()
+    {
+        // load controllers
+        $pluginManager = new PluginManager();
+        $pluginManager->deploy(true, true);
+
+        // add the default role for employees
+        $this->addDefaultRoleAccess();
+
+        // clear routes
+        $appRouter = new AppRouter();
+        $appRouter->clear();
+
+        // change user homepage
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : static::NEW_DEFAULT_PAGE;
         $this->user->save();
 
-        /// redirect to the home page
-        $this->redirect($this->user->homepage);
+        $this->finalRedirect();
     }
 
     /**
