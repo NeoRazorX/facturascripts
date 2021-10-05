@@ -127,7 +127,7 @@ class InvoiceToAccounting extends AccountingClass
             $this->getSpecialSubAccount('COMPRA');
 
         $tool = new PurchasesDocLineAccount();
-        $totals = $tool->getTotalsForDocument($this->document, $purchaseAccount->codsubcuenta);
+        $totals = $tool->getTotalsForDocument($this->document, $purchaseAccount->codsubcuenta ?? '');
         return $this->addLinesFromTotals(
             $entry,
             $totals,
@@ -153,7 +153,7 @@ class InvoiceToAccounting extends AccountingClass
             $this->getSpecialSubAccount('VENTAS');
 
         $tool = new SalesDocLineAccount();
-        $totals = $tool->getTotalsForDocument($this->document, $salesAccount->codsubcuenta);
+        $totals = $tool->getTotalsForDocument($this->document, $salesAccount->codsubcuenta ?? '');
         return $this->addLinesFromTotals(
             $entry,
             $totals,
@@ -191,7 +191,7 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $tool = new PurchasesDocIrpfAccount();
-        $totals = $tool->getTotalsForDocument($this->document, $irpfAccount->codsubcuenta, $percentage);
+        $totals = $tool->getTotalsForDocument($this->document, $irpfAccount->codsubcuenta ?? '', $percentage);
         return $this->addLinesFromTotals(
             $entry,
             $totals,

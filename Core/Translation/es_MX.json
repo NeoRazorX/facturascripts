@@ -609,7 +609,7 @@
     "irpf-subaccount-not-found": "Subcuenta de IRPF no encontrada",
     "is-admin": "Es administrador",
     "is-creditor": "Es acreedor",
-    "is-person": "Persona natural (no jurídica)",
+    "is-person": "Persona física",
     "iso": "ISO",
     "issued": "Emitido",
     "item-limit": "Elementos por página",

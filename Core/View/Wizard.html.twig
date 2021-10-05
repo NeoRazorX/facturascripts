@@ -1,21 +1,21 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
 {% extends "Master/MicroTemplate.html.twig" %}
 
@@ -37,23 +37,25 @@
             <div class="card-body">
                 <h1 class="h3">
                     <i class="fas fa-magic" aria-hidden="true"></i> {{ i18n.trans('wizard') }}
-                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
+                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary"
+                       title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                 </h1>
                 <p>{{ i18n.trans('wizard-p') }}</p>
                 <hr/>
                 <form method="post" class="form" id="formWizard">
-                    <input type="hidden" name="action" value="step1" />
-                    <div class="form-row align-items-end">
-                        <div class="col-sm-4">
+                    <input type="hidden" name="action" value="step1"/>
+                    <div class="form-row">
+                        <div class="col-sm-3">
                             <div class="form-group">
-                                {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombre, 'text', i18n.trans('company-name'),
-                            '', {'autofocus': '', 'maxlength': '100', 'required': ''}) }}
+                                {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombre, 'text',
+                                    i18n.trans('company-name'), '', {'autofocus': '', 'maxlength': '100', 'required': ''}) }}
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
+                                <label class="mb-1">{{ i18n.trans('type') }}</label>
                                 <select name="personafisica" class="form-control">
                                     {% if fsc.empresa.personafisica %}
                                         <option value="1" selected>{{ i18n.trans('is-person') }}</option>
@@ -65,56 +67,56 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 {{ forms.simpleSelect('tipoidfiscal', 'tipoidfiscal', fsc.empresa.tipoidfiscal,
-                            fsc.getSelectValues('IdentificadorFiscal', true), i18n.trans('fiscal-id')) }}
+                                    fsc.getSelectValues('IdentificadorFiscal', true), i18n.trans('fiscal-id')) }}
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
                                 {{ forms.simpleInput('cifnif', 'cifnif', fsc.empresa.cifnif, 'text', i18n.trans('fiscal-number'),
-                            '', {'maxlength': '30'}) }}
+                                    '', {'maxlength': '30'}) }}
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'),
-                            'fas fa-map-marked', {'maxlength': '100', 'required': ''}) }}
+                                    'fas fa-map-marked', {'maxlength': '100', 'required': ''}) }}
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
                                 {{ forms.simpleInput('apartado', 'apartado', fsc.empresa.apartado, 'text', i18n.trans('post-office-box'),
-                            NULL, {'maxlength': '10', 'placeholder': i18n.trans('optional')}) }}
+                                    NULL, {'maxlength': '10', 'placeholder': i18n.trans('optional')}) }}
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
                                 {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('zip-code'),
-                            NULL, {'maxlength': '10'}) }}
+                                    NULL, {'maxlength': '10'}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', i18n.trans('city'), '',
-                            {'maxlength': '100', 'required': ''}) }}
+                                    {'maxlength': '100', 'required': ''}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 {{ forms.simpleInput('provincia', 'provincia', provincia, 'text', i18n.trans('province'),
-                            '', {'maxlength': '100', 'required': ''}) }}
+                                    '', {'maxlength': '100', 'required': ''}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 {% if constant('FS_INITIAL_CODPAIS') is defined %}
                                     {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'),
-                            i18n.trans('country'), 'fas fa-globe-americas', {'disabled': ''}) }}
+                                        i18n.trans('country'), 'fas fa-globe-americas', {'disabled': ''}) }}
                                 {% else %}
                                     {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'),
-                            i18n.trans('country'), 'fas fa-globe-americas') }}
+                                        i18n.trans('country'), 'fas fa-globe-americas') }}
                                 {% endif %}
                             </div>
                         </div>
@@ -122,20 +124,20 @@
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ forms.simpleInput('email', 'email', fsc.empresa.email, 'email', i18n.trans('email'),
-                                'fas fa-envelope', {'required': '', 'class': 'form-control'}) }}
+                                        'fas fa-envelope', {'required': '', 'class': 'form-control'}) }}
                                 </div>
                             </div>
                         {% endif %}
                         <div class="col-sm-4">
                             <div class="form-group">
                                 {{ forms.simpleInput('telefono1', 'telefono1', fsc.empresa.telefono1, 'text', i18n.trans('phone'),
-                            'fas fa-phone', {'maxlength': '30'}) }}
+                                    'fas fa-phone', {'maxlength': '30'}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 {{ forms.simpleInput('telefono2', 'telefono2', fsc.empresa.telefono2, 'text', i18n.trans('phone2'),
-                            'fas fa-mobile-alt', {'maxlength': '30'}) }}
+                                    'fas fa-mobile-alt', {'maxlength': '30'}) }}
                             </div>
                         </div>
                     </div>
@@ -143,7 +145,8 @@
                         <div class="form-row">
                             <div class="col mt-3">
                                 <h3 class="h4 text-info">
-                                    <i class="fas fa-key" aria-hidden="true"></i> {{ i18n.trans('you-should-change-passwd') }}
+                                    <i class="fas fa-key"
+                                       aria-hidden="true"></i> {{ i18n.trans('you-should-change-passwd') }}
                                 </h3>
                             </div>
                         </div>
@@ -154,13 +157,13 @@
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key',
-                                {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
+                                        {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'),
-                                'fas fa-key', {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
+                                        'fas fa-key', {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
                                 </div>
                             </div>
                         </div>
@@ -179,7 +182,7 @@
 
 {% block css %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}" />
+    <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}"/>
 {% endblock %}
 
 {% block javascripts %}

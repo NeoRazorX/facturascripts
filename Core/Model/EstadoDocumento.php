@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -39,7 +40,6 @@ class EstadoDocumento extends Base\ModelClass
     public $actualizastock;
 
     /**
-     *
      * @var bool
      */
     public $bloquear;
@@ -107,7 +107,6 @@ class EstadoDocumento extends Base\ModelClass
     }
 
     /**
-     * 
      * @return bool
      */
     public function delete()
@@ -121,7 +120,6 @@ class EstadoDocumento extends Base\ModelClass
     }
 
     /**
-     * 
      * @return string
      */
     public function icon(): string
@@ -132,7 +130,7 @@ class EstadoDocumento extends Base\ModelClass
             return 'fas fa-check';
         }
 
-        return $this->editable ? 'fas fa-tag' : 'fas fa-lock';
+        return $this->editable ? 'fas fa-pen' : 'fas fa-lock';
     }
 
     /**
@@ -146,7 +144,6 @@ class EstadoDocumento extends Base\ModelClass
     }
 
     /**
-     * 
      * @return bool
      */
     public function save()
@@ -201,7 +198,6 @@ class EstadoDocumento extends Base\ModelClass
     }
 
     /**
-     * 
      * @param string $type
      * @param string $list
      *

@@ -36,7 +36,7 @@
 #}
 {% macro simpleInput(id, name, value, type = "text", label = NULL, icon = NULL, attributes = NULL) %}
         {% if label %}
-            <label for="{{ name }}">{{ label }}</label>
+            <label class="mb-1" for="{{ name }}">{{ label }}</label>
         {% endif %}
 
         {% if icon %}
@@ -81,7 +81,7 @@
 #}
 {% macro simpleSelect(id, name, value, allValues = {}, label = NULL, icon = NULL, attributes = NULL) %}
     {% if label %}
-        <label for="{{ name }}">{{ label }}</label>
+        <label class="mb-1" for="{{ name }}">{{ label }}</label>
     {% endif %}
 
     {% if icon %}
