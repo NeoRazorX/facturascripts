@@ -41,6 +41,13 @@ class GroupItem extends VisualItem
      * @var ColumnItem[]
      */
     public $columns = [];
+    
+    /**
+     * Description
+     *
+     * @var string
+     */
+    protected $description;
 
     /**
      * Icon used as the value or accompaining the group title
@@ -81,6 +88,7 @@ class GroupItem extends VisualItem
     {
         parent::__construct($data);
         $this->class = isset($data['class']) ? $data['class'] : '';
+        $this->description = $data['description'] ?? '';
         $this->icon = isset($data['icon']) ? $data['icon'] : '';
         $this->numcolumns = isset($data['numcolumns']) ? (int) $data['numcolumns'] : 0;
         $this->order = isset($data['order']) ? (int) $data['order'] : 0;
@@ -200,7 +208,14 @@ class GroupItem extends VisualItem
     protected function legend()
     {
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
-        return '<legend class="text-info mt-3">' . $icon . static::$i18n->trans($this->title) . '</legend>';
+        $paddingBottom = (!empty($this->description)) ? 'mb-0' : '';
+        $html = '<legend class="text-info mt-3 ' . $paddingBottom  . '">' . $icon . static::$i18n->trans($this->title) . '</legend>';
+        
+        if (!empty($this->description)) {
+            $html = $html . '<small class="form-text text-muted w-100 mb-3">' . static::$i18n->trans($this->description) . '</small>';
+        }
+
+        return $html;
     }
 
     /**
