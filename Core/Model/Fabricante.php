@@ -51,6 +51,15 @@ class Fabricante extends Base\ModelClass
     public $numproductos;
 
     /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->numproductos = 0;
+    }
+
+    /**
      * Returns the name of the column that is the primary key of the model.
      *
      * @return string
