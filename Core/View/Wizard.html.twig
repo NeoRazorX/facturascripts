@@ -19,19 +19,28 @@
 #}
 {% extends "Master/MicroTemplate.html.twig" %}
 
-{% block body %}
-    <!-- Macros Template Imports -->
-    {% import 'Macro/Forms.html.twig' as forms %}
-
-    {% set ciudad = fsc.empresa ? fsc.empresa.ciudad : '' %}
-    {% set codpais = fsc.empresa ? fsc.empresa.codpais : appSettings.get('default', 'codpais', 'ESP') %}
-    {% set provincia = fsc.empresa ? fsc.empresa.provincia : '' %}
-
+{% block messages %}
     <div class="bg-primary pt-5 pb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    {{ parent() }}
+                </div>
+            </div>
+        </div>
         <br/>
         <br/>
         <br/>
     </div>
+{% endblock %}
+
+{% block body %}
+    <!-- Macros Template Imports -->
+    {% import 'Macro/Forms.html.twig' as forms %}
+    {% set ciudad = fsc.empresa ? fsc.empresa.ciudad : '' %}
+    {% set codpais = fsc.empresa ? fsc.empresa.codpais : appSettings.get('default', 'codpais', 'ESP') %}
+    {% set provincia = fsc.empresa ? fsc.empresa.provincia : '' %}
+
     <div class="container" style="margin-top: -100px;">
         <div class="card shadow mb-5">
             <div class="card-body">

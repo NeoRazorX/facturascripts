@@ -19,17 +19,27 @@
 #}
 {% extends "Master/MicroTemplate.html.twig" %}
 
+{% block messages %}
+    <div class="bg-primary pt-5 pb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    {{ parent() }}
+                </div>
+            </div>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+    </div>
+{% endblock %}
+
 {% block body %}
     <!-- Macros Template Imports -->
     {% import 'Macro/Forms.html.twig' as forms %}
     {% set codimpuesto = appSettings.get('default', 'codimpuesto') %}
     {% set codretencion = appSettings.get('default', 'codretencion') %}
 
-    <div class="bg-primary pt-5 pb-5">
-        <br/>
-        <br/>
-        <br/>
-    </div>
     <div class="container" style="margin-top: -100px;">
         <div class="card shadow mb-5">
             <div class="card-body">

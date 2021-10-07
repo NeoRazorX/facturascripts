@@ -198,7 +198,7 @@ class Wizard extends Controller
     protected function finalRedirect()
     {
         // redirect to the home page
-        $this->redirect($this->user->homepage);
+        $this->redirect($this->user->homepage, 2);
     }
 
     /**
@@ -385,6 +385,13 @@ class Wizard extends Controller
             $this->loadDefaultAccountingPlan($this->empresa->codpais);
         }
 
+        // change template and redirect
+        $this->setTemplate('Wizard-3');
+        $this->redirect($this->url() . '?action=step3', 2);
+    }
+
+    protected function saveStep3()
+    {
         // load all models
         $modelNames = [];
         $modelsFolder = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Model';
@@ -398,11 +405,6 @@ class Wizard extends Controller
             $this->initModels($modelNames);
         }
 
-        $this->redirect($this->url() . '?action=step3');
-    }
-
-    protected function saveStep3()
-    {
         // load controllers
         $pluginManager = new PluginManager();
         $pluginManager->deploy(true, true);
@@ -418,6 +420,8 @@ class Wizard extends Controller
         $this->user->homepage = $this->dataBase->tableExists('fs_users') ? 'AdminPlugins' : static::NEW_DEFAULT_PAGE;
         $this->user->save();
 
+        // change template and redirect
+        $this->setTemplate('Wizard-3');
         $this->finalRedirect();
     }
 
