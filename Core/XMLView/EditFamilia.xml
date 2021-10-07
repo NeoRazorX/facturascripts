@@ -33,8 +33,8 @@
                     <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion" />
                 </widget>
             </column>
-            <column name="number-of-products" display="right" numcolumns="2" order="125">
-                <widget type="number" fieldname="numproductos" required="true" />
+            <column name="products" display="right" numcolumns="2" order="125">
+                <widget type="number" fieldname="numproductos" readonly="true" />
             </column>        
         </group>
         <group name="accounts" title="accounting" icon="fas fa-balance-scale" numcolumns="12">
