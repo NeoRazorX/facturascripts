@@ -372,7 +372,7 @@ class Wizard extends Controller
         $this->empresa->regimeniva = $this->request->request->get('regimeniva');
         $this->empresa->save();
 
-        foreach (['codimpuesto', 'codretencion', 'costpricepolicy'] as $key) {
+        foreach (['codimpuesto', 'costpricepolicy'] as $key) {
             $value = $this->request->request->get($key);
             $finalValue = empty($value) ? null : $value;
             $this->appSettings->set('default', $key, $finalValue);
