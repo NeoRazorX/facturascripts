@@ -206,7 +206,7 @@ class ListView extends BaseView
         $this->offset = $offset < 0 ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
         $this->where = array_merge($where, $this->where);
-        $this->loadCount();
+        $this->count = is_null($this->model) ? 0 : $this->model->count($this->where);
 
         // avoid overflow
         if ($this->offset > $this->count) {
@@ -297,30 +297,6 @@ class ListView extends BaseView
             $cache->set('sum-' . $tableName . '-' . $fieldName, $sum);
         }
         return $sum;
-    }
-
-    private function loadCount()
-    {
-        if (is_null($this->model)) {
-            $this->count = 0;
-            return;
-        }
-
-        if ($this->where) {
-            $this->count = $this->model->count($this->where);
-            return;
-        }
-
-        // read from the cache
-        $cache = new Cache();
-        $key = 'count-' . get_class($this->model);
-        $count = $cache->get($key);
-        if (is_null($count)) {
-            // empty cache value? Then get the value from the database and store on the cache
-            $count = $this->model->count($this->where);
-            $cache->set($key, $count);
-        }
-        $this->count = $count;
     }
 
     private function loadTotalAmounts()
