@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 
@@ -132,28 +131,8 @@ class TotalModel
             return 0.0;
         }
 
-        // read from cache when there is no filters
-        if (empty($where)) {
-            $cache = new Cache();
-            $total = $cache->get('sum-' . $tableName . '-' . $fieldName);
-            if ($total !== null) {
-                return $total;
-            }
-
-            // not found on the cache? then read the database and store on cache
-            $sql = 'SELECT SUM(' . static::dataBase()->escapeColumn($fieldName) . ') as sum'
-                . ' FROM ' . static::dataBase()->escapeColumn($tableName);
-            foreach (static::dataBase()->select($sql) as $row) {
-                $cache->set('sum-' . $tableName . '-' . $fieldName, (float)$row['sum']);
-                return (float)$row['sum'];
-            }
-            return 0.0;
-        }
-
-        // filters? the read from the database
         $sql = 'SELECT SUM(' . static::dataBase()->escapeColumn($fieldName) . ') as sum'
-            . ' FROM ' . static::dataBase()->escapeColumn($tableName)
-            . DataBaseWhere::getSQLWhere($where);
+            . ' FROM ' . static::dataBase()->escapeColumn($tableName) . DataBaseWhere::getSQLWhere($where);
         foreach (static::dataBase()->select($sql) as $row) {
             return (float)$row['sum'];
         }

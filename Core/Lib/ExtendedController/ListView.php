@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
@@ -140,12 +141,12 @@ class ListView extends BaseView
      */
     public function export(&$exportManager, $codes): bool
     {
-        /// no data
+        // no data
         if ($this->count < 1) {
             return true;
         }
 
-        /// selected items?
+        // selected items?
         if (is_array($codes) && count($codes) > 0) {
             foreach ($this->cursor as $model) {
                 if (false === in_array($model->primaryColumnValue(), $codes)) {
@@ -162,12 +163,12 @@ class ListView extends BaseView
             return false;
         }
 
-        /// print list
+        // print list
         $exportManager->addListModelPage(
             $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
         );
 
-        /// print totals
+        // print totals
         if ($this->totalAmounts) {
             $total = [];
             foreach ($this->totalAmounts as $key => $value) {
@@ -205,14 +206,14 @@ class ListView extends BaseView
         $this->offset = $offset < 0 ? $this->offset : $offset;
         $this->order = empty($order) ? $this->order : $order;
         $this->where = array_merge($where, $this->where);
-        $this->count = is_null($this->model) ? 0 : $this->model->count($this->where);
+        $this->loadCount();
 
-        /// avoid overflow
+        // avoid overflow
         if ($this->offset > $this->count) {
             $this->offset = 0;
         }
 
-        /// needed when megasearch force data reload
+        // needed when megasearch force data reload
         $this->cursor = [];
         if ($this->count > 0) {
             $this->cursor = $this->model->all($this->where, $this->order, $this->offset, $limit);
@@ -274,6 +275,49 @@ class ListView extends BaseView
         AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/ListView.js');
     }
 
+    /**
+     * @param string $tableName
+     * @param string $fieldName
+     * @param array $where
+     *
+     * @return float
+     */
+    private function getTotalSum(string $tableName, string $fieldName, array $where): float
+    {
+        if ($where) {
+            return TotalModel::sum($tableName, $fieldName, $where);
+        }
+
+        // if there are no filters, then read from the cache
+        $cache = new Cache();
+        $sum = $cache->get('sum-' . $tableName . '-' . $fieldName);
+        if (is_null($sum)) {
+            // empty cache value? Then get the value from the database and store on the cache
+            $sum = TotalModel::sum($tableName, $fieldName, $where);
+            $cache->set('sum-' . $tableName . '-' . $fieldName, $sum);
+        }
+        return $sum;
+    }
+
+    private function loadCount()
+    {
+        if (is_null($this->model)) {
+            $this->count = 0;
+            return;
+        }
+
+        // read from the cache
+        $cache = new Cache();
+        $key = 'count-' . get_class($this->model);
+        $count = $cache->get($key);
+        if (is_null($count)) {
+            // empty cache value? Then get the value from the database and store on the cache
+            $count = $this->model->count($this->where);
+            $cache->set($key, $count);
+        }
+        $this->count = $count;
+    }
+
     private function loadTotalAmounts()
     {
         $tableName = count($this->cursor) > 1 && method_exists($this->model, 'tableName') ? $this->model->tableName() : '';
@@ -294,7 +338,7 @@ class ListView extends BaseView
             $this->totalAmounts[$col->widget->fieldname] = [
                 'title' => $col->title,
                 'page' => $pageTotalAmount,
-                'total' => TotalModel::sum($tableName, $col->widget->fieldname, $this->where)
+                'total' => $this->getTotalSum($tableName, $col->widget->fieldname, $this->where)
             ];
         }
     }
@@ -307,14 +351,14 @@ class ListView extends BaseView
         $this->offset = (int)$request->request->get('offset', 0);
         $this->setSelectedOrderBy($request->request->get('order', ''));
 
-        /// query
+        // query
         $this->query = $request->request->get('query', '');
         if ('' !== $this->query) {
             $fields = implode('|', $this->searchFields);
             $this->where[] = new DataBaseWhere($fields, ToolBox::utils()::noHtml($this->query), 'XLIKE');
         }
 
-        /// select saved filter
+        // select saved filter
         $this->pageFilterKey = $request->request->get('loadfilter', 0);
         if (!empty($this->pageFilterKey)) {
             // Load saved filter into page parameters
@@ -326,7 +370,7 @@ class ListView extends BaseView
             }
         }
 
-        /// filters
+        // filters
         foreach ($this->filters as $filter) {
             $filter->setValueFromRequest($request);
             if ($filter->getDataBaseWhere($this->where)) {
