@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -58,7 +59,7 @@ abstract class PurchaseDocument extends TransformerDocument
     {
         parent::clear();
 
-        /// select default currency
+        // select default currency
         $coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
         $this->setCurrency($coddivisa, true);
     }
@@ -94,7 +95,7 @@ abstract class PurchaseDocument extends TransformerDocument
 
             $this->setLastSupplierPrice($newLine);
 
-            /// allow extensions
+            // allow extensions
             $this->pipe('getNewProductLine', $newLine, $variant, $product);
         }
 
@@ -102,7 +103,6 @@ abstract class PurchaseDocument extends TransformerDocument
     }
 
     /**
-     * 
      * @return Proveedor
      */
     public function getSubject()
@@ -113,15 +113,14 @@ abstract class PurchaseDocument extends TransformerDocument
     }
 
     /**
-     * 
      * @return string
      */
     public function install()
     {
-        /// we need to call parent first
+        // we need to call parent first
         $result = parent::install();
 
-        /// needed dependencies
+        // needed dependencies
         new Proveedor();
 
         return $result;
@@ -129,7 +128,7 @@ abstract class PurchaseDocument extends TransformerDocument
 
     /**
      * Sets the author for this document.
-     * 
+     *
      * @param User $author
      *
      * @return bool
@@ -144,14 +143,14 @@ abstract class PurchaseDocument extends TransformerDocument
         $this->idempresa = $author->idempresa ?? $this->idempresa;
         $this->nick = $author->nick;
 
-        /// allow extensions
+        // allow extensions
         $this->pipe('setAuthor', $author);
         return true;
     }
 
     /**
      * Assign the supplier to the document.
-     * 
+     *
      * @param Proveedor $subject
      *
      * @return bool
@@ -162,23 +161,24 @@ abstract class PurchaseDocument extends TransformerDocument
             return false;
         }
 
-        /// supplier model
+        // supplier model
         $this->codproveedor = $subject->codproveedor;
         $this->nombre = $subject->razonsocial;
         $this->cifnif = $subject->cifnif ?? '';
 
-        /// commercial data
-        $this->codpago = $subject->codpago ?? $this->codpago;
-        $this->codserie = $subject->codserie ?? $this->codserie;
-        $this->irpf = $subject->irpf() ?? $this->irpf;
+        // commercial data
+        if (empty($this->primaryColumnValue())) {
+            $this->codpago = $subject->codpago ?? $this->codpago;
+            $this->codserie = $subject->codserie ?? $this->codserie;
+            $this->irpf = $subject->irpf() ?? $this->irpf;
+        }
 
-        /// allow extensions
+        // allow extensions
         $this->pipe('setSubject', $subject);
         return true;
     }
 
     /**
-     * 
      * @return string
      */
     public function subjectColumn()
@@ -208,12 +208,12 @@ abstract class PurchaseDocument extends TransformerDocument
     public function updateSubject()
     {
         $proveedor = new Proveedor();
-        return $this->codproveedor && $proveedor->loadFromCode($this->codproveedor) ? $this->setSubject($proveedor) : false;
+        return $this->codproveedor && $proveedor->loadFromCode($this->codproveedor) && $this->setSubject($proveedor);
     }
 
     /**
      * Sets the last price and discounts from this supplier.
-     * 
+     *
      * @param BusinessDocumentLine $newLine
      */
     protected function setLastSupplierPrice(&$newLine)
@@ -231,12 +231,11 @@ abstract class PurchaseDocument extends TransformerDocument
     }
 
     /**
-     * 
      * @param array $fields
      */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codproveedor'];
-        parent::setPreviousData(\array_merge($more, $fields));
+        parent::setPreviousData(array_merge($more, $fields));
     }
 }
