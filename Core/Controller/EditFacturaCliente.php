@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -61,26 +62,24 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createAccountsView(string $viewName = 'ListAsiento')
     {
         $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
 
-        /// buttons
+        // buttons
         $this->addButton($viewName, [
             'action' => 'generate-accounting',
             'icon' => 'fas fa-magic',
             'label' => 'generate-accounting-entry'
         ]);
 
-        /// settings
+        // settings
         $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createReceiptsView(string $viewName = 'ListReciboCliente')
@@ -88,7 +87,7 @@ class EditFacturaCliente extends SalesDocumentController
         $this->addListView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
         $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
 
-        /// buttons
+        // buttons
         $this->addButton($viewName, [
             'action' => 'generate-receipts',
             'confirm' => 'true',
@@ -103,11 +102,11 @@ class EditFacturaCliente extends SalesDocumentController
             'label' => 'paid'
         ]);
 
-        /// disable columns
+        // disable columns
         $this->views[$viewName]->disableColumn('customer');
         $this->views[$viewName]->disableColumn('invoice');
 
-        /// settings
+        // settings
         $this->setSettings($viewName, 'modalInsert', 'generate-receipts');
     }
 
@@ -118,7 +117,7 @@ class EditFacturaCliente extends SalesDocumentController
     {
         parent::createViews();
 
-        /// prevent users to change readonly property of numero field
+        // prevent users to change readonly property of numero field
         $editViewName = 'Edit' . $this->getModelClassName();
         $this->views[$editViewName]->disableColumn('number', false, 'true');
 
@@ -128,7 +127,6 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
      * @param string $action
      *
      * @return bool
@@ -156,10 +154,9 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function generateAccountingAction()
+    protected function generateAccountingAction(): bool
     {
         $invoice = new FacturaCliente();
         if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
@@ -184,10 +181,9 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function generateReceiptsAction()
+    protected function generateReceiptsAction(): bool
     {
         $invoice = new FacturaCliente();
         if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
@@ -196,7 +192,7 @@ class EditFacturaCliente extends SalesDocumentController
         }
 
         $generator = new ReceiptGenerator();
-        $number = (int) $this->request->request->get('number', '0');
+        $number = (int)$this->request->request->get('number', '0');
         if ($generator->generate($invoice, $number)) {
             $generator->update($invoice);
             $invoice->save();
@@ -212,7 +208,7 @@ class EditFacturaCliente extends SalesDocumentController
     /**
      * Load data view procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -234,10 +230,9 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function newRefundAction()
+    protected function newRefundAction(): bool
     {
         $invoice = new FacturaCliente();
         if (false === $invoice->loadFromCode($this->request->request->get('idfactura'))) {
@@ -248,7 +243,7 @@ class EditFacturaCliente extends SalesDocumentController
         $lines = [];
         $quantities = [];
         foreach ($invoice->getLines() as $line) {
-            $quantity = (float) $this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
+            $quantity = (float)$this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
             if (empty($quantity)) {
                 continue;
             }
@@ -283,10 +278,9 @@ class EditFacturaCliente extends SalesDocumentController
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function paidAction()
+    protected function paidAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
@@ -295,7 +289,7 @@ class EditFacturaCliente extends SalesDocumentController
 
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
-        if (false === \is_array($codes) || empty($model)) {
+        if (false === is_array($codes) || empty($model)) {
             $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }

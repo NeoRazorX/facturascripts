@@ -306,6 +306,11 @@ class ListView extends BaseView
             return;
         }
 
+        if ($this->where) {
+            $this->count = $this->model->count($this->where);
+            return;
+        }
+
         // read from the cache
         $cache = new Cache();
         $key = 'count-' . get_class($this->model);

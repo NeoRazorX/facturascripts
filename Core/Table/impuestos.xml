@@ -42,4 +42,8 @@
         <name>impuestos_pkey</name>
         <type>PRIMARY KEY (codimpuesto)</type>
     </constraint>
+    <constraint>
+        <name>uniq_impuestos_iva</name>
+        <type>UNIQUE (iva)</type>
+    </constraint>
 </table>
