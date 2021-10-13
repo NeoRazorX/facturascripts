@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -94,7 +95,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['pvptotal'], 'amount');
         $this->addOrderBy($viewName, ['idlinea'], 'code', 2);
 
-        /// filters
+        // filters
         $this->addFilterAutocomplete($viewName, 'idproducto', 'product', 'idproducto', 'productos', 'idproducto', 'referencia');
 
         $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
@@ -108,7 +109,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterCheckbox($viewName, 'irpf', 'retention', 'irpf', '!=', 0);
         $this->addFilterCheckbox($viewName, 'suplido', 'supplied', 'suplido');
 
-        /// settings
+        // settings
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'checkBoxes', false);
@@ -131,7 +132,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['codproveedor'], 'supplier-code');
         $this->addOrderBy($viewName, ['total'], 'total');
 
-        /// filters
+        // filters
         $this->addCommonViewFilters($viewName, $modelName);
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
@@ -153,7 +154,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['numero2'], 'number2');
         $this->addOrderBy($viewName, ['total'], 'total');
 
-        /// filters
+        // filters
         $this->addCommonViewFilters($viewName, $modelName);
         $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterAutocomplete($viewName, 'idcontactofact', 'billing-address', 'idcontactofact', 'contactos', 'idcontacto', 'direccion');
