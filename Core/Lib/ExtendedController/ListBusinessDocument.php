@@ -20,6 +20,12 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Almacenes;
+use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 
 /**
@@ -51,27 +57,27 @@ abstract class ListBusinessDocument extends ListController
             $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
         }
 
-        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
+        $companies = Empresas::codeModel();
         if (count($companies) > 2) {
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
         }
 
-        $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        $warehouses = Almacenes::codeModel();
         if (count($warehouses) > 2) {
             $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
         }
 
-        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $series = Series::codeModel();
         if (count($series) > 2) {
             $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', $series);
         }
 
-        $paymethods = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        $paymethods = FormasPago::codeModel();
         if (count($paymethods) > 2) {
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymethods);
         }
 
-        $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
+        $currencies = Divisas::codeModel();
         if (count($currencies) > 2) {
             $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
         }
@@ -97,10 +103,7 @@ abstract class ListBusinessDocument extends ListController
 
         // filters
         $this->addFilterAutocomplete($viewName, 'idproducto', 'product', 'idproducto', 'productos', 'idproducto', 'referencia');
-
-        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
-        $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
-
+        $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', Impuestos::codeModel());
         $this->addFilterNumber($viewName, 'cantidad', 'quantity', 'cantidad');
         $this->addFilterNumber($viewName, 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber($viewName, 'pvpunitario', 'pvp', 'pvpunitario');

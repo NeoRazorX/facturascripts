@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,34 +17,40 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Model\Base;
+namespace FacturaScripts\Core\DataSrc;
 
-use FacturaScripts\Core\DataSrc\Impuestos;
-use FacturaScripts\Dinamic\Model\Impuesto;
+use FacturaScripts\Dinamic\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\FormaPago;
 
-trait TaxRelationTrait
+class FormasPago
 {
+    private static $list;
 
     /**
-     * Tax identifier of the tax assigned.
-     *
-     * @var string
+     * @return FormaPago[]
      */
-    public $codimpuesto;
-
-    /**
-     * Returns the current tax or the default one
-     *
-     * @return Impuesto
-     */
-    public function getTax(): Impuesto
+    public static function all(): array
     {
-        foreach (Impuestos::all() as $impuesto) {
-            if ($impuesto->codimpuesto === $this->codimpuesto) {
-                return $impuesto;
-            }
+        if (!isset(self::$list)) {
+            $model = new FormaPago();
+            self::$list = $model->all();
         }
 
-        return new Impuesto();
+        return self::$list;
+    }
+
+    /**
+     * @param bool $addEmpty
+     *
+     * @return array
+     */
+    public static function codeModel(bool $addEmpty = true): array
+    {
+        $codes = [];
+        foreach (self::all() as $formaPago) {
+            $codes[$formaPago->codpago] = $formaPago->descripcion;
+        }
+
+        return CodeModel::array2codeModel($codes, $addEmpty);
     }
 }

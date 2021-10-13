@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente;
 use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
@@ -31,7 +33,6 @@ class ReportProducto extends ListController
 {
 
     /**
-     * 
      * @return array
      */
     public function getPageData(): array
@@ -45,7 +46,7 @@ class ReportProducto extends ListController
 
     protected function createViews()
     {
-        /// needed dependencies
+        // needed dependencies
         new LineaFacturaCliente();
         new LineaFacturaProveedor();
 
@@ -56,7 +57,6 @@ class ReportProducto extends ListController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsCustomerDeliveryNotes(string $viewName = 'FacturaClienteProducto-alb')
@@ -76,7 +76,6 @@ class ReportProducto extends ListController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsCustomerInvoices(string $viewName = 'FacturaClienteProducto')
@@ -96,7 +95,6 @@ class ReportProducto extends ListController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsSupplierDeliveryNotes(string $viewName = 'FacturaProveedorProducto-alb')
@@ -115,7 +113,6 @@ class ReportProducto extends ListController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsSupplierInvoices(string $viewName = 'FacturaProveedorProducto')
@@ -130,13 +127,12 @@ class ReportProducto extends ListController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     private function addCommonFilters(string $viewName)
     {
-        $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        if (\count($warehouses) > 2) {
+        $warehouses = Almacenes::codeModel();
+        if (count($warehouses) > 2) {
             $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
         } else {
             $this->views[$viewName]->disableColumn('warehouse');
@@ -150,7 +146,6 @@ class ReportProducto extends ListController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     private function disableButtons(string $viewName)

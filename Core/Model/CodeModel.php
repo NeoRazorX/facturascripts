@@ -117,12 +117,17 @@ class CodeModel
      * Convert an associative array (code and value) into a CodeModel array.
      *
      * @param array $data
+     * @param bool $addEmpty
      *
      * @return static[]
      */
-    public static function array2codeModel(array $data): array
+    public static function array2codeModel(array $data, bool $addEmpty = true): array
     {
         $result = [];
+        if ($addEmpty) {
+            $result[] = new static(['code' => null, 'description' => '------']);
+        }
+
         foreach ($data as $key => $value) {
             $row = ['code' => $key, 'description' => $value];
             $result[] = new static($row);

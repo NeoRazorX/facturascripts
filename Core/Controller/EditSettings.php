@@ -16,9 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\EditView;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
@@ -67,7 +70,6 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
      * @return bool
      */
     protected function checkPaymentMethod()
@@ -79,26 +81,25 @@ class EditSettings extends PanelController
         $values = $this->codeModel->all('formaspago', 'codpago', 'descripcion', false, $where);
         foreach ($values as $value) {
             if ($value->code == $appSettings->get('default', 'codpago')) {
-                /// perfect
+                // perfect
                 return true;
             }
         }
 
-        /// assign a new payment method
+        // assign a new payment method
         foreach ($values as $value) {
             $appSettings->set('default', 'codpago', $value->code);
             $appSettings->save();
             return true;
         }
 
-        /// assign no payment method
+        // assign no payment method
         $appSettings->set('default', 'codpago', null);
         $appSettings->save();
         return false;
     }
 
     /**
-     * 
      * @return bool
      */
     protected function checkWarehouse()
@@ -110,33 +111,32 @@ class EditSettings extends PanelController
         $values = $this->codeModel->all('almacenes', 'codalmacen', 'nombre', false, $where);
         foreach ($values as $value) {
             if ($value->code == $appSettings->get('default', 'codalmacen')) {
-                /// perfect
+                // perfect
                 return true;
             }
         }
 
-        /// assign a new warehouse
+        // assign a new warehouse
         foreach ($values as $value) {
             $appSettings->set('default', 'codalmacen', $value->code);
             $appSettings->save();
             return true;
         }
 
-        /// assign no warehouse
+        // assign no warehouse
         $appSettings->set('default', 'codalmacen', null);
         $appSettings->save();
         return false;
     }
 
     /**
-     * 
      * @return bool
      */
     protected function checkTax()
     {
         $appSettings = $this->toolBox()->appSettings();
 
-        /// find current default tax
+        // find current default tax
         $taxModel = new Impuesto();
         $codimpuesto = $appSettings->get('default', 'codimpuesto');
         if ($taxModel->loadFromCode($codimpuesto)) {
@@ -153,14 +153,13 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createDocTypeFilter(string $viewName)
     {
         $types = $this->codeModel->all('estados_documentos', 'tipodoc', 'tipodoc');
 
-        /// custom translation
+        // custom translation
         foreach ($types as $key => $value) {
             if (!empty($value->code)) {
                 $types[$key]->description = $this->toolBox()->i18n()->trans($value->code);
@@ -183,7 +182,7 @@ class EditSettings extends PanelController
             $title = $this->getKeyFromViewName($name);
             $this->addEditView($name, $modelName, $title, $icon);
 
-            /// change icon
+            // change icon
             $groups = $this->views[$name]->getColumns();
             foreach ($groups as $group) {
                 if (!empty($group->icon)) {
@@ -192,7 +191,7 @@ class EditSettings extends PanelController
                 }
             }
 
-            /// disable buttons
+            // disable buttons
             $this->setSettings($name, 'btnDelete', false);
             $this->setSettings($name, 'btnNew', false);
         }
@@ -205,7 +204,6 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsApiKeys(string $viewName = 'ListApiKey')
@@ -218,7 +216,6 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsIdFiscal(string $viewName = 'EditIdentificadorFiscal')
@@ -228,7 +225,6 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewFormats(string $viewName = 'ListFormatoDocumento')
@@ -238,18 +234,13 @@ class EditSettings extends PanelController
         $this->views[$viewName]->addOrderBy(['titulo'], 'title');
         $this->views[$viewName]->addSearchFields(['nombre', 'titulo', 'texto']);
 
-        /// Filters
+        // Filters
         $this->createDocTypeFilter($viewName);
-
-        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-        $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', $companies);
-
-        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
-        $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', $series);
+        $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
+        $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewSequences(string $viewName = 'ListSecuenciaDocumento')
@@ -260,21 +251,18 @@ class EditSettings extends PanelController
         $this->views[$viewName]->addOrderBy(['numero'], 'number');
         $this->views[$viewName]->addSearchFields(['patron', 'tipodoc']);
 
-        /// Filters
+        // Filters
         $this->createDocTypeFilter($viewName);
 
-        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-        $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', $companies);
+        $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
 
         $exercises = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
         $this->views[$viewName]->addFilterSelect('codejercicio', 'exercise', 'codejercicio', $exercises);
 
-        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
-        $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', $series);
+        $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewStates(string $viewName = 'ListEstadoDocumento')
@@ -284,7 +272,7 @@ class EditSettings extends PanelController
         $this->views[$viewName]->addOrderBy(['nombre'], 'name');
         $this->views[$viewName]->addSearchFields(['nombre']);
 
-        /// Filters
+        // Filters
         $this->createDocTypeFilter($viewName);
 
         $this->views[$viewName]->addFilterSelect('actualizastock', 'update-stock', 'actualizastock', [
@@ -300,7 +288,6 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
      * @return bool
      */
     protected function editAction()
@@ -311,7 +298,7 @@ class EditSettings extends PanelController
 
         $this->toolBox()->appSettings()->reload();
 
-        /// check relations
+        // check relations
         $this->checkPaymentMethod();
         $this->checkWarehouse();
         $this->checkTax();
@@ -358,7 +345,7 @@ class EditSettings extends PanelController
     /**
      * Load view data
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param EditView $view
      */
     protected function loadData($viewName, $view)
@@ -366,7 +353,7 @@ class EditSettings extends PanelController
         switch ($viewName) {
             case 'ListApiKey':
                 $view->loadData();
-                if (false === (bool) $this->toolBox()->appSettings()->get('default', 'enable_api', '0')) {
+                if (false === (bool)$this->toolBox()->appSettings()->get('default', 'enable_api', '0')) {
                     $this->setSettings($viewName, 'active', false);
                 }
                 break;
@@ -396,7 +383,6 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function loadPaymentMethodValues($viewName)
@@ -412,7 +398,6 @@ class EditSettings extends PanelController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function loadWarehouseValues($viewName)

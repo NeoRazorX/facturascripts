@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Lib\CommissionTools;
@@ -68,7 +70,7 @@ class ListAgente extends ListController
         $this->addOrderBy($viewName, ['nombre'], 'name', 1);
         $this->addSearchFields($viewName, ['nombre', 'codagente', 'email', 'telefono1', 'telefono2', 'observaciones']);
 
-        /// Filters
+        // Filters
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $this->toolBox()->i18n()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
             ['label' => $this->toolBox()->i18n()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
@@ -95,7 +97,7 @@ class ListAgente extends ListController
         $this->addOrderBy($viewName, ['codfamilia', 'idproducto', 'porcentaje'], 'family');
         $this->addSearchFields($viewName, ['codagente', 'codcliente']);
 
-        /// Filters
+        // Filters
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyList);
         $this->addFilterAutocomplete($viewName, 'agent', 'agent', 'codagente', 'agentes', 'codagente', 'nombre');
         $this->addFilterAutocomplete($viewName, 'customer', 'customer', 'codcliente', 'Cliente', 'codcliente');
@@ -116,11 +118,11 @@ class ListAgente extends ListController
         $this->addOrderBy($viewName, ['total', 'fecha'], 'amount');
         $this->addSearchFields($viewName, ['observaciones']);
 
-        /// Filters
+        // Filters
         $this->addFilterPeriod($viewName, 'fecha', 'date', 'fecha');
         $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyList);
 
-        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
+        $series = Series::codeModel();
         $this->addFilterSelect($viewName, 'codserie', 'serie', 'codserie', $series);
 
         $agents = $this->codeModel->all('agentes', 'codagente', 'nombre');
@@ -147,7 +149,6 @@ class ListAgente extends ListController
     }
 
     /**
-     * 
      * @param string $action
      *
      * @return bool
@@ -198,10 +199,9 @@ class ListAgente extends ListController
     }
 
     /**
-     * 
-     * @param string           $codagente
-     * @param int              $idempresa
-     * @param string           $codserie
+     * @param string $codagente
+     * @param int $idempresa
+     * @param string $codserie
      * @param FacturaCliente[] $invoices
      */
     protected function newSettlement($codagente, $idempresa, $codserie, $invoices)
@@ -213,7 +213,7 @@ class ListAgente extends ListController
         if ($newSettlement->save()) {
             $commissionTools = new CommissionTools();
             foreach ($invoices as $invoice) {
-                /// recalculate commissions
+                // recalculate commissions
                 $lines = $invoice->getLines();
                 $commissionTools->recalculate($invoice, $lines);
 

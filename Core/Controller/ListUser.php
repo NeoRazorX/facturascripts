@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\DataSrc\Almacenes;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
@@ -52,7 +55,6 @@ class ListUser extends ListController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsRoles(string $viewName = 'ListRole')
@@ -64,7 +66,6 @@ class ListUser extends ListController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsUsers(string $viewName = 'ListUser')
@@ -77,20 +78,20 @@ class ListUser extends ListController
         $this->addOrderBy($viewName, ['creationdate'], 'creation-date');
         $this->addOrderBy($viewName, ['lastactivity'], 'last-activity');
 
-        /// filters
+        // filters
         $levels = $this->codeModel->all('users', 'level', 'level');
         $this->addFilterSelect($viewName, 'level', 'level', 'level', $levels);
 
         $languages = $this->codeModel->all('users', 'langcode', 'langcode');
         $this->addFilterSelect($viewName, 'langcode', 'language', 'langcode', $languages);
 
-        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-        if (\count($companies) > 2) {
+        $companies = Empresas::codeModel();
+        if (count($companies) > 2) {
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
         }
 
-        $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        if (\count($warehouses) > 2) {
+        $warehouses = Almacenes::codeModel();
+        if (count($warehouses) > 2) {
             $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
         }
     }
