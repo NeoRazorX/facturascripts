@@ -97,11 +97,22 @@ abstract class ModelClass extends ModelCore
      *
      * @return int
      */
-    public function count(array $where = [])
+    public function count(array $where = []): int
     {
-        $sql = 'SELECT COUNT(1) AS total FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where);
-        $data = self::$dataBase->select($sql);
-        return empty($data) ? 0 : (int)$data[0]['total'];
+        if ($where) {
+            $sql = 'SELECT COUNT(1) AS total FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where);
+            $data = self::$dataBase->select($sql);
+            return empty($data) ? 0 : (int)$data[0]['total'];
+        }
+
+        $key = 'model-' . $this->modelClassName() . '-count';
+        $count = self::toolBox()::cache()->get($key);
+        if (is_null($count)) {
+            $data = self::$dataBase->select('SELECT COUNT(1) AS total FROM ' . static::tableName());
+            $count = empty($data) ? 0 : (int)$data[0]['total'];
+            self::toolBox()::cache()->set($key, $count);
+        }
+        return $count;
     }
 
     /**
@@ -119,6 +130,7 @@ abstract class ModelClass extends ModelCore
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
         if (self::$dataBase->exec($sql)) {
+            self::toolBox()::cache()->delete('model-' . $this->modelClassName() . '-count');
             $this->pipe('delete');
             return true;
         }
@@ -249,6 +261,7 @@ abstract class ModelClass extends ModelCore
         }
 
         if ($done) {
+            self::toolBox()::cache()->delete('model-' . $this->modelClassName() . '-count');
             $this->pipe('save');
         }
 
