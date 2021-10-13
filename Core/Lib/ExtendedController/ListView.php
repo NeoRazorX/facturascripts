@@ -213,7 +213,7 @@ class ListView extends BaseView
             $this->offset = 0;
         }
 
-        // needed when megasearch force data reload
+        // needed when mega-search force data reload
         $this->cursor = [];
         if ($this->count > 0) {
             $this->cursor = $this->model->all($this->where, $this->order, $this->offset, $limit);
@@ -290,11 +290,12 @@ class ListView extends BaseView
 
         // if there are no filters, then read from the cache
         $cache = new Cache();
-        $sum = $cache->get('sum-' . $tableName . '-' . $fieldName);
+        $key = 'sum-' . $tableName . '-' . $fieldName;
+        $sum = $cache->get($key);
         if (is_null($sum)) {
             // empty cache value? Then get the value from the database and store on the cache
             $sum = TotalModel::sum($tableName, $fieldName, $where);
-            $cache->set('sum-' . $tableName . '-' . $fieldName, $sum);
+            $cache->set($key, $sum);
         }
         return $sum;
     }
