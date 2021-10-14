@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Impuestos;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
@@ -156,8 +156,8 @@ class ListProducto extends ListController
             ]
         ]);
 
-        $this->addFilterNumber($viewName, 'min-stock', 'stocks.quantity', 'cantidad', '<=');
-        $this->addFilterNumber($viewName, 'max-stock', 'stocks.quantity', 'cantidad', '>=');
+        $this->addFilterNumber($viewName, 'max-stock', 'quantity', 'cantidad', '>=');
+        $this->addFilterNumber($viewName, 'min-stock', 'quantity', 'cantidad', '<=');
 
         // disable buttons
         $this->setSettings($viewName, 'btnNew', false);
