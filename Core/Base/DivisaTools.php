@@ -49,7 +49,7 @@ class DivisaTools extends NumberTools
 
         if (!isset(self::$selectedDivisa)) {
             $coddivisa = AppSettings::get('default', 'coddivisa');
-            self::$selectedDivisa = self::get($coddivisa);
+            self::$selectedDivisa = Divisas::get($coddivisa);
         }
     }
 
@@ -65,7 +65,7 @@ class DivisaTools extends NumberTools
     public static function convert($amount, $coddivisa1, $coddivisa2): float
     {
         if ($coddivisa1 != $coddivisa2) {
-            return (float)$amount / static::get($coddivisa1)->tasaconv * static::get($coddivisa2)->tasaconv;
+            return (float)$amount / Divisas::get($coddivisa1)->tasaconv * Divisas::get($coddivisa2)->tasaconv;
         }
 
         return (float)$amount;
@@ -79,7 +79,7 @@ class DivisaTools extends NumberTools
     public function findDivisa($model)
     {
         if (isset($model->coddivisa)) {
-            self::$selectedDivisa = static::get($model->coddivisa);
+            self::$selectedDivisa = Divisas::get($model->coddivisa);
         }
     }
 
@@ -112,21 +112,5 @@ class DivisaTools extends NumberTools
     public static function getSymbol(): string
     {
         return isset(self::$selectedDivisa) ? self::$selectedDivisa->simbolo : '?';
-    }
-
-    /**
-     * @param string|null $coddivisa
-     *
-     * @return Divisa
-     */
-    private static function get(?string $coddivisa): Divisa
-    {
-        foreach (Divisas::all() as $div) {
-            if ($div->coddivisa == $coddivisa) {
-                return $div;
-            }
-        }
-
-        return new Divisa();
     }
 }

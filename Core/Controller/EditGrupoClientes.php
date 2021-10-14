@@ -19,9 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\DataSrc\FormasPago;
-use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\DataSrc\Retenciones;
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Dinamic\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -64,7 +65,7 @@ class EditGrupoClientes extends EditController
     protected function addCustomerAction()
     {
         $codes = $this->request->request->get('code', []);
-        if (false === \is_array($codes)) {
+        if (false === is_array($codes)) {
             return;
         }
 
@@ -122,14 +123,9 @@ class EditGrupoClientes extends EditController
         ];
         $this->views[$viewName]->addFilterSelectWhere('status', $values);
 
-        $series = Series::codeModel();
-        $this->views[$viewName]->addFilterSelect('codserie', 'series', 'codserie', $series);
-
-        $retentions = $this->codeModel->all('retenciones', 'codretencion', 'descripcion');
-        $this->views[$viewName]->addFilterSelect('codretencion', 'retentions', 'codretencion', $retentions);
-
-        $paymentMethods = FormasPago::codeModel();
-        $this->views[$viewName]->addFilterSelect('codpago', 'payment-methods', 'codpago', $paymentMethods);
+        $this->views[$viewName]->addFilterSelect('codserie', 'series', 'codserie', Series::codeModel());
+        $this->views[$viewName]->addFilterSelect('codretencion', 'retentions', 'codretencion', Retenciones::codeModel());
+        $this->views[$viewName]->addFilterSelect('codpago', 'payment-methods', 'codpago', FormasPago::codeModel());
     }
 
     /**
@@ -182,10 +178,9 @@ class EditGrupoClientes extends EditController
             case 'remove-customer':
                 $this->removeCustomerAction();
                 return true;
-
-            default:
-                return parent::execPreviousAction($action);
         }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -217,7 +212,7 @@ class EditGrupoClientes extends EditController
     protected function removeCustomerAction()
     {
         $codes = $this->request->request->get('code', []);
-        if (false === \is_array($codes)) {
+        if (false === is_array($codes)) {
             return;
         }
 

@@ -39,12 +39,6 @@ trait TaxRelationTrait
      */
     public function getTax(): Impuesto
     {
-        foreach (Impuestos::all() as $impuesto) {
-            if ($impuesto->codimpuesto === $this->codimpuesto) {
-                return $impuesto;
-            }
-        }
-
-        return new Impuesto();
+        return Impuestos::get($this->codimpuesto);
     }
 }

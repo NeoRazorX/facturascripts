@@ -19,10 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
@@ -95,8 +96,7 @@ class ListCliente extends ListController
         $this->addOrderBy($viewName, ['fechaalta'], 'creation-date', 2);
 
         // filters
-        $countries = Paises::codeModel();
-        $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', $countries);
+        $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', Paises::codeModel());
 
         $provinces = $this->codeModel->all('contactos', 'provincia', 'provincia');
         if (count($provinces) >= CodeModel::ALL_LIMIT) {
@@ -144,14 +144,9 @@ class ListCliente extends ListController
         $groupValues = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
         $this->addFilterSelect($viewName, 'codgrupo', 'group', 'codgrupo', $groupValues);
 
-        $series = Series::codeModel();
-        $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', $series);
-
-        $retentions = $this->codeModel->all('retenciones', 'codretencion', 'descripcion');
-        $this->addFilterSelect($viewName, 'codretencion', 'retentions', 'codretencion', $retentions);
-
-        $paymentMethods = FormasPago::codeModel();
-        $this->addFilterSelect($viewName, 'codpago', 'payment-methods', 'codpago', $paymentMethods);
+        $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', Series::codeModel());
+        $this->addFilterSelect($viewName, 'codretencion', 'retentions', 'codretencion', Retenciones::codeModel());
+        $this->addFilterSelect($viewName, 'codpago', 'payment-methods', 'codpago', FormasPago::codeModel());
 
         $vatRegimes = $this->codeModel->all('clientes', 'regimeniva', 'regimeniva');
         $this->addFilterSelect($viewName, 'regimeniva', 'vat-regime', 'regimeniva', $vatRegimes);
