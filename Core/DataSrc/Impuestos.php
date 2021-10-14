@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\DataSrc;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
-class Impuestos
+class Impuestos implements DataSrcInterface
 {
     private static $list;
 
@@ -33,7 +33,7 @@ class Impuestos
     {
         if (!isset(self::$list)) {
             $model = new Impuesto();
-            self::$list = $model->all();
+            self::$list = $model->all([], [], 0, 0);
         }
 
         return self::$list;
@@ -52,5 +52,21 @@ class Impuestos
         }
 
         return CodeModel::array2codeModel($codes, $addEmpty);
+    }
+
+    /**
+     * @param string $code
+     *
+     * @return Impuesto
+     */
+    public static function get($code): Impuesto
+    {
+        foreach (self::all() as $item) {
+            if ($item->primaryColumnValue() === $code) {
+                return $item;
+            }
+        }
+
+        return new Impuesto();
     }
 }

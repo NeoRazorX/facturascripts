@@ -19,12 +19,12 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Agentes;
+use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Lib\CommissionTools;
-use FacturaScripts\Dinamic\Model\Agente;
-use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\LiquidacionComision;
 
@@ -36,13 +36,6 @@ use FacturaScripts\Dinamic\Model\LiquidacionComision;
  */
 class ListAgente extends ListController
 {
-
-    /**
-     * Company list used by filters
-     *
-     * @var array
-     */
-    protected $companyList;
 
     /**
      * Returns basic page attributes
@@ -77,8 +70,8 @@ class ListAgente extends ListController
             ['label' => $this->toolBox()->i18n()->trans('all'), 'where' => []]
         ]);
 
-        $selectValues = $this->codeModel->all('agentes', 'cargo', 'cargo');
-        $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $selectValues);
+        $cargos = $this->codeModel->all('agentes', 'cargo', 'cargo');
+        $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $cargos);
     }
 
     /**
@@ -98,7 +91,7 @@ class ListAgente extends ListController
         $this->addSearchFields($viewName, ['codagente', 'codcliente']);
 
         // Filters
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyList);
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
         $this->addFilterAutocomplete($viewName, 'agent', 'agent', 'codagente', 'agentes', 'codagente', 'nombre');
         $this->addFilterAutocomplete($viewName, 'customer', 'customer', 'codcliente', 'Cliente', 'codcliente');
         $this->addFilterAutocomplete($viewName, 'family', 'family', 'codfamilia', 'Familia', 'codfamilia');
@@ -120,13 +113,9 @@ class ListAgente extends ListController
 
         // Filters
         $this->addFilterPeriod($viewName, 'fecha', 'date', 'fecha');
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyList);
-
-        $series = Series::codeModel();
-        $this->addFilterSelect($viewName, 'codserie', 'serie', 'codserie', $series);
-
-        $agents = $this->codeModel->all('agentes', 'codagente', 'nombre');
-        $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
+        $this->addFilterSelect($viewName, 'codserie', 'serie', 'codserie', Series::codeModel());
+        $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', Agentes::codeModel());
 
         $this->addButton($viewName, [
             'action' => 'gen-settlements',
@@ -141,8 +130,6 @@ class ListAgente extends ListController
      */
     protected function createViews()
     {
-        $this->companyList = $this->codeModel->all(Empresa::tableName(), Empresa::primaryColumn(), 'nombre');
-
         $this->createAgentView();
         $this->createCommissionView();
         $this->createSettlementView();
@@ -170,8 +157,7 @@ class ListAgente extends ListController
         $idempresa = $this->request->request->get('idempresa');
 
         $generated = 0;
-        $agenteModel = new Agente();
-        foreach ($agenteModel->all([], [], 0, 0) as $agente) {
+        foreach (Agentes::all() as $agente) {
             $invoiceModel = new FacturaCliente();
             $where = [
                 new DataBaseWhere('idliquidacion', null, 'IS'),
@@ -189,7 +175,7 @@ class ListAgente extends ListController
             }
 
             $invoices = $invoiceModel->all($where, [], 0, 0);
-            if (\count($invoices)) {
+            if (count($invoices)) {
                 $this->newSettlement($agente->codagente, $idempresa, $codserie, $invoices);
                 $generated++;
             }

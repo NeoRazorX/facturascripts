@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\DataSrc;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Pais;
 
-class Paises
+class Paises implements DataSrcInterface
 {
     private static $list;
 
@@ -33,7 +33,7 @@ class Paises
     {
         if (!isset(self::$list)) {
             $model = new Pais();
-            self::$list = $model->all();
+            self::$list = $model->all([], [], 0, 0);
         }
 
         return self::$list;
@@ -52,5 +52,21 @@ class Paises
         }
 
         return CodeModel::array2codeModel($codes, $addEmpty);
+    }
+
+    /**
+     * @param string $code
+     *
+     * @return Pais
+     */
+    public static function get($code): Pais
+    {
+        foreach (self::all() as $item) {
+            if ($item->primaryColumnValue() === $code) {
+                return $item;
+            }
+        }
+
+        return new Pais();
     }
 }

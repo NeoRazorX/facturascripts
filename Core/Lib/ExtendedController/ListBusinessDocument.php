@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
@@ -163,8 +164,8 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterAutocomplete($viewName, 'idcontactofact', 'billing-address', 'idcontactofact', 'contactos', 'idcontacto', 'direccion');
         $this->addFilterautocomplete($viewName, 'idcontactoenv', 'shipping-address', 'idcontactoenv', 'contactos', 'idcontacto', 'direccion');
 
-        $agents = $this->codeModel->all('agentes', 'codagente', 'nombre');
-        if (count($agents) > 1) {
+        $agents = Agentes::codeModel();
+        if (count($agents) > 2) {
             $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
         }
 

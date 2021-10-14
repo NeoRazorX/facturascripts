@@ -19,20 +19,20 @@
 
 namespace FacturaScripts\Core\DataSrc;
 
-use FacturaScripts\Dinamic\Model\Almacen;
+use FacturaScripts\Dinamic\Model\Agente;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
-class Almacenes implements DataSrcInterface
+class Agentes implements DataSrcInterface
 {
     private static $list;
 
     /**
-     * @return Almacen[]
+     * @return Agente[]
      */
     public static function all(): array
     {
         if (!isset(self::$list)) {
-            $model = new Almacen();
+            $model = new Agente();
             self::$list = $model->all([], [], 0, 0);
         }
 
@@ -47,8 +47,8 @@ class Almacenes implements DataSrcInterface
     public static function codeModel(bool $addEmpty = true): array
     {
         $codes = [];
-        foreach (self::all() as $almacen) {
-            $codes[$almacen->codalmacen] = $almacen->nombre;
+        foreach (self::all() as $agente) {
+            $codes[$agente->codagente] = $agente->nombre;
         }
 
         return CodeModel::array2codeModel($codes, $addEmpty);
@@ -57,9 +57,9 @@ class Almacenes implements DataSrcInterface
     /**
      * @param string $code
      *
-     * @return Almacen
+     * @return Agente
      */
-    public static function get($code): Almacen
+    public static function get($code): Agente
     {
         foreach (self::all() as $item) {
             if ($item->primaryColumnValue() === $code) {
@@ -67,6 +67,6 @@ class Almacenes implements DataSrcInterface
             }
         }
 
-        return new Almacen();
+        return new Agente();
     }
 }

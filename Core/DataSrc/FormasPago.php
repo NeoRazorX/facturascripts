@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\DataSrc;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
-class FormasPago
+class FormasPago implements DataSrcInterface
 {
     private static $list;
 
@@ -33,7 +33,7 @@ class FormasPago
     {
         if (!isset(self::$list)) {
             $model = new FormaPago();
-            self::$list = $model->all();
+            self::$list = $model->all([], [], 0, 0);
         }
 
         return self::$list;
@@ -52,5 +52,21 @@ class FormasPago
         }
 
         return CodeModel::array2codeModel($codes, $addEmpty);
+    }
+
+    /**
+     * @param string $code
+     *
+     * @return FormaPago
+     */
+    public static function get($code): FormaPago
+    {
+        foreach (self::all() as $item) {
+            if ($item->primaryColumnValue() === $code) {
+                return $item;
+            }
+        }
+
+        return new FormaPago();
     }
 }

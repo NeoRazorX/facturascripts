@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\DataSrc;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Empresa;
 
-class Empresas
+class Empresas implements DataSrcInterface
 {
     private static $list;
 
@@ -33,7 +33,7 @@ class Empresas
     {
         if (!isset(self::$list)) {
             $model = new Empresa();
-            self::$list = $model->all();
+            self::$list = $model->all([], [], 0, 0);
         }
 
         return self::$list;
@@ -52,5 +52,21 @@ class Empresas
         }
 
         return CodeModel::array2codeModel($codes, $addEmpty);
+    }
+
+    /**
+     * @param string $code
+     *
+     * @return Empresa
+     */
+    public static function get($code): Empresa
+    {
+        foreach (self::all() as $item) {
+            if ($item->primaryColumnValue() == $code) {
+                return $item;
+            }
+        }
+
+        return new Empresa();
     }
 }
