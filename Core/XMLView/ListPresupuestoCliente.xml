@@ -115,7 +115,7 @@
         <column name="commission" display="none" order="360">
             <widget type="money" fieldname="totalcomision" />
         </column>
-        <column name="expiration" display="right" order="365">
+        <column name="expiration" display="none" order="365">
             <widget type="date" fieldname="finoferta" />
         </column>
         <column name="date" display="right" order="370">
