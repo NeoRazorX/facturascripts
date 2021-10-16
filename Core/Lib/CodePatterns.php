@@ -55,20 +55,24 @@ class CodePatterns
         $ejerc = $options['ejercicio'] ?? 'codejercicio';
         $parts = explode('|', $text);
 
+        $dateFromModel = $model->{$date} ?? date(self::DATE_STYLE);
+        $numberFromModel = $model->{$number} ?? 0;
+        $serieFromModel = $model->{$serie} ?? '';
+
         $result = strtr($parts[0], [
             '{FECHA}' => date(self::DATE_STYLE),
             '{HORA}' => date(self::HOUR_STYLE),
             '{FECHAHORA}' => date(self::DATETIME_STYLE),
-            '{ANYO}' => date('Y', strtotime($model->{$date})),
-            '{DIA}' => date('d', strtotime($model->{$date})),
+            '{ANYO}' => date('Y', strtotime($dateFromModel)),
+            '{DIA}' => date('d', strtotime($dateFromModel)),
             '{EJE}' => $model->{$ejerc},
             '{EJE2}' => substr($model->{$ejerc}, -2),
-            '{MES}' => date('m', strtotime($model->{$date})),
-            '{NUM}' => $model->{$number},
-            '{SERIE}' => $model->{$serie},
-            '{0NUM}' => str_pad($model->{$number}, $long, '0', STR_PAD_LEFT),
-            '{0SERIE}' => str_pad($model->{$serie}, 2, '0', STR_PAD_LEFT),
-            '{NOMBREMES}' => ToolBox::i18n()->trans(date('F', strtotime($model->{$date}))),
+            '{MES}' => date('m', strtotime($dateFromModel)),
+            '{NUM}' => $numberFromModel,
+            '{SERIE}' => $serieFromModel,
+            '{0NUM}' => str_pad($numberFromModel, $long, '0', STR_PAD_LEFT),
+            '{0SERIE}' => str_pad($serieFromModel, 2, '0', STR_PAD_LEFT),
+            '{NOMBREMES}' => ToolBox::i18n()->trans(date('F', strtotime($dateFromModel))),
         ]);
 
         return count($parts) > 1 ? static::format($result, $parts[1]) : $result;
