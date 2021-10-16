@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal        <yopli2000@gmail.com>
+ * @author Carlos García Gómez                  <carlos@facturascripts.com>
+ * @collaborator Jerónimo Pedro Sánchez Manzano <socger@gmail.com>
 -->
 <view>
     <columns>
@@ -50,8 +51,8 @@
     </columns>
     <rows>
         <row type="status">
-            <option color="danger" fieldname="saldo" title="positive-balance">lt:0</option>
-            <option color="success" fieldname="saldo" title="negative-balance">gt:0</option>
+            <option color="danger" fieldname="saldo" title="negative-balance">lt:0</option>
+            <option color="success" fieldname="saldo" title="positive-balance">gt:0</option>
         </row>
     </rows>
 </view>

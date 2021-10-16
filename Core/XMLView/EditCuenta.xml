@@ -58,6 +58,13 @@
             <column name="date-to" title="until-date" numcolumns="12">
                 <widget type="date" fieldname="dateTo" required="true" />
             </column>
+            <column name="type" numcolumns="12">
+                <widget type="select" fieldname="typeofgroup" translate="true" required="true">
+                    <values title="ungrouped">N</values>
+<!--                    <values title="group-by-account">C</values>-->
+                    <values title="group-by-subaccount">S</values>
+                </widget>
+            </column>
             <column name="channel" numcolumns="12">
                 <widget type="number" fieldname="channel" />
             </column>
