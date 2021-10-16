@@ -150,19 +150,22 @@ class EditCuenta extends EditController
 
         $request = $this->request->request->all();
         $params = [
-            'grouped' => false,
+            'grouped' => $request['typeofgroup'], // opciones ... 'N' nada, 'C' agrupado por cuenta, 'S' agrupado por subcuenta
+            
             'channel' => $request['channel'],
             'account-from' => $account->codcuenta
         ];
-
+        
         $ledger = new Ledger();
         $ledger->setExercise($account->codejercicio);
         $pages = $ledger->generate($request['dateFrom'], $request['dateTo'], $params);
+        
         $this->exportManager->newDoc($request['format']);
         foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);
             $this->exportManager->addTablePage($headers, $data);
         }
+        
         $this->exportManager->show($this->response);
     }
 
