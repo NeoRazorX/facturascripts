@@ -178,6 +178,10 @@ class Dashboard extends Controller
      */
     private function loadLowStockSection()
     {
+        if (false === $this->dataBase->tableExists('stocks')) {
+            return;
+        }
+
         $found = false;
         $sql = 'SELECT * FROM stocks WHERE stockmin > 0 AND disponible < stockmin;';
         foreach ($this->dataBase->select($sql) as $row) {

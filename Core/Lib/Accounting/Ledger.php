@@ -37,7 +37,7 @@ class Ledger extends AccountingBase
     {
         parent::__construct();
 
-        /// needed dependecies
+        // needed dependencies
         new Partida();
     }
 
@@ -57,11 +57,9 @@ class Ledger extends AccountingBase
         $debe = $haber = 0.0;
         $ledger = [];
 
-        $grouped = $params['grouped'];
-        
-        switch ($grouped) {
+        switch ($params['grouped']) {
             case 'C':
-                /// group by account
+                // group by account
                 $balances = [];
                 foreach ($this->getDataGroupedByAccount($params) as $line) {
                     $this->processLineBalanceGroupedByAccount($balances, $ledger, $line);
@@ -78,7 +76,7 @@ class Ledger extends AccountingBase
                 break;
 
             case 'S':
-                /// group by subaccount
+                // group by subaccount
                 $balances = [];
                 foreach ($this->getDataGroupedBySubAccount($params) as $line) {
                     $this->processLineBalanceGroupedBySubAccount($balances, $ledger, $line);
@@ -95,7 +93,7 @@ class Ledger extends AccountingBase
                 break;
 
             default:
-                /// do not group data
+                // do not group data
                 foreach ($this->getData($params) as $line) {
                     $this->processLine($ledger['lines'], $line);
                     $debe += (float)$line['debe'];
@@ -111,7 +109,7 @@ class Ledger extends AccountingBase
                 ];
                 break;
         }
-        
+
         return $ledger;
     }
 
@@ -123,7 +121,7 @@ class Ledger extends AccountingBase
      *
      * @return array
      */
-    public static function getButton($type, $action = 'ledger')
+    public static function getButton(string $type, string $action = 'ledger'): array
     {
         return [
             'action' => $action,
@@ -163,7 +161,7 @@ class Ledger extends AccountingBase
      *
      * @return array
      */
-    protected function getDataGroupedByAccount(array $params = [])
+    protected function getDataGroupedByAccount(array $params = []): array
     {
         if (false === $this->dataBase->tableExists('partidas')) {
             return [];
@@ -187,7 +185,7 @@ class Ledger extends AccountingBase
      *
      * @return array
      */
-    protected function getDataGroupedBySubAccount(array $params = [])
+    protected function getDataGroupedBySubAccount(array $params = []): array
     {
         if (false === $this->dataBase->tableExists('partidas')) {
             return [];
@@ -212,7 +210,7 @@ class Ledger extends AccountingBase
      *
      * @return string
      */
-    protected function getDataWhere(array $params = [])
+    protected function getDataWhere(array $params = []): string
     {
         $where = 'asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio)
             . ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom)
@@ -356,5 +354,4 @@ class Ledger extends AccountingBase
             'saldo' => $this->toolBox()->coins()->format($balances[$codcuenta], FS_NF0, '')
         ];
     }
-    
 }
