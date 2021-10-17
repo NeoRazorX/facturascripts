@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -70,7 +71,7 @@ class Familia extends Base\ModelClass
      * @var string
      */
     public $madre;
-    
+
     /**
      * Number of products
      *
@@ -154,7 +155,7 @@ class Familia extends Base\ModelClass
         $this->codfamilia = $utils->noHtml($this->codfamilia);
         $this->descripcion = $utils->noHtml($this->descripcion);
 
-        if ($this->codfamilia && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
+        if ($this->codfamilia && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codfamilia, '%column%' => 'codfamilia', '%min%' => '1', '%max%' => '8']
@@ -162,7 +163,7 @@ class Familia extends Base\ModelClass
             return false;
         }
 
-        if (empty($this->descripcion) || \strlen($this->descripcion) > 100) {
+        if (empty($this->descripcion) || strlen($this->descripcion) > 100) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '100']
@@ -178,9 +179,8 @@ class Familia extends Base\ModelClass
     }
 
     /**
-     *
-     * @param string  $code
-     * @param string  $field
+     * @param string $code
+     * @param string $field
      * @param Familia $model
      *
      * @return string
@@ -205,7 +205,6 @@ class Familia extends Base\ModelClass
     }
 
     /**
-     *
      * @param array $values
      *
      * @return bool

@@ -33,7 +33,7 @@
                 <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"/>
             </widget>
         </column>
-        <column name="products" order="125">
+        <column name="products" display="right" order="125">
             <widget type="number" fieldname="numproductos" decimal="0"/>
         </column>
         <column name="subaccount-purchases" display="none" order="130">
