@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\CuentaBancoProveedor as DinCuentaBancoProveedor;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
+use FacturaScripts\Dinamic\Model\CuentaBancoProveedor as DinCuentaBancoProveedor;
 
 /**
  * A supplier. It can be related to several addresses or sub-accounts.
@@ -65,18 +66,17 @@ class Proveedor extends Base\ComercialContact
     }
 
     /**
-     * 
-     * @param string          $query
-     * @param string          $fieldcode
+     * @param string $query
+     * @param string $fieldCode
      * @param DataBaseWhere[] $where
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldcode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
     {
-        $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
+        $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $fields = 'cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2';
-        $where[] = new DataBaseWhere($fields, \mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
         $where[] = new DataBaseWhere('fechabaja', null, 'IS');
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
@@ -95,7 +95,7 @@ class Proveedor extends Base\ComercialContact
 
     /**
      * Returns the bank accounts associated with the provider.
-     * 
+     *
      * @return DinCuentaBancoProveedor[]
      */
     public function getBankAccounts()
@@ -154,7 +154,7 @@ class Proveedor extends Base\ComercialContact
      */
     public function test()
     {
-        if (!empty($this->codproveedor) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
+        if (!empty($this->codproveedor) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codproveedor, '%column%' => 'codproveedor', '%min%' => '1', '%max%' => '10']
@@ -166,7 +166,6 @@ class Proveedor extends Base\ComercialContact
     }
 
     /**
-     * 
      * @param array $values
      *
      * @return bool
@@ -174,12 +173,12 @@ class Proveedor extends Base\ComercialContact
     protected function saveInsert(array $values = [])
     {
         if (empty($this->codproveedor)) {
-            $this->codproveedor = (string) $this->newCode();
+            $this->codproveedor = (string)$this->newCode();
         }
 
         $return = parent::saveInsert($values);
         if ($return && empty($this->idcontacto)) {
-            /// creates new contact
+            // creates new contact
             $contact = new DinContacto();
             $contact->cifnif = $this->cifnif;
             $contact->codproveedor = $this->codproveedor;
