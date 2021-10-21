@@ -96,6 +96,7 @@ abstract class App
         $this->response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $this->response->headers->set('X-XSS-Protection', '1; mode=block');
         $this->response->headers->set('X-Content-Type-Options', 'nosniff');
+        $this->response->headers->set('Strict-Transport-Security', 'max-age=31536000');
 
         $this->toolBox()->log()->debug('URI: ' . $this->uri);
     }
