@@ -92,8 +92,10 @@ abstract class App
         // timezone
         date_default_timezone_set(FS_TIMEZONE);
 
-        // add security header
-        $this->response->headers->set('x-frame-options', 'DENY');
+        // add security headers
+        $this->response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+        $this->response->headers->set('X-XSS-Protection', '1; mode=block');
+        $this->response->headers->set('X-Content-Type-Options', 'nosniff');
 
         $this->toolBox()->log()->debug('URI: ' . $this->uri);
     }
