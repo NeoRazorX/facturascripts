@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
 use FacturaScripts\Dinamic\Model\User;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * AdminPlugins.
@@ -41,10 +42,9 @@ class AdminPlugins extends Base\Controller
     public $pluginManager;
 
     /**
-     * 
      * @return array
      */
-    public function getAllPlugins()
+    public function getAllPlugins(): array
     {
         $downloadTools = new Base\DownloadTools();
         $json = json_decode($downloadTools->getContents(self::PLUGIN_LIST_URL, 3), true);
@@ -54,7 +54,7 @@ class AdminPlugins extends Base\Controller
 
         $list = [];
         foreach ($json as $item) {
-            /// plugin is already installed?
+            // plugin is already installed?
             $item['installed'] = false;
             foreach ($this->getPlugins() as $plug) {
                 if ($plug['name'] == $item['name']) {
@@ -101,14 +101,14 @@ class AdminPlugins extends Base\Controller
     public function getPlugins()
     {
         $installedPlugins = $this->pluginManager->installedPlugins();
-        if (!defined('FS_HIDDEN_PLUGINS')) {
+        if (false === defined('FS_HIDDEN_PLUGINS')) {
             return $installedPlugins;
         }
 
-        /// exclude hidden plugins
-        $hiddenPlugins = \explode(',', \FS_HIDDEN_PLUGINS);
+        // exclude hidden plugins
+        $hiddenPlugins = explode(',', FS_HIDDEN_PLUGINS);
         foreach ($installedPlugins as $key => $plugin) {
-            if (\in_array($plugin['name'], $hiddenPlugins, false)) {
+            if (in_array($plugin['name'], $hiddenPlugins, false)) {
                 unset($installedPlugins[$key]);
             }
         }
@@ -118,9 +118,9 @@ class AdminPlugins extends Base\Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response                      $response
-     * @param User                          $user
-     * @param Base\ControllerPermissions    $permissions
+     * @param Response $response
+     * @param User $user
+     * @param Base\ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
@@ -169,7 +169,7 @@ class AdminPlugins extends Base\Controller
 
     /**
      * Execute main actions.
-     * 
+     *
      * @param string $action
      */
     private function execAction($action)
@@ -198,8 +198,8 @@ class AdminPlugins extends Base\Controller
                 break;
 
             default:
-                if (\FS_DEBUG) {
-                    /// On debug mode, always deploy the contents of Dinamic.
+                if (FS_DEBUG) {
+                    // On debug mode, always deploy the contents of Dinamic.
                     $this->pluginManager->deploy(true, true);
                     $this->toolBox()->cache()->clear();
                 }
@@ -232,6 +232,25 @@ class AdminPlugins extends Base\Controller
      */
     private function uploadPlugin($uploadFiles)
     {
+        // check user permissions
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            return;
+        }
+
+        // valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+            $this->toolBox()->i18nLog()->warning('invalid-request');
+            return;
+        }
+
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($token)) {
+            $this->toolBox()->i18nLog()->warning('duplicated-request');
+            return;
+        }
+
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
                 $this->toolBox()->log()->error($uploadFile->getErrorMessage());
@@ -244,7 +263,7 @@ class AdminPlugins extends Base\Controller
             }
 
             $this->pluginManager->install($uploadFile->getPathname(), $uploadFile->getClientOriginalName());
-            \unlink($uploadFile->getPathname());
+            unlink($uploadFile->getPathname());
         }
 
         if ($this->pluginManager->deploymentRequired()) {
