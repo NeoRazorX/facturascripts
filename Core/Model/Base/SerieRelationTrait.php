@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,27 +16,25 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Dinamic\Model\Serie;
 
 trait SerieRelationTrait
 {
 
     /**
-     *
      * @var string
      */
     public $codserie;
 
     /**
-     * 
      * @return Serie
      */
-    public function getSerie()
+    public function getSerie(): Serie
     {
-        $serie = new Serie();
-        $serie->loadFromCode($this->codserie);
-        return $serie;
+        return Series::get($this->codserie);
     }
 }

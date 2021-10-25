@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -42,13 +43,11 @@ class Impuesto extends Base\ModelClass
     public $codimpuesto;
 
     /**
-     *
      * @var string
      */
     public $codsubcuentarep;
 
     /**
-     *
      * @var string
      */
     public $codsubcuentasop;
@@ -94,7 +93,7 @@ class Impuesto extends Base\ModelClass
 
     /**
      * Removes tax from database.
-     * 
+     *
      * @return bool
      */
     public function delete()
@@ -110,7 +109,7 @@ class Impuesto extends Base\ModelClass
     /**
      * Gets the input tax accounting subaccount indicated.
      * If it does not exist, the default tax is returned.
-     * 
+     *
      * @param string $subAccount
      *
      * @return self
@@ -125,7 +124,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->codimpuesto === $this->toolBox()->appSettings()->get('default', 'codimpuesto');
     }
@@ -143,7 +142,7 @@ class Impuesto extends Base\ModelClass
     /**
      * Gets the output tax accounting subaccount indicated.
      * If it does not exist, the default tax is returned.
-     * 
+     *
      * @param string $subAccount
      *
      * @return self
@@ -170,8 +169,8 @@ class Impuesto extends Base\ModelClass
      */
     public function test()
     {
-        $this->codimpuesto = \trim($this->codimpuesto);
-        if ($this->codimpuesto && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
+        $this->codimpuesto = trim($this->codimpuesto);
+        if ($this->codimpuesto && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codimpuesto, '%column%' => 'codimpuesto', '%min%' => '1', '%max%' => '10']
@@ -186,7 +185,6 @@ class Impuesto extends Base\ModelClass
     }
 
     /**
-     * 
      * @param string $field
      * @param string $subAccount
      *
@@ -205,7 +203,6 @@ class Impuesto extends Base\ModelClass
     }
 
     /**
-     * 
      * @param array $values
      *
      * @return bool
@@ -213,7 +210,7 @@ class Impuesto extends Base\ModelClass
     protected function saveInsert(array $values = [])
     {
         if (empty($this->codimpuesto)) {
-            $this->codimpuesto = (string) $this->newCode();
+            $this->codimpuesto = (string)$this->newCode();
         }
 
         return parent::saveInsert($values);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -199,17 +200,17 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function alias()
+    public function alias(): string
     {
-        if (empty($this->email) || \strpos($this->email, '@') === false) {
-            return (string) $this->idcontacto;
+        if (empty($this->email) || strpos($this->email, '@') === false) {
+            return (string)$this->idcontacto;
         }
 
-        $aux = \explode('@', $this->email);
+        $aux = explode('@', $this->email);
         switch ($aux[0]) {
             case 'admin':
             case 'info':
-                $domain = \explode('.', $aux[1]);
+                $domain = explode('.', $aux[1]);
                 return $domain[0] . '_' . $this->idcontacto;
 
             default:
@@ -233,10 +234,28 @@ class Contacto extends Base\Contact
     }
 
     /**
-     * 
+     * @param string $query
+     * @param string $fieldCode
+     * @param DataBaseWhere[] $where
+     *
+     * @return CodeModel[]
+     */
+    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
+    {
+        $results = [];
+        $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
+        $fields = 'apellidos|cifnif|descripcion|email|empresa|idcontacto|nombre|observaciones|telefono1|telefono2';
+        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
+        foreach ($this->all($where) as $item) {
+            $results[] = new CodeModel(['code' => $item->{$field}, 'description' => $item->fullName()]);
+        }
+        return $results;
+    }
+
+    /**
      * @return string
      */
-    public function country()
+    public function country(): string
     {
         $country = new DinPais();
         $where = [new DataBaseWhere('codiso', $this->codpais)];
@@ -252,18 +271,17 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function fullName()
+    public function fullName(): string
     {
         return $this->nombre . ' ' . $this->apellidos;
     }
 
     /**
-     * 
      * @param bool $create
      *
      * @return DinCliente
      */
-    public function getCustomer($create = true)
+    public function getCustomer(bool $create = true)
     {
         $cliente = new DinCliente();
         if ($this->codcliente && $cliente->loadFromCode($this->codcliente)) {
@@ -271,7 +289,7 @@ class Contacto extends Base\Contact
         }
 
         if ($create) {
-            /// creates a new customer
+            // creates a new customer
             $cliente->cifnif = $this->cifnif ?? '';
             $cliente->codproveedor = $this->codproveedor;
             $cliente->email = $this->email;
@@ -294,12 +312,11 @@ class Contacto extends Base\Contact
     }
 
     /**
-     * 
      * @param bool $create
      *
      * @return DinProveedor
      */
-    public function getSupplier($create = true)
+    public function getSupplier(bool $create = true)
     {
         $proveedor = new DinProveedor();
         if ($this->codproveedor && $proveedor->loadFromCode($this->codproveedor)) {
@@ -307,7 +324,7 @@ class Contacto extends Base\Contact
         }
 
         if ($create) {
-            /// creates a new supplier
+            // creates a new supplier
             $proveedor->cifnif = $this->cifnif ?? '';
             $proveedor->codcliente = $this->codcliente;
             $proveedor->email = $this->email;
@@ -337,7 +354,7 @@ class Contacto extends Base\Contact
      */
     public function install()
     {
-        /// we need this models to be checked before
+        // we need this models to be checked before
         new DinAgente();
         new DinCliente();
         new DinProveedor();
@@ -346,8 +363,7 @@ class Contacto extends Base\Contact
     }
 
     /**
-     * Generates a new login key for the user. It also updates lastactivity
-     * ans last IP.
+     * Generates a new login key for the user. It also updates last activity and last IP.
      *
      * @param string $ipAddress
      *
@@ -355,7 +371,7 @@ class Contacto extends Base\Contact
      */
     public function newLogkey($ipAddress)
     {
-        $this->lastactivity = \date(self::DATETIME_STYLE);
+        $this->lastactivity = date(self::DATETIME_STYLE);
         $this->lastip = $ipAddress;
         $this->logkey = $this->toolBox()->utils()->randomString(99);
         return $this->logkey;

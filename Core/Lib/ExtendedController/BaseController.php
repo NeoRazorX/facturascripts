@@ -116,7 +116,6 @@ abstract class BaseController extends Controller
     }
 
     /**
-     *
      * @param string $viewName
      * @param BaseView|ListView $view
      */
@@ -135,7 +134,6 @@ abstract class BaseController extends Controller
     }
 
     /**
-     *
      * @return BaseView|ListView
      */
     public function getCurrentView()
@@ -278,22 +276,11 @@ abstract class BaseController extends Controller
      */
     protected function deleteAction()
     {
-        /// check user permissions
+        // check user permissions
         if (false === $this->permissions->allowDelete || false === $this->views[$this->active]->settings['btnDelete']) {
             $this->toolBox()->i18nLog()->warning('not-allowed-delete');
             return false;
-        }
-
-        /// valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
-            $this->toolBox()->i18nLog()->warning('invalid-request');
-            return false;
-        }
-
-        /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            $this->toolBox()->i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFormToken()) {
             return false;
         }
 
@@ -315,7 +302,7 @@ abstract class BaseController extends Controller
                     continue;
                 }
 
-                /// error?
+                // error?
                 $this->dataBase->rollback();
                 break;
             }
@@ -408,5 +395,26 @@ abstract class BaseController extends Controller
             $result[$key] = $this->request->get($key);
         }
         return $result;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function validateFormToken(): bool
+    {
+        // valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+            $this->toolBox()->i18nLog()->warning('invalid-request');
+            return false;
+        }
+
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($token)) {
+            $this->toolBox()->i18nLog()->warning('duplicated-request');
+            return false;
+        }
+
+        return true;
     }
 }

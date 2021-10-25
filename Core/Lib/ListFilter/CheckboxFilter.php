@@ -88,7 +88,7 @@ class CheckboxFilter extends BaseFilter
     public function render(): string
     {
         $extra = is_null($this->value) ? '' : ' checked=""';
-        return '<div class="col-2">'
+        return '<div class="col-sm-2">'
             . '<div class="form-group">'
             . '<div class="form-check mb-2 mb-sm-0">'
             . '<label class="form-check-label">'

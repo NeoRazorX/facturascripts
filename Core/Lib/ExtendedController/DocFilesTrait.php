@@ -35,7 +35,6 @@ trait DocFilesTrait
     abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5');
 
     /**
-     *
      * @return bool
      */
     private function addFileAction(): bool
@@ -43,18 +42,7 @@ trait DocFilesTrait
         if (false === $this->permissions->allowUpdate) {
             ToolBox::i18nLog()->warning('not-allowed-modify');
             return true;
-        }
-
-        /// valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
-            ToolBox::i18nLog()->warning('invalid-request');
-            return true;
-        }
-
-        /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            ToolBox::i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFileActionToken()) {
             return true;
         }
 
@@ -85,8 +73,8 @@ trait DocFilesTrait
     }
 
     /**
-     *
      * @param string $viewName
+     * @param string $template
      */
     protected function createViewDocFiles(string $viewName = 'docfiles', string $template = 'Tab/DocFiles')
     {
@@ -94,7 +82,6 @@ trait DocFilesTrait
     }
 
     /**
-     *
      * @return bool
      */
     private function deleteFileAction(): bool
@@ -102,18 +89,7 @@ trait DocFilesTrait
         if (false === $this->permissions->allowDelete) {
             ToolBox::i18nLog()->warning('not-allowed-delete');
             return true;
-        }
-
-        /// valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
-            ToolBox::i18nLog()->warning('invalid-request');
-            return true;
-        }
-
-        /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            ToolBox::i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFileActionToken()) {
             return true;
         }
 
@@ -130,7 +106,6 @@ trait DocFilesTrait
     }
 
     /**
-     *
      * @return bool
      */
     private function editFileAction(): bool
@@ -138,18 +113,7 @@ trait DocFilesTrait
         if (false === $this->permissions->allowUpdate) {
             ToolBox::i18nLog()->warning('not-allowed-modify');
             return true;
-        }
-
-        /// valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
-            ToolBox::i18nLog()->warning('invalid-request');
-            return true;
-        }
-
-        /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            ToolBox::i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFileActionToken()) {
             return true;
         }
 
@@ -165,7 +129,6 @@ trait DocFilesTrait
     }
 
     /**
-     *
      * @param BaseView $view
      * @param string $model
      * @param string $modelid
@@ -180,7 +143,6 @@ trait DocFilesTrait
     }
 
     /**
-     *
      * @return bool
      */
     private function unlinkFileAction(): bool
@@ -188,18 +150,7 @@ trait DocFilesTrait
         if (false === $this->permissions->allowUpdate) {
             ToolBox::i18nLog()->warning('not-allowed-modify');
             return true;
-        }
-
-        /// valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
-            ToolBox::i18nLog()->warning('invalid-request');
-            return true;
-        }
-
-        /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            ToolBox::i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFileActionToken()) {
             return true;
         }
 
@@ -210,6 +161,27 @@ trait DocFilesTrait
         }
 
         ToolBox::i18nLog()->notice('record-updated-correctly');
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    private function validateFileActionToken(): bool
+    {
+        // valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+            ToolBox::i18nLog()->warning('invalid-request');
+            return false;
+        }
+
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($token)) {
+            ToolBox::i18nLog()->warning('duplicated-request');
+            return false;
+        }
+
         return true;
     }
 }

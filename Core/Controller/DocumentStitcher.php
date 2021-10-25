@@ -119,7 +119,7 @@ class DocumentStitcher extends Controller
         if ($status) {
             // validate form request?
             $token = $this->request->request->get('multireqtoken', '');
-            if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
+            if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
                 $this->toolBox()->i18nLog()->warning('invalid-request');
                 return;
             }

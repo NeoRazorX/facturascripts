@@ -40,7 +40,7 @@ class EditProveedor extends ComercialContactController
      *
      * @return string
      */
-    public function getDeliveryNotesRisk()
+    public function getDeliveryNotesRisk(): string
     {
         $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
         $total = SupplierRiskTools::getDeliveryNotesRisk($codproveedor);
@@ -52,7 +52,7 @@ class EditProveedor extends ComercialContactController
      *
      * @return string
      */
-    public function getInvoicesRisk()
+    public function getInvoicesRisk(): string
     {
         $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
         $total = SupplierRiskTools::getInvoicesRisk($codproveedor);
@@ -116,10 +116,10 @@ class EditProveedor extends ComercialContactController
         $this->views[$viewName]->addOrderBy(['neto'], 'net');
         $this->views[$viewName]->addSearchFields(['referencia', 'refproveedor']);
 
-        /// disable columns
+        // disable columns
         $this->views[$viewName]->disableColumn('supplier');
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }
 
@@ -152,7 +152,7 @@ class EditProveedor extends ComercialContactController
         if ($return && $this->active === $this->getMainViewName()) {
             $this->checkSubaccountLength($this->getModel()->codsubcuenta);
 
-            /// update contact email and phones when supplier email or phones are updated
+            // update contact email and phones when supplier email or phones are updated
             $this->updateContact($this->views[$this->active]->model);
         }
 
@@ -168,7 +168,7 @@ class EditProveedor extends ComercialContactController
             return false;
         }
 
-        /// redirect to returnUrl if return is defined
+        // redirect to returnUrl if return is defined
         $returnUrl = $this->request->query->get('return');
         if (!empty($returnUrl)) {
             $model = $this->views[$this->active]->model;
@@ -224,24 +224,24 @@ class EditProveedor extends ComercialContactController
      */
     protected function setCustomWidgetValues(string $viewName)
     {
-        /// Load values option to VAT Type select input
+        // Load values option to VAT Type select input
         $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
         if ($columnVATType && $columnVATType->widget->getType() === 'select') {
             $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
         }
 
-        /// Model exists?
+        // Model exists?
         if (false === $this->views[$viewName]->model->exists()) {
             $this->views[$viewName]->disableColumn('contact');
             return;
         }
 
-        /// Search for supplier contacts
+        // Search for supplier contacts
         $codproveedor = $this->getViewModelValue($viewName, 'codproveedor');
         $where = [new DataBaseWhere('codproveedor', $codproveedor)];
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 
-        /// Load values option to default contact
+        // Load values option to default contact
         $columnBilling = $this->views[$viewName]->columnForName('contact');
         if ($columnBilling && $columnBilling->widget->getType() === 'select') {
             $columnBilling->widget->setValuesFromCodeModel($contacts);

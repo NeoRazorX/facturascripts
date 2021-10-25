@@ -23,31 +23,29 @@
     <columns>
         <group name="basic" numcolumns="12">
             <column name="code" display="none" order="100">
-                <widget type="text" fieldname="id" />
+                <widget type="text" fieldname="id"/>
             </column>
             <column name="name" order="110">
-                <widget type="text" fieldname="name" required="true" />
+                <widget type="text" fieldname="name" required="true"/>
             </column>
-            <column name="type" numcolumns="3" order="120">
-                <widget type="select" fieldname="type" required="true" />
+            <column name="type" order="120">
+                <widget type="select" fieldname="type" required="true"/>
             </column>
-            <column name="sub-type" numcolumns="3" order="130">
-                <widget type="select" fieldname="subtype" required="true" />
+            <column name="sub-type" order="130">
+                <widget type="select" fieldname="subtype" required="true"/>
             </column>
-            <column name="company" titleurl="ListEmpresa" numcolumns="2" order="140">
+            <column name="company" titleurl="ListEmpresa" order="140">
                 <widget type="select" fieldname="idcompany" onclick="EditEmpresa">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
                 </widget>
             </column>
-        </group>
-        <group name="date" numcolumns="12">
-            <column name="from-date" numcolumns="2" order="100">
-                <widget type="date" fieldname="startdate" required="true" />
+            <column name="from-date" order="150">
+                <widget type="date" fieldname="startdate" required="true"/>
             </column>
-            <column name="until-date" numcolumns="2" order="110">
-                <widget type="date" fieldname="enddate" required="true" />
+            <column name="until-date" order="160">
+                <widget type="date" fieldname="enddate" required="true"/>
             </column>
-            <column name="channel" numcolumns="2" order="120">
+            <column name="channel" display="none" order="170">
                 <widget type="number" fieldname="channel" decimal="0"/>
             </column>
         </group>

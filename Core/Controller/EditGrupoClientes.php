@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\DataSrc\Retenciones;
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Dinamic\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -36,7 +40,7 @@ class EditGrupoClientes extends EditController
 
     /**
      * Returns the class name of the model to use in the editView.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -61,7 +65,7 @@ class EditGrupoClientes extends EditController
     protected function addCustomerAction()
     {
         $codes = $this->request->request->get('code', []);
-        if (false === \is_array($codes)) {
+        if (false === is_array($codes)) {
             return;
         }
 
@@ -94,7 +98,6 @@ class EditGrupoClientes extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewCommon(string $viewName)
@@ -106,12 +109,12 @@ class EditGrupoClientes extends EditController
         $this->views[$viewName]->addOrderBy(['riesgoalcanzado'], 'current-risk');
         $this->views[$viewName]->searchFields = ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2'];
 
-        /// settings
+        // settings
         $this->views[$viewName]->disableColumn('group');
         $this->views[$viewName]->settings['btnNew'] = false;
         $this->views[$viewName]->settings['btnDelete'] = false;
 
-        /// filters
+        // filters
         $i18n = $this->toolBox()->i18n();
         $values = [
             ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
@@ -120,18 +123,12 @@ class EditGrupoClientes extends EditController
         ];
         $this->views[$viewName]->addFilterSelectWhere('status', $values);
 
-        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
-        $this->views[$viewName]->addFilterSelect('codserie', 'series', 'codserie', $series);
-
-        $retentions = $this->codeModel->all('retenciones', 'codretencion', 'descripcion');
-        $this->views[$viewName]->addFilterSelect('codretencion', 'retentions', 'codretencion', $retentions);
-
-        $paymentMethods = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        $this->views[$viewName]->addFilterSelect('codpago', 'payment-methods', 'codpago', $paymentMethods);
+        $this->views[$viewName]->addFilterSelect('codserie', 'series', 'codserie', Series::codeModel());
+        $this->views[$viewName]->addFilterSelect('codretencion', 'retentions', 'codretencion', Retenciones::codeModel());
+        $this->views[$viewName]->addFilterSelect('codpago', 'payment-methods', 'codpago', FormasPago::codeModel());
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewCustomers(string $viewName = 'ListCliente')
@@ -139,7 +136,7 @@ class EditGrupoClientes extends EditController
         $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
         $this->createViewCommon($viewName);
 
-        /// add action button
+        // add action button
         $this->addButton($viewName, [
             'action' => 'remove-customer',
             'color' => 'danger',
@@ -150,7 +147,6 @@ class EditGrupoClientes extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewNewCustomers(string $viewName = 'ListCliente-new')
@@ -158,7 +154,7 @@ class EditGrupoClientes extends EditController
         $this->addListView($viewName, 'Cliente', 'add', 'fas fa-user-plus');
         $this->createViewCommon($viewName);
 
-        /// add action button
+        // add action button
         $this->addButton($viewName, [
             'action' => 'add-customer',
             'color' => 'success',
@@ -168,7 +164,6 @@ class EditGrupoClientes extends EditController
     }
 
     /**
-     * 
      * @param string $action
      *
      * @return bool
@@ -183,16 +178,15 @@ class EditGrupoClientes extends EditController
             case 'remove-customer':
                 $this->removeCustomerAction();
                 return true;
-
-            default:
-                return parent::execPreviousAction($action);
         }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
      * Procedure responsible for loading the data to be displayed.
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -218,7 +212,7 @@ class EditGrupoClientes extends EditController
     protected function removeCustomerAction()
     {
         $codes = $this->request->request->get('code', []);
-        if (false === \is_array($codes)) {
+        if (false === is_array($codes)) {
             return;
         }
 

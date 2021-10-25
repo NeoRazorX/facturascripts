@@ -23,29 +23,32 @@
     <columns>
         <group name="primary-data" numcolumns="12">
             <column name="id" order="100" display="none">
-                <widget type="text" fieldname="idcuenta" />
+                <widget type="text" fieldname="idcuenta"/>
             </column>
             <column name="account" numcolumns="3" order="110">
-                <widget type="text" fieldname="codcuenta" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" required="true" />
+                <widget type="text" fieldname="codcuenta" icon="fas fa-hashtag" maxlength="10" readonly="dinamic"
+                        required="true"/>
             </column>
             <column name="description" order="120">
-                <widget type="text" fieldname="descripcion" maxlength="255" required="true" />
+                <widget type="text" fieldname="descripcion" maxlength="255" required="true"/>
             </column>
         </group>
         <group name="seccondary-data" numcolumns="12">
             <column name="parent-account" numcolumns="3" order="100">
-                <widget type="autocomplete" fieldname="parent_idcuenta" onclick="EditCuenta" icon="fas fa-book" readonly="dinamic">
-                    <values source="cuentas" fieldcode="idcuenta" fieldtitle="codcuenta" fieldfilter="codejercicio" />
+                <widget type="autocomplete" fieldname="parent_idcuenta" onclick="EditCuenta" icon="fas fa-book"
+                        readonly="dinamic">
+                    <values source="cuentas" fieldcode="idcuenta" fieldtitle="codcuenta" fieldfilter="codejercicio"/>
                 </widget>
             </column>
             <column name="fiscal-exercise" numcolumns="3" order="110">
-                <widget type="select" fieldname="codejercicio" onclick="EditEjercicio" readonly="dinamic" required="true">
-                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre" />
+                <widget type="select" fieldname="codejercicio" onclick="EditEjercicio" readonly="dinamic"
+                        required="true">
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"/>
                 </widget>
             </column>
             <column name="special-account" titleurl="ListCuenta?activetab=ListCuentaEspecial" order="120">
                 <widget type="select" fieldname="codcuentaesp" onclick="EditCuentaEspecial">
-                    <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion" />
+                    <values source="cuentasesp" fieldcode="codcuentaesp" fieldtitle="descripcion"/>
                 </widget>
             </column>
         </group>
@@ -53,16 +56,22 @@
     <modals>
         <group name="ledger" title="ledger" icon="fas fa-book fa-fw">
             <column name="date-from" title="from-date" numcolumns="12">
-                <widget type="date" fieldname="dateFrom" required="true" />
+                <widget type="date" fieldname="dateFrom" required="true"/>
             </column>
             <column name="date-to" title="until-date" numcolumns="12">
-                <widget type="date" fieldname="dateTo" required="true" />
+                <widget type="date" fieldname="dateTo" required="true"/>
             </column>
-            <column name="channel" numcolumns="12">
-                <widget type="number" fieldname="channel" />
+            <column name="grouping-type" numcolumns="12">
+                <widget type="select" fieldname="groupingtype" translate="true" required="true">
+                    <values title="do-not-group">N</values>
+                    <values title="group-by-subaccount">S</values>
+                </widget>
+            </column>
+            <column name="channel" display="none" numcolumns="12">
+                <widget type="number" fieldname="channel"/>
             </column>
             <column name="format" title="format" numcolumns="12">
-                <widget type="select" fieldname="format" required="true" translate="true" />
+                <widget type="select" fieldname="format" required="true" translate="true"/>
             </column>
         </group>
     </modals>

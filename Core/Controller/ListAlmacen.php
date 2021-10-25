@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
@@ -52,7 +54,6 @@ class ListAlmacen extends ListController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewWarehouse(string $viewName = 'ListAlmacen')
@@ -62,14 +63,7 @@ class ListAlmacen extends ListController
         $this->addOrderBy($viewName, ['codalmacen'], 'code');
         $this->addOrderBy($viewName, ['nombre'], 'name');
 
-        /// Filters
-        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombre');
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
-
-        $countries = $this->codeModel->all('paises', 'codpais', 'nombre');
-        $this->addFilterSelect($viewName, 'codpais', 'country', 'codpais', $countries);
-
-        $provinces = $this->codeModel->all('almacenes', 'provincia', 'provincia');
-        $this->addFilterSelect($viewName, 'provincia', 'province', 'provincia', $provinces);
+        // Filters
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
     }
 }

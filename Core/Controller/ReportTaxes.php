@@ -33,7 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ReportTaxes extends Controller
 {
 
-    const MAX_TOTAL_DIFF = 0.01;
+    const MAX_TOTAL_DIFF = 0.05;
 
     /**
      * @var string
@@ -94,7 +94,7 @@ class ReportTaxes extends Controller
             return;
         }
 
-        /// prepare lines
+        // prepare lines
         $lastcode = '';
         $lines = [];
         foreach ($data as $row) {
@@ -126,7 +126,7 @@ class ReportTaxes extends Controller
             return;
         }
 
-        /// prepare totals
+        // prepare totals
         $totals = [];
         foreach ($totalsData as $row) {
             $totals[] = [
@@ -234,7 +234,7 @@ class ReportTaxes extends Controller
             ];
         }
 
-        /// round
+        // round
         foreach ($data as $key => $value) {
             $data[$key]['neto'] = round($value['neto'], FS_NF0);
             $data[$key]['totaliva'] = round($value['totaliva'], FS_NF0);
@@ -300,7 +300,7 @@ class ReportTaxes extends Controller
         $exportManager->setOrientation('landscape');
         $exportManager->newDoc($this->format, $i18n->trans('taxes'));
 
-        /// add information table
+        // add information table
         $exportManager->addTablePage([$i18n->trans('report'), $i18n->trans('from-date'), $i18n->trans('until-date')], [
             [
                 $i18n->trans('report') => $i18n->trans('taxes') . ' ' . $i18n->trans($this->source),
@@ -309,12 +309,12 @@ class ReportTaxes extends Controller
             ]
         ]);
 
-        /// add lines table
+        // add lines table
         $this->reduceLines($lines);
         $headers = empty($lines) ? [] : array_keys(end($lines));
         $exportManager->addTablePage($headers, $lines);
 
-        /// add totals table
+        // add totals table
         $headtotals = empty($totals) ? [] : array_keys(end($totals));
         $exportManager->addTablePage($headtotals, $totals);
 
@@ -388,7 +388,7 @@ class ReportTaxes extends Controller
      */
     protected function validateTotals(array $totalsData): bool
     {
-        /// sum totals from the given data
+        // sum totals from the given data
         $neto = $totaliva = $totalrecargo = 0.0;
         foreach ($totalsData as $row) {
             $neto += $row['neto'];
@@ -396,7 +396,7 @@ class ReportTaxes extends Controller
             $totalrecargo += $row['totalrecargo'];
         }
 
-        /// gets totals from the database
+        // gets totals from the database
         $neto2 = $totaliva2 = $totalrecargo2 = 0.0;
         $tableName = $this->source === 'sales' ? 'facturascli' : 'facturasprov';
         $sql = 'SELECT SUM(neto) as neto, SUM(totaliva) as t1, SUM(totalrecargo) as t2 FROM ' . $tableName
@@ -409,7 +409,7 @@ class ReportTaxes extends Controller
             $totalrecargo2 += (float)$row['t2'];
         }
 
-        /// compare
+        // compare
         return abs($neto - $neto2) <= self::MAX_TOTAL_DIFF &&
             abs($totaliva - $totaliva2) <= self::MAX_TOTAL_DIFF &&
             abs($totalrecargo - $totalrecargo2) <= self::MAX_TOTAL_DIFF;

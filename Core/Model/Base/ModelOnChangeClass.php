@@ -46,7 +46,6 @@ abstract class ModelOnChangeClass extends ModelClass
     }
 
     /**
-     *
      * @return bool
      */
     public function delete()
@@ -69,7 +68,7 @@ abstract class ModelOnChangeClass extends ModelClass
      *
      * @return bool
      */
-    public function loadFromCode($code, array $where = [], array $orderby = [])
+    public function loadFromCode($code, array $where = [], array $orderby = []): bool
     {
         if (parent::loadFromCode($code, $where, $orderby)) {
             $this->setPreviousData();

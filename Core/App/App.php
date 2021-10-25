@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -88,8 +89,14 @@ abstract class App
         $this->response = new Response();
         $this->uri = $uri;
 
-        /// timezone
-        \date_default_timezone_set(\FS_TIMEZONE);
+        // timezone
+        date_default_timezone_set(FS_TIMEZONE);
+
+        // add security headers
+        $this->response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+        $this->response->headers->set('X-XSS-Protection', '1; mode=block');
+        $this->response->headers->set('X-Content-Type-Options', 'nosniff');
+        $this->response->headers->set('Strict-Transport-Security', 'max-age=31536000');
 
         $this->toolBox()->log()->debug('URI: ' . $this->uri);
     }
@@ -117,11 +124,11 @@ abstract class App
      */
     public function close(string $nick = '')
     {
-        /// send telemetry (if configured)
+        // send telemetry (if configured)
         $telemetry = new TelemetryManager();
         $telemetry->update();
 
-        /// save log
+        // save log
         new MiniLogSave($this->toolBox()->ipFilter()->getClientIp(), $nick, $this->uri);
 
         $this->dataBase->close();
@@ -137,7 +144,7 @@ abstract class App
 
     /**
      * Runs the application core.
-     * 
+     *
      * @return bool
      */
     public function run(): bool
@@ -158,14 +165,14 @@ abstract class App
     /**
      * Returns param number $num in uri.
      *
-     * @param int $num
+     * @param string $num
      *
      * @return string
      */
     protected function getUriParam(string $num): string
     {
-        $params = \explode('/', \substr($this->uri, 1));
-        return isset($params[$num]) ? $params[$num] : '';
+        $params = explode('/', substr($this->uri, 1));
+        return $params[$num] ?? '';
     }
 
     /**
@@ -195,7 +202,7 @@ abstract class App
     {
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             $initClass = '\\FacturaScripts\\Plugins\\' . $pluginName . '\\Init';
-            if (\class_exists($initClass)) {
+            if (class_exists($initClass)) {
                 $initObject = new $initClass();
                 $initObject->init();
             }
@@ -203,7 +210,6 @@ abstract class App
     }
 
     /**
-     * 
      * @return ToolBox
      */
     protected function toolBox()

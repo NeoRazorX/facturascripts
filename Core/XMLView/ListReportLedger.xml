@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,44 +16,49 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Jose Antonio Cuello <jcuello@artextrading.com>
 -->
 <view>
     <columns>
         <column name="code" display="none" order="100">
-            <widget type="text" fieldname="id" />
+            <widget type="text" fieldname="id"/>
         </column>
         <column name="company" display="none" order="110">
             <widget type="select" fieldname="idcompany">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
             </widget>
         </column>
         <column name="name" order="120">
-            <widget type="text" fieldname="name" />
+            <widget type="text" fieldname="name"/>
         </column>
         <column name="from-date" display="center" order="130">
-            <widget type="text" fieldname="startdate" />
+            <widget type="text" fieldname="startdate"/>
         </column>
         <column name="until-date" display="center" order="140">
-            <widget type="text" fieldname="enddate" />
+            <widget type="text" fieldname="enddate"/>
         </column>
-        <column name="group-accounts" display="center" order="150">
-            <widget type="checkbox" fieldname="grouped" />
+        <column name="channel" display="none" order="150">
+            <widget type="text" fieldname="channel"/>
         </column>
-        <column name="channel" display="center" order="160">
-            <widget type="text" fieldname="channel" />
+        <column name="grouping-type" order="160">
+            <widget type="select" fieldname="groupingtype" translate="true">
+                <values title="do-not-group">N</values>
+                <values title="report-grouping-account">C</values>
+                <values title="group-by-subaccount">S</values>
+            </widget>
         </column>
         <column name="from-subaccount" display="center" order="170">
-            <widget type="text" fieldname="startcodsubaccount" />
+            <widget type="text" fieldname="startcodsubaccount"/>
         </column>
         <column name="until-subaccount" display="center" order="180">
-            <widget type="text" fieldname="endcodsubaccount" />
+            <widget type="text" fieldname="endcodsubaccount"/>
         </column>
         <column name="from-accounting-entry" display="center" order="190">
-            <widget type="text" fieldname="startentry" />
+            <widget type="text" fieldname="startentry"/>
         </column>
         <column name="until-accounting-entry" display="center" order="200">
-            <widget type="text" fieldname="endentry" />
+            <widget type="text" fieldname="endentry"/>
         </column>
     </columns>
 </view>

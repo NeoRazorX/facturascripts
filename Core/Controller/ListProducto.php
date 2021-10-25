@@ -16,9 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Almacenes;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
@@ -54,7 +57,6 @@ class ListProducto extends ListController
     }
 
     /**
-     *
      * @param string $viewName
      */
     protected function createViewProducto(string $viewName = 'ListProducto')
@@ -68,7 +70,7 @@ class ListProducto extends ListController
         $this->addOrderBy($viewName, ['actualizado'], 'update-time');
         $this->addSearchFields($viewName, ['referencia', 'descripcion', 'observaciones']);
 
-        /// filters
+        // filters
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
         $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
 
@@ -80,7 +82,7 @@ class ListProducto extends ListController
         $this->addFilterNumber($viewName, 'min-stock', 'stock', 'stockfis', '<=');
         $this->addFilterNumber($viewName, 'max-stock', 'stock', 'stockfis', '>=');
 
-        $taxes = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
+        $taxes = Impuestos::codeModel();
         $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
 
         $this->addFilterCheckbox($viewName, 'nostock', 'no-stock', 'nostock');
@@ -92,7 +94,6 @@ class ListProducto extends ListController
     }
 
     /**
-     *
      * @param string $viewName
      */
     protected function createViewVariante(string $viewName = 'ListVariante')
@@ -106,7 +107,7 @@ class ListProducto extends ListController
         $this->addOrderBy($viewName, ['productos.descripcion', 'variantes.referencia'], 'product');
         $this->addSearchFields($viewName, ['variantes.referencia', 'variantes.codbarras', 'productos.descripcion']);
 
-        /// filters
+        // filters
         $attributes = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
         $this->addFilterSelect($viewName, 'idatributovalor1', 'attribute-value-1', 'variantes.idatributovalor1', $attributes);
         $this->addFilterSelect($viewName, 'idatributovalor2', 'attribute-value-2', 'variantes.idatributovalor2', $attributes);
@@ -117,7 +118,7 @@ class ListProducto extends ListController
         $this->addFilterNumber($viewName, 'min-stock', 'stock', 'variantes.stockfis', '<=');
         $this->addFilterNumber($viewName, 'max-stock', 'stock', 'variantes.stockfis', '>=');
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }
 
@@ -136,8 +137,8 @@ class ListProducto extends ListController
         $this->addOrderBy($viewName, ['productos.descripcion', 'stocks.referencia'], 'product');
         $this->addSearchFields($viewName, ['stocks.referencia', 'productos.descripcion']);
 
-        /// filters
-        $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
+        // filters
+        $warehouses = Almacenes::codeModel();
         $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'stocks.codalmacen', $warehouses);
 
         $this->addFilterSelectWhere($viewName, 'type', [
@@ -155,10 +156,10 @@ class ListProducto extends ListController
             ]
         ]);
 
-        $this->addFilterNumber($viewName, 'min-stock', 'stocks.quantity', 'cantidad', '<=');
-        $this->addFilterNumber($viewName, 'max-stock', 'stocks.quantity', 'cantidad', '>=');
+        $this->addFilterNumber($viewName, 'max-stock', 'quantity', 'cantidad', '>=');
+        $this->addFilterNumber($viewName, 'min-stock', 'quantity', 'cantidad', '<=');
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -56,7 +57,7 @@ class TotalModel
      *
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         $this->code = '';
         $this->totals = [];
@@ -73,10 +74,10 @@ class TotalModel
     /**
      * Load a list of TotalModel (code and fields of statistics) for the indicated table.
      *
-     * @param string          $tableName
+     * @param string $tableName
      * @param DataBaseWhere[] $where
-     * @param array           $fieldList (['key' => 'SUM(total)', 'key2' => 'MAX(total)' ...])
-     * @param string          $fieldCode (for multiples rows agruped by field code)
+     * @param array $fieldList (['key' => 'SUM(total)', 'key2' => 'MAX(total)' ...])
+     * @param string $fieldCode (for multiples rows agruped by field code)
      *
      * @return static[]
      */
@@ -95,7 +96,7 @@ class TotalModel
             }
         }
 
-        /// if it is empty we are obliged to always return a record with the totals to zero
+        // if it is empty we are obliged to always return a record with the totals to zero
         if (empty($result)) {
             $item = new static();
             $item->clearTotals(\array_keys($fieldList));
@@ -110,7 +111,7 @@ class TotalModel
      *
      * @param array $totalFields
      */
-    public function clearTotals($totalFields)
+    public function clearTotals(array $totalFields)
     {
         foreach ($totalFields as $fieldName) {
             $this->totals[$fieldName] = 0.0;
@@ -118,32 +119,30 @@ class TotalModel
     }
 
     /**
-     * 
-     * @param string          $tableName
-     * @param string          $fieldName
+     * @param string $tableName
+     * @param string $fieldName
      * @param DataBaseWhere[] $where
      *
      * @return float
      */
-    public static function sum($tableName, $fieldName, $where): float
+    public static function sum(string $tableName, string $fieldName, array $where): float
     {
-        if (static::dataBase()->tableExists($tableName)) {
-            $sql = 'SELECT SUM(' . static::dataBase()->escapeColumn($fieldName) . ') as sum'
-                . ' FROM ' . static::dataBase()->escapeColumn($tableName)
-                . DataBaseWhere::getSQLWhere($where);
-            foreach (static::dataBase()->select($sql) as $row) {
-                return (float) $row['sum'];
-            }
+        if (false === static::dataBase()->tableExists($tableName)) {
+            return 0.0;
         }
 
+        $sql = 'SELECT SUM(' . static::dataBase()->escapeColumn($fieldName) . ') as sum'
+            . ' FROM ' . static::dataBase()->escapeColumn($tableName) . DataBaseWhere::getSQLWhere($where);
+        foreach (static::dataBase()->select($sql) as $row) {
+            return (float)$row['sum'];
+        }
         return 0.0;
     }
 
     /**
-     * 
      * @return DataBase
      */
-    private static function dataBase()
+    private static function dataBase(): DataBase
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
@@ -156,11 +155,11 @@ class TotalModel
      * Returns the / fields as part of the SQL query.
      *
      * @param string $fieldCode
-     * @param array  $fieldList
+     * @param array $fieldList
      *
      * @return string
      */
-    private static function getFieldSQL($fieldCode, $fieldList)
+    private static function getFieldSQL(string $fieldCode, array $fieldList): string
     {
         $result = '';
         $comma = '';

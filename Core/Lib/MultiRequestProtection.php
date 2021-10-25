@@ -31,7 +31,9 @@ class MultiRequestProtection
 {
 
     const CACHE_KEY = 'MultiRequestProtection';
+    const MAX_TOKEN_AGE = 4;
     const MAX_TOKENS = 500;
+    const RANDOM_STRING_LENGTH = 6;
 
     /**
      * @var Cache
@@ -41,24 +43,37 @@ class MultiRequestProtection
     /**
      * @var string
      */
-    protected $controllerName;
+    protected $seed;
 
-    public function __construct(string $controllerName)
+    public function __construct()
     {
         $this->cache = new Cache();
-        $this->controllerName = $controllerName;
+
+        // something unique in each installation
+        $this->seed = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS . FS_CACHE_PREFIX;
     }
 
     /**
-     * Generates a random token for this code.
-     *
-     * @param string $code
+     * @param string $seed
+     */
+    public function addSeed(string $seed)
+    {
+        $this->seed .= $seed;
+    }
+
+    /**
+     * Generates a random token.
      *
      * @return string
      */
-    public function newToken(string $code = ''): string
+    public function newToken(): string
     {
-        return sha1($this->controllerName . $code) . '|' . $this->getRandomStr();
+        // something that changes every hour
+        $num = intval(date('YmdH')) + strlen($this->seed);
+
+        // combine and generate the token
+        $value = $this->seed . $num;
+        return sha1($value) . '|' . $this->getRandomStr();
     }
 
     /**
@@ -81,16 +96,28 @@ class MultiRequestProtection
 
     /**
      * @param string $token
-     * @param string $code
      *
      * @return bool
      */
-    public function validate(string $token, string $code = ''): bool
+    public function validate(string $token): bool
     {
-        $newTokenParts = explode('|', $this->newToken($code));
         $tokenParts = explode('|', $token);
+        if (count($tokenParts) != 2) {
+            // invalid token format
+            // the random part can be incremented in javascript so there is no fixed length
+            return false;
+        }
 
-        return count($tokenParts) === 2 && $tokenParts[0] === $newTokenParts[0];
+        // check all valid tokens roots
+        $num = intval(date('YmdH')) + strlen($this->seed);
+        $valid = [sha1($this->seed . $num)];
+        for ($hour = 1; $hour <= self::MAX_TOKEN_AGE; $hour++) {
+            $time = strtotime('-' . $hour . ' hours');
+            $altNum = intval(date('YmdH', $time)) + strlen($this->seed);
+            $valid[] = sha1($this->seed . $altNum);
+        }
+
+        return in_array($tokenParts[0], $valid);
     }
 
     /**
@@ -99,7 +126,7 @@ class MultiRequestProtection
     protected function getRandomStr(): string
     {
         $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        return substr(str_shuffle($chars), 0, 5);
+        return substr(str_shuffle($chars), 0, self::RANDOM_STRING_LENGTH);
     }
 
     /**
@@ -113,7 +140,7 @@ class MultiRequestProtection
             return $tokens;
         }
 
-        /// reduce tokens
+        // reduce tokens
         return array_slice($tokens, -10);
     }
 
@@ -128,7 +155,7 @@ class MultiRequestProtection
     {
         $tokens = $this->getTokens();
 
-        /// save new token
+        // save new token
         $tokens[] = $token;
         return $this->cache->set(self::CACHE_KEY, $tokens);
     }

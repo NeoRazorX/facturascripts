@@ -1,7 +1,7 @@
 {#
     /**
      * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
      *
      * This program is free software: you can redistribute it and/or modify
      * it under the terms of the GNU Lesser General Public License as
@@ -57,7 +57,7 @@
     <input type="hidden" name="action" value="{{ action }}"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="code" value="{{ currentView.model.primaryColumnValue() }}"/>
-    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken(fsc.user.logkey) }}"/>
+    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
         <div class="{{ currentView.settings.card ? 'card-body' : 'container-fluid' }}">
             <div class="row">

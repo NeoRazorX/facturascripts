@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -34,7 +35,6 @@ class EditRole extends EditController
 {
 
     /**
-     * 
      * @return array
      */
     public function getAccessRules(): array
@@ -64,7 +64,6 @@ class EditRole extends EditController
     }
 
     /**
-     * 
      * @return string
      */
     public function getModelClassName()
@@ -98,7 +97,6 @@ class EditRole extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsAccess(string $viewName = 'RoleAccess')
@@ -107,7 +105,6 @@ class EditRole extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsUsers(string $viewName = 'EditRoleUser')
@@ -115,40 +112,47 @@ class EditRole extends EditController
         $this->addEditListView($viewName, 'RoleUser', 'users', 'fas fa-address-card');
         $this->views[$viewName]->setInLine(true);
 
-        /// Disable column
+        // Disable column
         $this->views[$viewName]->disableColumn('role', true);
     }
 
     /**
-     * 
      * @return bool
      */
     protected function editRulesAction(): bool
     {
+        // check user permissions
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return true;
+        }
+
         $show = $this->request->request->get('show');
         $onlyOwner = $this->request->request->get('onlyOwner');
         $update = $this->request->request->get('update');
         $delete = $this->request->request->get('delete');
 
-        /// update or delete current access rules
+        // update or delete current access rules
         $roleAccessModel = new RoleAccess();
         $where = [new DataBaseWhere('codrole', $this->request->query->get('code'))];
         $rules = $roleAccessModel->all($where, [], 0, 0);
         foreach ($rules as $roleAccess) {
-            /// delete rule?
-            if (false === \is_array($show) || false === \in_array($roleAccess->pagename, $show)) {
+            // delete rule?
+            if (false === is_array($show) || false === in_array($roleAccess->pagename, $show)) {
                 $roleAccess->delete();
                 continue;
             }
 
-            /// update
-            $roleAccess->onlyownerdata = \is_array($onlyOwner) && \in_array($roleAccess->pagename, $onlyOwner);
-            $roleAccess->allowupdate = \is_array($update) && \in_array($roleAccess->pagename, $update);
-            $roleAccess->allowdelete = \is_array($delete) && \in_array($roleAccess->pagename, $delete);
+            // update
+            $roleAccess->onlyownerdata = is_array($onlyOwner) && in_array($roleAccess->pagename, $onlyOwner);
+            $roleAccess->allowupdate = is_array($update) && in_array($roleAccess->pagename, $update);
+            $roleAccess->allowdelete = is_array($delete) && in_array($roleAccess->pagename, $delete);
             $roleAccess->save();
         }
 
-        /// add new rules
+        // add new rules
         foreach ($show as $pageName) {
             $found = false;
             foreach ($rules as $rule) {
@@ -161,13 +165,13 @@ class EditRole extends EditController
                 continue;
             }
 
-            /// add
+            // add
             $newRoleAccess = new RoleAccess();
             $newRoleAccess->codrole = $this->request->query->get('code');
             $newRoleAccess->pagename = $pageName;
-            $newRoleAccess->onlyownerdata = \is_array($onlyOwner) && \in_array($pageName, $onlyOwner);
-            $newRoleAccess->allowupdate = \is_array($update) && \in_array($pageName, $update);
-            $newRoleAccess->allowdelete = \is_array($delete) && \in_array($pageName, $delete);
+            $newRoleAccess->onlyownerdata = is_array($onlyOwner) && in_array($pageName, $onlyOwner);
+            $newRoleAccess->allowupdate = is_array($update) && in_array($pageName, $update);
+            $newRoleAccess->allowdelete = is_array($delete) && in_array($pageName, $delete);
             $newRoleAccess->save();
         }
 
@@ -207,7 +211,7 @@ class EditRole extends EditController
     /**
      * Load view data
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)

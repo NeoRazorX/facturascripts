@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\EditReportAccounting;
@@ -59,7 +60,7 @@ class EditReportLedger extends EditReportAccounting
     {
         parent::createViews();
 
-        /// disable company column if there is only one company
+        // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }
@@ -69,7 +70,7 @@ class EditReportLedger extends EditReportAccounting
      * Generate Ledger data for report
      *
      * @param ReportLedger $model
-     * @param string       $format
+     * @param string $format
      *
      * @return array
      */
@@ -80,7 +81,7 @@ class EditReportLedger extends EditReportAccounting
             'entry-from' => $model->startentry,
             'entry-to' => $model->endentry,
             'format' => $format,
-            'grouped' => $model->grouped,
+            'grouped' => $model->groupingtype,
             'idcompany' => $model->idcompany,
             'subaccount-from' => $model->startcodsubaccount,
             'subaccount-to' => $model->endcodsubaccount

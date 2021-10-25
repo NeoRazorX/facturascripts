@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
-use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
@@ -34,7 +34,6 @@ class EditApiKey extends EditController
 {
 
     /**
-     * 
      * @return array
      */
     public function getAccessRules(): array
@@ -63,7 +62,7 @@ class EditApiKey extends EditController
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -96,7 +95,6 @@ class EditApiKey extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsAccess(string $viewName = 'ApiAccess')
@@ -105,29 +103,36 @@ class EditApiKey extends EditController
     }
 
     /**
-     * 
      * @return bool
      */
     protected function editRulesAction(): bool
     {
+        // check user permissions
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return true;
+        }
+
         $allowGet = $this->request->request->get('allowget');
         $allowPut = $this->request->request->get('allowput');
         $allowPost = $this->request->request->get('allowpost');
         $allowDelete = $this->request->request->get('allowdelete');
 
-        /// update current access rules
+        // update current access rules
         $accessModel = new ApiAccess();
         $where = [new DataBaseWhere('idapikey', $this->request->query->get('code'))];
         $rules = $accessModel->all($where, [], 0, 0);
         foreach ($rules as $access) {
-            $access->allowget = \is_array($allowGet) && \in_array($access->resource, $allowGet);
-            $access->allowput = \is_array($allowPut) && \in_array($access->resource, $allowPut);
-            $access->allowpost = \is_array($allowPost) && \in_array($access->resource, $allowPost);
-            $access->allowdelete = \is_array($allowDelete) && \in_array($access->resource, $allowDelete);
+            $access->allowget = is_array($allowGet) && in_array($access->resource, $allowGet);
+            $access->allowput = is_array($allowPut) && in_array($access->resource, $allowPut);
+            $access->allowpost = is_array($allowPost) && in_array($access->resource, $allowPost);
+            $access->allowdelete = is_array($allowDelete) && in_array($access->resource, $allowDelete);
             $access->save();
         }
 
-        /// add new rules
+        // add new rules
         foreach ($allowGet as $resource) {
             $found = false;
             foreach ($rules as $rule) {
@@ -140,14 +145,14 @@ class EditApiKey extends EditController
                 continue;
             }
 
-            /// add
+            // add
             $newAccess = new ApiAccess();
             $newAccess->idapikey = $this->request->query->get('code');
             $newAccess->resource = $resource;
-            $newAccess->allowget = \is_array($allowGet) && \in_array($resource, $allowGet);
-            $newAccess->allowput = \is_array($allowPut) && \in_array($resource, $allowPut);
-            $newAccess->allowpost = \is_array($allowPost) && \in_array($resource, $allowPost);
-            $newAccess->allowdelete = \is_array($allowDelete) && \in_array($resource, $allowDelete);
+            $newAccess->allowget = is_array($allowGet) && in_array($resource, $allowGet);
+            $newAccess->allowput = is_array($allowPut) && in_array($resource, $allowPut);
+            $newAccess->allowpost = is_array($allowPost) && in_array($resource, $allowPost);
+            $newAccess->allowdelete = is_array($allowDelete) && in_array($resource, $allowDelete);
             $newAccess->save();
         }
 
@@ -183,29 +188,29 @@ class EditApiKey extends EditController
     {
         $resources = [];
 
-        $path = \FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Lib' . DIRECTORY_SEPARATOR . 'API';
-        foreach (\scandir($path, SCANDIR_SORT_NONE) as $resource) {
-            if (\substr($resource, -4) !== '.php') {
+        $path = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Lib' . DIRECTORY_SEPARATOR . 'API';
+        foreach (scandir($path, SCANDIR_SORT_NONE) as $resource) {
+            if (substr($resource, -4) !== '.php') {
                 continue;
             }
 
             $class = substr('\\FacturaScripts\\Dinamic\\Lib\\API\\' . $resource, 0, -4);
             $APIClass = new $class($this->response, $this->request, []);
-            if (isset($APIClass) && \method_exists($APIClass, 'getResources')) {
+            if (isset($APIClass) && method_exists($APIClass, 'getResources')) {
                 foreach ($APIClass->getResources() as $name => $data) {
                     $resources[] = $name;
                 }
             }
         }
 
-        \sort($resources);
+        sort($resources);
         return $resources;
     }
 
     /**
      * Load view data.
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)

@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Dinamic\Model\Divisa;
+use FacturaScripts\Core\DataSrc\Divisas;
 
 /**
  * Description of CurrencyRelationTrait
@@ -36,12 +37,6 @@ trait CurrencyRelationTrait
     public $coddivisa;
 
     /**
-     *
-     * @var Divisa[]
-     */
-    private static $divisas;
-
-    /**
      * Rate of conversion to Euros of the selected currency.
      *
      * @var float|int
@@ -49,18 +44,12 @@ trait CurrencyRelationTrait
     public $tasaconv;
 
     /**
-     * 
      * @param string $coddivisa
-     * @param bool   $purchase
+     * @param bool $purchase
      */
     public function setCurrency($coddivisa, $purchase = false)
     {
-        if (empty(self::$divisas)) {
-            $divisaModel = new Divisa();
-            self::$divisas = $divisaModel->all([], [], 0, 0);
-        }
-
-        foreach (self::$divisas as $divisa) {
+        foreach (Divisas::all() as $divisa) {
             if ($divisa->coddivisa === $coddivisa) {
                 $this->coddivisa = $divisa->coddivisa;
                 $this->tasaconv = $purchase ? $divisa->tasaconvcompra : $divisa->tasaconv;

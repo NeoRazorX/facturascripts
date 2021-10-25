@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 trait TaxRelationTrait
@@ -31,24 +33,12 @@ trait TaxRelationTrait
     public $codimpuesto;
 
     /**
-     * Containt all avaliable taxes.
-     *
-     * @var Impuesto[]
-     */
-    private static $taxes = [];
-
-    /**
      * Returns the current tax or the default one
-     * 
+     *
      * @return Impuesto
      */
-    public function getTax()
+    public function getTax(): Impuesto
     {
-        if (!isset(self::$taxes[$this->codimpuesto])) {
-            self::$taxes[$this->codimpuesto] = new Impuesto();
-            self::$taxes[$this->codimpuesto]->loadFromCode($this->codimpuesto);
-        }
-
-        return self::$taxes[$this->codimpuesto];
+        return Impuestos::get($this->codimpuesto);
     }
 }

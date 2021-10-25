@@ -77,24 +77,24 @@ abstract class PanelController extends BaseController
     {
         parent::privateCore($response, $user, $permissions);
 
-        /// Get any operations that have to be performed
+        // Get any operations that have to be performed
         $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
-        /// Runs operations before reading data
+        // Runs operations before reading data
         if ($this->execPreviousAction($action) === false || $this->pipe('execPreviousAction', $action) === false) {
             return;
         }
 
-        /// Load the data for each view
+        // Load the data for each view
         $mainViewName = $this->getMainViewName();
         foreach ($this->views as $viewName => $view) {
-            /// disable views if main view has no data
+            // disable views if main view has no data
             if ($viewName != $mainViewName && false === $this->hasData) {
                 $this->setSettings($viewName, 'active', false);
             }
 
             if (false === $view->settings['active']) {
-                /// exclude inactive views
+                // exclude inactive views
                 continue;
             } elseif ($this->active == $viewName) {
                 $view->processFormData($this->request, 'load');
@@ -110,7 +110,7 @@ abstract class PanelController extends BaseController
             }
         }
 
-        /// General operations with the loaded data
+        // General operations with the loaded data
         $this->execAfterAction($action);
         $this->pipe('execAfterAction', $action);
     }
@@ -235,21 +235,10 @@ abstract class PanelController extends BaseController
      */
     protected function editAction()
     {
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
-        }
-
-        // valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
-            $this->toolBox()->i18nLog()->warning('invalid-request');
-            return false;
-        }
-
-        // duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            $this->toolBox()->i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFormToken()) {
             return false;
         }
 
@@ -332,7 +321,7 @@ abstract class PanelController extends BaseController
 
             case 'insert':
                 if ($this->insertAction() || !empty($this->views[$this->active]->model->primaryColumnValue())) {
-                    /// wee need to clear model in these scenarios
+                    // we need to clear model in these scenarios
                     $this->views[$this->active]->model->clear();
                 }
                 break;
@@ -362,18 +351,7 @@ abstract class PanelController extends BaseController
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
-        }
-
-        // valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
-            $this->toolBox()->i18nLog()->warning('invalid-request');
-            return false;
-        }
-
-        // duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            $this->toolBox()->i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFormToken()) {
             return false;
         }
 
@@ -385,19 +363,19 @@ abstract class PanelController extends BaseController
         }
 
         // save in database
-        if ($this->views[$this->active]->model->save()) {
-            /// redir to new model url only if this is the first view
-            if ($this->active === $this->getMainViewName()) {
-                $this->redirect($this->views[$this->active]->model->url() . '&action=save-ok');
-            }
-
-            $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-            return true;
+        if (false === $this->views[$this->active]->model->save()) {
+            $this->toolBox()->i18nLog()->error('record-save-error');
+            return false;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
-        return false;
+        // redirect to new model url only if this is the first view
+        if ($this->active === $this->getMainViewName()) {
+            $this->redirect($this->views[$this->active]->model->url() . '&action=save-ok');
+        }
+
+        $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        return true;
     }
 
     /**

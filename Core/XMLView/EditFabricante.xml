@@ -25,9 +25,12 @@
             <column name="code" description="optional" numcolumns="2" order="100">
                 <widget type="text" fieldname="codfabricante" icon="fas fa-hashtag" maxlength="8" readonly="dinamic" />
             </column>
-            <column name="name" numcolumns="10" order="110">
+            <column name="name" numcolumns="8" order="110">
                 <widget type="text" fieldname="nombre" maxlength="100" required="true" />
             </column>
+            <column name="products" display="right" numcolumns="2" order="125">
+                <widget type="number" fieldname="numproductos" readonly="true" decimal="0" />
+            </column>        
         </group>
     </columns>
 </view>

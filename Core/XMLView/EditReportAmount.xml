@@ -23,22 +23,22 @@
     <columns>
         <group name="basic" numcolumns="12">
             <column name="code" display="none" order="100">
-                <widget type="text" fieldname="id" />
+                <widget type="text" fieldname="id"/>
             </column>
             <column name="name" order="110">
-                <widget type="text" fieldname="name" required="true" />
+                <widget type="text" fieldname="name" required="true"/>
             </column>
-            <column name="company" titleurl="ListEmpresa" numcolumns="3" order="120">
+            <column name="company" titleurl="ListEmpresa" order="120">
                 <widget type="select" fieldname="idcompany" onclick="EditEmpresa">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
                 </widget>
             </column>
-            <column name="channel" numcolumns="2" order="130">
+            <column name="channel" display="none" order="130">
                 <widget type="number" fieldname="channel" decimal="0"/>
             </column>
             <column name="level" numcolumns="2" order="140">
                 <widget type="select" fieldname="level" required="true">
-                    <values start="0" end="4" step="1" />
+                    <values start="0" end="4" step="1"/>
                 </widget>
             </column>
         </group>
@@ -47,23 +47,23 @@
                 <widget type="date" fieldname="startdate" required="true"/>
             </column>
             <column name="until-date" order="110">
-                <widget type="date" fieldname="enddate" required="true" />
+                <widget type="date" fieldname="enddate" required="true"/>
             </column>
             <column name="from-subaccount" order="120">
                 <widget type="autocomplete" fieldname="startcodsubaccount" strict="false">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"/>
                 </widget>
             </column>
             <column name="until-subaccount" order="130">
                 <widget type="autocomplete" fieldname="endcodsubaccount" strict="false">
-                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion" />
+                    <values source="subcuentas" fieldcode="codsubcuenta" fieldtitle="descripcion"/>
                 </widget>
             </column>
             <column name="without-regularization" order="150">
-                <widget type="checkbox" fieldname="ignoreregularization" />
+                <widget type="checkbox" fieldname="ignoreregularization"/>
             </column>
             <column name="without-closure" order="160">
-                <widget type="checkbox" fieldname="ignoreclosure" />
+                <widget type="checkbox" fieldname="ignoreclosure"/>
             </column>
         </group>
     </columns>

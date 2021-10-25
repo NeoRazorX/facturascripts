@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
@@ -122,7 +123,7 @@ class Controller
         $this->className = $className;
         $this->dataBase = new DataBase();
         $this->empresa = new Empresa();
-        $this->multiRequestProtection = new MultiRequestProtection($className);
+        $this->multiRequestProtection = new MultiRequestProtection();
         $this->request = Request::createFromGlobals();
         $this->template = $this->className . '.html.twig';
         $this->uri = $uri;
@@ -197,10 +198,13 @@ class Controller
         $this->response = &$response;
         $this->user = $user;
 
-        /// Select the default company for the user
-        $this->empresa->loadFromCode($this->user->idempresa);
+        // Select the default company for the user
+        $this->empresa = Empresas::get($this->user->idempresa);
 
-        /// Have this user a default page?
+        // add the user to the token generation seed
+        $this->multiRequestProtection->addSeed($user->nick);
+
+        // Have this user a default page?
         $defaultPage = $this->request->query->get('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
@@ -225,7 +229,7 @@ class Controller
         $this->template = 'Login/Login.html.twig';
 
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
-        $this->empresa->loadFromCode($idempresa);
+        $this->empresa = Empresas::get($idempresa);
     }
 
     /**
