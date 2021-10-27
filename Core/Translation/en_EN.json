@@ -762,6 +762,7 @@
     "new-address": "New Address",
     "new-customer": "new customer",
     "new-customers": "New customers",
+    "new-invoice-line-p": "Puedes añadir un producto pulsando el botón producto o escribiendo su referencia o código de barras en el campo código de barras. O pulsa el botón línea para una línea sin producto.",
     "new-password": "New password",
     "new-price": "New price",
     "new-refund": "New refund",

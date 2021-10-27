@@ -762,6 +762,7 @@
     "new-address": "Nova adreça",
     "new-customer": "Nou client",
     "new-customers": "Nous clients",
+    "new-invoice-line-p": "Pots afegir un producte prement el botó producte o escrivint la seva referència o codi de barres al camp codi de barres. O prem el botó línia per a una línia sense producte.",
     "new-password": "Nova contrasenya",
     "new-price": "Nou preu",
     "new-refund": "Nova devolució",

@@ -762,6 +762,7 @@
     "new-address": "Helbide Berria",
     "new-customer": "bezero berria",
     "new-customers": "Bezero berriak",
+    "new-invoice-line-p": "Puedes añadir un producto pulsando el botón producto o escribiendo su referencia o código de barras en el campo código de barras. O pulsa el botón línea para una línea sin producto.",
     "new-password": "Pasahitz berria",
     "new-price": "Prezio berria",
     "new-refund": "Itzulketa berria",
