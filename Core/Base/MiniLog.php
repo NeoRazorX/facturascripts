@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -29,6 +30,7 @@ class MiniLog
     const ALL_LEVELS = ['critical', 'debug', 'error', 'info', 'notice', 'warning'];
     const DEFAULT_CHANNEL = 'master';
     const DEFAULT_LEVELS = ['critical', 'error', 'info', 'notice', 'warning'];
+    const LIMIT = 5000;
 
     /**
      * Current channel.
@@ -45,7 +47,7 @@ class MiniLog
     private static $dataLog = [];
 
     /**
-     * 
+     *
      * @param string $channel
      */
     public function __construct(string $channel = '')
@@ -67,7 +69,7 @@ class MiniLog
      * Example: Application component unavailable, unexpected exception.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function critical(string $message, array $context = [])
     {
@@ -78,7 +80,7 @@ class MiniLog
      * Detailed debug information.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function debug(string $message, array $context = [])
     {
@@ -90,7 +92,7 @@ class MiniLog
      * be logged and monitored.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function error(string $message, array $context = [])
     {
@@ -101,7 +103,7 @@ class MiniLog
      * Interesting information, advices.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function info(string $message, array $context = [])
     {
@@ -112,7 +114,7 @@ class MiniLog
      * Normal but significant events.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function notice(string $message, array $context = [])
     {
@@ -121,7 +123,7 @@ class MiniLog
 
     /**
      * Returns specified level messages of this channel.
-     * 
+     *
      * @param array $levels
      *
      * @return array
@@ -140,7 +142,7 @@ class MiniLog
 
     /**
      * Returns specified level messages of all channels.
-     * 
+     *
      * @param array $levels
      *
      * @return array
@@ -164,7 +166,7 @@ class MiniLog
      * that are not necessarily wrong.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function warning(string $message, array $context = [])
     {
@@ -176,7 +178,7 @@ class MiniLog
      *
      * @param string $level
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     protected function log(string $level, string $message, array $context = [])
     {
@@ -189,6 +191,35 @@ class MiniLog
                 'microtime' => microtime(true),
                 'time' => time(),
             ];
+
+            $this->reduce();
+        }
+    }
+
+    protected function reduce()
+    {
+        if (count(self::$dataLog) <= self::LIMIT) {
+            return;
+        }
+
+        // get the count for this channel
+        $count = 0;
+        foreach (self::$dataLog as $item) {
+            if ($item['channel'] === $this->channel) {
+                $count++;
+            }
+        }
+        if ($count <= self::LIMIT) {
+            return;
+        }
+
+        // remove the first 100 items for this channel
+        $remove = 100;
+        foreach (self::$dataLog as $key => $item) {
+            if ($remove > 0 && $item['channel'] === $this->channel) {
+                unset(self::$dataLog[$key]);
+                $remove--;
+            }
         }
     }
 }

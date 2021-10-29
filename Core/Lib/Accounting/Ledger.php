@@ -159,6 +159,8 @@ class Ledger extends AccountingBase
     /**
      * Return the appropriate data from database.
      *
+     * @param array $params
+     *
      * @return array
      */
     protected function getDataGroupedByAccount(array $params = []): array
@@ -182,6 +184,8 @@ class Ledger extends AccountingBase
 
     /**
      * Return the appropriate data from database.
+     *
+     * @param array $params
      *
      * @return array
      */
