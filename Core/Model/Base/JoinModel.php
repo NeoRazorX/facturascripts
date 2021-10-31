@@ -53,13 +53,6 @@ abstract class JoinModel
     private $masterModel;
 
     /**
-     * List of values for record view
-     *
-     * @var array
-     */
-    private $values = [];
-
-    /**
      * List of tables required for the execution of the view.
      */
     abstract protected function getTables(): array;
@@ -93,45 +86,6 @@ abstract class JoinModel
     }
 
     /**
-     * Return model view field value
-     *
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        if (!isset($this->values[$name])) {
-            $this->values[$name] = null;
-        }
-
-        return $this->values[$name];
-    }
-
-    /**
-     * Check if exits value to property
-     *
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function __isset($name)
-    {
-        return \array_key_exists($name, $this->values);
-    }
-
-    /**
-     * Set value to model view field
-     *
-     * @param string $name
-     * @param mixed  $value
-     */
-    public function __set($name, $value)
-    {
-        $this->values[$name] = $value;
-    }
-
-    /**
      * Load data for the indicated where.
      *
      * @param DataBaseWhere[] $where  filters to apply to model records.
@@ -151,7 +105,6 @@ abstract class JoinModel
                 $result[] = new static($row);
             }
         }
-
         return $result;
     }
 
@@ -161,7 +114,7 @@ abstract class JoinModel
     public function clear()
     {
         foreach (\array_keys($this->getFields()) as $field) {
-            $this->values[$field] = null;
+            $this->{$field} = null;
         }
     }
 
@@ -416,7 +369,7 @@ abstract class JoinModel
     protected function loadFromData($data)
     {
         foreach ($data as $field => $value) {
-            $this->values[$field] = $value;
+            $this->{$field} = $value;
         }
     }
 
