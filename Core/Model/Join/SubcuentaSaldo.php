@@ -111,7 +111,7 @@ class SubcuentaSaldo extends JoinModel
      *
      * @param array $data
      */
-    protected function loadFromData($data)
+    protected function loadFromData(array $data)
     {
         parent::loadFromData($data);
         $this->saldo = $this->debe - $this->haber;
