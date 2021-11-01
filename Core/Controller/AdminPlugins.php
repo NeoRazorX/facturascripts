@@ -98,7 +98,7 @@ class AdminPlugins extends Base\Controller
      *
      * @return array
      */
-    public function getPlugins()
+    public function getPlugins(): array
     {
         $installedPlugins = $this->pluginManager->installedPlugins();
         if (false === defined('FS_HIDDEN_PLUGINS')) {
@@ -138,14 +138,15 @@ class AdminPlugins extends Base\Controller
      *
      * @return bool
      */
-    private function disablePlugin($pluginName)
+    private function disablePlugin(string $pluginName): bool
     {
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
         }
 
         $this->pluginManager->disable($pluginName);
+        $this->toolBox()->cache()->clear();
         return true;
     }
 
@@ -156,7 +157,7 @@ class AdminPlugins extends Base\Controller
      *
      * @return bool
      */
-    private function enablePlugin($pluginName)
+    private function enablePlugin(string $pluginName): bool
     {
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
@@ -164,6 +165,7 @@ class AdminPlugins extends Base\Controller
         }
 
         $this->pluginManager->enable($pluginName);
+        $this->toolBox()->cache()->clear();
         return true;
     }
 
@@ -172,7 +174,7 @@ class AdminPlugins extends Base\Controller
      *
      * @param string $action
      */
-    private function execAction($action)
+    private function execAction(string $action)
     {
         switch ($action) {
             case 'disable':
@@ -214,7 +216,7 @@ class AdminPlugins extends Base\Controller
      *
      * @return bool
      */
-    private function removePlugin($pluginName)
+    private function removePlugin(string $pluginName): bool
     {
         if (false === $this->permissions->allowDelete) {
             $this->toolBox()->i18nLog()->warning('not-allowed-delete');
@@ -222,6 +224,7 @@ class AdminPlugins extends Base\Controller
         }
 
         $this->pluginManager->remove($pluginName);
+        $this->toolBox()->cache()->clear();
         return true;
     }
 
@@ -230,7 +233,7 @@ class AdminPlugins extends Base\Controller
      *
      * @param UploadedFile[] $uploadFiles
      */
-    private function uploadPlugin($uploadFiles)
+    private function uploadPlugin(array $uploadFiles)
     {
         // check user permissions
         if (false === $this->permissions->allowUpdate) {
@@ -267,6 +270,7 @@ class AdminPlugins extends Base\Controller
         }
 
         if ($this->pluginManager->deploymentRequired()) {
+            $this->toolBox()->cache()->clear();
             $this->toolBox()->i18nLog()->notice('reloading');
             $this->redirect($this->url() . '?action=rebuild', 3);
         }
