@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Core\Model\Base\JoinModel;
@@ -32,13 +33,11 @@ class PartidaAsiento extends JoinModel
 {
 
     /**
-     *
      * @var Asiento
      */
     private $asiento;
 
     /**
-     *
      * @param array $data
      */
     public function __construct($data = [])
@@ -46,6 +45,16 @@ class PartidaAsiento extends JoinModel
         parent::__construct($data);
         $this->setMasterModel(new Partida());
         $this->asiento = new Asiento();
+    }
+
+    /**
+     * @return Partida
+     */
+    public function getPartida(): Partida
+    {
+        $partida = new Partida();
+        $partida->loadFromCode($this->idpartida);
+        return $partida;
     }
 
     /**
@@ -63,7 +72,6 @@ class PartidaAsiento extends JoinModel
     }
 
     /**
-     *
      * @return array
      */
     protected function getFields(): array
@@ -75,13 +83,13 @@ class PartidaAsiento extends JoinModel
             'haber' => 'partidas.haber',
             'idasiento' => 'partidas.idasiento',
             'idpartida' => 'partidas.idpartida',
+            'numero' => 'asientos.numero',
             'punteada' => 'partidas.punteada',
-            'numero' => 'asientos.numero'
+            'saldo' => 'partidas.saldo'
         ];
     }
 
     /**
-     *
      * @return string
      */
     protected function getSQLFrom(): string
@@ -90,7 +98,6 @@ class PartidaAsiento extends JoinModel
     }
 
     /**
-     *
      * @return array
      */
     protected function getTables(): array

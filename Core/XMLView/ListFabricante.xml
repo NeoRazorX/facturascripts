@@ -28,8 +28,5 @@
         <column name="name" order="110">
             <widget type="text" fieldname="nombre"/>
         </column>
-        <column name="products" display="right" order="120">
-            <widget type="number" fieldname="numproductos" decimal="0"/>
-        </column>
     </columns>
 </view>
