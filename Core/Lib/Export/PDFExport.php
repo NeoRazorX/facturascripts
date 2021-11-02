@@ -59,16 +59,16 @@ class PDFExport extends PDFDocument
             $this->insertedHeader = false;
         }
 
+        $this->insertHeader($model->idempresa);
+        $this->insertBusinessDocHeader($model);
+        $this->insertBusinessDocBody($model);
+        $this->insertBusinessDocFooter($model);
+
         if ($model->modelClassName() === 'FacturaCliente' && $model->editable) {
             $this->pdf->setColor(200, 0, 0);
             $this->pdf->addText(0, 230, 15, $this->i18n->trans('sketch-invoice-warning'), 600, 'center', -35);
             $this->pdf->setColor(0, 0, 0);
         }
-
-        $this->insertHeader($model->idempresa);
-        $this->insertBusinessDocHeader($model);
-        $this->insertBusinessDocBody($model);
-        $this->insertBusinessDocFooter($model);
 
         // do not continue with export
         return false;
