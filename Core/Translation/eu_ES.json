@@ -1033,6 +1033,7 @@
     "simple": "Sinplea",
     "size": "Tamaina",
     "sketch": "Boceto",
+    "sketch-invoice-warning": "Esta factura todavía es un boceto. Hágala oficial cambiado su estado a emitida.",
     "small": "Txikia",
     "smaller-than": "Baino txikiagoa",
     "social-security-number": "Gizarte segurantza zenbakia",

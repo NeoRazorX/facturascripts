@@ -61,7 +61,7 @@ class PDFExport extends PDFDocument
 
         if ($model->modelClassName() === 'FacturaCliente' && $model->editable) {
             $this->pdf->setColor(200, 0, 0);
-            $this->pdf->addText(0, 400, 50, $this->i18n->trans('sketch'), 600, 'center', -45);
+            $this->pdf->addText(0, 230, 15, $this->i18n->trans('sketch-invoice-warning'), 600, 'center', -35);
             $this->pdf->setColor(0, 0, 0);
         }
 

@@ -1033,6 +1033,7 @@
     "simple": "Simple",
     "size": "Tamaño",
     "sketch": "Boceto",
+    "sketch-invoice-warning": "Esta factura todavía es un boceto. Hágala oficial cambiado su estado a emitida.",
     "small": "Pequeño",
     "smaller-than": "Menor que",
     "social-security-number": "Número Seguridad Social",
