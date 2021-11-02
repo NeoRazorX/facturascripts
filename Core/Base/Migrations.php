@@ -83,8 +83,6 @@ final class Migrations
             $status->editable = false;
             $status->nombre = 'Emitida';
             $status->save();
-            $status->bloquear = true;
-            $status->save();
         }
     }
 

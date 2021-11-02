@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\EstadoDocumento;
 use PHPUnit\Framework\TestCase;
 
-class EstadoDocumentoTest extends TestCase
+final class EstadoDocumentoTest extends TestCase
 {
     public function testCreateNewStatus()
     {

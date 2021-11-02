@@ -259,6 +259,24 @@ class EstadoDocumento extends Base\ModelOnChangeClass
     }
 
     /**
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->idestado)) {
+            /**
+             * postgresql does not correctly update the serial when inserting the values from a csv.
+             * So we use this to get the new id manually.
+             */
+            $this->idestado = $this->newCode();
+        }
+
+        return parent::saveInsert($values);
+    }
+
+    /**
      * @param array $fields
      */
     protected function setPreviousData(array $fields = [])
