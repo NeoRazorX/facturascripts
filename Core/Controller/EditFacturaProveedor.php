@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -61,26 +62,24 @@ class EditFacturaProveedor extends PurchaseDocumentController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createAccountsView(string $viewName = 'ListAsiento')
     {
         $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
 
-        /// buttons
+        // buttons
         $this->addButton($viewName, [
             'action' => 'generate-accounting',
             'icon' => 'fas fa-magic',
             'label' => 'generate-accounting-entry'
         ]);
 
-        /// settings
+        // settings
         $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createReceiptsView(string $viewName = 'ListReciboProveedor')
@@ -88,7 +87,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
         $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
         $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
 
-        /// buttons
+        // buttons
         $this->addButton($viewName, [
             'action' => 'generate-receipts',
             'confirm' => 'true',
@@ -103,11 +102,11 @@ class EditFacturaProveedor extends PurchaseDocumentController
             'label' => 'paid'
         ]);
 
-        /// disable columns
+        // disable columns
         $this->views[$viewName]->disableColumn('invoice');
         $this->views[$viewName]->disableColumn('supplier');
 
-        /// settings
+        // settings
         $this->setSettings($viewName, 'modalInsert', 'generate-receipts');
     }
 
@@ -117,13 +116,20 @@ class EditFacturaProveedor extends PurchaseDocumentController
     protected function createViews()
     {
         parent::createViews();
+
+        // prevent users to change readonly property of numero field
+        $editViewName = 'Edit' . $this->getModelClassName();
+        $this->views[$editViewName]->disableColumn('number', false, 'true');
+
+        // disable delete button
+        $this->setSettings($this->getLineXMLView(), 'btnDelete', false);
+
         $this->createReceiptsView();
         $this->createAccountsView();
-        $this->addHtmlView('Refund', 'Tab/RefundFacturaProveedor', 'FacturaProveedor', 'refunds', 'fas fa-share-square');
+        $this->addHtmlView('delete', 'Tab/DeleteFacturaProveedor', 'FacturaProveedor', 'delete', 'fas fa-trash-alt');
     }
 
     /**
-     * 
      * @param string $action
      *
      * @return bool
@@ -151,10 +157,9 @@ class EditFacturaProveedor extends PurchaseDocumentController
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function generateAccountingAction()
+    protected function generateAccountingAction(): bool
     {
         $invoice = new FacturaProveedor();
         if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
@@ -179,10 +184,9 @@ class EditFacturaProveedor extends PurchaseDocumentController
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function generateReceiptsAction()
+    protected function generateReceiptsAction(): bool
     {
         $invoice = new FacturaProveedor();
         if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
@@ -191,7 +195,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
         }
 
         $generator = new ReceiptGenerator();
-        $number = (int) $this->request->request->get('number', '0');
+        $number = (int)$this->request->request->get('number', '0');
         if ($generator->generate($invoice, $number)) {
             $generator->update($invoice);
             $invoice->save();
@@ -207,32 +211,39 @@ class EditFacturaProveedor extends PurchaseDocumentController
     /**
      * Load data view procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
+        $mvn = $this->getMainViewName();
+
         switch ($viewName) {
+            case 'delete':
+                $where = [new DataBaseWhere('idfacturarect', $this->getViewModelValue($mvn, 'idfactura'))];
+                $view->loadData('', $where);
+                break;
+
             case 'ListReciboProveedor':
-                $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($this->getLineXMLView(), 'idfactura'))];
+                $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($mvn, 'idfactura'))];
                 $view->loadData('', $where);
                 break;
 
             case 'ListAsiento':
-                $where = [new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasiento'))];
+                $where = [new DataBaseWhere('idasiento', $this->getViewModelValue($mvn, 'idasiento'))];
                 $view->loadData('', $where);
                 break;
 
             default:
                 parent::loadData($viewName, $view);
+                break;
         }
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function newRefundAction()
+    protected function newRefundAction(): bool
     {
         $invoice = new FacturaProveedor();
         if (false === $invoice->loadFromCode($this->request->request->get('idfactura'))) {
@@ -243,7 +254,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
         $lines = [];
         $quantities = [];
         foreach ($invoice->getLines() as $line) {
-            $quantity = (float) $this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
+            $quantity = (float)$this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
             if (empty($quantity)) {
                 continue;
             }
@@ -279,10 +290,9 @@ class EditFacturaProveedor extends PurchaseDocumentController
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function paidAction()
+    protected function paidAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');

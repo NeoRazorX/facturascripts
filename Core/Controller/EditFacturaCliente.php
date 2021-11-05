@@ -121,9 +121,12 @@ class EditFacturaCliente extends SalesDocumentController
         $editViewName = 'Edit' . $this->getModelClassName();
         $this->views[$editViewName]->disableColumn('number', false, 'true');
 
+        // disable delete button
+        $this->setSettings($this->getLineXMLView(), 'btnDelete', false);
+
         $this->createReceiptsView();
         $this->createAccountsView();
-        $this->addHtmlView('Refund', 'Tab/RefundFacturaCliente', 'FacturaCliente', 'refunds', 'fas fa-share-square');
+        $this->addHtmlView('delete', 'Tab/DeleteFacturaCliente', 'FacturaCliente', 'delete', 'fas fa-trash-alt');
     }
 
     /**
@@ -213,19 +216,27 @@ class EditFacturaCliente extends SalesDocumentController
      */
     protected function loadData($viewName, $view)
     {
+        $mvn = $this->getMainViewName();
+
         switch ($viewName) {
+            case 'delete':
+                $where = [new DataBaseWhere('idfacturarect', $this->getViewModelValue($mvn, 'idfactura'))];
+                $view->loadData('', $where);
+                break;
+
             case 'ListReciboCliente':
-                $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($this->getLineXMLView(), 'idfactura'))];
+                $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($mvn, 'idfactura'))];
                 $view->loadData('', $where);
                 break;
 
             case 'ListAsiento':
-                $where = [new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasiento'))];
+                $where = [new DataBaseWhere('idasiento', $this->getViewModelValue($mvn, 'idasiento'))];
                 $view->loadData('', $where);
                 break;
 
             default:
                 parent::loadData($viewName, $view);
+                break;
         }
     }
 
