@@ -155,6 +155,29 @@ trait InvoiceTrait
     }
 
     /**
+     * Returns all parent document of this one.
+     *
+     * @return TransformerDocument[]
+     */
+    public function parentDocuments()
+    {
+        $parents = parent::parentDocuments();
+        $where = [new DataBaseWhere('idfactura', $this->idfacturarect)];
+        foreach ($this->all($where, ['idfactura' => 'DESC'], 0, 0) as $invoice) {
+            // is this invoice in parents?
+            foreach ($parents as $parent) {
+                if ($parent->primaryColumnValue() == $invoice->primaryColumnValue()) {
+                    continue 2;
+                }
+            }
+
+            $parents[] = $invoice;
+        }
+
+        return $parents;
+    }
+
+    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
@@ -162,25 +185,6 @@ trait InvoiceTrait
     public static function primaryColumn()
     {
         return 'idfactura';
-    }
-
-    /**
-     * Returns the refunded items amount associated with the invoice.
-     *
-     * @return float|int
-     */
-    public function refundedItemAmount($ref)
-    {
-        $amount = 0;
-        foreach ($this->getRefunds() as $invoice) {
-            foreach ($invoice->getLines() as $line) {
-                if ($line->referencia == $ref) {
-                    $amount += abs($line->cantidad);
-                }
-            }
-        }
-
-        return $amount;
     }
 
     /**

@@ -944,7 +944,7 @@
     "record-updated-correctly": "Registre actualitzat correctament!",
     "recreate-system-integrity": "Tornar a crear la integritat del sistema",
     "rectified-invoice": "Factura rectificativa",
-    "rectified-invoice-p": "Les factures són documents mercantils i té una sèrie de restriccions legals. No es poden eliminar ni modificar. Només es permeten devolucions totals o parcials. Utilitza aquest formulari per fer una devolució sobre aquesta factura.",
+    "rectified-invoice-p": "Les factures són documents mercantils i tenen una sèrie de restriccions legals. No es poden eliminar ni modificar. Només es permeten devolucions totals o parcials. Utilitza aquest formulari per fer una devolució sobre aquesta factura.",
     "rectifying-serie": "Sèrie rectificativa",
     "reference": "Referència",
     "reference+description": "Referència + Descripció",

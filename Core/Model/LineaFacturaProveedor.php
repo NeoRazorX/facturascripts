@@ -16,17 +16,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Model\Base\InvoiceLineTrait;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Model\Base\PurchaseDocumentLine;
 
 /**
  * Line of a supplier invoice.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaFacturaProveedor extends Base\PurchaseDocumentLine
+class LineaFacturaProveedor extends PurchaseDocumentLine
 {
 
-    use Base\ModelTrait;
+    use ModelTrait;
+    use InvoiceLineTrait;
 
     /**
      * Invoice ID of this line.
@@ -36,7 +42,11 @@ class LineaFacturaProveedor extends Base\PurchaseDocumentLine
     public $idfactura;
 
     /**
-     * 
+     * @var int
+     */
+    public $idlinearect;
+
+    /**
      * @return string
      */
     public function documentColumn()
@@ -45,7 +55,6 @@ class LineaFacturaProveedor extends Base\PurchaseDocumentLine
     }
 
     /**
-     * 
      * @return FacturaProveedor
      */
     public function getDocument()
@@ -56,14 +65,12 @@ class LineaFacturaProveedor extends Base\PurchaseDocumentLine
     }
 
     /**
-     * 
      * @return string
      */
     public function install()
     {
-        /// needed dependency
+        // needed dependency
         new FacturaProveedor();
-
         return parent::install();
     }
 
@@ -78,18 +85,16 @@ class LineaFacturaProveedor extends Base\PurchaseDocumentLine
     }
 
     /**
-     * 
      * @return bool
      */
     public function test()
     {
-        /// servido will always be 0 to prevent stock problems when removing rectified invoices
+        // servido will always be 0 to prevent stock problems when removing rectified invoices
         $this->servido = 0.0;
         return parent::test();
     }
 
     /**
-     * 
      * @param string $type
      * @param string $list
      *
@@ -97,10 +102,6 @@ class LineaFacturaProveedor extends Base\PurchaseDocumentLine
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        if (null !== $this->idfactura) {
-            return 'EditFacturaProveedor?code=' . $this->idfactura;
-        }
-
-        return parent::url($type, $list);
+        return $this->idfactura ? 'EditFacturaProveedor?code=' . $this->idfactura : parent::url($type, $list);
     }
 }
