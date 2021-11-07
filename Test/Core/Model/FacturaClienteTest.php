@@ -19,95 +19,109 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\BusinessDocumentTools;
-use FacturaScripts\Core\Model\FacturaProveedor;
+use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Test\Core\BusinessDocsTrait;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
-final class FacturaProveedorTest extends TestCase
+class FacturaClienteTest extends TestCase
 {
     use LogErrorsTrait;
     use BusinessDocsTrait;
 
-    const INVOICE_NOTES = 'Test test test.';
-    const INVOICE_REF = '7777777';
-    const PRODUCT1_COST = 99.9;
-    const PRODUCT1_QUANTITY = 10;
-    const PRODUCT1_REF = '1234';
-    const SUPPLIER_CIF = '8888';
-    const SUPPLIER_NAME = 'ACME';
+    const CUSTOMER_CIF = '556677';
+    const CUSTOMER_NAME = 'Alberto';
+    const INVOICE_NOTES = 'Test, 2, 3.';
+    const INVOICE_REF = 'J567-987';
+    const PRODUCT1_PRICE = 66.1;
+    const PRODUCT1_QUANTITY = 3;
+    const PRODUCT1_REF = 'X7878';
 
-    public function testCreateNewInvoice()
+    public function testCanCreateInvoice()
     {
-        $supplier = $this->getSupplier(self::SUPPLIER_NAME, self::SUPPLIER_CIF);
-        $this->assertTrue($supplier->save(), 'cant-create-supplier');
+        $customer = self::getCustomer(self::CUSTOMER_NAME, self::CUSTOMER_CIF);
+        $this->assertTrue($customer->save(), 'cant-create-customer');
 
         // create invoice
-        $invoice = new FacturaProveedor();
-        $invoice->setSubject($supplier);
-        $invoice->numproveedor = self::INVOICE_REF;
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $invoice->numero2 = self::INVOICE_REF;
         $invoice->observaciones = self::INVOICE_NOTES;
         $this->assertTrue($invoice->save(), 'cant-create-invoice');
-        $this->assertTrue($invoice->exists(), 'invoice-does-not-exist');
+        $this->assertTrue($invoice->exists(), 'invoice-not-exists');
 
         // add line
         $firstLine = $invoice->getNewLine();
         $firstLine->cantidad = self::PRODUCT1_QUANTITY;
         $firstLine->descripcion = 'Test';
-        $firstLine->pvpunitario = self::PRODUCT1_COST;
+        $firstLine->pvpunitario = self::PRODUCT1_PRICE;
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
         $this->assertTrue($firstLine->exists(), 'first-invoice-line-does-not-exists');
 
         // recalculate
         $tool = new BusinessDocumentTools();
         $tool->recalculate($invoice);
-        $neto = round(self::PRODUCT1_QUANTITY * self::PRODUCT1_COST, 2);
+        $neto = round(self::PRODUCT1_PRICE * self::PRODUCT1_QUANTITY, 2);
         $this->assertEquals($neto, $invoice->neto, 'bad-invoice-neto');
         $this->assertTrue($invoice->save(), 'cant-update-invoice');
 
         // find invoice
         $dbInvoice = $invoice->get($invoice->idfactura);
         $this->assertIsObject($dbInvoice, 'invoice-cant-be-read');
-        $this->assertEquals(self::SUPPLIER_CIF, $dbInvoice->cifnif, 'bad-invoice-cifnif');
+        $this->assertEquals(self::CUSTOMER_CIF, $dbInvoice->cifnif, 'bad-invoice-cifnif');
         $this->assertEquals($invoice->codigo, $dbInvoice->codigo, 'bad-invoice-codigo');
         $this->assertEquals($invoice->neto, $dbInvoice->neto, 'bad-invoice-neto');
-        $this->assertEquals(self::SUPPLIER_NAME, $dbInvoice->nombre, 'bad-invoice-nombre');
+        $this->assertEquals(self::CUSTOMER_NAME, $dbInvoice->nombrecliente, 'bad-invoice-nombre');
         $this->assertEquals($invoice->numero, $dbInvoice->numero, 'bad-invoice-numero');
-        $this->assertEquals(self::INVOICE_REF, $dbInvoice->numproveedor, 'bad-invoice-numproveedor');
+        $this->assertEquals(self::INVOICE_REF, $dbInvoice->numero2, 'bad-invoice-numero2');
         $this->assertEquals(self::INVOICE_NOTES, $dbInvoice->observaciones, 'bad-invoice-notes');
         $this->assertEquals($invoice->total, $dbInvoice->total, 'bad-invoice-total');
 
         // delete
-        $this->assertTrue($dbInvoice->delete(), 'cant-delete-invoice');
-        $this->assertFalse($dbInvoice->exists(), 'deleted-invoice-still-found');
-        $this->assertFalse($invoice->exists(), 'deleted-invoice-still-found-2');
-        $this->assertFalse($firstLine->exists(), 'deleted-line-invoice-still-found');
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertFalse($dbInvoice->exists(), 'invoice-still-found');
+        $this->assertFalse($firstLine->exists(), 'invoice-line-not-deleted');
     }
 
-    public function testCanNotCreateInvoiceWithoutSupplier()
+    public function testCanNotCreateInvoiceWithoutCustomer()
     {
-        $invoice = new FacturaProveedor();
-        $this->assertFalse($invoice->save(), 'can-create-invoice-without-supplier');
+        $invoice = new FacturaCliente();
+        $this->assertFalse($invoice->save(), 'can-create-invoice-without-customer');
     }
 
     public function testInvoiceLineUpdateStock()
     {
         $product = $this->getProduct(self::PRODUCT1_REF);
+        $product->precio = self::PRODUCT1_PRICE;
         $this->assertTrue($product->save(), 'cant-create-product');
         $this->assertEquals(0, $product->stockfis, 'product-bad-stock');
 
+        // update stock
+        $stock = new Stock();
+        $stock->cantidad = self::PRODUCT1_QUANTITY;
+        $stock->codalmacen = AppSettings::get('default', 'codalmacen');
+        $stock->idproducto = $product->idproducto;
+        $stock->referencia = $product->referencia;
+        $this->assertTrue($stock->save(), 'cant-create-stock');
+
+        // reload product
+        $product->loadFromCode($product->idproducto);
+        $this->assertEquals(self::PRODUCT1_QUANTITY, $product->stockfis, 'product-stock-not-updated');
+
         // create invoice
-        $invoice = new FacturaProveedor();
-        $supplier = $this->getSupplier(self::SUPPLIER_NAME, self::SUPPLIER_CIF);
-        $invoice->setSubject($supplier);
+        $invoice = new FacturaCliente();
+        $customer = self::getCustomer(self::CUSTOMER_NAME, self::CUSTOMER_CIF);
+        $invoice->setSubject($customer);
         $this->assertTrue($invoice->save(), 'cant-create-invoice');
 
-        // add line
+        // add product line
         $firstLine = $invoice->getNewProductLine(self::PRODUCT1_REF);
         $firstLine->cantidad = self::PRODUCT1_QUANTITY;
-        $firstLine->pvpunitario = self::PRODUCT1_COST;
+        $firstLine->pvpunitario = self::PRODUCT1_PRICE;
         $this->assertEquals(self::PRODUCT1_REF, $firstLine->referencia, 'bad-first-line-reference');
         $this->assertEquals(self::PRODUCT1_REF, $firstLine->descripcion, 'bad-first-line-description');
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
@@ -119,7 +133,7 @@ final class FacturaProveedorTest extends TestCase
 
         // reload product
         $product->loadFromCode($product->idproducto);
-        $this->assertEquals(self::PRODUCT1_QUANTITY, $product->stockfis, 'bad-product1-stock');
+        $this->assertEquals(0, $product->stockfis, 'bad-product1-stock');
 
         // delete
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
@@ -127,21 +141,21 @@ final class FacturaProveedorTest extends TestCase
 
         // reload product again
         $product->loadFromCode($product->idproducto);
-        $this->assertEquals(0, $product->stockfis, 'bad-product1-stock-end');
+        $this->assertEquals(self::PRODUCT1_QUANTITY, $product->stockfis, 'bad-product1-stock-end');
     }
 
     public function testCreateInvoiceCreatesAccountingEntry()
     {
         // create invoice
-        $invoice = new FacturaProveedor();
-        $supplier = $this->getSupplier(self::SUPPLIER_NAME, self::SUPPLIER_CIF);
-        $invoice->setSubject($supplier);
+        $invoice = new FacturaCliente();
+        $customer = self::getCustomer(self::CUSTOMER_NAME, self::CUSTOMER_CIF);
+        $invoice->setSubject($customer);
         $this->assertTrue($invoice->save(), 'cant-create-invoice');
 
         // add line
         $firstLine = $invoice->getNewLine();
         $firstLine->cantidad = 1;
-        $firstLine->pvpunitario = self::PRODUCT1_COST;
+        $firstLine->pvpunitario = self::PRODUCT1_PRICE;
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculate
@@ -179,15 +193,15 @@ final class FacturaProveedorTest extends TestCase
     public function cantUpdateOrDeleteNonEditableInvoice()
     {
         // create invoice
-        $invoice = new FacturaProveedor();
-        $supplier = $this->getSupplier(self::SUPPLIER_NAME, self::SUPPLIER_CIF);
-        $invoice->setSubject($supplier);
+        $invoice = new FacturaCliente();
+        $customer = self::getCustomer(self::CUSTOMER_NAME, self::CUSTOMER_CIF);
+        $invoice->setSubject($customer);
         $this->assertTrue($invoice->save(), 'cant-create-invoice');
 
         // add line
         $firstLine = $invoice->getNewLine();
         $firstLine->cantidad = 1;
-        $firstLine->pvpunitario = self::PRODUCT1_COST;
+        $firstLine->pvpunitario = self::PRODUCT1_PRICE;
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculate
@@ -227,14 +241,14 @@ final class FacturaProveedorTest extends TestCase
     public static function tearDownAfterClass()
     {
         // delete items
-        $supplier = self::getSupplier(self::SUPPLIER_NAME, self::SUPPLIER_CIF);
-        $facturaModel = new FacturaProveedor();
-        $where = [new DataBaseWhere('codproveedor', $supplier->codproveedor)];
+        $facturaModel = new FacturaCliente();
+        $customer = self::getCustomer(self::CUSTOMER_NAME, self::CUSTOMER_NAME);
+        $where = [new DataBaseWhere('codcliente', $customer->codcliente)];
         foreach ($facturaModel->all($where) as $invoice) {
             $invoice->delete();
         }
 
-        $supplier->delete();
+        $customer->delete();
         self::getProduct(self::PRODUCT1_REF)->delete();
     }
 }

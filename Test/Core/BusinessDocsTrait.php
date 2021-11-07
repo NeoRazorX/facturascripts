@@ -23,6 +23,7 @@ use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Model\Almacen;
+use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\Producto;
@@ -30,7 +31,18 @@ use FacturaScripts\Core\Model\Proveedor;
 
 trait BusinessDocsTrait
 {
-    protected static function getProduct1(string $ref): Producto
+    protected static function getCustomer(string $name, string $cif): Cliente
+    {
+        $customer = new Cliente();
+        $where = [new DataBaseWhere('nombre', $name)];
+        $customer->loadFromCode('', $where);
+
+        $customer->cifnif = $cif;
+        $customer->nombre = $name;
+        return $customer;
+    }
+
+    protected static function getProduct(string $ref): Producto
     {
         $product = new Producto();
         $where = [new DataBaseWhere('referencia', $ref)];
@@ -39,6 +51,7 @@ trait BusinessDocsTrait
         $product->descripcion = $product->referencia = $ref;
         $product->nostock = false;
         $product->secompra = true;
+        $product->sevende = true;
         return $product;
     }
 
