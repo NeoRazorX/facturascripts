@@ -21,10 +21,13 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\EstadoDocumento;
+use FacturaScripts\Test\Core\ShowLogTrait;
 use PHPUnit\Framework\TestCase;
 
 final class EstadoDocumentoTest extends TestCase
 {
+    use ShowLogTrait;
+
     public function testCreateNewStatus()
     {
         $status = new EstadoDocumento();
@@ -40,9 +43,7 @@ final class EstadoDocumentoTest extends TestCase
     {
         // get the initial default count
         $status = new EstadoDocumento();
-        $where = [
-            new DataBaseWhere('predeterminado', true)
-        ];
+        $where = [new DataBaseWhere('predeterminado', true)];
         $defaultsCount = $status->count($where);
 
         // create a new default status

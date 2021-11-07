@@ -41,10 +41,25 @@ echo "\n" . 'DB User: ' . FS_DB_USER;
 echo "\n" . 'DB Pass: ' . FS_DB_PASS;
 echo "\n" . 'Database: ' . FS_DB_NAME . "\n\n";
 
-/// clean cache
+// clean cache
 $cache = new FacturaScripts\Core\Base\Cache();
 $cache->clear();
 
-/// deploy
+// deploy
 $pluginManager = new FacturaScripts\Core\Base\PluginManager();
 $pluginManager->deploy();
+
+// database connect
+$db = new \FacturaScripts\Core\Base\DataBase();
+$db->connect();
+
+// settings
+$appSettings = new \FacturaScripts\Core\App\AppSettings();
+$fileContent = file_get_contents(FS_FOLDER . '/Core/Data/Codpais/ESP/default.json');
+$defaultValues = json_decode($fileContent, true) ?? [];
+foreach ($defaultValues as $group => $values) {
+    foreach ($values as $key => $value) {
+        $appSettings->set($group, $key, $value);
+    }
+}
+$appSettings->save();
