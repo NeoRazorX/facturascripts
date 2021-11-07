@@ -21,9 +21,9 @@ namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
 
-trait ShowLogTrait
+trait LogErrorsTrait
 {
-    protected function tearDown()
+    protected function logErrors()
     {
         $logger = new MiniLog();
         if ($this->getStatus() > 1) {

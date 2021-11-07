@@ -21,12 +21,12 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\EstadoDocumento;
-use FacturaScripts\Test\Core\ShowLogTrait;
+use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class EstadoDocumentoTest extends TestCase
 {
-    use ShowLogTrait;
+    use LogErrorsTrait;
 
     public function testCreateNewStatus()
     {
@@ -93,5 +93,10 @@ final class EstadoDocumentoTest extends TestCase
 
         // delete
         $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
     }
 }

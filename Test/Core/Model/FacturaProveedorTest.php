@@ -19,19 +19,16 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\BusinessDocumentTools;
-use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\FacturaProveedor;
-use FacturaScripts\Core\Model\Producto;
-use FacturaScripts\Core\Model\Proveedor;
-use FacturaScripts\Test\Core\ShowLogTrait;
+use FacturaScripts\Test\Core\BusinessDocsTrait;
+use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class FacturaProveedorTest extends TestCase
 {
-    use ShowLogTrait;
+    use LogErrorsTrait;
+    use BusinessDocsTrait;
 
     const INVOICE_NOTES = 'Test test test.';
     const INVOICE_REF = '7777777';
@@ -43,13 +40,14 @@ final class FacturaProveedorTest extends TestCase
 
     public function testCreateNewInvoice()
     {
-        $supplier = $this->getSupplier();
+        $supplier = $this->getSupplier(self::SUPPLIER_NAME, self::SUPPLIER_CIF);
         $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
-        $product = $this->getProduct1();
+        $product = $this->getProduct1(self::PRODUCT1_REF);
         $this->assertTrue($product->save(), 'cant-create-product');
         $this->assertEquals(0, $product->stockfis, 'product-bad-stock');
 
+        // create invoice
         $invoice = new FacturaProveedor();
         $invoice->setSubject($supplier);
         $invoice->numproveedor = self::INVOICE_REF;
@@ -57,6 +55,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($invoice->save(), 'cant-create-invoice');
         $this->assertTrue($invoice->exists(), 'invoice-does-not-exist');
 
+        // add line
         $firstLine = $invoice->getNewProductLine(self::PRODUCT1_REF);
         $firstLine->cantidad = self::PRODUCT1_QUANTITY;
         $firstLine->pvpunitario = self::PRODUCT1_COST;
@@ -65,6 +64,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
         $this->assertTrue($firstLine->exists(), 'first-invoice-line-does-not-exists');
 
+        // recalculate
         $tool = new BusinessDocumentTools();
         $tool->recalculate($invoice);
         $this->assertTrue($invoice->save(), 'cant-update-invoice');
@@ -74,61 +74,132 @@ final class FacturaProveedorTest extends TestCase
         $this->assertEquals(self::PRODUCT1_QUANTITY, $product->stockfis, 'bad-product1-stock');
 
         // find invoice
-        $readedInvoice = $invoice->get($invoice->idfactura);
-        $this->assertIsObject($readedInvoice, 'invoice-cant-be-read');
-        $this->assertEquals($invoice->codigo, $readedInvoice->codigo, 'bad-invoice-codigo');
-        $this->assertEquals($invoice->neto, $readedInvoice->neto, 'bad-invoice-neto');
-        $this->assertEquals(self::SUPPLIER_NAME, $readedInvoice->nombre, 'bad-invoice-nombre');
-        $this->assertEquals($invoice->numero, $readedInvoice->numero, 'bad-invoice-numero');
-        $this->assertEquals(self::INVOICE_REF, $readedInvoice->numproveedor, 'bad-invoice-numproveedor');
-        $this->assertEquals(self::INVOICE_NOTES, $readedInvoice->observaciones, 'bad-invoice-notes');
-        $this->assertEquals($invoice->total, $readedInvoice->total, 'bad-invoice-total');
+        $dbInvoice = $invoice->get($invoice->idfactura);
+        $this->assertIsObject($dbInvoice, 'invoice-cant-be-read');
+        $this->assertEquals($invoice->codigo, $dbInvoice->codigo, 'bad-invoice-codigo');
+        $this->assertEquals($invoice->neto, $dbInvoice->neto, 'bad-invoice-neto');
+        $this->assertEquals(self::SUPPLIER_NAME, $dbInvoice->nombre, 'bad-invoice-nombre');
+        $this->assertEquals($invoice->numero, $dbInvoice->numero, 'bad-invoice-numero');
+        $this->assertEquals(self::INVOICE_REF, $dbInvoice->numproveedor, 'bad-invoice-numproveedor');
+        $this->assertEquals(self::INVOICE_NOTES, $dbInvoice->observaciones, 'bad-invoice-notes');
+        $this->assertEquals($invoice->total, $dbInvoice->total, 'bad-invoice-total');
 
         // delete
-        $this->assertTrue($readedInvoice->delete(), 'cant-delete-invoice');
-        $this->assertFalse($readedInvoice->exists(), 'deleted-invoice-still-found');
+        $this->assertTrue($dbInvoice->delete(), 'cant-delete-invoice');
+        $this->assertFalse($dbInvoice->exists(), 'deleted-invoice-still-found');
         $this->assertFalse($invoice->exists(), 'deleted-invoice-still-found-2');
         $this->assertFalse($firstLine->exists(), 'deleted-line-invoice-still-found');
 
         // reload product again
         $product->loadFromCode($product->idproducto);
         $this->assertEquals(0, $product->stockfis, 'bad-product1-stock-end');
-
-        // delete product and supplier
-        $this->assertTrue($product->delete(), 'cant-delete-product');
-        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
-    private function getProduct1(): Producto
+    public function testCreateInvoiceCreatesAccountingEntry()
     {
-        $product = new Producto();
-        $where = [new DataBaseWhere('referencia', self::PRODUCT1_REF)];
-        $product->loadFromCode('', $where);
+        $supplier = $this->getSupplier(self::SUPPLIER_NAME, self::SUPPLIER_CIF);
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
 
-        $product->descripcion = $product->referencia = self::PRODUCT1_REF;
-        $product->nostock = false;
-        $product->secompra = true;
-        return $product;
+        // create invoice
+        $invoice = new FacturaProveedor();
+        $invoice->setSubject($supplier);
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // add line
+        $firstLine = $invoice->getNewLine();
+        $firstLine->cantidad = 1;
+        $firstLine->pvpunitario = self::PRODUCT1_COST;
+        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
+
+        // recalculate
+        $tool = new BusinessDocumentTools();
+        $tool->recalculate($invoice);
+        $netosindto = $invoice->netosindto;
+        $neto = $invoice->neto;
+        $total = $invoice->total;
+        $this->assertTrue($invoice->save(), 'cant-update-invoice');
+
+        // check accounting entry
+        $entry = $invoice->getAccountingEntry();
+        $this->assertTrue($entry->exists(), 'accounting-entry-not-found');
+        $this->assertEquals($invoice->total, $entry->importe, 'accounting-entry-bad-importe');
+
+        // update discount to update invoice total
+        $invoice->dtopor1 = 50;
+        $tool->recalculate($invoice);
+        $this->assertEquals($netosindto, $invoice->netosindto, 'bad-netosindto');
+        $this->assertLessThan($neto, $invoice->neto, 'bad-neto');
+        $this->assertLessThan($total, $invoice->total, 'bad-total');
+        $this->assertTrue($invoice->save(), 'cant-update-invoice-discount');
+
+        // check updated accounting entry
+        $updEntry = $invoice->getAccountingEntry();
+        $this->assertTrue($updEntry->exists(), 'updated-accounting-entry-not-found');
+        $this->assertEquals($invoice->idasiento, $updEntry->idasiento, 'accounting-entry-not-updated');
+        $this->assertEquals($invoice->total, $updEntry->importe, 'updated-accounting-entry-bad-importe');
+
+        // delete invoice
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertFalse($updEntry->exists(), 'deleted-accounting-entry-still-found');
     }
 
-    private function getSupplier(): Proveedor
+    public function cantUpdateOrDeleteNonEditableInvoice()
     {
-        $supplier = new Proveedor();
-        $where = [new DataBaseWhere('nombre', self::SUPPLIER_NAME)];
-        $supplier->loadFromCode('', $where);
+        // create invoice
+        $invoice = new FacturaProveedor();
+        $supplier = $this->getSupplier(self::SUPPLIER_NAME, self::SUPPLIER_CIF);
+        $invoice->setSubject($supplier);
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
 
-        $supplier->cifnif = self::SUPPLIER_CIF;
-        $supplier->nombre = self::SUPPLIER_NAME;
-        return $supplier;
-    }
+        // add line
+        $firstLine = $invoice->getNewLine();
+        $firstLine->cantidad = 1;
+        $firstLine->pvpunitario = self::PRODUCT1_COST;
+        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
-    protected function setUp()
-    {
-        $almacenModel = new Almacen();
-        foreach ($almacenModel->all() as $almacen) {
-            $appset = new AppSettings();
-            $appset->set('default', 'codalmacen', $almacen->codalmacen);
-            $appset->save();
+        // recalculate
+        $tool = new BusinessDocumentTools();
+        $tool->recalculate($invoice);
+        $this->assertTrue($invoice->save(), 'cant-update-invoice');
+
+        // change status
+        $changed = false;
+        foreach ($invoice->getAvaliableStatus() as $status) {
+            if (false === $status->editable) {
+                $invoice->idestado = $status->idestado;
+                $changed = true;
+            }
         }
+        $this->assertTrue($changed, 'non-editable-status-not-found');
+        $this->assertTrue($invoice->save(), 'cant-update-invoice');
+
+        // update discount to update invoice total
+        $invoice->dtopor1 = 50;
+        $tool->recalculate($invoice);
+        $this->assertFalse($invoice->save(), 'can-update-non-editable-invoice');
+        $this->assertFalse($invoice->delete(), 'can-delete-non-editable-invoice');
+    }
+
+    public static function setUpBeforeClass()
+    {
+        self::setDefaultSettings();
+        self::installAccountingPlan();
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
+    }
+
+    public static function tearDownAfterClass()
+    {
+        // delete items
+        $facturaModel = new FacturaProveedor();
+        foreach ($facturaModel->all() as $invoice) {
+            $invoice->delete();
+        }
+
+        self::getSupplier(self::SUPPLIER_NAME, self::SUPPLIER_CIF)->delete();
+        self::getProduct1(self::PRODUCT1_REF)->delete();
     }
 }

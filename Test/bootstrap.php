@@ -48,18 +48,3 @@ $cache->clear();
 // deploy
 $pluginManager = new FacturaScripts\Core\Base\PluginManager();
 $pluginManager->deploy();
-
-// database connect
-$db = new \FacturaScripts\Core\Base\DataBase();
-$db->connect();
-
-// settings
-$appSettings = new \FacturaScripts\Core\App\AppSettings();
-$fileContent = file_get_contents(FS_FOLDER . '/Core/Data/Codpais/ESP/default.json');
-$defaultValues = json_decode($fileContent, true) ?? [];
-foreach ($defaultValues as $group => $values) {
-    foreach ($values as $key => $value) {
-        $appSettings->set($group, $key, $value);
-    }
-}
-$appSettings->save();
