@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\ToolBox;
+
 /**
  * Model to persist data from logs.
  *
@@ -104,6 +106,16 @@ class LogMessage extends Base\ModelClass
     }
 
     /**
+     * Returns the saved context as array.
+     *
+     * @return array
+     */
+    public function context(): array
+    {
+        return json_decode(ToolBox::utils()::fixHtml($this->context), true);
+    }
+
+    /**
      * Returns the name of the column that is the primary key of the model.
      *
      * @return string
@@ -132,7 +144,7 @@ class LogMessage extends Base\ModelClass
     {
         $utils = $this->toolBox()->utils();
         $this->channel = $utils->noHtml($this->channel);
-        $this->context = $utils->noHtml($this->channel);
+        $this->context = $utils->noHtml($this->context);
         $this->message = $utils->noHtml($this->message);
         if (strlen($this->message) > static::MAX_MESSAGE_LEN) {
             $this->message = substr($this->message, 0, static::MAX_MESSAGE_LEN);

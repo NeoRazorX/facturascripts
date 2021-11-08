@@ -186,14 +186,21 @@ final class MiniLog
 
     /**
      * Stores all messages on the default storage.
+     *
+     * @return bool
      */
-    public static function save()
+    public static function save(): bool
     {
         if (!isset(self::$storage)) {
             self::$storage = new MiniLogStorage();
         }
 
-        self::$storage->save(self::$data);
+        if (self::$storage->save(self::$data)) {
+            self::clear();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -272,7 +279,6 @@ final class MiniLog
     {
         if (count(self::$data) > self::LIMIT) {
             self::save();
-            self::clear();
         }
     }
 }

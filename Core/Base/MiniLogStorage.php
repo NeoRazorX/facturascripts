@@ -26,23 +26,27 @@ use FacturaScripts\Dinamic\Model\LogMessage;
 
 final class MiniLogStorage implements MiniLogStorageInterface
 {
-    public function save(array $data)
+    public function save(array $data): bool
     {
+        $done = true;
         foreach ($data as $item) {
-            if (false === in_array($item['level'], ['critical', 'error']) && $item['channel'] != ModelCore::AUDIT_CHANNEL) {
-                continue;
+            if (in_array($item['level'], ['critical', 'error']) || $item['channel'] === ModelCore::AUDIT_CHANNEL) {
+                $logItem = new LogMessage();
+                $logItem->channel = $item['channel'];
+                $logItem->context = json_encode($item['context']);
+                $logItem->idcontacto = $item['context']['idcontacto'] ?? null;
+                $logItem->ip = IPFilter::getClientIp();
+                $logItem->level = $item['level'];
+                $logItem->message = $item['message'];
+                $logItem->nick = $item['context']['nick'] ?? null;
+                $logItem->time = date('d-m-Y H:i:s', (int)$item['time']);
+                $logItem->uri = $item['context']['uri'] ?? null;
+                if (false === $logItem->save()) {
+                    $done = false;
+                }
             }
-
-            $logItem = new LogMessage();
-            $logItem->channel = $item['channel'];
-            $logItem->context = json_encode($item['context']);
-            $logItem->idcontacto = $item['context']['idcontacto'] ?? null;
-            $logItem->ip = IPFilter::getClientIp();
-            $logItem->level = $item['level'];
-            $logItem->message = $item['message'];
-            $logItem->nick = $item['context']['nick'] ?? null;
-            $logItem->time = (int)$item['time'];
-            $logItem->uri = $item['context']['uri'] ?? null;
         }
+
+        return $done;
     }
 }

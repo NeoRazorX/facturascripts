@@ -19,7 +19,10 @@
 
 namespace FacturaScripts\Test\Core\Base;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Model\LogMessage;
+use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,6 +33,8 @@ use PHPUnit\Framework\TestCase;
  */
 class MiniLogTest extends TestCase
 {
+    use LogErrorsTrait;
+
     const CHANNEL = 'test';
 
     public function testCritical()
@@ -38,7 +43,7 @@ class MiniLogTest extends TestCase
         $logger = new MiniLog(self::CHANNEL);
 
         $message = 'test-critical';
-        $context = ['test-key' => 'FAIL'];
+        $context = ['test-key' => 'FAIL', 'other-key' => 'other', 'more' => 1234];
         $logger->critical($message, $context);
 
         $data = MiniLog::read(self::CHANNEL);
@@ -46,6 +51,8 @@ class MiniLogTest extends TestCase
         $this->assertEquals(1, count($data), 'more-than-one-message');
         $this->assertEquals($message, $data[0]['message']);
         $this->assertNotEmpty($data[0]['context'], 'empty-context');
+        $this->assertGreaterThanOrEqual(3, count($data[0]['context']), 'bad-context');
+        $this->assertEquals('other', $data[0]['context']['other-key'], 'bad-context-key');
         $this->assertEquals('critical', $data[0]['level']);
         $this->assertEquals(self::CHANNEL, $data[0]['channel']);
     }
@@ -167,5 +174,39 @@ class MiniLogTest extends TestCase
         $this->assertEquals(1, count($data), 'more-than-one-message');
         $this->assertEquals('test', $data[0]['message']);
         $this->assertEquals(2, $data[0]['count']);
+    }
+
+    public function testSave()
+    {
+        // crear data
+        MiniLog::clear();
+        $logModel = new LogMessage();
+        $where = [new DataBaseWhere('channel', self::CHANNEL)];
+        foreach ($logModel->all($where, [], 0, 0) as $item) {
+            $item->delete();
+        }
+
+        $logger = new MiniLog(self::CHANNEL);
+        $logger->error('test', ['more' => 'one']);
+        $this->assertTrue(MiniLog::save(), 'cant-save-log');
+        $this->assertEmpty(MiniLog::read(self::CHANNEL), 'log-not-empty');
+
+        // verify data from database
+        $items = $logModel->all($where, [], 0, 0);
+        $this->assertNotEmpty($items, 'log-item-not-found-in-db');
+        $this->assertEquals(1, count($items), 'more-than-one-log-item-in-db');
+        $this->assertEquals('test', $items[0]->message);
+        $this->assertEquals('error', $items[0]->level);
+        $this->assertEquals(self::CHANNEL, $items[0]->channel);
+
+        // check context
+        $context = $items[0]->context();
+        $this->assertIsArray($context, 'db-context-is-not-an-array');
+        $this->assertEquals('one', $context['more'], 'bad-db-context-key');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
     }
 }

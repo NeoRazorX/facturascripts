@@ -21,5 +21,5 @@ namespace FacturaScripts\Core\Base\Contract;
 
 interface MiniLogStorageInterface
 {
-    public function save(array $data);
+    public function save(array $data): bool;
 }

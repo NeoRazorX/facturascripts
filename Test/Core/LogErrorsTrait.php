@@ -25,13 +25,12 @@ trait LogErrorsTrait
 {
     protected function logErrors()
     {
-        $logger = new MiniLog();
         if ($this->getStatus() > 1) {
-            foreach ($logger->readAll(['critical', 'error', 'warning']) as $item) {
+            foreach (MiniLog::read('', ['critical', 'error', 'warning']) as $item) {
                 error_log($item['message']);
             }
         }
 
-        $logger->clear();
+        MiniLog::clear();
     }
 }
