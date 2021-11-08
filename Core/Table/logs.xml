@@ -11,9 +11,17 @@
         <type>character varying(40)</type>
     </column>
     <column>
+        <name>context</name>
+        <type>text</type>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
+    </column>
+    <column>
+        <name>idcontacto</name>
+        <type>integer</type>
     </column>
     <column>
         <name>ip</name>

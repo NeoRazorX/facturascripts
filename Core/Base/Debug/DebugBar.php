@@ -142,8 +142,7 @@ class DebugBar extends DumbBar
         $channels = [];
 
         $lastMicrotime = self::$init[''];
-        $logger = new MiniLog();
-        foreach ($logger->readAll(MiniLog::ALL_LEVELS) as $log) {
+        foreach (MiniLog::read('', MiniLog::ALL_LEVELS) as $log) {
             if (!isset($channels[$log['channel']])) {
                 $channels[$log['channel']] = [
                     'label' => $log['channel'],

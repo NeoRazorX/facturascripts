@@ -131,6 +131,9 @@ abstract class ModelClass extends ModelCore
 
         if (self::$dataBase->exec($sql)) {
             self::toolBox()::cache()->delete('model-' . $this->modelClassName() . '-count');
+            self::toolBox()::i18nLog(self::AUDIT_CHANNEL)->info('deleted-model', [
+                '%model%' => $this->modelClassName(), '%key%' => $this->primaryColumnValue()
+            ]);
             $this->pipe('delete');
             return true;
         }

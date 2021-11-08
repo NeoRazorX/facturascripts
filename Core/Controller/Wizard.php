@@ -183,18 +183,6 @@ class Wizard extends Controller
         }
     }
 
-    /**
-     * Enable all logs by default.
-     */
-    private function enableLogs()
-    {
-        foreach (['critical', 'error', 'warning'] as $type) {
-            $this->appSettings->set('log', $type, 'true');
-        }
-
-        $this->appSettings->save();
-    }
-
     protected function finalRedirect()
     {
         // redirect to the home page
@@ -359,9 +347,6 @@ class Wizard extends Controller
         if ('' !== $email && false === $this->saveEmail($email)) {
             return;
         }
-
-        // change default log values to enabled
-        $this->enableLogs();
 
         // change template
         $this->setTemplate('Wizard-2');

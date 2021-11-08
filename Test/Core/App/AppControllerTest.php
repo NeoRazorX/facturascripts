@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,43 +16,31 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\App;
 
 use FacturaScripts\Core\App\AppController;
+use FacturaScripts\Core\App\AppDebugController;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Description of AppControllerTest
  *
  * @author Carlos Carlos Garcia Gomez <carlos@facturascripts.com>
- * @covers \FacturaScripts\Core\App\AppController
  */
 class AppControllerTest extends TestCase
 {
-
-    /**
-     * @var AppController
-     */
-    protected $object;
-
-    protected function setUp()
+    public function testControllersRun()
     {
-        $this->object = new AppController();
+        $app = new AppController();
+        $this->assertTrue($app->connect(), 'db-connection-error');
+        $this->assertTrue($app->run(), 'app-controller-error');
     }
 
-    /**
-     * @covers \FacturaScripts\Core\App\AppController::connect
-     */
-    public function testConnect()
+    public function testDebugControllersRun()
     {
-        $this->assertTrue($this->object->connect());
-    }
-
-    /**
-     * @covers \FacturaScripts\Core\App\AppController::run
-     */
-    public function testRun()
-    {
-        $this->assertTrue($this->object->run());
+        $app = new AppDebugController();
+        $this->assertTrue($app->connect(), 'db-connection-error');
+        $this->assertTrue($app->run(), 'app-debug-controller-error');
     }
 }

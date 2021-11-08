@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -32,6 +33,7 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
 abstract class ModelCore
 {
 
+    const AUDIT_CHANNEL = 'audit';
     const DATE_STYLE = 'd-m-Y';
     const DATETIME_STYLE = 'd-m-Y H:i:s';
     const HOUR_STYLE = 'H:i:s';
@@ -68,7 +70,7 @@ abstract class ModelCore
      * Loads table fields if is necessary.
      *
      * @param DataBase $dataBase
-     * @param string   $tableName
+     * @param string $tableName
      */
     abstract protected function loadModelFields(DataBase &$dataBase, string $tableName);
 
@@ -90,7 +92,7 @@ abstract class ModelCore
      * Executes all $name methods added from the extensions.
      *
      * @param string $name
-     * @param array  $arguments
+     * @param array $arguments
      *
      * @return mixed
      */
@@ -121,12 +123,12 @@ abstract class ModelCore
             self::$dataBase = new DataBase();
 
             $tables = $this->toolBox()->cache()->get('fs_checked_tables');
-            if (\is_array($tables) && !empty($tables)) {
+            if (is_array($tables) && !empty($tables)) {
                 self::$checkedTables = $tables;
             }
         }
 
-        if (static::tableName() !== '' && false === \in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
+        if (static::tableName() !== '' && false === in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
             $this->toolBox()->i18nLog()->debug('table-checked', ['%tableName%' => static::tableName()]);
             self::$checkedTables[] = static::tableName();
             $this->toolBox()->cache()->set('fs_checked_tables', self::$checkedTables);
@@ -168,7 +170,7 @@ abstract class ModelCore
      */
     public function clear()
     {
-        foreach (\array_keys($this->getModelFields()) as $fieldName) {
+        foreach (array_keys($this->getModelFields()) as $fieldName) {
             $this->{$fieldName} = null;
         }
 
@@ -197,7 +199,7 @@ abstract class ModelCore
     {
         $fields = $this->getModelFields();
         foreach ($data as $key => $value) {
-            if (\in_array($key, $exclude)) {
+            if (in_array($key, $exclude)) {
                 continue;
             } elseif (!isset($fields[$key])) {
                 $this->{$key} = $value;
@@ -206,7 +208,7 @@ abstract class ModelCore
 
             // We check if it is a varchar (with established length) or another type of data
             $field = $fields[$key];
-            $type = \strpos($field['type'], '(') === false ? $field['type'] : \substr($field['type'], 0, \strpos($field['type'], '('));
+            $type = strpos($field['type'], '(') === false ? $field['type'] : substr($field['type'], 0, strpos($field['type'], '('));
 
             switch ($type) {
                 case 'tinyint':
@@ -227,12 +229,12 @@ abstract class ModelCore
                     break;
 
                 case 'date':
-                    $this->{$key} = empty($value) ? null : \date(self::DATE_STYLE, \strtotime($value));
+                    $this->{$key} = empty($value) ? null : date(self::DATE_STYLE, strtotime($value));
                     break;
 
                 case 'datetime':
                 case 'timestamp':
-                    $this->{$key} = empty($value) ? null : \date(self::DATETIME_STYLE, \strtotime($value));
+                    $this->{$key} = empty($value) ? null : date(self::DATETIME_STYLE, strtotime($value));
                     break;
 
                 default:
@@ -256,10 +258,10 @@ abstract class ModelCore
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $data = [];
-        foreach (\array_keys($this->getModelFields()) as $fieldName) {
+        foreach (array_keys($this->getModelFields()) as $fieldName) {
             $data[$fieldName] = $this->{$fieldName};
         }
 
@@ -271,7 +273,7 @@ abstract class ModelCore
      *
      * @return bool
      */
-    private function checkTable()
+    private function checkTable(): bool
     {
         $xmlCols = [];
         $xmlCons = [];
@@ -296,16 +298,16 @@ abstract class ModelCore
     /**
      * Returns the boolean value for the field.
      *
-     * @param array  $field
+     * @param array $field
      * @param string $value
      *
      * @return bool|null
      */
-    private function getBoolValueForField($field, $value)
+    private function getBoolValueForField($field, $value): ?bool
     {
-        if (\in_array(\strtolower($value), ['true', 't', '1'], false)) {
+        if (in_array(strtolower($value), ['true', 't', '1'], false)) {
             return true;
-        } elseif (\in_array(\strtolower($value), ['false', 'f', '0'], false)) {
+        } elseif (in_array(strtolower($value), ['false', 'f', '0'], false)) {
             return false;
         }
 
@@ -315,15 +317,15 @@ abstract class ModelCore
     /**
      * Returns the float value for the field.
      *
-     * @param array  $field
+     * @param array $field
      * @param string $value
      *
      * @return float|null
      */
-    private function getFloatValueForField($field, $value)
+    private function getFloatValueForField($field, $value): ?float
     {
-        if (\is_numeric($value)) {
-            return (float) $value;
+        if (is_numeric($value)) {
+            return (float)$value;
         }
 
         return $field['is_nullable'] === 'NO' ? 0.0 : null;
@@ -332,15 +334,15 @@ abstract class ModelCore
     /**
      * Returns the integer value by controlling special cases for the PK and FK.
      *
-     * @param array  $field
+     * @param array $field
      * @param string $value
      *
      * @return int|null
      */
-    private function getIntergerValueForField($field, $value)
+    private function getIntergerValueForField($field, $value): ?int
     {
-        if (\is_numeric($value)) {
-            return (int) $value;
+        if (is_numeric($value)) {
+            return (int)$value;
         }
 
         if ($field['name'] === static::primaryColumn()) {
@@ -351,7 +353,6 @@ abstract class ModelCore
     }
 
     /**
-     *
      * @return ToolBox
      */
     protected static function toolBox()

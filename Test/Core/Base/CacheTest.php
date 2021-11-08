@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Base;
 
 use FacturaScripts\Core\Base\Cache;
@@ -29,50 +30,61 @@ use PHPUnit\Framework\TestCase;
  */
 class CacheTest extends TestCase
 {
+    const KEY = 'test-1234';
+    const VALUE = 'Test-test-Test';
 
-    /**
-     * @var Cache
-     */
-    protected $object;
-
-    protected function setUp()
+    public function testCanSetAndGet()
     {
-        $this->object = new Cache();
-        $this->object->clear();
+        $cache = new Cache();
+        $cache->set(self::KEY, self::VALUE);
+        $this->assertEquals(self::VALUE, $cache->get(self::KEY), 'value-not-found');
     }
 
-    /**
-     * @covers \FacturaScripts\Core\Base\Cache::get
-     */
-    public function testGet()
-    {
-        $this->object->set('TEST', 1234);
-        $data = $this->object->get('TEST');
-        $this->assertEquals(1234, $data);
-        $this->assertSame(1234, $data);
-        $this->assertNotSame('1234', $data);
-        $this->assertNotNull($data);
-        $this->assertNotFalse($data);
-    }
-
-    /**
-     * @covers \FacturaScripts\Core\Base\Cache::delete
-     */
-    public function testDelete()
-    {
-        $this->object->set('TEST', 1234);
-        $this->object->delete('TEST');
-        $this->assertEmpty($this->object->get('TEST'));
-    }
-
-    /**
-     * @covers \FacturaScripts\Core\Base\Cache::clear
-     */
     public function testClear()
     {
-        $this->object->set('TEST_1', 12345);
-        $this->object->clear();
-        $this->assertEmpty($this->object->get('TEST_1'));
-        $this->assertNull($this->object->get('TEST_1'));
+        $cache = new Cache();
+        $cache->set(self::KEY, self::VALUE);
+        $cache->clear();
+        $this->assertNull($cache->get(self::KEY), 'value-still-found');
+    }
+
+    public function testSetAndDelete()
+    {
+        $cache = new Cache();
+        $cache->set(self::KEY, self::VALUE);
+        $cache->delete(self::KEY);
+        $this->assertNull($cache->get(self::KEY), 'value-still-found');
+    }
+
+    public function testMassiveSetGetDelete()
+    {
+        $cache = new Cache();
+        for ($num = 1; $num <= 100; $num++) {
+            $cache->set('test-' . $num, $num);
+        }
+        for ($num = 1; $num <= 100; $num++) {
+            $this->assertEquals($num, $cache->get('test-' . $num), 'value-' . $num . '-not-found');
+        }
+        for ($num = 1; $num <= 100; $num++) {
+            $cache->delete('test-' . $num);
+        }
+        for ($num = 1; $num <= 100; $num++) {
+            $this->assertNull($cache->get('test-' . $num), 'value-' . $num . '-still-found');
+        }
+    }
+
+    public function testMassiveSetGetClear()
+    {
+        $cache = new Cache();
+        for ($num = 1; $num <= 200; $num++) {
+            $cache->set('test-' . $num, $num);
+        }
+        for ($num = 1; $num <= 200; $num++) {
+            $this->assertEquals($num, $cache->get('test-' . $num), 'value-' . $num . '-not-found');
+        }
+        $cache->clear();
+        for ($num = 1; $num <= 200; $num++) {
+            $this->assertNull($cache->get('test-' . $num), 'value-' . $num . '-still-found');
+        }
     }
 }

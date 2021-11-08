@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@ namespace FacturaScripts\Core\App;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model\ApiAccess;
 use FacturaScripts\Dinamic\Model\ApiKey;
 use Symfony\Component\HttpFoundation\Response;
@@ -69,15 +70,15 @@ final class AppAPI extends App
         } elseif ($this->request->server->get('REQUEST_METHOD') == 'OPTIONS') {
             $allowHeaders = $this->request->server->get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS');
             $this->response->headers->set('Access-Control-Allow-Headers', $allowHeaders);
-            return false;
+            return true;
         } elseif (false === $this->checkAuthToken()) {
             $this->ipWarning();
             $this->die(Response::HTTP_FORBIDDEN, 'auth-token-invalid');
-            return false;
+            return true;
         } elseif (false === $this->isAllowed()) {
             $this->ipWarning();
             $this->die(Response::HTTP_FORBIDDEN, 'forbidden');
-            return false;
+            return true;
         }
 
         return $this->selectVersion();
@@ -103,8 +104,8 @@ final class AppAPI extends App
             return false;
         }
 
-        if (defined('FS_API_KEY') && $token == \FS_API_KEY) {
-            $this->apiKey->apikey = \FS_API_KEY;
+        if (defined('FS_API_KEY') && $token == FS_API_KEY) {
+            $this->apiKey->apikey = FS_API_KEY;
             $this->apiKey->fullaccess = true;
             return true;
         }
@@ -117,14 +118,13 @@ final class AppAPI extends App
     }
 
     /**
-     * 
      * @param int    $status
      * @param string $message
      */
     protected function die(int $status, string $message = '')
     {
-        $content = $this->toolBox()->i18n()->trans($message);
-        foreach ($this->toolBox()->log()->readAll() as $log) {
+        $content = ToolBox::i18n()->trans($message);
+        foreach (ToolBox::log()::read() as $log) {
             $content .= empty($content) ? $log["message"] : "\n" . $log["message"];
         }
 
@@ -137,7 +137,7 @@ final class AppAPI extends App
      *
      * @param array $map
      */
-    private function exposeResources(&$map)
+    private function exposeResources(array &$map)
     {
         $json = ['resources' => []];
         foreach (array_keys($map) as $key) {
@@ -158,7 +158,7 @@ final class AppAPI extends App
     {
         $resources = [[]];
         // Loop all controllers in /Dinamic/Lib/API
-        foreach (scandir(\FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Lib' . DIRECTORY_SEPARATOR . 'API', SCANDIR_SORT_NONE) as $resource) {
+        foreach (scandir(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Lib' . DIRECTORY_SEPARATOR . 'API', SCANDIR_SORT_NONE) as $resource) {
             if (substr($resource, -4) !== '.php') {
                 continue;
             }
@@ -229,12 +229,12 @@ final class AppAPI extends App
      */
     private function isDisabled(): bool
     {
-        /// Is FS_API_KEY defined in the config?
+        // Is FS_API_KEY defined in the config?
         if (defined('FS_API_KEY')) {
             return false;
         }
 
-        return $this->toolBox()->appSettings()->get('default', 'enable_api', false) == false;
+        return ToolBox::appSettings()->get('default', 'enable_api', false) == false;
     }
 
     /**
@@ -258,7 +258,7 @@ final class AppAPI extends App
             return false;
         }
 
-        /// get params
+        // get params
         $param = 3;
         $params = [];
         while (($item = $this->getUriParam($param)) !== '') {
@@ -270,7 +270,7 @@ final class AppAPI extends App
             $APIClass = new $map[$resourceName]['API']($this->response, $this->request, $params);
             return $APIClass->processResource($map[$resourceName]['Name']);
         } catch (Exception $exc) {
-            $this->toolBox()->log()->critical('API-ERROR: ' . $exc->getMessage());
+            ToolBox::log()->critical('API-ERROR: ' . $exc->getMessage());
             $this->die(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 

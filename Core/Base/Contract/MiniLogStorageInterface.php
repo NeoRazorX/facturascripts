@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,24 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Test\Core\App;
+namespace FacturaScripts\Core\Base\Contract;
 
-use FacturaScripts\Core\App\AppCron;
-use PHPUnit\Framework\TestCase;
-
-/**
- * Description of AppCronTest
- *
- * @author Carlos Carlos Garcia Gomez <carlos@facturascripts.com>
- * @covers \FacturaScripts\Core\App\AppCron
- */
-class AppCronTest extends TestCase
+interface MiniLogStorageInterface
 {
-
-    public function testCronWorks()
-    {
-        $app = new AppCron();
-        $this->assertTrue($app->connect(), 'db-connection-error');
-        $this->assertTrue($app->run(), 'cron-run-fail');
-    }
+    public function save(array $data);
 }

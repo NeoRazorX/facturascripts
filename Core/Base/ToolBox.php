@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -30,106 +31,96 @@ class ToolBox
 {
 
     /**
-     * 
      * @return AppSettings
      */
-    public static function appSettings()
+    public static function appSettings(): AppSettings
     {
         return new AppSettings();
     }
 
     /**
-     * 
      * @return Cache
      */
-    public static function cache()
+    public static function cache(): Cache
     {
         return new Cache();
     }
 
     /**
-     * 
      * @return DivisaTools
      */
-    public static function coins()
+    public static function coins(): DivisaTools
     {
         return new DivisaTools();
     }
 
     /**
-     * 
      * @return FileManager
      */
-    public static function files()
+    public static function files(): FileManager
     {
         return new FileManager();
     }
 
     /**
-     * 
      * @param string $langcode
      *
      * @return Translator
      */
-    public static function i18n(string $langcode = '')
+    public static function i18n(string $langcode = ''): Translator
     {
         return new Translator($langcode);
     }
 
     /**
-     * 
      * @param string $channel
      *
-     * @return Translate2Log
+     * @return MiniLog
      */
-    public static function i18nLog(string $channel = '')
+    public static function i18nLog(string $channel = ''): MiniLog
     {
-        return new Translate2Log($channel);
+        $translator = new Translator();
+        return new MiniLog($channel, $translator);
     }
 
     /**
-     * 
      * @return IPFilter
      */
-    public static function ipFilter()
+    public static function ipFilter(): IPFilter
     {
         return new IPFilter();
     }
 
     /**
-     * 
      * @param string $channel
      *
      * @return MiniLog
      */
-    public static function log(string $channel = '')
+    public static function log(string $channel = ''): MiniLog
     {
         return new MiniLog($channel);
     }
 
     /**
-     * 
      * @return NumberTools
      */
-    public static function numbers()
+    public static function numbers(): NumberTools
     {
         return new NumberTools();
     }
 
     /**
-     * 
      * @return string
      */
-    public static function today()
+    public static function today(): string
     {
-        return \date('d-m-Y');
+        return date('d-m-Y');
     }
 
     /**
-     * 
      * @return Utils
      */
-    public static function utils()
+    public static function utils(): Utils
     {
         return new Utils();
     }

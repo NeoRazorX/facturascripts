@@ -38,11 +38,21 @@ class LogMessage extends Base\ModelClass
     public $channel;
 
     /**
-     * Primary key.
-     *
      * @var string
      */
+    public $context;
+
+    /**
+     * Primary key.
+     *
+     * @var int
+     */
     public $id;
+
+    /**
+     * @var int
+     */
+    public $idcontacto;
 
     /**
      * IP address.
@@ -122,6 +132,7 @@ class LogMessage extends Base\ModelClass
     {
         $utils = $this->toolBox()->utils();
         $this->channel = $utils->noHtml($this->channel);
+        $this->context = $utils->noHtml($this->channel);
         $this->message = $utils->noHtml($this->message);
         if (strlen($this->message) > static::MAX_MESSAGE_LEN) {
             $this->message = substr($this->message, 0, static::MAX_MESSAGE_LEN);

@@ -16,11 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use DateTimeZone;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\ToolBox;
+use mysqli;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,7 +47,7 @@ final class AppInstaller
     public function __construct()
     {
         $this->request = Request::createFromGlobals();
-        \define('FS_LANG', $this->request->get('fs_lang', $this->getUserLanguage()));
+        define('FS_LANG', $this->request->get('fs_lang', $this->getUserLanguage()));
 
         $installed = false;
         if (false === $this->searchErrors() && $this->request->getMethod() === 'POST' &&
@@ -59,7 +61,7 @@ final class AppInstaller
             $this->render('Installer/Redir.html.twig');
         } elseif ('TRUE' === $this->request->get('phpinfo', '')) {
             /** @noinspection ForgottenDebugOutputInspection */
-            \phpinfo();
+            phpinfo();
         } else {
             $this->render();
         }
@@ -70,7 +72,7 @@ final class AppInstaller
      *
      * @return bool
      */
-    private function createDataBase()
+    private function createDataBase(): bool
     {
         $dbData = [
             'host' => $this->request->request->get('fs_db_host'),
@@ -82,14 +84,14 @@ final class AppInstaller
         ];
 
         $dbType = $this->request->request->get('fs_db_type');
-        if ('postgresql' == $dbType && \strtolower($dbData['name']) != $dbData['name']) {
+        if ('postgresql' == $dbType && strtolower($dbData['name']) != $dbData['name']) {
             ToolBox::i18nLog()->warning('database-name-must-be-lowercase');
             return false;
         }
 
         switch ($dbType) {
             case 'mysql':
-                if (\class_exists('mysqli')) {
+                if (class_exists('mysqli')) {
                     return $this->testMysql($dbData);
                 }
 
@@ -97,7 +99,7 @@ final class AppInstaller
                 return false;
 
             case 'postgresql':
-                if (\function_exists('pg_connect')) {
+                if (function_exists('pg_connect')) {
                     return $this->testPostgreSql($dbData);
                 }
 
@@ -114,7 +116,7 @@ final class AppInstaller
      *
      * @return bool
      */
-    private function createFolders()
+    private function createFolders(): bool
     {
         // Check each needed folder to deploy
         foreach (['Plugins', 'Dinamic', 'MyFiles'] as $folder) {
@@ -134,10 +136,10 @@ final class AppInstaller
      *
      * @return string
      */
-    private function getUri()
+    private function getUri(): string
     {
         $uri = $this->request->getBasePath();
-        return ('/' === \substr($uri, -1)) ? \substr($uri, 0, -1) : $uri;
+        return ('/' === substr($uri, -1)) ? substr($uri, 0, -1) : $uri;
     }
 
     /**
@@ -146,32 +148,32 @@ final class AppInstaller
      *
      * @return string
      */
-    private function getUserLanguage()
+    private function getUserLanguage(): string
     {
-        $dataLanguage = \explode(';', \filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
-        $userLanguage = \str_replace('-', '_', \explode(',', $dataLanguage[0])[0]);
-        return \file_exists(\FS_FOLDER . '/Core/Translation/' . $userLanguage . '.json') ? $userLanguage : 'en_EN';
+        $dataLanguage = explode(';', filter_input(INPUT_SERVER, 'HTTP_ACCEPT_LANGUAGE'));
+        $userLanguage = str_replace('-', '_', explode(',', $dataLanguage[0])[0]);
+        return file_exists(FS_FOLDER . '/Core/Translation/' . $userLanguage . '.json') ? $userLanguage : 'en_EN';
     }
 
     /**
      * Renders HTML.
-     * 
+     *
      * @param string $template
      */
-    private function render($template = 'Installer/Install.html.twig')
+    private function render(string $template = 'Installer/Install.html.twig')
     {
-        /// HTML template variables
+        // HTML template variables
         $templateVars = [
-            'license' => \file_get_contents(\FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
+            'license' => file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
             'memcache_prefix' => ToolBox::utils()->randomString(8),
             'timezones' => DateTimeZone::listIdentifiers(),
             'version' => PluginManager::CORE_VERSION
         ];
 
-        /// Load the template engine
+        // Load the template engine
         $webRender = new WebRender();
 
-        /// Generate and return the HTML
+        // Generate and return the HTML
         $response = new Response($webRender->render($template, $templateVars), Response::HTTP_OK);
         $response->send();
     }
@@ -181,10 +183,10 @@ final class AppInstaller
      *
      * @return bool
      */
-    private function saveHtaccess()
+    private function saveHtaccess(): bool
     {
-        $contentFile = ToolBox::files()->extractFromMarkers(\FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
-        return ToolBox::files()->insertWithMarkers($contentFile, \FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
+        $contentFile = ToolBox::files()->extractFromMarkers(FS_FOLDER . DIRECTORY_SEPARATOR . 'htaccess-sample', 'FacturaScripts code');
+        return ToolBox::files()->insertWithMarkers($contentFile, FS_FOLDER . DIRECTORY_SEPARATOR . '.htaccess', 'FacturaScripts code');
     }
 
     /**
@@ -192,37 +194,37 @@ final class AppInstaller
      *
      * @return bool
      */
-    private function saveInstall()
+    private function saveInstall(): bool
     {
-        $file = \fopen(\FS_FOLDER . '/config.php', 'wb');
-        if (\is_resource($file)) {
-            \fwrite($file, "<?php\n");
-            \fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 604800) . ");\n");
-            \fwrite($file, "define('FS_ROUTE', '" . $this->request->request->get('fs_route', $this->getUri()) . "');\n");
-            \fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
-            \fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
-            \fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8');\n");
-            \fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
+        $file = fopen(FS_FOLDER . '/config.php', 'wb');
+        if (is_resource($file)) {
+            fwrite($file, "<?php\n");
+            fwrite($file, "define('FS_COOKIES_EXPIRE', " . $this->request->request->get('fs_cookie_expire', 604800) . ");\n");
+            fwrite($file, "define('FS_ROUTE', '" . $this->request->request->get('fs_route', $this->getUri()) . "');\n");
+            fwrite($file, "define('FS_DB_FOREIGN_KEYS', true);\n");
+            fwrite($file, "define('FS_DB_TYPE_CHECK', true);\n");
+            fwrite($file, "define('FS_MYSQL_CHARSET', 'utf8');\n");
+            fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
 
             $fields = [
                 'lang', 'timezone', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user',
                 'db_pass', 'cache_host', 'cache_port', 'cache_prefix', 'hidden_plugins'
             ];
             foreach ($fields as $field) {
-                \fwrite($file, "define('FS_" . \strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, '') . "');\n");
+                fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, '') . "');\n");
             }
 
             $booleanFields = ['debug', 'disable_add_plugins', 'disable_rm_plugins'];
             foreach ($booleanFields as $field) {
-                \fwrite($file, "define('FS_" . \strtoupper($field) . "', " . $this->request->request->get('fs_' . $field, 'false') . ");\n");
+                fwrite($file, "define('FS_" . strtoupper($field) . "', " . $this->request->request->get('fs_' . $field, 'false') . ");\n");
             }
 
             if ($this->request->request->get('db_type') === 'MYSQL' && $this->request->request->get('mysql_socket') !== '') {
-                \fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
+                fwrite($file, "\nini_set('mysqli.default_socket', '" . $this->request->request->get('mysql_socket') . "');\n");
             }
 
-            \fwrite($file, "\n");
-            \fclose($file);
+            fwrite($file, "\n");
+            fclose($file);
             return true;
         }
 
@@ -235,28 +237,28 @@ final class AppInstaller
      *
      * @return bool
      */
-    private function searchErrors()
+    private function searchErrors(): bool
     {
         $errors = false;
 
-        if ((float) '3,1' >= (float) '3.1') {
+        if ((float)'3,1' >= (float)'3.1') {
             ToolBox::i18nLog()->critical('wrong-decimal-separator');
             $errors = true;
         }
 
         foreach (['bcmath', 'curl', 'fileinfo', 'gd', 'mbstring', 'openssl', 'simplexml', 'zip'] as $extension) {
-            if (false === \extension_loaded($extension)) {
+            if (false === extension_loaded($extension)) {
                 ToolBox::i18nLog()->critical('php-extension-not-found', ['%extension%' => $extension]);
                 $errors = true;
             }
         }
 
-        if (\function_exists('apache_get_modules') && false === \in_array('mod_rewrite', \apache_get_modules())) {
+        if (function_exists('apache_get_modules') && false === in_array('mod_rewrite', apache_get_modules())) {
             ToolBox::i18nLog()->critical('apache-module-not-found', ['%module%' => 'mod_rewrite']);
             $errors = true;
         }
 
-        if (false === \is_writable(\FS_FOLDER)) {
+        if (false === is_writable(FS_FOLDER)) {
             ToolBox::i18nLog()->critical('folder-not-writable');
             $errors = true;
         }
@@ -271,17 +273,17 @@ final class AppInstaller
      *
      * @return bool
      */
-    private function testMysql($dbData)
+    private function testMysql(array $dbData): bool
     {
         if ($dbData['socket'] !== '') {
-            \ini_set('mysqli.default_socket', $dbData['socket']);
+            ini_set('mysqli.default_socket', $dbData['socket']);
         }
 
         // Omit the DB name because it will be checked on a later stage
-        $connection = @new \mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int) $dbData['port']);
+        $connection = @new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int)$dbData['port']);
         if (!$connection->connect_error) {
             // Check that the DB exists, if it doesn't, we create a new one
-            $dbSelected = \mysqli_select_db($connection, $dbData['name']);
+            $dbSelected = mysqli_select_db($connection, $dbData['name']);
             if ($dbSelected) {
                 return true;
             }
@@ -293,7 +295,7 @@ final class AppInstaller
         }
 
         ToolBox::i18nLog()->critical('cant-connect-database');
-        ToolBox::log()->critical((string) $connection->connect_errno . ': ' . $connection->connect_error);
+        ToolBox::log()->critical($connection->connect_errno . ': ' . $connection->connect_error);
         return false;
     }
 
@@ -304,27 +306,27 @@ final class AppInstaller
      *
      * @return bool
      */
-    private function testPostgreSql($dbData)
+    private function testPostgreSql(array $dbData): bool
     {
         $connectionStr = 'host=' . $dbData['host'] . ' port=' . $dbData['port'];
-        $connection = @\pg_connect($connectionStr . ' dbname=postgres user=' . $dbData['user'] . ' password=' . $dbData['pass']);
-        if (\is_resource($connection)) {
+        $connection = @pg_connect($connectionStr . ' dbname=postgres user=' . $dbData['user'] . ' password=' . $dbData['pass']);
+        if (is_resource($connection)) {
             // Check that the DB exists, if it doesn't, we try to create a new one
             $sqlExistsBD = "SELECT 1 AS result FROM pg_database WHERE datname = '" . $dbData['name'] . "';";
-            $result = \pg_query($connection, $sqlExistsBD);
-            if (\is_resource($result) && \pg_num_rows($result) > 0) {
+            $result = pg_query($connection, $sqlExistsBD);
+            if (is_resource($result) && pg_num_rows($result) > 0) {
                 return true;
             }
 
             $sqlCreateBD = 'CREATE DATABASE "' . $dbData['name'] . '";';
-            if (false !== \pg_query($connection, $sqlCreateBD)) {
+            if (false !== pg_query($connection, $sqlCreateBD)) {
                 return true;
             }
         }
 
         ToolBox::i18nLog()->critical('cant-connect-database');
-        if (\is_resource($connection) && \pg_last_error($connection) !== false) {
-            ToolBox::log()->critical((string) \pg_last_error($connection));
+        if (is_resource($connection) && pg_last_error($connection) != false) {
+            ToolBox::log()->critical(pg_last_error($connection));
         }
 
         return false;

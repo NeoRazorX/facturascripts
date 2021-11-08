@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\MiniLogSave;
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Base\ToolBox;
@@ -81,7 +81,7 @@ abstract class App
     {
         $this->request = Request::createFromGlobals();
         if ($this->request->cookies->get('fsLang')) {
-            $this->toolBox()->i18n()->setDefaultLang($this->request->cookies->get('fsLang'));
+            ToolBox::i18n()->setDefaultLang($this->request->cookies->get('fsLang'));
         }
 
         $this->dataBase = new DataBase();
@@ -98,7 +98,8 @@ abstract class App
         $this->response->headers->set('X-Content-Type-Options', 'nosniff');
         $this->response->headers->set('Strict-Transport-Security', 'max-age=31536000');
 
-        $this->toolBox()->log()->debug('URI: ' . $this->uri);
+        ToolBox::log()->debug('URI: ' . $this->uri);
+        ToolBox::log()::setContext('uri', $this->uri);
     }
 
     /**
@@ -109,7 +110,7 @@ abstract class App
     public function connect(): bool
     {
         if ($this->dataBase->connect()) {
-            $this->toolBox()->appSettings()->load();
+            ToolBox::appSettings()->load();
             $this->loadPlugins();
             return true;
         }
@@ -119,17 +120,15 @@ abstract class App
 
     /**
      * Save log and disconnects from the database.
-     *
-     * @param string $nick
      */
-    public function close(string $nick = '')
+    public function close()
     {
         // send telemetry (if configured)
         $telemetry = new TelemetryManager();
         $telemetry->update();
 
         // save log
-        new MiniLogSave($this->toolBox()->ipFilter()->getClientIp(), $nick, $this->uri);
+        MiniLog::save();
 
         $this->dataBase->close();
     }
@@ -150,11 +149,11 @@ abstract class App
     public function run(): bool
     {
         if (false === $this->dataBase->connected()) {
-            $this->toolBox()->i18nLog()->critical('cant-connect-database');
+            ToolBox::i18nLog()->critical('cant-connect-database');
             $this->die(Response::HTTP_INTERNAL_SERVER_ERROR);
             return false;
         } elseif ($this->isIPBanned()) {
-            $this->toolBox()->i18nLog()->critical('ip-banned');
+            ToolBox::i18nLog()->critical('ip-banned');
             $this->die(Response::HTTP_TOO_MANY_REQUESTS);
             return false;
         }
@@ -180,7 +179,7 @@ abstract class App
      */
     protected function ipWarning()
     {
-        $ipFilter = $this->toolBox()->ipFilter();
+        $ipFilter = ToolBox::ipFilter();
         $ipFilter->setAttempt($ipFilter->getClientIp());
     }
 
@@ -191,7 +190,7 @@ abstract class App
      */
     protected function isIPBanned(): bool
     {
-        $ipFilter = $this->toolBox()->ipFilter();
+        $ipFilter = ToolBox::ipFilter();
         return $ipFilter->isBanned($ipFilter->getClientIp());
     }
 
@@ -207,13 +206,5 @@ abstract class App
                 $initObject->init();
             }
         }
-    }
-
-    /**
-     * @return ToolBox
-     */
-    protected function toolBox()
-    {
-        return new ToolBox();
     }
 }

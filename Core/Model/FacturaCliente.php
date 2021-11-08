@@ -49,7 +49,7 @@ class FacturaCliente extends Base\SalesDocument
      */
     public function install()
     {
-        /// needed dependencies
+        // needed dependencies
         new DinLiquidacionComision();
 
         return parent::install();
@@ -127,11 +127,11 @@ class FacturaCliente extends Base\SalesDocument
         }
 
         if ($this->codserie != $this->previousData['codserie']) {
-            /// prevent check date if serie is changed
+            // prevent check date if serie is changed
             return true;
         }
 
-        /// prevent form using old dates
+        // prevent form using old dates
         $numColumn = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(numero as integer)' : 'CAST(numero as unsigned)';
         $whereOld = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
@@ -145,7 +145,7 @@ class FacturaCliente extends Base\SalesDocument
             }
         }
 
-        /// prevent the use of too new dates
+        // prevent the use of too new dates
         $whereNew = [
             new DataBaseWhere('codejercicio', $this->codejercicio),
             new DataBaseWhere('codserie', $this->codserie),
