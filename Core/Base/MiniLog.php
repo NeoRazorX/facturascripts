@@ -29,9 +29,7 @@ use FacturaScripts\Core\Base\Contract\MiniLogStorageInterface;
 final class MiniLog
 {
 
-    const ALL_LEVELS = ['critical', 'debug', 'error', 'info', 'notice', 'warning'];
     const DEFAULT_CHANNEL = 'master';
-    const DEFAULT_LEVELS = ['critical', 'error', 'info', 'notice', 'warning'];
     const LIMIT = 5000;
 
     /**
@@ -164,11 +162,11 @@ final class MiniLog
      * Returns all messages for a given channel (or all channels) and some levels.
      *
      * @param string $channel
-     * @param string[] $levels
+     * @param array $levels
      *
      * @return array
      */
-    public static function read(string $channel = '', array $levels = self::DEFAULT_LEVELS): array
+    public static function read(string $channel = '', array $levels = []): array
     {
         $messages = [];
         foreach (self::$data as $data) {
@@ -176,9 +174,11 @@ final class MiniLog
                 continue;
             }
 
-            if (in_array($data['level'], $levels, false)) {
-                $messages[] = $data;
+            if ($levels && false === in_array($data['level'], $levels)) {
+                continue;
             }
+
+            $messages[] = $data;
         }
 
         return $messages;

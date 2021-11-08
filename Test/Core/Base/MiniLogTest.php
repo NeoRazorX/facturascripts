@@ -176,6 +176,18 @@ class MiniLogTest extends TestCase
         $this->assertEquals(2, $data[0]['count']);
     }
 
+    public function testRead()
+    {
+        MiniLog::clear(self::CHANNEL);
+        $logger = new MiniLog(self::CHANNEL);
+        $logger->info('test');
+
+        $this->assertNotEmpty(MiniLog::read(), 'full-log-empty');
+        $this->assertNotEmpty(MiniLog::read(self::CHANNEL), 'channel-log-empty');
+        $this->assertNotEmpty(MiniLog::read(self::CHANNEL, ['info']), 'channel-level-log-empty');
+        $this->assertEmpty(MiniLog::read(self::CHANNEL, ['error']), 'channel-level-error-not-empty');
+    }
+
     public function testSave()
     {
         // crear data
