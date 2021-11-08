@@ -176,6 +176,17 @@ final class MiniLogTest extends TestCase
         $this->assertEquals(2, $data[0]['count']);
     }
 
+    public function testGlobalContext()
+    {
+        $key = 'tk-8787';
+        $value1 = 'val-54545';
+        $value2 = 'value-2';
+        MiniLog::setContext($key, $value1);
+        $this->assertEquals($value1, MiniLog::getContext($key));
+        MiniLog::setContext($key, $value2);
+        $this->assertEquals($value2, MiniLog::getContext($key));
+    }
+
     public function testRead()
     {
         MiniLog::clear(self::CHANNEL);
