@@ -28,7 +28,7 @@ use FacturaScripts\Test\Core\BusinessDocsTrait;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
-class FacturaClienteTest extends TestCase
+final class FacturaClienteTest extends TestCase
 {
     use LogErrorsTrait;
     use BusinessDocsTrait;

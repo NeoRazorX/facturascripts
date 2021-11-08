@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author Carlos Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class AppControllerTest extends TestCase
+final class AppControllerTest extends TestCase
 {
     public function testControllersRun()
     {

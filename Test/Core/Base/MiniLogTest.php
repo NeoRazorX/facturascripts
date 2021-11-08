@@ -31,7 +31,7 @@ use PHPUnit\Framework\TestCase;
  * @author Carlos Carlos Garcia Gomez <carlos@facturascripts.com>
  * @covers \FacturaScripts\Core\Base\MiniLog
  */
-class MiniLogTest extends TestCase
+final class MiniLogTest extends TestCase
 {
     use LogErrorsTrait;
 

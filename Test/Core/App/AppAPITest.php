@@ -29,7 +29,7 @@ use PHPUnit\Framework\TestCase;
  * @author Carlos Carlos Garcia Gomez <carlos@facturascripts.com>
  * @covers \FacturaScripts\Core\App\AppAPI
  */
-class AppAPITest extends TestCase
+final class AppAPITest extends TestCase
 {
 
     public function testApiRun()

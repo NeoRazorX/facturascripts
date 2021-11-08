@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
  * @author Carlos Carlos Garcia Gomez <carlos@facturascripts.com>
  * @covers \FacturaScripts\Core\Base\Cache
  */
-class CacheTest extends TestCase
+final class CacheTest extends TestCase
 {
     const KEY = 'test-1234';
     const VALUE = 'Test-test-Test';

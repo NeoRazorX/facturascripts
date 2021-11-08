@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
  * @author Carlos Carlos Garcia Gomez <carlos@facturascripts.com>
  * @covers \FacturaScripts\Core\App\AppCron
  */
-class AppCronTest extends TestCase
+final class AppCronTest extends TestCase
 {
 
     public function testCronWorks()
