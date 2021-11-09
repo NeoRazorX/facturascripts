@@ -40,6 +40,7 @@ final class IPFilterTest extends TestCase
     public function testBanIP()
     {
         $ipFilter = new IPFilter();
+        $ipFilter->clear();
         $this->assertFalse($ipFilter->isBanned(self::TARGET_IP), 'target-ip-banned');
         $this->assertFalse($ipFilter->isBanned(self::CLEAN_IP), 'clean-ip-banned');
 
@@ -48,11 +49,31 @@ final class IPFilterTest extends TestCase
             $this->assertFalse($ipFilter->isBanned(self::TARGET_IP), 'target-ip-banned-' . $attempt);
         }
 
+        $ipFilter->setAttempt(self::TARGET_IP);
         $this->assertTrue($ipFilter->isBanned(self::TARGET_IP), 'target-ip-not-banned');
         $this->assertFalse($ipFilter->isBanned(self::CLEAN_IP), 'clean-ip-banned');
 
         $ipFilter->clear();
         $this->assertFalse($ipFilter->isBanned(self::TARGET_IP), 'target-ip-banned');
+    }
+
+    public function testClearAndSave()
+    {
+        // band the target ip
+        $ipFilter = new IPFilter();
+        for ($attempt = 0; $attempt <= IPFilter::MAX_ATTEMPTS; $attempt++) {
+            $ipFilter->setAttempt(self::TARGET_IP);
+        }
+        $this->assertTrue($ipFilter->isBanned(self::TARGET_IP), 'target-ip-not-banned');
+
+        // use another instance
+        $ipFilter2 = new IPFilter();
+        $this->assertTrue($ipFilter2->isBanned(self::TARGET_IP), 'target-ip-not-banned');
+        $ipFilter2->clear();
+
+        // use instance number 3
+        $ipFilter3 = new IPFilter();
+        $this->assertFalse($ipFilter3->isBanned(self::TARGET_IP), 'target-ip-banned');
     }
 
     protected function tearDown()

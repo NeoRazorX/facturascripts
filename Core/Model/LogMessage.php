@@ -116,6 +116,19 @@ class LogMessage extends Base\ModelClass
     }
 
     /**
+     * @return bool
+     */
+    public function delete()
+    {
+        if ($this->channel === self::AUDIT_CHANNEL) {
+            self::toolBox()::i18nLog()->warning('cant-delete-audit-log');
+            return false;
+        }
+
+        return parent::delete();
+    }
+
+    /**
      * Returns the name of the column that is the primary key of the model.
      *
      * @return string
@@ -152,5 +165,20 @@ class LogMessage extends Base\ModelClass
 
         $this->uri = $utils->noHtml($this->uri);
         return parent::test();
+    }
+
+    /**
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveUpdate(array $values = [])
+    {
+        if ($this->channel === self::AUDIT_CHANNEL) {
+            self::toolBox()::i18nLog()->warning('cant-update-audit-log');
+            return false;
+        }
+
+        return parent::saveUpdate($values);
     }
 }
