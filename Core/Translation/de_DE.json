@@ -326,6 +326,7 @@
     "delete-file": "Datei löschen",
     "delete-opening": "Öffnungsbuchung löschen",
     "delete-record": "Datensatz entfernen",
+    "deleted-model": "Eliminado %model% (%key%) %desc%",
     "delivery-note": "Frachtbrief",
     "delivery-note-email-subject": "Ihr Lieferschein %code%",
     "delivery-note-email-text": "Hallo, als Anlage Ihr Lieferschein %code%",

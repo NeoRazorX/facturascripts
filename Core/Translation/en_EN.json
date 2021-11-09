@@ -326,6 +326,7 @@
     "delete-file": "Delete file",
     "delete-opening": "Remove account opening entry",
     "delete-record": "Remove record",
+    "deleted-model": "Eliminado %model% (%key%) %desc%",
     "delivery-note": "Delivery note",
     "delivery-note-email-subject": "Your delivery note %code%",
     "delivery-note-email-text": "Hello, I am attaching your %code% delivery note",

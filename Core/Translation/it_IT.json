@@ -326,6 +326,7 @@
     "delete-file": "delete-file",
     "delete-opening": "delete-opening",
     "delete-record": "Rimuovi record",
+    "deleted-model": "Eliminado %model% (%key%) %desc%",
     "delivery-note": "lista dei passeggeri",
     "delivery-note-email-subject": "delivery-note-email-subject",
     "delivery-note-email-text": "delivery-note-email-text",

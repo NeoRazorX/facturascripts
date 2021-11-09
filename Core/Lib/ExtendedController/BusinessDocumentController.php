@@ -297,7 +297,7 @@ abstract class BusinessDocumentController extends PanelController
      */
     protected function saveDocumentError(string $message): string
     {
-        foreach ($this->toolBox()->log()->readAll() as $msg) {
+        foreach ($this->toolBox()->log()->read('', ['critical','error','warning']) as $msg) {
             $message .= "\n" . $msg['message'];
         }
 

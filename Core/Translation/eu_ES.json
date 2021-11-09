@@ -326,6 +326,7 @@
     "delete-file": "Artxiboa ezabatu",
     "delete-opening": "Irekitze idazpena ezabatu",
     "delete-record": "Erregistroa ezabatu",
+    "deleted-model": "Eliminado %model% (%key%) %desc%",
     "delivery-note": "Albarana",
     "delivery-note-email-subject": "Zure %code%. albarana",
     "delivery-note-email-text": "Kaixo, zure %code% albarana atxikitzen dizut",

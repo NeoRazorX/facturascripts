@@ -326,6 +326,7 @@
     "delete-file": "delete-file",
     "delete-opening": "delete-opening",
     "delete-record": "Remover registro",
+    "deleted-model": "Eliminado %model% (%key%) %desc%",
     "delivery-note": "Nota de entrega",
     "delivery-note-email-subject": "A sua nota de entrega %code%",
     "delivery-note-email-text": "Olá, vai anexo a sua Nota de Entrega %code%",

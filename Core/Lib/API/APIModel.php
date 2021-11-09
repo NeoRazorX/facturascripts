@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\API;
 
 use Exception;
@@ -68,12 +69,12 @@ class APIModel extends APIResourceClass
      */
     public function doGET(): bool
     {
-        /// all records
+        // all records
         if (empty($this->params)) {
             return $this->listAll();
         }
 
-        /// model schema
+        // model schema
         if ($this->params[0] === 'schema') {
             $data = [];
             foreach ($this->model->getModelFields() as $key => $value) {
@@ -87,7 +88,7 @@ class APIModel extends APIResourceClass
             return true;
         }
 
-        /// record not found
+        // record not found
         if (!$this->model->loadFromCode($this->params[0])) {
             $this->setError($this->toolBox()->i18n()->trans('record-not-found'));
             return false;
@@ -114,7 +115,7 @@ class APIModel extends APIResourceClass
             return false;
         }
 
-        /// TODO: Why don't use $this->modal->loadFromData() ???
+        // TODO: Why don't use $this->modal->loadFromData() ???
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
         }
@@ -139,7 +140,7 @@ class APIModel extends APIResourceClass
             return false;
         }
 
-        /// TODO: Why don't use $this->modal->loadFromData() ???
+        // TODO: Why don't use $this->modal->loadFromData() ???
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
         }
@@ -190,7 +191,7 @@ class APIModel extends APIResourceClass
     private function getRequestArray($key, $default = ''): array
     {
         $array = $this->request->get($key, $default);
-        return \is_array($array) ? $array : []; /// if is string has bad format
+        return is_array($array) ? $array : []; // if is string has bad format
     }
 
     /**
@@ -203,8 +204,8 @@ class APIModel extends APIResourceClass
     private function getResourcesFromFolder($folder): array
     {
         $resources = [];
-        foreach (\scandir(\FS_FOLDER . '/Dinamic/' . $folder, \SCANDIR_SORT_ASCENDING) as $fName) {
-            if (\substr($fName, -4) === '.php') {
+        foreach (scandir(FS_FOLDER . '/Dinamic/' . $folder, SCANDIR_SORT_ASCENDING) as $fName) {
+            if (substr($fName, -4) === '.php') {
                 $modelName = substr($fName, 0, -4);
                 $plural = $this->pluralize($modelName);
                 $resources[$plural] = $this->setResource($modelName);
@@ -217,8 +218,8 @@ class APIModel extends APIResourceClass
     /**
      * Returns the where clauses.
      *
-     * @param array  $filter
-     * @param array  $operation
+     * @param array $filter
+     * @param array $operation
      * @param string $defaultOperation
      *
      * @return DataBaseWhere[]
@@ -230,45 +231,45 @@ class APIModel extends APIResourceClass
             $field = $key;
             $operator = '=';
 
-            switch (\substr($key, -3)) {
+            switch (substr($key, -3)) {
                 case '_gt':
-                    $field = \substr($key, 0, -3);
+                    $field = substr($key, 0, -3);
                     $operator = '>';
                     break;
 
                 case '_is':
-                    $field = \substr($key, 0, -3);
+                    $field = substr($key, 0, -3);
                     $operator = 'IS';
                     break;
 
                 case '_lt':
-                    $field = \substr($key, 0, -3);
+                    $field = substr($key, 0, -3);
                     $operator = '<';
                     break;
             }
 
-            switch (\substr($key, -4)) {
+            switch (substr($key, -4)) {
                 case '_gte':
-                    $field = \substr($key, 0, -4);
+                    $field = substr($key, 0, -4);
                     $operator = '>=';
                     break;
 
                 case '_lte':
-                    $field = \substr($key, 0, -4);
+                    $field = substr($key, 0, -4);
                     $operator = '<=';
                     break;
 
                 case '_neq':
-                    $field = \substr($key, 0, -4);
+                    $field = substr($key, 0, -4);
                     $operator = '!=';
                     break;
             }
 
-            if (\substr($key, -5) == '_like') {
-                $field = \substr($key, 0, -5);
+            if (substr($key, -5) == '_like') {
+                $field = substr($key, 0, -5);
                 $operator = 'LIKE';
-            } elseif (\substr($key, -6) == '_isnot') {
-                $field = \substr($key, 0, -6);
+            } elseif (substr($key, -6) == '_isnot') {
+                $field = substr($key, 0, -6);
                 $operator = 'IS NOT';
             }
 
@@ -283,14 +284,13 @@ class APIModel extends APIResourceClass
     }
 
     /**
-     *
      * @return bool
      */
     protected function listAll(): bool
     {
         $filter = $this->getRequestArray('filter');
-        $limit = (int) $this->request->get('limit', 50);
-        $offset = (int) $this->request->get('offset', 0);
+        $limit = (int)$this->request->get('limit', 50);
+        $offset = (int)$this->request->get('offset', 0);
         $operation = $this->getRequestArray('operation');
         $order = $this->getRequestArray('sort');
 
@@ -311,23 +311,22 @@ class APIModel extends APIResourceClass
      */
     private function pluralize($text): string
     {
-        if (\substr($text, -1) === 's') {
-            return \strtolower($text);
+        if (substr($text, -1) === 's') {
+            return strtolower($text);
         }
 
-        if (\substr($text, -3) === 'ser' || \substr($text, -4) === 'tion') {
-            return \strtolower($text) . 's';
+        if (substr($text, -3) === 'ser' || substr($text, -4) === 'tion') {
+            return strtolower($text) . 's';
         }
 
-        if (\in_array(\substr($text, -1), ['a', 'e', 'i', 'o', 'u', 'k'], false)) {
-            return \strtolower($text) . 's';
+        if (in_array(substr($text, -1), ['a', 'e', 'i', 'o', 'u', 'k'], false)) {
+            return strtolower($text) . 's';
         }
 
-        return \strtolower($text) . 'es';
+        return strtolower($text) . 'es';
     }
 
     /**
-     *
      * @return bool
      */
     private function saveResource(): bool
@@ -338,7 +337,7 @@ class APIModel extends APIResourceClass
         }
 
         $message = $this->toolBox()->i18n()->trans('record-save-error');
-        foreach ($this->toolBox()->log()->readAll() as $log) {
+        foreach ($this->toolBox()->log()->read('', ['critical', 'error', 'info', 'notice', 'warning']) as $log) {
             $message .= ' - ' . $log['message'];
         }
 

@@ -367,7 +367,7 @@ class GridView extends EditView
     private function getErrors(): array
     {
         $errors = [];
-        foreach (ToolBox::log()->readAll() as $log) {
+        foreach (ToolBox::log()->read('', ['critical', 'error', 'warning']) as $log) {
             $errors[] = $log['message'];
         }
 

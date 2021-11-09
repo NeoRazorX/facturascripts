@@ -326,6 +326,7 @@
     "delete-file": "esborrar-arxiu",
     "delete-opening": "Eliminar l'assentament d'obertura",
     "delete-record": "Eliminar el registre",
+    "deleted-model": "Eliminado %model% (%key%) %desc%",
     "delivery-note": "Albarà",
     "delivery-note-email-subject": "El seu albarà %code%",
     "delivery-note-email-text": "Hola, li adjuntem el seu albarà %code%",
