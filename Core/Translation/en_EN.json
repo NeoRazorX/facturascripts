@@ -610,6 +610,7 @@
     "invoice-regularized-cant-delete": "The invoice is within a regularization of %tax%. It cann't be deleted.",
     "invoice-without-acc-entry": "Invoice without accounting entry",
     "invoices": "Invoices",
+    "invoices-cant-generate-new-docs": "Las facturas no pueden generar nuevos documentos",
     "ip": "IP",
     "ip-banned": "For security reasons access from your IP has been temporarily blocked.",
     "irpf": "PIT",

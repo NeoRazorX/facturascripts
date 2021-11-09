@@ -610,6 +610,7 @@
     "invoice-regularized-cant-delete": "Die Rechnung liegt innerhalb einer Regularisierung von 0. Sie kann nicht gelöscht werden.",
     "invoice-without-acc-entry": "invoice-without-acc-entry",
     "invoices": "Banknoten",
+    "invoices-cant-generate-new-docs": "Las facturas no pueden generar nuevos documentos",
     "ip": "IP",
     "ip-banned": "ip-banned",
     "irpf": "Einkommensteuer",

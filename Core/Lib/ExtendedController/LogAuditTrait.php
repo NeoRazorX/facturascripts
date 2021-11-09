@@ -27,7 +27,7 @@ trait LogAuditTrait
     {
         $this->addListView($viewName, 'LogMessage', 'history', 'fas fa-history');
         $this->views[$viewName]->addOrderBy(['time'], 'date', 2);
-        $this->views[$viewName]->addSearchFields(['message', 'original']);
+        $this->views[$viewName]->addSearchFields(['context', 'message']);
 
         // disable columns
         $this->views[$viewName]->disableColumn('channel');
@@ -36,6 +36,7 @@ trait LogAuditTrait
         // disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'checkBoxes', false);
     }
 
     public function loadDataLogAudit($view, $model, $modelid)

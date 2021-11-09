@@ -610,6 +610,7 @@
     "invoice-regularized-cant-delete": "Faktura %tax% erregularizazioan dago. Ezin da ezabatu.",
     "invoice-without-acc-entry": "Idazpen gabeko faktura",
     "invoices": "Fakturak",
+    "invoices-cant-generate-new-docs": "Las facturas no pueden generar nuevos documentos",
     "ip": "IP",
     "ip-banned": "Segurtasun arrazoiengatik sarbidea aldi baterako blokeatu egin da zure IPtik.",
     "irpf": "PFEZ",

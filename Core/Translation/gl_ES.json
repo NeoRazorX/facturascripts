@@ -610,6 +610,7 @@
     "invoice-regularized-cant-delete": "A factura está dentro dunha regularización de %tax%. Non se pode eliminar.",
     "invoice-without-acc-entry": "Factura sen asento",
     "invoices": "Facturas",
+    "invoices-cant-generate-new-docs": "Las facturas no pueden generar nuevos documentos",
     "ip": "IP",
     "ip-banned": "Por motivos de seguridade, bloqueouse temporalmente o acceso desde a súa IP",
     "irpf": "IRPF",
