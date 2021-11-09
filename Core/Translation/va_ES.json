@@ -1186,6 +1186,7 @@
     "update-stock": "Actualitza l'estoc",
     "update-supplier-prices": "update-supplier-prices",
     "update-time": "Hora de l'actualització",
+    "updated-model": "Actualizado %model% (%key%) %desc%",
     "updater": "Actualitzador",
     "uploaded-at": "Pujat el",
     "url": "Lloc Web",

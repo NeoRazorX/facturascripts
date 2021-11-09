@@ -1186,6 +1186,7 @@
     "update-stock": "Lagerbestand aktualisieren",
     "update-supplier-prices": "aktullieren Lieferantenpreise",
     "update-time": "Aktuallierungszeit",
+    "updated-model": "Actualizado %model% (%key%) %desc%",
     "updater": "Updater",
     "uploaded-at": "geladen am",
     "url": "Webseite",

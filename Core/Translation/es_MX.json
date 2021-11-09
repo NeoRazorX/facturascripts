@@ -1186,6 +1186,7 @@
     "update-stock": "Actualizar stock",
     "update-supplier-prices": "Actualizar precios de proveedores",
     "update-time": "Hora de actualización",
+    "updated-model": "Actualizado %model% (%key%) %desc%",
     "updater": "Actualizador",
     "uploaded-at": "Subido en",
     "url": "Dirección web",

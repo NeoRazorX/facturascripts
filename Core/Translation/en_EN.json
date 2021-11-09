@@ -1186,6 +1186,7 @@
     "update-stock": "Update stock",
     "update-supplier-prices": "Update supplier prices",
     "update-time": "Update time",
+    "updated-model": "Actualizado %model% (%key%) %desc%",
     "updater": "Updater",
     "uploaded-at": "Uploaded at",
     "url": "Web site",

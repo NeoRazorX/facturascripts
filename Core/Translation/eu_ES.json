@@ -1186,6 +1186,7 @@
     "update-stock": "Stock eguneratu",
     "update-supplier-prices": "Hornitzaileen prezioak eguneratu",
     "update-time": "Eguneratze ordua",
+    "updated-model": "Actualizado %model% (%key%) %desc%",
     "updater": "Eguneratzailea",
     "uploaded-at": "Hemen kargatua",
     "url": "Webgunea",

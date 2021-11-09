@@ -42,7 +42,6 @@ final class MiniLogTest extends TestCase
     {
         MiniLog::clear(self::CHANNEL);
         $logger = new MiniLog(self::CHANNEL);
-
         $message = 'test-critical';
         $context = ['test-key' => 'FAIL', 'other-key' => 'other', 'more' => 1234];
         $logger->critical($message, $context);
@@ -62,7 +61,6 @@ final class MiniLogTest extends TestCase
     {
         MiniLog::clear(self::CHANNEL);
         $logger = new MiniLog(self::CHANNEL);
-
         $message = 'test-error';
         $context = ['test-key' => '78687687681111'];
         $logger->error($message, $context);
@@ -80,7 +78,6 @@ final class MiniLogTest extends TestCase
     {
         MiniLog::clear(self::CHANNEL);
         $logger = new MiniLog(self::CHANNEL);
-
         $message = 'test-info';
         $context = ['test-key' => '78686867'];
         $logger->info($message, $context);
@@ -98,7 +95,6 @@ final class MiniLogTest extends TestCase
     {
         MiniLog::clear(self::CHANNEL);
         $logger = new MiniLog(self::CHANNEL);
-
         $message = 'test-notice';
         $context = ['test-key' => '3232324'];
         $logger->notice($message, $context);
@@ -116,7 +112,6 @@ final class MiniLogTest extends TestCase
     {
         MiniLog::clear(self::CHANNEL);
         $logger = new MiniLog(self::CHANNEL);
-
         $message = 'test-war';
         $context = ['test-key' => 'war'];
         $logger->warning($message, $context);
@@ -163,6 +158,7 @@ final class MiniLogTest extends TestCase
 
     public function testMessageCount()
     {
+        MiniLog::clear();
         $defaultLogger = new MiniLog();
         $defaultLogger->info('test');
 
@@ -175,6 +171,39 @@ final class MiniLogTest extends TestCase
         $this->assertEquals(1, count($data), 'more-than-one-message');
         $this->assertEquals('test', $data[0]['message']);
         $this->assertEquals(2, $data[0]['count']);
+    }
+
+    public function testMessageCountWithSameContext()
+    {
+        MiniLog::clear();
+        $logger = new MiniLog(self::CHANNEL);
+        $msg = 'test-msg';
+        $context = ['key1' => 1, 'key2' => 'val-2'];
+        $logger->info($msg, $context);
+        $logger->info($msg, $context);
+
+        $data = MiniLog::read(self::CHANNEL);
+        $this->assertNotEmpty($data, 'log-empty');
+        $this->assertEquals(1, count($data), 'more-than-one-message');
+        $this->assertEquals($msg, $data[0]['message']);
+        $this->assertEquals(2, $data[0]['count']);
+    }
+
+    public function testMessageCountWithDifferentContext()
+    {
+        MiniLog::clear();
+        $logger = new MiniLog(self::CHANNEL);
+        $msg = 'test-msg-2';
+        $context1 = ['key1' => 1, 'key2' => 'val-2'];
+        $context2 = ['key1' => 2, 'key-7' => 'val-999'];
+        $logger->info($msg, $context1);
+        $logger->info($msg, $context2);
+
+        $data = MiniLog::read(self::CHANNEL);
+        $this->assertNotEmpty($data, 'log-empty');
+        $this->assertEquals(2, count($data), 'not-two-messages');
+        $this->assertEquals($msg, $data[0]['message']);
+        $this->assertEquals(1, $data[0]['count']);
     }
 
     public function testMessageCountTranslated()

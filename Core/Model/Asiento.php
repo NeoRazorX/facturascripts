@@ -185,7 +185,9 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),
-            'model' => $this->toArray()
+            'model-class' => $this->modelClassName(),
+            'model-code' => $this->primaryColumnValue(),
+            'model-data' => $this->toArray()
         ]);
         return true;
     }

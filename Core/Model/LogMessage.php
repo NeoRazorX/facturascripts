@@ -78,6 +78,16 @@ class LogMessage extends Base\ModelClass
     public $message;
 
     /**
+     * @var string
+     */
+    public $model;
+
+    /**
+     * @var string
+     */
+    public $modelcode;
+
+    /**
      * User nick.
      *
      * @var string
@@ -149,7 +159,7 @@ class LogMessage extends Base\ModelClass
     }
 
     /**
-     * Returns True if there is no erros on properties values.
+     * Returns True if there are no errors on properties values.
      *
      * @return bool
      */
@@ -163,6 +173,8 @@ class LogMessage extends Base\ModelClass
             $this->message = substr($this->message, 0, static::MAX_MESSAGE_LEN);
         }
 
+        $this->model = $utils->noHtml($this->model);
+        $this->modelcode = $utils->noHtml($this->modelcode);
         $this->uri = $utils->noHtml($this->uri);
         return parent::test();
     }
