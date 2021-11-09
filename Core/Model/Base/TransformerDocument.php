@@ -162,6 +162,14 @@ abstract class TransformerDocument extends BusinessDocument
             }
         }
 
+        // add audit log
+        self::toolBox()::i18nLog(self::AUDIT_CHANNEL)->info('deleted-model', [
+            '%model%' => $this->modelClassName(),
+            '%key%' => $this->primaryColumnValue(),
+            '%desc%' => $this->primaryDescription(),
+            'model' => $this->toArray()
+        ]);
+
         if ($newTransation) {
             self::$dataBase->commit();
         }
