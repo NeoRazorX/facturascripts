@@ -252,8 +252,9 @@ final class MiniLog
         }
 
         // if we find this message in the log, we increase the counter
+        $transMessage = is_null($this->translator) ? $message : $this->translator->trans($message, $context);
         foreach (self::$data as $key => $value) {
-            if ($value['channel'] === $this->channel && $value['level'] === $level && $value['original'] === $message) {
+            if ($value['channel'] === $this->channel && $value['level'] === $level && $value['message'] === $transMessage) {
                 self::$data[$key]['count']++;
                 return;
             }
@@ -265,7 +266,7 @@ final class MiniLog
             'context' => array_merge($context, self::$context),
             'count' => 1,
             'level' => $level,
-            'message' => is_null($this->translator) ? $message : $this->translator->trans($message, $context),
+            'message' => $transMessage,
             'original' => $message,
             'time' => microtime(true)
         ];

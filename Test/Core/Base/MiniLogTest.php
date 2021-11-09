@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\LogMessage;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -174,6 +175,29 @@ final class MiniLogTest extends TestCase
         $this->assertEquals(1, count($data), 'more-than-one-message');
         $this->assertEquals('test', $data[0]['message']);
         $this->assertEquals(2, $data[0]['count']);
+    }
+
+    public function testMessageCountTranslated()
+    {
+        // test translation
+        $i18n = new Translator();
+        $key = 'field-can-not-be-null';
+        $trans1 = $i18n->trans($key, ['%fieldName%' => 1]);
+        $trans2 = $i18n->trans($key, ['%fieldName%' => 2]);
+        $this->assertNotEquals($trans1, $trans2, 'translations-equals');
+
+        // add log messages
+        MiniLog::clear();
+        $logger = new MiniLog(self::CHANNEL, $i18n);
+        $logger->info($key, ['%fieldName%' => 1]);
+        $logger->info($key, ['%fieldName%' => 2]);
+
+        // check log
+        $data = MiniLog::read(self::CHANNEL);
+        $this->assertNotEmpty($data, 'log-empty');
+        $this->assertEquals(2, count($data), 'not-two-messages');
+        $this->assertEquals($trans1, $data[0]['message']);
+        $this->assertEquals(1, $data[0]['count']);
     }
 
     public function testGlobalContext()
