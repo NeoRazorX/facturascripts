@@ -169,6 +169,11 @@ class EstadoDocumento extends Base\ModelOnChangeClass
 
         if (!empty($this->generadoc)) {
             $this->editable = false;
+
+            if (in_array($this->tipodoc, ['FacturaCliente', 'FacturaProveedor'])) {
+                self::toolBox()::i18nLog()->warning('invoices-cant-generate-new-docs');
+                return false;
+            }
         }
 
         return parent::test();

@@ -95,6 +95,30 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
     }
 
+    public function testStatusCanNotHaveGenerationAndEditable()
+    {
+        $status = new EstadoDocumento();
+        $status->editable = true;
+        $status->generadoc = 'PedidoProveedor';
+        $status->nombre = 'Generate';
+        $status->tipodoc = 'PresupuestoCliente';
+        $this->assertTrue($status->save(), 'estado-documento-cant-save');
+        $this->assertFalse($status->editable, 'estado-documento-must-be-not-editable');
+    }
+
+    public function testCanNotCreateInvoicesWithGeneration()
+    {
+        $status = new EstadoDocumento();
+        $status->generadoc = 'PedidoCliente';
+        $status->nombre = 'Generate';
+        $status->tipodoc = 'FacturaCliente';
+        $this->assertFalse($status->save(), 'invalid-estado-documento-for-sales-invoice-can-save');
+
+        $status->generadoc = 'PedidoProveedor';
+        $status->tipodoc = 'FacturaProveedor';
+        $this->assertFalse($status->save(), 'invalid-estado-documento-for-purchase-invoice-can-save');
+    }
+
     protected function tearDown()
     {
         $this->logErrors();
