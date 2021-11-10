@@ -181,7 +181,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
         }
 
         // add audit log
-        self::toolBox()::i18nLog(self::AUDIT_CHANNEL)->info('deleted-model', [
+        self::toolBox()::i18nLog(self::AUDIT_CHANNEL)->warning('deleted-model', [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),
