@@ -1,0 +1,138 @@
+{#
+/**
+ * This file is part of HumanResources plugin for FacturaScripts.
+ * FacturaScripts Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * HumanResources Copyright (C) 2018-2021 Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ *
+ * This program and its files are under the terms of the license specified in the LICENSE file.
+ *
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ */
+#}
+{% set firstView = fsc.views | first %}
+{% set doc = firstView.model %}
+{% set currentView = fsc.getCurrentView() %}
+
+<div class="container-fluid">
+    {# -- New form -- #}
+    <div class="row">
+        <div class="col">
+            <form id="{{ 'form' ~ currentView.getViewName() ~ '0' }}" action="{{ doc.url() }}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}" />
+                <input type="hidden" name="action" value="add-file" />
+                <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+                <div class="card border-success shadow mb-2">
+                    <div class="card-body p-2">
+                        <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse" data-target="#NewFileCollapse" aria-expanded="false">
+                            <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
+                            {{ i18n.trans('add') }}
+                        </button>
+                        &nbsp;
+                        {{ currentView.title }}
+                    </div>
+                    <div class="collapse" id="NewFileCollapse">
+                        <div class="card-body border-top">
+                            {{ _self.inputTextArea('', i18n) }}
+                            <div class="form-row align-items-end">
+                                <div class="col">
+                                    <input type="file" name="new-file" class="form-control-file" required="" />
+                                    <p class="text-muted mb-0">{{ i18n.trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}</p>
+                                </div>
+                                <div class="col text-right">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {# -- Attached files -- #}
+    <div class="row">
+        <div class="col">
+            {% for counter, docfile in currentView.cursor %}
+                {% set formName = currentView.getViewName() ~ (counter + 1) %}
+                {% set file = docfile.getFile() %}
+                {% set urlDownload = file.url('download') %}
+                <form id="{{ 'form' ~ formName }}" action="{{ doc.url() }}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}" />
+                    <input type="hidden" name="id" value="{{ docfile.id }}" />
+                    <input type="hidden" name="action" value="edit-file"/>
+                    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+                    <div class="card shadow mb-3">
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="col-md-9">
+                                    <h5 class="card-title"><i class="far fa-file-image mb-3"></i> &nbsp;{{ file.filename }}</h5>
+                                    {{ _self.inputTextArea(docfile.observations, i18n) }}
+                                    <div class="form-row">
+                                        <div class="col">
+                                            {{ _self.buttonDelete(formName, i18n) }}
+                                        </div>
+                                        <div class="col text-center">
+                                            <small>
+                                                <i class="fas fa-user"></i> {{ docfile.nick }} &nbsp;
+                                                <i class="fas fa-calendar-alt"></i> {{ docfile.creationdate }}
+                                            </small>
+                                        </div>
+                                        <div class="col text-right">
+                                            <a class="btn btn-sm btn-outline-info" target="_blank" href="{{ asset(urlDownload) }}">
+                                                <i class="fas fa-cloud-download-alt"></i>
+                                                <span class="d-none d-sm-inline-block">{{ i18n.trans('download') }}</span>
+                                            </a>
+                                            <button class="btn btn-sm btn-primary" type="submit" name="action" value="edit-file">
+                                                <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                                                <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    {{ _self.previewFile(urlDownload, file.filename, file.getExtension(), i18n) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% macro inputTextArea(text, i18n) %}
+    <div class="form-group">
+        <textarea name="observations" class="form-control col-12" rows="4" placeholder="{{ i18n.trans('observations') }}">{{ text }}</textarea>
+    </div>
+{% endmacro %}
+
+{% macro previewFile(url, filename, extFile, i18n) %}
+    <style>
+        .preview-fit { width: inherit; height: 200px; max-width: 100%; max-height: 100%; object-fit: contain; }
+    </style>
+    {% if extFile in ['gif','jpg', 'jpeg','png', 'svg', 'webp'] %}
+        <img src="{{ asset(url) }}" class="preview-fit img-thumbnail border-info" alt="{{ filename }}">
+    {% elseif extFile in ['mp4', 'ogg', 'webm'] %}
+        <div class="embed-responsive embed-responsive-16by9">
+            <video class="preview-fit" controls><source src="{{ asset(url) }}" type="video/{{ extFile }}" /></video>
+        </div>
+    {% elseif extFile == 'pdf' %}
+        <embed class="preview-fit" src="{{ asset(url) }}" type="application/pdf">
+    {% else %}
+        <p class="card-text">{{ i18n.trans('preview-file-type-not-soported') }}</p>
+    {% endif %}
+{% endmacro %}
+
+{% macro buttonDelete(formName, i18n) %}
+    {% set label = i18n.trans('delete-file') %}
+    {% set text = i18n.trans('are-you-sure') %}
+    {% set cancel = i18n.trans('cancel') %}
+    {% set confirm = i18n.trans('confirm') %}
+    <button type="button" class="btn btn-sm btn-danger"
+            onclick="confirmAction('{{ formName }}','delete-file','{{ label }}','{{ text }}','{{ cancel }}','{{ confirm }}');">
+        <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+        <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
+    </button>
+{% endmacro %}
