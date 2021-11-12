@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -23,10 +24,11 @@ use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
 use Twig\Environment;
-use Twig\TwigFilter;
-use Twig\TwigFunction;
+use Twig\Error\LoaderError;
 use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 /**
  * Description of WebRender
@@ -63,12 +65,12 @@ final class WebRender
     public function __construct()
     {
         $this->installed = true;
-        if (!defined('FS_DEBUG')) {
+        if (false === defined('FS_DEBUG')) {
             define('FS_DEBUG', true);
             $this->installed = false;
         }
 
-        $path = FS_DEBUG ? \FS_FOLDER . '/Core/View' : \FS_FOLDER . '/Dinamic/View';
+        $path = FS_DEBUG ? FS_FOLDER . '/Core/View' : FS_FOLDER . '/Dinamic/View';
         $this->loader = new FilesystemLoader($path);
         $this->pluginManager = new PluginManager();
     }
@@ -78,13 +80,13 @@ final class WebRender
      *
      * @return Environment
      */
-    public function getTwig()
+    public function getTwig(): Environment
     {
         $twig = new Environment($this->loader, $this->getOptions());
 
-        /// asset functions
+        // asset functions
         $assetFunction = new TwigFunction('asset', function ($string) {
-            $path = \FS_ROUTE . '/';
+            $path = FS_ROUTE . '/';
             if (substr($string, 0, strlen($path)) == $path) {
                 return $string;
             }
@@ -92,13 +94,13 @@ final class WebRender
         });
         $twig->addFunction($assetFunction);
 
-        /// fixHtml functions
+        // fixHtml functions
         $fixHtmlFunction = new TwigFilter('fixHtml', function ($string) {
             return Utils::fixHtml($string);
         });
         $twig->addFilter($fixHtmlFunction);
 
-        /// debug extension
+        // debug extension
         $twig->addExtension(new DebugExtension());
 
         return $twig;
@@ -106,19 +108,20 @@ final class WebRender
 
     /**
      * Add all paths from Core and Plugins folders.
+     * @throws LoaderError
      */
     public function loadPluginFolders()
     {
-        /// Core namespace
-        $this->loader->addPath(\FS_FOLDER . '/Core/View', 'Core');
+        // Core namespace
+        $this->loader->addPath(FS_FOLDER . '/Core/View', 'Core');
 
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-            $pluginPath = \FS_FOLDER . '/Plugins/' . $pluginName . '/View';
-            if (!file_exists($pluginPath)) {
+            $pluginPath = FS_FOLDER . '/Plugins/' . $pluginName . '/View';
+            if (false === file_exists($pluginPath)) {
                 continue;
             }
 
-            /// plugin namespace
+            // plugin namespace
             $this->loader->addPath($pluginPath, 'Plugin' . $pluginName);
             if (FS_DEBUG) {
                 $this->loader->prependPath($pluginPath);
@@ -130,11 +133,11 @@ final class WebRender
      * Returns the data into the standard output.
      *
      * @param string $template
-     * @param array  $params
+     * @param array $params
      *
      * @return string
      */
-    public function render($template, $params = [])
+    public function render(string $template, array $params = []): string
     {
         $templateVars = [
             'i18n' => new Translator(),
@@ -153,7 +156,7 @@ final class WebRender
      *
      * @return array
      */
-    private function getOptions()
+    private function getOptions(): array
     {
         if ($this->installed) {
             return [

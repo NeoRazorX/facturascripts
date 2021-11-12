@@ -11,9 +11,17 @@
         <type>character varying(40)</type>
     </column>
     <column>
+        <name>context</name>
+        <type>text</type>
+    </column>
+    <column>
         <name>id</name>
         <type>serial</type>
         <null>NO</null>
+    </column>
+    <column>
+        <name>idcontacto</name>
+        <type>integer</type>
     </column>
     <column>
         <name>ip</name>
@@ -28,6 +36,14 @@
         <name>message</name>
         <type>text</type>
         <null>NO</null>
+    </column>
+    <column>
+        <name>model</name>
+        <type>character varying(30)</type>
+    </column>
+    <column>
+        <name>modelcode</name>
+        <type>character varying(40)</type>
     </column>
     <column>
         <name>nick</name>

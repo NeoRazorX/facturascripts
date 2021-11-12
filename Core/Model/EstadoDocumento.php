@@ -169,6 +169,11 @@ class EstadoDocumento extends Base\ModelOnChangeClass
 
         if (!empty($this->generadoc)) {
             $this->editable = false;
+
+            if (in_array($this->tipodoc, ['FacturaCliente', 'FacturaProveedor'])) {
+                self::toolBox()::i18nLog()->warning('invoices-cant-generate-new-docs');
+                return false;
+            }
         }
 
         return parent::test();
@@ -256,6 +261,24 @@ class EstadoDocumento extends Base\ModelOnChangeClass
                 . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
             self::$dataBase->exec($sql);
         }
+    }
+
+    /**
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->idestado)) {
+            /**
+             * postgresql does not correctly update the serial when inserting the values from a csv.
+             * So we use this to get the new id manually.
+             */
+            $this->idestado = $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 
     /**

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\PDF;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -50,13 +51,11 @@ abstract class PDFDocument extends PDFCore
     const INVOICE_TOTALS_Y = 200;
 
     /**
-     *
      * @var array
      */
     protected $lineHeaders;
 
     /**
-     *
      * @var FormatoDocumento
      */
     protected $format;
@@ -94,10 +93,10 @@ abstract class PDFDocument extends PDFCore
         $completeAddress .= empty($model->codpais) ? '' : ', ' . $this->getCountryName($model->codpais);
         return $completeAddress;
     }
-    
+
     /**
-     * Returns the combination of the address. 
-     * If it is a supplier invoice, it returns the supplier's default address. 
+     * Returns the combination of the address.
+     * If it is a supplier invoice, it returns the supplier's default address.
      * If it is a a customer invoice, return the invoice address
      *
      * @param Cliente|Proveedor $subject
@@ -105,18 +104,17 @@ abstract class PDFDocument extends PDFCore
      *
      * @return string
      */
-    protected function getDocAddress($subject, $model) : string
+    protected function getDocAddress($subject, $model): string
     {
         if (isset($model->codproveedor)) {
             $contacto = $subject->getDefaultAddress(); // Traemos en un modelo contacto la dirección por defecto del proveedor
             return $this->combineAddress($contacto); // Devolvemos la dirección usando combineAddress , pero pasándole el modelo contacto
         }
-        
+
         return $this->combineAddress($model); // Pasamos $p_model porque $p_subject por ejemplo no tiene $p_subject->direccion
     }
 
     /**
-     * 
      * @param BusinessDocument|ReciboCliente $receipt
      *
      * @return string
@@ -179,7 +177,6 @@ abstract class PDFDocument extends PDFCore
     }
 
     /**
-     * 
      * @param BusinessDocument $model
      */
     protected function getTaxesRows($model)
@@ -214,7 +211,7 @@ abstract class PDFDocument extends PDFCore
             $subtotals[$key]['taxsurcharge'] += $line->pvptotal * $eud * $line->recargo / 100;
         }
 
-        /// irpf
+        // irpf
         foreach ($model->getLines() as $line) {
             if (empty($line->irpf)) {
                 continue;
@@ -236,7 +233,7 @@ abstract class PDFDocument extends PDFCore
             $subtotals[$key]['taxamount'] -= $line->pvptotal * $eud * $line->irpf / 100;
         }
 
-        /// round
+        // round
         foreach ($subtotals as $key => $value) {
             $subtotals[$key]['taxbase'] = $this->numberTools->format($value['taxbase']);
             $subtotals[$key]['taxamount'] = $this->numberTools->format($value['taxamount']);
@@ -261,7 +258,7 @@ abstract class PDFDocument extends PDFCore
             'width' => $this->tableWidth
         ];
 
-        /// fill headers and options with the line headers information
+        // fill headers and options with the line headers information
         foreach ($this->lineHeaders as $key => $value) {
             $headers[$key] = $value['title'];
             if (in_array($value['type'], ['number', 'percentage'], true)) {
@@ -307,7 +304,7 @@ abstract class PDFDocument extends PDFCore
 
         $this->newPage();
 
-        /// taxes
+        // taxes
         $taxHeaders = [
             'tax' => $this->i18n->trans('tax'),
             'taxbase' => $this->i18n->trans('tax-base'),
@@ -338,7 +335,7 @@ abstract class PDFDocument extends PDFCore
             $this->pdf->y = static::INVOICE_TOTALS_Y;
         }
 
-        /// subtotals
+        // subtotals
         $headers = [
             'currency' => $this->i18n->trans('currency'),
             'subtotal' => $this->i18n->trans('subtotal'),
@@ -384,7 +381,7 @@ abstract class PDFDocument extends PDFCore
         ];
         $this->pdf->ezTable($rows, $headers, '', $tableOptions);
 
-        /// receipts
+        // receipts
         if ($model->modelClassName() === 'FacturaCliente') {
             $this->insertInvoiceReceipts($model);
         } elseif (isset($model->codcliente)) {
@@ -423,7 +420,7 @@ abstract class PDFDocument extends PDFCore
 
         $subject = $model->getSubject();
         $tipoidfiscal = empty($subject->tipoidfiscal) ? $this->i18n->trans('cifnif') : $subject->tipoidfiscal;
-        
+
         $tableData = [
             ['key' => $headerData['subject'], 'value' => Utils::fixHtml($model->{$headerData['fieldName']})],
             ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
@@ -434,7 +431,7 @@ abstract class PDFDocument extends PDFCore
             ['key' => $this->i18n->trans('serie'), 'value' => $model->codserie]
         ];
 
-        /// rectified invoice?
+        // rectified invoice?
         if (isset($model->codigorect) && !empty($model->codigorect)) {
             $tableData[3] = ['key' => $this->i18n->trans('original'), 'value' => $model->codigorect];
         } elseif (property_exists($model, 'numproveedor') && $model->numproveedor) {
@@ -497,7 +494,7 @@ abstract class PDFDocument extends PDFCore
 
     /**
      * Inserts company logo to PDF document or dies with a message to try to solve the problem.
-     * 
+     *
      * @param int $idfile
      */
     protected function insertCompanyLogo($idfile = 0)
@@ -522,7 +519,7 @@ abstract class PDFDocument extends PDFCore
             $this->addImageFromFile($logoPath, $xPos, $yPos, $logoSize['width'], $logoSize['height']);
         }
 
-        /// add some margin
+        // add some margin
         $this->pdf->y -= 20;
     }
 
@@ -575,7 +572,6 @@ abstract class PDFDocument extends PDFCore
     }
 
     /**
-     * 
      * @param FacturaCliente $invoice
      */
     protected function insertInvoicePayMehtod($invoice)
@@ -604,7 +600,6 @@ abstract class PDFDocument extends PDFCore
     }
 
     /**
-     * 
      * @param FacturaCliente $invoice
      */
     protected function insertInvoiceReceipts($invoice)
@@ -623,7 +618,7 @@ abstract class PDFDocument extends PDFCore
                 $rows[] = [
                     'numero' => $receipt->numero,
                     'bank' => empty($paylink) ? $this->getBankData($receipt) : '<c:alink:' . $paylink . '>'
-                    . $this->i18n->trans('pay') . '</c:alink>',
+                        . $this->i18n->trans('pay') . '</c:alink>',
                     'importe' => $this->numberTools->format($receipt->importe),
                     'vencimiento' => $receipt->pagado ? $this->i18n->trans('paid') : $receipt->vencimiento
                 ];

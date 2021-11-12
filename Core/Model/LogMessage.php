@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\ToolBox;
+
 /**
  * Model to persist data from logs.
  *
@@ -38,11 +40,21 @@ class LogMessage extends Base\ModelClass
     public $channel;
 
     /**
-     * Primary key.
-     *
      * @var string
      */
+    public $context;
+
+    /**
+     * Primary key.
+     *
+     * @var int
+     */
     public $id;
+
+    /**
+     * @var int
+     */
+    public $idcontacto;
 
     /**
      * IP address.
@@ -64,6 +76,16 @@ class LogMessage extends Base\ModelClass
      * @var string
      */
     public $message;
+
+    /**
+     * @var string
+     */
+    public $model;
+
+    /**
+     * @var string
+     */
+    public $modelcode;
 
     /**
      * User nick.
@@ -94,6 +116,29 @@ class LogMessage extends Base\ModelClass
     }
 
     /**
+     * Returns the saved context as array.
+     *
+     * @return array
+     */
+    public function context(): array
+    {
+        return json_decode(ToolBox::utils()::fixHtml($this->context), true);
+    }
+
+    /**
+     * @return bool
+     */
+    public function delete()
+    {
+        if ($this->channel === self::AUDIT_CHANNEL) {
+            self::toolBox()::i18nLog()->warning('cant-delete-audit-log');
+            return false;
+        }
+
+        return parent::delete();
+    }
+
+    /**
      * Returns the name of the column that is the primary key of the model.
      *
      * @return string
@@ -114,7 +159,7 @@ class LogMessage extends Base\ModelClass
     }
 
     /**
-     * Returns True if there is no erros on properties values.
+     * Returns True if there are no errors on properties values.
      *
      * @return bool
      */
@@ -122,12 +167,30 @@ class LogMessage extends Base\ModelClass
     {
         $utils = $this->toolBox()->utils();
         $this->channel = $utils->noHtml($this->channel);
+        $this->context = $utils->noHtml($this->context);
         $this->message = $utils->noHtml($this->message);
         if (strlen($this->message) > static::MAX_MESSAGE_LEN) {
             $this->message = substr($this->message, 0, static::MAX_MESSAGE_LEN);
         }
 
+        $this->model = $utils->noHtml($this->model);
+        $this->modelcode = $utils->noHtml($this->modelcode);
         $this->uri = $utils->noHtml($this->uri);
         return parent::test();
+    }
+
+    /**
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveUpdate(array $values = [])
+    {
+        if ($this->channel === self::AUDIT_CHANNEL) {
+            self::toolBox()::i18nLog()->warning('cant-update-audit-log');
+            return false;
+        }
+
+        return parent::saveUpdate($values);
     }
 }

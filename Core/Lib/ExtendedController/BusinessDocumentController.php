@@ -31,6 +31,7 @@ abstract class BusinessDocumentController extends PanelController
 {
 
     use DocFilesTrait;
+    use LogAuditTrait;
 
     /**
      * @var BusinessDocumentFormTools
@@ -98,8 +99,9 @@ abstract class BusinessDocumentController extends PanelController
         // disable delete button
         $this->setSettings($viewName, 'btnDelete', false);
 
-        // files tab
+        // files and audit log tabs
         $this->createViewDocFiles();
+        $this->createViewLogAudit();
     }
 
     /**
@@ -190,6 +192,10 @@ abstract class BusinessDocumentController extends PanelController
 
             case 'Edit' . $this->getModelClassName():
                 $view->loadData($code);
+                break;
+
+            case 'ListLogMessage':
+                $this->loadDataLogAudit($view, $this->getModelClassName(), $code);
                 break;
 
             case $this->getLineXMLView():
@@ -297,7 +303,7 @@ abstract class BusinessDocumentController extends PanelController
      */
     protected function saveDocumentError(string $message): string
     {
-        foreach ($this->toolBox()->log()->readAll() as $msg) {
+        foreach ($this->toolBox()->log()->read('', ['critical', 'error', 'warning']) as $msg) {
             $message .= "\n" . $msg['message'];
         }
 

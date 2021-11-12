@@ -21,10 +21,13 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\EstadoDocumento;
+use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
-class EstadoDocumentoTest extends TestCase
+final class EstadoDocumentoTest extends TestCase
 {
+    use LogErrorsTrait;
+
     public function testCreateNewStatus()
     {
         $status = new EstadoDocumento();
@@ -40,9 +43,7 @@ class EstadoDocumentoTest extends TestCase
     {
         // get the initial default count
         $status = new EstadoDocumento();
-        $where = [
-            new DataBaseWhere('predeterminado', true)
-        ];
+        $where = [new DataBaseWhere('predeterminado', true)];
         $defaultsCount = $status->count($where);
 
         // create a new default status
@@ -92,5 +93,34 @@ class EstadoDocumentoTest extends TestCase
 
         // delete
         $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
+    }
+
+    public function testStatusCanNotHaveGenerationAndEditable()
+    {
+        $status = new EstadoDocumento();
+        $status->editable = true;
+        $status->generadoc = 'PedidoProveedor';
+        $status->nombre = 'Generate';
+        $status->tipodoc = 'PresupuestoCliente';
+        $this->assertTrue($status->save(), 'estado-documento-cant-save');
+        $this->assertFalse($status->editable, 'estado-documento-must-be-not-editable');
+    }
+
+    public function testCanNotCreateInvoicesWithGeneration()
+    {
+        $status = new EstadoDocumento();
+        $status->generadoc = 'PedidoCliente';
+        $status->nombre = 'Generate';
+        $status->tipodoc = 'FacturaCliente';
+        $this->assertFalse($status->save(), 'invalid-estado-documento-for-sales-invoice-can-save');
+
+        $status->generadoc = 'PedidoProveedor';
+        $status->tipodoc = 'FacturaProveedor';
+        $this->assertFalse($status->save(), 'invalid-estado-documento-for-purchase-invoice-can-save');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
     }
 }

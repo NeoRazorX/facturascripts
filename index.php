@@ -53,11 +53,11 @@ if (false === file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'config.php')) {
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/config.php';
 
-/// Disable 30 seconds PHP limit
+// Disable 30 seconds PHP limit
 @set_time_limit(0);
 ignore_user_abort(true);
 
-/// Register error handler
+// Register error handler
 if (FS_DEBUG) {
     $whoops = new Run;
     $whoops->prependHandler(new PlainTextHandler());
@@ -81,13 +81,13 @@ if (isset($argv[1]) && $argv[1] === '-cron') {
 } elseif (false === $router->getFile()) {
     $app = $router->getApp();
 
-    /// Connect to the database, cache, etc.
+    // Connect to the database, cache, etc.
     $app->connect();
 
-    /// Executes App logic
+    // Executes App logic
     $app->run();
     $app->render();
 
-    /// Disconnect from everything
+    // Disconnect from everything
     $app->close();
 }

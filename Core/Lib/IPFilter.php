@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 /**
@@ -55,7 +56,7 @@ class IPFilter
      */
     public function __construct()
     {
-        $this->filePath = \FS_FOLDER . '/MyFiles/Cache/ip.list';
+        $this->filePath = FS_FOLDER . '/MyFiles/Cache/ip.list';
         $this->ipList = [];
         $this->readFile();
     }
@@ -71,7 +72,7 @@ class IPFilter
 
     /**
      * Returns true client IP address.
-     * 
+     *
      * @return string
      */
     public static function getClientIp(): string
@@ -110,37 +111,33 @@ class IPFilter
      */
     public function setAttempt(string $ip)
     {
-        $found = false;
         foreach ($this->ipList as $key => $line) {
             if ($line['ip'] === $ip) {
                 ++$this->ipList[$key]['count'];
                 $this->ipList[$key]['expire'] = time() + self::BAN_SECONDS;
-                $found = true;
-                break;
+                $this->save();
+                return;
             }
         }
 
-        if (!$found) {
-            $this->ipList[] = [
-                'ip' => $ip,
-                'count' => 1,
-                'expire' => time() + self::BAN_SECONDS,
-            ];
-        }
-
+        $this->ipList[] = [
+            'ip' => $ip,
+            'count' => 1,
+            'expire' => time() + self::BAN_SECONDS
+        ];
         $this->save();
     }
 
     /**
-     * Reads file and load IP addressess.
+     * Reads file and load IP addresses.
      */
     private function readFile()
     {
-        if (!file_exists($this->filePath)) {
+        if (false === file_exists($this->filePath)) {
             return;
         }
 
-        /// We read the list of IP addresses in the file
+        // We read the list of IP addresses in the file
         $file = fopen($this->filePath, 'rb');
         if ($file) {
             while (!feof($file)) {
@@ -153,18 +150,18 @@ class IPFilter
     }
 
     /**
-     * Load the IP addresses in the $ ipList array
+     * Load the IP addresses in the ipList array
      *
      * @param array $line
      */
     private function readIp(array $line)
     {
-        /// if row is not expired
-        if (count($line) === 3 && (int) $line[2] > time()) {
+        // if row is not expired
+        if (count($line) === 3 && (int)$line[2] > time()) {
             $this->ipList[] = [
                 'ip' => $line[0],
-                'count' => (int) $line[1],
-                'expire' => (int) $line[2],
+                'count' => (int)$line[1],
+                'expire' => (int)$line[2]
             ];
         }
     }

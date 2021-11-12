@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Lib;
 
 use FacturaScripts\Core\Lib\IPFilter;
+use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,46 +29,55 @@ use PHPUnit\Framework\TestCase;
  * @author Carlos Carlos Garcia Gomez <carlos@facturascripts.com>
  * @covers \FacturaScripts\Core\Lib\IPFilter
  */
-class IPFilterTest extends TestCase
+final class IPFilterTest extends TestCase
 {
 
-    /**
-     * @var IPFilter
-     */
-    protected $object;
+    use LogErrorsTrait;
 
-    protected function setUp()
+    const CLEAN_IP = '192.168.0.2';
+    const TARGET_IP = '192.168.0.11';
+
+    public function testBanIP()
     {
-        $this->object = new IPFilter();
-        $this->object->clear();
+        $ipFilter = new IPFilter();
+        $ipFilter->clear();
+        $this->assertFalse($ipFilter->isBanned(self::TARGET_IP), 'target-ip-banned');
+        $this->assertFalse($ipFilter->isBanned(self::CLEAN_IP), 'clean-ip-banned');
+
+        for ($attempt = 0; $attempt < IPFilter::MAX_ATTEMPTS; $attempt++) {
+            $ipFilter->setAttempt(self::TARGET_IP);
+            $this->assertFalse($ipFilter->isBanned(self::TARGET_IP), 'target-ip-banned-' . $attempt);
+        }
+
+        $ipFilter->setAttempt(self::TARGET_IP);
+        $this->assertTrue($ipFilter->isBanned(self::TARGET_IP), 'target-ip-not-banned');
+        $this->assertFalse($ipFilter->isBanned(self::CLEAN_IP), 'clean-ip-banned');
+
+        $ipFilter->clear();
+        $this->assertFalse($ipFilter->isBanned(self::TARGET_IP), 'target-ip-banned');
     }
 
-    /**
-     * @covers \FacturaScripts\Core\Base\IPFilter::setAttempt
-     */
-    public function testSetAttempt()
+    public function testClearAndSave()
     {
-        $this->object->clear();
-        $this->object->setAttempt('192.168.1.1');
+        // band the target ip
+        $ipFilter = new IPFilter();
+        for ($attempt = 0; $attempt <= IPFilter::MAX_ATTEMPTS; $attempt++) {
+            $ipFilter->setAttempt(self::TARGET_IP);
+        }
+        $this->assertTrue($ipFilter->isBanned(self::TARGET_IP), 'target-ip-not-banned');
 
-        /// leemos directamente del archivo para ver si hay algo
-        $data = file_get_contents(\FS_FOLDER . '/MyFiles/Cache/ip.list');
-        $this->assertNotEmpty($data);
+        // use another instance
+        $ipFilter2 = new IPFilter();
+        $this->assertTrue($ipFilter2->isBanned(self::TARGET_IP), 'target-ip-not-banned');
+        $ipFilter2->clear();
+
+        // use instance number 3
+        $ipFilter3 = new IPFilter();
+        $this->assertFalse($ipFilter3->isBanned(self::TARGET_IP), 'target-ip-banned');
     }
 
-    /**
-     * @covers \FacturaScripts\Core\Base\IPFilter::isBanned
-     */
-    public function testIsBanned()
+    protected function tearDown()
     {
-        /// forzamos el baneo de la IP
-        $this->object->setAttempt('192.168.1.1');
-        $this->object->setAttempt('192.168.1.1');
-        $this->object->setAttempt('192.168.1.1');
-        $this->object->setAttempt('192.168.1.1');
-        $this->object->setAttempt('192.168.1.1');
-        $this->object->setAttempt('192.168.1.1');
-
-        $this->assertTrue($this->object->isBanned('192.168.1.1'));
+        $this->logErrors();
     }
 }

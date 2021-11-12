@@ -41,10 +41,10 @@ echo "\n" . 'DB User: ' . FS_DB_USER;
 echo "\n" . 'DB Pass: ' . FS_DB_PASS;
 echo "\n" . 'Database: ' . FS_DB_NAME . "\n\n";
 
-/// clean cache
+// clean cache
 $cache = new FacturaScripts\Core\Base\Cache();
 $cache->clear();
 
-/// deploy
+// deploy
 $pluginManager = new FacturaScripts\Core\Base\PluginManager();
 $pluginManager->deploy();

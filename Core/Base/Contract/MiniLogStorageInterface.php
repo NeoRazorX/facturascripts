@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,21 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Model\LineaFacturaCliente;
-use FacturaScripts\Test\Core\CustomTest;
+namespace FacturaScripts\Core\Base\Contract;
 
-/**
- * @covers \LineaFacturaCliente
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- */
-final class LineaFacturaClienteTest extends CustomTest
+interface MiniLogStorageInterface
 {
-
-    protected function setUp()
-    {
-        $this->model = new LineaFacturaCliente();
-    }
+    public function save(array $data): bool;
 }

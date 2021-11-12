@@ -83,7 +83,28 @@ final class Migrations
             $status->editable = false;
             $status->nombre = 'Emitida';
             $status->save();
+        }
+
+        if ($status->loadFromCode('21') && $status->nombre === 'Nueva') {
+            // unlock
+            $status->bloquear = false;
+            $status->save();
+            // update
             $status->bloquear = true;
+            $status->editable = true;
+            $status->nombre = 'Boceto';
+            $status->predeterminado = true;
+            $status->save();
+        }
+
+        if ($status->loadFromCode('22') && $status->nombre === 'Completada') {
+            // unlock
+            $status->bloquear = false;
+            $status->save();
+            // update
+            $status->bloquear = true;
+            $status->editable = false;
+            $status->nombre = 'Recibida';
             $status->save();
         }
     }
