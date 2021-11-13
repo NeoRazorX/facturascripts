@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
@@ -69,7 +70,7 @@ final class DataBase
         if (self::$link === null) {
             self::$miniLog = new MiniLog(self::CHANNEL);
 
-            switch (strtolower(\FS_DB_TYPE)) {
+            switch (strtolower(FS_DB_TYPE)) {
                 case 'postgresql':
                     self::$engine = new PostgresqlEngine();
                     break;
@@ -146,7 +147,6 @@ final class DataBase
 
         $error = '';
         self::$link = self::$engine->connect($error);
-
         if ($error !== '') {
             self::$miniLog->critical($error);
         }
@@ -161,12 +161,12 @@ final class DataBase
      */
     public function connected(): bool
     {
-        return (bool) self::$link;
+        return (bool)self::$link;
     }
 
     /**
      * Escape the quotes from the column name.
-     * 
+     *
      * @param string $name
      *
      * @return string
@@ -190,7 +190,7 @@ final class DataBase
 
     /**
      * Execute SQL statements on the database (inserts, updates or deletes).
-     * To make selects, it is better to use select () or selecLimit ().
+     * To make selects, it is better to use select () or selectLimit ().
      * If there is no open transaction, one starts, queries are executed
      * If the transaction has opened it in the call, it closes it confirming
      * or discarding according to whether it has gone well or has given an error
@@ -203,26 +203,26 @@ final class DataBase
     {
         $result = $this->connected();
         if ($result) {
-            /// clean the list of tables, since there could be changes when executing this sql.
+            // clean the list of tables, since there could be changes when executing this sql.
             self::$tables = [];
 
             $inTransaction = $this->inTransaction();
             $this->beginTransaction();
 
-            /// adds the sql query to the history
+            // adds the sql query to the history
             self::$miniLog->debug($sql);
 
-            /// execute sql
+            // execute sql
             $result = self::$engine->exec(self::$link, $sql);
             if (!$result) {
-                self::$miniLog->error(self::$engine->errorMessage(self::$link));
+                self::$miniLog->error(self::$engine->errorMessage(self::$link), ['sql' => $sql]);
             }
 
             if ($inTransaction) {
                 return $result;
             }
 
-            /// We only operate if the transaction has been initiated in this call
+            // We only operate if the transaction has been initiated in this call
             if ($result) {
                 return $this->commit();
             }
@@ -256,7 +256,7 @@ final class DataBase
      * Returns an array with the constraints of a table.
      *
      * @param string $tableName
-     * @param bool   $extended
+     * @param bool $extended
      *
      * @return array
      */
@@ -264,7 +264,7 @@ final class DataBase
     {
         $sql = $extended ? self::$engine->getSQL()->sqlConstraintsExtended($tableName) : self::$engine->getSQL()->sqlConstraints($tableName);
         $data = $this->select($sql);
-        return $data ? \array_values($data) : [];
+        return $data ? array_values($data) : [];
     }
 
     /**
@@ -375,33 +375,33 @@ final class DataBase
      * number from which you want it to start.
      *
      * @param string $sql
-     * @param int    $limit
-     * @param int    $offset
+     * @param int $limit
+     * @param int $offset
      *
      * @return array
      */
-    public function selectLimit($sql, $limit = \FS_ITEM_LIMIT, $offset = 0)
+    public function selectLimit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
     {
         if (false === $this->connected()) {
             return [];
         }
 
         if ($limit > 0) {
-            /// add limit and offset to sql query
+            // add limit and offset to sql query
             $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset . ';';
         }
 
-        /// add the sql query to the history
+        // add the sql query to the history
         self::$miniLog->debug($sql);
         $result = self::$engine->select(self::$link, $sql);
         if (!empty($result)) {
             return $result;
         }
 
-        /// some error?
+        // some error?
         $error = self::$engine->errorMessage(self::$link);
         if (!empty($error)) {
-            self::$miniLog->critical($error);
+            self::$miniLog->error($error, ['sql' => $sql]);
         }
 
         return [];
@@ -411,7 +411,7 @@ final class DataBase
      * Returns True if the table exists, False otherwise.
      *
      * @param string $tableName
-     * @param array  $list
+     * @param array $list
      *
      * @return bool
      */
@@ -421,13 +421,12 @@ final class DataBase
             $list = $this->getTables();
         }
 
-        return \in_array($tableName, $list, false);
+        return in_array($tableName, $list, false);
     }
 
     /**
-     * 
      * @param string $tableName
-     * @param array  $fields
+     * @param array $fields
      */
     public function updateSequence($tableName, $fields)
     {
@@ -447,18 +446,18 @@ final class DataBase
             return 'NULL';
         }
 
-        if (\is_bool($val)) {
+        if (is_bool($val)) {
             return $val ? 'TRUE' : 'FALSE';
         }
 
-        /// If its a date
-        if (\preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
-            return "'" . \date(self::$engine->dateStyle(), \strtotime($val)) . "'";
+        // If it's a date
+        if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4})$/i", $val)) {
+            return "'" . date(self::$engine->dateStyle(), strtotime($val)) . "'";
         }
 
-        /// It its a date time
-        if (\preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
-            return "'" . \date(self::$engine->dateStyle() . ' H:i:s', \strtotime($val)) . "'";
+        // If it's a date time
+        if (preg_match("/^([\d]{1,2})-([\d]{1,2})-([\d]{4}) ([\d]{1,2}):([\d]{1,2}):([\d]{1,2})$/i", $val)) {
+            return "'" . date(self::$engine->dateStyle() . ' H:i:s', strtotime($val)) . "'";
         }
 
         return "'" . $this->escapeString($val) . "'";

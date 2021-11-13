@@ -78,7 +78,7 @@ abstract class CronClass
      *
      * @return bool
      */
-    public function isTimeForJob(string $jobName, string $period = '1 day')
+    public function isTimeForJob(string $jobName, string $period = '1 day'): bool
     {
         // initialize duration counter
         $this->init = microtime(true);
@@ -137,7 +137,7 @@ abstract class CronClass
     /**
      * @return ToolBox
      */
-    protected function toolBox()
+    protected function toolBox(): ToolBox
     {
         return new ToolBox();
     }

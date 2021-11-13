@@ -187,16 +187,19 @@ final class MiniLog
     /**
      * Stores all messages on the default storage.
      *
+     * @param string $channel
+     *
      * @return bool
      */
-    public static function save(): bool
+    public static function save(string $channel = ''): bool
     {
         if (!isset(self::$storage)) {
             self::$storage = new MiniLogStorage();
         }
 
-        if (self::$storage->save(self::$data)) {
-            self::clear();
+        $data = empty($channel) ? self::$data : self::read($channel);
+        if (self::$storage->save($data)) {
+            self::clear($channel);
             return true;
         }
 
@@ -281,7 +284,7 @@ final class MiniLog
     protected function reduce()
     {
         if (count(self::$data) > self::LIMIT) {
-            self::save();
+            self::save($this->channel);
         }
     }
 }
