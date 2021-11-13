@@ -68,7 +68,7 @@ class CodePatterns
             '{SERIE}' => $model->{$serie},
             '{0NUM}' => str_pad($model->{$number}, $long, '0', STR_PAD_LEFT),
             '{0SERIE}' => str_pad($model->{$serie}, 2, '0', STR_PAD_LEFT),
-            '{NOMBREMES}' => ToolBox::i18n()->trans(date('F', strtotime($model->{$date}))),
+            '{NOMBREMES}' => ToolBox::i18n()->trans(strtolower(date('F', strtotime($model->{$date}))))
         ]);
 
         return count($parts) > 1 ? static::format($result, $parts[1]) : $result;
