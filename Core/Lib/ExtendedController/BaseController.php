@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
@@ -192,6 +193,7 @@ abstract class BaseController extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        VisualItem::setToken($this->multiRequestProtection->newToken());
 
         // Create the views to display
         $this->createViews();
