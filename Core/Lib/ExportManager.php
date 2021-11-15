@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Lib\Export\ExportBase;
@@ -45,7 +46,6 @@ class ExportManager
     protected static $options = [];
 
     /**
-     * 
      * @var array
      */
     protected static $optionsModels = [];
@@ -58,19 +58,16 @@ class ExportManager
     protected $orientation;
 
     /**
-     * 
      * @var string
      */
     protected static $selectedLang;
 
     /**
-     * 
      * @var string
      */
     protected static $selectedOption;
 
     /**
-     * 
      * @var string
      */
     protected static $selectedTitle;
@@ -99,39 +96,39 @@ class ExportManager
      */
     public function addBusinessDocPage($model): bool
     {
-        return empty(static::$engine) ? false : static::$engine->addBusinessDocPage($model);
+        return !empty(static::$engine) && static::$engine->addBusinessDocPage($model);
     }
 
     /**
      * Adds a new page with a table listing the models data.
      *
-     * @param mixed  $model
-     * @param array  $where
-     * @param array  $order
-     * @param int    $offset
-     * @param array  $columns
+     * @param mixed $model
+     * @param array $where
+     * @param array $order
+     * @param int $offset
+     * @param array $columns
      * @param string $title
      *
      * @return bool
      */
     public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
     {
-        return empty(static::$engine) ? false : static::$engine->addListModelPage($model, $where, $order, $offset, $columns, $title);
+        return !empty(static::$engine) && static::$engine->addListModelPage($model, $where, $order, $offset, $columns, $title);
     }
 
     /**
      * Adds a new page with the model data.
      *
-     * @param mixed  $model
-     * @param array  $columns
+     * @param mixed $model
+     * @param array $columns
      * @param string $title
      *
      * @return bool
      */
     public function addModelPage($model, $columns, $title = ''): bool
     {
-        /// sort by priority
-        \uasort(static::$optionsModels, function ($item1, $item2) {
+        // sort by priority
+        uasort(static::$optionsModels, function ($item1, $item2) {
             if ($item1['priority'] > $item2['priority']) {
                 return 1;
             } elseif ($item1['priority'] < $item2['priority']) {
@@ -141,7 +138,7 @@ class ExportManager
             return 0;
         });
 
-        /// find a custom option for this model
+        // find a custom option for this model
         foreach (static::$optionsModels as $option) {
             if ($option['option'] !== self::$selectedOption ||
                 $option['modelName'] !== $model->modelClassName()) {
@@ -156,7 +153,7 @@ class ExportManager
             }
         }
 
-        return empty(static::$engine) ? false : static::$engine->addModelPage($model, $columns, $title);
+        return !empty(static::$engine) && static::$engine->addModelPage($model, $columns, $title);
     }
 
     /**
@@ -173,11 +170,10 @@ class ExportManager
     }
 
     /**
-     * 
      * @param string $exportClassName
      * @param string $optionKey
      * @param string $modelName
-     * @param int    $priority
+     * @param int $priority
      */
     public static function addOptionModel($exportClassName, $optionKey, $modelName, $priority = 0)
     {
@@ -214,13 +210,13 @@ class ExportManager
      */
     public function addTablePage($headers, $rows): bool
     {
-        /// We need headers key to be equal to value
+        // We need headers key to be equal to value
         $fixedHeaders = [];
         foreach ($headers as $value) {
             $fixedHeaders[$value] = $value;
         }
 
-        return empty(static::$engine) ? false : static::$engine->addTablePage($fixedHeaders, $rows);
+        return !empty(static::$engine) && static::$engine->addTablePage($fixedHeaders, $rows);
     }
 
     /**
@@ -230,7 +226,7 @@ class ExportManager
      */
     public static function defaultOption()
     {
-        foreach (\array_keys(static::$options) as $key) {
+        foreach (array_keys(static::$options) as $key) {
             return $key;
         }
 
@@ -239,7 +235,7 @@ class ExportManager
 
     /**
      * Return generated doc.
-     * 
+     *
      * @return mixed
      */
     public function getDoc()
@@ -248,7 +244,6 @@ class ExportManager
     }
 
     /**
-     * 
      * @param object $model
      *
      * @return array
@@ -271,7 +266,7 @@ class ExportManager
      *
      * @param string $option
      * @param string $title
-     * @param int    $format
+     * @param int $format
      * @param string $lang
      */
     public function newDoc(string $option, string $title = '', int $format = 0, string $lang = '')
@@ -280,7 +275,7 @@ class ExportManager
         static::$selectedTitle = $title;
         static::$selectedLang = $lang;
 
-        /// calls to the appropiate engine to generate the doc
+        // calls to the appropriate engine to generate the doc
         $className = $this->getExportClassName($option);
         static::$engine = new $className();
         static::$engine->newDoc($title, $format, $lang);
@@ -310,7 +305,7 @@ class ExportManager
     }
 
     /**
-     * Returns the formated data.
+     * Returns the formatted data.
      *
      * @param Response $response
      */
@@ -322,7 +317,6 @@ class ExportManager
     }
 
     /**
-     *
      * @return array
      */
     public static function tools(): array
@@ -337,15 +331,15 @@ class ExportManager
      *
      * @return string
      */
-    private function getExportClassName($option)
+    private function getExportClassName($option): string
     {
         $dinClassName = '\\FacturaScripts\\Dinamic\\Lib\\Export\\' . $option . 'Export';
-        if (\class_exists($dinClassName)) {
+        if (class_exists($dinClassName)) {
             return $dinClassName;
         }
 
         $className = '\\FacturaScripts\\Core\\Lib\\Export\\' . $option . 'Export';
-        return \class_exists($className) ? $className : '\\FacturaScripts\\Core\\Lib\\Export\\PDFExport';
+        return class_exists($className) ? $className : '\\FacturaScripts\\Core\\Lib\\Export\\PDFExport';
     }
 
     /**
