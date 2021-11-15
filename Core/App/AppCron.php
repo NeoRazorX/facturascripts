@@ -37,9 +37,20 @@ final class AppCron extends App
     {
         $this->response->headers->set('Content-Type', 'text/plain');
 
-        $content = $this->response->getContent();
-        foreach (ToolBox::log()::read() as $log) {
-            $content .= empty($content) ? $log["message"] : "\n" . $log["message"];
+        $title = <<<END
+ 88888888b                     dP                              .d88888b                    oo            dP            
+ 88                            88                              88.    "'                                 88            
+a88aaaa    .d8888b. .d8888b. d8888P dP    dP 88d888b. .d8888b. `Y88888b. .d8888b. 88d888b. dP 88d888b. d8888P .d8888b. 
+ 88        88'  `88 88'  `""   88   88    88 88'  `88 88'  `88       `8b 88'  `"" 88'  `88 88 88'  `88   88   Y8ooooo. 
+ 88        88.  .88 88.  ...   88   88.  .88 88       88.  .88 d8'   .8P 88.  ... 88       88 88.  .88   88         88 
+ dP        `88888P8 `88888P'   dP   `88888P' dP       `88888P8  Y88888P  `88888P' dP       dP 88Y888P'   dP   `88888P' 
+                                                                                              88                       
+                                                                                              dP                       
+END;
+
+        $content = $this->response->getContent() . $title;
+        foreach (ToolBox::log()::read('', ['critical', 'error', 'info', 'notice', 'warning']) as $log) {
+            $content .= "\n" . $log["message"];
         }
 
         $this->response->setContent($content . "\n");
@@ -53,7 +64,7 @@ final class AppCron extends App
      */
     public function run(): bool
     {
-        if (!parent::run()) {
+        if (false === parent::run()) {
             return false;
         }
 
