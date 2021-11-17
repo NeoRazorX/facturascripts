@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,22 +19,46 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Almacen;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Almacen
- */
-final class AlmacenTest extends CustomTest
+final class AlmacenTest extends TestCase
 {
 
-    protected function setUp()
+   use LogErrorsTrait;
+
+    public function testCreate()
     {
-        $this->model = new Almacen();
+        $warehouse = new Almacen();
+        $warehouse->codalmacen = 'Test';
+        $warehouse->nombre = 'Test Warehouse';
+        $this->assertTrue($warehouse->save(), 'warehouse-cant-save');
+        $this->assertNotNull($warehouse->primaryColumnValue(), 'warehouse-not-stored');
+        $this->assertTrue($warehouse->exists(), 'warehouse-cant-persist');
+        $this->assertTrue($warehouse->delete(), 'warehouse-cant-delete');
     }
-    
-    public function testPrimaryColumnValue()
+
+    public function testCreateWithNewCode()
     {
-        $this->model->{$this->model->primaryColumn()} = 'n"l123';
-        $this->assertFalse($this->model->test());
-    }    
+        $warehouse = new Almacen();
+        $warehouse->nombre = 'Test Warehouse with new code';
+        $this->assertTrue($warehouse->save(), 'warehouse-cant-save');
+        $this->assertTrue($warehouse->delete(), 'warehouse-cant-delete');
+    }
+
+    public function testDeleteDefault()
+    {
+        $warehouse = new Almacen();
+        foreach ($warehouse->all([], [], 0, 0) as $row) {
+            if ($row->isDefault()) {
+                $this->assertFalse($row->delete(), 'warehouse-default-cant-delete');
+                break;
+            }
+        }
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
+    }
 }

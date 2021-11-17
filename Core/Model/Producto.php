@@ -187,7 +187,7 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return Variante[]
      */
     public function getVariants()
@@ -217,7 +217,7 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return float
      */
     public function priceWithTax()
@@ -236,7 +236,7 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function primaryDescriptionColumn()
@@ -245,7 +245,7 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param float $price
      */
     public function setPriceWithTax($price)
@@ -305,6 +305,8 @@ class Producto extends Base\ModelClass
 
         if ($this->bloqueado) {
             $this->publico = false;
+            $this->sevende = false;
+            $this->secompra = false;
         }
 
         $this->actualizado = \date(self::DATETIME_STYLE);
@@ -335,7 +337,7 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool
