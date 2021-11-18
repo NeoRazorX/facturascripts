@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,26 +19,45 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\FormaPago;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \FormaPago
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- */
-final class FormaPagoTest extends CustomTest
+final class FormaPagoTest extends TestCase
 {
+    use LogErrorsTrait;
 
-    protected function setUp()
+    public function testCreate()
     {
-        $this->model = new FormaPago();
+        $payment = new FormaPago();
+        $payment->codpago = 'Test';
+        $payment->descripcion = 'Test Payment Method';
+        $this->assertTrue($payment->save(), 'payment-method-cant-save');
+        $this->assertNotNull($payment->primaryColumnValue(), 'payment-method-not-stored');
+        $this->assertTrue($payment->exists(), 'payment-method-cant-persist');
+        $this->assertTrue($payment->delete(), 'payment-method-cant-delete');
     }
-    
-    public function testPrimaryColumnValue()
+
+    public function testCreateWithNewCode()
     {
-        $this->model->plazovencimiento = 0;
-        
-        $this->model->{$this->model->primaryColumn()} = 'n"l123';
-        $this->assertFalse($this->model->test());
-    }    
+        $payment = new FormaPago();
+        $payment->descripcion = 'Test Payment Method';
+        $this->assertTrue($payment->save(), 'payment-method-cant-save');
+        $this->assertTrue($payment->delete(), 'payment-method-cant-delete');
+    }
+
+    public function testDeleteDefault()
+    {
+        $payment = new FormaPago();
+        foreach ($payment->all([], [], 0, 0) as $row) {
+            if ($row->isDefault()) {
+                $this->assertFalse($row->delete(), 'payment-method-default-cant-delete');
+                break;
+            }
+        }
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
+    }
 }

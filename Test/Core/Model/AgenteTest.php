@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,22 +19,34 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Agente;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Agente
- */
-final class AgenteTest extends CustomTest
+final class AgenteTest extends TestCase
 {
+    use LogErrorsTrait;
 
-    protected function setUp()
+    public function testCreate()
     {
-        $this->model = new Agente();
+        $agent = new Agente();
+        $agent->codagente = 'Test';
+        $agent->nombre = 'Test Agent';
+        $this->assertTrue($agent->save(), 'agent-cant-save');
+        $this->assertNotNull($agent->primaryColumnValue(), 'agent-not-stored');
+        $this->assertTrue($agent->exists(), 'agent-cant-persist');
+        $this->assertTrue($agent->delete(), 'agent-cant-delete');
     }
-    
-    public function testPrimaryColumnValue()
+
+    public function testCreateWithNewCode()
     {
-        $this->model->{$this->model->primaryColumn()} = 'n"l123';
-        $this->assertFalse($this->model->test());
-    }    
+        $agent = new Agente();
+        $agent->nombre = 'Test Agent with new code';
+        $this->assertTrue($agent->save(), 'agent-cant-save');
+        $this->assertTrue($agent->delete(), 'agent-cant-delete');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
+    }
 }

@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,22 +19,36 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\AgenciaTransporte;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \AgenciaTransporte
- */
-final class AgenciaTransporteTest extends CustomTest
+final class AgenciaTransporteTest extends TestCase
 {
 
-    protected function setUp()
+    use LogErrorsTrait;
+
+    public function testCreate()
     {
-        $this->model = new AgenciaTransporte();
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'Test';
+        $agency->nombre = 'Test Agency';
+        $this->assertTrue($agency->save(), 'agency-cant-save');
+        $this->assertNotNull($agency->primaryColumnValue(), 'agency-not-stored');
+        $this->assertTrue($agency->exists(), 'agency-cant-persist');
+        $this->assertTrue($agency->delete(), 'agency-cant-delete');
     }
-    
-    public function testPrimaryColumnValue()
+
+    public function testCreateWithNewCode()
     {
-        $this->model->{$this->model->primaryColumn()} = 'n"l123';
-        $this->assertFalse($this->model->test());
-    }    
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'Test';
+        $agency->nombre = 'Test Agency with new code';
+        $this->assertTrue($agency->save(), 'agency-cant-save');
+        $this->assertTrue($agency->delete(), 'agency-cant-delete');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
+    }
 }
