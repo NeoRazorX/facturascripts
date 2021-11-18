@@ -36,11 +36,11 @@ class ConceptoPartida extends Base\ModelClass
     public $codconcepto;
 
     /**
-     * Concept of departure.
+     * Human description for concept.
      *
      * @var string
      */
-    public $concepto;
+    public $descripcion;
 
     /**
      * Returns the name of the column that is the model's primary key.
@@ -79,7 +79,7 @@ class ConceptoPartida extends Base\ModelClass
      */
     public function test()
     {
-        $this->concepto = $this->toolBox()->utils()->noHtml($this->concepto);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         return parent::test();
     }
 
@@ -97,7 +97,7 @@ class ConceptoPartida extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool
