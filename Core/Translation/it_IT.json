@@ -918,6 +918,7 @@
     "printing-formats": "Formati di stampa",
     "priority": "priority",
     "product": "Prodotto",
+    "product-not-found": "Producto %ref% no encontrado",
     "products": "Prodotti",
     "profit-and-loss": "Profit and Loss",
     "profit-and-loss-balance": "Profit and loss accounts",

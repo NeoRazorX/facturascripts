@@ -918,6 +918,7 @@
     "printing-formats": "Inprimatze formatuak",
     "priority": "Lehentasuna",
     "product": "Produktua",
+    "product-not-found": "%ref% produktua ez da aurkitu",
     "products": "Produktuak",
     "profit-and-loss": "Galera eta irabaziak",
     "profit-and-loss-balance": "Galdu-irabazien kontua",
