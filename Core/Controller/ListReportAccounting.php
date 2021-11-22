@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\ReportLedger;
 /**
  * Description of ListReportAccounting
  *
- * @author Jose Antonio Cuello <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello <yopli2000@gmail.com>
  */
 class ListReportAccounting extends ListController
 {

@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
  * Class base for accounting reports
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- * @author Jose Antonio Cuello <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello <yopli2000@gmail.com>
  */
 abstract class EditReportAccounting extends EditController
 {
@@ -41,7 +41,7 @@ abstract class EditReportAccounting extends EditController
             $this->toolBox()->i18nLog()->warning('no-data');
             return;
         }
-        
+
         $title = $model->name;
         $this->setTemplate(false);
         $this->exportData($pages, $title, $format);

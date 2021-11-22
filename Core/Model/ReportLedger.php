@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Model for ledger report
  *
- * @author Jose Antonio Cuello <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello <yopli2000@gmail.com>
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ReportLedger extends Base\ReportAccounting

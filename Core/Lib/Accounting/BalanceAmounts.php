@@ -82,6 +82,10 @@ class BalanceAmounts extends AccountingBase
         foreach ($accounts as $account) {
             $debe = $haber = 0.00;
             $this->combineData($account, $accounts, $amounts, $debe, $haber);
+            if ($debe == 0 && $haber == 0) {
+                continue;
+            }
+
             $saldo = $debe - $haber;
             if ($level > 0 && strlen($account->codcuenta) > $level) {
                 continue;

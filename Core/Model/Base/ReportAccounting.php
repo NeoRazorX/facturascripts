@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 /**
  * Model Base for accounting reports
  *
- * @author Jose Antonio Cuello <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello <yopli2000@gmail.com>
  */
 abstract class ReportAccounting extends ModelClass
 {

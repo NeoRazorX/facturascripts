@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Model;
 /**
  * Model for balances reports
  *
- * @author Jose Antonio Cuello <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello <yopli2000@gmail.com>
  */
 class ReportBalance extends Base\ReportAccounting
 {
