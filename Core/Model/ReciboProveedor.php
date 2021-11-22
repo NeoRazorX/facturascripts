@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,13 +32,11 @@ class ReciboProveedor extends Base\Receipt
     use Base\ModelTrait;
 
     /**
-     *
      * @var string
      */
     public $codproveedor;
 
     /**
-     * 
      * @return FacturaProveedor
      */
     public function getInvoice()
@@ -49,7 +48,7 @@ class ReciboProveedor extends Base\Receipt
 
     /**
      * Returns all payment history for this receipt
-     * 
+     *
      * @return PagoProveedor[]
      */
     public function getPayments()
@@ -60,7 +59,6 @@ class ReciboProveedor extends Base\Receipt
     }
 
     /**
-     * 
      * @return Proveedor
      */
     public function getSubject()
@@ -71,19 +69,17 @@ class ReciboProveedor extends Base\Receipt
     }
 
     /**
-     * 
      * @return string
      */
     public function install()
     {
-        /// needed dependencies
+        // needed dependencies
         new Proveedor();
 
         return parent::install();
     }
 
     /**
-     * 
      * @return string
      */
     public static function tableName()
@@ -92,7 +88,6 @@ class ReciboProveedor extends Base\Receipt
     }
 
     /**
-     * 
      * @param string $type
      * @param string $list
      *
@@ -108,8 +103,8 @@ class ReciboProveedor extends Base\Receipt
     }
 
     /**
-     * Creates a new payment fro this receipt.
-     * 
+     * Creates a new payment for this receipt.
+     *
      * @return bool
      */
     protected function newPayment()
