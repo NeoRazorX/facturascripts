@@ -129,7 +129,6 @@ final class ProductoTest extends TestCase
         $this->assertTrue($variant->coste == 100, 'variant-cost-should-not-change');
 
         $this->assertTrue($product->delete(), 'product-cant-delete');
-        $this->assertTrue($supplierProduct->delete(), 'supplier-product-cant-delete');
         $this->assertTrue($supplier->delete(), 'supplier-cant-delete');
     }
 
@@ -179,8 +178,6 @@ final class ProductoTest extends TestCase
         $this->assertTrue($variant->coste == 200, 'variant-cost-not-last');
 
         $this->assertTrue($product->delete(), 'product-cant-delete');
-        $this->assertTrue($supplierProduct1->delete(), 'supplier-product-cant-delete');
-        $this->assertTrue($supplierProduct2->delete(), 'supplier-product-cant-delete');
         $this->assertTrue($supplier1->delete(), 'supplier-cant-delete');
         $this->assertTrue($supplier2->delete(), 'supplier-cant-delete');
     }
@@ -227,8 +224,6 @@ final class ProductoTest extends TestCase
         $this->assertTrue($variant->coste == 150, 'variant-cost-not-average');
 
         $this->assertTrue($product->delete(), 'product-cant-delete');
-        $this->assertTrue($supplierProduct1->delete(), 'supplier-product-cant-delete');
-        $this->assertTrue($supplierProduct2->delete(), 'supplier-product-cant-delete');
         $this->assertTrue($supplier1->delete(), 'supplier-cant-delete');
         $this->assertTrue($supplier2->delete(), 'supplier-cant-delete');
     }
