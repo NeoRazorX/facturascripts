@@ -41,7 +41,6 @@ final class AgenciaTransporteTest extends TestCase
     public function testCreateWithNewCode()
     {
         $agency = new AgenciaTransporte();
-        $agency->codtrans = 'Test';
         $agency->nombre = 'Test Agency with new code';
         $this->assertTrue($agency->save(), 'agency-cant-save');
         $this->assertTrue($agency->delete(), 'agency-cant-delete');

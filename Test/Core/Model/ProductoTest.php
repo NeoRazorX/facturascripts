@@ -129,8 +129,8 @@ final class ProductoTest extends TestCase
         $this->assertTrue($variant->coste == 100, 'variant-cost-should-not-change');
 
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($supplierProduct->delete(), 'supplier-product-cant-delete');
         $this->assertTrue($supplier->delete(), 'supplier-cant-delete');
-        $this->assertFalse($supplierProduct->loadFromCode($supplierProduct->primaryColumnValue()), 'product-supplier-cant-load-after-delete');
     }
 
     public function testCostPricePolicy2()
@@ -158,7 +158,7 @@ final class ProductoTest extends TestCase
         $supplierProduct1->precio = 100;
         $supplierProduct1->actualizado = date(
             ProductoProveedor::DATETIME_STYLE,
-            strtotime(date(ProductoProveedor::DATETIME_STYLE) . "- 1 days")
+            strtotime("- 1 days")
         );
         $this->assertTrue($supplierProduct1->save(), 'supplier-product-cant-save');
 
@@ -179,10 +179,10 @@ final class ProductoTest extends TestCase
         $this->assertTrue($variant->coste == 200, 'variant-cost-not-last');
 
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($supplierProduct1->delete(), 'supplier-product-cant-delete');
+        $this->assertTrue($supplierProduct2->delete(), 'supplier-product-cant-delete');
         $this->assertTrue($supplier1->delete(), 'supplier-cant-delete');
         $this->assertTrue($supplier2->delete(), 'supplier-cant-delete');
-        $this->assertFalse($supplierProduct1->loadFromCode($supplierProduct1->primaryColumnValue()), 'product-supplier-cant-load-after-delete');
-        $this->assertFalse($supplierProduct2->loadFromCode($supplierProduct2->primaryColumnValue()), 'product-supplier-cant-load-after-delete');
     }
 
     public function testCostPricePolicy3()
@@ -227,10 +227,10 @@ final class ProductoTest extends TestCase
         $this->assertTrue($variant->coste == 150, 'variant-cost-not-average');
 
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($supplierProduct1->delete(), 'supplier-product-cant-delete');
+        $this->assertTrue($supplierProduct2->delete(), 'supplier-product-cant-delete');
         $this->assertTrue($supplier1->delete(), 'supplier-cant-delete');
         $this->assertTrue($supplier2->delete(), 'supplier-cant-delete');
-        $this->assertFalse($supplierProduct1->loadFromCode($supplierProduct1->primaryColumnValue()), 'product-supplier-cant-load-after-delete');
-        $this->assertFalse($supplierProduct2->loadFromCode($supplierProduct2->primaryColumnValue()), 'product-supplier-cant-load-after-delete');
     }
 
     public function testStock()
