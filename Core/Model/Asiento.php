@@ -195,11 +195,11 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     /**
      * @return DinPartida[]
      */
-    public function getLines()
+    public function getLines(): array
     {
         $partida = new DinPartida();
         $where = [new DataBaseWhere('idasiento', $this->idasiento)];
-        return $partida->all($where, ['codsubcuenta' => 'ASC'], 0, 0);
+        return $partida->all($where, ['orden' => 'DESC', 'codsubcuenta' => 'ASC'], 0, 0);
     }
 
     /**
