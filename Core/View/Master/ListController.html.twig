@@ -128,6 +128,11 @@
                 window.location.hash = this.hash;
                 $('html,body').scrollTop(scrollmem);
             });
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                if (window.innerWidth > 1023) {
+                    $("input[name='query']:visible").focus();
+                }
+            });
         });
     </script>
 {% endblock %}
