@@ -133,6 +133,9 @@
                     $("input[name='query']:visible").focus();
                 }
             });
+            if (window.innerWidth > 1023) {
+                $("input[name='query']:visible").focus();
+            }
         });
     </script>
 {% endblock %}
