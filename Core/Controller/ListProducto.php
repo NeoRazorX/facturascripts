@@ -85,12 +85,18 @@ class ListProducto extends ListController
         $taxes = Impuestos::codeModel();
         $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
 
+        $i18n = $this->toolBox()->i18n();
+        $this->addFilterSelectWhere($viewName, 'status', [
+            ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
+            ['label' => $i18n->trans('only-blocked'), 'where' => [new DataBaseWhere('bloqueado', true)]],
+            ['label' => $i18n->trans('only-public'), 'where' => [new DataBaseWhere('publico', true)]],
+            ['label' => $i18n->trans('all'), 'where' => []]
+        ]);
+
         $this->addFilterCheckbox($viewName, 'nostock', 'no-stock', 'nostock');
         $this->addFilterCheckbox($viewName, 'ventasinstock', 'allow-sale-without-stock', 'ventasinstock');
         $this->addFilterCheckbox($viewName, 'secompra', 'for-purchase', 'secompra');
         $this->addFilterCheckbox($viewName, 'sevende', 'for-sale', 'sevende');
-        $this->addFilterCheckbox($viewName, 'bloqueado', 'locked', 'bloqueado');
-        $this->addFilterCheckbox($viewName, 'publico', 'public', 'publico');
     }
 
     /**
