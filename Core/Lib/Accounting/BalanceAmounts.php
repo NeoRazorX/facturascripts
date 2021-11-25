@@ -68,12 +68,11 @@ class BalanceAmounts extends AccountingBase
 
         /// get accounts
         $cuenta = new Cuenta();
-        $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
-        $accounts = $cuenta->all($where, ['codcuenta' => 'ASC'], 0, 0);
+        $accounts = $cuenta->all($this->getAccountWhere($params), ['codcuenta' => 'ASC'], 0, 0);
 
         /// get subaccounts
         $subcuenta = new Subcuenta();
-        $subaccounts = $subcuenta->all($where, [], 0, 0);
+        $subaccounts = $subcuenta->all($this->getSubAccountWhere($params), [], 0, 0);
 
         /// get amounts
         $amounts = $this->getData($params);
@@ -214,6 +213,26 @@ class BalanceAmounts extends AccountingBase
     }
 
     /**
+     *
+     * @param array $params
+     * @return DataBaseWhere
+     */
+    protected function getAccountWhere(array $params = []) {
+        $where = [ new DataBaseWhere('codejercicio', $this->exercise->codejercicio) ];
+
+        $subaccountFrom = $params['subaccount-from'] ?? '';
+        if (!empty($subaccountFrom)) {
+            $where[] = new DataBaseWhere('codcuenta', substr($subaccountFrom, 0, 1), '>=');
+        }
+
+        $subaccountTo = $params['subaccount-to'] ?? '';
+        if (!empty($subaccountTo)) {
+            $where[] = new DataBaseWhere('codcuenta', substr($subaccountTo, 0, 4), '<=');
+        }
+        return $where;
+    }
+
+    /**
      * @param array $params
      *
      * @return string
@@ -242,12 +261,35 @@ class BalanceAmounts extends AccountingBase
         }
 
         $subaccountFrom = $params['subaccount-from'] ?? '';
-        $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
-        if (!empty($subaccountFrom) || !empty($subaccountTo)) {
-            $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom)
-                . ' AND ' . $this->dataBase->var2str($subaccountTo);
+        if (!empty($subaccountFrom)) {
+            $where .= ' AND partidas.codsubcuenta >= ' . $this->dataBase->var2str($subaccountFrom);
         }
 
+        $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
+        if (!empty($subaccountTo)) {
+            $where .= ' AND partidas.codsubcuenta <= ' . $this->dataBase->var2str($subaccountTo);
+        }
+
+        return $where;
+    }
+
+    /**
+     *
+     * @param array $params
+     * @return DataBaseWhere
+     */
+    protected function getSubAccountWhere(array $params = []) {
+        $where = [ new DataBaseWhere('codejercicio', $this->exercise->codejercicio) ];
+
+        $subaccountFrom = $params['subaccount-from'] ?? '';
+        if (!empty($subaccountFrom)) {
+            $where[] = new DataBaseWhere('codsubcuenta', $subaccountFrom, '>=');
+        }
+
+        $subaccountTo = $params['subaccount-to'] ?? '';
+        if (!empty($subaccountTo)) {
+            $where[] = new DataBaseWhere('codsubcuenta', $subaccountTo, '<=');
+        }
         return $where;
     }
 
