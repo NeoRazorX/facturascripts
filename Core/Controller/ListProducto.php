@@ -71,27 +71,27 @@ class ListProducto extends ListController
         $this->addSearchFields($viewName, ['referencia', 'descripcion', 'observaciones']);
 
         // filters
+        $i18n = $this->toolBox()->i18n();
+        $this->addFilterSelectWhere($viewName, 'status', [
+            ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
+            ['label' => $i18n->trans('blocked'), 'where' => [new DataBaseWhere('bloqueado', true)]],
+            ['label' => $i18n->trans('public'), 'where' => [new DataBaseWhere('publico', true)]],
+            ['label' => $i18n->trans('all'), 'where' => []]
+        ]);
+
         $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
         $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
 
         $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
         $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
 
+        $taxes = Impuestos::codeModel();
+        $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
+
         $this->addFilterNumber($viewName, 'min-price', 'price', 'precio', '<=');
         $this->addFilterNumber($viewName, 'max-price', 'price', 'precio', '>=');
         $this->addFilterNumber($viewName, 'min-stock', 'stock', 'stockfis', '<=');
         $this->addFilterNumber($viewName, 'max-stock', 'stock', 'stockfis', '>=');
-
-        $taxes = Impuestos::codeModel();
-        $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
-
-        $i18n = $this->toolBox()->i18n();
-        $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
-            ['label' => $i18n->trans('only-blocked'), 'where' => [new DataBaseWhere('bloqueado', true)]],
-            ['label' => $i18n->trans('only-public'), 'where' => [new DataBaseWhere('publico', true)]],
-            ['label' => $i18n->trans('all'), 'where' => []]
-        ]);
 
         $this->addFilterCheckbox($viewName, 'nostock', 'no-stock', 'nostock');
         $this->addFilterCheckbox($viewName, 'ventasinstock', 'allow-sale-without-stock', 'ventasinstock');
