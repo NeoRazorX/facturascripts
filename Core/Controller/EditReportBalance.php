@@ -30,7 +30,7 @@ use FacturaScripts\Dinamic\Model\ReportBalance;
  * Description of EditReportBalance
  *
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
- * @author Jose Antonio Cuello  <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  */
 class EditReportBalance extends EditReportAccounting
 {
@@ -72,7 +72,7 @@ class EditReportBalance extends EditReportAccounting
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewsBalances(string $viewName = 'ListBalance')
@@ -136,7 +136,7 @@ class EditReportBalance extends EditReportAccounting
     }
 
     /**
-     * 
+     *
      * @return array
      */
     protected function getPreferencesWhere()

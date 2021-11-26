@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\ReportAmount;
  * Description of EditReportAmount
  *
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
- * @author Jose Antonio Cuello  <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  */
 class EditReportAmount extends EditReportAccounting
 {
