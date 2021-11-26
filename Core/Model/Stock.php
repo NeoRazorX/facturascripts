@@ -214,12 +214,13 @@ class Stock extends Base\ModelClass
      */
     public function test()
     {
-        $this->cantidad = round($this->cantidad, self::MAX_DECIMALS);
-        $this->referencia = $this->toolBox()->utils()->noHtml($this->referencia);
+        // el stock no puede reflejar situaciones imposibles, como stock negativo
+        $this->cantidad = $this->cantidad < 0 ? 0 : round($this->cantidad, self::MAX_DECIMALS);
         $this->reservada = round($this->reservada, self::MAX_DECIMALS);
         $this->pterecibir = round($this->pterecibir, self::MAX_DECIMALS);
         $this->disponible = max([0, $this->cantidad - $this->reservada]);
 
+        $this->referencia = $this->toolBox()->utils()->noHtml($this->referencia);
         if (empty($this->idproducto)) {
             $variante = new DinVariante();
             $whereRef = [new DataBaseWhere('referencia', $this->referencia)];
