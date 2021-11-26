@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Atributo;
@@ -36,40 +37,50 @@ final class AtributoTest extends TestCase
         $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
     }
 
-    public function testCreateWithNewCode()
+    public function testCreateWithNoCode()
     {
         $attribute = new Atributo();
-        $attribute->nombre = 'Test Atribute with new code';
+        $attribute->nombre = 'Test Attribute with new code';
         $this->assertTrue($attribute->save(), 'attribute-cant-save');
         $this->assertTrue($attribute->delete(), 'attribute-cant-delete');
     }
 
     public function testAttributeValues()
     {
+        // creamos el atributo
         $attribute = $this->getTestAttribute();
         $this->assertTrue($attribute->save(), 'attribute-cant-save');
 
+        // creamos un valor
         $attributeValue = new AtributoValor();
         $attributeValue->codatributo = $attribute->codatributo;
         $attributeValue->valor = 'Value 1';
         $this->assertTrue($attributeValue->save(), 'attribute-value-cant-save');
 
-        $attributeValue->codatributo = null;
-        $this->assertFalse($attributeValue->save(), 'attribute-value-need-parent-code');
+        // eliminamos el atributo
+        $this->assertTrue($attribute->delete(), 'attribute-value-cant-delete');
 
-        $this->assertTrue($attributeValue->delete(), 'attribute-value-cant-delete');
+        // se debe haber eliminado el valor
+        $this->assertFalse($attributeValue->exists(), 'attribute-value-still-persist');
     }
 
-    protected function tearDown()
+    public function testValueNoAttribute()
     {
-        $this->logErrors();
+        $attributeValue = new AtributoValor();
+        $attributeValue->valor = 'Value 1';
+        $this->assertFalse($attributeValue->save(), 'value-can-save-without-attribute');
     }
 
-    private function getTestAttribute()
+    private function getTestAttribute(): Atributo
     {
         $attribute = new Atributo();
         $attribute->codatributo = 'Test';
         $attribute->nombre = 'Test Atribute';
         return $attribute;
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
     }
 }

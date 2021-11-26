@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\ConceptoPartida;
@@ -38,7 +39,7 @@ final class ConceptoPartidaTest extends TestCase
         $this->assertTrue($concept->delete(), 'concept-cant-delete');
     }
 
-    public function testCreateWithNewCode()
+    public function testCreateWithNoCode()
     {
         $concept = new ConceptoPartida();
         $concept->descripcion = 'Test Concept with new code';

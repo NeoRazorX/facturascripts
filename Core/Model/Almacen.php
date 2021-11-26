@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
@@ -55,7 +56,7 @@ class Almacen extends Base\Address
 
     /**
      * Removed warehouse from database.
-     * 
+     *
      * @return bool
      */
     public function delete()
@@ -69,12 +70,12 @@ class Almacen extends Base\Address
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function install()
     {
-        /// needed dependencies
+        // needed dependencies
         new DinEmpresa();
 
         return parent::install();
@@ -127,7 +128,7 @@ class Almacen extends Base\Address
      */
     public function test()
     {
-        if (!empty($this->codalmacen) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
+        if (!empty($this->codalmacen) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codalmacen, '%column%' => 'codalmacen', '%min%' => '1', '%max%' => '4']
@@ -146,7 +147,6 @@ class Almacen extends Base\Address
     }
 
     /**
-     * 
      * @param array $values
      *
      * @return bool
@@ -154,7 +154,7 @@ class Almacen extends Base\Address
     protected function saveInsert(array $values = [])
     {
         if (empty($this->codalmacen)) {
-            $this->codalmacen = (string) $this->newCode();
+            $this->codalmacen = (string)$this->newCode();
         }
 
         return parent::saveInsert($values);

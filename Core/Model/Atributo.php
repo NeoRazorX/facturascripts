@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -72,7 +73,7 @@ class Atributo extends Base\ModelClass
         $this->codatributo = $this->toolBox()->utils()->noHtml($this->codatributo);
         $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
 
-        if ($this->codatributo && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codatributo)) {
+        if ($this->codatributo && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codatributo)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codatributo, '%column%' => 'codatributo', '%min%' => '1', '%max%' => '20']
@@ -84,7 +85,6 @@ class Atributo extends Base\ModelClass
     }
 
     /**
-     * 
      * @param array $values
      *
      * @return bool
@@ -92,7 +92,7 @@ class Atributo extends Base\ModelClass
     protected function saveInsert(array $values = [])
     {
         if (empty($this->codatributo)) {
-            $this->codatributo = (string) $this->newCode();
+            $this->codatributo = (string)$this->newCode();
         }
 
         return parent::saveInsert($values);

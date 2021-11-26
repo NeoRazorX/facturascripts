@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\GrupoClientes;
@@ -38,7 +39,7 @@ final class GrupoClientesTest extends TestCase
         $this->assertTrue($group->delete(), 'customer-group-cant-delete');
     }
 
-    public function testCreateWithNewCode()
+    public function testCreateWithNoCode()
     {
         $group = new GrupoClientes();
         $group->nombre = 'Test Customer Group';

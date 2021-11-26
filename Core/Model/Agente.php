@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
@@ -91,7 +92,7 @@ class Agente extends Base\Contact
      */
     public function install()
     {
-        /// needed dependencies
+        // needed dependencies
         new DinProducto();
 
         return parent::install();
@@ -136,7 +137,7 @@ class Agente extends Base\Contact
     {
         $this->cargo = $this->toolBox()->utils()->noHtml($this->cargo);
 
-        if (!empty($this->codagente) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codagente)) {
+        if (!empty($this->codagente) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codagente)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codagente, '%column%' => 'codagente', '%min%' => '1', '%max%' => '10']
@@ -157,11 +158,11 @@ class Agente extends Base\Contact
     protected function saveInsert(array $values = [])
     {
         if (empty($this->codagente)) {
-            $this->codagente = (string) $this->newCode();
+            $this->codagente = (string)$this->newCode();
         }
 
         if (parent::saveInsert($values)) {
-            /// creates new contact
+            // creates new contact
             $contact = new DinContacto();
             $contact->cifnif = $this->cifnif;
             $contact->codagente = $this->codagente;

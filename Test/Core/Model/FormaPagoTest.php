@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\FormaPago;
@@ -37,7 +38,7 @@ final class FormaPagoTest extends TestCase
         $this->assertTrue($payment->delete(), 'payment-method-cant-delete');
     }
 
-    public function testCreateWithNewCode()
+    public function testCreateWithNoCode()
     {
         $payment = new FormaPago();
         $payment->descripcion = 'Test Payment Method';
