@@ -27,6 +27,12 @@ final class FormaPagoTest extends TestCase
 {
     use LogErrorsTrait;
 
+    public function testDataInstalled()
+    {
+        $payment = new FormaPago();
+        $this->assertNotEmpty($payment->all(), 'payment-method-data-not-installed-from-csv');
+    }
+
     public function testCreate()
     {
         $payment = new FormaPago();

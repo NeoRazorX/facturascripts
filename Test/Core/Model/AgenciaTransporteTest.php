@@ -25,8 +25,13 @@ use PHPUnit\Framework\TestCase;
 
 final class AgenciaTransporteTest extends TestCase
 {
-
     use LogErrorsTrait;
+
+    public function testDataInstalled()
+    {
+        $agency = new AgenciaTransporte();
+        $this->assertNotEmpty($agency->all(), 'agency-data-not-installed-from-csv');
+    }
 
     public function testCreate()
     {

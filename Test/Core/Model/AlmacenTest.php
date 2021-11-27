@@ -25,8 +25,13 @@ use PHPUnit\Framework\TestCase;
 
 final class AlmacenTest extends TestCase
 {
-
     use LogErrorsTrait;
+
+    public function testDataInstalled()
+    {
+        $warehouse = new Almacen();
+        $this->assertNotEmpty($warehouse->all(), 'warehouse-data-not-installed-from-csv');
+    }
 
     public function testCreate()
     {
