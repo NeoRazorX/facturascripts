@@ -28,6 +28,12 @@ final class EstadoDocumentoTest extends TestCase
 {
     use LogErrorsTrait;
 
+    public function testDataInstalled()
+    {
+        $status = new EstadoDocumento();
+        $this->assertNotEmpty($status->all(), 'estado-documento-data-not-installed-from-csv');
+    }
+
     public function testCreateNewStatus()
     {
         $status = new EstadoDocumento();
