@@ -62,6 +62,12 @@ class RowButton extends VisualItem
      * @var int
      */
     public $level;
+	
+    /**
+     *
+     * @var string
+     */
+    public $target;
 
     /**
      *
@@ -78,6 +84,7 @@ class RowButton extends VisualItem
         parent::__construct($data);
         $this->action = $data['action'] ?? '';
         $this->color = $data['color'] ?? '';
+		$this->target = $data['target'] ?? '';
         $this->confirm = isset($data['confirm']);
         $this->icon = $data['icon'] ?? '';
         $this->label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
@@ -103,6 +110,7 @@ class RowButton extends VisualItem
         $cssClass .= empty($this->color) ? 'btn-light' : $this->colorToClass($this->color, 'btn-');
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         $label = $small ? '' : $this->label;
+		$target = empty($this->target) ? '' : ' target="' . $this->target . '"';
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
         if ($small && empty($icon)) {
             $icon = $this->label;
@@ -115,7 +123,7 @@ class RowButton extends VisualItem
 
             case 'link':
                 return '<a ' . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
-                    . ' title="' . $this->label . '">' . $icon . $label . '</a>';
+                    . $target . ' title="' . $this->label . '">' . $icon . $label . '</a>';
 
             case 'modal':
                 return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
