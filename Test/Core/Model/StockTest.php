@@ -204,6 +204,49 @@ final class StockTest extends TestCase
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
+    public function testNegativeQuantity()
+    {
+        // creamos el producto
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // añadimos stock
+        $stock = new Stock();
+        $stock->idproducto = $product->idproducto;
+        $stock->referencia = $product->referencia;
+        $stock->cantidad = -10;
+        $this->assertTrue($stock->save(), 'stock-cant-save');
+
+        // comprobamos
+        $this->assertEquals(0, $stock->cantidad);
+
+        // eliminamos
+        $this->assertTrue($stock->delete(), 'stock-cant-delete');
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+    }
+
+    public function testNegativeAvailable()
+    {
+        // creamos el producto
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // añadimos stock
+        $stock = new Stock();
+        $stock->idproducto = $product->idproducto;
+        $stock->referencia = $product->referencia;
+        $stock->cantidad = 2;
+        $stock->reservada = 10;
+        $this->assertTrue($stock->save(), 'stock-cant-save');
+
+        // comprobamos
+        $this->assertEquals(0, $stock->cantidad);
+
+        // eliminamos
+        $this->assertTrue($stock->delete(), 'stock-cant-delete');
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+    }
+
     private function getRandomProduct(): Producto
     {
         $num = mt_rand(1, 9999);
