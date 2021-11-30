@@ -29,7 +29,6 @@ use FacturaScripts\Core\Base\ToolBox;
  */
 class CodePatterns
 {
-
     const DATE_STYLE = 'd-m-Y';
     const DATETIME_STYLE = 'd-m-Y H:i:s';
     const HOUR_STYLE = 'H:i:s';
@@ -48,29 +47,42 @@ class CodePatterns
      */
     public static function trans(string $text, &$model, array $options = []): string
     {
+        // columnas
+        $colFecha = $options['fecha'] ?? 'fecha';
+        $colHora = $options['hora'] ?? 'hora';
+        $colNumero = $options['numero'] ?? 'numero';
+        $colSerie = $options['serie'] ?? 'codserie';
+        $colEjercicio = $options['ejercicio'] ?? 'codejercicio';
+
+        // valores
+        $ejercicio = $model->{$colEjercicio} ?? '';
+        $fecha = $model->{$colFecha} ?? date(self::DATE_STYLE);
+        $hora = $model->{$colHora} ?? date(self::HOUR_STYLE);
         $long = $options['long'] ?? 0;
-        $date = $options['fecha'] ?? 'fecha';
-        $number = $options['numero'] ?? 'numero';
-        $serie = $options['serie'] ?? 'codserie';
-        $ejerc = $options['ejercicio'] ?? 'codejercicio';
+        $numero = $model->{$colNumero} ?? 0;
+        $serie = $model->{$colSerie} ?? '';
+
+        // El separador | sirve para aplicar filtros. Usaremos solamente la primera parte para transformar
         $parts = explode('|', $text);
 
+        // transformación
         $result = strtr($parts[0], [
-            '{FECHA}' => date(self::DATE_STYLE),
-            '{HORA}' => date(self::HOUR_STYLE),
-            '{FECHAHORA}' => date(self::DATETIME_STYLE),
-            '{ANYO}' => date('Y', strtotime($model->{$date})),
-            '{DIA}' => date('d', strtotime($model->{$date})),
-            '{EJE}' => $model->{$ejerc},
-            '{EJE2}' => substr($model->{$ejerc}, -2),
-            '{MES}' => date('m', strtotime($model->{$date})),
-            '{NUM}' => $model->{$number},
-            '{SERIE}' => $model->{$serie},
-            '{0NUM}' => str_pad($model->{$number}, $long, '0', STR_PAD_LEFT),
-            '{0SERIE}' => str_pad($model->{$serie}, 2, '0', STR_PAD_LEFT),
-            '{NOMBREMES}' => ToolBox::i18n()->trans(strtolower(date('F', strtotime($model->{$date}))))
+            '{FECHA}' => date(self::DATE_STYLE, strtotime($fecha)),
+            '{HORA}' => date(self::HOUR_STYLE, strtotime($hora)),
+            '{FECHAHORA}' => date(self::DATETIME_STYLE, strtotime($fecha . ' ' . $hora)),
+            '{ANYO}' => date('Y', strtotime($fecha)),
+            '{DIA}' => date('d', strtotime($fecha)),
+            '{EJE}' => $ejercicio,
+            '{EJE2}' => substr($ejercicio, -2),
+            '{MES}' => date('m', strtotime($fecha)),
+            '{NUM}' => $numero,
+            '{SERIE}' => $serie,
+            '{0NUM}' => str_pad($numero, $long, '0', STR_PAD_LEFT),
+            '{0SERIE}' => str_pad($serie, 2, '0', STR_PAD_LEFT),
+            '{NOMBREMES}' => ToolBox::i18n()->trans(strtolower(date('F', strtotime($fecha))))
         ]);
 
+        // si hay filtros, los aplicamos ahora
         return count($parts) > 1 ? static::format($result, $parts[1]) : $result;
     }
 
