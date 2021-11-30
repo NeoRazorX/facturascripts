@@ -197,7 +197,7 @@ final class StockTest extends TestCase
 
         // comprobamos
         $this->assertTrue($stock->disponible < $stock->cantidad, 'stock-available-wrong');
-        $this->assertEquals(5, $stock->disponible);
+        $this->assertEquals(5, $stock->disponible, 'stock-disponible-bad');
 
         // eliminamos
         $this->assertTrue($stock->delete(), 'stock-cant-delete');
@@ -218,7 +218,7 @@ final class StockTest extends TestCase
         $this->assertTrue($stock->save(), 'stock-cant-save');
 
         // comprobamos
-        $this->assertEquals(0, $stock->cantidad);
+        $this->assertEquals(0, $stock->cantidad, 'stock-cantidad-no-puede-ser-negativo');
 
         // eliminamos
         $this->assertTrue($stock->delete(), 'stock-cant-delete');
@@ -240,7 +240,7 @@ final class StockTest extends TestCase
         $this->assertTrue($stock->save(), 'stock-cant-save');
 
         // comprobamos
-        $this->assertEquals(0, $stock->cantidad);
+        $this->assertEquals(0, $stock->disponible, 'stock-disponible-no-puede-ser-negativo');
 
         // eliminamos
         $this->assertTrue($stock->delete(), 'stock-cant-delete');
