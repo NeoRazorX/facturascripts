@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\ReportLedger;
  * Description of EditReportLedger
  *
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
- * @author Jose Antonio Cuello  <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  */
 class EditReportLedger extends EditReportAccounting
 {
@@ -88,7 +88,10 @@ class EditReportLedger extends EditReportAccounting
         ];
 
         $ledger = new Ledger();
-        $ledger->setExerciseFromDate($model->idcompany, $model->startdate);
+        if (false === $ledger->setExerciseFromDate($model->idcompany, $model->startdate)) {
+            $this->toolBox()->i18nLog()->warning('accounting-exercise-not-found');
+            return [];
+        }
         return $ledger->generate($model->startdate, $model->enddate, $params);
     }
 }
