@@ -166,8 +166,13 @@ final class MiniLog
      *
      * @return array
      */
-    public static function read(string $channel = '', array $levels = []): array
+    public static function read($channel = '', array $levels = []): array
     {
+        // TODO: eliminar antes del lanzamiento de la 2021.6
+        if (false === is_string($channel)) {
+            return [];
+        }
+
         $messages = [];
         foreach (self::$data as $data) {
             if ($channel && $data['channel'] != $channel) {
