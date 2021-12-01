@@ -1,0 +1,62 @@
+<?php
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2021  Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+namespace FacturaScripts\Test\Core;
+
+use FacturaScripts\Core\Model\Almacen;
+use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\Producto;
+use FacturaScripts\Core\Model\Proveedor;
+
+trait RandomDataTrait
+{
+    protected function getRandomCustomer(): Cliente
+    {
+        $cliente = new Cliente();
+        $cliente->cifnif = 'B' . mt_rand(1, 999999);
+        $cliente->nombre = 'Customer ' . mt_rand(1, 99999);
+        $cliente->razonsocial = 'Empresa ' . mt_rand(1, 99999);
+        return $cliente;
+    }
+
+    protected function getRandomProduct(): Producto
+    {
+        $num = mt_rand(1, 9999);
+        $product = new Producto();
+        $product->referencia = 'test' . $num;
+        $product->descripcion = 'Test Product ' . $num;
+        return $product;
+    }
+
+    private function getRandomSupplier(): Proveedor
+    {
+        $proveedor = new Proveedor();
+        $proveedor->cifnif = mt_rand(1, 99999999) . 'J';
+        $proveedor->nombre = 'Proveedor ' . mt_rand(1, 999);
+        $proveedor->razonsocial = 'Empresa ' . mt_rand(1, 999);
+        return $proveedor;
+    }
+
+    private function getRandomWarehouse(): Almacen
+    {
+        $warehouse = new Almacen();
+        $warehouse->nombre = 'Warehouse ' . mt_rand(1, 99);
+        return $warehouse;
+    }
+}

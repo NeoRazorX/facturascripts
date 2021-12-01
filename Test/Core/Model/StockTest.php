@@ -19,16 +19,16 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Model\Almacen;
-use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Core\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class StockTest extends TestCase
 {
     use LogErrorsTrait;
+    use RandomDataTrait;
 
     public function testCreate()
     {
@@ -245,22 +245,6 @@ final class StockTest extends TestCase
         // eliminamos
         $this->assertTrue($stock->delete(), 'stock-cant-delete');
         $this->assertTrue($product->delete(), 'product-cant-delete');
-    }
-
-    private function getRandomProduct(): Producto
-    {
-        $num = mt_rand(1, 9999);
-        $product = new Producto();
-        $product->referencia = 'test' . $num;
-        $product->descripcion = 'Test Product ' . $num;
-        return $product;
-    }
-
-    private function getRandomWarehouse(): Almacen
-    {
-        $warehouse = new Almacen();
-        $warehouse->nombre = 'Warehouse ' . mt_rand(1, 99);
-        return $warehouse;
     }
 
     protected function tearDown()
