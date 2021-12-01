@@ -298,6 +298,16 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     }
 
     /**
+     * @return bool
+     */
+    public function save()
+    {
+        $done = parent::save();
+        $this->disableUpdateStock(false);
+        return $done;
+    }
+
+    /**
      * Transfers the line stock from one warehouse to another.
      *
      * @param string $fromCodalmacen
@@ -305,7 +315,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      *
      * @return bool
      */
-    public function transfer($fromCodalmacen, $toCodalmacen)
+    public function transfer($fromCodalmacen, $toCodalmacen): bool
     {
         // find the stock
         $fromStock = new Stock();
@@ -352,7 +362,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        $name = \str_replace('Linea', '', $this->modelClassName());
+        $name = str_replace('Linea', '', $this->modelClassName());
         return $type === 'new' ? 'Edit' . $name : parent::url($type, 'List' . $name . '?activetab=List');
     }
 
@@ -432,7 +442,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     protected function setPreviousData(array $fields = [])
     {
         $more = ['actualizastock', 'cantidad', 'servido'];
-        parent::setPreviousData(\array_merge($more, $fields));
+        parent::setPreviousData(array_merge($more, $fields));
 
         if (null === $this->previousData['actualizastock']) {
             $this->previousData['actualizastock'] = 0;
@@ -448,7 +458,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function updateStock()
+    protected function updateStock(): bool
     {
         if ($this->disableUpdateStock) {
             return true;

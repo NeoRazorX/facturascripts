@@ -204,12 +204,12 @@ abstract class BusinessDocument extends ModelOnChangeClass
     /**
      * Sets the author for this document.
      */
-    abstract public function setAuthor($author);
+    abstract public function setAuthor($user): bool;
 
     /**
      * Sets subject for this document.
      */
-    abstract public function setSubject($subject);
+    abstract public function setSubject($subject): bool;
 
     /**
      * Returns the name of the column for subject.
@@ -219,7 +219,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     /**
      * Updates subjects data in this document.
      */
-    abstract public function updateSubject();
+    abstract public function updateSubject(): bool;
 
     /**
      * Reset the values of all model properties.
@@ -285,7 +285,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     /**
      * @return bool
      */
-    public function paid()
+    public function paid(): bool
     {
         return false;
     }
@@ -474,7 +474,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function setWarehouse($codalmacen)
+    protected function setWarehouse(string $codalmacen): bool
     {
         $almacen = new Almacen();
         if ($almacen->loadFromCode($codalmacen)) {

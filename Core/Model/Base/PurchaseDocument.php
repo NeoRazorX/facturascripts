@@ -20,9 +20,10 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Proveedor as CoreProveedor;
+use FacturaScripts\Core\Model\User;
 use FacturaScripts\Dinamic\Model\ProductoProveedor;
 use FacturaScripts\Dinamic\Model\Proveedor;
-use FacturaScripts\Dinamic\Model\User;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
@@ -129,33 +130,33 @@ abstract class PurchaseDocument extends TransformerDocument
     /**
      * Sets the author for this document.
      *
-     * @param User $author
+     * @param User $user
      *
      * @return bool
      */
-    public function setAuthor($author)
+    public function setAuthor($user): bool
     {
-        if (!isset($author->nick)) {
+        if (!isset($user->nick)) {
             return false;
         }
 
-        $this->codalmacen = $author->codalmacen ?? $this->codalmacen;
-        $this->idempresa = $author->idempresa ?? $this->idempresa;
-        $this->nick = $author->nick;
+        $this->codalmacen = $user->codalmacen ?? $this->codalmacen;
+        $this->idempresa = $user->idempresa ?? $this->idempresa;
+        $this->nick = $user->nick;
 
         // allow extensions
-        $this->pipe('setAuthor', $author);
+        $this->pipe('setAuthor', $user);
         return true;
     }
 
     /**
      * Assign the supplier to the document.
      *
-     * @param Proveedor $subject
+     * @param CoreProveedor $subject
      *
      * @return bool
      */
-    public function setSubject($subject)
+    public function setSubject($subject): bool
     {
         if (!isset($subject->codproveedor)) {
             return false;
@@ -205,7 +206,7 @@ abstract class PurchaseDocument extends TransformerDocument
      *
      * @return bool
      */
-    public function updateSubject()
+    public function updateSubject(): bool
     {
         $proveedor = new Proveedor();
         return $this->codproveedor && $proveedor->loadFromCode($this->codproveedor) && $this->setSubject($proveedor);

@@ -149,7 +149,7 @@ trait InvoiceTrait
     /**
      * @return bool
      */
-    public function paid()
+    public function paid(): bool
     {
         return $this->pagada;
     }

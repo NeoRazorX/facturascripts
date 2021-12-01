@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\AlbaranCliente;
+use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use FacturaScripts\Test\Core\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -63,6 +64,12 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-1');
     }
 
+    public function testCreateWithoutSubject()
+    {
+        $doc = new AlbaranCliente();
+        $this->assertFalse($doc->save(), 'can-create-albaran-cliente-without-subject');
+    }
+
     public function testCreateOneLine()
     {
         // creamos el cliente
@@ -79,6 +86,8 @@ final class AlbaranClienteTest extends TestCase
         $line->cantidad = 1;
         $line->pvpunitario = 100;
         $this->assertTrue($line->save(), 'can-not-save-line-2');
+        $this->assertNotEmpty($line->idlinea, 'empty-line-id-2');
+        $this->assertTrue($line->exists(), 'line-not-persist-2');
 
         // actualizamos los totales
         $tool = new BusinessDocumentTools();
@@ -97,6 +106,63 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($doc->delete(), 'can-not-delete-albaran-cliente-2');
         $this->assertFalse($line->exists(), 'linea-albaran-cliente-still-exists');
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-2');
+    }
+
+    public function testCreateProductLine()
+    {
+        // creamos el cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+
+        // creamos el producto
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save(), 'can-not-save-supplier-3');
+
+        // creamos el albarán
+        $doc = new AlbaranCliente();
+        $doc->setSubject($subject);
+        $this->assertTrue($doc->save(), 'can-not-create-albaran-cliente-2');
+
+        // añadimos el producto sin stock
+        $line = $doc->getNewProductLine($product->referencia);
+        $line->pvpunitario = 10;
+        $this->assertFalse($line->save(), 'can-add-product-without-stock');
+
+        // añadimos stock
+        $stock = new Stock();
+        $stock->cantidad = 2;
+        $stock->idproducto = $product->idproducto;
+        $stock->referencia = $product->referencia;
+        $stock->save();
+
+        // ahora si debe añadir el producto al albarán
+        $this->assertTrue($line->save(), 'can-not-save-line-3');
+
+        // recargamos producto y comprobamos el stock
+        $product->loadFromCode($product->idproducto);
+        $this->assertEquals(1, $product->stockfis, 'albaran-cliente-product-do-not-update-stock');
+
+        // actualizamos los totales
+        $tool = new BusinessDocumentTools();
+        $tool->recalculate($doc);
+        $this->assertTrue($doc->save(), 'can-not-update-albaran-cliente-3');
+
+        // comprobamos
+        $this->assertEquals(10, $doc->neto, 'albaran-cliente-bad-neto-3');
+        $this->assertEquals(12.1, $doc->total, 'albaran-cliente-bad-total-3');
+        $this->assertEquals(2.1, $doc->totaliva, 'albaran-cliente-bad-totaliva-3');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-albaran-cliente-3');
+        $this->assertFalse($line->exists(), 'linea-albaran-cliente-still-exists-3');
+        $this->assertTrue($subject->delete(), 'can-not-delete-cliente-3');
+
+        // recargamos producto y comprobamos el stock
+        $product->loadFromCode($product->idproducto);
+        $this->assertEquals(2, $product->stockfis, 'albaran-proveedor-product-do-not-update-stock');
+
+        // eliminamos el producto
+        $this->assertTrue($product->delete(), 'can-not-delete-product-3');
     }
 
     protected function tearDown()

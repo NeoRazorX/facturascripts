@@ -61,6 +61,12 @@ final class AlbaranProveedorTest extends TestCase
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-1');
     }
 
+    public function testCreateWithoutSubject()
+    {
+        $doc = new AlbaranProveedor();
+        $this->assertFalse($doc->save(), 'can-create-albaran-proveedor-without-subject');
+    }
+
     public function testCreateOneLine()
     {
         // creamos el proveedor
@@ -74,9 +80,10 @@ final class AlbaranProveedorTest extends TestCase
 
         // añadimos una línea
         $line = $doc->getNewLine();
-        $line->cantidad = 1;
         $line->pvpunitario = 100;
         $this->assertTrue($line->save(), 'can-not-save-line-2');
+        $this->assertNotEmpty($line->idlinea, 'empty-line-id-2');
+        $this->assertTrue($line->exists(), 'line-not-persist-2');
 
         // actualizamos los totales
         $tool = new BusinessDocumentTools();
@@ -95,6 +102,70 @@ final class AlbaranProveedorTest extends TestCase
         $this->assertTrue($doc->delete(), 'can-not-delete-albaran-proveedor-2');
         $this->assertFalse($line->exists(), 'linea-albaran-proveedor-still-exists-2');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-2');
+    }
+
+    public function testCreateProductLine()
+    {
+        // creamos el proveedor
+        $subject = $this->getRandomSupplier();
+        $this->assertTrue($subject->save(), 'can-not-save-supplier-3');
+
+        // creamos el producto
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save(), 'can-not-save-supplier-3');
+
+        // creamos el albarán
+        $doc = new AlbaranProveedor();
+        $doc->setSubject($subject);
+        $this->assertTrue($doc->save(), 'can-not-create-albaran-proveedor-3');
+
+        // añadimos el producto
+        $line = $doc->getNewProductLine($product->referencia);
+        $line->pvpunitario = 10;
+        $this->assertTrue($line->save(), 'can-not-save-line-3');
+
+        // recargamos producto y comprobamos el stock
+        $product->loadFromCode($product->idproducto);
+        $this->assertEquals(1, $product->stockfis, 'albaran-proveedor-product-do-not-update-stock');
+
+        // actualizamos los totales
+        $tool = new BusinessDocumentTools();
+        $tool->recalculate($doc);
+        $this->assertTrue($doc->save(), 'can-not-update-albaran-proveedor-3');
+
+        // comprobamos
+        $this->assertEquals(10, $doc->neto, 'albaran-proveedor-bad-neto-3');
+        $this->assertEquals(12.1, $doc->total, 'albaran-proveedor-bad-total-3');
+        $this->assertEquals(2.1, $doc->totaliva, 'albaran-proveedor-bad-totaliva-3');
+
+        // modificamos la cantidad
+        $line->cantidad = 10;
+        $this->assertTrue($line->save(), 'can-not-update-line-3');
+
+        // recargamos producto y comprobamos el stock
+        $product->loadFromCode($product->idproducto);
+        $this->assertEquals(10, $product->stockfis, 'albaran-proveedor-product-do-not-update-stock');
+
+        // actualizamos los totales
+        $tool->recalculate($doc);
+        $this->assertTrue($doc->save(), 'can-not-update-albaran-proveedor-3');
+
+        // comprobamos
+        $this->assertEquals(100, $doc->neto, 'albaran-proveedor-bad-neto-3');
+        $this->assertEquals(121, $doc->total, 'albaran-proveedor-bad-total-3');
+        $this->assertEquals(21, $doc->totaliva, 'albaran-proveedor-bad-totaliva-3');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-albaran-proveedor-3');
+        $this->assertFalse($line->exists(), 'linea-albaran-proveedor-still-exists-3');
+        $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-3');
+
+        // recargamos producto y comprobamos el stock
+        $product->loadFromCode($product->idproducto);
+        $this->assertEquals(0, $product->stockfis, 'albaran-proveedor-product-do-not-update-stock');
+
+        // eliminamos el producto
+        $this->assertTrue($product->delete(), 'can-not-delete-product-3');
     }
 
     protected function tearDown()
