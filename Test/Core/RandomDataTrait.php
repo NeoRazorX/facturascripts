@@ -19,13 +19,22 @@
 
 namespace FacturaScripts\Test\Core;
 
+use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Core\Model\User;
 
 trait RandomDataTrait
 {
+    protected function getRandomAgent(): Agente
+    {
+        $agente = new Agente();
+        $agente->nombre = 'Pepe ' . mt_rand(1, 9999);
+        return $agente;
+    }
+
     protected function getRandomCustomer(): Cliente
     {
         $cliente = new Cliente();
@@ -44,7 +53,7 @@ trait RandomDataTrait
         return $product;
     }
 
-    private function getRandomSupplier(): Proveedor
+    protected function getRandomSupplier(): Proveedor
     {
         $proveedor = new Proveedor();
         $proveedor->cifnif = mt_rand(1, 99999999) . 'J';
@@ -53,7 +62,16 @@ trait RandomDataTrait
         return $proveedor;
     }
 
-    private function getRandomWarehouse(): Almacen
+    protected function getRandomUser(): User
+    {
+        $user = new User();
+        $user->nick = 'user_' . mt_rand(1, 999);
+        $user->email = $user->nick . '@facturascripts.com';
+        $user->setPassword(mt_rand(1, 999999));
+        return $user;
+    }
+
+    protected function getRandomWarehouse(): Almacen
     {
         $warehouse = new Almacen();
         $warehouse->nombre = 'Warehouse ' . mt_rand(1, 99);

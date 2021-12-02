@@ -30,7 +30,37 @@ final class AlbaranProveedorTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
-    public function testCreateEmpty()
+    public function testDefaultValues()
+    {
+        $doc = new AlbaranProveedor();
+        $this->assertNotEmpty($doc->codalmacen, 'empty-warehouse');
+        $this->assertNotEmpty($doc->coddivisa, 'empty-currency');
+        $this->assertNotEmpty($doc->codserie, 'empty-serie');
+        $this->assertNotEmpty($doc->fecha, 'empty-date');
+        $this->assertNotEmpty($doc->hora, 'empty-time');
+    }
+
+    public function testSetAuthor()
+    {
+        // create warehouse
+        $warehouse = $this->getRandomWarehouse();
+        $this->assertTrue($warehouse->save(), 'can-not-create-warehouse');
+
+        // create user
+        $user = $this->getRandomUser();
+        $user->codalmacen = $warehouse->codalmacen;
+
+        // asignamos usuario
+        $doc = new AlbaranProveedor();
+        $this->assertTrue($doc->setAuthor($user), 'can-not-set-user');
+        $this->assertEquals($user->codalmacen, $doc->codalmacen, 'albaran-proveedor-bad-warehouse');
+        $this->assertEquals($user->nick, $doc->nick, 'albaran-proveedor-bad-nick');
+
+        // eliminamos
+        $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
+    }
+
+    public function testSetSubject()
     {
         // creamos el proveedor
         $subject = $this->getRandomSupplier();
@@ -39,12 +69,28 @@ final class AlbaranProveedorTest extends TestCase
         // creamos el albarán
         $doc = new AlbaranProveedor();
         $this->assertTrue($doc->setSubject($subject), 'can-not-set-subject-1');
-        $this->assertTrue($doc->save(), 'can-not-create-albaran-proveedor-1');
 
         // comprobamos valores por defecto
         $this->assertEquals($subject->cifnif, $doc->cifnif, 'albaran-proveedor-bad-cifnif-1');
         $this->assertEquals($subject->codproveedor, $doc->codproveedor, 'albaran-proveedor-bad-codproveedor-1');
         $this->assertEquals($subject->razonsocial, $doc->nombre, 'albaran-proveedor-bad-nombre-1');
+
+        // eliminamos
+        $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-1');
+    }
+
+    public function testCreateEmpty()
+    {
+        // creamos el proveedor
+        $subject = $this->getRandomSupplier();
+        $this->assertTrue($subject->save(), 'can-not-save-supplier-1');
+
+        // creamos el albarán
+        $doc = new AlbaranProveedor();
+        $doc->setSubject($subject);
+        $this->assertTrue($doc->save(), 'can-not-create-albaran-proveedor-1');
+
+        // comprobamos valores por defecto
         $this->assertEquals(date('d-m-Y'), $doc->fecha, 'albaran-proveedor-bad-date-1');
         $this->assertEquals(0, $doc->dtopor1, 'albaran-proveedor-bad-dtopor1-1');
         $this->assertEquals(0, $doc->dtopor2, 'albaran-proveedor-bad-dtopor2-1');

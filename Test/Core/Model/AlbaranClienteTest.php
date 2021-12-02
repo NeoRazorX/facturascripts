@@ -31,6 +31,36 @@ final class AlbaranClienteTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
+    public function testDefaultValues()
+    {
+        $doc = new AlbaranCliente();
+        $this->assertNotEmpty($doc->codalmacen, 'empty-warehouse');
+        $this->assertNotEmpty($doc->coddivisa, 'empty-currency');
+        $this->assertNotEmpty($doc->codserie, 'empty-serie');
+        $this->assertNotEmpty($doc->fecha, 'empty-date');
+        $this->assertNotEmpty($doc->hora, 'empty-time');
+    }
+
+    public function testSetAuthor()
+    {
+        // create warehouse
+        $warehouse = $this->getRandomWarehouse();
+        $this->assertTrue($warehouse->save(), 'can-not-create-warehouse');
+
+        // create user
+        $user = $this->getRandomUser();
+        $user->codalmacen = $warehouse->codalmacen;
+
+        // asignamos el usuario
+        $doc = new AlbaranCliente();
+        $this->assertTrue($doc->setAuthor($user), 'can-not-set-user');
+        $this->assertEquals($user->codalmacen, $doc->codalmacen, 'albaran-cliente-bad-warehouse');
+        $this->assertEquals($user->nick, $doc->nick, 'albaran-cliente-bad-nick');
+
+        // eliminamos
+        $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
+    }
+
     public function testCreateEmpty()
     {
         // creamos el cliente
@@ -39,7 +69,7 @@ final class AlbaranClienteTest extends TestCase
 
         // creamos el albarán
         $doc = new AlbaranCliente();
-        $this->assertTrue($doc->setSubject($subject), 'can-not-set-customer-1');
+        $doc->setSubject($subject);
         $this->assertTrue($doc->save(), 'can-not-create-albaran-cliente-1');
 
         // comprobamos valores
@@ -159,7 +189,7 @@ final class AlbaranClienteTest extends TestCase
 
         // recargamos producto y comprobamos el stock
         $product->loadFromCode($product->idproducto);
-        $this->assertEquals(2, $product->stockfis, 'albaran-proveedor-product-do-not-update-stock');
+        $this->assertEquals(2, $product->stockfis, 'albaran-cliente-product-do-not-update-stock');
 
         // eliminamos el producto
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
