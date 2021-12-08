@@ -20,14 +20,10 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Model\Almacen;
-use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
-use FacturaScripts\Core\Model\Producto;
-use FacturaScripts\Core\Model\Proveedor;
 
 trait DefaultSettingsTrait
 {
