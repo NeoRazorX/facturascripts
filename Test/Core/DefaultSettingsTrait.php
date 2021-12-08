@@ -29,43 +29,8 @@ use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Proveedor;
 
-trait BusinessDocsTrait
+trait DefaultSettingsTrait
 {
-    protected static function getCustomer(string $name, string $cif): Cliente
-    {
-        $customer = new Cliente();
-        $where = [new DataBaseWhere('nombre', $name)];
-        $customer->loadFromCode('', $where);
-
-        $customer->cifnif = $cif;
-        $customer->nombre = $name;
-        return $customer;
-    }
-
-    protected static function getProduct(string $ref): Producto
-    {
-        $product = new Producto();
-        $where = [new DataBaseWhere('referencia', $ref)];
-        $product->loadFromCode('', $where);
-
-        $product->descripcion = $product->referencia = $ref;
-        $product->nostock = false;
-        $product->secompra = true;
-        $product->sevende = true;
-        return $product;
-    }
-
-    protected static function getSupplier(string $name, string $cif): Proveedor
-    {
-        $supplier = new Proveedor();
-        $where = [new DataBaseWhere('nombre', $name)];
-        $supplier->loadFromCode('', $where);
-
-        $supplier->cifnif = $cif;
-        $supplier->nombre = $name;
-        return $supplier;
-    }
-
     protected static function installAccountingPlan()
     {
         // Is there a default accounting plan?

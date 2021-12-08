@@ -21,14 +21,21 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\AlbaranProveedor;
+use FacturaScripts\Test\Core\DefaultSettingsTrait;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use FacturaScripts\Test\Core\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class AlbaranProveedorTest extends TestCase
 {
+    use DefaultSettingsTrait;
     use LogErrorsTrait;
     use RandomDataTrait;
+
+    public static function setUpBeforeClass()
+    {
+        self::setDefaultSettings();
+    }
 
     public function testDefaultValues()
     {
