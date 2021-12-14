@@ -40,7 +40,7 @@ class Wizard extends Controller
 {
 
     const ITEM_SELECT_LIMIT = 500;
-    const NEW_DEFAULT_PAGE = 'ListFacturaCliente';
+    const NEW_DEFAULT_PAGE = 'Dashboard';
 
     /**
      * @var AppSettings
