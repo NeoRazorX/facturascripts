@@ -50,7 +50,9 @@ END;
 
         $content = $this->response->getContent() . $title;
         foreach (ToolBox::log()::read('', ['critical', 'error', 'info', 'notice', 'warning']) as $log) {
-            $content .= "\n" . $log["message"];
+            if ($log['channel'] != 'audit') {
+                $content .= "\n" . $log["message"];
+            }
         }
 
         $this->response->setContent($content . "\n");
