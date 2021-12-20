@@ -153,28 +153,29 @@ class EditRole extends EditController
         }
 
         // add new rules
-        foreach ($show as $pageName) {
-            $found = false;
-            foreach ($rules as $rule) {
-                if ($rule->pagename === $pageName) {
-                    $found = true;
-                    break;
+        if (is_array($show)) {
+            foreach ($show as $pageName) {
+                $found = false;
+                foreach ($rules as $rule) {
+                    if ($rule->pagename === $pageName) {
+                        $found = true;
+                        break;
+                    }
                 }
-            }
-            if ($found) {
-                continue;
-            }
+                if ($found) {
+                    continue;
+                }
 
-            // add
-            $newRoleAccess = new RoleAccess();
-            $newRoleAccess->codrole = $this->request->query->get('code');
-            $newRoleAccess->pagename = $pageName;
-            $newRoleAccess->onlyownerdata = is_array($onlyOwner) && in_array($pageName, $onlyOwner);
-            $newRoleAccess->allowupdate = is_array($update) && in_array($pageName, $update);
-            $newRoleAccess->allowdelete = is_array($delete) && in_array($pageName, $delete);
-            $newRoleAccess->save();
+                // add
+                $newRoleAccess = new RoleAccess();
+                $newRoleAccess->codrole = $this->request->query->get('code');
+                $newRoleAccess->pagename = $pageName;
+                $newRoleAccess->onlyownerdata = is_array($onlyOwner) && in_array($pageName, $onlyOwner);
+                $newRoleAccess->allowupdate = is_array($update) && in_array($pageName, $update);
+                $newRoleAccess->allowdelete = is_array($delete) && in_array($pageName, $delete);
+                $newRoleAccess->save();
+            }
         }
-
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         return true;
     }
