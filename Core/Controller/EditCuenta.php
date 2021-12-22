@@ -97,6 +97,7 @@ class EditCuenta extends EditController
         $this->addListView($viewName, 'Subcuenta', 'subaccounts');
         $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code', 1);
         $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
+        $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
 
         // disable columns
         $this->views[$viewName]->disableColumn('fiscal-exercise');
@@ -145,7 +146,6 @@ class EditCuenta extends EditController
     {
         $account = new Cuenta();
         $account->loadFromCode($idAccount);
-
         $request = $this->request->request->all();
         $params = [
             'grouped' => $request['groupingtype'],
@@ -156,13 +156,25 @@ class EditCuenta extends EditController
         $ledger = new Ledger();
         $ledger->setExercise($account->codejercicio);
         $pages = $ledger->generate($request['dateFrom'], $request['dateTo'], $params);
+        $title = self::toolBox()::i18n()->trans('ledger') . ' ' . $account->codcuenta;
+        $this->exportManager->newDoc($request['format'], $title);
 
-        $this->exportManager->newDoc($request['format']);
+        // añadimos la tabla de cabecera con la info del informe
+        if ($request['format'] === 'PDF') {
+            $titles = [[
+                self::toolBox()::i18n()->trans('account') => $account->codcuenta,
+                self::toolBox()::i18n()->trans('exercise') => $account->codejercicio,
+                self::toolBox()::i18n()->trans('from-date') => $request['dateFrom'],
+                self::toolBox()::i18n()->trans('until-date') => $request['dateTo']
+            ]];
+            $this->exportManager->addTablePage(array_keys($titles[0]), $titles);
+        }
+
+        // tablas con los listados
         foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);
             $this->exportManager->addTablePage($headers, $data);
         }
-
         $this->exportManager->show($this->response);
     }
 

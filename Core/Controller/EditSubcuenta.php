@@ -108,10 +108,10 @@ class EditSubcuenta extends EditController
             'label' => 'unchecked'
         ]);
 
-        /// disable column
+        // disable column
         $this->views[$viewName]->disableColumn('subaccount');
 
-        /// disable button
+        // disable button
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
@@ -162,7 +162,6 @@ class EditSubcuenta extends EditController
     {
         $subAccount = new Subcuenta();
         $subAccount->loadFromCode($idSubAccount);
-
         $request = $this->request->request->all();
         $params = [
             'grouped' => false,
@@ -173,7 +172,21 @@ class EditSubcuenta extends EditController
         $ledger = new Ledger();
         $ledger->setExercise($subAccount->codejercicio);
         $pages = $ledger->generate($request['dateFrom'], $request['dateTo'], $params);
-        $this->exportManager->newDoc($request['format']);
+        $title = self::toolBox()::i18n()->trans('ledger') . ' ' . $subAccount->codsubcuenta;
+        $this->exportManager->newDoc($request['format'], $title);
+
+        // añadimos la tabla de cabecera con la info del informe
+        if ($request['format'] === 'PDF') {
+            $titles = [[
+                self::toolBox()::i18n()->trans('subaccount') => $subAccount->codsubcuenta,
+                self::toolBox()::i18n()->trans('exercise') => $subAccount->codejercicio,
+                self::toolBox()::i18n()->trans('from-date') => $request['dateFrom'],
+                self::toolBox()::i18n()->trans('until-date') => $request['dateTo']
+            ]];
+            $this->exportManager->addTablePage(array_keys($titles[0]), $titles);
+        }
+
+        // tablas con los listados
         foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);
             $this->exportManager->addTablePage($headers, $data);
