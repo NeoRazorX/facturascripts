@@ -46,7 +46,7 @@ class BalanceAmounts extends AccountingBase
     {
         parent::__construct();
 
-        /// needed dependencies
+        // needed dependencies
         new Partida();
     }
 
@@ -66,15 +66,15 @@ class BalanceAmounts extends AccountingBase
         $this->format = $params['format'];
         $level = (int)$params['level'] ?? 0;
 
-        /// get accounts
+        // get accounts
         $cuenta = new Cuenta();
         $accounts = $cuenta->all($this->getAccountWhere($params), ['codcuenta' => 'ASC'], 0, 0);
 
-        /// get subaccounts
+        // get subaccounts
         $subcuenta = new Subcuenta();
         $subaccounts = $subcuenta->all($this->getSubAccountWhere($params), [], 0, 0);
 
-        /// get amounts
+        // get amounts
         $amounts = $this->getData($params);
 
         $rows = [];
@@ -90,7 +90,7 @@ class BalanceAmounts extends AccountingBase
                 continue;
             }
 
-            /// add account line
+            // add account line
             $bold = strlen($account->codcuenta) <= 1;
             $rows[] = [
                 'cuenta' => $this->formatValue($account->codcuenta, 'text', $bold),
@@ -104,7 +104,7 @@ class BalanceAmounts extends AccountingBase
                 continue;
             }
 
-            /// add subaccount lines
+            // add subaccount lines
             foreach ($amounts as $amount) {
                 if ($amount['idcuenta'] == $account->idcuenta) {
                     $rows[] = $this->processAmountLine($subaccounts, $amount);
@@ -112,11 +112,11 @@ class BalanceAmounts extends AccountingBase
             }
         }
 
-        /// we need this multidimensional array for printing support
+        // we need this multidimensional array for printing support
         $totals = [['debe' => 0.00, 'haber' => 0.00, 'saldo' => 0.00]];
         $this->combineTotals($amounts, $totals);
 
-        /// every page is a table
+        // every page is a table
         return [$rows, $totals];
     }
 
@@ -194,7 +194,7 @@ class BalanceAmounts extends AccountingBase
     }
 
     /**
-     * Return the appropiate data from database.
+     * Return the appropriate data from database.
      *
      * @return array
      */
@@ -217,12 +217,13 @@ class BalanceAmounts extends AccountingBase
     }
 
     /**
-     *
      * @param array $params
-     * @return DataBaseWhere
+     *
+     * @return DataBaseWhere[]
      */
-    protected function getAccountWhere(array $params = []) {
-        $where = [ new DataBaseWhere('codejercicio', $this->exercise->codejercicio) ];
+    protected function getAccountWhere(array $params = []): array
+    {
+        $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
 
         $subaccountFrom = $params['subaccount-from'] ?? '';
         if (!empty($subaccountFrom)) {
@@ -278,12 +279,13 @@ class BalanceAmounts extends AccountingBase
     }
 
     /**
-     *
      * @param array $params
-     * @return DataBaseWhere
+     *
+     * @return DataBaseWhere[]
      */
-    protected function getSubAccountWhere(array $params = []) {
-        $where = [ new DataBaseWhere('codejercicio', $this->exercise->codejercicio) ];
+    protected function getSubAccountWhere(array $params = []): array
+    {
+        $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
 
         $subaccountFrom = $params['subaccount-from'] ?? '';
         if (!empty($subaccountFrom)) {
