@@ -168,6 +168,17 @@
     </style>
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function () {
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
+                $("input,textarea").filter(":not([readonly='readonly']):not([disabled='disabled']):not([type='hidden'])").first().focus();
+            }
+        });
+    </script>
+{% endblock %}
+
 {% macro optionsButton(fsc, firstView, i18n) %}
     {% set show = false %}
     {% for viewName, view in fsc.views %}
