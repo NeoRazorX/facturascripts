@@ -1,21 +1,21 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
 {% extends "Master/MenuTemplate.html.twig" %}
 
@@ -53,13 +53,14 @@
         </div>
         <div class="row">
             {# -- Top left buttons -- #}
-            <div class="col-md col-8 mb-2">
+            <div class="col-md-8 mb-2">
                 <div class="btn-group bg-white">
                     <a href="{{ firstView.model.url('list') }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-list fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-lg-inline-block">{{ i18n.trans('all') }}</span>
                     </a>
-                    <a href="{{ firstView.model.url('edit') }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
+                    <a href="{{ firstView.model.url('edit') }}" class="btn btn-sm btn-outline-secondary"
+                       title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                 </div>
@@ -82,22 +83,17 @@
             </div>
             {# -- Top right text -- #}
             <div class="col-md d-none d-md-inline-block text-right">
-                <h1 class="h4">
-                    {{ i18n.trans(pageData.title) }}<br/>
-                    {% if fsc.hasData %}
-                        <small class="text-info">{{ firstView.model.primaryDescription() | raw }}</small>
-                    {% else %}
-                        <small class="text-info">{{ i18n.trans('new') }}</small>
-                    {% endif %}
-                </h1>
-            </div>
-            {# -- Top right icon -- #}
-            <div class="col-lg-1 d-none d-lg-inline-block text-center">
                 {% set image = fsc.getImageUrl() %}
                 {% if image is empty %}
-                    <i class="{{ pageData.icon }} fa-3x" aria-hidden="true"></i>
+                    <i class="{{ pageData.icon }} fa-3x pl-3 float-right" aria-hidden="true"></i>
                 {% else %}
-                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail" style="margin-bottom: 10px;"/>
+                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail ml-3 mb-2 float-right"/>
+                {% endif %}
+                <h1 class="h5 mb-0">{{ i18n.trans(pageData.title) }}</h1>
+                {% if fsc.hasData %}
+                    <p class="text-info mb-2">{{ firstView.model.primaryDescription() | raw }}</p>
+                {% else %}
+                    <p class="text-info mb-2">{{ i18n.trans('new') }}</p>
                 {% endif %}
             </div>
         </div>
@@ -115,12 +111,14 @@
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
                             {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-toggle="pill" href="#{{ viewName }}"
+                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-toggle="pill"
+                               href="#{{ viewName }}"
                                role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
                                 {% if view.count >= 1 and viewName != firstView.getViewName() %}
                                     <span class='badge badge-secondary float-right'>{{ view.count }}</span>
                                 {% endif %}
-                                <i class="{{ view.icon }} fa-fw d-none d-xl-inline-block" aria-hidden="true"></i> {{ view.title }}
+                                <i class="{{ view.icon }} fa-fw d-none d-xl-inline-block"
+                                   aria-hidden="true"></i> {{ view.title }}
                             </a>
                         {% endfor %}
                     </div>
@@ -135,9 +133,11 @@
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
                             {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab2" data-toggle="tab" href="#{{ viewName }}"
+                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab2" data-toggle="tab"
+                               href="#{{ viewName }}"
                                role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
-                                {% if view.count > 1 %}<span class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
+                                {% if view.count > 1 %}<span
+                                        class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
                                 <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i>
                             </a>
                         {% endfor %}
@@ -147,7 +147,8 @@
                 <div class="tab-content" id="mainTabsContent">
                     {% for viewName, view in fsc.views %}
                         {% set active = (viewName == fsc.active) ? ' show active' : '' %}
-                        <div class="tab-pane fade{{ active }}" id="{{ viewName }}" role="tabpanel" aria-labelledby="{{ viewName }}-tab">
+                        <div class="tab-pane fade{{ active }}" id="{{ viewName }}" role="tabpanel"
+                             aria-labelledby="{{ viewName }}-tab">
                             {% do fsc.setCurrentView(viewName) %}
                             {{ include(view.template) }}
                         </div>
@@ -177,14 +178,16 @@
     {% if show %}
         <div class="btn-group">
             <div class="dropdown">
-                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-wrench fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-lg-inline-block">{{ i18n.trans('options') }}</span>
                 </button>
                 <div class="dropdown-menu">
                     {% for viewName, view in fsc.views %}
                         {% if view.settings.active and view.columns is not empty %}
-                            <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
+                            <a class="dropdown-item"
+                               href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
                                 <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
                             </a>
                         {% endif %}
@@ -197,11 +200,13 @@
 
 {% macro printButton(fsc, firstView, i18n) %}
     <div class="btn-group bg-white">
-        <a href="{{ firstView.model.url() }}&action=export&option={{ fsc.exportManager.defaultOption() }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+        <a href="{{ firstView.model.url() }}&action=export&option={{ fsc.exportManager.defaultOption() }}"
+           target="_blank" class="btn btn-sm btn-outline-secondary">
             <i class="fas fa-print fa-fw" aria-hidden="true"></i>
             <span class="d-none d-lg-inline-block">{{ i18n.trans('print') }}</span>
         </a>
-        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="sr-only">{{ i18n.trans('more') }}</span>
         </button>
         <div class="dropdown-menu dropdown-menu-right">
@@ -231,7 +236,7 @@
         </div>
     </div>
     <form action="{{ firstView.model.url() }}" method="post" target="_blank">
-        <input type="hidden" name="action" value="export" />
+        <input type="hidden" name="action" value="export"/>
         <div class="modal fade" id="advancedExportModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

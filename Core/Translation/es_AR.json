@@ -332,7 +332,7 @@
     "delete-opening": "Eliminar el asiento de apertura",
     "delete-record": "Eliminar registro",
     "deleted-model": "Eliminado %model% (%key%) %desc%",
-    "delivery-note": "Guía de Despacho",
+    "delivery-note": "Remito",
     "delivery-note-email-subject": "Su albarán %code%",
     "delivery-note-email-text": "Hola, le adjunto su albarán %code%",
     "delivery-notes": "Remitos",
