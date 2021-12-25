@@ -138,7 +138,7 @@ class RowButton extends VisualItem
         }
 
         $cssClass = 'btn btn-sm ';
-        $cssClass .= empty($this->color) ? 'btn-outline-secondary' : $this->colorToClass($this->color, 'btn-outline-');
+        $cssClass .= empty($this->color) ? 'btn-secondary' : $this->colorToClass($this->color, 'btn-');
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
 

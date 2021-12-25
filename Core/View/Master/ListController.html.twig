@@ -39,18 +39,18 @@
                         <li class="breadcrumb-item active" aria-current="page">{{ fsc.title }}</li>
                     </ol>
                 </nav>
-                <div class="btn-group bg-white">
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}"
+                <div class="btn-group">
+                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}"
                        title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                     {% if pageData.name == fsc.user.homepage %}
-                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE"
+                        <a class="btn btn-sm btn-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE"
                            title="{{ i18n.trans('marked-as-homepage') }}">
                             <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
-                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
+                        <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
                            title="{{ i18n.trans('mark-as-homepage') }}">
                             <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>

@@ -1,21 +1,21 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
 {% set currentView = fsc.getCurrentView() %}
 
@@ -48,7 +48,8 @@
             <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
             <div class="card border-success shadow mb-2">
                 <div class="card-body p-2">
-                    <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse" data-target="#{{ formName }}Collapse" aria-expanded="false">
+                    <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse"
+                            data-target="#{{ formName }}Collapse" aria-expanded="false">
                         <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
                         {{ i18n.trans('add') }}
                     </button>
@@ -92,7 +93,8 @@
                     <div class="row">
                         {% if currentView.settings.btnDelete %}
                             <div class="col">
-                                <button type="button" class="btn btn-sm btn-danger" onclick="editListViewDelete('{{ currentView.getViewName() ~ counter }}');">
+                                <button type="button" class="btn btn-sm btn-danger"
+                                        onclick="editListViewDelete('{{ currentView.getViewName() ~ counter }}');">
                                     <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
                                     <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
                                 </button>
@@ -130,10 +132,11 @@
             <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
             <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
             <div class="text-center pt-3">
-                <div class="btn-group bg-white">
+                <div class="btn-group">
                     {% for page in currentView.getPagination() %}
                         {% set btnClass = page.active ? 'btn btn-outline-dark active' : 'btn btn-outline-dark' %}
-                        <button type="button" class="{{ btnClass }}" onclick="editListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
+                        <button type="button" class="{{ btnClass }}"
+                                onclick="editListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
                             {{ page.num }}
                         </button>
                     {% endfor %}
