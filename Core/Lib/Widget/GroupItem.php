@@ -201,11 +201,11 @@ class GroupItem extends VisualItem
     {
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         if (empty($this->description)) {
-            return '<legend class="text-info mt-3">' . $icon . static::$i18n->trans($this->title) . '</legend>';
+            return '<legend class="text-info mt-2 mb-0">' . $icon . static::$i18n->trans($this->title) . '</legend>';
         }
 
-        return '<legend class="text-info mt-3 mb-0">' . $icon . static::$i18n->trans($this->title) . '</legend>'
-            . '<small class="form-text text-muted w-100 mb-3">' . static::$i18n->trans($this->description) . '</small>';
+        return '<legend class="text-info mt-2 mb-1">' . $icon . static::$i18n->trans($this->title) . '</legend>'
+            . '<small class="form-text text-muted w-100 mb-2">' . static::$i18n->trans($this->description) . '</small>';
     }
 
     /**

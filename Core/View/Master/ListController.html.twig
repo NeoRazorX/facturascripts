@@ -22,7 +22,7 @@
 {% block bodyHeaderOptions %}
     {{ parent() }}
     {% set pageData = fsc.getPageData() %}
-    <div class="container-fluid mb-1 d-print-none">
+    <div class="container-fluid mb-3 d-print-none">
         <div class="row">
             <div class="col-md-7">
                 {# -- Page data for small devices -- #}
@@ -75,10 +75,9 @@
                 </div>
             </div>
             <div class="col-md-5 text-right">
-                <h1 class="h3 d-none d-md-inline-block">
-                    {{ fsc.title }} <i class="{{ pageData.icon }}" aria-hidden="true"></i>
+                <h1 class="h4 mb-0 d-none d-md-inline-block">
+                    {{ fsc.title }}<i class="{{ pageData.icon }} ml-3" aria-hidden="true"></i>
                 </h1>
-                <br class="d-md-none"/>
             </div>
         </div>
     </div>
