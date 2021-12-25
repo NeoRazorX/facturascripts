@@ -66,7 +66,6 @@
                 </div>
                 {# -- Options button -- #}
                 {{ _self.optionsButton(fsc, firstView, i18n) }}
-                &nbsp;
                 {# -- New button -- #}
                 {% if fsc.hasData and firstView.settings.btnNew %}
                     <a href="{{ firstView.model.url('new') }}" class="btn btn-sm btn-success">
@@ -106,19 +105,18 @@
         <div class="row">
             {# -- Left Panel -- #}
             {% if fsc.views | length > 1 %}
-                <div class="col-lg-2 d-none d-lg-inline-block">
-                    <div class="nav flex-column nav-pills" id="mainTabs" role="tablist">
+                <div class="col-lg-2">
+                    {# -- Left tabs -- #}
+                    <div class="nav nav-pills flex-row flex-lg-column pb-3" id="mainTabs" role="tablist">
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
                             {% set disable = view.settings.active ? '' : ' disabled' %}
                             <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-toggle="pill"
-                               href="#{{ viewName }}"
-                               role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
+                               href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
+                                <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
                                 {% if view.count >= 1 and viewName != firstView.getViewName() %}
-                                    <span class='badge badge-secondary float-right'>{{ view.count }}</span>
+                                    <span class='badge badge-secondary mt-lg-1 mb-lg-1 float-lg-right'>{{ view.count }}</span>
                                 {% endif %}
-                                <i class="{{ view.icon }} fa-fw d-none d-xl-inline-block"
-                                   aria-hidden="true"></i> {{ view.title }}
                             </a>
                         {% endfor %}
                     </div>
@@ -127,22 +125,6 @@
             {# -- Right Panel -- #}
             {% set rightPanelClass = (fsc.views | length > 1) ? 'col-lg-10' : 'col' %}
             <div class="{{ rightPanelClass }}">
-                {# -- Tabs on top when screen is small -- #}
-                {% if fsc.views | length > 1 %}
-                    <div class="nav nav-tabs d-lg-none" role="tablist">
-                        {% for viewName, view in fsc.views %}
-                            {% set active = (viewName == fsc.active) ? ' active' : '' %}
-                            {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab2" data-toggle="tab"
-                               href="#{{ viewName }}"
-                               role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
-                                {% if view.count > 1 %}<span
-                                        class='badge badge-secondary float-right'>{{ view.count }}</span>{% endif %}
-                                <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i>
-                            </a>
-                        {% endfor %}
-                    </div>
-                {% endif %}
                 {# -- Tab content -- #}
                 <div class="tab-content" id="mainTabsContent">
                     {% for viewName, view in fsc.views %}
@@ -189,7 +171,7 @@
     {% if show %}
         <div class="btn-group">
             <div class="dropdown">
-                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+                <button class="btn btn-sm btn-secondary mr-3 dropdown-toggle" type="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-wrench fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-lg-inline-block">{{ i18n.trans('options') }}</span>

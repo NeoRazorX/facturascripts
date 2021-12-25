@@ -1,45 +1,42 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
 {% extends "Master/PanelController.html.twig" %}
 
 {% block bodyHeaderOptions %}
     {{ parent() }}
-    <div class="container-fluid d-print-none">
-        <div class="row">
-            <div class="col">
-                <ul class="nav nav-tabs" id="mainTabs" role="tablist">
-                    {% for viewName, view in fsc.views %}
-                        <li class="nav-item">
-                            {% set active = (viewName == fsc.active) ? ' active' : '' %}
-                            {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
-                                <i class="{{ view.icon }}" aria-hidden="true"></i>
-                                <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
-                                {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>{% endif %}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </div>
+    <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
+        {% for viewName, view in fsc.views %}
+            <li class="nav-item">
+                {% set active = (viewName == fsc.active) ? ' active' : '' %}
+                {% set disable = view.settings.active ? '' : ' disabled' %}
+                <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-toggle="tab" role="tab"
+                   aria-controls="{{ viewName }}">
+                    <i class="{{ view.icon }}" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">{{ view.title }}</span>
+                    {% if view.count > 0 %}
+                        <span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>
+                    {% endif %}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
 
 {% block body %}
@@ -60,6 +57,7 @@
         body {
             background-color: transparent;
         }
+
         .bg-header {
             background-color: #FAFBFC;
         }
