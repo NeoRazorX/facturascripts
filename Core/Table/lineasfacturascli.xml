@@ -123,12 +123,13 @@
         <type>PRIMARY KEY (idlinea)</type>
     </constraint>
     <constraint>
-        <name>ca_lineasfacturascli_facturascli</name>
-        <type>FOREIGN KEY (idfactura) REFERENCES facturascli (idfactura) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <name>ca_lineasfacturascli_facturascli2</name>
+        <type>FOREIGN KEY (idfactura) REFERENCES facturascli (idfactura) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>ca_lineasfacturascli_linearect</name>
-        <type>FOREIGN KEY (idlinearect) REFERENCES lineasfacturascli (idlinea) ON DELETE RESTRICT ON UPDATE CASCADE</type>
+        <name>ca_lineasfacturascli_linearect2</name>
+        <type>FOREIGN KEY (idlinearect) REFERENCES lineasfacturascli (idlinea) ON DELETE SET NULL ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_lineasfacturascli_impuestos</name>
