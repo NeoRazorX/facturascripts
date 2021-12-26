@@ -17,7 +17,7 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 #}
-{% extends "Master/MenuTemplate.html.twig" %}
+{% extends "Master/MenuBghTemplate.html.twig" %}
 
 {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 {% set allPlugins = fsc.getAllPlugins() %}
@@ -41,7 +41,7 @@
                     {% else %}
                         <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
                            title="{{ i18n.trans('mark-as-homepage') }}">
-                            <i class="fas fa-bookmark" aria-hidden="true"></i>
+                            <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                 </div>
@@ -143,15 +143,6 @@
             </div>
         </form>
     {% endif %}
-{% endblock %}
-
-{% block css %}
-    {{ parent() }}
-    <style>
-        .bg-header {
-            background-color: #FAFBFC;
-        }
-    </style>
 {% endblock %}
 
 {% block javascripts %}

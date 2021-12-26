@@ -1,27 +1,33 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
-{% extends "Master/MenuTemplate.html.twig" %}
+{% extends "Master/MenuBghTemplate.html.twig" %}
+
+{% block bodyHeaderOptions %}
+    <br/>
+    <br/>
+    <br/>
+{% endblock %}
 
 {% block body %}
     <form method="post">
-        <input type="hidden" name="action" value="export" />
+        <input type="hidden" name="action" value="export"/>
         <div class="container" style="margin-top: -60px;">
             <div class="row">
                 <div class="col-12">
@@ -37,7 +43,8 @@
                                         <select name="idempresa" class="form-control">
                                             {% for empresa in fsc.empresa.all() %}
                                                 {% if empresa.idempresa == fsc.idempresa %}
-                                                    <option value="{{ empresa.idempresa }}" selected="">{{ empresa.nombrecorto | raw }}</option>
+                                                    <option value="{{ empresa.idempresa }}"
+                                                            selected="">{{ empresa.nombrecorto | raw }}</option>
                                                 {% else %}
                                                     <option value="{{ empresa.idempresa }}">{{ empresa.nombrecorto | raw }}</option>
                                                 {% endif %}
@@ -51,7 +58,8 @@
                                         <select name="source" class="form-control">
                                             {% if fsc.source == 'purchases' %}
                                                 <option value="sales">{{ i18n.trans('sales') }}</option>
-                                                <option value="purchases" selected="">{{ i18n.trans('purchases') }}</option>
+                                                <option value="purchases"
+                                                        selected="">{{ i18n.trans('purchases') }}</option>
                                             {% else %}
                                                 <option value="sales" selected="">{{ i18n.trans('sales') }}</option>
                                                 <option value="purchases">{{ i18n.trans('purchases') }}</option>
@@ -62,13 +70,15 @@
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         {{ i18n.trans('from-date') }}
-                                        <input type="date" name="datefrom" value="{{ fsc.datefrom }}" class="form-control" required="" />
+                                        <input type="date" name="datefrom" value="{{ fsc.datefrom }}"
+                                               class="form-control" required=""/>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         {{ i18n.trans('until-date') }}
-                                        <input type="date" name="dateto" value="{{ fsc.dateto }}" class="form-control" required="" />
+                                        <input type="date" name="dateto" value="{{ fsc.dateto }}" class="form-control"
+                                               required=""/>
                                     </div>
                                 </div>
                             </div>
@@ -97,15 +107,4 @@
             </div>
         </div>
     </form>
-{% endblock %}
-
-
-{% block css %}
-    {{ parent() }}
-    <style>
-        .bg-header {
-            background-color: #FAFBFC;
-            padding-bottom: 90px;
-        }
-    </style>
 {% endblock %}

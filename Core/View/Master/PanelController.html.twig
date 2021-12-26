@@ -17,7 +17,7 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 #}
-{% extends "Master/MenuTemplate.html.twig" %}
+{% extends "Master/MenuBgTemplate.html.twig" %}
 
 {% block bodyHeaderOptions %}
     {{ parent() }}
@@ -90,9 +90,9 @@
                 {% endif %}
                 <h1 class="h5 mb-0">{{ i18n.trans(pageData.title) }}</h1>
                 {% if fsc.hasData %}
-                    <p class="text-info mb-2">{{ firstView.model.primaryDescription() | raw }}</p>
+                    <p class="text-info mb-3">{{ firstView.model.primaryDescription() | raw }}</p>
                 {% else %}
-                    <p class="text-info mb-2">{{ i18n.trans('new') }}</p>
+                    <p class="text-info mb-3">{{ i18n.trans('new') }}</p>
                 {% endif %}
             </div>
         </div>
@@ -140,15 +140,6 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block css %}
-    {{ parent() }}
-    <style>
-        body {
-            background-color: #FAFBFC;
-        }
-    </style>
 {% endblock %}
 
 {% block javascripts %}

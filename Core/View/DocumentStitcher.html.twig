@@ -17,7 +17,7 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 #}
-{% extends "Master/MenuTemplate.html.twig" %}
+{% extends "Master/MenuBgTemplate.html.twig" %}
 {% set pageData = fsc.getPageData() %}
 
 {% block body %}
@@ -166,10 +166,6 @@
 {% block css %}
     {{ parent() }}
     <style>
-        body {
-            background-color: #FAFBFC;
-        }
-
         .td-quantity {
             width: 165px;
         }
