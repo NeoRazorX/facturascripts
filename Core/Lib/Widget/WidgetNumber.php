@@ -48,21 +48,21 @@ class WidgetNumber extends BaseWidget
      *
      * @var string
      */
-    protected $min;
+    public $min;
 
     /**
      * Indicates the max value
      *
      * @var string
      */
-    protected $max;
+    public $max;
 
     /**
      * Indicates the step value
      *
      * @var string
      */
-    protected $step;
+    public $step;
 
     /**
      *
