@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\CuentaEspecial;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -70,5 +71,10 @@ final class CuentaEspecialTest extends TestCase
     protected function tearDown()
     {
         $this->logErrors();
+    }
+
+    protected function tools()
+    {
+        return new ToolBox();
     }
 }
