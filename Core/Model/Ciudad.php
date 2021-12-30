@@ -20,7 +20,7 @@ namespace FacturaScripts\Core\Model;
 
 /**
  * Ciudad
- * 
+ *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Frank Aguirre        <faguirre@soenac.com>
  */
@@ -58,7 +58,7 @@ class Ciudad extends Base\ModelClass
     public $idprovincia;
 
     /**
-     * 
+     *
      * @return string
      */
     public function install()
@@ -72,7 +72,7 @@ class Ciudad extends Base\ModelClass
     /**
      * Primary column
      *
-     * @return string
+     * @return int
      */
     public static function primaryColumn()
     {
@@ -87,6 +87,16 @@ class Ciudad extends Base\ModelClass
     public static function tableName()
     {
         return 'ciudades';
+    }
+
+    /**
+     *
+     * @return bool
+     */
+    public function test()
+    {
+        $this->ciudad = $this->toolBox()->utils()->noHtml($this->ciudad);
+        return parent::test();
     }
 
     /**
