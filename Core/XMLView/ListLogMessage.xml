@@ -21,8 +21,8 @@
 -->
 <view>
     <columns>
-        <column name="code" display="none" order="0">
-            <widget type="text" fieldname="id" onclick="EditLogMessage"/>
+        <column name="code" order="0">
+            <widget type="text" fieldname="id"/>
         </column>
         <column name="message" order="100">
             <widget type="textarea" fieldname="message"/>
