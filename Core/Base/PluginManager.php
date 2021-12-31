@@ -32,7 +32,7 @@ final class PluginManager
     /**
      * FacturaScripts core version.
      */
-    const CORE_VERSION = 2021.52;
+    const CORE_VERSION = 2021.60;
 
     /**
      * Path to list plugins on file.
@@ -135,7 +135,7 @@ final class PluginManager
      */
     public function enable(string $pluginName): bool
     {
-        /// is pluginName enabled?
+        // is pluginName enabled?
         if (in_array($pluginName, $this->enabledPlugins())) {
             return true;
         }
@@ -208,7 +208,7 @@ final class PluginManager
             return false;
         }
 
-        /// get the facturascripts.ini file inside the zip
+        // get the facturascripts.ini file inside the zip
         $zipIndex = $zipFile->locateName('facturascripts.ini', ZipArchive::FL_NODIR);
         $pathINI = $zipFile->getNameIndex($zipIndex);
         $info = $this->getPluginInfo($zipName, $zipFile->getFromIndex($zipIndex));
@@ -220,12 +220,12 @@ final class PluginManager
             return false;
         }
 
-        /// Removing previous version
+        // Removing previous version
         if (is_dir(self::PLUGIN_PATH . $info['name'])) {
             ToolBox::files()->delTree(self::PLUGIN_PATH . $info['name']);
         }
 
-        /// Extract new version
+        // Extract new version
         if (false === $zipFile->extractTo(self::PLUGIN_PATH)) {
             ToolBox::log()->error('ZIP EXTRACT ERROR: ' . $zipName);
             $zipFile->close();
@@ -234,13 +234,13 @@ final class PluginManager
 
         $zipFile->close();
 
-        /// Rename folder Plugin
+        // Rename folder Plugin
         $folderPluginZip = explode('/', $pathINI);
         if ($folderPluginZip[0] !== $info['name']) {
             rename(self::PLUGIN_PATH . $folderPluginZip[0], self::PLUGIN_PATH . $info['name']);
         }
 
-        /// Deployment required?
+        // Deployment required?
         if (in_array($info['name'], $this->enabledPlugins())) {
             self::$deploymentRequired = true;
         }
@@ -281,7 +281,7 @@ final class PluginManager
             return false;
         }
 
-        /// can't remove enabled plugins
+        // can't remove enabled plugins
         if (in_array($pluginName, $this->enabledPlugins())) {
             ToolBox::i18nLog()->warning('plugin-enabled', ['%pluginName%' => $pluginName]);
             return false;
@@ -431,21 +431,21 @@ final class PluginManager
             return false;
         }
 
-        /// get the facturascripts.ini file inside the zip
+        // get the facturascripts.ini file inside the zip
         $zipIndex = $zipFile->locateName('facturascripts.ini', ZipArchive::FL_NODIR);
         if (false === $zipIndex) {
             ToolBox::i18nLog()->error('plugin-not-compatible', ['%pluginName%' => $zipName, '%version%' => self::CORE_VERSION]);
             return false;
         }
 
-        /// the zip must contain the plugin folder
+        // the zip must contain the plugin folder
         $pathINI = $zipFile->getNameIndex($zipIndex);
         if (count(explode('/', $pathINI)) !== 2) {
             ToolBox::i18nLog()->error('zip-error-wrong-structure');
             return false;
         }
 
-        /// get folders inside the zip file
+        // get folders inside the zip file
         $folders = [];
         for ($index = 0; $index < $zipFile->numFiles; $index++) {
             $data = $zipFile->statIndex($index);
@@ -455,7 +455,7 @@ final class PluginManager
             }
         }
 
-        //// the zip must contain a single plugin
+        // the zip must contain a single plugin
         if (count($folders) != 1) {
             ToolBox::i18nLog()->error('zip-error-wrong-structure');
             return false;

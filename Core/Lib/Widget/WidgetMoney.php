@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\DivisaTools;
@@ -27,15 +28,12 @@ use FacturaScripts\Core\Base\DivisaTools;
  */
 class WidgetMoney extends WidgetNumber
 {
-
     /**
-     *
      * @var DivisaTools
      */
     protected static $divisaTools;
 
     /**
-     * 
      * @param array $data
      */
     public function __construct($data)
@@ -48,7 +46,6 @@ class WidgetMoney extends WidgetNumber
     }
 
     /**
-     * 
      * @return bool
      */
     public function showTableTotals(): bool
@@ -57,7 +54,6 @@ class WidgetMoney extends WidgetNumber
     }
 
     /**
-     * 
      * @param object $model
      */
     protected function setValue($model)
@@ -84,16 +80,14 @@ class WidgetMoney extends WidgetNumber
     }
 
     /**
-     * 
      * @return string
      */
     protected function show()
     {
-        return \is_null($this->value) ? '-' : static::$divisaTools->format($this->value, $this->decimal);
+        return is_null($this->value) ? '-' : static::$divisaTools->format($this->value, $this->decimal);
     }
 
     /**
-     * 
      * @param string $initialClass
      * @param string $alternativeClass
      */
