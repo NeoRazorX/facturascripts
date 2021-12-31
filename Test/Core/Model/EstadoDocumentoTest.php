@@ -110,6 +110,9 @@ final class EstadoDocumentoTest extends TestCase
         $status->tipodoc = 'PresupuestoCliente';
         $this->assertTrue($status->save(), 'estado-documento-cant-save');
         $this->assertFalse($status->editable, 'estado-documento-must-be-not-editable');
+
+        // delete
+        $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
     }
 
     public function testCanNotCreateInvoicesWithGeneration()
