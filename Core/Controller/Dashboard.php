@@ -118,8 +118,9 @@ class Dashboard extends Controller
      */
     private function getStatsMonth(int $previous): string
     {
-        $mask = '-' . $previous . ' month';
-        return strtolower(date('F', strtotime($mask)));
+        $firstDate = date('01-m-Y');
+        $date = $previous > 0 ? date('01-m-Y', strtotime($firstDate . ' -' . $previous . ' month')) : $firstDate;
+        return strtolower(date('F', strtotime($date)));
     }
 
     /**
@@ -132,13 +133,14 @@ class Dashboard extends Controller
      */
     private function getStatsWhere(string $field, int $previous): array
     {
-        $mask = '-' . $previous . ' month';
-        $where = [new DataBaseWhere($field, date('1-m-Y', strtotime($mask)), '>=')];
-        if ($previous > 0) {
-            $mask = '-' . ($previous - 1) . ' month';
-            $where[] = new DataBaseWhere($field, date('1-m-Y', strtotime($mask)), '<');
-        }
-        return $where;
+        $firstDate = date('01-m-Y');
+        $fromDate = $previous > 0 ? date('01-m-Y', strtotime($firstDate . ' -' . $previous . ' month')) : $firstDate;
+        $untilDate = date('01-m-Y', strtotime($fromDate . ' +1 month'));
+
+        return [
+            new DataBaseWhere($field, $fromDate, '>='),
+            new DataBaseWhere($field, $untilDate, '<')
+        ];
     }
 
     /**
