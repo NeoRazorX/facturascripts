@@ -85,6 +85,23 @@
                             <div class="form-row align-items-end">
                                 <div class="col-sm-3">
                                     <div class="form-group">
+                                        {{ i18n.trans('serie') }}
+                                        <select name="codserie" class="form-control">
+                                            <option value="">{{ i18n.trans('all') }}</option>
+                                            <option value="">------</option>
+                                            {% for serie in fsc.serie.all() %}
+                                                {% if serie.codserie == fsc.codserie %}
+                                                    <option value="{{ serie.codserie }}"
+                                                            selected="">{{ serie.descripcion | raw }}</option>
+                                                {% else %}
+                                                    <option value="{{ serie.codserie }}">{{ serie.descripcion | raw }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
                                         {{ i18n.trans('format') }}
                                         <select name="format" class="form-control">
                                             <option value="PDF">PDF</option>
