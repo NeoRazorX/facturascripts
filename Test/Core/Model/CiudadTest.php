@@ -38,9 +38,7 @@ final class CiudadTest extends TestCase
     public function testCreate()
     {
         $province = new Provincia();
-        $province->provincia = 'Test';
-        $province->codpais = 'ESP';
-        $this->assertTrue($province->save(), 'province-cant-save');
+        $province->loadFromCode('1');
 
         $city = new Ciudad();
         $city->ciudad = 'Test';
@@ -49,15 +47,12 @@ final class CiudadTest extends TestCase
         $this->assertNotNull($city->primaryColumnValue(), 'agency-not-stored');
         $this->assertTrue($city->exists(), 'city-cant-persist');
         $this->assertTrue($city->delete(), 'city-cant-delete');
-        $this->assertTrue($province->delete(), 'province-cant-delete');
     }
 
     public function testCreateHtml()
     {
         $province = new Provincia();
-        $province->provincia = 'Test';
-        $province->codpais = 'ESP';
-        $this->assertTrue($province->save(), 'province-cant-save');
+        $province->loadFromCode('1');
 
         $city = new Ciudad();
         $city->ciudad = '<b>Test</b>';
@@ -68,7 +63,6 @@ final class CiudadTest extends TestCase
         $city->loadFromCode($city->idciudad);
         $this->assertTrue($city->ciudad == $description, 'city-wrong-html');
         $this->assertTrue($city->delete(), 'city-cant-delete');
-        $this->assertTrue($province->delete(), 'province-cant-delete');
     }
 
     public function testCreateWithoutProvince()
