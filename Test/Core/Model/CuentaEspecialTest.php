@@ -73,7 +73,7 @@ final class CuentaEspecialTest extends TestCase
         $this->logErrors();
     }
 
-    protected function tools()
+    protected function toolBox()
     {
         return new ToolBox();
     }
