@@ -95,7 +95,7 @@ final class CuentaTest extends TestCase
          * y Cuenta.test() sobrescribe con valores vacíos los
          * id_parent y cod_parent permitiendo grabar la cuenta hija
          * cuando no debería.
-         * 
+         *
         $exercise1 = $this->getExercise();
         $start = \strtotime($exercise1->fechainicio . '-1 year');
         $year = \date('Y', $start);
@@ -147,6 +147,9 @@ final class CuentaTest extends TestCase
 
         $account2->codcuenta = 'Test2';
         $this->assertFalse($account2->save(), 'account-cant-equal-parent');
+
+        $account2->codcuenta = \str_pad('Test', $exercise->longsubcuenta, '0');
+        $this->assertFalse($account2->save(), 'account-cant-longer-subaccount');
 
         $this->assertTrue($account1->delete(), 'account-cant-delete');
     }
