@@ -86,7 +86,7 @@ final class CiudadTest extends TestCase
         $this->logErrors();
     }
 
-    protected function tools()
+    protected function toolBox()
     {
         return new ToolBox();
     }
