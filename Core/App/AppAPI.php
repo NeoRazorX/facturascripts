@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use Exception;
@@ -89,7 +90,7 @@ final class AppAPI extends App
      * In the header you have to pass a token using the header 'Token' or the
      * standard 'X-Auth-Token', returning true if the token passed by any of
      * those headers is valid.
-     * 
+     *
      * We can define a master API KEY in the config.php by defining the constant
      * FS_API_KEY.
      *
@@ -118,14 +119,16 @@ final class AppAPI extends App
     }
 
     /**
-     * @param int    $status
+     * @param int $status
      * @param string $message
      */
     protected function die(int $status, string $message = '')
     {
         $content = ToolBox::i18n()->trans($message);
-        foreach (ToolBox::log()::read() as $log) {
-            $content .= empty($content) ? $log["message"] : "\n" . $log["message"];
+        foreach (ToolBox::log()::read('', ['critical', 'error', 'info', 'notice', 'warning']) as $log) {
+            if ($log['channel'] != 'audit') {
+                $content .= empty($content) ? $log["message"] : "\n" . $log["message"];
+            }
         }
 
         $this->response->setContent(json_encode(['error' => $content]));
