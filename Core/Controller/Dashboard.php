@@ -296,16 +296,16 @@ class Dashboard extends Controller
 
         $this->stats['taxes'] = [
             $this->getStatsMonth(0) =>
-                +$totalModel->all('facturascli', $this->getStatsWhere('fecha', 0), ['total' => 'totaliva + totalrecargo'])[0]->totals['total']
-                - $totalModel->all('facturasprov', $this->getStatsWhere('fecha', 0), ['total' => 'totaliva + totalrecargo'])[0]->totals['total'],
+                +$totalModel->all('facturascli', $this->getStatsWhere('fecha', 0), ['total' => 'sum(totaliva + totalrecargo)'])[0]->totals['total']
+                - $totalModel->all('facturasprov', $this->getStatsWhere('fecha', 0), ['total' => 'sum(totaliva + totalrecargo)'])[0]->totals['total'],
 
             $this->getStatsMonth(1) =>
-                +$totalModel->all('facturascli', $this->getStatsWhere('fecha', 1), ['total' => 'totaliva + totalrecargo'])[0]->totals['total']
-                - $totalModel->all('facturasprov', $this->getStatsWhere('fecha', 1), ['total' => 'totaliva + totalrecargo'])[0]->totals['total'],
+                +$totalModel->all('facturascli', $this->getStatsWhere('fecha', 1), ['total' => 'sum(totaliva + totalrecargo)'])[0]->totals['total']
+                - $totalModel->all('facturasprov', $this->getStatsWhere('fecha', 1), ['total' => 'sum(totaliva + totalrecargo)'])[0]->totals['total'],
 
             $this->getStatsMonth(2) =>
-                +$totalModel->all('facturascli', $this->getStatsWhere('fecha', 2), ['total' => 'totaliva + totalrecargo'])[0]->totals['total']
-                - $totalModel->all('facturasprov', $this->getStatsWhere('fecha', 2), ['total' => 'totaliva + totalrecargo'])[0]->totals['total'],
+                +$totalModel->all('facturascli', $this->getStatsWhere('fecha', 2), ['total' => 'sum(totaliva + totalrecargo)'])[0]->totals['total']
+                - $totalModel->all('facturasprov', $this->getStatsWhere('fecha', 2), ['total' => 'sum(totaliva + totalrecargo)'])[0]->totals['total'],
         ];
 
         $customerModel = new Cliente();
