@@ -293,12 +293,16 @@ class EditFacturaProveedor extends PurchaseDocumentController
             }
         }
 
+        $excludeFields = ['codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora', 'idasiento', 'idestado',
+            'idfacturarect', 'neto', 'netosindto', 'numero', 'pagada', 'total', 'totalirpf', 'totaliva', 'totalrecargo',
+            'totalsuplidos', $invoice->primaryColumn()];
+
         $newRefund = new FacturaProveedor();
-        $newRefund->setAuthor($this->user);
-        $newRefund->setSubject($invoice->getSubject());
+        $newRefund->loadFromData($invoice->toArray(), $excludeFields);
         $newRefund->codigorect = $invoice->codigo;
         $newRefund->codserie = $this->request->request->get('codserie');
         $newRefund->idfacturarect = $invoice->idfactura;
+        $newRefund->nick = $this->user->nick;
         $newRefund->numproveedor = $this->request->request->get('numproveedor');
         $newRefund->observaciones = $this->request->request->get('observaciones');
         $newRefund->setDate($this->request->request->get('fecha'), date(FacturaProveedor::HOUR_STYLE));
