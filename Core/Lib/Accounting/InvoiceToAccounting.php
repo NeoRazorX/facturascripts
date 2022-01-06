@@ -180,18 +180,18 @@ class InvoiceToAccounting extends AccountingClass
 
         $retention = new Retencion();
         if (false === $retention->loadFromPercentage($percentage)) {
-            $this->toolBox()->i18nLog()->warning('irpf-code-not-found');
+            $this->toolBox()->i18nLog()->warning('irpf-record-not-found', ['%value%' => $percentage]);
             return false;
         }
 
-        $irpfAccount = $this->getIRPFPurchaseAccount($retention);
-        if (false === $irpfAccount->exists()) {
+        $account = $this->getIRPFPurchaseAccount($retention);
+        if (false === $account->exists()) {
             $this->toolBox()->i18nLog()->warning('irpfpr-subaccount-not-found');
             return false;
         }
 
         $tool = new PurchasesDocIrpfAccount();
-        $totals = $tool->getTotalsForDocument($this->document, $irpfAccount->codsubcuenta ?? '', $percentage);
+        $totals = $tool->getTotalsForDocument($this->document, $account->codsubcuenta ?? '', $percentage);
         return $this->addLinesFromTotals(
             $entry,
             $totals,
@@ -233,7 +233,7 @@ class InvoiceToAccounting extends AccountingClass
     {
         $tax = new Impuesto();
         foreach ($this->subtotals as $key => $value) {
-            /// search for tax data
+            // search for tax data
             $tax->loadFromCode($key);
             $subaccount = $this->getTaxSupportedAccount($tax);
             if (false === $subaccount->exists()) {
@@ -261,21 +261,21 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $key = array_keys($this->subtotals)[0];
-        $percentaje = $this->subtotals[$key]['irpf'];
+        $percentage = $this->subtotals[$key]['irpf'];
 
         $retention = new Retencion();
-        if (false === $retention->loadFromPercentage($percentaje)) {
-            $this->toolBox()->i18nLog()->warning('irpf-code-not-found');
+        if (false === $retention->loadFromPercentage($percentage)) {
+            $this->toolBox()->i18nLog()->warning('irpf-record-not-found', ['%value%' => $percentage]);
             return false;
         }
 
-        $subaccount = $this->getIRPFSalesAccount($retention);
-        if (false === $subaccount->exists()) {
+        $account = $this->getIRPFSalesAccount($retention);
+        if (false === $account->exists()) {
             $this->toolBox()->i18nLog()->warning('irpf-subaccount-not-found');
             return false;
         }
 
-        $newLine = $this->getBasicLine($entry, $subaccount, true, $this->subtotals[$key]['totalirpf']);
+        $newLine = $this->getBasicLine($entry, $account, true, $this->subtotals[$key]['totalirpf']);
         $newLine->setCounterpart($this->counterpart);
         return $newLine->save();
     }
@@ -313,7 +313,7 @@ class InvoiceToAccounting extends AccountingClass
     {
         $tax = new Impuesto();
         foreach ($this->subtotals as $key => $value) {
-            /// search for tax data
+            // search for tax data
             $tax->loadFromCode($key);
             $subaccount = $this->getTaxImpactedAccount($tax);
             if (false === $subaccount->exists()) {
@@ -321,7 +321,7 @@ class InvoiceToAccounting extends AccountingClass
                 return false;
             }
 
-            /// add tax line
+            // add tax line
             if (false === $this->addTaxLine($entry, $subaccount, $this->counterpart, false, $value)) {
                 return false;
             }
@@ -470,7 +470,7 @@ class InvoiceToAccounting extends AccountingClass
         $entry->idempresa = $this->document->idempresa;
         $entry->importe = $this->document->total;
 
-        /// Assign analytical data defined in Serie model
+        // Assign analytical data defined in Serie model
         $serie = new Serie();
         $serie->loadFromCode($this->document->codserie);
 
