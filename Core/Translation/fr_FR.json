@@ -614,6 +614,7 @@
     "invoice-regularized-cant-change-date": "La facture est dans une régularisation de %tax%. La date ne peut pas être modifiée.",
     "invoice-regularized-cant-delete": "La facture est dans une régularisation de %tax%. Elle ne peut pas être supprimée.",
     "invoice-without-acc-entry": "invoice-without-acc-entry",
+    "invoiced": "invoiced",
     "invoices": "factures",
     "invoices-cant-generate-new-docs": "Las facturas no pueden generar nuevos documentos",
     "ip": "IP",

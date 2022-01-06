@@ -614,6 +614,7 @@
     "invoice-regularized-cant-change-date": "La factura se encuentra dentro de una regularización de %tax%. No se puede modificar la fecha.",
     "invoice-regularized-cant-delete": "La factura se encuentra dentro de una regularización de %tax% No se puede eliminar.",
     "invoice-without-acc-entry": "Factura sin asiento",
+    "invoiced": "Facturado",
     "invoices": "Facturas",
     "invoices-cant-generate-new-docs": "Las facturas no pueden generar nuevos documentos",
     "ip": "IP",

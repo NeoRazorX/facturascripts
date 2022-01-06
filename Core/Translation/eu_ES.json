@@ -614,6 +614,7 @@
     "invoice-regularized-cant-change-date": "Faktura %tax% erregularizazioan dago. Data ezin da aldatu.",
     "invoice-regularized-cant-delete": "Faktura %tax% erregularizazioan dago. Ezin da ezabatu.",
     "invoice-without-acc-entry": "Idazpen gabeko faktura",
+    "invoiced": "Fakturatuta",
     "invoices": "Fakturak",
     "invoices-cant-generate-new-docs": "Fakturak ezin dituzte dokumentu berriak sortu",
     "ip": "IP",

@@ -614,6 +614,7 @@
     "invoice-regularized-cant-change-date": "The invoice is within a regularization of %tax%. The date cann't be modified.",
     "invoice-regularized-cant-delete": "The invoice is within a regularization of %tax%. It cann't be deleted.",
     "invoice-without-acc-entry": "Invoice without accounting entry",
+    "invoiced": "Invoiced",
     "invoices": "Invoices",
     "invoices-cant-generate-new-docs": "Invoices can't generate new documents",
     "ip": "IP",

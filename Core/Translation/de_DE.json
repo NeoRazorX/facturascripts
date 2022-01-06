@@ -614,6 +614,7 @@
     "invoice-regularized-cant-change-date": "Die Rechnung liegt innerhalb einer Regularisierung von 0. Das Datum kann nicht geändert werden.",
     "invoice-regularized-cant-delete": "Die Rechnung liegt innerhalb einer Regularisierung von 0. Sie kann nicht gelöscht werden.",
     "invoice-without-acc-entry": "invoice-without-acc-entry",
+    "invoiced": "berechnet",
     "invoices": "Banknoten",
     "invoices-cant-generate-new-docs": "Las facturas no pueden generar nuevos documentos",
     "ip": "IP",
