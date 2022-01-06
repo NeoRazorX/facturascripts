@@ -620,6 +620,7 @@
     "ip": "IP",
     "ip-banned": "Segurtasun arrazoiengatik sarbidea aldi baterako blokeatu egin da zure IPtik.",
     "irpf": "PFEZ",
+    "irpf-record-not-found": "Registro de IRPF %value%% no encontrado.",
     "irpf-subaccount-not-found": "PFEZ azpikontua ez da aurkitu",
     "is-admin": "Administratzailea da",
     "is-creditor": "Hartzekoduna da",

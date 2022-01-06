@@ -620,6 +620,7 @@
     "ip": "IP",
     "ip-banned": "For security reasons access from your IP has been temporarily blocked.",
     "irpf": "PIT",
+    "irpf-record-not-found": "Registro de IRPF %value%% no encontrado.",
     "irpf-subaccount-not-found": "Income tax subaccount not found",
     "is-admin": "Is administrator",
     "is-creditor": "Is creditor",

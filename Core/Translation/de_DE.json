@@ -620,6 +620,7 @@
     "ip": "IP",
     "ip-banned": "ip-banned",
     "irpf": "Einkommensteuer",
+    "irpf-record-not-found": "Registro de IRPF %value%% no encontrado.",
     "irpf-subaccount-not-found": "irpf-subaccount-not-found",
     "is-admin": "Ist Administrator",
     "is-creditor": "Ist Gläubiger",
