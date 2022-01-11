@@ -63,17 +63,7 @@ abstract class PDFDocument extends PDFCore
     public function __construct()
     {
         parent::__construct();
-        $this->lineHeaders = [
-            'referencia' => ['type' => 'text', 'title' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description')],
-            'cantidad' => ['type' => 'number', 'title' => $this->i18n->trans('quantity')],
-            'pvpunitario' => ['type' => 'number', 'title' => $this->i18n->trans('price')],
-            'dtopor' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto')],
-            'dtopor2' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto-2')],
-            'pvptotal' => ['type' => 'number', 'title' => $this->i18n->trans('net')],
-            'iva' => ['type' => 'percentage', 'title' => $this->i18n->trans('tax')],
-            'recargo' => ['type' => 'percentage', 'title' => $this->i18n->trans('re')],
-            'irpf' => ['type' => 'percentage', 'title' => $this->i18n->trans('irpf')]
-        ];
+        $this->lineHeadersTranslate();
     }
 
     /**
@@ -637,5 +627,22 @@ abstract class PDFDocument extends PDFCore
             $this->pdf->ezText("\n");
             $this->pdf->ezTable($rows, $headers, '', $tableOptions);
         }
+    }
+    
+    protected function lineHeadersTranslate (string $code="") {
+        if(!empty($code)) {
+            $this->i18n->setLang($code);
+        }
+        $this->lineHeaders = [
+            'referencia' => ['type' => 'text', 'title' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description')],
+            'cantidad' => ['type' => 'number', 'title' => $this->i18n->trans('quantity')],
+            'pvpunitario' => ['type' => 'number', 'title' => $this->i18n->trans('price')],
+            'dtopor' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto')],
+            'dtopor2' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto-2')],
+            'pvptotal' => ['type' => 'number', 'title' => $this->i18n->trans('net')],
+            'iva' => ['type' => 'percentage', 'title' => $this->i18n->trans('tax')],
+            'recargo' => ['type' => 'percentage', 'title' => $this->i18n->trans('re')],
+            'irpf' => ['type' => 'percentage', 'title' => $this->i18n->trans('irpf')]
+        ];
     }
 }
