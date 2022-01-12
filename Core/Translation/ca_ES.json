@@ -620,7 +620,7 @@
     "ip": "IP",
     "ip-banned": "Per motius de seguretat s'ha bloquejat temporalment l'accés des de la seva IP.",
     "irpf": "IRPF",
-    "irpf-record-not-found": "Registro de IRPF %value%% no encontrado.",
+    "irpf-record-not-found": "Registre d'IRPF %value%% no trobat.",
     "irpf-subaccount-not-found": "Subcompte d'IRPF no trobada",
     "is-admin": "És administrador",
     "is-creditor": "És creditor",
