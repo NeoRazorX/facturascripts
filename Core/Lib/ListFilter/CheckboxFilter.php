@@ -55,6 +55,7 @@ class CheckboxFilter extends BaseFilter
     public function __construct(string $key, string $field = '', string $label = '', string $operation = '=', $matchValue = true, array $default = [])
     {
         parent::__construct($key, $field, $label);
+        $this->autosubmit = true;
         $this->default = $default;
         $this->matchValue = $matchValue;
         $this->operation = $operation;

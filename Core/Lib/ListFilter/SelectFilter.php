@@ -48,6 +48,7 @@ class SelectFilter extends BaseFilter
     public function __construct(string $key, string $field, string $label, array $values = [])
     {
         parent::__construct($key, $field, $label);
+        $this->autosubmit = true;
         $this->values = $values;
     }
 

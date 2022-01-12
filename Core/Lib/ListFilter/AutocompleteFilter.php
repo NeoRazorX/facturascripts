@@ -63,6 +63,7 @@ class AutocompleteFilter extends BaseFilter
     public function __construct(string $key, string $field, string $label, string $table, string $fieldcode = '', string $fieldtitle = '', array $where = [])
     {
         parent::__construct($key, $field, $label);
+        $this->autosubmit = true;
         $this->table = $table;
         $this->fieldcode = empty($fieldcode) ? $this->field : $fieldcode;
         $this->fieldtitle = empty($fieldtitle) ? $this->fieldcode : $fieldtitle;
