@@ -51,20 +51,9 @@ abstract class PDFDocument extends PDFCore
     const INVOICE_TOTALS_Y = 200;
 
     /**
-     * @var array
-     */
-    protected $lineHeaders;
-
-    /**
      * @var FormatoDocumento
      */
     protected $format;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->lineHeadersTranslate();
-    }
 
     /**
      * Combine address if the parameters don´t empty
@@ -97,11 +86,11 @@ abstract class PDFDocument extends PDFCore
     protected function getDocAddress($subject, $model): string
     {
         if (isset($model->codproveedor)) {
-            $contacto = $subject->getDefaultAddress(); // Traemos en un modelo contacto la dirección por defecto del proveedor
-            return $this->combineAddress($contacto); // Devolvemos la dirección usando combineAddress , pero pasándole el modelo contacto
+            $contacto = $subject->getDefaultAddress();
+            return $this->combineAddress($contacto);
         }
 
-        return $this->combineAddress($model); // Pasamos $p_model porque $p_subject por ejemplo no tiene $p_subject->direccion
+        return $this->combineAddress($model);
     }
 
     /**
@@ -164,6 +153,21 @@ abstract class PDFDocument extends PDFCore
 
         $divisa = new Divisa();
         return $divisa->loadFromCode($code) ? $divisa->descripcion : '';
+    }
+
+    protected function getLineHeaders(): array
+    {
+        return [
+            'referencia' => ['type' => 'text', 'title' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description')],
+            'cantidad' => ['type' => 'number', 'title' => $this->i18n->trans('quantity')],
+            'pvpunitario' => ['type' => 'number', 'title' => $this->i18n->trans('price')],
+            'dtopor' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto')],
+            'dtopor2' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto-2')],
+            'pvptotal' => ['type' => 'number', 'title' => $this->i18n->trans('net')],
+            'iva' => ['type' => 'percentage', 'title' => $this->i18n->trans('tax')],
+            'recargo' => ['type' => 'percentage', 'title' => $this->i18n->trans('re')],
+            'irpf' => ['type' => 'percentage', 'title' => $this->i18n->trans('irpf')]
+        ];
     }
 
     /**
@@ -249,7 +253,7 @@ abstract class PDFDocument extends PDFCore
         ];
 
         // fill headers and options with the line headers information
-        foreach ($this->lineHeaders as $key => $value) {
+        foreach ($this->getLineHeaders() as $key => $value) {
             $headers[$key] = $value['title'];
             if (in_array($value['type'], ['number', 'percentage'], true)) {
                 $tableOptions['cols'][$key] = ['justification' => 'right'];
@@ -259,7 +263,7 @@ abstract class PDFDocument extends PDFCore
         $tableData = [];
         foreach ($model->getlines() as $line) {
             $data = [];
-            foreach ($this->lineHeaders as $key => $value) {
+            foreach ($this->getLineHeaders() as $key => $value) {
                 if ($key === 'referencia') {
                     $data[$key] = empty($line->{$key}) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->{$key} . " - " . $line->descripcion);
                 } elseif ($value['type'] === 'percentage') {
@@ -627,19 +631,5 @@ abstract class PDFDocument extends PDFCore
             $this->pdf->ezText("\n");
             $this->pdf->ezTable($rows, $headers, '', $tableOptions);
         }
-    }
-    
-    protected function lineHeadersTranslate () {    
-        $this->lineHeaders = [
-            'referencia' => ['type' => 'text', 'title' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description')],
-            'cantidad' => ['type' => 'number', 'title' => $this->i18n->trans('quantity')],
-            'pvpunitario' => ['type' => 'number', 'title' => $this->i18n->trans('price')],
-            'dtopor' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto')],
-            'dtopor2' => ['type' => 'percentage', 'title' => $this->i18n->trans('dto-2')],
-            'pvptotal' => ['type' => 'number', 'title' => $this->i18n->trans('net')],
-            'iva' => ['type' => 'percentage', 'title' => $this->i18n->trans('tax')],
-            'recargo' => ['type' => 'percentage', 'title' => $this->i18n->trans('re')],
-            'irpf' => ['type' => 'percentage', 'title' => $this->i18n->trans('irpf')]
-        ];
     }
 }
