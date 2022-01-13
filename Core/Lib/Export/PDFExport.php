@@ -225,7 +225,7 @@ class PDFExport extends PDFDocument
      */
     public function newDoc(string $title, int $idformat, string $langcode)
     {
-        $this->lineHeadersTranslate($langcode);
+        
         $this->setFileName($title);
 
         if (!empty($idformat)) {
@@ -236,6 +236,7 @@ class PDFExport extends PDFDocument
         if (!empty($langcode)) {
             $this->i18n->setLang($langcode);
         }
+        $this->lineHeadersTranslate();
     }
 
     /**

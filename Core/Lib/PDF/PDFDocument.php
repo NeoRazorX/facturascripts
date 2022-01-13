@@ -629,10 +629,7 @@ abstract class PDFDocument extends PDFCore
         }
     }
     
-    protected function lineHeadersTranslate (string $code="") {
-        if(!empty($code)) {
-            $this->i18n->setLang($code);
-        }
+    protected function lineHeadersTranslate () {    
         $this->lineHeaders = [
             'referencia' => ['type' => 'text', 'title' => $this->i18n->trans('reference') . ' - ' . $this->i18n->trans('description')],
             'cantidad' => ['type' => 'number', 'title' => $this->i18n->trans('quantity')],
