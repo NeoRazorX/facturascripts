@@ -461,7 +461,7 @@
     "family-code": "Familiencode",
     "fax": "Fax",
     "february": "Febrero",
-    "field-can-not-be-null": "Field %fieldName% on table %tableName% can't be null",
+    "field-can-not-be-null": "Das Feld %fieldName% der Tabelle %tableName% kann nicht Null sein",
     "file": "archivieren",
     "file-name": "Dateiname",
     "file-not-exists": "File not exists: %fileName%",

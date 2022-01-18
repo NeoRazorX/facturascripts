@@ -1,21 +1,21 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
 {% extends "Master/MenuTemplate.html.twig" %}
 
@@ -24,21 +24,23 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="btn-group">
-                    <a href="AdminPlugins" class="btn btn-sm btn-outline-secondary">
+                    <a href="AdminPlugins" class="btn btn-sm btn-secondary">
                         <i class="fas fa-arrow-left fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">{{ i18n.trans('plugins') }} </span>
                     </a>
-                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
+                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-secondary" title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                 </div>
                 {% if fsc.telemetryManager.ready() %}
-                    <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal" data-target="#modalTelemetry">
+                    <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal"
+                            data-target="#modalTelemetry">
                         <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">{{ i18n.trans('register-installation') }} </span>
                     </button>
                 {% else %}
-                    <button class="btn btn-sm btn-warning" type="button" data-toggle="modal" data-target="#modalTelemetry">
+                    <button class="btn btn-sm btn-warning" type="button" data-toggle="modal"
+                            data-target="#modalTelemetry">
                         <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-md-inline-block">{{ i18n.trans('register-installation') }}</span>
                     </button>
@@ -56,41 +58,44 @@
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
-                <tr>
-                    <th scope="col">{{ i18n.trans('component') }}</th>
-                    <th scope="col">{{ i18n.trans('description') }}</th>
-                    <th scope="col" class="text-right">{{ i18n.trans('action') }}</th>
-                </tr>
+            <tr>
+                <th scope="col">{{ i18n.trans('component') }}</th>
+                <th scope="col">{{ i18n.trans('description') }}</th>
+                <th scope="col" class="text-right">{{ i18n.trans('action') }}</th>
+            </tr>
             </thead>
             <tbody>
-                {% for item in fsc.updaterItems %}
-                    <tr class="{{ item.stable ? 'table-success' : 'table-warning' }}">
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.description }}</td>
-                        <td class="text-right">
-                            {% if item.downloaded %}
-                                <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
-                                    <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ i18n.trans('update') }}
-                                </a>
-                                <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}" class="btn btn-sm btn-warning">
-                                    <i class="fas fa-times fa-fw" aria-hidden="true"></i> {{ i18n.trans('cancel') }}
-                                </a>
-                            {% elseif item.stable %}
-                                <a href="{{ fsc.url() }}?action=download&item={{ item.id }}" class="btn btn-sm btn-secondary">
-                                    <i class="fas fa-cloud-download-alt fa-fw" aria-hidden="true"></i> {{ i18n.trans('download') }}
-                                </a>
-                            {% else %}
-                                <a href="{{ fsc.url() }}?action=download&item={{ item.id }}" class="btn btn-sm btn-outline-warning">
-                                    <i class="fas fa-flask fa-fw" aria-hidden="true"></i> {{ i18n.trans('beta') }}
-                                </a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr class="table-warning">
-                        <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
-                    </tr>
-                {% endfor %}
+            {% for item in fsc.updaterItems %}
+                <tr class="{{ item.stable ? 'table-success' : 'table-warning' }}">
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.description }}</td>
+                    <td class="text-right">
+                        {% if item.downloaded %}
+                            <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
+                                <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ i18n.trans('update') }}
+                            </a>
+                            <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-times fa-fw" aria-hidden="true"></i> {{ i18n.trans('cancel') }}
+                            </a>
+                        {% elseif item.stable %}
+                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
+                               class="btn btn-sm btn-secondary">
+                                <i class="fas fa-cloud-download-alt fa-fw"
+                                   aria-hidden="true"></i> {{ i18n.trans('download') }}
+                            </a>
+                        {% else %}
+                            <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
+                               class="btn btn-sm btn-outline-warning">
+                                <i class="fas fa-flask fa-fw" aria-hidden="true"></i> {{ i18n.trans('beta') }}
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr class="table-warning">
+                    <td colspan="3"><b>{{ i18n.trans('no-data') }}</b></td>
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
@@ -113,10 +118,11 @@
                     </div>
                 {% else %}
                     <form action="{{ fsc.url() }}" method="post">
-                        <input type="hidden" name="action" value="register" />
+                        <input type="hidden" name="action" value="register"/>
                         <div class="modal-header">
                             <h5 class="modal-title">{{ i18n.trans('register-installation') }}</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="{{ i18n.trans('close') }}">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
