@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -145,7 +145,7 @@ class EditCliente extends ComercialContactController
         if ($return && $this->active === $this->getMainViewName()) {
             $this->checkSubaccountLength($this->getModel()->codsubcuenta);
 
-            /// update contact emal and phones when customer email or phones are updated
+            // update contact email and phones when customer email or phones are updated
             $this->updateContact($this->views[$this->active]->model);
         }
 
@@ -161,7 +161,7 @@ class EditCliente extends ComercialContactController
             return false;
         }
 
-        /// redirect to returnUrl if return is defined
+        // redirect to returnUrl if return is defined
         $returnUrl = $this->request->query->get('return');
         if (!empty($returnUrl)) {
             $model = $this->views[$this->active]->model;
@@ -216,31 +216,31 @@ class EditCliente extends ComercialContactController
      */
     protected function setCustomWidgetValues(string $viewName)
     {
-        /// Load values option to VAT Type select input
+        // Load values option to VAT Type select input
         $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
         if ($columnVATType && $columnVATType->widget->getType() === 'select') {
             $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
         }
 
-        /// Model exists?
+        // Model exists?
         if (false === $this->views[$viewName]->model->exists()) {
             $this->views[$viewName]->disableColumn('billing-address');
             $this->views[$viewName]->disableColumn('shipping-address');
             return;
         }
 
-        /// Search for client contacts
+        // Search for client contacts
         $codcliente = $this->getViewModelValue($viewName, 'codcliente');
         $where = [new DataBaseWhere('codcliente', $codcliente)];
         $contacts = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', false, $where);
 
-        /// Load values option to default billing address from client contacts list
+        // Load values option to default billing address from client contacts list
         $columnBilling = $this->views[$viewName]->columnForName('billing-address');
         if ($columnBilling && $columnBilling->widget->getType() === 'select') {
             $columnBilling->widget->setValuesFromCodeModel($contacts);
         }
 
-        /// Load values option to default shipping address from client contacts list
+        // Load values option to default shipping address from client contacts list
         $columnShipping = $this->views[$viewName]->columnForName('shipping-address');
         if ($columnShipping && $columnShipping->widget->getType() === 'select') {
             $contacts2 = $this->codeModel->all('contactos', 'idcontacto', 'descripcion', true, $where);
