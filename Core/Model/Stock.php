@@ -101,6 +101,11 @@ class Stock extends Base\ModelClass
     public $stockmin;
 
     /**
+     * @var string
+     */
+    public $ubicacion;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -214,6 +219,8 @@ class Stock extends Base\ModelClass
      */
     public function test()
     {
+        $this->ubicacion = self::toolBox()::utils()::noHtml($this->ubicacion);
+
         // el stock no puede reflejar situaciones imposibles, como stock negativo
         $this->cantidad = $this->cantidad < 0 ? 0 : round($this->cantidad, self::MAX_DECIMALS);
         $this->reservada = round($this->reservada, self::MAX_DECIMALS);
