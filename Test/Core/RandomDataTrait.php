@@ -19,9 +19,12 @@
 
 namespace FacturaScripts\Test\Core;
 
+use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\User;
@@ -44,6 +47,28 @@ trait RandomDataTrait
         return $cliente;
     }
 
+    protected function getRandomCustomerInvoice(): FacturaCliente
+    {
+        // creamos el cliente
+        $subject = $this->getRandomCustomer();
+        $subject->save();
+
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($subject);
+        if ($invoice->save()) {
+            $line = $invoice->getNewLine();
+            $line->cantidad = 1;
+            $line->pvpunitario = mt_rand(100, 9999);
+            $line->save();
+
+            $tool = new BusinessDocumentTools();
+            $tool->recalculate($invoice);
+            $invoice->save();
+        }
+
+        return $invoice;
+    }
+
     protected function getRandomProduct(): Producto
     {
         $num = mt_rand(1, 9999);
@@ -60,6 +85,28 @@ trait RandomDataTrait
         $proveedor->nombre = 'Proveedor ' . mt_rand(1, 999);
         $proveedor->razonsocial = 'Empresa ' . mt_rand(1, 999);
         return $proveedor;
+    }
+
+    protected function getRandomSupplierInvoice(): FacturaProveedor
+    {
+        // creamos el proveedor
+        $subject = $this->getRandomSupplier();
+        $subject->save();
+
+        $invoice = new FacturaProveedor();
+        $invoice->setSubject($subject);
+        if ($invoice->save()) {
+            $line = $invoice->getNewLine();
+            $line->cantidad = 1;
+            $line->pvpunitario = mt_rand(100, 9999);
+            $line->save();
+
+            $tool = new BusinessDocumentTools();
+            $tool->recalculate($invoice);
+            $invoice->save();
+        }
+
+        return $invoice;
     }
 
     protected function getRandomUser(): User

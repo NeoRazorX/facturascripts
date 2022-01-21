@@ -202,8 +202,6 @@ class EditFacturaCliente extends SalesDocumentController
         $number = (int)$this->request->request->get('number', '0');
         if ($generator->generate($invoice, $number)) {
             $generator->update($invoice);
-            $invoice->save();
-
             $this->toolBox()->i18nLog()->notice('record-updated-correctly');
             return true;
         }

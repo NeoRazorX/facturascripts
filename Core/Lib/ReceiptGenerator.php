@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,11 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Dinamic\Model\FacturaCliente;
-use FacturaScripts\Dinamic\Model\FacturaProveedor;
+use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\ReciboCliente;
 use FacturaScripts\Dinamic\Model\ReciboProveedor;
 
@@ -36,13 +38,12 @@ class ReceiptGenerator
     const PARTIAL_AMOUNT_MULTIPLIER = 1.5;
 
     /**
-     * 
      * @param FacturaCliente|FacturaProveedor $invoice
-     * @param int                             $number
+     * @param int $number
      *
      * @return bool
      */
-    public function generate($invoice, $number = 0)
+    public function generate($invoice, int $number = 0): bool
     {
         if ($number > self::MAX_RECEIPTS) {
             $number = self::MAX_RECEIPTS;
@@ -62,44 +63,48 @@ class ReceiptGenerator
     }
 
     /**
-     * 
      * @param FacturaCliente|FacturaProveedor $invoice
      */
     public function update(&$invoice)
     {
-        /// check current invoice receipts
+        // check current invoice receipts
         $receipts = $invoice->getReceipts();
 
+        // set invoice as pais or not
         $paidAmount = 0.0;
         foreach ($receipts as $receipt) {
             if ($receipt->pagado) {
                 $paidAmount += $receipt->importe;
             }
         }
-
         $invoice->pagada = $this->isCero($invoice->total - $paidAmount);
+
+        // update by sql
+        $dataBase = new DataBase();
+        $sql = 'UPDATE ' . $invoice::tableName() . ' SET pagada = ' . $dataBase->var2str($invoice->pagada)
+            . ' WHERE ' . $invoice::primaryColumn() . ' = ' . $dataBase->var2str($invoice->primaryColumnValue()) . ';';
+        $dataBase->exec($sql);
     }
 
     /**
-     * 
      * @param FacturaCliente $invoice
-     * @param int            $number
+     * @param int $number
      *
      * @return bool
      */
-    protected function generateCustomerReceipts($invoice, $number)
+    protected function generateCustomerReceipts($invoice, $number): bool
     {
-        /// check current invoice receipts
+        // check current invoice receipts
         $receipts = $invoice->getReceipts();
 
-        /// calculate outstanding amount
+        // calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
         if (empty($amount)) {
             $this->toolBox()->i18nLog()->warning('no-outstanding-amount');
             return false;
         }
 
-        /// calculate new receipt number
+        // calculate new receipt number
         $newNum = 1;
         foreach ($receipts as $receipt) {
             if ($receipt->numero >= $newNum) {
@@ -107,8 +112,8 @@ class ReceiptGenerator
             }
         }
 
-        /// create new receipts
-        $partialAmount = $number > 1 ? \round($amount / $number, \FS_NF0) : $amount;
+        // create new receipts
+        $partialAmount = $number > 1 ? round($amount / $number, FS_NF0) : $amount;
         while (false === $this->isCero($amount)) {
             $receiptAmount = $amount > self::PARTIAL_AMOUNT_MULTIPLIER * $partialAmount ? $partialAmount : $amount;
             if (false === $this->newCustomerReceipt($invoice, $newNum, $receiptAmount)) {
@@ -123,25 +128,24 @@ class ReceiptGenerator
     }
 
     /**
-     * 
      * @param FacturaProveedor $invoice
-     * @param int              $number
+     * @param int $number
      *
      * @return bool
      */
-    protected function generateSupplierReceipts($invoice, $number)
+    protected function generateSupplierReceipts($invoice, $number): bool
     {
-        /// check current invoice receipts
+        // check current invoice receipts
         $receipts = $invoice->getReceipts();
 
-        /// calculate outstanding amount
+        // calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
         if (empty($amount)) {
             $this->toolBox()->i18nLog()->warning('no-outstanding-amount');
             return false;
         }
 
-        /// calculate new receipt number
+        // calculate new receipt number
         $newNum = 1;
         foreach ($receipts as $receipt) {
             if ($receipt->numero >= $newNum) {
@@ -149,8 +153,8 @@ class ReceiptGenerator
             }
         }
 
-        /// create new receipts
-        $partialAmount = $number > 1 ? \round($amount / $number, \FS_NF0) : $amount;
+        // create new receipts
+        $partialAmount = $number > 1 ? round($amount / $number, FS_NF0) : $amount;
         while (false === $this->isCero($amount)) {
             $receiptAmount = $amount > self::PARTIAL_AMOUNT_MULTIPLIER * $partialAmount ? $partialAmount : $amount;
             if (false === $this->newSupplierReceipt($invoice, $newNum, $receiptAmount)) {
@@ -165,43 +169,41 @@ class ReceiptGenerator
     }
 
     /**
-     * 
      * @param ReciboCliente[]|ReciboProveedor[] $receipts
-     * @param float                             $amount
+     * @param float $amount
      *
      * @return float
      */
-    protected function getOutstandingAmount($receipts, $amount)
+    protected function getOutstandingAmount($receipts, $amount): float
     {
         $pending = $amount;
         foreach ($receipts as $receipt) {
             $pending -= $receipt->importe;
         }
 
-        return \round($pending, \FS_NF0);
+        return round($pending, FS_NF0);
     }
 
     /**
      * Returns TRUE if $amount is cero.
-     * 
+     *
      * @param float $amount
      *
      * @return bool
      */
-    protected function isCero($amount)
+    protected function isCero($amount): bool
     {
-        return $this->toolBox()->utils()->floatcmp($amount, 0.0, \FS_NF0, true);
+        return $this->toolBox()->utils()->floatcmp($amount, 0.0, FS_NF0, true);
     }
 
     /**
-     * 
      * @param FacturaCliente $invoice
-     * @param int            $number
-     * @param float          $amount
+     * @param int $number
+     * @param float $amount
      *
      * @return bool
      */
-    protected function newCustomerReceipt($invoice, $number, $amount)
+    protected function newCustomerReceipt($invoice, $number, $amount): bool
     {
         $newReceipt = new ReciboCliente();
         $newReceipt->codcliente = $invoice->codcliente;
@@ -218,14 +220,13 @@ class ReceiptGenerator
     }
 
     /**
-     * 
      * @param FacturaProveedor $invoice
-     * @param int              $number
-     * @param float            $amount
+     * @param int $number
+     * @param float $amount
      *
      * @return bool
      */
-    protected function newSupplierReceipt($invoice, $number, $amount)
+    protected function newSupplierReceipt($invoice, $number, $amount): bool
     {
         $newReceipt = new ReciboProveedor();
         $newReceipt->codproveedor = $invoice->codproveedor;
@@ -241,32 +242,30 @@ class ReceiptGenerator
     }
 
     /**
-     * 
      * @return ToolBox
      */
-    protected function toolBox()
+    protected function toolBox(): ToolBox
     {
         return new ToolBox();
     }
 
     /**
-     * 
      * @param FacturaCliente $invoice
      *
      * @return bool
      */
-    protected function updateCustomerReceipts($invoice)
+    protected function updateCustomerReceipts($invoice): bool
     {
-        /// check current invoice receipts
+        // check current invoice receipts
         $receipts = $invoice->getReceipts();
 
-        /// calculate outstanding amount
+        // calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
 
-        /// calculate new receipt number
+        // calculate new receipt number
         $newNum = 1;
         foreach ($receipts as $receipt) {
-            /// try to update open receipts
+            // try to update open receipts
             if ($receipt->pagado === false) {
                 $receipt->importe += $amount;
                 $receipt->save();
@@ -278,28 +277,27 @@ class ReceiptGenerator
             }
         }
 
-        /// create new receipt
+        // create new receipt
         return $this->newCustomerReceipt($invoice, $newNum, $amount);
     }
 
     /**
-     * 
      * @param FacturaProveedor $invoice
      *
      * @return bool
      */
-    protected function updateSupplierReceipts($invoice)
+    protected function updateSupplierReceipts($invoice): bool
     {
-        /// check current invoice receipts
+        // check current invoice receipts
         $receipts = $invoice->getReceipts();
 
-        /// calculate outstanding amount
+        // calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
 
-        /// calculate new receipt number
+        // calculate new receipt number
         $newNum = 1;
         foreach ($receipts as $receipt) {
-            /// try to update open receipts
+            // try to update open receipts
             if ($receipt->pagado === false) {
                 $receipt->importe += $amount;
                 $receipt->save();
@@ -311,7 +309,7 @@ class ReceiptGenerator
             }
         }
 
-        /// create new receipt
+        // create new receipt
         return $this->newSupplierReceipt($invoice, $newNum, $amount);
     }
 }

@@ -202,7 +202,7 @@ final class FacturaProveedorTest extends TestCase
         $invoice->setSubject($supplier);
         $this->assertTrue($invoice->save(), 'cant-create-invoice');
 
-        // añadimos una alínea
+        // añadimos una línea
         $firstLine = $invoice->getNewLine();
         $firstLine->cantidad = 1;
         $firstLine->pvpunitario = self::PRODUCT1_COST;
