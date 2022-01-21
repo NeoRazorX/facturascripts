@@ -19,6 +19,20 @@
 #}
 {% extends "Master/MenuTemplate.html.twig" %}
 
+{% block messages %}
+    {% from 'Macro/Utils.html.twig' import messageCompat as showMessage %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                {{ showMessage(log, ['error', 'critical'], 'danger') }}
+                {{ showMessage(log, ['warning'], 'warning') }}
+                {{ showMessage(log, ['notice'], 'success') }}
+                {{ showMessage(log, ['info'], 'info') }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block body %}
     <div class="container-fluid">
         <div class="row">
