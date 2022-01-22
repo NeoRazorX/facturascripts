@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,45 +36,42 @@ final class CuentaEspecialTest extends TestCase
 
     public function testCreate()
     {
+        // creamos una cuenta
         $account = new CuentaEspecial();
         $account->codcuentaesp = 'Test';
         $account->descripcion = 'Test Special Account';
         $this->assertTrue($account->save(), 'account-special-cant-save');
-        $this->assertNotNull($account->primaryColumnValue(), 'account-special-not-stored');
         $this->assertTrue($account->exists(), 'account-special-cant-persist');
+
+        // eliminamos
         $this->assertTrue($account->delete(), 'account-special-cant-delete');
     }
 
     public function testCreateHTMLDescription()
     {
+        // creamos una cuenta con html en la descripción
         $account = new CuentaEspecial();
         $account->codcuentaesp = 'Test';
         $account->descripcion = 'Test <b>Special Account</b>';
         $this->assertTrue($account->save(), 'account-special-cant-save');
 
-        $account->loadFromCode($account->codcuentaesp);
-        $description = $this->toolBox()->utils()->noHtml('Test <b>Special Account</b>');
-        $this->assertTrue($account->descripcion == $description, 'account-html-descripcion');
+        // comprobamos que el html haya sido escapado
+        $noHtml = ToolBox::utils()::noHtml('Test <b>Special Account</b>');
+        $this->assertEquals($noHtml, $account->descripcion, 'account-html-description');
+
+        // eliminamos
         $this->assertTrue($account->delete(), 'account-special-cant-delete');
     }
 
-    public function testCreateWrongCode()
+    public function testCreateWithoutCode()
     {
         $account = new CuentaEspecial();
         $account->descripcion = 'Test Special Account';
         $this->assertFalse($account->save(), 'account-special-cant-save-without-code');
-
-        $account->codcuentaesp = 'Test 1';
-        $this->assertFalse($account->save(), 'account-special-cant-save-with-spaces');
     }
 
     protected function tearDown()
     {
         $this->logErrors();
-    }
-
-    protected function toolBox()
-    {
-        return new ToolBox();
     }
 }
