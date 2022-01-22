@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,48 +29,51 @@ final class CiudadTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testDataInstalled()
-    {
-        $city = new Ciudad();
-        $this->assertNotEmpty($city->all(), 'city-data-not-installed-from-csv');
-    }
-
     public function testCreate()
     {
-        $province = new Provincia();
-        $province->loadFromCode('1');
+        $provinceModel = new Provincia();
+        foreach ($provinceModel->all() as $provincia) {
+            // creamos una ciudad
+            $city = new Ciudad();
+            $city->ciudad = 'Test';
+            $city->idprovincia = $provincia->idprovincia;
+            $this->assertTrue($city->save(), 'city-cant-save');
 
-        $city = new Ciudad();
-        $city->ciudad = 'Test';
-        $city->idprovincia = $province->idprovincia;
-        $this->assertTrue($city->save(), 'city-cant-save');
-        $this->assertNotNull($city->primaryColumnValue(), 'agency-not-stored');
-        $this->assertTrue($city->exists(), 'city-cant-persist');
-        $this->assertTrue($city->delete(), 'city-cant-delete');
+            // comprobamos que existe en la base de datos
+            $this->assertTrue($city->exists(), 'city-cant-persist');
+
+            // eliminamos
+            $this->assertTrue($city->delete(), 'city-cant-delete');
+        }
     }
 
     public function testCreateHtml()
     {
-        $province = new Provincia();
-        $province->loadFromCode('1');
+        $provinceModel = new Provincia();
+        foreach ($provinceModel->all() as $provincia) {
+            // creamos una ciudad con un nombre con html
+            $city = new Ciudad();
+            $city->ciudad = '<b>Test</b>';
+            $city->idprovincia = $provincia->idprovincia;
+            $this->assertTrue($city->save(), 'city-cant-save');
 
-        $city = new Ciudad();
-        $city->ciudad = '<b>Test</b>';
-        $city->idprovincia = $province->idprovincia;
-        $this->assertTrue($city->save(), 'city-cant-save');
+            // comprobamos que el html ha sido escapado
+            $noHtml = ToolBox::utils()::noHtml('<b>Test</b>');
+            $this->assertEquals($noHtml, $city->ciudad, 'city-wrong-html');
 
-        $description = $this->toolBox()->utils()->noHtml('<b>Test</b>');
-        $city->loadFromCode($city->idciudad);
-        $this->assertTrue($city->ciudad == $description, 'city-wrong-html');
-        $this->assertTrue($city->delete(), 'city-cant-delete');
+            // eliminamos
+            $this->assertTrue($city->delete(), 'city-cant-delete');
+        }
     }
 
     public function testCreateWithoutProvince()
     {
+        // creamos una ciudad sin provincia
         $city = new Ciudad();
         $city->ciudad = 'Test';
         $this->assertFalse($city->save(), 'city-must-have-province');
 
+        // asignamos una provincia que no existe
         $city->idprovincia = -1;
         $this->assertFalse($city->save(), 'city-must-exist-province');
     }
@@ -78,10 +81,5 @@ final class CiudadTest extends TestCase
     protected function tearDown()
     {
         $this->logErrors();
-    }
-
-    protected function toolBox()
-    {
-        return new ToolBox();
     }
 }
