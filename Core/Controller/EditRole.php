@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -129,10 +129,10 @@ class EditRole extends EditController
             return true;
         }
 
-        $show = $this->request->request->get('show');
-        $onlyOwner = $this->request->request->get('onlyOwner');
-        $update = $this->request->request->get('update');
-        $delete = $this->request->request->get('delete');
+        $show = $this->request->request->get('show', []);
+        $onlyOwner = $this->request->request->get('onlyOwner', []);
+        $update = $this->request->request->get('update', []);
+        $delete = $this->request->request->get('delete', []);
 
         // update or delete current access rules
         $roleAccessModel = new RoleAccess();
@@ -188,9 +188,8 @@ class EditRole extends EditController
      */
     protected function execPreviousAction($action)
     {
-        switch ($action) {
-            case 'edit-rules':
-                return $this->editRulesAction();
+        if ($action == 'edit-rules') {
+            return $this->editRulesAction();
         }
 
         return parent::execPreviousAction($action);
@@ -218,8 +217,8 @@ class EditRole extends EditController
     {
         switch ($viewName) {
             case 'EditRoleUser':
-                $codrole = $this->getViewModelValue($this->getMainViewName(), 'codrole');
-                $where = [new DataBaseWhere('codrole', $codrole)];
+                $code = $this->getViewModelValue($this->getMainViewName(), 'codrole');
+                $where = [new DataBaseWhere('codrole', $code)];
                 $view->loadData('', $where, ['id' => 'DESC']);
                 break;
 
