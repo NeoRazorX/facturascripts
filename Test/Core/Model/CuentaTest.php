@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,180 +19,168 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Core\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CuentaTest extends TestCase
 {
-    use LogErrorsTrait;
+    use RandomDataTrait;
+
+    public static function setUpBeforeClass()
+    {
+        $account = new Cuenta();
+        $where = [new DataBaseWhere('codcuenta', '9999')];
+        if ($account->loadFromCode('', $where)) {
+            $account->delete();
+        }
+    }
 
     public function testCreate()
     {
-        $exercise = $this->getExercise();
-        $account = $this->getAccount();
-        $account->codejercicio = $exercise->codejercicio;
-        $this->assertTrue($account->save(), 'account-cant-save');
-        $this->assertNotNull($account->primaryColumnValue(), 'account-not-stored');
+        // creamos una cuenta
+        $account = new Cuenta();
+        $account->codcuenta = '9999';
+        $account->codejercicio = $this->getRandomExercise()->codejercicio;
+        $account->descripcion = 'Test';
+        $this->assertTrue($account->save(), 'can-not-create-account');
+
+        // comprobamos que persiste en la base de datos
         $this->assertTrue($account->exists(), 'account-cant-persist');
+
+        // eliminamos
         $this->assertTrue($account->delete(), 'account-cant-delete');
+    }
+
+    public function testCreateBadCode()
+    {
+        // creamos una cuenta con un código no válido
+        $account = new Cuenta();
+        $account->codcuenta = 'test';
+        $account->codejercicio = $this->getRandomExercise()->codejercicio;
+        $account->descripcion = 'Test';
+
+        // comprobamos si se guarda
+        $save = $account->save();
+        $this->assertFalse($save, 'can-create-bad-code-account');
+
+        // eliminamos en caso de fallo
+        if ($save) {
+            $account->delete();
+        }
     }
 
     public function testCreateClosed()
     {
-        $exercise = $this->getExercise();
+        // cerramos un ejercicio
+        $exercise = $this->getRandomExercise();
         $exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
         $exercise->save();
 
-        $account = $this->getAccount();
-        $account->codejercicio = $exercise->codejercicio;
+        // creamos una cuenta
+        $account = $this->getRandomAccount();
+
+        // limpiamos la caché de ejercicios
         $account->clearExerciseCache();
+
         try {
+            // guardamos la cuenta
             $this->assertFalse($account->save(), 'account-can-create-in-closed-exercise');
 
+            // desactivamos las comprobaciones y guardamos
             $account->disableAditionalTest(true);
             $this->assertTrue($account->save(), 'account-cant-save');
+
+            // eliminamos la cuenta
             $this->assertTrue($account->delete(), 'account-cant-delete');
         } finally {
-            // Force restore status and cache. Prevents errors in other tests.
+            // reabrimos el ejercicio
             $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
             $exercise->save();
+
+            // limpiamos la caché de ejercicios
             $account->clearExerciseCache();
         }
     }
 
     public function testDeleteClosed()
     {
-        $exercise = $this->getExercise();
-        $account = $this->getAccount();
+        $exercise = $this->getRandomExercise();
+
+        // creamos una cuenta
+        $account = $this->getRandomAccount();
         $account->codejercicio = $exercise->codejercicio;
         $this->assertTrue($account->save(), 'account-cant-save');
 
+        // cerramos el ejercicio
         $exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
         $exercise->save();
+
+        // limpiamos la caché de ejercicios
         $account->clearExerciseCache();
+
         try {
+            // eliminamos la cuenta
             $this->assertFalse($account->delete(), 'account-can-delete-in-closed-exercise');
 
+            // desactivamos las comprobaciones y eliminamos
             $account->disableAditionalTest(true);
             $this->assertTrue($account->delete(), 'account-cant-delete');
         } finally {
-            // Force restore status and cache. Prevents errors in other tests.
+            // reabrimos el ejercicio
             $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
             $exercise->save();
+
+            // limpiamos la caché de ejercicios
             $account->clearExerciseCache();
         }
     }
 
-    public function testExercise()
+    public function testCreateChild()
     {
-        /**
-         * Al grabar y no coincidir el codejercicio,
-         * busca la cuenta padre en el ejercicio de la hija,
-         * como no la encuentra retorna un Cuenta "vacío"
-         * y Cuenta.test() sobrescribe con valores vacíos los
-         * id_parent y cod_parent permitiendo grabar la cuenta hija
-         * cuando no debería.
-         *
-        $exercise1 = $this->getExercise();
-        $start = \strtotime($exercise1->fechainicio . '-1 year');
-        $year = \date('Y', $start);
+        $exercise = $this->getRandomExercise();
 
-        $exercise2 = new Ejercicio();
-        $exercise2->idempresa = $exercise1->idempresa;
-        $exercise2->codejercicio = 'TE2';
-        $exercise2->nombre = 'Test Exercise 2';
-        $exercise2->fechainicio = \date('01-01-' . $year);
-        $exercise2->fechafin = \date('31-12-' . $year);
-        $this->assertTrue($exercise2->save(), 'exercise-cant-save');
-
-        $account1 = new Cuenta();
-        $account1->codcuenta = 'Test1';
-        $account1->descripcion = 'Test Account 1';
-        $account1->codejercicio = $exercise1->codejercicio;
-        $this->assertTrue($account1->save(), 'account-cant-save');
-
-        $account2 = new Cuenta();
-        $account2->codcuenta = 'Test12';
-        $account2->descripcion = 'Test Account 2';
-        $account2->codejercicio = $exercise2->codejercicio;
-        $account2->parent_idcuenta = $account1->idcuenta;
-        $this->assertFalse($account2->save(), 'account-different-parent-exercise');
-
-        $this->assertTrue($account1->delete(), 'account-cant-delete');
-        $this->assertTrue($exercise2->delete(), 'exercise-cant-delete');
-        *
-        */
-    }
-
-    public function testLength()
-    {
-        $exercise = $this->getExercise();
-
-        $account1 = new Cuenta();
-        $account1->codcuenta = 'Test1';
-        $account1->descripcion = 'Test Account 1';
+        // creamos una cuenta
+        $account1 = $this->getRandomAccount();
         $account1->codejercicio = $exercise->codejercicio;
         $this->assertTrue($account1->save(), 'account-cant-save');
 
-        $account2 = new Cuenta();
-        $account2->codcuenta = 'T2';
-        $account2->descripcion = 'Test Account 2';
+        // creamos una cuenta hija
+        $account2 = $this->getRandomAccount();
+        $account2->codcuenta = $account1->codcuenta . '9';
+        $account2->codejercicio = $exercise->codejercicio;
+        $account2->parent_idcuenta = $account1->idcuenta;
+        $account2->parent_codcuenta = $account1->codcuenta;
+        $this->assertTrue($account2->save(), 'account-cant-longer-parent');
+
+        // eliminamos
+        $this->assertTrue($account1->delete(), 'account-cant-delete');
+        $this->assertTrue($account2->delete(), 'account-cant-delete');
+    }
+
+    public function createBadChild()
+    {
+        $exercise = $this->getRandomExercise();
+
+        // creamos una cuenta
+        $account1 = $this->getRandomAccount();
+        $account1->codejercicio = $exercise->codejercicio;
+        $this->assertTrue($account1->save(), 'account-cant-save');
+
+        // creamos una cuenta hija
+        $account2 = $this->getRandomAccount();
+        $account2->codcuenta = substr($account1->codcuenta, 0, -1);
         $account2->codejercicio = $exercise->codejercicio;
         $account2->parent_idcuenta = $account1->idcuenta;
         $account2->parent_codcuenta = $account1->codcuenta;
         $this->assertFalse($account2->save(), 'account-cant-longer-parent');
 
-        $account2->codcuenta = 'Test2';
-        $this->assertFalse($account2->save(), 'account-cant-equal-parent');
-
-        $account2->codcuenta = \str_pad('Test', $exercise->longsubcuenta, '0');
-        $this->assertFalse($account2->save(), 'account-cant-longer-subaccount');
-
+        // eliminamos
         $this->assertTrue($account1->delete(), 'account-cant-delete');
-    }
-
-    public function testParent()
-    {
-        $exercise = $this->getExercise();
-        $account = $this->getAccount();
-        $account->codejercicio = $exercise->codejercicio;
-        $account->parent_codcuenta = $account->codcuenta;
-        $this->assertTrue($account->save(), 'account-cant-save');
-        $this->assertFalse($account->parent_codcuenta == $account->codcuenta, 'parent-account-can-be-same-account-code');
-
-        $account->parent_idcuenta = $account->idcuenta;
-        $this->assertTrue($account->save(), 'account-cant-save');
-        $this->assertFalse($account->parent_idcuenta == $account->idcuenta, 'parent-account-can-be-same-account-id');
-
-        $this->assertTrue($account->delete(), 'account-cant-delete');
-    }
-
-    protected function tearDown()
-    {
-        $this->logErrors();
-    }
-
-    private function getAccount()
-    {
-        $account = new Cuenta();
-        $account->codcuenta = 'Test';
-        $account->descripcion = 'Test Account';
-        return $account;
-    }
-
-    private function getExercise()
-    {
-        $exercise = new Ejercicio();
-        $exercise->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
-        $exercise->loadFromDate(\date(Ejercicio::DATE_STYLE), true, false);
-        return $exercise;
-    }
-
-    private function toolBox()
-    {
-        return new ToolBox();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,8 @@ use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\Cuenta;
+use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Model\Producto;
@@ -31,6 +33,15 @@ use FacturaScripts\Core\Model\User;
 
 trait RandomDataTrait
 {
+    protected function getRandomAccount(): Cuenta
+    {
+        $account = new Cuenta();
+        $account->codcuenta = '9999';
+        $account->codejercicio = $this->getRandomExercise()->codejercicio;
+        $account->descripcion = 'Test';
+        return $account;
+    }
+
     protected function getRandomAgent(): Agente
     {
         $agente = new Agente();
@@ -67,6 +78,16 @@ trait RandomDataTrait
         }
 
         return $invoice;
+    }
+
+    protected function getRandomExercise(): Ejercicio
+    {
+        $model = new Ejercicio();
+        foreach ($model->all() as $ejercicio) {
+            return $ejercicio;
+        }
+
+        return $model;
     }
 
     protected function getRandomProduct(): Producto
