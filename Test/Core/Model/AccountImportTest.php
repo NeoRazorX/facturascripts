@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Subcuenta;
 use FacturaScripts\Test\Core\RandomDataTrait;
@@ -53,31 +54,32 @@ final class AccountImportTest extends TestCase {
 
         // comprobamos que se haya importado el csv
         $account = new Cuenta();
-        $this->assertNotEmpty($account->all(), 'account-data-not-installed-from-csv');
+        $this->assertNotEmpty($account->count() > 0, 'account-data-not-installed-from-csv');
 
         $subaccount = new Subcuenta();
-        $this->assertNotEmpty($subaccount->all(), 'account-data-not-installed-from-csv');
+        $this->assertNotEmpty($subaccount->count() > 0, 'account-data-not-installed-from-csv');
     }
 
     public function testAccountCount()
     {
         // comprobamos el total de cuentas importadas
         $account = new Cuenta();
-        $this->assertTrue(\count($account->all()) == self::TOTAL_ACCOUNT, 'account-data-not-installed-from-csv');
+        $this->assertTrue($account->count() == self::TOTAL_ACCOUNT, 'account-count-error');
     }
 
     public function testSubAccountCount()
     {
         // comprobamos el total de subcuentas importadas
         $subaccount = new Subcuenta();
-        $this->assertTrue(\count($subaccount->all()) == self::TOTAL_SUBACCOUNT, 'subaccount-data-not-installed-from-csv');
+        $this->assertTrue($subaccount->count() == self::TOTAL_SUBACCOUNT, 'subaccount-count-error');
     }
 
     public function testAccountTree()
     {
+        $exercise = $this->getRandomExercise()->codejercicio;
         $subaccount = new Subcuenta();
         $where1 = [
-            new DataBaseWhere('codejercicio', $this->getRandomExercise()),
+            new DataBaseWhere('codejercicio', $exercise),
             new DataBaseWhere('codsubcuenta', '1000000000'),
         ];
 
@@ -85,9 +87,9 @@ final class AccountImportTest extends TestCase {
         $this->assertTrue($subaccount->loadFromCode('', $where1), 'subaccount-1000000000-not-found');
         $this->assertTrue($subaccount->codcuenta == '100', 'subaccount-1000000000-account-error');
 
-        $account = new Account();
+        $account = new Cuenta();
         $where2 = [
-            new DataBaseWhere('codejercicio', $this->getRandomExercise()),
+            new DataBaseWhere('codejercicio', $exercise),
             new DataBaseWhere('codcuenta', '100'),
         ];
 
@@ -96,7 +98,7 @@ final class AccountImportTest extends TestCase {
         $this->assertTrue($account->parent_codcuenta == '10', 'account-100-parent-error');
 
         $where3 = [
-            new DataBaseWhere('codejercicio', $this->getRandomExercise()),
+            new DataBaseWhere('codejercicio', $exercise),
             new DataBaseWhere('codcuenta', '10'),
         ];
 
