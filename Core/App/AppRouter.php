@@ -164,7 +164,7 @@ final class AppRouter
             'json', 'map', 'mkv', 'mp4', 'ogg', 'pdf', 'png', 'sql', 'svg',
             'ttf', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
         ];
-        return empty($parts) || in_array(end($parts), $safe, true);
+        return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
     }
 
     /**
