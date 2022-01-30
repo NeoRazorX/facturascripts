@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Model\Settings;
@@ -47,7 +48,7 @@ final class AppSettings
      *
      * @param string $group
      * @param string $property
-     * @param mixed  $default
+     * @param mixed $default
      *
      * @return mixed
      */
@@ -84,7 +85,7 @@ final class AppSettings
     {
         $this->reload();
 
-        /// Constants
+        // Constants
         $constants = [
             'FS_CODPAIS' => ['property' => 'codpais', 'default' => 'ESP'],
             'FS_NF0' => ['property' => 'decimals', 'default' => 2],
@@ -95,11 +96,11 @@ final class AppSettings
         ];
         $this->setConstants($constants);
 
-        /// Other default values
-        static::get('default', 'coddivisa', 'EUR');
-        static::get('default', 'homepage', 'Wizard');
-        static::get('default', 'updatesupplierprices', true);
-        static::get('default', 'ventasinstock', false);
+        // Other default values
+        self::get('default', 'coddivisa', 'EUR');
+        self::get('default', 'homepage', 'Wizard');
+        self::get('default', 'updatesupplierprices', true);
+        self::get('default', 'ventasinstock', false);
 
         if (self::$save) {
             $this->save();
@@ -124,7 +125,7 @@ final class AppSettings
     {
         foreach (self::$data as $key => $value) {
             $settings = new Settings();
-            $settings->name = (string) $key;
+            $settings->name = (string)$key;
             $settings->properties = $value;
             $settings->save();
         }
@@ -141,7 +142,7 @@ final class AppSettings
     {
         foreach ($data as $key => $value) {
             if (!defined($key)) {
-                define($key, static::get('default', $value['property'], $value['default']));
+                define($key, self::get('default', $value['property'], $value['default']));
             }
         }
     }

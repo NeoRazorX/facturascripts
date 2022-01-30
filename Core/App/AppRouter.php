@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -110,7 +110,7 @@ final class AppRouter
         $uri = $this->getUri();
         $filePath = FS_FOLDER . urldecode($uri);
 
-        /// favicon.ico
+        // favicon.ico
         if ('/favicon.ico' == $uri) {
             $filePath = FS_FOLDER . '/Dinamic/Assets/Images/favicon.ico';
             header('Content-Type: ' . $this->getMime($filePath));
@@ -118,12 +118,12 @@ final class AppRouter
             return true;
         }
 
-        /// Not a file? Not a safe file?
+        // Not a file? Not a safe file?
         if (false === is_file($filePath) || false === $this->isFileSafe($filePath)) {
             return false;
         }
 
-        /// Allowed folder?
+        // Allowed folder?
         $allowedFolders = ['node_modules', 'vendor', 'Dinamic', 'Core', 'Plugins', 'MyFiles/Public'];
         foreach ($allowedFolders as $folder) {
             if ('/' . $folder === substr($uri, 0, 1 + strlen($folder))) {
@@ -133,13 +133,13 @@ final class AppRouter
             }
         }
 
-        /// MyFiles and token?
+        // MyFiles and token?
         $token = filter_input(INPUT_GET, 'myft');
         $fixedFilePath = substr(urldecode($uri), 1);
         if ('/MyFiles/' === substr($uri, 0, 9) && $token && MyFilesToken::validate($fixedFilePath, $token)) {
             header('Content-Type: ' . $this->getMime($filePath));
 
-            /// disable the buffer if enabled
+            // disable the buffer if enabled
             if (ob_get_contents()) {
                 ob_end_flush();
             }
@@ -178,7 +178,7 @@ final class AppRouter
     public function setRoute(string $newRoute, string $controllerName, string $optionalId = '', bool $checkOptionalId = true)
     {
         if (!empty($optionalId) && $checkOptionalId) {
-            /// if optionalId, then remove previous items with that data
+            // if optionalId, then remove previous items with that data
             foreach ($this->routes as $route => $routeItem) {
                 if ($routeItem['controller'] === $controllerName && $routeItem['optionalId'] === $optionalId) {
                     unset($this->routes[$route]);
