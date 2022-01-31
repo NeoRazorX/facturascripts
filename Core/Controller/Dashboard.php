@@ -283,18 +283,22 @@ class Dashboard extends Controller
     private function loadStats()
     {
         $totalModel = new TotalModel();
+
+        // compras
         $this->stats['purchases'] = [
-            $this->getStatsMonth(0) => $totalModel->sum('facturasprov', 'total', $this->getStatsWhere('fecha', 0)),
-            $this->getStatsMonth(1) => $totalModel->sum('facturasprov', 'total', $this->getStatsWhere('fecha', 1)),
-            $this->getStatsMonth(2) => $totalModel->sum('facturasprov', 'total', $this->getStatsWhere('fecha', 2)),
+            $this->getStatsMonth(0) => $totalModel->sum('facturasprov', 'neto', $this->getStatsWhere('fecha', 0)),
+            $this->getStatsMonth(1) => $totalModel->sum('facturasprov', 'neto', $this->getStatsWhere('fecha', 1)),
+            $this->getStatsMonth(2) => $totalModel->sum('facturasprov', 'neto', $this->getStatsWhere('fecha', 2)),
         ];
 
+        // ventas
         $this->stats['sales'] = [
-            $this->getStatsMonth(0) => $totalModel->sum('facturascli', 'total', $this->getStatsWhere('fecha', 0)),
-            $this->getStatsMonth(1) => $totalModel->sum('facturascli', 'total', $this->getStatsWhere('fecha', 1)),
-            $this->getStatsMonth(2) => $totalModel->sum('facturascli', 'total', $this->getStatsWhere('fecha', 2)),
+            $this->getStatsMonth(0) => $totalModel->sum('facturascli', 'neto', $this->getStatsWhere('fecha', 0)),
+            $this->getStatsMonth(1) => $totalModel->sum('facturascli', 'neto', $this->getStatsWhere('fecha', 1)),
+            $this->getStatsMonth(2) => $totalModel->sum('facturascli', 'neto', $this->getStatsWhere('fecha', 2)),
         ];
 
+        // impuestos
         foreach ([0, 1, 2] as $num) {
             $where = $this->getStatsWhere('fecha', $num);
             $this->stats['taxes'][$this->getStatsMonth($num)] = $totalModel->sum('facturascli', 'totaliva', $where)
@@ -303,6 +307,7 @@ class Dashboard extends Controller
                 - $totalModel->sum('facturasprov', 'totalrecargo', $where);
         }
 
+        // clientes
         $customerModel = new Cliente();
         $this->stats['new-customers'] = [
             $this->getStatsMonth(0) => $customerModel->count($this->getStatsWhere('fechaalta', 0)),
