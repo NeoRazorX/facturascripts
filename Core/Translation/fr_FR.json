@@ -13,6 +13,7 @@
     "account": "Compte",
     "account-balance": "Solde du compte",
     "account-code": "Code de compte",
+    "account-code-bigger-than-subaccounts": "El código de la cuenta %code% es más largo que las subcuentas",
     "account-code-lower-than-parent": "Code de compte %code% est plus court que le parent",
     "account-data-missing": "Données manquantes dans le compte",
     "account-dot-code": "compte-dot-code",
