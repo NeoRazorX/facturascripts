@@ -155,7 +155,7 @@ class AccountingFooterHTML
      */
     protected static function newSubaccount(Translator $i18n, Asiento $model): string
     {
-        if (false == $model->editable) {
+        if (false === $model->editable) {
             return '<div class="col-sm"></div>';
         }
 
@@ -174,7 +174,7 @@ class AccountingFooterHTML
      */
     protected static function saveBtn(Translator $i18n, Asiento $model): string
     {
-        if (false == $model->editable) {
+        if (false === $model->editable) {
             return '<div class="col-sm-3 col-md-2">'
                 . '<button type="button" class="btn btn-block btn-warning mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\', this);">'
                 . '<i class="fas fa-lock-open fa-fw"></i> ' . $i18n->trans('unlock-entry') . '</button>'
@@ -195,7 +195,7 @@ class AccountingFooterHTML
      */
     protected static function subaccountBtn(Translator $i18n, Asiento $model): string
     {
-        if (false == $model->editable) {
+        if (false === $model->editable) {
             return '';
         }
 
