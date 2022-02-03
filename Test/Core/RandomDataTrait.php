@@ -33,11 +33,11 @@ use FacturaScripts\Core\Model\User;
 
 trait RandomDataTrait
 {
-    protected function getRandomAccount(): Cuenta
+    protected function getRandomAccount(string $codejercicio): Cuenta
     {
         $account = new Cuenta();
         $account->codcuenta = '9999';
-        $account->codejercicio = $this->getRandomExercise()->codejercicio;
+        $account->codejercicio = $codejercicio;
         $account->descripcion = 'Test';
         return $account;
     }

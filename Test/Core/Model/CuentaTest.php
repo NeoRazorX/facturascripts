@@ -20,11 +20,8 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
-use FacturaScripts\Test\Core\LogErrorsTrait;
 use FacturaScripts\Test\Core\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -83,7 +80,7 @@ final class CuentaTest extends TestCase
         $exercise->save();
 
         // creamos una cuenta
-        $account = $this->getRandomAccount();
+        $account = $this->getRandomAccount($exercise->codejercicio);
 
         // limpiamos la caché de ejercicios
         $account->clearExerciseCache();
@@ -113,8 +110,7 @@ final class CuentaTest extends TestCase
         $exercise = $this->getRandomExercise();
 
         // creamos una cuenta
-        $account = $this->getRandomAccount();
-        $account->codejercicio = $exercise->codejercicio;
+        $account = $this->getRandomAccount($exercise->codejercicio);
         $this->assertTrue($account->save(), 'account-cant-save');
 
         // cerramos el ejercicio
@@ -146,14 +142,12 @@ final class CuentaTest extends TestCase
         $exercise = $this->getRandomExercise();
 
         // creamos una cuenta
-        $account1 = $this->getRandomAccount();
-        $account1->codejercicio = $exercise->codejercicio;
+        $account1 = $this->getRandomAccount($exercise->codejercicio);
         $this->assertTrue($account1->save(), 'account-cant-save');
 
         // creamos una cuenta hija
-        $account2 = $this->getRandomAccount();
+        $account2 = $this->getRandomAccount($exercise->codejercicio);
         $account2->codcuenta = $account1->codcuenta . '9';
-        $account2->codejercicio = $exercise->codejercicio;
         $account2->parent_idcuenta = $account1->idcuenta;
         $account2->parent_codcuenta = $account1->codcuenta;
         $this->assertTrue($account2->save(), 'account-cant-longer-parent');
@@ -168,14 +162,12 @@ final class CuentaTest extends TestCase
         $exercise = $this->getRandomExercise();
 
         // creamos una cuenta
-        $account1 = $this->getRandomAccount();
-        $account1->codejercicio = $exercise->codejercicio;
+        $account1 = $this->getRandomAccount($exercise->codejercicio);
         $this->assertTrue($account1->save(), 'account-cant-save');
 
         // creamos una cuenta hija
-        $account2 = $this->getRandomAccount();
+        $account2 = $this->getRandomAccount($exercise->codejercicio);
         $account2->codcuenta = substr($account1->codcuenta, 0, -1);
-        $account2->codejercicio = $exercise->codejercicio;
         $account2->parent_idcuenta = $account1->idcuenta;
         $account2->parent_codcuenta = $account1->codcuenta;
         $this->assertFalse($account2->save(), 'account-cant-longer-parent');
