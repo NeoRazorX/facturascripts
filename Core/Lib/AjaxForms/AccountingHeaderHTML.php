@@ -38,7 +38,7 @@ class AccountingHeaderHTML
      * @param Asiento $model
      * @param array $formData
      */
-    public static function apply(&$model, array $formData)
+    public static function apply(Asiento &$model, array $formData)
     {
         $model->setDate($formData['fecha'] ?? $model->fecha);
         $model->concepto = $formData['concepto'] ?? $model->concepto;
@@ -52,7 +52,7 @@ class AccountingHeaderHTML
      *
      * @return string
      */
-    public static function render($model): string
+    public static function render(Asiento $model): string
     {
         $i18n = new Translator();
         return '<div class="container-fluid"><div class="form-row">'
@@ -71,9 +71,9 @@ class AccountingHeaderHTML
      *
      * @return string
      */
-    protected static function concepto(Translator $i18n, $model): string
+    protected static function concepto(Translator $i18n, Asiento $model): string
     {
-        $attributes = $model->editable ? 'name="concepto" autocomplete="off" autofocus required' : 'disabled';
+        $attributes = $model->editable ? 'name="concepto" autocomplete="off" required' : 'disabled';
         return '<div class="col-sm-6 col-md">'
             . '<div class="form-group">' . $i18n->trans('concept')
             . '<input type="text" list="concept-items" ' . $attributes . ' value="' . $model->concepto . '" class="form-control"/>'
@@ -90,7 +90,7 @@ class AccountingHeaderHTML
      *
      * @return string
      */
-    protected static function documento(Translator $i18n, $model): string
+    protected static function documento(Translator $i18n, Asiento $model): string
     {
         return empty($model->documento) ? '' : '<div class="col-sm-3 col-md-2">'
             . '<div class="form-group">' . $i18n->trans('document')
@@ -107,7 +107,7 @@ class AccountingHeaderHTML
      *
      * @return string
      */
-    protected static function fecha(Translator $i18n, $model): string
+    protected static function fecha(Translator $i18n, Asiento $model): string
     {
         $attributes = $model->editable ? 'name="fecha" required' : 'disabled';
         return '<div class="col-sm-3 col-md-2">'
@@ -124,7 +124,7 @@ class AccountingHeaderHTML
      *
      * @return string
      */
-    private static function getConceptItems($model): string
+    private static function getConceptItems(Asiento $model): string
     {
         $result = '';
         $conceptModel = new ConceptoPartida();
@@ -162,7 +162,7 @@ class AccountingHeaderHTML
      *
      * @return string
      */
-    protected static function idempresa(Translator $i18n, $model): string
+    protected static function idempresa(Translator $i18n, Asiento $model): string
     {
         $company = new Empresa();
         $companyList = $company->all([], ['nombre' => 'ASC']);

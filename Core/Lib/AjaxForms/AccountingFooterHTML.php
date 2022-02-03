@@ -162,6 +162,7 @@ class AccountingFooterHTML
         return '<div class="col-sm-6 col-md-2 mb-3">'
             . '<input type="text" class="form-control" maxlength="15" autocomplete="off" placeholder="' . $i18n->trans('subaccount')
             . '" id="new_subaccount" name="new_subaccount" onchange="return newLineAction(this.value);"/>'
+            . '<p class="text-muted">' . $i18n->trans('account-dot-code') . '</p>'
             . '</div>';
     }
 
