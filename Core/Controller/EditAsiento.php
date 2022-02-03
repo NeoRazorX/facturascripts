@@ -1,10 +1,28 @@
 <?php
 /**
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Lib\AjaxForms\AccountingFooterHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingHeaderHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingLineHTML;
+use FacturaScripts\Core\Lib\AjaxForms\AccountingModalHTML;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
@@ -12,10 +30,6 @@ use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExtendedController\PanelController;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
-use FacturaScripts\Core\Lib\Accounting\AccountingFooterHTML;
-use FacturaScripts\Core\Lib\Accounting\AccountingHeaderHTML;
-use FacturaScripts\Core\Lib\Accounting\AccountingLineHTML;
-use FacturaScripts\Core\Lib\Accounting\AccountingModalHTML;
 
 /**
  * Description of EditAsiento
@@ -92,7 +106,7 @@ class EditAsiento extends PanelController
      *
      * @return string
      */
-    public function renderAccEntryForm($model, $lines): string
+    public function renderAccEntryForm(Asiento $model, array $lines): string
     {
         return '<div id="accEntryFormHeader">' . AccountingHeaderHTML::render($model) . '</div>'
             . '<div id="accEntryFormLines">' . AccountingLineHTML::render($lines, $model) . '</div>'
@@ -107,7 +121,7 @@ class EditAsiento extends PanelController
      * @param Partida[] $lines
      * @param bool $applyModal
      */
-    private function applyMainFormData(&$model, &$lines, $applyModal = false)
+    private function applyMainFormData(Asiento &$model, array &$lines, bool $applyModal = false)
     {
         $formData = json_decode($this->request->request->get('data'), true);
         AccountingHeaderHTML::apply($model, $formData);

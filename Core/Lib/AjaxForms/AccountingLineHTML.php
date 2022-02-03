@@ -1,9 +1,23 @@
 <?php
 /**
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * This file is part of FacturaScripts
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Lib\Accounting;
+namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
@@ -122,13 +136,13 @@ class AccountingLineHTML
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $cssClass = static::$num % 2 == 0 ? 'bg-white border-top' : 'bg-light border-top';
         return '<div class="' . $cssClass . ' pl-2 pr-2">'
-            . '<div class="form-row">'
+            . '<div class="form-row align-items-end">'
             . static::subcuenta($i18n, $line, $model)
             . static::debe($i18n, $line, $model)
             . static::haber($i18n, $line, $model)
             . static::renderExpandButton($i18n, $idlinea, $model)
             . '</div>'
-            . '<div class="form-row collapse" id="collapse_' . $idlinea . '">'
+            . '<div class="form-row align-items-end collapse" id="collapse_' . $idlinea . '">'
             . static::contrapartida($i18n, $line, $model)
             . static::iva($i18n, $line, $model)
             . static::recargo($i18n, $line, $model)
@@ -169,8 +183,9 @@ class AccountingLineHTML
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="baseimponible_' . $idlinea . '"' : 'disabled';
-        return '<div class="col-sm pb-2">' . $i18n->trans('tax-base')
-            . '<input type="number" ' . $attributes . ' value="' . $line->baseimponible . '" class="form-control" step="any" autocomplete="off">'
+        return '<div class="col-sm pb-2 small">' . $i18n->trans('tax-base')
+            . '<input type="number" ' . $attributes . ' value="' . $line->baseimponible
+            . '" class="form-control" step="any" autocomplete="off">'
             . '</div>';
     }
 
@@ -200,8 +215,9 @@ class AccountingLineHTML
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="cifnif_' . $idlinea . '"' : 'disabled';
-        return '<div class="col-sm pb-2">' . $i18n->trans('cifnif')
-            . '<input type="text" ' . $attributes . ' value="' . $line->cifnif . '" class="form-control" maxlength="30" autocomplete="off"/>'
+        return '<div class="col-sm pb-2 small">' . $i18n->trans('cifnif')
+            . '<input type="text" ' . $attributes . ' value="' . $line->cifnif
+            . '" class="form-control" maxlength="30" autocomplete="off"/>'
             . '</div>';
     }
 
@@ -216,11 +232,12 @@ class AccountingLineHTML
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable
-            ? 'name="codcontrapartida_' . $idlinea . '" onkeyup="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
+            ? 'name="codcontrapartida_' . $idlinea . '" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col-sm-6 col-md-4 col-lg-2 pb-2">' . $i18n->trans('counterpart')
-            . '<input type="text" ' . $attributes . ' value="' . $line->codcontrapartida . '" class="form-control" maxlength="15" autocomplete="off"/>'
+        return '<div class="col-sm-6 col-md-4 col-lg-2 pb-2 small">' . $i18n->trans('counterpart')
+            . '<input type="text" ' . $attributes . ' value="' . $line->codcontrapartida
+            . '" class="form-control" maxlength="15" autocomplete="off"/>'
             . '</div>';
     }
 
@@ -235,10 +252,10 @@ class AccountingLineHTML
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable
-            ? 'name="debe_' . $idlinea . '" step="1" onkeyup="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
+            ? 'name="debe_' . $idlinea . '" step="1" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col-sm-2 col-lg-1 pb-2 small">' . $i18n->trans('debit')
+        return '<div class="col-sm-3 col-md-2 pb-2 small">' . $i18n->trans('debit')
             . '<input type="number" class="form-control line-debit" ' . $attributes . ' value="' . $line->debe . '"/>'
             . '</div>';
     }
@@ -288,10 +305,10 @@ class AccountingLineHTML
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable
-            ? 'name="haber_' . $idlinea . '" step="1" onkeyup="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
+            ? 'name="haber_' . $idlinea . '" step="1" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
             : 'disabled';
 
-        return '<div class="col-sm-2 pb-2 small">' . $i18n->trans('credit')
+        return '<div class="col-sm-3 col-md-2 pb-2 small">' . $i18n->trans('credit')
             . '<input type="number" class="form-control" ' . $attributes . ' value="' . $line->haber . '"/>'
             . '</div>';
     }
@@ -313,7 +330,7 @@ class AccountingLineHTML
 
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="iva_' . $idlinea . '"' : 'disabled';
-        return '<div class="col-sm pb-2">' . $i18n->trans('vat')
+        return '<div class="col-sm pb-2 small">' . $i18n->trans('vat')
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>';
     }
@@ -329,8 +346,9 @@ class AccountingLineHTML
     {
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="recargo_' . $idlinea . '"' : 'disabled';
-        return '<div class="col-sm pb-2">' . $i18n->trans('surcharge')
-            . '<input type="number" ' . $attributes . ' value="' . $line->recargo . '" decimal="2" class="form-control" step="any" autocomplete="off">'
+        return '<div class="col-sm pb-2 small">' . $i18n->trans('surcharge')
+            . '<input type="number" ' . $attributes . ' value="' . $line->recargo
+            . '" decimal="2" class="form-control" step="any" autocomplete="off">'
             . '</div>';
     }
 
@@ -344,12 +362,14 @@ class AccountingLineHTML
     protected static function renderExpandButton(Translator $i18n, string $idlinea, Asiento $model): string
     {
         if ($model->editable) {
-            return '<div class="col-sm-1"><div class="text-right small">' . $i18n->trans('drag') . '<i class="fas fa-arrows-alt-v ml-2"></i></div>'
-                . '<a href="#collapse_' . $idlinea . '" data-toggle="collapse" class="btn btn-block btn-outline-secondary mb-1">'
+            return '<div class="col-sm-2 col-md-1"><div class="text-right small">' . $i18n->trans('drag')
+                . '<i class="fas fa-arrows-alt-v ml-2"></i></div>'
+                . '<a href="#collapse_' . $idlinea . '" data-toggle="collapse" class="btn btn-block btn-outline-secondary mb-2">'
                 . $i18n->trans('more') . '</a></div>';
         }
 
-        return '<div class="col-sm-1"><a href="#collapse_' . $idlinea . '" data-toggle="collapse" class="btn btn-block btn-outline-secondary mb-1">'
+        return '<div class="col-sm-2 col-md-1"><a href="#collapse_' . $idlinea
+            . '" data-toggle="collapse" class="btn btn-block btn-outline-secondary mb-2">'
             . $i18n->trans('more') . '</a></div>';
     }
 
@@ -361,7 +381,7 @@ class AccountingLineHTML
      */
     protected static function saldo(Translator $i18n, Subcuenta $subcuenta): string
     {
-        return '<div class="col-sm-2 pb-2 small">' . $i18n->trans('balance')
+        return '<div class="col-sm-4 col-md-2 pb-2 small">' . $i18n->trans('balance')
             . '<input type="text" class="form-control" value="' . ToolBox::numbers()::format($subcuenta->saldo) . '" tabindex="-1" readonly>'
             . '</div>';
     }
@@ -378,16 +398,15 @@ class AccountingLineHTML
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $subcuenta = static::getSubcuenta($line->codsubcuenta, $model);
         if (false === $model->editable) {
-            return '<div class="col-sm-6 col-md-4 col-lg-2 pb-2 small">' . $i18n->trans('subaccount')
+            return '<div class="col-sm-6 col-md-2 pb-2 small">' . $i18n->trans('subaccount')
                 . '<input type="text" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'
                 . '</div>'
                 . static::descripcion($i18n, $subcuenta)
                 . static::saldo($i18n, $subcuenta);
         }
 
-        return '<div class="col-sm-6 col-md-4 col-lg-2 pb-2 small">'
-            . '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>'
-            . '<i class="fas fa-arrows-alt-v"></i> ' . $i18n->trans('subaccount')
+        return '<div class="col-sm-6 col-md-2 pb-2 small">'
+            . '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' . $i18n->trans('subaccount')
             . '<div class="input-group">'
             . '<input type="text" name="codsubcuenta_' . $idlinea . '" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'
             . '<div class="input-group-append"><button class="btn btn-outline-danger" type="button"'

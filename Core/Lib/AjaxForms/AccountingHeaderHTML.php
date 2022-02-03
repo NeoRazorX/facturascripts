@@ -1,9 +1,23 @@
 <?php
 /**
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * This file is part of FacturaScripts
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Lib\Accounting;
+namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Lib\CodePatterns;
@@ -46,8 +60,6 @@ class AccountingHeaderHTML
             . static::fecha($i18n, $model)
             . static::concepto($i18n, $model)
             . static::documento($i18n, $model)
-            . static::importe($i18n, $model)
-            . static::descuadre($i18n, $model)
             . '</div></div><br/>';
     }
 
@@ -83,28 +95,6 @@ class AccountingHeaderHTML
         return empty($model->documento) ? '' : '<div class="col-sm-3 col-md-2">'
             . '<div class="form-group">' . $i18n->trans('document')
             . '<input type="text" value="' . $model->documento . '" class="form-control" readonly/>'
-            . '</div>'
-            . '</div>';
-    }
-
-    /**
-     * Render the unbalance value
-     *
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function descuadre(Translator $i18n, $model): string
-    {
-        $unbalance = isset($model->debe, $model->haber) ? $model->debe - $model->haber : 0.00;
-        if (empty($unbalance)) {
-            return '';
-        }
-
-        return '<div class="col-sm-3 col-md-2">'
-            . '<div class="form-group text-danger">' . $i18n->trans('unbalance')
-            . '<input type="number" value="' . $unbalance . '" class="form-control" step="any" readonly>'
             . '</div>'
             . '</div>';
     }
@@ -188,23 +178,6 @@ class AccountingHeaderHTML
             . static::getItems($companyList, 'idempresa', 'nombre', $model->idempresa)
             . '</select>'
             . '</div>'
-            . '</div>'
-            . '</div>';
-    }
-
-    /**
-     * Render the amount field
-     *
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function importe(Translator $i18n, $model): string
-    {
-        return '<div class="col-sm-3 col-md-2">'
-            . '<div class="form-group">' . $i18n->trans('amount')
-            . '<input type="number" value="' . $model->importe . '" class="form-control" step="any" tabindex="-1" readonly>'
             . '</div>'
             . '</div>';
     }

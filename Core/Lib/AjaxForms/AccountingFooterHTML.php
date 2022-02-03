@@ -1,9 +1,23 @@
 <?php
 /**
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * This file is part of FacturaScripts
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Lib\Accounting;
+namespace FacturaScripts\Core\Lib\AjaxForms;
 
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -21,7 +35,7 @@ class AccountingFooterHTML
      * @param Asiento $model
      * @param array $formData
      */
-    public static function apply(&$model, array $formData)
+    public static function apply(Asiento &$model, array $formData)
     {
     }
 
@@ -30,20 +44,22 @@ class AccountingFooterHTML
      *
      * @return string
      */
-    public static function render($model): string
+    public static function render(Asiento $model): string
     {
         $i18n = new Translator();
-        return '<div class="container-fluid"><div class="form-row mt-3">'
+        return '<div class="container-fluid">'
+            . '<div class="form-row mt-3">'
             . static::newSubaccount($i18n, $model)
             . static::subaccountBtn($i18n, $model)
-            . '<div class="col-sm-6 col-md"></div>'
-            . static::deleteBtn($i18n, $model)
-            . '<div class="col-sm-3 col-md-2">'
-            . static::saveBtn($i18n, $model)
             . static::importe($i18n, $model)
             . static::descuadre($i18n, $model)
             . '</div>'
-            . '</div></div>';
+            . '<div class="form-row mt-3">'
+            . static::deleteBtn($i18n, $model)
+            . '<div class="col-sm"></div>'
+            . static::saveBtn($i18n, $model)
+            . '</div>'
+            . '</div>';
     }
 
     /**
@@ -52,7 +68,7 @@ class AccountingFooterHTML
      *
      * @return string
      */
-    protected static function deleteBtn(Translator $i18n, $model): string
+    protected static function deleteBtn(Translator $i18n, Asiento $model): string
     {
         if (false === $model->exists() || false === $model->editable) {
             return '';
@@ -102,16 +118,17 @@ class AccountingFooterHTML
      *
      * @return string
      */
-    protected static function descuadre(Translator $i18n, $model): string
+    protected static function descuadre(Translator $i18n, Asiento $model): string
     {
         $unbalance = isset($model->debe, $model->haber) ? $model->debe - $model->haber : 0.00;
         if (empty($unbalance)) {
             return '';
         }
 
-        return '<div class="form-group text-danger">' . $i18n->trans('unbalance')
+        return '<div class="col-sm-3 col-md-2 mb-3">'
+            . '<div class="form-group text-danger">' . $i18n->trans('unbalance')
             . '<input type="number" value="' . $unbalance . '" class="form-control" step="any" readonly>'
-            . '</div>';
+            . '</div></div>';
     }
 
     /**
@@ -122,11 +139,12 @@ class AccountingFooterHTML
      *
      * @return string
      */
-    protected static function importe(Translator $i18n, $model): string
+    protected static function importe(Translator $i18n, Asiento $model): string
     {
-        return false === $model->editable || empty($model->importe) ? '' : '<div class="form-group">' . $i18n->trans('amount')
+        return '<div class="col-sm-3 col-md-2 mb-3">'
+            . '<div class="form-group">' . $i18n->trans('amount')
             . '<input type="number" value="' . $model->importe . '" class="form-control" step="any" tabindex="-1" readonly>'
-            . '</div>';
+            . '</div></div>';
     }
 
     /**
@@ -135,13 +153,13 @@ class AccountingFooterHTML
      *
      * @return string
      */
-    protected static function newSubaccount(Translator $i18n, $model): string
+    protected static function newSubaccount(Translator $i18n, Asiento $model): string
     {
         if (false == $model->editable) {
-            return '';
+            return '<div class="col-sm"></div>';
         }
 
-        return '<div class="col-sm-3 col-md-2 mb-3">'
+        return '<div class="col-sm-6 col-md-2 mb-3">'
             . '<input type="text" class="form-control" maxlength="15" autocomplete="off" placeholder="' . $i18n->trans('subaccount')
             . '" id="new_subaccount" name="new_subaccount" onchange="return newLineAction(this.value);"/>'
             . '</div>';
@@ -153,15 +171,19 @@ class AccountingFooterHTML
      *
      * @return string
      */
-    protected static function saveBtn(Translator $i18n, $model): string
+    protected static function saveBtn(Translator $i18n, Asiento $model): string
     {
         if (false == $model->editable) {
-            return '<button type="button" class="btn btn-block btn-warning mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\', this);">'
-                . '<i class="fas fa-lock-open fa-fw"></i> ' . $i18n->trans('unlock-entry') . '</button>';
+            return '<div class="col-sm-3 col-md-2">'
+                . '<button type="button" class="btn btn-block btn-warning mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\', this);">'
+                . '<i class="fas fa-lock-open fa-fw"></i> ' . $i18n->trans('unlock-entry') . '</button>'
+                . '</div>';
         }
 
-        return '<button type="button" class="btn btn-block btn-primary mb-3" onclick="return accEntryFormSave(\'save-doc\', \'0\', this);">'
-            . '<i class="fas fa-save fa-fw"></i> ' . $i18n->trans('save') . '</button>';
+        return '<div class="col-sm-3 col-md-2">'
+            . '<button type="button" class="btn btn-block btn-primary mb-3" onclick="return accEntryFormSave(\'save-doc\', \'0\', this);">'
+            . '<i class="fas fa-save fa-fw"></i> ' . $i18n->trans('save') . '</button>'
+            . '</div>';
     }
 
     /**
@@ -170,15 +192,15 @@ class AccountingFooterHTML
      *
      * @return string
      */
-    protected static function subaccountBtn(Translator $i18n, $model): string
+    protected static function subaccountBtn(Translator $i18n, Asiento $model): string
     {
         if (false == $model->editable) {
             return '';
         }
 
-        return '<div class="col-sm-3 col-md-2">'
-            . '<a href="#" class="btn btn-block btn-info mb-3" onclick="$(\'#findSubaccountModal\').modal(); $(\'#findSubaccountInput\').focus(); return false;">'
-            . '<i class="fas fa-search fa-fw"></i> ' . $i18n->trans('subaccounts') . '</a>'
+        return '<div class="col-sm-6 col-md">'
+            . '<a href="#" class="btn btn-info mb-3" onclick="$(\'#findSubaccountModal\').modal(); $(\'#findSubaccountInput\').focus(); return false;">'
+            . '<i class="fas fa-book fa-fw"></i> ' . $i18n->trans('subaccounts') . '</a>'
             . '</div>';
     }
 }
