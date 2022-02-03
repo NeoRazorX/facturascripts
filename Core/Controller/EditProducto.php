@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -35,7 +36,6 @@ class EditProducto extends EditController
 {
 
     /**
-     *
      * @return string
      */
     public function getModelClassName()
@@ -69,7 +69,6 @@ class EditProducto extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsStock(string $viewName = 'EditStock')
@@ -83,7 +82,6 @@ class EditProducto extends EditController
     }
 
     /**
-     *
      * @param string $viewName
      */
     protected function createViewsSuppliers(string $viewName = 'EditProductoProveedor')
@@ -92,7 +90,6 @@ class EditProducto extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsVariants(string $viewName = 'EditVariante')
@@ -116,7 +113,6 @@ class EditProducto extends EditController
     }
 
     /**
-     *
      * @return bool
      */
     protected function insertAction()
@@ -133,7 +129,6 @@ class EditProducto extends EditController
     }
 
     /**
-     *
      * @param string $viewName
      */
     protected function loadCustomAttributeWidgets(string $viewName)
@@ -148,7 +143,6 @@ class EditProducto extends EditController
     }
 
     /**
-     *
      * @param string $viewName
      */
     protected function loadCustomReferenceWidget(string $viewName)
@@ -169,7 +163,7 @@ class EditProducto extends EditController
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -180,6 +174,9 @@ class EditProducto extends EditController
         switch ($viewName) {
             case $this->getMainViewName():
                 parent::loadData($viewName, $view);
+                if (empty($view->model->primaryColumnValue())) {
+                    $view->disableColumn('stock');
+                }
                 $this->loadCustomReferenceWidget('EditProductoProveedor');
                 if ($view->model->nostock) {
                     $this->setSettings('EditStock', 'active', false);

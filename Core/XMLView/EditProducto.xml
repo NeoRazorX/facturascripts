@@ -51,9 +51,7 @@
             </column>
         </group>
         <group name="options" numcolumns="12" valign="bottom">
-            <column name="stock" order="100">
-                <widget type="number" fieldname="stockfis" readonly="true"/>
-            </column>
+
             <column name="nostock" title="no-stock" order="110">
                 <widget type="checkbox" fieldname="nostock"/>
             </column>
@@ -73,7 +71,10 @@
                 <widget type="checkbox" fieldname="publico"/>
             </column>
         </group>
-        <group name="advanced" title="advanced" numcolumns="12">
+        <group name="advanced" numcolumns="12">
+            <column name="stock" numcolumns="2" order="90">
+                <widget type="number" fieldname="stockfis" readonly="true"/>
+            </column>
             <column name="creation-date" numcolumns="2" order="100">
                 <widget type="date" fieldname="fechaalta" readonly="true"/>
             </column>
