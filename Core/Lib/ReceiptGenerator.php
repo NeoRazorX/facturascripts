@@ -236,6 +236,7 @@ class ReceiptGenerator
         $newReceipt->importe = $amount;
         $newReceipt->nick = $invoice->nick;
         $newReceipt->numero = $number;
+        $newReceipt->fecha = $invoice->fecha;
         $newReceipt->setPaymentMethod($invoice->codpago);
         $newReceipt->disableInvoiceUpdate(true);
         return $newReceipt->save();
