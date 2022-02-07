@@ -55,7 +55,7 @@ class EditSettings extends PanelController
     /**
      * @return bool
      */
-    protected function checkPaymentMethod()
+    protected function checkPaymentMethod(): bool
     {
         $appSettings = $this->toolBox()->appSettings();
 
@@ -85,7 +85,7 @@ class EditSettings extends PanelController
     /**
      * @return bool
      */
-    protected function checkWarehouse()
+    protected function checkWarehouse(): bool
     {
         $appSettings = $this->toolBox()->appSettings();
 
@@ -115,7 +115,7 @@ class EditSettings extends PanelController
     /**
      * @return bool
      */
-    protected function checkTax()
+    protected function checkTax(): bool
     {
         $appSettings = $this->toolBox()->appSettings();
 
@@ -162,19 +162,17 @@ class EditSettings extends PanelController
     {
         $this->setTemplate('EditSettings');
 
+        // añadimos una pestaña para cada archivo SettingsXXX
         $modelName = 'Settings';
         $icon = $this->getPageData()['icon'];
-
         $this->createViewsSettings('SettingsDefault', $modelName, $icon);
-
         foreach ($this->allSettingsXMLViews() as $name) {
-            if ($name === 'SettingsDefault') {
-                continue;
+            if ($name != 'SettingsDefault') {
+                $this->createViewsSettings($name, $modelName, $icon);
             }
-            $this->createViewsSettings($name, $modelName, $icon);
         }
 
-        /// Others configuration views.
+        // Añadimos el resto de pestañas
         $this->createViewsApiKeys();
         $this->createViewsIdFiscal();
         $this->createViewSequences();
@@ -221,17 +219,17 @@ class EditSettings extends PanelController
 
     /**
      * Add a view settings.
-     * 
-     * @param type $name
-     * @param type $model
-     * @param type $icon
+     *
+     * @param string $name
+     * @param string $model
+     * @param string $icon
      */
-    protected function createViewsSettings($name, $model, $icon)
+    protected function createViewsSettings(string $name, string $model, string $icon)
     {
         $title = $this->getKeyFromViewName($name);
         $this->addEditView($name, $model, $title, $icon);
 
-        /// change icon
+        // change icon
         $groups = $this->views[$name]->getColumns();
         foreach ($groups as $group) {
             if (!empty($group->icon)) {
@@ -240,7 +238,7 @@ class EditSettings extends PanelController
             }
         }
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($name, 'btnDelete', false);
         $this->setSettings($name, 'btnNew', false);
     }
@@ -258,7 +256,6 @@ class EditSettings extends PanelController
 
         // Filters
         $this->createDocTypeFilter($viewName);
-
         $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
 
         $exercises = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
@@ -279,7 +276,6 @@ class EditSettings extends PanelController
 
         // Filters
         $this->createDocTypeFilter($viewName);
-
         $this->views[$viewName]->addFilterSelect('actualizastock', 'update-stock', 'actualizastock', [
             ['code' => null, 'description' => '------'],
             ['code' => -2, 'description' => $this->toolBox()->i18n()->trans('book')],
@@ -378,7 +374,7 @@ class EditSettings extends PanelController
     /**
      * @param string $viewName
      */
-    protected function loadPaymentMethodValues($viewName)
+    protected function loadPaymentMethodValues(string $viewName)
     {
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
@@ -393,7 +389,7 @@ class EditSettings extends PanelController
     /**
      * @param string $viewName
      */
-    protected function loadWarehouseValues($viewName)
+    protected function loadWarehouseValues(string $viewName)
     {
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
@@ -410,12 +406,12 @@ class EditSettings extends PanelController
      *
      * @return array
      */
-    private function allSettingsXMLViews()
+    private function allSettingsXMLViews(): array
     {
         $names = [];
-        foreach ($this->toolBox()->files()->scanFolder(\FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
-            if (0 === \strpos($fileName, self::KEY_SETTINGS)) {
-                $names[] = \substr($fileName, 0, -4);
+        foreach ($this->toolBox()->files()->scanFolder(FS_FOLDER . '/Dinamic/XMLView') as $fileName) {
+            if (0 === strpos($fileName, self::KEY_SETTINGS)) {
+                $names[] = substr($fileName, 0, -4);
             }
         }
 
@@ -429,8 +425,8 @@ class EditSettings extends PanelController
      *
      * @return string
      */
-    private function getKeyFromViewName($viewName)
+    private function getKeyFromViewName(string $viewName): string
     {
-        return \strtolower(\substr($viewName, \strlen(self::KEY_SETTINGS)));
+        return strtolower(substr($viewName, strlen(self::KEY_SETTINGS)));
     }
 }
