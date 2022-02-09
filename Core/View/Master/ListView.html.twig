@@ -38,7 +38,7 @@
         <div class="{{ currentView.settings.card ? 'container-fluid pt-3' : 'container-fluid' }}">
             <div class="form-row">
                 {# -- Left buttons -- #}
-                <div class="col mb-2">
+                <div class="col-md-auto mb-2">
                     <div class="btn-group">
                         {% if currentView.settings.btnNew %}
                             {% if currentView.settings.modalInsert %}
@@ -75,7 +75,7 @@
                     {# -- Search field -- #}
                     {{ _self.searchControl(currentView, i18n) }}
                 </div>
-                <div class="col-md text-right mb-2">
+                <div class="col-sm-auto text-right mb-2">
                     {# -- Filters button -- #}
                     {{ _self.filterButton(currentView, fsc, i18n) }}
                     {# -- Colors button -- #}
