@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,7 +51,7 @@ class WidgetCheckbox extends BaseWidget
         $descriptionHtml = empty($description) ? '' :
             '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
 
-        return '<div class="form-group form-check">'
+        return '<div class="form-group form-check pr-3">'
             . $inputHtml
             . $labelHtml
             . $descriptionHtml

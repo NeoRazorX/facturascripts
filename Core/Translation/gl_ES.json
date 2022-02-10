@@ -13,7 +13,7 @@
     "account": "Conta",
     "account-balance": "Saldo da conta",
     "account-code": "Código de conta",
-    "account-code-bigger-than-subaccounts": "El código de la cuenta %code% es más largo que las subcuentas",
+    "account-code-bigger-than-subaccounts": "O código da conta %code% é máis longo que as subcontas",
     "account-code-lower-than-parent": "Código da conta %code% es mais curto ca do pai",
     "account-data-missing": "Faltan datos na conta",
     "account-dot-code": "Punto para autocompletar ceros. Exemplo: 11.1 = 1100000001",
