@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,7 +38,7 @@
         <div class="{{ currentView.settings.card ? 'container-fluid pt-3' : 'container-fluid' }}">
             <div class="form-row">
                 {# -- Left buttons -- #}
-                <div class="col mb-2">
+                <div class="col-md-auto mb-2">
                     <div class="btn-group">
                         {% if currentView.settings.btnNew %}
                             {% if currentView.settings.modalInsert %}
@@ -75,7 +75,7 @@
                     {# -- Search field -- #}
                     {{ _self.searchControl(currentView, i18n) }}
                 </div>
-                <div class="col-md text-right mb-2">
+                <div class="col-sm-auto text-right mb-2">
                     {# -- Filters button -- #}
                     {{ _self.filterButton(currentView, fsc, i18n) }}
                     {# -- Colors button -- #}
@@ -145,11 +145,10 @@
         {# -- Totals -- #}
         {% if currentView.totalAmounts is not empty %}
             <div class="table-responsive">
-                <table class="table table-sm table-hover mb-0">
+                <table class="table table-sm table-hover mt-4 mb-0">
                     <thead>
                     <tr>
-                        <th>
-                        </th>
+                        <th></th>
                         {% for item in currentView.totalAmounts %}
                             <th class="text-right text-capitalize">
                                 {{ i18n.trans(item.title) }}

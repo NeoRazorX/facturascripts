@@ -405,7 +405,7 @@
     "email-not-configured": "Posta elektronikoa ez dago konfiguratuta. Administratzailea, kontrol panela, aplikazioaren lehentasunak menutik ahal duzu konfiguratu.",
     "email-not-sent": "Bidali gabe",
     "email-replies-to": "Email honen erantzunak %email% helbidera joango dira",
-    "email-sent": "Bidali posta elektronikoz",
+    "email-sent": "Posta elektronikoz bidalita",
     "email-sent-to": "%email%(e)ri bidalitako emaila",
     "email-signature": "Emailaren sinadura",
     "email-to": "Emaila norentzat",
