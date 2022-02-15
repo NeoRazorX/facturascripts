@@ -397,7 +397,7 @@ final class PluginManager
     {
         if (file_exists(self::PLUGIN_LIST_FILE)) {
             $content = file_get_contents(self::PLUGIN_LIST_FILE);
-            if ($content !== false) {
+            if ($content) {
                 return json_decode($content, true);
             }
         }
