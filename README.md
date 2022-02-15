@@ -23,7 +23,7 @@ https://facturascripts.com/contacto
 If you discover a security vulnerability within FacturaScripts, please send an e-mail to Carlos Garcia via [carlos@facturascripts.com](mailto:carlos@facturascripts.com)
 
 ## Translations
-https://facturascripts.com/forja
+https://facturascripts.com/traducciones
 
 ## Tests
 ```
