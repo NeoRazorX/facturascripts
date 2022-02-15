@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view>
+    <columns>
+        <column name="name" order="100">
+            <widget type="text" fieldname="name" />
+        </column>
+        <column name="subject" order="110">
+            <widget type="text" fieldname="subject" />
+        </column>
+        <column name="enabled" display="center" order="120">
+            <widget type="checkbox" fieldname="enabled" />
+        </column>
+        <column name="date" display="right" order="130">
+            <widget type="date" fieldname="creationdate" />
+        </column>
+    </columns>
+    <rows>
+        <row type="status">
+            <option color="success" fieldname="enabled">1</option>
+            <option color="warning" fieldname="enabled">0</option>
+        </row>
+    </rows>
+</view>
