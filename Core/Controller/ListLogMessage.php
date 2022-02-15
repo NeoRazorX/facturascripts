@@ -52,7 +52,6 @@ class ListLogMessage extends ListController
     {
         $this->createLogMessageView();
         $this->createCronJobView();
-        $this->createEmailSentView();
     }
 
     /**
@@ -74,25 +73,6 @@ class ListLogMessage extends ListController
         $this->addFilterSelect($viewName, 'pluginname', 'plugin', 'pluginname', $plugins);
 
         $this->addFilterPeriod($viewName, 'date', 'period', 'date');
-
-        // settings
-        $this->setSettings($viewName, 'btnNew', false);
-    }
-
-    /**
-     * @param string $viewName
-     */
-    protected function createEmailSentView(string $viewName = 'ListEmailSent')
-    {
-        $this->addView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
-        $this->addOrderBy($viewName, ['date'], 'date', 2);
-        $this->addSearchFields($viewName, ['addressee', 'body', 'subject']);
-
-        // filters
-        $users = $this->codeModel->all('users', 'nick', 'nick');
-        $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
-        $this->addFilterPeriod($viewName, 'date', 'period', 'date');
-        $this->addFilterCheckbox($viewName, 'opened');
 
         // settings
         $this->setSettings($viewName, 'btnNew', false);
