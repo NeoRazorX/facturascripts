@@ -25,16 +25,16 @@
                             <td>{{ rule.menu }}</td>
                             <td class="text-center">
                                 {% if rule.show %}
-                                    <input type="checkbox" name="show[]" value="{{ pageName }}" checked="" />
+                                    <input class="show" type="checkbox" name="show[]" value="{{ pageName }}" checked="" />
                                 {% else %}
-                                    <input type="checkbox" name="show[]" value="{{ pageName }}" />
+                                    <input class="show" type="checkbox" name="show[]" value="{{ pageName }}" />
                                 {% endif %}
                             </td>
                             <td class="text-center">
                                 {% if rule.onlyOwner %}
-                                    <input type="checkbox" name="onlyOwner[]" value="{{ pageName }}" checked="" />
+                                    <input class="onlyOwner" type="checkbox" name="onlyOwner[]" value="{{ pageName }}" checked="" />
                                 {% else %}
-                                    <input type="checkbox" name="onlyOwner[]" value="{{ pageName }}" />
+                                    <input class="onlyOwner" type="checkbox" name="onlyOwner[]" value="{{ pageName }}" />
                                 {% endif %}
                             </td>
                             <td class="text-center">
@@ -69,3 +69,21 @@
         </div>
     </div>
 </form>
+
+<script>
+    $(document).ready(function(){
+        $('input.onlyOwner').change(function() {
+            if(this.checked) {
+                $(this).parent().parent().find('input.show').prop('checked', true);
+            } else {
+                $(this).parent().parent().find('input.show').prop('checked', false);
+            }
+        });
+
+        $('input.show').change(function() {
+            if(!this.checked) {
+                $(this).parent().parent().find('input.onlyOwner').prop('checked', false);
+            }
+        });
+    });
+</script>
