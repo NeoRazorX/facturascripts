@@ -119,6 +119,15 @@ final class PluginManager
             $this->disableByDependency($pluginName);
             $this->save();
             $this->deploy(true, true);
+
+            $pluginClass = "FacturaScripts\\Plugins\\$pluginName\\Init";
+            if (class_exists($pluginClass)) {
+                $initObject = new $pluginClass();
+                if (method_exists($initObject, 'unistall')) {
+                    $initObject->unistall();
+                }
+            }
+
             ToolBox::i18nLog()->notice('plugin-disabled', ['%pluginName%' => $pluginName]);
             return true;
         }
