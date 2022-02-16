@@ -20,8 +20,10 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
+use FacturaScripts\Dinamic\Model\LogMessage;
 
 /**
  * Description of Migrations
@@ -33,10 +35,29 @@ final class Migrations
 
     public static function run()
     {
+        self::clearLogs();
         self::fixCodagente();
         self::initModels();
         self::updateSettings();
         self::updateInvoiceStatus();
+    }
+
+    private static function clearLogs()
+    {
+        $logModel = new LogMessage();
+        $where = [new DataBaseWhere('channel', 'master')];
+
+        if ($logModel->count($where) < 20000) {
+            return;
+        }
+
+        $logModel->clear();
+        $currentDate = date("Y-m-d H:i:s");
+        $date = date("Y-m-d H:i:s", strtotime($currentDate . "- 1 month"));
+        $where[] = new DataBaseWhere('time', $date, '<');
+        foreach ($logModel->all($where, [], 0, 0) as $log) {
+            $log->delete();
+        }
     }
 
     private static function fixCodagente()
