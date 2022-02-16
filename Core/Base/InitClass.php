@@ -39,6 +39,11 @@ abstract class InitClass
     abstract public function update();
 
     /**
+     * Code that is executed when uninstalling a plugin.
+     */
+    public function unistall(){}
+
+    /**
      * 
      * @return string
      */
