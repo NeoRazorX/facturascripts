@@ -109,6 +109,7 @@ class ListLogMessage extends ListController
         $this->addSearchFields($viewName, ['context', 'message', 'uri']);
         $this->addOrderBy($viewName, ['time', 'id'], 'date', 2);
         $this->addOrderBy($viewName, ['level'], 'level');
+        $this->addOrderBy($viewName, ['ip'], 'ip');
 
         // filters
         $channels = $this->codeModel->all('logs', 'channel', 'channel');
