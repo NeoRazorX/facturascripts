@@ -93,9 +93,6 @@ final class PluginManager
         }
     }
 
-    /**
-     * @return bool
-     */
     public function deploymentRequired(): bool
     {
         return self::$deploymentRequired;
@@ -123,9 +120,7 @@ final class PluginManager
             $pluginClass = "FacturaScripts\\Plugins\\$pluginName\\Init";
             if (class_exists($pluginClass)) {
                 $initObject = new $pluginClass();
-                if (method_exists($initObject, 'unistall')) {
-                    $initObject->unistall();
-                }
+                $initObject->uninstall();
             }
 
             ToolBox::i18nLog()->notice('plugin-disabled', ['%pluginName%' => $pluginName]);
@@ -184,7 +179,6 @@ final class PluginManager
     }
 
     /**
-     *
      * @param string $pluginName
      */
     public function initPlugin(string $pluginName)
