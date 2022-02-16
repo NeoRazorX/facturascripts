@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
@@ -36,42 +35,26 @@ final class Migrations
 
     public static function run()
     {
-        self::clearLogs();
-        self::fixCodagente();
         self::initModels();
         self::updateProductsBlock();
         self::updateSettings();
         self::updateInvoiceStatus();
+        self::clearLogs();
     }
 
     private static function clearLogs()
     {
         $logModel = new LogMessage();
         $where = [new DataBaseWhere('channel', 'master')];
-
         if ($logModel->count($where) < 20000) {
             return;
         }
 
-        $date = date("Y-m-d H:i:s", strtotime("- 1 month"));
+        // cuando hay miles de registros en el canal master, eliminamos los antiguos para evitar problemas de rendimiento
         $dataBase = new DataBase();
-        $sql = 'DELETE logs WHERE channel="master" AND time<"' . $date . '";';
+        $date = date("Y-m-d H:i:s", strtotime("-1 month"));
+        $sql = "DELETE logs WHERE channel = 'master' AND time < '" . $date . "';";
         $dataBase->exec($sql);
-    }
-
-    private static function fixCodagente()
-    {
-        $dataBase = new DataBase();
-        $tables = ['albaranescli', 'facturascli', 'pedidoscli', 'presupuestoscli'];
-        foreach ($tables as $table) {
-            if (false === $dataBase->tableExists($table)) {
-                continue;
-            }
-
-            $sql = 'UPDATE ' . $table . ' SET codagente = NULL WHERE codagente IS NOT NULL'
-                . ' AND codagente NOT IN (SELECT codagente FROM agentes);';
-            $dataBase->exec($sql);
-        }
     }
 
     private static function initModels()
