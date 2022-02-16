@@ -25,9 +25,9 @@
                             <td>{{ rule.menu }}</td>
                             <td class="text-center">
                                 {% if rule.show %}
-                                    <input type="checkbox" name="show[]" value="{{ pageName }}" checked="" />
+                                    <input class="show" type="checkbox" name="show[]" value="{{ pageName }}" checked="" />
                                 {% else %}
-                                    <input type="checkbox" name="show[]" value="{{ pageName }}" />
+                                    <input class="show" type="checkbox" name="show[]" value="{{ pageName }}" />
                                 {% endif %}
                             </td>
                             <td class="text-center">
@@ -72,11 +72,17 @@
 
 <script>
     $(document).ready(function(){
-        $("input.onlyOwner").change(function() {
+        $('input.onlyOwner').change(function() {
             if(this.checked) {
-                $(this).parent().prev().find('input[type="checkbox"]').prop('checked', true);
+                $(this).parent().parent().find('input.show').prop('checked', true);
             } else {
-                $(this).parent().prev().find('input[type="checkbox"]').prop('checked', false);
+                $(this).parent().parent().find('input.show').prop('checked', false);
+            }
+        });
+
+        $('input.show').change(function() {
+            if(!this.checked) {
+                $(this).parent().parent().find('input.onlyOwner').prop('checked', false);
             }
         });
     });
