@@ -39,9 +39,20 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
     });
 }
 
-function setModalParentCode(modal, code) {
-    // asignamos el code del formulario donde sale el botón al formulario del modal
-    $("#" + modal).parent().find('input[name="parentcode"]').val(code);
+function setModalParentForm(modal, form) {
+    if (form.code) {
+        // asignamos al formulario del modal el code del formulario donde sale el botón
+        $("#" + modal).parent().find('input[name="code"]').val(form.code.value);
+    } else if (form.elements['code[]']) {
+        let codes = [];
+        for (let num = 0; num < form.elements['code[]'].length; num++) {
+            if (form.elements['code[]'][num].checked) {
+                codes.push(form.elements['code[]'][num].value);
+            }
+        }
+        // asignamos al formulario del modal los checkboxes marcados del formulario donde sale el botón
+        $("#" + modal).parent().find('input[name="code"]').val(codes.join());
+    }
 }
 
 $(document).ready(function () {

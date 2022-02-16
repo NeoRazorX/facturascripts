@@ -120,7 +120,7 @@ class RowButton extends VisualItem
             case 'modal':
                 $modal = 'modal' . $this->action;
                 return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#'
-                    . $modal . '" title="' . $this->label . '" onclick="setModalParentCode(\'' . $modal . '\', this.form.code.value)">'
+                    . $modal . '" title="' . $this->label . '" onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
                     . $icon . $label . '</button>';
 
             default:

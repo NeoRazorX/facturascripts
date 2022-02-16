@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\App\WebRender;
@@ -29,27 +30,17 @@ class RowFooter extends VisualItem
 {
 
     /**
-     *
      * @var array
      */
     protected $children;
 
-    /**
-     *
-     * @param array $data
-     */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         parent::__construct($data);
         $this->children = $data['children'];
     }
 
-    /**
-     * Adds a new button.
-     *
-     * @param array $btnArray
-     */
-    public function addButton($btnArray)
+    public function addButton(array $btnArray)
     {
         if (!isset($btnArray['tag'])) {
             $btnArray['tag'] = 'button';
@@ -60,14 +51,13 @@ class RowFooter extends VisualItem
     }
 
     /**
-     *
      * @param string $viewName
      * @param string $jsFunction
      * @param object $controller
      *
      * @return string
      */
-    public function render($viewName, $jsFunction = '', &$controller = null)
+    public function render(string $viewName, string $jsFunction = '', &$controller = null): string
     {
         $html = '';
         foreach ($this->children as $child) {
@@ -87,13 +77,7 @@ class RowFooter extends VisualItem
         return $html;
     }
 
-    /**
-     *
-     * @param array $group
-     *
-     * @return string
-     */
-    protected function renderCardFooter($group)
+    protected function renderCardFooter(array $group): string
     {
         if (isset($group['footer'])) {
             return '<div class="card-footer">' . static::$i18n->trans($group['footer']) . '</div>';
@@ -102,13 +86,7 @@ class RowFooter extends VisualItem
         return '';
     }
 
-    /**
-     *
-     * @param array $group
-     *
-     * @return string
-     */
-    protected function renderCardHeader($group)
+    protected function renderCardHeader(array $group): string
     {
         if (isset($group['title'])) {
             return '<div class="card-header">' . static::$i18n->trans($group['title']) . '</div>';
@@ -118,15 +96,14 @@ class RowFooter extends VisualItem
     }
 
     /**
-     *
-     * @param array  $group
+     * @param array $group
      * @param string $viewName
      * @param string $jsFunction
      * @param object $controller
      *
      * @return string
      */
-    protected function renderGroup($group, $viewName, $jsFunction, &$controller = null)
+    protected function renderGroup(array $group, string $viewName, string $jsFunction, &$controller = null): string
     {
         $colClass = isset($group['numcolumns']) ? 'col-sm-' . $group['numcolumns'] : 'col';
         $class = isset($group['class']) ? ' ' . $group['class'] : '';
