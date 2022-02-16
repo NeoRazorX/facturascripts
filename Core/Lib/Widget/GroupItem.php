@@ -132,6 +132,7 @@ class GroupItem extends VisualItem
         $html = '<form id="formModal' . $this->getUniqueId() . '" method="post" enctype="multipart/form-data">'
             . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
             . '<input type="hidden" name="multireqtoken" value="' . self::getToken() . '"/>'
+            . '<input type="hidden" name="parentcode" value=""/>'
             . '<div class="modal" id="modal' . $this->name . '" tabindex="-1" role="dialog">'
             . '<div class="modal-dialog ' . $this->class . '" role="document">'
             . '<div class="modal-content">'

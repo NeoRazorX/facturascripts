@@ -118,8 +118,10 @@ class RowButton extends VisualItem
                     . ' title="' . $this->label . '">' . $icon . $label . '</a>';
 
             case 'modal':
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
-                    . $this->action . '" title="' . $this->label . '">' . $icon . $label . '</button>';
+                $modal = 'modal' . $this->action;
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#'
+                    . $modal . '" title="' . $this->label . '" onclick="setModalParentCode(\'' . $modal . '\', this.form.code.value)">'
+                    . $icon . $label . '</button>';
 
             default:
                 $onclick = $this->getOnClickValue($viewName, $jsFunction);

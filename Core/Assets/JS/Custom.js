@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,6 +37,11 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
             }
         }
     });
+}
+
+function setModalParentCode(modal, code) {
+    // asignamos el code del formulario donde sale el botón al formulario del modal
+    $("#" + modal).parent().find('input[name="parentcode"]').val(code);
 }
 
 $(document).ready(function () {
