@@ -54,7 +54,9 @@ class ListFacturaCliente extends ListBusinessDocument
     protected function createViews()
     {
         $this->createViewSales('ListFacturaCliente', 'FacturaCliente', 'invoices');
-        $this->createViewLines('ListLineaFacturaCliente', 'LineaFacturaCliente');
+        if ($this->permissions->onlyOwnerData === false) {
+            $this->createViewLines('ListLineaFacturaCliente', 'LineaFacturaCliente');
+        }
         $this->createViewReceipts();
     }
 

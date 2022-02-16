@@ -54,7 +54,9 @@ class ListFacturaProveedor extends ListBusinessDocument
     protected function createViews()
     {
         $this->createViewPurchases('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
-        $this->createViewLines('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
+        if ($this->permissions->onlyOwnerData === false) {
+            $this->createViewLines('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
+        }
         $this->createViewReceipts();
     }
 
