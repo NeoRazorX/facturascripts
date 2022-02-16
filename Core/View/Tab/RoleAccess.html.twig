@@ -32,9 +32,9 @@
                             </td>
                             <td class="text-center">
                                 {% if rule.onlyOwner %}
-                                    <input type="checkbox" name="onlyOwner[]" value="{{ pageName }}" checked="" />
+                                    <input class="onlyOwner" type="checkbox" name="onlyOwner[]" value="{{ pageName }}" checked="" />
                                 {% else %}
-                                    <input type="checkbox" name="onlyOwner[]" value="{{ pageName }}" />
+                                    <input class="onlyOwner" type="checkbox" name="onlyOwner[]" value="{{ pageName }}" />
                                 {% endif %}
                             </td>
                             <td class="text-center">
@@ -69,3 +69,15 @@
         </div>
     </div>
 </form>
+
+<script>
+    $(document).ready(function(){
+        $("input.onlyOwner").change(function() {
+            if(this.checked) {
+                $(this).parent().prev().find('input[type="checkbox"]').prop('checked', true);
+            } else {
+                $(this).parent().prev().find('input[type="checkbox"]').prop('checked', false);
+            }
+        });
+    });
+</script>
