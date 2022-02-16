@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
@@ -51,13 +52,10 @@ final class Migrations
             return;
         }
 
-        $logModel->clear();
-        $currentDate = date("Y-m-d H:i:s");
-        $date = date("Y-m-d H:i:s", strtotime($currentDate . "- 1 month"));
-        $where[] = new DataBaseWhere('time', $date, '<');
-        foreach ($logModel->all($where, [], 0, 0) as $log) {
-            $log->delete();
-        }
+        $date = date("Y-m-d H:i:s", strtotime("- 1 month"));
+        $dataBase = new DataBase();
+        $sql = 'DELETE logs WHERE channel="master" AND time<"' . $date . '";';
+        $dataBase->exec($sql);
     }
 
     private static function fixCodagente()
