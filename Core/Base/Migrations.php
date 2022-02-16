@@ -36,9 +36,9 @@ final class Migrations
     public static function run()
     {
         self::initModels();
-        self::updateProductsBlock();
         self::updateSettings();
         self::updateInvoiceStatus();
+        self::unlockNullProducts();
         self::clearLogs();
     }
 
@@ -62,10 +62,10 @@ final class Migrations
         new FormatoDocumento();
     }
 
-    private static function updateProductsBlock()
+    private static function unlockNullProducts()
     {
         $dataBase = new DataBase();
-        $sql = 'UPDATE productos SET bloqueado=0 WHERE bloqueado IS NULL;';
+        $sql = 'UPDATE productos SET bloqueado = false WHERE bloqueado IS NULL;';
         $dataBase->exec($sql);
     }
 
