@@ -282,13 +282,7 @@ final class AppInstaller
         // Omit the DB name because it will be checked on a later stage
         $connection = @new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int)$dbData['port']);
         if (!$connection->connect_error) {
-            // Check that the DB exists, if it doesn't, we create a new one
-            $dbSelected = mysqli_select_db($connection, $dbData['name']);
-            if ($dbSelected) {
-                return true;
-            }
-
-            $sqlCrearBD = 'CREATE DATABASE `' . $dbData['name'] . '`;';
+            $sqlCrearBD = 'CREATE DATABASE IF NOT EXISTS `' . $dbData['name'] . '`;';
             if ($connection->query($sqlCrearBD)) {
                 return true;
             }
