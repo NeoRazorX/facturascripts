@@ -57,8 +57,10 @@ class ListCliente extends ListController
     protected function createViews()
     {
         $this->createViewCustomers();
-        $this->createViewContacts();
-        $this->createViewBankAccounts();
+        if ($this->permissions->onlyOwnerData === false) {
+            $this->createViewContacts();
+            $this->createViewBankAccounts();
+        }
         $this->createViewGroups();
     }
 
