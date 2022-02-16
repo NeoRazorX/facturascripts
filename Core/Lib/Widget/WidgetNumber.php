@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\NumberTools;
@@ -31,82 +32,62 @@ class WidgetNumber extends BaseWidget
 {
 
     /**
-     * Indicates the number of decimals to use.
-     *
-     * @var NumberTools
-     */
-    protected static $numberTools;
-
-    /**
-     *
      * @var int
      */
     public $decimal;
-
-    /**
-     * Indicates the min value
-     *
-     * @var string
-     */
-    protected $min;
 
     /**
      * Indicates the max value
      *
      * @var string
      */
-    protected $max;
+    public $max;
+
+    /**
+     * Indicates the min value
+     *
+     * @var string
+     */
+    public $min;
 
     /**
      * Indicates the step value
      *
      * @var string
      */
-    protected $step;
+    public $step;
 
     /**
-     *
      * @param array $data
      */
     public function __construct($data)
     {
-        if (!isset(static::$numberTools)) {
-            static::$numberTools = new NumberTools();
-        }
-
         parent::__construct($data);
-        $this->decimal = (int) ($data['decimal'] ?? FS_NF0);
-        $this->min = $data['min'] ?? '';
+        $this->decimal = (int)($data['decimal'] ?? FS_NF0);
         $this->max = $data['max'] ?? '';
+        $this->min = $data['min'] ?? '';
         $this->step = $data['step'] ?? 'any';
     }
 
     /**
-     * 
      * @return array
      */
     public function gridFormat(): array
     {
-        $format = '0.';
-        for ($num = 0; $num < $this->decimal; $num++) {
-            $format .= '0';
-        }
-
+        $format = '0.' . str_repeat('0', $this->decimal);
         return ['pattern' => $format];
     }
 
     /**
-     * 
-     * @param object  $model
+     * @param object $model
      * @param Request $request
      */
     public function processFormData(&$model, $request)
     {
-        $model->{$this->fieldname} = (float) $request->request->get($this->fieldname);
+        $model->{$this->fieldname} = (float)$request->request->get($this->fieldname);
     }
 
     /**
-     *
      * @param string $type
      * @param string $extraClass
      *
@@ -131,28 +112,25 @@ class WidgetNumber extends BaseWidget
     }
 
     /**
-     * 
      * @param object $model
      */
     protected function setValue($model)
     {
         parent::setValue($model);
         if (null === $this->value && $this->required) {
-            $this->value = empty($this->min) ? 0 : (float) $this->min;
+            $this->value = empty($this->min) ? 0 : (float)$this->min;
         }
     }
 
     /**
-     *
      * @return string
      */
     protected function show()
     {
-        return \is_null($this->value) ? '-' : static::$numberTools->format($this->value, $this->decimal);
+        return is_null($this->value) ? '-' : NumberTools::format($this->value, $this->decimal);
     }
 
     /**
-     *
      * @param string $initialClass
      * @param string $alternativeClass
      */

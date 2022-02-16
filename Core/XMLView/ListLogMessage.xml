@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,29 +21,29 @@
 -->
 <view>
     <columns>
-        <column name="code" display="none" order="0">
-            <widget type="text" fieldname="id" onclick="EditLogMessage" />
+        <column name="code" order="0">
+            <widget type="text" fieldname="id"/>
         </column>
         <column name="message" order="100">
-            <widget type="textarea" fieldname="message" />
+            <widget type="textarea" fieldname="message"/>
         </column>
         <column name="channel" order="110">
-            <widget type="text" fieldname="channel" />
+            <widget type="text" fieldname="channel"/>
         </column>
         <column name="level" order="120">
-            <widget type="text" fieldname="level" />
+            <widget type="text" fieldname="level"/>
         </column>
         <column name="user" order="130">
-            <widget type="text" fieldname="nick" />
+            <widget type="text" fieldname="nick"/>
         </column>
         <column name="url" order="140">
-            <widget type="link" fieldname="uri" />
+            <widget type="link" fieldname="uri"/>
         </column>
         <column name="ip" order="150">
-            <widget type="text" fieldname="ip" />
+            <widget type="text" fieldname="ip"/>
         </column>
         <column name="date" display="right" order="160">
-            <widget type="datetime" fieldname="time" />
+            <widget type="datetime" fieldname="time"/>
         </column>
     </columns>
     <rows>

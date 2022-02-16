@@ -65,6 +65,12 @@ class AttachedFileRelation extends Base\ModelClass
      * 
      * @var string
      */
+    public $modelcode;
+
+    /**
+     * 
+     * @var string
+     */
     public $nick;
 
     /**
@@ -149,10 +155,11 @@ class AttachedFileRelation extends Base\ModelClass
      */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
-        if ($this->model && $this->modelid) {
+        if ($this->model) {
             $modelClass = '\\FacturaScripts\\Dinamic\\Model\\' . $this->model;
             $model = new $modelClass();
-            if ($model->loadFromCode($this->modelid)) {
+            $code = empty($this->modelcode) ? $this->modelid : $this->modelcode;
+            if ($model->loadFromCode($code)) {
                 return $model->url();
             }
         }

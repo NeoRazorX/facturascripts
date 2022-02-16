@@ -26,8 +26,8 @@ use FacturaScripts\Dinamic\Model\CuentaEspecial;
 /**
  * Controller to list the items in the Cuenta model.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListCuenta extends ListController
 {
@@ -66,7 +66,7 @@ class ListCuenta extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewsAccounts(string $viewName = 'ListCuenta')
@@ -84,7 +84,7 @@ class ListCuenta extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewsSpecialAcounts(string $viewName = 'ListCuentaEspecial')
@@ -112,7 +112,7 @@ class ListCuenta extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewsSubaccounts(string $viewName = 'ListSubcuenta')
@@ -124,16 +124,21 @@ class ListCuenta extends ListController
         $this->addSearchFields($viewName, ['codsubcuenta', 'descripcion', 'codejercicio', 'codcuentaesp']);
 
         /// filters
+        $this->addFilterNumber($viewName, 'debit-major', 'debit', 'debe', '>=');
+        $this->addFilterNumber($viewName, 'debit-minor', 'debit', 'debe', '<=');
+        $this->addFilterNumber($viewName, 'credit-major', 'credit', 'haber', '>=');
+        $this->addFilterNumber($viewName, 'credit-minor', 'credit', 'haber', '<=');
+        $this->addFilterNumber($viewName, 'balance-major', 'balance', 'saldo', '>=');
+        $this->addFilterNumber($viewName, 'balance-minor', 'balance', 'saldo', '<=');
+
         $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $this->exerciseValues);
 
         $specialAccounts = $this->codeModel->all('cuentasesp', 'codcuentaesp', 'codcuentaesp');
         $this->addFilterSelect($viewName, 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccounts);
-
-        $this->addFilterCheckbox($viewName, 'saldo', 'balance', 'saldo', '!=', 0);
     }
 
     /**
-     * 
+     *
      * @param string $action
      *
      * @return bool

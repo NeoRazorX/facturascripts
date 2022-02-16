@@ -58,10 +58,9 @@ class EditAttachedFile extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->setTabsPosition('bottom');
-
         $this->createViewsPreview();
         $this->createViewsRelations();
+        $this->setTabsPosition('bottom');
     }
 
     /**
@@ -82,6 +81,9 @@ class EditAttachedFile extends EditController
         $this->addListView($viewName, 'AttachedFileRelation', 'related', 'fas fa-copy');
         $this->views[$viewName]->addSearchFields(['observations']);
         $this->views[$viewName]->addOrderBy(['creationdate'], 'date', 2);
+
+        /// disable button
+        $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
@@ -93,8 +95,7 @@ class EditAttachedFile extends EditController
     {
         switch ($viewName) {
             case 'ListAttachedFileRelation':
-                $idfile = $this->getViewModelValue($this->getMainViewName(), 'idfile');
-                $where = [new DataBaseWhere('idfile', $idfile)];
+                $where = [new DataBaseWhere('idfile', $this->getModel()->primaryColumnValue())];
                 $view->loadData('', $where);
                 break;
 

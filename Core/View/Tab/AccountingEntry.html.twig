@@ -1,0 +1,176 @@
+{% set model = fsc.getCurrentView().model %}
+{% include 'Master/btnLoading.html.twig' %}
+
+<script>
+    let editLine = 0;
+    findSubaccount = 0;
+
+    function findSubaccountSearch(action, id, input) {
+        findSubaccount++;
+        return setTimeout(function () {
+            accEntryFormAction(action, id, $(input).parent().find('button'));
+        }, 500);
+    }
+
+    function newLineAction(code) {
+        document.getElementById("new_subaccount").value = code;
+        return accEntryFormAction('new-line', '0');
+    }
+
+    function recalculateLine(recalculate, idlinea) {
+        editLine++;
+        return setTimeout(function () {
+            accEntryFormAction(recalculate, idlinea);
+        }, 500);
+    }
+
+    function accEntryFormAction(action, selectedLine, btn = '') {
+        if (btn !== '') {
+            animateSpinner(btn, 'add');
+        }
+
+        if (editLine > 1) {
+            editLine--;
+            return false;
+        }
+
+        if (findSubaccount > 1) {
+            findSubaccount--;
+            return false;
+        }
+
+        editLine = 0;
+        findSubaccount = 0;
+        document.forms['accEntryForm']['action'].value = action;
+        document.forms['accEntryForm']['selectedLine'].value = selectedLine;
+
+        const formData = new FormData(document.forms['accEntryForm']);
+        const plainFormData = Object.fromEntries(formData.entries());
+        const formDataJsonString = JSON.stringify(plainFormData);
+
+        let data = new FormData();
+        data.append('action', action);
+        data.append('code', document.forms['accEntryForm']['code'].value);
+        data.append('multireqtoken', document.forms['accEntryForm']['multireqtoken'].value);
+        data.append('selectedLine', document.forms['accEntryForm']['selectedLine'].value);
+        data.append('idasiento', document.forms['accEntryForm']['idasiento'].value);
+        data.append('data', formDataJsonString);
+
+        console.log(formData);
+
+        fetch('{{ fsc.url() }}', {
+            method: 'POST',
+            body: data
+        }).then(function (response) {
+            if (response.ok) {
+                if (btn !== '') {
+                    animateSpinner(btn, 'remove', true);
+                }
+                return response.json();
+            }
+            if (btn !== '') {
+                animateSpinner(btn, 'remove', false);
+            }
+            return Promise.reject(response);
+        }).then(function (data) {
+            if (data.header !== '') {
+                document.getElementById("accEntryFormHeader").innerHTML = data.header;
+            }
+            if (data.lines !== '') {
+                document.getElementById("accEntryFormLines").innerHTML = data.lines;
+            }
+            if (data.footer !== '') {
+                document.getElementById("accEntryFormFooter").innerHTML = data.footer;
+            }
+            if (data.list !== '') {
+                document.getElementById("findSubaccountList").innerHTML = data.list;
+            }
+            if (Array.isArray(data.messages)) {
+                data.messages.forEach(item => alert(item.message));
+            }
+            if (document.forms['accEntryForm']['action'].value === 'new-line') {
+                $(".line-debit:last").focus().select();
+            }
+        }).catch(function (error) {
+            alert('error');
+            console.warn(error);
+        });
+
+        return false;
+    };
+
+    function accEntryFormSave(action, selectedLine, btn) {
+        if (btn !== '') {
+            animateSpinner(btn, 'add');
+        }
+
+        document.forms['accEntryForm']['action'].value = action;
+        document.forms['accEntryForm']['selectedLine'].value = selectedLine;
+
+        const formData = new FormData(document.forms['accEntryForm']);
+        const plainFormData = Object.fromEntries(formData.entries());
+        const formDataJsonString = JSON.stringify(plainFormData);
+
+        let data = new FormData();
+        data.append('action', action);
+        data.append('code', document.forms['accEntryForm']['code'].value);
+        data.append('multireqtoken', document.forms['accEntryForm']['multireqtoken'].value);
+        data.append('selectedLine', document.forms['accEntryForm']['selectedLine'].value);
+        data.append('idasiento', document.forms['accEntryForm']['idasiento'].value);
+        data.append('data', formDataJsonString);
+
+        console.log(formData);
+
+        fetch('{{ fsc.url() }}', {
+            method: 'POST',
+            body: data
+        }).then(function (response) {
+            if (response.ok) {
+                if (btn !== '') {
+                    animateSpinner(btn, 'remove', true);
+                }
+                return response.json();
+            }
+            if (btn !== '') {
+                animateSpinner(btn, 'remove', false);
+            }
+            return Promise.reject(response);
+        }).then(function (data) {
+            if (Array.isArray(data.messages)) {
+                data.messages.forEach(item => alert(item.message));
+            }
+            if (data.ok) {
+                window.location.replace(data.newurl);
+            }
+        }).catch(function (error) {
+            alert('error');
+            console.warn(error);
+        });
+
+        return false;
+    };
+
+    $(document).ready(function () {
+        {% if model.editable %}
+        $("#accEntryFormLines").sortable({
+            update: function (event, ui) {
+                let orderInputs = $("input[name^='orden_']");
+                let count = orderInputs.length * 10;
+                orderInputs.each(function (index) {
+                    $(this).val(count - (index * 10));
+                });
+            }
+        });
+        $("#accEntryFormLines").disableSelection();
+        {% endif %}
+    });
+</script>
+
+<form name="accEntryForm" method="post">
+    <input type="hidden" name="action"/>
+    <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
+    <input type="hidden" name="{{ model.primaryColumn() }}" value="{{ model.primaryColumnValue() }}"/>
+    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken(fsc.user.logkey) }}"/>
+    <input type="hidden" name="selectedLine"/>
+    {{ fsc.renderAccEntryForm(model, model.getLines()) | raw }}
+</form>

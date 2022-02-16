@@ -1,23 +1,23 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
-{% extends "Master/MenuTemplate.html.twig" %}
+{% extends "Master/MenuBgTemplate.html.twig" %}
 
 {% block body %}
     {% for section in fsc.sections %}
@@ -34,7 +34,8 @@
                 <form action="{{ fsc.url() }}" method="post" class="form">
                     <div class="form-group">
                         <div class="input-group">
-                            <input type="text" name="query" value="{{ fsc.query }}" class="form-control form-control-lg" autocomplete="off" autofocus=""/>
+                            <input type="text" name="query" value="{{ fsc.query }}" class="form-control form-control-lg"
+                                   autocomplete="off" autofocus=""/>
                             <span class="input-group-append">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-search" aria-hidden="true"></i>
@@ -48,9 +49,10 @@
         <div class="row">
             <div class="col-sm-3 col-xl-2">
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
-                    {% for key, result in fsc.results  %}
+                    {% for key, result in fsc.results %}
                         {% set active = (loop.index == 1) ? 'nav-link active' : 'nav-link' %}
-                        <a class="{{ active }}" data-toggle="pill" href="#v-pills-{{ key }}" role="tab" aria-controls="v-pills-{{ key }}" aria-expanded="true">
+                        <a class="{{ active }}" data-toggle="pill" href="#v-pills-{{ key }}" role="tab"
+                           aria-controls="v-pills-{{ key }}" aria-expanded="true">
                             <span class="badge badge-secondary float-right">{{ result.results | length }}</span>
                             <i class="{{ result.icon }} fa-fw"></i>
                             {{ i18n.trans(result.title) }}
@@ -60,9 +62,10 @@
             </div>
             <div class="col-sm-9 col-xl-10">
                 <div class="tab-content" id="v-pills-tabContent">
-                    {% for key, result in fsc.results  %}
+                    {% for key, result in fsc.results %}
                         {% set active = (loop.index == 1) ? ' show active' : '' %}
-                        <div class="tab-pane fade{{ active }}" id="v-pills-{{ key }}" role="tabpanel" aria-labelledby="v-pills-{{ key }}-tab">
+                        <div class="tab-pane fade{{ active }}" id="v-pills-{{ key }}" role="tabpanel"
+                             aria-labelledby="v-pills-{{ key }}-tab">
                             <div class="card shadow">
                                 {{ _self.showSearchResults(result, i18n) }}
                             </div>
@@ -74,47 +77,38 @@
     </div>
 {% endblock %}
 
-{% block css %}
-    {{ parent() }}
-    <style>
-        body {
-            background-color: #FAFBFC;
-        }
-    </style>
-{% endblock %}
-
 {% macro showSearchResults(result, i18n) %}
     <div class="table-responsive">
         <table class="table table-striped table-hover">
             <thead>
-                <tr>
+            <tr>
+                {% for key, column in result.columns %}
+                    {% if key == 'icon' %}
+                        <th>
+                        </th>
+                    {% else %}
+                        <th>
+                            {{ i18n.trans(column) | capitalize }}
+                        </th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for line in result.results %}
+                {% set link = line.link ? line.link : '#' %}
+                <tr class="clickableRow" data-href="{{ link }}" data-target="_blank">
                     {% for key, column in result.columns %}
                         {% if key == 'icon' %}
-                            <th>
-                            </th>
-                        {% else %}
-                            <th>
-                                {{ i18n.trans(column) | capitalize }}
-                            </th>
+                            <td class="text-center">
+                                <i class="{{ line[key] }} fa-fw"></i>
+                            </td>
+                        {% elseif key != 'link' %}
+                            <td>{{ line[key] }}</td>
                         {% endif %}
                     {% endfor %}
                 </tr>
-            </thead>
-            <tbody>
-                {% for line in result.results %}
-                    {% set link = line.link ? line.link : '#' %}
-                    <tr class="clickableRow" data-href="{{ link }}" data-target="_blank">
-                        {% for key, column in result.columns %}
-                            {% if key == 'icon' %}
-                                <td class="text-center">
-                                    <i class="{{ line[key] }} fa-fw"></i>
-                                </td>
-                            {% elseif key != 'link' %}
-                                <td>{{ line[key] }}</td>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
+            {% endfor %}
             </tbody>
         </table>
     </div>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * A family of products.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class Familia extends Base\ModelClass
 {
@@ -72,6 +73,44 @@ class Familia extends Base\ModelClass
     public $madre;
 
     /**
+     * Number of products
+     *
+     * @var int
+     */
+    public $numproductos;
+
+    /**
+     * Reset the values of all model properties.
+     */
+    public function clear()
+    {
+        parent::clear();
+        $this->numproductos = 0;
+    }
+
+    /**
+     * Returns the name of the column that is the primary key of the model.
+     *
+     * @return string
+     */
+    public static function primaryColumn()
+    {
+        return 'codfamilia';
+    }
+
+    /**
+     * Get the accounting sub-account for irpf purchases.
+     *
+     * @param string $code
+     *
+     * @return string
+     */
+    public static function purchaseIrpfSubAccount($code)
+    {
+        return self::getSubaccountFromFamily($code, 'codsubcuentairpfcom');
+    }
+
+    /**
      * Get the accounting sub-account for purchases.
      *
      * @param string $code
@@ -84,13 +123,15 @@ class Familia extends Base\ModelClass
     }
 
     /**
-     * Returns the name of the column that is the primary key of the model.
+     * Get the accounting sub-account for sales.
+     *
+     * @param string $code
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function saleSubAccount($code)
     {
-        return 'codfamilia';
+        return self::getSubaccountFromFamily($code, 'codsubcuentaven');
     }
 
     /**
@@ -114,7 +155,7 @@ class Familia extends Base\ModelClass
         $this->codfamilia = $utils->noHtml($this->codfamilia);
         $this->descripcion = $utils->noHtml($this->descripcion);
 
-        if ($this->codfamilia && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
+        if ($this->codfamilia && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codfamilia, '%column%' => 'codfamilia', '%min%' => '1', '%max%' => '8']
@@ -130,7 +171,7 @@ class Familia extends Base\ModelClass
             return false;
         }
 
-        if ($this->madre === $this->codfamilia) {
+        if (empty($this->madre) || $this->madre === $this->codfamilia) {
             $this->madre = null;
         }
 
@@ -138,21 +179,8 @@ class Familia extends Base\ModelClass
     }
 
     /**
-     * Get the accounting sub-account for sales.
-     *
      * @param string $code
-     *
-     * @return string
-     */
-    public static function saleSubAccount($code)
-    {
-        return self::getSubaccountFromFamily($code, 'codsubcuentaven');
-    }
-
-    /**
-     *
-     * @param string  $code
-     * @param string  $field
+     * @param string $field
      * @param Familia $model
      *
      * @return string
@@ -177,7 +205,6 @@ class Familia extends Base\ModelClass
     }
 
     /**
-     * 
      * @param array $values
      *
      * @return bool

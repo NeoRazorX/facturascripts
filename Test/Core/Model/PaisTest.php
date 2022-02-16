@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,21 +16,42 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Pais;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Pais
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- */
-final class PaisTest extends CustomTest
+final class PaisTest extends TestCase
 {
+    use LogErrorsTrait;
 
-    protected function setUp()
+    public function testDataInstalled()
     {
-        $this->model = new Pais();
+        $pais = new Pais();
+        $this->assertNotEmpty($pais->all(), 'pais-data-not-installed-from-csv');
+    }
+
+    public function testCreate()
+    {
+        $pais = new Pais();
+        $pais->codpais = 'YOL';
+        $pais->nombre = 'Yolandia';
+        $this->assertTrue($pais->save(), 'pais-can-not-create');
+        $this->assertTrue($pais->exists(), 'pais-do-not-persists');
+        $this->assertTrue($pais->delete(), 'pais-can-not-delete');
+    }
+
+    public function testCreateNoCode()
+    {
+        $pais = new Pais();
+        $pais->nombre = 'Wolandia';
+        $this->assertFalse($pais->save(), 'pais-can-not-create');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
     }
 }

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -29,61 +30,51 @@ class BaseWidget extends VisualItem
 {
 
     /**
-     * 
      * @var bool
      */
     public $autocomplete;
 
     /**
-     *
      * @var string
      */
     public $fieldname;
 
     /**
-     *
      * @var string
      */
     public $icon;
 
     /**
-     *
      * @var string
      */
     public $onclick;
 
     /**
-     *
      * @var array
      */
     public $options = [];
 
     /**
-     *
      * @var string
      */
     public $readonly;
 
     /**
-     *
      * @var bool
      */
     public $required;
 
     /**
-     *
      * @var string
      */
     private $type;
 
     /**
-     *
      * @var mixed
      */
     protected $value;
 
     /**
-     *
      * @param array $data
      */
     public function __construct($data)
@@ -94,14 +85,13 @@ class BaseWidget extends VisualItem
         $this->icon = $data['icon'] ?? '';
         $this->onclick = $data['onclick'] ?? '';
         $this->readonly = $data['readonly'] ?? 'false';
-        $this->required = isset($data['required']) ? \strtolower($data['required']) === 'true' : false;
+        $this->required = isset($data['required']) && strtolower($data['required']) === 'true';
         $this->type = $data['type'];
         $this->loadOptions($data['children']);
         $this->assets();
     }
 
     /**
-     *
      * @param object $model
      * @param string $title
      * @param string $description
@@ -113,7 +103,7 @@ class BaseWidget extends VisualItem
     {
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
-        $labelHtml = '<label>' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
+        $labelHtml = '<label class="mb-1">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
         if (empty($this->icon)) {
             return '<div class="form-group">'
@@ -126,7 +116,7 @@ class BaseWidget extends VisualItem
         return '<div class="form-group">'
             . $labelHtml
             . '<div class="input-group">'
-            . '<div class="' . $this->css('input-group-prepend') . '">'
+            . '<div class="' . $this->css('input-group-prepend') . ' d-flex d-sm-none d-xl-flex">'
             . '<span class="input-group-text"><i class="' . $this->icon . ' fa-fw"></i></span>'
             . '</div>'
             . $this->inputHtml()
@@ -146,7 +136,6 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
      * @return array
      */
     public function gridFormat()
@@ -155,7 +144,6 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     *
      * @param object $model
      *
      * @return string
@@ -167,7 +155,6 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     *
      * @param object $model
      *
      * @return string
@@ -179,8 +166,7 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     *
-     * @param object  $model
+     * @param object $model
      * @param Request $request
      */
     public function processFormData(&$model, $request)
@@ -190,7 +176,7 @@ class BaseWidget extends VisualItem
 
     /**
      * Set custom fixed value to widget
-     * 
+     *
      * @param mixed $value
      */
     public function setCustomValue($value)
@@ -199,7 +185,6 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     * 
      * @return bool
      */
     public function showTableTotals(): bool
@@ -208,7 +193,6 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     *
      * @param object $model
      * @param string $display
      *
@@ -230,7 +214,6 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     *
      * @param string $type
      * @param string $extraClass
      *
@@ -244,7 +227,6 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     *
      * @return string
      */
     protected function inputHtmlExtraParams()
@@ -257,21 +239,19 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     *
      * @param array $children
      */
     protected function loadOptions($children)
     {
         foreach ($children as $child) {
             if ($child['tag'] === 'option') {
-                $child['text'] = \html_entity_decode($child['text']);
+                $child['text'] = html_entity_decode($child['text']);
                 $this->options[] = $child;
             }
         }
     }
 
     /**
-     *
      * @param string $inside
      * @param string $titleurl
      *
@@ -279,16 +259,15 @@ class BaseWidget extends VisualItem
      */
     protected function onclickHtml($inside, $titleurl = '')
     {
-        if (empty($this->onclick) || \is_null($this->value)) {
+        if (empty($this->onclick) || is_null($this->value)) {
             return empty($titleurl) ? $inside : '<a href="' . $titleurl . '">' . $inside . '</a>';
         }
 
-        return '<a href="' . \FS_ROUTE . '/' . $this->onclick . '?code=' . \rawurlencode($this->value)
+        return '<a href="' . FS_ROUTE . '/' . $this->onclick . '?code=' . rawurlencode($this->value)
             . '" class="cancelClickable">' . $inside . '</a>';
     }
 
     /**
-     * 
      * @return bool
      */
     protected function readonly()
@@ -301,7 +280,6 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     *
      * @param object $model
      */
     protected function setValue($model)
@@ -310,16 +288,14 @@ class BaseWidget extends VisualItem
     }
 
     /**
-     *
      * @return string
      */
     protected function show()
     {
-        return \is_null($this->value) ? '-' : (string) $this->value;
+        return is_null($this->value) ? '-' : (string)$this->value;
     }
 
     /**
-     *
      * @param string $initialClass
      * @param string $alternativeClass
      *
@@ -329,19 +305,19 @@ class BaseWidget extends VisualItem
     {
         foreach ($this->options as $opt) {
             $textClass = $this->getColorFromOption($opt, $this->value, 'text-');
-            if (!empty($textClass)) {
+            if ($textClass) {
                 $alternativeClass = $textClass;
                 break;
             }
         }
 
-        $class = [\trim($initialClass)];
-        if (!empty($alternativeClass)) {
+        $class = [trim($initialClass)];
+        if ($alternativeClass) {
             $class[] = $alternativeClass;
-        } elseif (\is_null($this->value)) {
+        } elseif (is_null($this->value)) {
             $class[] = $this->colorToClass('warning', 'text-');
         }
 
-        return \implode(' ', $class);
+        return implode(' ', $class);
     }
 }

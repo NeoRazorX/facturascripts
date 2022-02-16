@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -34,7 +35,6 @@ abstract class ExportBase
 {
 
     /**
-     *
      * @var string
      */
     private $fileName;
@@ -67,7 +67,7 @@ abstract class ExportBase
     /**
      * Blank document.
      */
-    abstract public function newDoc(string $title);
+    abstract public function newDoc(string $title, int $idformat, string $langcode);
 
     /**
      * Sets default orientation.
@@ -80,16 +80,15 @@ abstract class ExportBase
     abstract public function show(Response &$response);
 
     /**
-     * 
      * @param array $columns
      *
      * @return array
      */
-    protected function getColumnAlignments($columns): array
+    protected function getColumnAlignments(array $columns): array
     {
         $alignments = [];
         foreach ($columns as $col) {
-            if (\is_string($col)) {
+            if (is_string($col)) {
                 $alignments[$col] = 'left';
                 continue;
             }
@@ -110,16 +109,15 @@ abstract class ExportBase
     }
 
     /**
-     * 
      * @param array $columns
      *
      * @return array
      */
-    protected function getColumnTitles($columns): array
+    protected function getColumnTitles(array $columns): array
     {
         $titles = [];
         foreach ($columns as $col) {
-            if (\is_string($col)) {
+            if (is_string($col)) {
                 $titles[$col] = $col;
                 continue;
             }
@@ -140,16 +138,15 @@ abstract class ExportBase
     }
 
     /**
-     * 
      * @param array $columns
      *
      * @return array
      */
-    protected function getColumnWidgets($columns): array
+    protected function getColumnWidgets(array $columns): array
     {
         $widgets = [];
         foreach ($columns as $col) {
-            if (\is_string($col)) {
+            if (is_string($col)) {
                 continue;
             }
 
@@ -169,13 +166,12 @@ abstract class ExportBase
     }
 
     /**
-     * 
      * @param ModelClass[] $cursor
-     * @param array        $columns
+     * @param array $columns
      *
      * @return array
      */
-    protected function getCursorData($cursor, $columns): array
+    protected function getCursorData(array $cursor, array $columns): array
     {
         $data = [];
         $widgets = $this->getColumnWidgets($columns);
@@ -189,13 +185,12 @@ abstract class ExportBase
     }
 
     /**
-     * 
      * @param ModelClass[] $cursor
-     * @param array        $fields
+     * @param array $fields
      *
      * @return array
      */
-    protected function getCursorRawData($cursor, $fields = []): array
+    protected function getCursorRawData(array $cursor, array $fields = []): array
     {
         $data = [];
         foreach ($cursor as $num => $row) {
@@ -213,7 +208,6 @@ abstract class ExportBase
     }
 
     /**
-     * 
      * @param BusinessDocument $model
      *
      * @return FormatoDocumento
@@ -221,7 +215,10 @@ abstract class ExportBase
     protected function getDocumentFormat($model)
     {
         $documentFormat = new FormatoDocumento();
-        $where = [new DataBaseWhere('idempresa', $model->idempresa)];
+        $where = [
+            new DataBaseWhere('autoaplicar', true),
+            new DataBaseWhere('idempresa', $model->idempresa)
+        ];
         foreach ($documentFormat->all($where, ['tipodoc' => 'DESC', 'codserie' => 'DESC']) as $format) {
             if ($format->tipodoc === $model->modelClassName() && $format->codserie === $model->codserie) {
                 return $format;
@@ -238,17 +235,16 @@ abstract class ExportBase
     }
 
     /**
-     * 
      * @param ModelClass $model
-     * @param array      $columns
+     * @param array $columns
      *
      * @return array
      */
-    protected function getModelColumnsData($model, $columns): array
+    protected function getModelColumnsData(ModelClass $model, array $columns): array
     {
         $data = [];
         foreach ($columns as $col) {
-            if (\is_string($col)) {
+            if (is_string($col)) {
                 continue;
             }
 
@@ -271,7 +267,6 @@ abstract class ExportBase
     }
 
     /**
-     * 
      * @param ModelClass $model
      *
      * @return array
@@ -279,7 +274,7 @@ abstract class ExportBase
     protected function getModelFields($model): array
     {
         $fields = [];
-        foreach (\array_keys($model->getModelFields()) as $key) {
+        foreach (array_keys($model->getModelFields()) as $key) {
             $fields[$key] = $key;
         }
 
@@ -287,30 +282,27 @@ abstract class ExportBase
     }
 
     /**
-     * 
      * @return string
      */
     protected function getFileName(): string
     {
-        return empty($this->fileName) ? 'file_' . \mt_rand(1, 9999) : $this->fileName;
+        return empty($this->fileName) ? 'file_' . mt_rand(1, 9999) : $this->fileName;
     }
 
     /**
-     * 
      * @param string $name
      */
     protected function setFileName(string $name)
     {
         if (empty($this->fileName)) {
-            $this->fileName = \str_replace([' ', '"', "'", '/', '\\', ','], '_', ToolBox::utils()->fixHtml($name));
+            $this->fileName = str_replace([' ', '"', "'", '/', '\\', ','], '_', ToolBox::utils()->fixHtml($name));
         }
     }
 
     /**
-     * 
      * @return ToolBox
      */
-    protected function toolBox()
+    protected function toolBox(): ToolBox
     {
         return new ToolBox();
     }

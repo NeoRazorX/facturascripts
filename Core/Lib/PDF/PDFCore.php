@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\PDF;
 
 use Cezpdf;
@@ -35,7 +36,7 @@ abstract class PDFCore extends ExportBase
 {
 
     /**
-     * X position to start writting.
+     * X position to start writing.
      */
     const CONTENT_X = 30;
 
@@ -55,7 +56,6 @@ abstract class PDFCore extends ExportBase
     const MAX_TITLE_LEN = 12;
 
     /**
-     *
      * @var DivisaTools
      */
     protected $divisaTools;
@@ -68,7 +68,6 @@ abstract class PDFCore extends ExportBase
     protected $i18n;
 
     /**
-     *
      * @var bool
      */
     protected $insertedHeader = false;
@@ -106,7 +105,7 @@ abstract class PDFCore extends ExportBase
 
     /**
      * Sets default orientation.
-     * 
+     *
      * @param string $orientation
      */
     public function setOrientation(string $orientation)
@@ -115,14 +114,13 @@ abstract class PDFCore extends ExportBase
     }
 
     /**
-     * 
      * @param AttachedFile $file
-     * @param int|float    $xPos
-     * @param int|float    $yPos
-     * @param int|float    $width
-     * @param int|float    $height
+     * @param int|float $xPos
+     * @param int|float $yPos
+     * @param int|float $width
+     * @param int|float $height
      */
-    protected function addImageFromAttachedFile($file, $xPos, $yPos, $width, $height)
+    protected function addImageFromAttachedFile(AttachedFile $file, $xPos, $yPos, $width, $height)
     {
         switch ($file->mimetype) {
             case 'image/gif':
@@ -141,14 +139,13 @@ abstract class PDFCore extends ExportBase
     }
 
     /**
-     * 
-     * @param string    $filePath
+     * @param string $filePath
      * @param int|float $xPos
      * @param int|float $yPos
      * @param int|float $width
      * @param int|float $height
      */
-    protected function addImageFromFile($filePath, $xPos, $yPos, $width, $height)
+    protected function addImageFromFile(string $filePath, $xPos, $yPos, $width, $height)
     {
         $parts = explode('.', $filePath);
         $extension = strtolower(end($parts));
@@ -175,7 +172,7 @@ abstract class PDFCore extends ExportBase
      *
      * @return array
      */
-    protected function calcImageSize($filePath)
+    protected function calcImageSize(string $filePath): array
     {
         $imageSize = $size = getimagesize($filePath);
         if ($size[0] > 200) {
@@ -195,12 +192,11 @@ abstract class PDFCore extends ExportBase
     }
 
     /**
-     * 
      * @param string $value
      *
      * @return string
      */
-    protected function fixValue($value)
+    protected function fixValue(string $value): string
     {
         return str_replace(['€', '₡', '₲', '£'], ['EUR', 'SVC', 'PYG', 'GBP'], Utils::fixHtml($value));
     }
@@ -214,7 +210,7 @@ abstract class PDFCore extends ExportBase
      *
      * @return array
      */
-    protected function getTableData($cursor, $tableCols, $tableOptions)
+    protected function getTableData(array $cursor, array $tableCols, array $tableOptions): array
     {
         $tableData = [];
 
@@ -232,14 +228,14 @@ abstract class PDFCore extends ExportBase
     /**
      * Generate a table with two key => value per row.
      *
-     * @param array  $tableData
+     * @param array $tableData
      * @param string $title
-     * @param array  $options
+     * @param array $options
      */
-    protected function insertParalellTable($tableData, $title = '', $options = [])
+    protected function insertParallelTable(array $tableData, string $title = '', array $options = [])
     {
         $headers = ['data1' => 'data1', 'data2' => 'data2'];
-        $rows = $this->paralellTableData($tableData);
+        $rows = $this->parallelTableData($tableData);
         $this->pdf->ezTable($rows, $headers, $title, $options);
     }
 
@@ -258,7 +254,7 @@ abstract class PDFCore extends ExportBase
      * @param array $titles
      * @param array $columns
      */
-    protected function newLongTitles(&$titles, $columns)
+    protected function newLongTitles(array &$titles, array $columns)
     {
         $txt = '';
         foreach ($titles as $key => $value) {
@@ -283,14 +279,14 @@ abstract class PDFCore extends ExportBase
      *
      * @param string $orientation
      */
-    protected function newPage($orientation = 'portrait')
+    protected function newPage(string $orientation = 'portrait')
     {
         if ($this->pdf === null) {
             $this->pdf = new Cezpdf('a4', $orientation);
             $this->pdf->addInfo('Creator', 'FacturaScripts');
             $this->pdf->addInfo('Producer', 'FacturaScripts');
             $this->pdf->addInfo('Title', $this->getFileName());
-            $this->pdf->tempPath = \FS_FOLDER . '/MyFiles/Cache';
+            $this->pdf->tempPath = FS_FOLDER . '/MyFiles/Cache';
 
             $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
 
@@ -306,7 +302,7 @@ abstract class PDFCore extends ExportBase
     /**
      * Returns a new table with 2 columns. Each column with colName1: colName2
      *
-     * @param array  $table
+     * @param array $table
      * @param string $colName1
      * @param string $colName2
      * @param string $finalColName1
@@ -314,7 +310,7 @@ abstract class PDFCore extends ExportBase
      *
      * @return array
      */
-    protected function paralellTableData($table, $colName1 = 'key', $colName2 = 'value', $finalColName1 = 'data1', $finalColName2 = 'data2')
+    protected function parallelTableData(array $table, string $colName1 = 'key', string $colName2 = 'value', string $finalColName1 = 'data1', string $finalColName2 = 'data2'): array
     {
         $tableData = [];
         $key = 0;
@@ -341,7 +337,7 @@ abstract class PDFCore extends ExportBase
      * @param array $tableColsTitle
      * @param mixed $customEmptyValue
      */
-    protected function removeEmptyCols(&$tableData, &$tableColsTitle, $customEmptyValue = '0')
+    protected function removeEmptyCols(array &$tableData, array &$tableColsTitle, $customEmptyValue = '0')
     {
         $emptyValues = ['-', '0%', $customEmptyValue, $customEmptyValue . '%'];
         foreach (array_keys($tableColsTitle) as $key) {
@@ -365,7 +361,7 @@ abstract class PDFCore extends ExportBase
      * @param array $longTitles
      * @param array $titles
      */
-    protected function removeLongTitles(&$longTitles, &$titles)
+    protected function removeLongTitles(array &$longTitles, array &$titles)
     {
         $num = 1;
         foreach ($titles as $key => $value) {
@@ -385,7 +381,7 @@ abstract class PDFCore extends ExportBase
      * @param array $tableColsTitle
      * @param array $tableOptions
      */
-    protected function setTableColumns(&$columns, &$tableCols, &$tableColsTitle, &$tableOptions)
+    protected function setTableColumns(array &$columns, array &$tableCols, array &$tableColsTitle, array &$tableOptions)
     {
         foreach ($columns as $col) {
             if (is_string($col)) {

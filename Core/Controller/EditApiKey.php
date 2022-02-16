@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
-use Exception;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Dinamic\Model;
+use FacturaScripts\Dinamic\Model\ApiAccess;
 
 /**
  * Controller to edit a single item from the ApiKey model.
@@ -34,8 +34,35 @@ class EditApiKey extends EditController
 {
 
     /**
+     * @return array
+     */
+    public function getAccessRules(): array
+    {
+        $rules = [];
+        foreach ($this->getResources() as $resource) {
+            $rules[$resource] = [
+                'allowget' => false,
+                'allowpost' => false,
+                'allowput' => false,
+                'allowdelete' => false
+            ];
+        }
+
+        $accessModel = new ApiAccess();
+        $where = [new DataBaseWhere('idapikey', $this->request->query->get('code'))];
+        foreach ($accessModel->all($where, [], 0, 0) as $access) {
+            $rules[$access->resource]['allowget'] = $access->allowget;
+            $rules[$access->resource]['allowpost'] = $access->allowpost;
+            $rules[$access->resource]['allowput'] = $access->allowput;
+            $rules[$access->resource]['allowdelete'] = $access->allowdelete;
+        }
+
+        return $rules;
+    }
+
+    /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -58,34 +85,79 @@ class EditApiKey extends EditController
     }
 
     /**
-     * Add the indicated resource list to the api key.
-     *
-     * @param int   $idApiKey
-     * @param array $apiAccess
-     * @param bool  $state
-     *
-     * @throws Exception
-     */
-    protected function addResourcesToApiKey($idApiKey, $apiAccess, $state = false)
-    {
-        // add Pages to Rol
-        if (!Model\ApiAccess::addResourcesToApiKey($idApiKey, $apiAccess, $state)) {
-            throw new Exception($this->toolBox()->i18n()->trans('cancel-process'));
-        }
-    }
-
-    /**
      * Load views.
      */
     protected function createViews()
     {
         parent::createViews();
+        $this->createViewsAccess();
         $this->setTabsPosition('bottom');
+    }
 
-        $this->addEditListView('EditApiAccess', 'ApiAccess', 'rules', 'fas fa-check-square');
+    /**
+     * @param string $viewName
+     */
+    protected function createViewsAccess(string $viewName = 'ApiAccess')
+    {
+        $this->addHtmlView($viewName, 'Tab/ApiAccess', 'ApiAccess', 'rules', 'fas fa-check-square');
+    }
 
-        /// settings
-        $this->views['EditApiAccess']->settings['btnNew'] = false;
+    /**
+     * @return bool
+     */
+    protected function editRulesAction(): bool
+    {
+        // check user permissions
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return true;
+        }
+
+        $allowGet = $this->request->request->get('allowget');
+        $allowPut = $this->request->request->get('allowput');
+        $allowPost = $this->request->request->get('allowpost');
+        $allowDelete = $this->request->request->get('allowdelete');
+
+        // update current access rules
+        $accessModel = new ApiAccess();
+        $where = [new DataBaseWhere('idapikey', $this->request->query->get('code'))];
+        $rules = $accessModel->all($where, [], 0, 0);
+        foreach ($rules as $access) {
+            $access->allowget = is_array($allowGet) && in_array($access->resource, $allowGet);
+            $access->allowput = is_array($allowPut) && in_array($access->resource, $allowPut);
+            $access->allowpost = is_array($allowPost) && in_array($access->resource, $allowPost);
+            $access->allowdelete = is_array($allowDelete) && in_array($access->resource, $allowDelete);
+            $access->save();
+        }
+
+        // add new rules
+        foreach ($allowGet as $resource) {
+            $found = false;
+            foreach ($rules as $rule) {
+                if ($rule->resource === $resource) {
+                    $found = true;
+                    break;
+                }
+            }
+            if ($found) {
+                continue;
+            }
+
+            // add
+            $newAccess = new ApiAccess();
+            $newAccess->idapikey = $this->request->query->get('code');
+            $newAccess->resource = $resource;
+            $newAccess->allowget = is_array($allowGet) && in_array($resource, $allowGet);
+            $newAccess->allowput = is_array($allowPut) && in_array($resource, $allowPut);
+            $newAccess->allowpost = is_array($allowPost) && in_array($resource, $allowPost);
+            $newAccess->allowdelete = is_array($allowDelete) && in_array($resource, $allowDelete);
+            $newAccess->save();
+        }
+
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        return true;
     }
 
     /**
@@ -98,42 +170,11 @@ class EditApiKey extends EditController
     protected function execPreviousAction($action)
     {
         switch ($action) {
-            case 'add-api-access-enabled':
-                return $this->addResourcesWith(true);
-
-            case 'add-api-access-disabled':
-                return $this->addResourcesWith();
-
-            default:
-                return parent::execPreviousAction($action);
-        }
-    }
-
-    /**
-     * Add the indicated resource list to the api key.
-     *
-     * @param bool $state
-     *
-     * @return bool
-     */
-    protected function addResourcesWith($state = false)
-    {
-        $idApiKey = $this->request->get('code', '');
-        $resources = $this->getResources();
-        if (empty($resources) || empty($idApiKey)) {
-            return true;
+            case 'edit-rules':
+                return $this->editRulesAction();
         }
 
-        $this->dataBase->beginTransaction();
-        try {
-            $this->addResourcesToApiKey((int) $idApiKey, $resources, $state);
-            $this->dataBase->commit();
-        } catch (Exception $exc) {
-            $this->dataBase->rollback();
-            $this->toolBox()->log()->notice($exc->getMessage());
-        }
-
-        return true;
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -147,7 +188,7 @@ class EditApiKey extends EditController
     {
         $resources = [];
 
-        $path = \FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Lib' . DIRECTORY_SEPARATOR . 'API';
+        $path = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Lib' . DIRECTORY_SEPARATOR . 'API';
         foreach (scandir($path, SCANDIR_SORT_NONE) as $resource) {
             if (substr($resource, -4) !== '.php') {
                 continue;
@@ -169,19 +210,13 @@ class EditApiKey extends EditController
     /**
      * Load view data.
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
         $mainViewName = $this->getMainViewName();
         switch ($viewName) {
-            case 'EditApiAccess':
-                $idApiKey = $this->getViewModelValue($mainViewName, 'id');
-                $where = [new DataBaseWhere('idapikey', $idApiKey)];
-                $view->loadData('', $where, ['resource' => 'ASC']);
-                break;
-
             case $mainViewName:
                 parent::loadData($viewName, $view);
                 if (false === $view->model->exists()) {

@@ -25,16 +25,16 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 /**
  * Controller to edit a single item from the Impuesto model
  *
- * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Artex Trading sa         <jcuello@artextrading.com>
- * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez              <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal    <yopli2000@gmail.com>
+ * @author Francesc Pineda Segarra          <francesc.pineda.segarra@gmail.com>
  */
 class EditImpuesto extends EditController
 {
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -56,6 +56,9 @@ class EditImpuesto extends EditController
         return $data;
     }
 
+    /**
+     * Create the view to display.
+     */
     protected function createViews()
     {
         parent::createViews();
@@ -65,7 +68,7 @@ class EditImpuesto extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewsProducts(string $viewName = 'ListProducto')
@@ -82,29 +85,26 @@ class EditImpuesto extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
-    Protected function createViewsZones(string $viewName = 'ListImpuestoZona')
+    protected function createViewsZones(string $viewName = 'EditImpuestoZona')
     {
-        $this->addListView($viewName, 'ImpuestoZona', 'tax-areas', 'fas fa-globe-americas');
-        $this->views[$viewName]->addOrderBy(['id'], 'code');
-        $this->views[$viewName]->addOrderBy(['prioridad'], 'priority', 2);
-        $this->views[$viewName]->addSearchFields(['codpais']);
-
-        /// disable tax column
+        $this->addEditListView($viewName, 'ImpuestoZona', 'exceptions', 'fas fa-globe-americas');
         $this->views[$viewName]->disableColumn('tax');
+        $this->views[$viewName]->setInLine(true);
     }
 
     /**
-     * 
+     * Loads the data to display.
+     *
      * @param string   $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
-            case 'ListImpuestoZona':
+            case 'EditImpuestoZona':
             case 'ListProducto':
                 $codimpuesto = $this->getViewModelValue('EditImpuesto', 'codimpuesto');
                 $where = [new DataBaseWhere('codimpuesto', $codimpuesto)];

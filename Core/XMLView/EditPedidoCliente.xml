@@ -31,7 +31,7 @@
                 <widget type="date" fieldname="fecha" required="true" />
             </column>
             <column name="hour" order="120">
-                <widget type="text" fieldname="hora" icon="fas fa-clock" required="true" />
+                <widget type="time" fieldname="hora" required="true" />
             </column>
             <column name="number" order="130">
                 <widget type="text" fieldname="numero" icon="fas fa-hashtag" readonly="true" />
@@ -40,7 +40,7 @@
                 <widget type="text" fieldname="numero2" icon="fas fa-hashtag" />
             </column>
             <column name="email-sent" order="150">
-                <widget type="date" fieldname="femail" readonly="true" />
+                <widget type="date" fieldname="femail" />
             </column>
         </group>
         <group name="billingaddr" title="billing-address" icon="fas fa-file-invoice" numcolumns="12">
@@ -74,12 +74,20 @@
                 </widget>
             </column>
         </group>
-        <group name="shipaddresses" title="shipping-address" icon="fas fa-truck" numcolumns="4">
+        <group name="shipaddresses" title="shipping-address" icon="fas fa-truck" numcolumns="6">
             <column name="shippingaddr" title="shipping-address" order="100">
                 <widget type="select" fieldname="idcontactoenv" onclick="EditContacto" />
             </column>
+            <column name="carrier" titleurl="ListAgenciaTransporte" order="110">
+                <widget type="select" fieldname="codtrans" onclick="EditAgenciaTransporte">
+                    <values source="agenciastrans" fieldcode="codtrans" fieldtitle="nombre" />
+                </widget>
+            </column>
+            <column name="tracking-code" order="120">
+                <widget type="text" fieldname="codigoenv" maxlength="200" />
+            </column>
         </group>
-        <group name="payment-method" title="payment-method" icon="fas fa-dollar-sign" numcolumns="8">
+        <group name="payment-method" title="payment-method" icon="fas fa-dollar-sign" numcolumns="6">
             <column name="payment" title="method-payment" order="100">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago" required="true">
                     <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />

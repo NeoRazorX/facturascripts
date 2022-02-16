@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
 /**
@@ -28,13 +30,6 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  */
 class ListFormaPago extends ListController
 {
-
-    /**
-     * List of companies to filter the views
-     *
-     * @var array
-     */
-    private $companyValues = [];
 
     /**
      * Returns basic page attributes
@@ -55,16 +50,12 @@ class ListFormaPago extends ListController
      */
     protected function createViews()
     {
-        // Get company list
-        $this->companyValues = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-
-        // Add views
         $this->createViewsPaymentMethods();
         $this->createViewsBankAccounts();
     }
 
     /**
-     * Add Bank Acounts view
+     * Add Bank Accounts view
      *
      * @param string $viewName
      */
@@ -75,8 +66,8 @@ class ListFormaPago extends ListController
         $this->addOrderBy($viewName, ['codcuenta'], 'code');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
 
-        /// filters
-        $this->addFilterSelect('ListCuentaBanco', 'idempresa', 'company', 'idempresa', $this->companyValues);
+        // filters
+        $this->addFilterSelect('ListCuentaBanco', 'idempresa', 'company', 'idempresa', Empresas::codeModel());
     }
 
     /**
@@ -92,8 +83,8 @@ class ListFormaPago extends ListController
         $this->addOrderBy($viewName, ['descripcion'], 'description');
         $this->addOrderBy($viewName, ['idempresa', 'codpago'], 'company');
 
-        /// filters
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyValues);
+        // filters
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
         $this->addFilterCheckbox($viewName, 'pagado', 'paid', 'pagado');
         $this->addFilterCheckbox($viewName, 'domiciliado', 'domiciled', 'domiciliado');
     }

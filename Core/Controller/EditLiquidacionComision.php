@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -60,7 +60,7 @@ class EditLiquidacionComision extends EditController
     public function getPageData()
     {
         $pagedata = parent::getPageData();
-        $pagedata['menu'] = 'sales';
+        $pagedata['menu'] = 'admin';
         $pagedata['title'] = 'settlement';
         $pagedata['icon'] = 'fas fa-chalkboard-teacher';
         return $pagedata;

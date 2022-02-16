@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\ToolBox;
@@ -27,14 +28,13 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Base class for creation of accounting processes
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  */
 abstract class AccountingClass extends AccountingAccounts
 {
 
     /**
-     *
      * @var ModelClass
      */
     protected $document;
@@ -53,10 +53,10 @@ abstract class AccountingClass extends AccountingAccounts
     /**
      * Add a standard line to the accounting entry based on the reported sub-account
      *
-     * @param Asiento   $accountEntry
+     * @param Asiento $accountEntry
      * @param Subcuenta $subaccount
-     * @param bool      $isDebit
-     * @param float     $amount
+     * @param bool $isDebit
+     * @param float $amount
      *
      * @return bool
      */
@@ -66,21 +66,58 @@ abstract class AccountingClass extends AccountingAccounts
     }
 
     /**
+     * Add a group of lines from array of subaccounts/amount.
+     *
+     * @param Asiento $accountEntry
+     * @param Array $totals
+     * @param bool $isDebit
+     * @param Subcuenta $counterpart
+     * @param string $accountError
+     * @param string $saveError
+     *
+     * @return bool
+     */
+    protected function addLinesFromTotals($accountEntry, $totals, $isDebit, $counterpart, $accountError, $saveError): bool
+    {
+        foreach ($totals as $code => $total) {
+            $subaccount = $this->getSubAccount($code);
+            if (empty($subaccount->codsubcuenta)) {
+                $this->toolBox()->i18nLog()->warning($accountError);
+                return false;
+            }
+
+            $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $total);
+
+            if (!empty($counterpart)) {
+                $line->setCounterpart($counterpart);
+            }
+
+            if (false === $line->save()) {
+                $this->toolBox()->i18nLog()->warning($saveError);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    /**
      * Add a line of taxes to the accounting entry based on the sub-account
      * and values reported
      *
-     * @param Asiento   $accountEntry
+     * @param Asiento $accountEntry
      * @param Subcuenta $subaccount
      * @param Subcuenta $counterpart
-     * @param bool      $isDebit
-     * @param array     $values
+     * @param bool $isDebit
+     * @param array $values
      *
      * @return bool
      */
     protected function addTaxLine($accountEntry, $subaccount, $counterpart, $isDebit, $values): bool
     {
         /// add basic data
-        $amount = (float) $values['totaliva'] + (float) $values['totalrecargo'];
+        $amount = (float)$values['totaliva'] + (float)$values['totalrecargo'];
         $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount);
 
         /// counterpart?
@@ -89,9 +126,9 @@ abstract class AccountingClass extends AccountingAccounts
         }
 
         /// add tax register data
-        $line->baseimponible = (float) $values['neto'];
-        $line->iva = (float) $values['iva'];
-        $line->recargo = (float) $values['recargo'];
+        $line->baseimponible = (float)$values['neto'];
+        $line->iva = (float)$values['iva'];
+        $line->recargo = (float)$values['recargo'];
         $line->cifnif = $this->document->cifnif;
         $line->codserie = $this->document->codserie;
         $line->documento = $this->document->codigo;
@@ -104,10 +141,10 @@ abstract class AccountingClass extends AccountingAccounts
     /**
      * Obtain a standard line to the accounting entry based on the reported sub-account
      *
-     * @param Asiento   $accountEntry
+     * @param Asiento $accountEntry
      * @param Subcuenta $subaccount
-     * @param bool      $isDebit
-     * @param float     $amount
+     * @param bool $isDebit
+     * @param float $amount
      *
      * @return Partida
      */
@@ -126,10 +163,9 @@ abstract class AccountingClass extends AccountingAccounts
     }
 
     /**
-     * 
      * @return ToolBox
      */
-    protected function toolBox()
+    protected function toolBox(): ToolBox
     {
         return new ToolBox();
     }

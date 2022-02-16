@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,25 +16,44 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\AgenciaTransporte;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \AgenciaTransporte
- */
-final class AgenciaTransporteTest extends CustomTest
+final class AgenciaTransporteTest extends TestCase
 {
+    use LogErrorsTrait;
 
-    protected function setUp()
+    public function testDataInstalled()
     {
-        $this->model = new AgenciaTransporte();
+        $agency = new AgenciaTransporte();
+        $this->assertNotEmpty($agency->all(), 'agency-data-not-installed-from-csv');
     }
-    
-    public function testPrimaryColumnValue()
+
+    public function testCreate()
     {
-        $this->model->{$this->model->primaryColumn()} = 'n"l123';
-        $this->assertFalse($this->model->test());
-    }    
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'Test';
+        $agency->nombre = 'Test Agency';
+        $this->assertTrue($agency->save(), 'agency-cant-save');
+        $this->assertNotNull($agency->primaryColumnValue(), 'agency-not-stored');
+        $this->assertTrue($agency->exists(), 'agency-cant-persist');
+        $this->assertTrue($agency->delete(), 'agency-cant-delete');
+    }
+
+    public function testCreateWithNewCode()
+    {
+        $agency = new AgenciaTransporte();
+        $agency->nombre = 'Test Agency with new code';
+        $this->assertTrue($agency->save(), 'agency-cant-save');
+        $this->assertTrue($agency->delete(), 'agency-cant-delete');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
+    }
 }

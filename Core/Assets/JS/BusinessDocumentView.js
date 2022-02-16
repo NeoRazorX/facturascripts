@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@ var hsTable = null;
 
 function beforeChange(changes, source) {
     // Check if the value has changed. Not Multiselection
-    if (changes !== null && changes[0][2] !== changes[0][3]) {
+    if (changes !== null && changes[0][2] != changes[0][3]) {
         for (var i = 0; i < businessDocViewAutocompleteColumns.length; i++) {
             if (changes[0][1] === businessDocViewAutocompleteColumns[i]) {
                 // apply for autocomplete columns
@@ -68,17 +68,17 @@ function businessDocViewSubjectChanged() {
              * Review the doc_codsubtipodoc existence, 
              * if it exist we put the value from the customer data
              */
-            if($("#doc_codsubtipodoc").length !== 0) {
+            if ($("#doc_codsubtipodoc").length !== 0) {
                 $("#doc_codsubtipodoc").val(results.codsubtipodoc);
             }
             /**
              * Review the doc_codopersaciondoc existence, 
              * if it exist we put the value from the customer data
              */
-            if($("#doc_codoperaciondoc").length !== 0) {
+            if ($("#doc_codoperaciondoc").length !== 0) {
                 $("#doc_codoperaciondoc").val(results.codoperaciondoc);
             }
-            
+
             console.log("results", results);
 
             businessDocViewRecalculate();
@@ -150,7 +150,8 @@ function businessDocViewSave() {
                 $("#" + businessDocViewFormName).attr('action', results.substring(3)).submit();
             } else {
                 alert(results);
-                $("#" + businessDocViewFormName + " :input[name=\"multireqtoken\"]").val(randomString(20));
+                let token = $("#" + businessDocViewFormName + " :input[name=\"multireqtoken\"]").val() + randomString(1);
+                $("#" + businessDocViewFormName + " :input[name=\"multireqtoken\"]").val(token);
             }
         },
         error: function (msg) {
@@ -302,6 +303,10 @@ $(document).ready(function () {
                     }
                     businessDocViewSubjectChanged();
                 }
+            },
+            open: function (event, ui) {
+                $(this).autocomplete('widget').css('z-index', 1500);
+                return false;
             }
         });
     });

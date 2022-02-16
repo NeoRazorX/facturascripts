@@ -26,10 +26,12 @@
                     <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre" />
                 </widget>
             </column>
-            <column name="reference" display="none" order="110">
-                <widget type="text" fieldname="referencia" readonly="true" required="true" />
+            <column name="reference" title="variant" order="110">
+                <widget type="select" fieldname="referencia" readonly="dinamic" required="true">
+                    <values />
+                </widget>
             </column>
-            <column name="supplier-reference" display="none" order="120">
+            <column name="supplier-reference" order="120">
                 <widget type="text" fieldname="refproveedor" />
             </column>
             <column name="price" order="130">

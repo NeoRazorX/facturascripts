@@ -1,23 +1,29 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
-{% extends "Master/MenuTemplate.html.twig" %}
+{% extends "Master/MenuBghTemplate.html.twig" %}
+
+{% block bodyHeaderOptions %}
+    <br/>
+    <br/>
+    <br/>
+{% endblock %}
 
 {% block body %}
     <div class="container" style="margin-top: -60px;">
@@ -48,13 +54,16 @@
                                         <span class="input-group-text">{{ i18n.trans('to') }}</span>
                                     </div>
                                     {% set emails = fsc.newMail.getToAddresses() is empty ? '' : fsc.newMail.getToAddresses() | join(',') ~ ', ' %}
-                                    <input type="text" id="email" name="email" value="{{ emails }}" class="form-control" required="" placeholder="{{ i18n.trans('email-to') }}"/>
+                                    <input type="text" id="email" name="email" value="{{ emails }}" class="form-control"
+                                           required="" placeholder="{{ i18n.trans('email-to') }}"/>
                                     <div class="input-group-append">
-                                        <button type="button" class="btn btn-outline-secondary" title="{{ i18n.trans('email-cc') }}" onclick="$('#fgCC').show();
+                                        <button type="button" class="btn btn-outline-secondary"
+                                                title="{{ i18n.trans('email-cc') }}" onclick="$('#fgCC').show();
                                                 $(this).hide();">
                                             {{ i18n.trans('cc') }}
                                         </button>
-                                        <button type="button" class="btn btn-outline-secondary" title="{{ i18n.trans('email-bcc') }}" onclick="$('#fgBCC').show();
+                                        <button type="button" class="btn btn-outline-secondary"
+                                                title="{{ i18n.trans('email-bcc') }}" onclick="$('#fgBCC').show();
                                                 $(this).hide();">
                                             {{ i18n.trans('bcc') }}
                                         </button>
@@ -66,7 +75,8 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">{{ i18n.trans('cc') }}</span>
                                     </div>
-                                    <input type="text" id="email-cc" name="email-cc" class="form-control" placeholder="{{ i18n.trans('email-cc') }}"/>
+                                    <input type="text" id="email-cc" name="email-cc" class="form-control"
+                                           placeholder="{{ i18n.trans('email-cc') }}"/>
                                 </div>
                             </div>
                             <div id="fgBCC" class="form-group" style="display: none;">
@@ -74,7 +84,8 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">{{ i18n.trans('bcc') }}</span>
                                     </div>
-                                    <input type="text" id="email-bcc" name="email-bcc" class="form-control" placeholder="{{ i18n.trans('email-bcc') }}"/>
+                                    <input type="text" id="email-bcc" name="email-bcc" class="form-control"
+                                           placeholder="{{ i18n.trans('email-bcc') }}"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -82,24 +93,33 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">{{ i18n.trans('subject') }}</span>
                                     </div>
-                                    <input type="text" name="subject" value="{{ fsc.newMail.title }}" class="form-control" required="" placeholder="{{ i18n.trans('subject') }}"/>
+                                    <input type="text" name="subject" value="{{ fsc.newMail.title }}"
+                                           class="form-control" required="" placeholder="{{ i18n.trans('subject') }}"/>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <textarea name="body" rows="4" class="form-control">{{ fsc.newMail.text }}</textarea>
+                                <textarea name="body" rows="5" class="form-control">{{ fsc.newMail.text }}</textarea>
                             </div>
+                            {% if fsc.newMail.signature %}
+                                <div class="form-group">
+                                    {{ i18n.trans('email-signature') }}
+                                    <textarea rows="3" class="form-control"
+                                              readonly="true">{{ fsc.newMail.signature }}</textarea>
+                                </div>
+                            {% endif %}
                             <div class="form-group">
-                                <input type="file" name="uploads[]" multiple=""/>
                                 {% for name in fsc.newMail.getAttachmentNames() %}
-                                    <p class="mt-2 mb-0">
-                                        <i class="fas fa-file fa-fw" aria-hidden="true"></i> {{ name }}
+                                    <p>
+                                        <i class="fas fa-paperclip fa-fw" aria-hidden="true"></i> {{ name }}
                                     </p>
                                 {% endfor %}
+                                <input type="file" name="uploads[]" multiple=""/>
                             </div>
                             <div class="row align-items-end">
                                 <div class="col-sm-6">
                                     <div class="form-check">
-                                        <input type="checkbox" name="replyto" value="1" checked="true" class="form-check-input" id="replytoCheck" />
+                                        <input type="checkbox" name="replyto" value="1" checked="true"
+                                               class="form-check-input" id="replytoCheck"/>
                                         <label class="form-check-label" for="replytoCheck">
                                             {{ i18n.trans('email-replies-to', {'%email%': fsc.user.email}) }}
                                         </label>
@@ -107,7 +127,8 @@
                                 </div>
                                 <div class="col-sm-6 text-right">
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ i18n.trans('send') }}
+                                        <i class="fas fa-envelope fa-fw"
+                                           aria-hidden="true"></i> {{ i18n.trans('send') }}
                                     </button>
                                 </div>
                             </div>
@@ -121,69 +142,67 @@
 
 {% block css %}
     {{ parent() }}
-    <style>
-        .bg-header {
-            background-color: #FAFBFC;
-            padding-bottom: 90px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.css') }}"/>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
     <script type="text/javascript">
         function split(val) {
             return val.split(/,\s*/);
         }
+
         function extractLast(term) {
             return split(term).pop();
         }
+
         $(document).ready(function () {
             var cacheQuery = {};
             $("#email,#email-cc,#email-bcc")
-                    // don't navigate away from the field on tab when selecting an item
-                    .on("keydown", function (event) {
-                        if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
-                            event.preventDefault();
+                // don't navigate away from the field on tab when selecting an item
+                .on("keydown", function (event) {
+                    if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
+                        event.preventDefault();
+                    }
+                })
+                .autocomplete({
+                    minLength: 0,
+                    source: function (request, response) {
+                        // Avoid re-query the same
+                        var term = request.term;
+                        if (term in cacheQuery) {
+                            response(cacheQuery[term]);
+                            return;
                         }
-                    })
-                    .autocomplete({
-                        minLength: 0,
-                        source: function (request, response) {
-                            // Avoid re-query the same
-                            var term = request.term;
-                            if (term in cacheQuery) {
-                                response(cacheQuery[term]);
-                                return;
-                            }
 
-                            $.getJSON("SendMail", {
-                                action: 'autocomplete',
-                                source: 'contactos',
-                                field: 'email',
-                                title: 'email',
-                                term: extractLast(request.term)
-                            }, function (data) {
-                                cacheQuery[ term ] = data;
-                                response(data);
-                            });
-                        },
-                        focus: function () {
-                            // Prevent value inserted on focus
-                            return false;
-                        },
-                        select: function (event, ui) {
-                            var terms = split(this.value);
-                            // Remove the current input
-                            terms.pop();
-                            // Add the selected item
-                            terms.push(ui.item.value);
-                            // Add placeholder to get the comma-and-space at the end
-                            terms.push("");
-                            this.value = terms.join(", ");
-                            return false;
-                        }
-                    });
+                        $.getJSON("SendMail", {
+                            action: 'autocomplete',
+                            source: 'contactos',
+                            field: 'email',
+                            title: 'email',
+                            term: extractLast(request.term)
+                        }, function (data) {
+                            cacheQuery[term] = data;
+                            response(data);
+                        });
+                    },
+                    focus: function () {
+                        // Prevent value inserted on focus
+                        return false;
+                    },
+                    select: function (event, ui) {
+                        var terms = split(this.value);
+                        // Remove the current input
+                        terms.pop();
+                        // Add the selected item
+                        terms.push(ui.item.value);
+                        // Add placeholder to get the comma-and-space at the end
+                        terms.push("");
+                        this.value = terms.join(", ");
+                        return false;
+                    }
+                });
         });
     </script>
 {% endblock %}

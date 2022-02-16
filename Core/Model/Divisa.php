@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -84,7 +85,7 @@ class Divisa extends Base\ModelClass
 
     /**
      * Removed currency from database.
-     * 
+     *
      * @return bool
      */
     public function delete()
@@ -102,7 +103,7 @@ class Divisa extends Base\ModelClass
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->coddivisa === $this->toolBox()->appSettings()->get('default', 'coddivisa');
     }
@@ -138,12 +139,12 @@ class Divisa extends Base\ModelClass
         $this->descripcion = $utils->noHtml($this->descripcion);
         $this->simbolo = $utils->noHtml($this->simbolo);
 
-        if (1 !== \preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
+        if (1 !== preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->coddivisa, '%column%' => 'coddivisa', '%min%' => '1', '%max%' => '3']
             );
-        } elseif ($this->codiso !== null && 1 !== \preg_match('/^[A-Z0-9]{1,5}$/i', $this->codiso)) {
+        } elseif ($this->codiso !== null && 1 !== preg_match('/^[A-Z0-9]{1,5}$/i', $this->codiso)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codiso, '%column%' => 'codiso', '%min%' => '1', '%max%' => '5']
@@ -155,5 +156,16 @@ class Divisa extends Base\ModelClass
         }
 
         return false;
+    }
+
+    /**
+     * @param string $type
+     * @param string $list
+     *
+     * @return string
+     */
+    public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
+    {
+        return parent::url($type, $list);
     }
 }

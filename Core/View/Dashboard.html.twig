@@ -1,0 +1,293 @@
+{#
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
+#}
+{% extends "Master/MenuBghTemplate.html.twig" %}
+
+{% block body %}
+    <div class="bg-light pt-4 pb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h1 class="h4">
+                        {% if fsc.getPageData().name == fsc.user.homepage %}
+                            <a class="btn btn-sm btn-secondary align-bottom active"
+                               href="{{ fsc.url() }}?defaultPage=FALSE"
+                               title="{{ i18n.trans('marked-as-homepage') }}">
+                                <i class="fas fa-bookmark" aria-hidden="true"></i>
+                            </a>
+                        {% else %}
+                            <a class="btn btn-sm btn-secondary align-bottom"
+                               href="{{ fsc.url() }}?defaultPage=TRUE"
+                               title="{{ i18n.trans('mark-as-homepage') }}">
+                                <i class="far fa-bookmark" aria-hidden="true"></i>
+                            </a>
+                        {% endif %}
+                        <span class="ml-2">{{ fsc.title }}</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-top: -40px;">
+        {% block sectionLinks %}
+            <div class="row">
+                <div class="col">
+                    {{ _self.sectionLinks(fsc, i18n) }}
+                </div>
+            </div>
+        {% endblock %}
+        {% block sectionStats %}
+            {{ _self.sectionStats(fsc, i18n) }}
+        {% endblock %}
+        {% block sections %}
+            <div class="row">
+                <div class="col">
+                    {% if 'receipts' in fsc.sections %}
+                        {{ _self.sectionReceipts(fsc, i18n) }}
+                    {% endif %}
+                    {% if 'low-stock' in fsc.sections %}
+                        {{ _self.sectionLowStock(fsc, i18n) }}
+                    {% endif %}
+                </div>
+            </div>
+            {{ _self.sectionNews(fsc, i18n) }}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% macro drawStatsBox(fsc, i18n, group, color, ismoney) %}
+    <div class="card shadow mb-3">
+        <div class="card-body text-white {{ color }}">
+            <h2 class="h5 text-center mb-0">
+                {{ i18n.trans(group) }}
+            </h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table mb-0">
+                {% for key, value in fsc.stats[group] %}
+                    <tr>
+                        <td>{{ i18n.trans(key) }}</td>
+                        {% set color = value < 0 ? ' text-danger' : '' %}
+                        {% if ismoney %}
+                            <td class="text-right{{ color }}">{{ fsc.toolBox().coins().format(value) }}</td>
+                        {% else %}
+                            <td class="text-right">{{ value }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro sectionLinks(fsc, i18n) %}
+    <div class="card shadow mb-3">
+        <div class="pl-3 pt-1 pr-3 pb-3">
+            <div class="form-row">
+                <div class="col-md">
+                    <h2 class="h4 mt-3 mb-1">
+                        <i class="fas fa-plus fa-fw"></i> {{ i18n.trans('create') }}
+                    </h2>
+                    <ul class="mb-1">
+                        {% for link, label in fsc.createLinks %}
+                            <li>
+                                <a href="{{ link }}">{{ i18n.trans(label) }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% if fsc.openLinks %}
+                    <div class="col-md">
+                        <h2 class="h4 mt-3 mb-1">
+                            <i class="fas fa-folder-open fa-fw"></i> {{ i18n.trans('open') }}
+                        </h2>
+                        <ul class="mb-1">
+                            {% for link in fsc.openLinks %}
+                                <li>
+                                    {{ i18n.trans(link.type) }}
+                                    <a href="{{ link.url }}">{{ link.name }}</a>
+                                    <span class="text-muted">{{ link.date }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                <div class="col-md">
+                    <h2 class="h4 mt-3 mb-1">
+                        <i class="fas fa-question-circle fa-fw"></i> {{ i18n.trans('help') }}
+                    </h2>
+                    <ul class="mb-1">
+                        <li>
+                            <a href="https://facturascripts.com/publicaciones/configuracion-15" target="_blank">Configuración</a>
+                        </li>
+                        <li>
+                            <a href="https://facturascripts.com/publicaciones/primeros-pasos-303" target="_blank">Primeros
+                                pasos</a>
+                        </li>
+                        <li>
+                            <a href="https://facturascripts.com/publicaciones/problemas-frecuentes-469" target="_blank">Problemas
+                                frecuentes</a>
+                        </li>
+                        <li>
+                            <a href="https://facturascripts.com/contacto" target="_blank">Soporte
+                                <i class="fas fa-headset"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro sectionLowStock(fsc, i18n) %}
+    <div class="card shadow mb-3">
+        <div class="p-3">
+            <h2 class="h4 mb-0">
+                <i class="fas fa-pallet fa-fw"></i> {{ i18n.trans('minimum-stock') }}
+            </h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0">
+                <thead>
+                <tr>
+                    <th>{{ i18n.trans('reference') }}</th>
+                    <th>{{ i18n.trans('warehouse') }}</th>
+                    <th class="text-right">{{ i18n.trans('minimum-stock') }}</th>
+                    <th class="text-right">{{ i18n.trans('available') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for stock in fsc.lowStock %}
+                    <tr class="clickableRow table-danger" data-href="{{ stock.url() }}">
+                        <td>{{ stock.referencia }}</td>
+                        <td>{{ stock.codalmacen }}</td>
+                        <td class="text-right">{{ fsc.toolBox().numbers().format(stock.stockmin) }}</td>
+                        <td class="text-right">{{ fsc.toolBox().numbers().format(stock.disponible) }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro sectionNews(fsc, i18n) %}
+    <div class="row">
+        <div class="col">
+            <div class="card-deck mb-3">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h2 class="h4">
+                            <i class="fas fa-chart-bar fa-fw"></i> Encuesta de uso 2021
+                        </h2>
+                        <p class="mb-0">
+                            Ayúdanos a conocer mejor tus necesidades y poder centrar el desarrollo de FacturaScripts
+                            2022.
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://forms.gle/kk1AvsAaMvjWeKdc9" target="_blank" class="btn btn-primary">Hacer
+                            encuesta</a>
+                    </div>
+                </div>
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h2 class="h4">
+                            <i class="fas fa-donate"></i> Patrocinar FacturaScripts
+                        </h2>
+                        <p class="mb-0">
+                            FacturaScripts avanza más rápido gracias al apoyo financiero de nuestros patrocinadores,
+                            personas que contribuyen a que podamos dedicar más tiempo al desarrollo, testeo y
+                            documentación.
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="https://facturascripts.com/patrocinar" target="_blank"
+                           class="btn btn-success">Patrocinar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for news in fsc.news %}
+        <div class="row">
+            <div class="col">
+                <div class="card shadow mb-3">
+                    <div class="card-body">
+                        <i class="far fa-newspaper fa-2x float-left pr-2 pb-4"></i>
+                        <a href="{{ news.url }}" target="_blank">{{ news.title | raw }}</a>
+                        {{ news.body | raw }}
+                        <small class="float-right">{{ news.fecha }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+{% macro sectionReceipts(fsc, i18n) %}
+    <div class="card shadow mb-3">
+        <div class="p-3">
+            <span class="float-right badge badge-danger">{{ i18n.trans('unpaid') }}</span>
+            <h2 class="h4 mb-0">
+                <i class="fas fa-dollar-sign fa-fw"></i>
+                {{ i18n.trans('receipts') }}
+            </h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover mb-0">
+                <thead>
+                <tr>
+                    <th>{{ i18n.trans('customer') }}</th>
+                    <th>{{ i18n.trans('observations') }}</th>
+                    <th class="text-right">{{ i18n.trans('amount') }}</th>
+                    <th class="text-right">{{ i18n.trans('expiration') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for receipt in fsc.receipts %}
+                    <tr class="clickableRow table-danger" data-href="{{ receipt.url() }}">
+                        <td>{{ receipt.getSubject().nombre | raw }}</td>
+                        <td>{{ receipt.observaciones | raw }}</td>
+                        <td class="text-right text-nowrap">{{ fsc.toolBox().coins().format(receipt.importe) }}</td>
+                        <td class="text-right text-nowrap">{{ receipt.vencimiento }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro sectionStats(fsc, i18n) %}
+    <div class="form-row">
+        <div class="col-sm-6 col-lg-3">
+            {{ _self.drawStatsBox(fsc, i18n, 'purchases', 'bg-danger', true) }}
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            {{ _self.drawStatsBox(fsc, i18n, 'sales', 'bg-success', true) }}
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            {{ _self.drawStatsBox(fsc, i18n, 'taxes', 'bg-warning', true) }}
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            {{ _self.drawStatsBox(fsc, i18n, 'new-customers', 'bg-info', false) }}
+        </div>
+    </div>
+{% endmacro %}

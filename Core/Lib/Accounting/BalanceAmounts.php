@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -34,13 +35,18 @@ class BalanceAmounts extends AccountingBase
 {
 
     /**
+     * @var string
+     */
+    protected $format;
+
+    /**
      * BalanceAmounts constructor.
      */
     public function __construct()
     {
         parent::__construct();
 
-        /// needed dependencies
+        // needed dependencies
         new Partida();
     }
 
@@ -49,7 +55,7 @@ class BalanceAmounts extends AccountingBase
      *
      * @param string $dateFrom
      * @param string $dateTo
-     * @param array  $params
+     * @param array $params
      *
      * @return array
      */
@@ -57,45 +63,48 @@ class BalanceAmounts extends AccountingBase
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
-        $level = (int) $params['level'] ?? 0;
+        $this->format = $params['format'];
+        $level = (int)$params['level'] ?? 0;
 
-        /// get accounts
+        // get accounts
         $cuenta = new Cuenta();
-        $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
-        $accounts = $cuenta->all($where, ['codcuenta' => 'ASC'], 0, 0);
+        $accounts = $cuenta->all($this->getAccountWhere($params), ['codcuenta' => 'ASC'], 0, 0);
 
-        /// get subaccounts
+        // get subaccounts
         $subcuenta = new Subcuenta();
-        $subaccounts = $subcuenta->all($where, [], 0, 0);
+        $subaccounts = $subcuenta->all($this->getSubAccountWhere($params), [], 0, 0);
 
-        /// get amounts
+        // get amounts
         $amounts = $this->getData($params);
 
         $rows = [];
         foreach ($accounts as $account) {
             $debe = $haber = 0.00;
             $this->combineData($account, $accounts, $amounts, $debe, $haber);
-            $saldo = $debe - $haber;
-            if ($level > 0 && \strlen($account->codcuenta) > $level) {
+            if ($debe == 0 && $haber == 0) {
                 continue;
             }
 
-            /// add account line
-            $prefix = \strlen($account->codcuenta) > 1 ? '' : '<b>';
-            $suffix = \strlen($account->codcuenta) > 1 ? '' : '</b>';
+            $saldo = $debe - $haber;
+            if ($level > 0 && strlen($account->codcuenta) > $level) {
+                continue;
+            }
+
+            // add account line
+            $bold = strlen($account->codcuenta) <= 1;
             $rows[] = [
-                'cuenta' => $prefix . $account->codcuenta . $suffix,
-                'descripcion' => $prefix . $this->toolBox()->utils()->fixHtml($account->descripcion) . $suffix,
-                'debe' => $prefix . $this->toolBox()->coins()->format($debe, FS_NF0, '') . $suffix,
-                'haber' => $prefix . $this->toolBox()->coins()->format($haber, FS_NF0, '') . $suffix,
-                'saldo' => $prefix . $this->toolBox()->coins()->format($saldo, FS_NF0, '') . $suffix
+                'cuenta' => $this->formatValue($account->codcuenta, 'text', $bold),
+                'descripcion' => $this->formatValue($account->descripcion, 'text', $bold),
+                'debe' => $this->formatValue($debe, 'money', $bold),
+                'haber' => $this->formatValue($haber, 'money', $bold),
+                'saldo' => $this->formatValue($saldo, 'money', $bold)
             ];
 
             if ($level > 0) {
                 continue;
             }
 
-            /// add subaccount lines
+            // add subaccount lines
             foreach ($amounts as $amount) {
                 if ($amount['idcuenta'] == $account->idcuenta) {
                     $rows[] = $this->processAmountLine($subaccounts, $amount);
@@ -103,40 +112,44 @@ class BalanceAmounts extends AccountingBase
             }
         }
 
-        /// we need this multidimensional array for printing support
+        // we need this multidimensional array for printing support
         $totals = [['debe' => 0.00, 'haber' => 0.00, 'saldo' => 0.00]];
         $this->combineTotals($amounts, $totals);
 
-        /// every page is a table
+        // every page is a table
         return [$rows, $totals];
     }
 
     /**
-     * 
-     * @param Cuenta      $selAccount
-     * @param Cuenta[]    $accounts
-     * @param array       $amounts
-     * @param float       $debe
-     * @param float       $haber
+     * @param Cuenta $selAccount
+     * @param Cuenta[] $accounts
+     * @param array $amounts
+     * @param float $debe
+     * @param float $haber
      */
-    protected function combineData(&$selAccount, &$accounts, &$amounts, &$debe, &$haber)
+    protected function combineData(&$selAccount, &$accounts, &$amounts, &$debe, &$haber, $max = 7)
     {
+        $max--;
+        if ($max < 0) {
+            $this->toolBox()->log()->error('account loop on ' . $selAccount->codcuenta);
+            return;
+        }
+
         foreach ($amounts as $row) {
             if ($row['idcuenta'] == $selAccount->idcuenta) {
-                $debe += (float) $row['debe'];
-                $haber += (float) $row['haber'];
+                $debe += (float)$row['debe'];
+                $haber += (float)$row['haber'];
             }
         }
 
         foreach ($accounts as $account) {
             if ($account->parent_idcuenta == $selAccount->idcuenta) {
-                $this->combineData($account, $accounts, $amounts, $debe, $haber);
+                $this->combineData($account, $accounts, $amounts, $debe, $haber, $max);
             }
         }
     }
 
     /**
-     * 
      * @param array $amounts
      * @param array $totals
      */
@@ -144,18 +157,44 @@ class BalanceAmounts extends AccountingBase
     {
         $debe = $haber = 0.00;
         foreach ($amounts as $row) {
-            $debe += (float) $row['debe'];
-            $haber += (float) $row['haber'];
+            $debe += (float)$row['debe'];
+            $haber += (float)$row['haber'];
         }
         $saldo = $debe - $haber;
 
-        $totals[0]['debe'] = $this->toolBox()->coins()->format($debe, FS_NF0, '');
-        $totals[0]['haber'] = $this->toolBox()->coins()->format($haber, FS_NF0, '');
-        $totals[0]['saldo'] = $this->toolBox()->coins()->format($saldo, FS_NF0, '');
+        $totals[0]['debe'] = $this->formatValue($debe);
+        $totals[0]['haber'] = $this->formatValue($haber);
+        $totals[0]['saldo'] = $this->formatValue($saldo);
     }
 
     /**
-     * Return the appropiate data from database.
+     * @param string $value
+     * @param string $type
+     * @param bool $bold
+     *
+     * @return string
+     */
+    protected function formatValue($value, $type = 'money', $bold = false)
+    {
+        $prefix = $bold ? '<b>' : '';
+        $suffix = $bold ? '</b>' : '';
+        switch ($type) {
+            case 'money':
+                if ($this->format === 'PDF') {
+                    return $prefix . $this->toolBox()->coins()->format($value, FS_NF0, '') . $suffix;
+                }
+                return number_format($value, FS_NF0, '.', '');
+
+            default:
+                if ($this->format === 'PDF') {
+                    return $prefix . $this->toolBox()->utils()->fixHtml($value) . $suffix;
+                }
+                return $this->toolBox()->utils()->fixHtml($value);
+        }
+    }
+
+    /**
+     * Return the appropriate data from database.
      *
      * @return array
      */
@@ -178,12 +217,32 @@ class BalanceAmounts extends AccountingBase
     }
 
     /**
+     * @param array $params
      *
+     * @return DataBaseWhere[]
+     */
+    protected function getAccountWhere(array $params = []): array
+    {
+        $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
+
+        $subaccountFrom = $params['subaccount-from'] ?? '';
+        if (!empty($subaccountFrom)) {
+            $where[] = new DataBaseWhere('codcuenta', substr($subaccountFrom, 0, 1), '>=');
+        }
+
+        $subaccountTo = $params['subaccount-to'] ?? '';
+        if (!empty($subaccountTo)) {
+            $where[] = new DataBaseWhere('codcuenta', substr($subaccountTo, 0, 4), '<=');
+        }
+        return $where;
+    }
+
+    /**
      * @param array $params
      *
      * @return string
      */
-    protected function getDataWhere(array $params = [])
+    protected function getDataWhere(array $params = []): string
     {
         $where = 'asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio)
             . ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom)
@@ -194,47 +253,72 @@ class BalanceAmounts extends AccountingBase
             $where .= ' AND asientos.canal = ' . $this->dataBase->var2str($channel);
         }
 
-        $ignoreRegularization = (bool) $params['ignoreregularization'] ?? false;
+        $ignoreRegularization = (bool)$params['ignoreregularization'] ?? false;
         if ($ignoreRegularization) {
-            $where .= ' AND (asientos.operacion IS NULL OR asientos.operacion != ' . $this->dataBase->var2str(Asiento::OPERATION_REGULARIZATION) . ')';
+            $where .= ' AND (asientos.operacion IS NULL OR asientos.operacion != '
+                . $this->dataBase->var2str(Asiento::OPERATION_REGULARIZATION) . ')';
         }
 
-        $ignoreClosure = (bool) $params['ignoreclosure'] ?? false;
+        $ignoreClosure = (bool)$params['ignoreclosure'] ?? false;
         if ($ignoreClosure) {
-            $where .= ' AND (asientos.operacion IS NULL OR asientos.operacion != ' . $this->dataBase->var2str(Asiento::OPERATION_CLOSING) . ')';
+            $where .= ' AND (asientos.operacion IS NULL OR asientos.operacion != '
+                . $this->dataBase->var2str(Asiento::OPERATION_CLOSING) . ')';
         }
 
         $subaccountFrom = $params['subaccount-from'] ?? '';
+        if (!empty($subaccountFrom)) {
+            $where .= ' AND partidas.codsubcuenta >= ' . $this->dataBase->var2str($subaccountFrom);
+        }
+
         $subaccountTo = $params['subaccount-to'] ?? $subaccountFrom;
-        if (!empty($subaccountFrom) || !empty($subaccountTo)) {
-            $where .= ' AND partidas.codsubcuenta BETWEEN ' . $this->dataBase->var2str($subaccountFrom)
-                . ' AND ' . $this->dataBase->var2str($subaccountTo);
+        if (!empty($subaccountTo)) {
+            $where .= ' AND partidas.codsubcuenta <= ' . $this->dataBase->var2str($subaccountTo);
         }
 
         return $where;
     }
 
     /**
-     * 
+     * @param array $params
+     *
+     * @return DataBaseWhere[]
+     */
+    protected function getSubAccountWhere(array $params = []): array
+    {
+        $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
+
+        $subaccountFrom = $params['subaccount-from'] ?? '';
+        if (!empty($subaccountFrom)) {
+            $where[] = new DataBaseWhere('codsubcuenta', $subaccountFrom, '>=');
+        }
+
+        $subaccountTo = $params['subaccount-to'] ?? '';
+        if (!empty($subaccountTo)) {
+            $where[] = new DataBaseWhere('codsubcuenta', $subaccountTo, '<=');
+        }
+        return $where;
+    }
+
+    /**
      * @param Subcuenta[] $subaccounts
-     * @param array       $amount
+     * @param array $amount
      *
      * @return array
      */
     protected function processAmountLine($subaccounts, $amount): array
     {
-        $debe = (float) $amount['debe'];
-        $haber = (float) $amount['haber'];
+        $debe = (float)$amount['debe'];
+        $haber = (float)$amount['haber'];
         $saldo = $debe - $haber;
 
         foreach ($subaccounts as $subc) {
             if ($subc->idsubcuenta == $amount['idsubcuenta']) {
                 return [
                     'cuenta' => $subc->codsubcuenta,
-                    'descripcion' => $this->toolBox()->utils()->fixHtml($subc->descripcion),
-                    'debe' => $this->toolBox()->coins()->format($debe, FS_NF0, ''),
-                    'haber' => $this->toolBox()->coins()->format($haber, FS_NF0, ''),
-                    'saldo' => $this->toolBox()->coins()->format($saldo, FS_NF0, '')
+                    'descripcion' => $this->formatValue($subc->descripcion, 'text'),
+                    'debe' => $this->formatValue($debe),
+                    'haber' => $this->formatValue($haber),
+                    'saldo' => $this->formatValue($saldo)
                 ];
             }
         }
@@ -242,9 +326,9 @@ class BalanceAmounts extends AccountingBase
         return [
             'cuenta' => '---',
             'descripcion' => '---',
-            'debe' => $this->toolBox()->coins()->format($debe, FS_NF0, ''),
-            'haber' => $this->toolBox()->coins()->format($haber, FS_NF0, ''),
-            'saldo' => $this->toolBox()->coins()->format($saldo, FS_NF0, '')
+            'debe' => $this->formatValue($debe),
+            'haber' => $this->formatValue($haber),
+            'saldo' => $this->formatValue($saldo)
         ];
     }
 }

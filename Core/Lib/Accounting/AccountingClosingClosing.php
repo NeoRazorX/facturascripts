@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -35,7 +36,7 @@ class AccountingClosingClosing extends AccountingClosingBase
      * Create a new account entry for channel with a one line by account balance.
      *
      * @param Ejercicio $exercise
-     * @param int       $idjournal
+     * @param int $idjournal
      *
      * @return bool
      */
@@ -52,8 +53,8 @@ class AccountingClosingClosing extends AccountingClosingBase
     protected function getConcept(): string
     {
         return $this->toolBox()->i18n()->trans(
-                'closing-closing-concept',
-                ['%exercise%' => $this->exercise->nombre]
+            'closing-closing-concept',
+            ['%exercise%' => $this->exercise->nombre]
         );
     }
 
@@ -102,7 +103,7 @@ class AccountingClosingClosing extends AccountingClosingBase
      * Establishes the common data of the entries of the accounting entry
      *
      * @param Partida $line
-     * @param array   $data
+     * @param array $data
      */
     protected function setDataLine(&$line, $data)
     {

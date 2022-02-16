@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
 use FacturaScripts\Dinamic\Model\Empresa;
@@ -57,7 +59,6 @@ class Controller
     public $empresa;
 
     /**
-     *
      * @var MultiRequestProtection
      */
     public $multiRequestProtection;
@@ -133,11 +134,10 @@ class Controller
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
 
-        $this->checkPHPversion(7.1);
+        $this->checkPHPversion(7.2);
     }
 
     /**
-     * 
      * @param mixed $extension
      */
     public static function addExtension($extension)
@@ -174,9 +174,8 @@ class Controller
     }
 
     /**
-     * 
      * @param string $name
-     * @param array  $arguments
+     * @param array $arguments
      *
      * @return mixed
      */
@@ -189,8 +188,8 @@ class Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response              $response
-     * @param User                  $user
+     * @param Response $response
+     * @param User $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -199,18 +198,21 @@ class Controller
         $this->response = &$response;
         $this->user = $user;
 
-        /// Select the default company for the user
-        $this->empresa->loadFromCode($this->user->idempresa);
+        // Select the default company for the user
+        $this->empresa = Empresas::get($this->user->idempresa);
 
-        /// This user have default page setted?
+        // add the user to the token generation seed
+        $this->multiRequestProtection->addSeed($user->nick);
+
+        // Have this user a default page?
         $defaultPage = $this->request->query->get('defaultPage', '');
         if ($defaultPage === 'TRUE') {
             $this->user->homepage = $this->className;
-            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() + \FS_COOKIES_EXPIRE));
+            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() + FS_COOKIES_EXPIRE));
             $this->user->save();
         } elseif ($defaultPage === 'FALSE') {
             $this->user->homepage = null;
-            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() - \FS_COOKIES_EXPIRE));
+            $this->response->headers->setCookie(new Cookie('fsHomepage', $this->user->homepage, time() - FS_COOKIES_EXPIRE));
             $this->user->save();
         }
     }
@@ -227,16 +229,16 @@ class Controller
         $this->template = 'Login/Login.html.twig';
 
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
-        $this->empresa->loadFromCode($idempresa);
+        $this->empresa = Empresas::get($idempresa);
     }
 
     /**
      * Redirect to an url or controller.
-     * 
+     *
      * @param string $url
-     * @param int    $delay
+     * @param int $delay
      */
-    public function redirect($url, $delay = 0)
+    public function redirect(string $url, int $delay = 0)
     {
         $this->response->headers->set('Refresh', $delay . '; ' . $url);
         if ($delay === 0) {
@@ -258,10 +260,9 @@ class Controller
     }
 
     /**
-     * 
      * @return ToolBox
      */
-    public static function toolBox()
+    public static function toolBox(): ToolBox
     {
         return new ToolBox();
     }
@@ -271,18 +272,17 @@ class Controller
      *
      * @return string
      */
-    public function url()
+    public function url(): string
     {
         return $this->className;
     }
 
     /**
-     * 
      * @param float $min
      */
     private function checkPHPversion(float $min)
     {
-        $current = (float) \substr(\phpversion(), 0, 3);
+        $current = (float)substr(phpversion(), 0, 3);
         if ($current < $min) {
             $this->toolBox()->i18nLog()->warning('php-support-end', ['%current%' => $current, '%min%' => $min]);
         }

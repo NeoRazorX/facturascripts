@@ -1,10 +1,8 @@
-/.idea/
 /cache/
 /Cache/
 /Dinamic/
 /doc/
 /MyFiles/
-/nbproject/
 /node_modules/
 /Plugins/
 /vendor/
@@ -18,11 +16,18 @@ package-lock.json
 *.cache
 *.lock
 
-# Eclipse config files
+# Eclipse
 .buildpath
 .project
 .settings
 
-# Vscode config files
+# netbeans
+/nbproject/
+
+# phpstorm
+/.idea/
+
+# vscode
 .vscode
 *.code-workspace
+.history

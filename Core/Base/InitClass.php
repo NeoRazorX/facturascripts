@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
@@ -39,67 +40,69 @@ abstract class InitClass
     abstract public function update();
 
     /**
-     * 
-     * @return string
+     * Code that is executed when uninstalling a plugin.
      */
-    protected function getNamespace()
+    public function uninstall()
     {
-        return \substr(static::class, 0, -5);
+    }
+
+    protected function getNamespace(): string
+    {
+        return substr(static::class, 0, -5);
     }
 
     /**
-     * 
      * @param mixed $extension
      *
      * @return bool
      */
     protected function loadExtension($extension): bool
     {
-        $namespace = \get_class($extension);
+        $namespace = get_class($extension);
         $findNamespace = $this->getNamespace() . '\\Extension\\';
-        if (\strpos($namespace, $findNamespace) !== 0) {
+        if (strpos($namespace, $findNamespace) !== 0) {
             $this->toolBox()->log()->error('Target object not found for: ' . $namespace);
             return false;
         }
 
-        $className = \substr($namespace, \strlen($findNamespace));
+        $className = substr($namespace, strlen($findNamespace));
         switch ($className) {
             case 'Model\\Base\\BusinessDocument':
                 return $this->loadBusinessDocumentExtension($extension, [
-                        'AlbaranCliente', 'AlbaranProveedor', 'FacturaCliente', 'FacturaProveedor',
-                        'PedidoCliente', 'PedidoProveedor', 'PresupuestoCliente', 'PresupuestoProveedor'
+                    'AlbaranCliente', 'AlbaranProveedor', 'FacturaCliente', 'FacturaProveedor',
+                    'PedidoCliente', 'PedidoProveedor', 'PresupuestoCliente', 'PresupuestoProveedor'
                 ]);
 
             case 'Model\\Base\\BusinessDocumentLine':
                 return $this->loadBusinessDocumentExtension($extension, [
-                        'LineaAlbaranCliente', 'LineaAlbaranProveedor', 'LineaFacturaCliente',
-                        'LineaFacturaProveedor', 'LineaPedidoCliente', 'LineaPedidoProveedor',
-                        'LineaPresupuestoCliente', 'LineaPresupuestoProveedor'
+                    'LineaAlbaranCliente', 'LineaAlbaranProveedor', 'LineaFacturaCliente',
+                    'LineaFacturaProveedor', 'LineaPedidoCliente', 'LineaPedidoProveedor',
+                    'LineaPresupuestoCliente', 'LineaPresupuestoProveedor'
                 ]);
 
             case 'Model\\Base\\PurchaseDocument':
                 return $this->loadBusinessDocumentExtension($extension, [
-                        'AlbaranProveedor', 'FacturaProveedor', 'PedidoProveedor', 'PresupuestoProveedor'
+                    'AlbaranProveedor', 'FacturaProveedor', 'PedidoProveedor', 'PresupuestoProveedor'
                 ]);
 
             case 'Model\\Base\\PurchaseDocumentLine':
                 return $this->loadBusinessDocumentExtension($extension, [
-                        'LineaAlbaranProveedor', 'LineaFacturaProveedor', 'LineaPedidoProveedor', 'LineaPresupuestoProveedor'
+                    'LineaAlbaranProveedor', 'LineaFacturaProveedor', 'LineaPedidoProveedor', 'LineaPresupuestoProveedor'
                 ]);
 
             case 'Model\\Base\\SalesDocument':
                 return $this->loadBusinessDocumentExtension($extension, [
-                        'AlbaranCliente', 'FacturaCliente', 'PedidoCliente', 'PresupuestoCliente'
+                    'AlbaranCliente', 'FacturaCliente', 'PedidoCliente', 'PresupuestoCliente'
                 ]);
 
             case 'Model\\Base\\SalesDocumentLine':
                 return $this->loadBusinessDocumentExtension($extension, [
-                        'LineaAlbaranCliente', 'LineaFacturaCliente', 'LineaPedidoCliente', 'LineaPresupuestoCliente'
+                    'LineaAlbaranCliente', 'LineaFacturaCliente', 'LineaPedidoCliente', 'LineaPresupuestoCliente'
                 ]);
         }
 
         $targetClass = '\\FacturaScripts\\Dinamic\\' . $className;
-        if (\class_exists($targetClass)) {
+        if (class_exists($targetClass)) {
             $targetClass::addExtension($extension);
             return true;
         }
@@ -108,7 +111,6 @@ abstract class InitClass
     }
 
     /**
-     * 
      * @param mixed $extension
      * @param array $models
      *
@@ -124,19 +126,11 @@ abstract class InitClass
         return true;
     }
 
-    /**
-     * 
-     * @return ToolBox
-     */
-    protected function toolBox()
+    protected function toolBox(): ToolBox
     {
         return new ToolBox();
     }
 
-    /**
-     * 
-     * @param string $tableName
-     */
     protected function updateTableData(string $tableName)
     {
         $sql = CSVImport::updateTableSQL($tableName);

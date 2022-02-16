@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Lib\AssetManager;
@@ -40,7 +42,6 @@ class BusinessDocumentView extends BaseView
     const MODEL_NAMESPACE_LIB = '\\FacturaScripts\\Dinamic\\Lib\\';
 
     /**
-     *
      * @var EstadoDocumento[]
      */
     public $documentStatus = [];
@@ -60,13 +61,12 @@ class BusinessDocumentView extends BaseView
     public $model;
 
     /**
-     * 
      * @param string $name
      * @param string $title
      * @param string $modelName
      * @param string $icon
      */
-    public function __construct($name, $title, $modelName, $icon = 'fas fa-file')
+    public function __construct(string $name, string $title, string $modelName, string $icon = 'fas fa-file')
     {
         parent::__construct($name, $title, $modelName, $icon);
         $this->documentStatus = $this->model->getAvaliableStatus();
@@ -76,19 +76,19 @@ class BusinessDocumentView extends BaseView
      * Method to export the view data.
      *
      * @param ExportManager $exportManager
+     * @param mixed $codes
      *
      * @return bool
      */
-    public function export(&$exportManager): bool
+    public function export(&$exportManager, $codes): bool
     {
         return $exportManager->addBusinessDocPage($this->model);
     }
 
     /**
-     * 
      * @return ColumnItem[]
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         foreach ($this->columns as $group) {
             return $group->columns;
@@ -98,12 +98,11 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
-     * 
      * @return int
      */
-    public function getMaxLines()
+    public function getMaxLines(): int
     {
-        return \intval(\ini_get('max_input_vars') / \count($this->getColumns()));
+        return intval(ini_get('max_input_vars') / count($this->getColumns()));
     }
 
     /**
@@ -111,7 +110,7 @@ class BusinessDocumentView extends BaseView
      *
      * @return string
      */
-    public function getLineData()
+    public function getLineData(): string
     {
         $data = [
             'headers' => [],
@@ -136,25 +135,25 @@ class BusinessDocumentView extends BaseView
                 $item['strict'] = false;
                 $item['visibleRows'] = 5;
                 $item['trimDropdown'] = false;
-            } elseif (\in_array($item['type'], ['money', 'number', 'percentage'], true)) {
+            } elseif (in_array($item['type'], ['money', 'number', 'percentage'], true)) {
                 $item['type'] = 'numeric';
                 $item['numericFormat'] = $col->widget->gridFormat();
             }
 
             $data['columns'][] = $item;
-            $data['headers'][] = $this->toolBox()->i18n()->trans($col->title);
+            $data['headers'][] = ToolBox::i18n()->trans($col->title);
         }
 
         $fixColumns = ['descripcion', 'referencia'];
         foreach ($this->lines as $line) {
             $lineArray = [];
-            foreach (\array_keys($line->getModelFields()) as $key) {
-                $lineArray[$key] = \in_array($key, $fixColumns) ? $this->toolBox()->utils()->fixHtml($line->{$key}) : $line->{$key};
+            foreach (array_keys($line->getModelFields()) as $key) {
+                $lineArray[$key] = in_array($key, $fixColumns) ? ToolBox::utils()::fixHtml($line->{$key}) : $line->{$key};
             }
             $data['rows'][] = $lineArray;
         }
 
-        return \json_encode($data);
+        return json_encode($data);
     }
 
     /**
@@ -164,10 +163,10 @@ class BusinessDocumentView extends BaseView
      *
      * @return array
      */
-    public function getSelectValues($modelName)
+    public function getSelectValues(string $modelName): array
     {
         $classModel = self::MODEL_NAMESPACE . $modelName;
-        if (\class_exists($classModel)) {
+        if (class_exists($classModel)) {
             $values = [];
             $model = new $classModel();
 
@@ -180,18 +179,17 @@ class BusinessDocumentView extends BaseView
         }
 
         $classLib = self::MODEL_NAMESPACE_LIB . $modelName;
-        return \class_exists($classLib) ? $classLib::all() : [];
+        return class_exists($classLib) ? $classLib::all() : [];
     }
 
     /**
-     * 
      * @param string $code
-     * @param array  $where
-     * @param int    $order
-     * @param int    $offset
-     * @param int    $limit
+     * @param array $where
+     * @param int $order
+     * @param int $offset
+     * @param int $limit
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = \FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         if ($this->newCode !== null) {
             $code = $this->newCode;
@@ -216,10 +214,10 @@ class BusinessDocumentView extends BaseView
      *
      * @return array
      */
-    public function processFormLines(array $formLines)
+    public function processFormLines(array $formLines): array
     {
         $newLines = [];
-        $order = \count($formLines);
+        $order = count($formLines);
         foreach ($formLines as $line) {
             if (is_array($line)) {
                 $line['orden'] = $order;
@@ -237,9 +235,8 @@ class BusinessDocumentView extends BaseView
     }
 
     /**
-     * 
      * @param Request $request
-     * @param string  $case
+     * @param string $case
      */
     public function processFormData($request, $case)
     {
@@ -264,18 +261,17 @@ class BusinessDocumentView extends BaseView
      */
     protected function assets()
     {
-        AssetManager::add('css', \FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css');
-        AssetManager::add('js', \FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js');
-        AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/BusinessDocumentView.js');
+        AssetManager::add('css', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css');
+        AssetManager::add('js', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js');
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/BusinessDocumentView.js?v=3');
     }
 
     /**
-     * 
      * @param string $code
      *
      * @return string
      */
-    protected function getCellAlign($code): string
+    protected function getCellAlign(string $code): string
     {
         switch ($code) {
             case 'center':

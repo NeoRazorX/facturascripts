@@ -16,17 +16,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\EditReportAccounting;
-use FacturaScripts\Core\Model\ReportLedger;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
+use FacturaScripts\Dinamic\Model\ReportLedger;
 
 /**
  * Description of EditReportLedger
  *
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
- * @author Jose Antonio Cuello  <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  */
 class EditReportLedger extends EditReportAccounting
 {
@@ -59,7 +60,7 @@ class EditReportLedger extends EditReportAccounting
     {
         parent::createViews();
 
-        /// disable company column if there is only one company
+        // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }
@@ -69,23 +70,28 @@ class EditReportLedger extends EditReportAccounting
      * Generate Ledger data for report
      *
      * @param ReportLedger $model
+     * @param string $format
      *
      * @return array
      */
-    protected function generateReport($model)
+    protected function generateReport($model, $format)
     {
         $params = [
-            'idcompany' => $model->idcompany,
-            'subaccount-from' => $model->startcodsubaccount,
-            'subaccount-to' => $model->endcodsubaccount,
+            'channel' => $model->channel,
             'entry-from' => $model->startentry,
             'entry-to' => $model->endentry,
-            'channel' => $model->channel,
-            'grouped' => $model->grouped
+            'format' => $format,
+            'grouped' => $model->groupingtype,
+            'idcompany' => $model->idcompany,
+            'subaccount-from' => $model->startcodsubaccount,
+            'subaccount-to' => $model->endcodsubaccount
         ];
 
         $ledger = new Ledger();
-        $ledger->setExerciseFromDate($model->idcompany, $model->startdate);
+        if (false === $ledger->setExerciseFromDate($model->idcompany, $model->startdate)) {
+            $this->toolBox()->i18nLog()->warning('accounting-exercise-not-found');
+            return [];
+        }
         return $ledger->generate($model->startdate, $model->enddate, $params);
     }
 }

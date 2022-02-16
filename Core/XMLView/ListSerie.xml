@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,21 +22,21 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="codserie" onclick="EditSerie" />
+            <widget type="text" fieldname="codserie" onclick="EditSerie"/>
         </column>
         <column name="description" order="110">
-            <widget type="textarea" fieldname="descripcion" />
+            <widget type="textarea" fieldname="descripcion"/>
         </column>
-        <column name="journal" order="120">
+        <column name="journal" display="none" order="120">
             <widget type="select" fieldname="iddiario">
-                <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion" />
+                <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"/>
             </widget>
         </column>
-        <column name="channel" order="130">
+        <column name="channel" display="none" order="130">
             <widget type="number" fieldname="canal" decimal="0" min="0"/>
         </column>
         <column name="without-taxation" display="center" order="140">
-            <widget type="checkbox" fieldname="siniva" />
+            <widget type="checkbox" fieldname="siniva"/>
         </column>
     </columns>
     <rows>

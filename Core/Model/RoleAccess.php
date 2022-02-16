@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021  Carlos García Gómez <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson          <joenilson@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -64,6 +64,13 @@ class RoleAccess extends Base\ModelClass
     public $id;
 
     /**
+     * Permision for show all or owner data.
+     *
+     * @var bool
+     */
+    public $onlyownerdata;
+
+    /**
      * Name of the page.
      *
      * @var string
@@ -94,6 +101,7 @@ class RoleAccess extends Base\ModelClass
             $roleAccess->pagename = $page->name;
             $roleAccess->allowdelete = true;
             $roleAccess->allowupdate = true;
+            $roleAccess->onlyownerdata = false;
             if (false === $roleAccess->save()) {
                 return false;
             }
@@ -103,7 +111,7 @@ class RoleAccess extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param string $nick
      * @param string $pageName
      *
@@ -121,7 +129,7 @@ class RoleAccess extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return Page
      */
     public function getPage()
@@ -132,7 +140,7 @@ class RoleAccess extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function install()

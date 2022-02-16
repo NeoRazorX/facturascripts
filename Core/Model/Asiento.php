@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -129,8 +130,8 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      */
     public function accumulateAmounts(array &$detail)
     {
-        $haber = isset($detail['haber']) ? (float) $detail['haber'] : 0.0;
-        $this->importe += round($haber, (int) FS_NF0);
+        $haber = isset($detail['haber']) ? (float)$detail['haber'] : 0.0;
+        $this->importe += round($haber, (int)FS_NF0);
     }
 
     /**
@@ -140,7 +141,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     {
         parent::clear();
         $this->editable = true;
-        $this->fecha = \date(self::DATE_STYLE);
+        $this->fecha = date(self::DATE_STYLE);
         $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $this->importe = 0.0;
         $this->numero = '';
@@ -170,27 +171,38 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
             return false;
         }
 
-        /// forze delete lines to update subaccounts
+        // force delete lines to update subaccounts
         foreach ($this->getLines() as $line) {
             $line->delete();
         }
 
-        return parent::delete();
+        if (false === parent::delete()) {
+            return false;
+        }
+
+        // add audit log
+        self::toolBox()::i18nLog(self::AUDIT_CHANNEL)->warning('deleted-model', [
+            '%model%' => $this->modelClassName(),
+            '%key%' => $this->primaryColumnValue(),
+            '%desc%' => $this->primaryDescription(),
+            'model-class' => $this->modelClassName(),
+            'model-code' => $this->primaryColumnValue(),
+            'model-data' => $this->toArray()
+        ]);
+        return true;
     }
 
     /**
-     *
      * @return DinPartida[]
      */
-    public function getLines()
+    public function getLines(): array
     {
         $partida = new DinPartida();
         $where = [new DataBaseWhere('idasiento', $this->idasiento)];
-        return $partida->all($where, ['codsubcuenta' => 'ASC'], 0, 0);
+        return $partida->all($where, ['orden' => 'DESC', 'codsubcuenta' => 'ASC'], 0, 0);
     }
 
     /**
-     *
      * @return DinPartida
      */
     public function getNewLine()
@@ -227,7 +239,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
 
     /**
      * Returns TRUE if accounting entry is balanced.
-     * 
+     *
      * @return bool
      */
     public function isBalanced(): bool
@@ -239,14 +251,14 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
             $haber += $line->haber;
         }
 
-        return $this->toolBox()->utils()->floatcmp($debe, $haber, \FS_NF0, true);
+        return $this->toolBox()->utils()->floatcmp($debe, $haber, FS_NF0, true);
     }
 
     /**
      * Returns the following code for the reported field or the primary key of the model.
      *
      * @param string $field
-     * @param array  $where
+     * @param array $where
      *
      * @return int
      */
@@ -316,7 +328,6 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     }
 
     /**
-     * 
      * @return bool
      */
     public function save()
@@ -345,7 +356,6 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     }
 
     /**
-     *
      * @param string $date
      *
      * @return bool
@@ -384,7 +394,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
         $this->concepto = $utils->noHtml($this->concepto);
         $this->documento = $utils->noHtml($this->documento);
 
-        if (\strlen($this->concepto) == 0 || \strlen($this->concepto) > 255) {
+        if (strlen($this->concepto) == 0 || strlen($this->concepto) > 255) {
             $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']);
             return false;
         }
@@ -407,7 +417,6 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     }
 
     /**
-     * 
      * @param string $field
      *
      * @return bool
@@ -435,7 +444,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      * Update accounting entry numbers.
      *
      * @param array $entries
-     * @param int   $number
+     * @param int $number
      *
      * @return bool
      */
@@ -468,12 +477,11 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     }
 
     /**
-     *
      * @param array $fields
      */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codejercicio', 'editable', 'fecha'];
-        parent::setPreviousData(\array_merge($more, $fields));
+        parent::setPreviousData(array_merge($more, $fields));
     }
 }

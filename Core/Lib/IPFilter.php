@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 /**
@@ -55,7 +56,7 @@ class IPFilter
      */
     public function __construct()
     {
-        $this->filePath = \FS_FOLDER . '/MyFiles/Cache/ip.list';
+        $this->filePath = FS_FOLDER . '/MyFiles/Cache/ip.list';
         $this->ipList = [];
         $this->readFile();
     }
@@ -71,14 +72,14 @@ class IPFilter
 
     /**
      * Returns true client IP address.
-     * 
+     *
      * @return string
      */
-    public static function getClientIp()
+    public static function getClientIp(): string
     {
         foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $field) {
             if (isset($_SERVER[$field])) {
-                return $_SERVER[$field];
+                return (string)$_SERVER[$field];
             }
         }
 
@@ -92,7 +93,7 @@ class IPFilter
      *
      * @return bool
      */
-    public function isBanned($ip)
+    public function isBanned(string $ip): bool
     {
         foreach ($this->ipList as $line) {
             if ($line['ip'] === $ip && $line['count'] > self::MAX_ATTEMPTS) {
@@ -108,39 +109,35 @@ class IPFilter
      *
      * @param string $ip
      */
-    public function setAttempt($ip)
+    public function setAttempt(string $ip)
     {
-        $found = false;
         foreach ($this->ipList as $key => $line) {
             if ($line['ip'] === $ip) {
                 ++$this->ipList[$key]['count'];
                 $this->ipList[$key]['expire'] = time() + self::BAN_SECONDS;
-                $found = true;
-                break;
+                $this->save();
+                return;
             }
         }
 
-        if (!$found) {
-            $this->ipList[] = [
-                'ip' => $ip,
-                'count' => 1,
-                'expire' => time() + self::BAN_SECONDS,
-            ];
-        }
-
+        $this->ipList[] = [
+            'ip' => $ip,
+            'count' => 1,
+            'expire' => time() + self::BAN_SECONDS
+        ];
         $this->save();
     }
 
     /**
-     * Reads file and load IP addressess.
+     * Reads file and load IP addresses.
      */
     private function readFile()
     {
-        if (!file_exists($this->filePath)) {
+        if (false === file_exists($this->filePath)) {
             return;
         }
 
-        /// We read the list of IP addresses in the file
+        // We read the list of IP addresses in the file
         $file = fopen($this->filePath, 'rb');
         if ($file) {
             while (!feof($file)) {
@@ -153,18 +150,18 @@ class IPFilter
     }
 
     /**
-     * Load the IP addresses in the $ ipList array
+     * Load the IP addresses in the ipList array
      *
      * @param array $line
      */
-    private function readIp($line)
+    private function readIp(array $line)
     {
-        /// if row is not expired
-        if (count($line) === 3 && (int) $line[2] > time()) {
+        // if row is not expired
+        if (count($line) === 3 && (int)$line[2] > time()) {
             $this->ipList[] = [
                 'ip' => $line[0],
-                'count' => (int) $line[1],
-                'expire' => (int) $line[2],
+                'count' => (int)$line[1],
+                'expire' => (int)$line[2]
             ];
         }
     }

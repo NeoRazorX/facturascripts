@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,12 +34,12 @@
             <widget type="textarea" fieldname="observaciones" />
         </column>
         <column name="manufacturer" order="140">
-            <widget type="autocomplete" fieldname="codfabricante" onclick="EditFabricante">
+            <widget type="autocomplete" fieldname="codfabricante">
                 <values source="fabricantes" fieldcode="codfabricante" fieldtitle="nombre" />
             </widget>
         </column>
         <column name="family" order="150">
-            <widget type="autocomplete" fieldname="codfamilia" onclick="EditFamilia">
+            <widget type="autocomplete" fieldname="codfamilia">
                 <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion" />
             </widget>
         </column>
@@ -49,7 +49,7 @@
         <column name="sevende" title="for-sale" display="none" order="170">
             <widget type="checkbox" fieldname="sevende" />
         </column>
-        <column name="publico" title="public" display="center" order="180">
+        <column name="publico" title="public" display="none" order="180">
             <widget type="checkbox" fieldname="publico" />
         </column>
         <column name="bloqueado" title="blocked" display="none" order="190">
@@ -62,7 +62,7 @@
             <widget type="money" fieldname="precio" />
         </column>
         <column name="tax" display="none" order="220">
-            <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
+            <widget type="select" fieldname="codimpuesto">
                 <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion" />
             </widget>
         </column>

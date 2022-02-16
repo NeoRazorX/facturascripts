@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\Translator;
@@ -29,13 +30,11 @@ class VisualItem
 {
 
     /**
-     *
      * @var string
      */
     public $class;
 
     /**
-     *
      * @var Translator
      */
     protected static $i18n;
@@ -62,15 +61,19 @@ class VisualItem
     public $name;
 
     /**
-     *
+     * @var string
+     */
+    private static $token = '';
+
+    /**
      * @var int
      */
     protected static $uniqueId = -1;
 
     /**
-     *
+     * @param array $data
      */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         if (!isset(static::$i18n)) {
             static::$i18n = new Translator();
@@ -82,31 +85,44 @@ class VisualItem
     }
 
     /**
-     *
      * @return int
      */
-    public static function getLevel()
+    public static function getLevel(): int
     {
         return self::$level;
     }
 
     /**
-     *
+     * @return string
+     */
+    public static function getToken(): string
+    {
+        return self::$token;
+    }
+
+    /**
      * @param int $new
      */
-    public static function setLevel($new)
+    public static function setLevel(int $new)
     {
         self::$level = $new;
     }
 
     /**
-     *
+     * @param string $token
+     */
+    public static function setToken(string $token)
+    {
+        self::$token = $token;
+    }
+
+    /**
      * @param string $color
      * @param string $prefix
      *
      * @return string
      */
-    protected function colorToClass($color, $prefix)
+    protected function colorToClass(string $color, string $prefix): string
     {
         switch ($color) {
             case 'danger':
@@ -135,8 +151,8 @@ class VisualItem
      * Calculate color from option configuration
      *
      * @param string[] $option
-     * @param mixed    $value
-     * @param string   $prefix
+     * @param mixed $value
+     * @param string $prefix
      *
      * @return string
      */
@@ -146,49 +162,48 @@ class VisualItem
     }
 
     /**
-     *
      * @param string[] $option
-     * @param mixed    $value
+     * @param mixed $value
      *
-     * @return boolean
+     * @return bool
      */
-    protected function applyOperatorFromOption($option, $value)
+    protected function applyOperatorFromOption($option, $value): bool
     {
         $text = $option['text'] ?? '';
 
         $applyOperator = '';
         $operators = ['>', 'gt:', 'gte:', '<', 'lt:', 'lte:', '!', 'neq:', 'like:', 'null:', 'notnull:'];
         foreach ($operators as $operator) {
-            if (0 === \strpos($text, $operator)) {
+            if (0 === strpos($text, $operator)) {
                 $applyOperator = $operator;
                 break;
             }
         }
 
-        $matchValue = \substr($text, \strlen($applyOperator));
+        $matchValue = substr($text, strlen($applyOperator));
         $apply = $matchValue == $value;
 
         switch ($applyOperator) {
             case '>':
             case 'gt:':
-                return (float) $value > (float) $matchValue;
+                return (float)$value > (float)$matchValue;
 
             case 'gte:':
-                return (float) $value >= (float) $matchValue;
+                return (float)$value >= (float)$matchValue;
 
             case '<':
             case 'lt:':
-                return (float) $value < (float) $matchValue;
+                return (float)$value < (float)$matchValue;
 
             case 'lte:':
-                return (float) $value <= (float) $matchValue;
+                return (float)$value <= (float)$matchValue;
 
             case '!':
             case 'neq:':
                 return $value != $matchValue;
 
             case 'like:':
-                return false !== \stripos($value, $matchValue);
+                return false !== stripos($value, $matchValue);
 
             case 'null:':
                 return null === $value;
@@ -201,7 +216,6 @@ class VisualItem
     }
 
     /**
-     * 
      * @param array $classes
      *
      * @return string
@@ -215,7 +229,7 @@ class VisualItem
             }
         }
 
-        return \implode(' ', $mix);
+        return implode(' ', $mix);
     }
 
     /**
@@ -225,16 +239,15 @@ class VisualItem
      *
      * @return string
      */
-    protected function css($class)
+    protected function css(string $class): string
     {
         return $class;
     }
 
     /**
-     *
      * @return int
      */
-    protected function getUniqueId()
+    protected function getUniqueId(): int
     {
         static::$uniqueId++;
         return static::$uniqueId;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,11 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Widget\VisualItem;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
@@ -79,7 +81,7 @@ abstract class BaseController extends Controller
     /**
      * Loads the data to display.
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     abstract protected function loadData($viewName, $view);
@@ -103,9 +105,9 @@ abstract class BaseController extends Controller
      * Adds a new button to the tab.
      *
      * @param string $viewName
-     * @param array  $btnArray
+     * @param array $btnArray
      */
-    public function addButton($viewName, $btnArray)
+    public function addButton(string $viewName, array $btnArray)
     {
         $rowType = isset($btnArray['row']) ? 'footer' : 'actions';
         $row = $this->views[$viewName]->getRow($rowType);
@@ -115,11 +117,10 @@ abstract class BaseController extends Controller
     }
 
     /**
-     *
-     * @param string            $viewName
+     * @param string $viewName
      * @param BaseView|ListView $view
      */
-    public function addCustomView($viewName, $view)
+    public function addCustomView(string $viewName, $view)
     {
         if ($viewName !== $view->getViewName()) {
             $this->toolBox()->log()->error('$viewName must be equals to $view->name');
@@ -134,7 +135,6 @@ abstract class BaseController extends Controller
     }
 
     /**
-     *
      * @return BaseView|ListView
      */
     public function getCurrentView()
@@ -147,9 +147,9 @@ abstract class BaseController extends Controller
      *
      * @return string
      */
-    public function getMainViewName()
+    public function getMainViewName(): string
     {
-        foreach (\array_keys($this->views) as $key) {
+        foreach (array_keys($this->views) as $key) {
             return $key;
         }
 
@@ -164,9 +164,9 @@ abstract class BaseController extends Controller
      *
      * @return mixed
      */
-    public function getSettings($viewName, $property)
+    public function getSettings(string $viewName, string $property)
     {
-        return isset($this->views[$viewName]->settings[$property]) ? $this->views[$viewName]->settings[$property] : null;
+        return $this->views[$viewName]->settings[$property] ?? null;
     }
 
     /**
@@ -177,22 +177,23 @@ abstract class BaseController extends Controller
      *
      * @return mixed
      */
-    public function getViewModelValue($viewName, $fieldName)
+    public function getViewModelValue(string $viewName, string $fieldName)
     {
         $model = $this->views[$viewName]->model;
-        return isset($model->{$fieldName}) ? $model->{$fieldName} : null;
+        return $model->{$fieldName} ?? null;
     }
 
     /**
      * Runs the controller's private logic.
      *
-     * @param Response              $response
-     * @param User                  $user
+     * @param Response $response
+     * @param User $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        VisualItem::setToken($this->multiRequestProtection->newToken());
 
         // Create the views to display
         $this->createViews();
@@ -200,10 +201,9 @@ abstract class BaseController extends Controller
     }
 
     /**
-     *
      * @param string $viewName
      */
-    public function setCurrentView($viewName)
+    public function setCurrentView(string $viewName)
     {
         $this->current = $viewName;
     }
@@ -213,9 +213,9 @@ abstract class BaseController extends Controller
      *
      * @param string $viewName
      * @param string $property
-     * @param mixed  $value
+     * @param mixed $value
      */
-    public function setSettings($viewName, $property, $value)
+    public function setSettings(string $viewName, string $property, $value)
     {
         $this->views[$viewName]->settings[$property] = $value;
     }
@@ -255,25 +255,45 @@ abstract class BaseController extends Controller
     }
 
     /**
+     * Check if the active user has permission to view the information
+     * of the active record in the informed model.
+     *
+     * @param object $model
+     *
+     * @return bool
+     */
+    protected function checkOwnerData($model): bool
+    {
+        if ($this->permissions->onlyOwnerData && isset($model->nick) && $model->nick !== $this->user->nick) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Action to delete data.
      *
      * @return bool
      */
     protected function deleteAction()
     {
+        // check user permissions
         if (false === $this->permissions->allowDelete || false === $this->views[$this->active]->settings['btnDelete']) {
             $this->toolBox()->i18nLog()->warning('not-allowed-delete');
+            return false;
+        } elseif (false === $this->validateFormToken()) {
             return false;
         }
 
         $model = $this->views[$this->active]->model;
         $codes = $this->request->request->get('code', '');
-
         if (empty($codes)) {
-            // no selected item
             $this->toolBox()->i18nLog()->warning('no-selected-item');
             return false;
-        } elseif (\is_array($codes)) {
+        }
+
+        if (is_array($codes)) {
             $this->dataBase->beginTransaction();
 
             // deleting multiples rows
@@ -284,7 +304,7 @@ abstract class BaseController extends Controller
                     continue;
                 }
 
-                /// error?
+                // error?
                 $this->dataBase->rollback();
                 break;
             }
@@ -310,13 +330,20 @@ abstract class BaseController extends Controller
     protected function exportAction()
     {
         $this->setTemplate(false);
-        $this->exportManager->newDoc($this->request->get('option', ''), $this->title);
+        $this->exportManager->newDoc(
+            $this->request->get('option', ''),
+            $this->title,
+            (int)$this->request->request->get('idformat', ''),
+            $this->request->request->get('langcode', '')
+        );
+
         foreach ($this->views as $selectedView) {
             if (false === $selectedView->settings['active']) {
                 continue;
             }
 
-            if (false === $selectedView->export($this->exportManager)) {
+            $codes = $this->request->request->get('code');
+            if (false === $selectedView->export($this->exportManager, $codes)) {
                 break;
             }
         }
@@ -344,18 +371,52 @@ abstract class BaseController extends Controller
     }
 
     /**
+     * Returns the where filter to apply to obtain the data
+     * created by the active user.
+     *
+     * @param object $model
+     *
+     * @return DataBaseWhere[]
+     */
+    protected function getOwnerFilter($model): array
+    {
+        return property_exists($model, 'nick') ? [new DataBaseWhere('nick', $this->user->nick)] : [];
+    }
+
+    /**
      * Return array with parameters values
      *
      * @param array $keys
      *
      * @return array
      */
-    protected function requestGet($keys): array
+    protected function requestGet(array $keys): array
     {
         $result = [];
         foreach ($keys as $key) {
             $result[$key] = $this->request->get($key);
         }
         return $result;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function validateFormToken(): bool
+    {
+        // valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+            $this->toolBox()->i18nLog()->warning('invalid-request');
+            return false;
+        }
+
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($token)) {
+            $this->toolBox()->i18nLog()->warning('duplicated-request');
+            return false;
+        }
+
+        return true;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Lib\Export\ExportBase;
+use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -44,11 +46,31 @@ class ExportManager
     protected static $options = [];
 
     /**
+     * @var array
+     */
+    protected static $optionsModels = [];
+
+    /**
      * Default document orientation.
      *
      * @var string
      */
     protected $orientation;
+
+    /**
+     * @var string
+     */
+    protected static $selectedLang;
+
+    /**
+     * @var string
+     */
+    protected static $selectedOption;
+
+    /**
+     * @var string
+     */
+    protected static $selectedTitle;
 
     /**
      * Tools list.
@@ -74,38 +96,64 @@ class ExportManager
      */
     public function addBusinessDocPage($model): bool
     {
-        return empty(static::$engine) ? false : static::$engine->addBusinessDocPage($model);
+        return !empty(static::$engine) && static::$engine->addBusinessDocPage($model);
     }
 
     /**
      * Adds a new page with a table listing the models data.
      *
-     * @param mixed  $model
-     * @param array  $where
-     * @param array  $order
-     * @param int    $offset
-     * @param array  $columns
+     * @param mixed $model
+     * @param array $where
+     * @param array $order
+     * @param int $offset
+     * @param array $columns
      * @param string $title
      *
      * @return bool
      */
     public function addListModelPage($model, $where, $order, $offset, $columns, $title = ''): bool
     {
-        return empty(static::$engine) ? false : static::$engine->addListModelPage($model, $where, $order, $offset, $columns, $title);
+        return !empty(static::$engine) && static::$engine->addListModelPage($model, $where, $order, $offset, $columns, $title);
     }
 
     /**
      * Adds a new page with the model data.
      *
-     * @param mixed  $model
-     * @param array  $columns
+     * @param mixed $model
+     * @param array $columns
      * @param string $title
      *
      * @return bool
      */
     public function addModelPage($model, $columns, $title = ''): bool
     {
-        return empty(static::$engine) ? false : static::$engine->addModelPage($model, $columns, $title);
+        // sort by priority
+        uasort(static::$optionsModels, function ($item1, $item2) {
+            if ($item1['priority'] > $item2['priority']) {
+                return 1;
+            } elseif ($item1['priority'] < $item2['priority']) {
+                return -1;
+            }
+
+            return 0;
+        });
+
+        // find a custom option for this model
+        foreach (static::$optionsModels as $option) {
+            if ($option['option'] !== self::$selectedOption ||
+                $option['modelName'] !== $model->modelClassName()) {
+                continue;
+            }
+
+            $className = '\\FacturaScripts\\Dinamic\\Lib\\Export\\' . $option['class'];
+            static::$engine = new $className();
+            static::$engine->newDoc(static::$selectedTitle, 0, static::$selectedLang);
+            if (!empty($this->orientation)) {
+                static::$engine->setOrientation($this->orientation);
+            }
+        }
+
+        return !empty(static::$engine) && static::$engine->addModelPage($model, $columns, $title);
     }
 
     /**
@@ -119,6 +167,23 @@ class ExportManager
     {
         static::init();
         static::$options[$key] = ['description' => $description, 'icon' => $icon];
+    }
+
+    /**
+     * @param string $exportClassName
+     * @param string $optionKey
+     * @param string $modelName
+     * @param int $priority
+     */
+    public static function addOptionModel($exportClassName, $optionKey, $modelName, $priority = 0)
+    {
+        static::init();
+        static::$optionsModels[] = [
+            'class' => $exportClassName,
+            'modelName' => $modelName,
+            'option' => $optionKey,
+            'priority' => $priority
+        ];
     }
 
     /**
@@ -145,13 +210,13 @@ class ExportManager
      */
     public function addTablePage($headers, $rows): bool
     {
-        /// We need headers key to be equal to value
+        // We need headers key to be equal to value
         $fixedHeaders = [];
         foreach ($headers as $value) {
             $fixedHeaders[$value] = $value;
         }
 
-        return empty(static::$engine) ? false : static::$engine->addTablePage($fixedHeaders, $rows);
+        return !empty(static::$engine) && static::$engine->addTablePage($fixedHeaders, $rows);
     }
 
     /**
@@ -161,7 +226,7 @@ class ExportManager
      */
     public static function defaultOption()
     {
-        foreach (\array_keys(static::$options) as $key) {
+        foreach (array_keys(static::$options) as $key) {
             return $key;
         }
 
@@ -170,7 +235,7 @@ class ExportManager
 
     /**
      * Return generated doc.
-     * 
+     *
      * @return mixed
      */
     public function getDoc()
@@ -179,17 +244,41 @@ class ExportManager
     }
 
     /**
+     * @param object $model
+     *
+     * @return array
+     */
+    public function getFormats($model): array
+    {
+        $return = [];
+        $formatModel = new FormatoDocumento();
+        foreach ($formatModel->all([], ['nombre' => 'ASC']) as $format) {
+            if (empty($format->tipodoc) || $format->tipodoc === $model->modelClassName()) {
+                $return[] = $format;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
      * Create a new doc and set headers.
      *
      * @param string $option
      * @param string $title
+     * @param int $format
+     * @param string $lang
      */
-    public function newDoc(string $option, string $title = '')
+    public function newDoc(string $option, string $title = '', int $format = 0, string $lang = '')
     {
-        /// calls to the appropiate engine to generate the doc
+        static::$selectedOption = $option;
+        static::$selectedTitle = $title;
+        static::$selectedLang = $lang;
+
+        // calls to the appropriate engine to generate the doc
         $className = $this->getExportClassName($option);
         static::$engine = new $className();
-        static::$engine->newDoc($title);
+        static::$engine->newDoc($title, $format, $lang);
         if (!empty($this->orientation)) {
             static::$engine->setOrientation($this->orientation);
         }
@@ -216,7 +305,7 @@ class ExportManager
     }
 
     /**
-     * Returns the formated data.
+     * Returns the formatted data.
      *
      * @param Response $response
      */
@@ -228,7 +317,6 @@ class ExportManager
     }
 
     /**
-     *
      * @return array
      */
     public static function tools(): array
@@ -243,15 +331,15 @@ class ExportManager
      *
      * @return string
      */
-    private function getExportClassName($option)
+    private function getExportClassName($option): string
     {
         $dinClassName = '\\FacturaScripts\\Dinamic\\Lib\\Export\\' . $option . 'Export';
-        if (\class_exists($dinClassName)) {
+        if (class_exists($dinClassName)) {
             return $dinClassName;
         }
 
         $className = '\\FacturaScripts\\Core\\Lib\\Export\\' . $option . 'Export';
-        return \class_exists($className) ? $className : '\\FacturaScripts\\Core\\Lib\\Export\\PDFExport';
+        return class_exists($className) ? $className : '\\FacturaScripts\\Core\\Lib\\Export\\PDFExport';
     }
 
     /**
@@ -271,7 +359,7 @@ class ExportManager
         if (empty(static::$tools)) {
             static::$tools = [
                 'main' => [
-                    'link' => 'ListSecuenciaDocumento?activetab=ListFormatoDocumento',
+                    'link' => 'EditSettings?activetab=ListFormatoDocumento',
                     'description' => 'printing-formats',
                     'icon' => 'fas fa-cog'
                 ],

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use Exception;
@@ -40,7 +41,6 @@ class AccountingPlanImport
 {
 
     /**
-     *
      * @var DataBase
      */
     protected $dataBase;
@@ -73,7 +73,7 @@ class AccountingPlanImport
             return false;
         }
 
-        if (false === \file_exists($filePath)) {
+        if (false === file_exists($filePath)) {
             $this->toolBox()->i18nLog()->warning('file-not-found', ['%fileName%' => $filePath]);
             return false;
         }
@@ -116,7 +116,7 @@ class AccountingPlanImport
         }
 
         $data = $this->getData($filePath);
-        if (\is_array($data) || $data->count() == 0) {
+        if (is_array($data) || $data->count() == 0) {
             return false;
         }
 
@@ -200,8 +200,8 @@ class AccountingPlanImport
         }
 
         /// update exercise configuration
-        if ($this->exercise->longsubcuenta != \strlen($code)) {
-            $this->exercise->longsubcuenta = \strlen($code);
+        if ($this->exercise->longsubcuenta != strlen($code)) {
+            $this->exercise->longsubcuenta = strlen($code);
             $this->exercise->save();
             $subaccount->clearExerciseCache();
         }
@@ -223,8 +223,8 @@ class AccountingPlanImport
      */
     protected function getData(string $filePath)
     {
-        if (\file_exists($filePath)) {
-            return \simplexml_load_string(\file_get_contents($filePath));
+        if (file_exists($filePath)) {
+            return simplexml_load_string(file_get_contents($filePath));
         }
 
         return [];
@@ -238,8 +238,8 @@ class AccountingPlanImport
     protected function importCuenta($data)
     {
         foreach ($data as $xmlAccount) {
-            $accountElement = (array) $xmlAccount;
-            $this->createAccount($accountElement['codcuenta'], \base64_decode($accountElement['descripcion']), $accountElement['codepigrafe'], $accountElement['idcuentaesp']);
+            $accountElement = (array)$xmlAccount;
+            $this->createAccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe'], $accountElement['idcuentaesp']);
         }
     }
 
@@ -251,8 +251,8 @@ class AccountingPlanImport
     protected function importEpigrafe($data)
     {
         foreach ($data as $xmlEpigrafeElement) {
-            $epigrafeElement = (array) $xmlEpigrafeElement;
-            $this->createAccount($epigrafeElement['codepigrafe'], \base64_decode($epigrafeElement['descripcion']), $epigrafeElement['codgrupo']);
+            $epigrafeElement = (array)$xmlEpigrafeElement;
+            $this->createAccount($epigrafeElement['codepigrafe'], base64_decode($epigrafeElement['descripcion']), $epigrafeElement['codgrupo']);
         }
     }
 
@@ -264,8 +264,8 @@ class AccountingPlanImport
     protected function importEpigrafeGroup($data)
     {
         foreach ($data as $xmlEpigrafeGroup) {
-            $epigrafeGroupElement = (array) $xmlEpigrafeGroup;
-            $this->createAccount($epigrafeGroupElement['codgrupo'], \base64_decode($epigrafeGroupElement['descripcion']));
+            $epigrafeGroupElement = (array)$xmlEpigrafeGroup;
+            $this->createAccount($epigrafeGroupElement['codgrupo'], base64_decode($epigrafeGroupElement['descripcion']));
         }
     }
 
@@ -277,8 +277,8 @@ class AccountingPlanImport
     protected function importSubcuenta($data)
     {
         foreach ($data as $xmlSubaccountElement) {
-            $subaccountElement = (array) $xmlSubaccountElement;
-            $this->createSubaccount($subaccountElement['codsubcuenta'], \base64_decode($subaccountElement['descripcion']), $subaccountElement['codcuenta']);
+            $subaccountElement = (array)$xmlSubaccountElement;
+            $this->createSubaccount($subaccountElement['codsubcuenta'], base64_decode($subaccountElement['descripcion']), $subaccountElement['codcuenta']);
         }
     }
 
@@ -296,24 +296,24 @@ class AccountingPlanImport
         $accountPlan = [];
         foreach ($csv->data as $value) {
             $key0 = $value[$csv->titles[0]] ?? $value[0];
-            if (\strlen($key0) > 0) {
+            if (strlen($key0) > 0) {
                 $accountPlan[$key0] = [
                     'descripcion' => $value[$csv->titles[1]] ?? $value[1],
                     'codcuentaesp' => $value[$csv->titles[2]] ?? $value[2]
                 ];
-                $length[] = \strlen($key0);
+                $length[] = strlen($key0);
             }
         }
 
-        $lengths = \array_unique($length);
-        \sort($lengths);
-        $minLength = \min($lengths);
-        $maxLength = \max($lengths);
-        $keys = \array_keys($accountPlan);
-        \ksort($accountPlan);
+        $lengths = array_unique($length);
+        sort($lengths);
+        $minLength = min($lengths);
+        $maxLength = max($lengths);
+        $keys = array_keys($accountPlan);
+        ksort($accountPlan);
 
         foreach ($accountPlan as $key => $value) {
-            switch (\strlen($key)) {
+            switch (strlen($key)) {
                 case $minLength:
                     $this->createAccount($key, $value['descripcion'], '', $value['codcuentaesp']);
                     break;
@@ -334,7 +334,7 @@ class AccountingPlanImport
     /**
      * Search the parent of account in a accounting Plan.
      *
-     * @param array  $accountCodes
+     * @param array $accountCodes
      * @param string $account
      *
      * @return string
@@ -343,10 +343,10 @@ class AccountingPlanImport
     {
         $parentCode = '';
         foreach ($accountCodes as $code) {
-            $strCode = (string) $code;
+            $strCode = (string)$code;
             if ($strCode === $account) {
                 continue;
-            } elseif (\strpos($account, $strCode) === 0 && \strlen($strCode) > \strlen($parentCode)) {
+            } elseif (strpos($account, $strCode) === 0 && strlen($strCode) > strlen($parentCode)) {
                 $parentCode = $code;
             }
         }
@@ -355,10 +355,9 @@ class AccountingPlanImport
     }
 
     /**
-     * 
      * @return ToolBox
      */
-    protected function toolBox()
+    protected function toolBox(): ToolBox
     {
         return new ToolBox();
     }

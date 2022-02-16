@@ -32,7 +32,7 @@
                 <widget type="date" fieldname="fecha" required="true" />
             </column>
             <column name="hour" order="120">
-                <widget type="text" fieldname="hora" icon="fas fa-clock" required="true" />
+                <widget type="time" fieldname="hora" required="true" />
             </column>
             <column name="number" order="130">
                 <widget type="text" fieldname="numero" icon="fas fa-hashtag" readonly="true" />
@@ -41,7 +41,7 @@
                 <widget type="text" fieldname="numproveedor" icon="fas fa-hashtag" />
             </column>
             <column name="email-sent" order="150">
-                <widget type="date" fieldname="femail" readonly="true" />
+                <widget type="date" fieldname="femail" />
             </column>
         </group>
         <group name="supplier" title="supplier" icon="fas fa-user" numcolumns="12">

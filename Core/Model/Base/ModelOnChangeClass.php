@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 /**
@@ -35,7 +36,7 @@ abstract class ModelOnChangeClass extends ModelClass
 
     /**
      * Class constructor.
-     * 
+     *
      * @param array $data
      */
     public function __construct(array $data = [])
@@ -45,7 +46,6 @@ abstract class ModelOnChangeClass extends ModelClass
     }
 
     /**
-     * 
      * @return bool
      */
     public function delete()
@@ -61,14 +61,14 @@ abstract class ModelOnChangeClass extends ModelClass
 
     /**
      * Loads a record from database.
-     * 
+     *
      * @param string $code
-     * @param array  $where
-     * @param array  $orderby
-     * 
+     * @param array $where
+     * @param array $orderby
+     *
      * @return bool
      */
-    public function loadFromCode($code, array $where = [], array $orderby = [])
+    public function loadFromCode($code, array $where = [], array $orderby = []): bool
     {
         if (parent::loadFromCode($code, $where, $orderby)) {
             $this->setPreviousData();
@@ -79,8 +79,8 @@ abstract class ModelOnChangeClass extends ModelClass
     }
 
     /**
-     * This methos is called before save (update) when some field has changed.
-     * 
+     * This method is called before save (update) when some field has changed.
+     *
      * @param string $field
      *
      * @return bool
@@ -120,7 +120,7 @@ abstract class ModelOnChangeClass extends ModelClass
 
     /**
      * Inserts this data as a new record in database.
-     * 
+     *
      * @param array $values
      *
      * @return bool
@@ -138,14 +138,14 @@ abstract class ModelOnChangeClass extends ModelClass
 
     /**
      * Updates the data of this record in the database.
-     * 
+     *
      * @param array $values
      *
      * @return bool
      */
     protected function saveUpdate(array $values = [])
     {
-        foreach (\array_keys($this->previousData) as $field) {
+        foreach (array_keys($this->previousData) as $field) {
             if ($this->{$field} != $this->previousData[$field] && !$this->onChange($field)) {
                 return false;
             }
@@ -162,20 +162,20 @@ abstract class ModelOnChangeClass extends ModelClass
 
     /**
      * Saves previous values.
-     * 
+     *
      * @param array $fields
      */
     protected function setPreviousData(array $fields = [])
     {
         $more = $this->pipe('setPreviousDataMore');
-        if (\is_array($more)) {
+        if (is_array($more)) {
             foreach ($more as $key) {
                 $fields[] = $key;
             }
         }
 
         foreach ($fields as $field) {
-            $this->previousData[$field] = isset($this->{$field}) ? $this->{$field} : null;
+            $this->previousData[$field] = $this->{$field} ?? null;
         }
     }
 }

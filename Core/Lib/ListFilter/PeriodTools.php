@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\Translator;
@@ -28,18 +29,20 @@ use FacturaScripts\Core\Base\Translator;
  */
 class PeriodTools
 {
+    const DATE_FORMAT = 'd-m-Y';
 
     /**
      * Returns a date applying to the date reported
      * or to the current date (if no date is reported)
      * a relative date format.
      *
-     * @param string $format        Relative date format (+1 day)
-     * @param string $dateformat    Return date format (d-m-Y)
-     * @param string $date          Date to apply relative format
+     * @param string $format Relative date format (+1 day)
+     * @param string $dateformat Return date format (d-m-Y)
+     * @param string $date Date to apply relative format
+     *
      * @return string
      */
-    public static function applyFormatToDate($format, $dateformat = 'd-m-Y', $date = ''): string
+    public static function applyFormatToDate(string $format, string $dateformat = self::DATE_FORMAT, string $date = ''): string
     {
         $time = empty($date) ? time() : strtotime($date);
         return date($dateformat, strtotime($format, $time));
@@ -55,7 +58,7 @@ class PeriodTools
      * @param string $endformat
      * @param string $dateformat
      */
-    public static function applyFormatToPeriod(&$startdate, &$enddate, $startformat, $endformat, $dateformat = 'd-m-Y')
+    public static function applyFormatToPeriod(string &$startdate, string &$enddate, string $startformat, string $endformat, string $dateformat = self::DATE_FORMAT)
     {
         $startdate = static::applyFormatToDate($startformat, $dateformat);
         $enddate = static::applyFormatToDate($endformat, $dateformat);
@@ -71,7 +74,7 @@ class PeriodTools
      * @param string $enddate
      * @param string $dateformat
      */
-    public static function applyPeriod($period, &$startdate, &$enddate, $dateformat = 'd-m-Y')
+    public static function applyPeriod(string $period, string &$startdate, string &$enddate, string $dateformat = self::DATE_FORMAT)
     {
         switch ($period) {
             case 'today':
@@ -154,7 +157,7 @@ class PeriodTools
      *
      * @return array
      */
-    public static function getFilterOptions(&$i18n)
+    public static function getFilterOptions(Translator &$i18n): array
     {
         $result = [
             ['code' => '', 'description' => '------']
@@ -199,7 +202,7 @@ class PeriodTools
      *
      * @return array
      */
-    public static function getWidgetOptions(&$i18n)
+    public static function getWidgetOptions(Translator &$i18n): array
     {
         $result = [];
         foreach (static::getPeriods() as $value) {

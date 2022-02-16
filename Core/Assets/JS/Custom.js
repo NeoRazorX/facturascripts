@@ -1,6 +1,6 @@
 /*
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,15 +40,6 @@ function confirmAction(viewName, action, title, message, cancel, confirm) {
 }
 
 $(document).ready(function () {
-    $(".datepicker").datepicker({
-        dateFormat: "dd-mm-yy",
-        firstDay: 1,
-        beforeShow: function () {
-            setTimeout(function () {
-                $(".ui-datepicker").css("z-index", 99999999999999);
-            }, 0);
-        }
-    });
     $(".clickableRow").mousedown(function (event) {
         if (event.which === 1 || event.which === 2) {
             var href = $(this).attr("data-href");

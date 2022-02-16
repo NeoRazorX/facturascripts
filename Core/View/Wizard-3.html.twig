@@ -1,83 +1,68 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
 {% extends "Master/MicroTemplate.html.twig" %}
 
-{% block body %}
-    <!-- Macros Template Imports -->
-    {% import 'Macro/Forms.html.twig' as forms %}
-    {% set plugins = fsc.getAvaliablePlugins() %}
-
-    <form action="#" method="post" class="form" id="formWizard">
-        <input type="hidden" name="action" value="step3" />
-        <div class="bg-primary pt-5 pb-5">
-            <br/>
-            <br/>
-            <br/>
-        </div>
-        <div class="container" style="margin-top: -100px;">
-            <div class="card shadow mb-5">
-                <div class="card-body">
-                    <h1 class="h3">
-                        <i class="fas fa-plug" aria-hidden="true"></i> {{ i18n.trans('plugins') }}
-                        <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary" title="{{ i18n.trans('refresh') }}">
-                            <i class="fas fa-redo" aria-hidden="true"></i>
-                        </a>
-                    </h1>
-                    <p>{{ i18n.trans('wizard-plugins') }}</p>
-                    <hr/>
-                    {% for plugin in plugins %}
-                        <div class="form-check mb-3">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="plugins[]" value="{{ plugin.name }}" checked=""/>
-                                <b>{{ plugin.name }}</b><br/>{{ plugin.description }}
-                            </label>
-                        </div>
-                    {% endfor %}
-                    <div class="text-right">
-                        <button type="submit" class="btn btn-primary" id="btnWizard">
-                            {{ i18n.trans('continue') }}
-                        </button>
-                    </div>
+{% block messages %}
+    <div class="bg-primary pt-5 pb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    {{ parent() }}
                 </div>
             </div>
-            <br/>
         </div>
-    </form>
+        <br/>
+        <br/>
+        <br/>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="container" style="margin-top: -100px;">
+        <div class="card shadow mb-5">
+            <div class="card-body">
+                <h1 class="h3">
+                    <i class="fas fa-magic" aria-hidden="true"></i> {{ i18n.trans('wizard') }}
+                    <a href="{{ fsc.url() }}" class="btn btn-sm btn-outline-secondary"
+                       title="{{ i18n.trans('refresh') }}">
+                        <i class="fas fa-redo" aria-hidden="true"></i>
+                    </a>
+                </h1>
+                <p>{{ i18n.trans('wizard-p') }}</p>
+                <hr/>
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-5x fa-spin"></i>
+                </div>
+            </div>
+        </div>
+        <br/>
+    </div>
 {% endblock %}
 
 {% block css %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}" />
+    <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}"/>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('node_modules/pace-js/pace.min.js') }}"></script>
     <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}"></script>
-    <script>
-        $(document).ready(function () {
-            $("#formWizard").submit(function () {
-                $("#btnWizard").prop('disabled', true);
-                $("#btnWizard").html('<i class="fas fa-spinner fa-spin"></i>');
-            });
-        });
-    </script>
 {% endblock %}

@@ -97,23 +97,23 @@ class EditReport extends EditController
      */
     protected function loadWidgetValues($viewName)
     {
-        $tableColumn = $this->views[$viewName]->columnForField('table');
-        if ($tableColumn) {
-            $tableColumn->widget->setValuesFromArray($this->dataBase->getTables());
+        $columnTable = $this->views[$viewName]->columnForField('table');
+        if ($columnTable && $columnTable->widget->getType() === 'select') {
+            $columnTable->widget->setValuesFromArray($this->dataBase->getTables());
         }
 
         $tableName = $this->views[$viewName]->model->table;
         $columns = empty($tableName) || !$this->dataBase->tableExists($tableName) ? [] : array_keys($this->dataBase->getColumns($tableName));
         sort($columns);
 
-        $xcolColumn = $this->views[$viewName]->columnForField('xcolumn');
-        if ($xcolColumn && count($columns) > 0) {
-            $xcolColumn->widget->setValuesFromArray($columns);
+        $columnX = $this->views[$viewName]->columnForField('xcolumn');
+        if ($columnX && count($columns) > 0 && $columnX->widget->getType() === 'select') {
+            $columnX->widget->setValuesFromArray($columns);
         }
 
-        $ycolColumn = $this->views[$viewName]->columnForField('ycolumn');
-        if ($ycolColumn && count($columns) > 0) {
-            $ycolColumn->widget->setValuesFromArray($columns, false, true);
+        $columnY = $this->views[$viewName]->columnForField('ycolumn');
+        if ($columnY && count($columns) > 0 && $columnY->widget->getType() === 'select') {
+            $columnY->widget->setValuesFromArray($columns, false, true);
         }
     }
 }

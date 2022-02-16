@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -68,10 +68,6 @@ class DownloadTools
             case 303:
                 $redirs = 0;
                 return static::curlRedirectExec($ch, $redirs);
-
-            default:
-                \curl_close($ch);
-                return 'ERROR';
         }
 
         /// save in log

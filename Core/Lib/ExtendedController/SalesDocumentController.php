@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Lib\ExtendedController\BusinessDocumentView;
 use FacturaScripts\Dinamic\Model\Cliente;
 
 /**
@@ -30,10 +30,9 @@ abstract class SalesDocumentController extends BusinessDocumentController
 {
 
     /**
-     * 
      * @return array
      */
-    public function getCustomFields()
+    public function getCustomFields(): array
     {
         return [
             [
@@ -45,17 +44,15 @@ abstract class SalesDocumentController extends BusinessDocumentController
     }
 
     /**
-     * 
      * @return string
      */
-    public function getNewSubjectUrl()
+    public function getNewSubjectUrl(): string
     {
         $cliente = new Cliente();
         return $cliente->url('new') . '?return=' . $this->url();
     }
 
     /**
-     * 
      * @return array
      */
     public function getPageData()
@@ -66,10 +63,9 @@ abstract class SalesDocumentController extends BusinessDocumentController
     }
 
     /**
-     * 
      * @return string
      */
-    protected function getLineXMLView()
+    protected function getLineXMLView(): string
     {
         return 'SalesDocumentLine';
     }
@@ -105,8 +101,7 @@ abstract class SalesDocumentController extends BusinessDocumentController
     }
 
     /**
-     * 
-     * @param string               $viewName
+     * @param string $viewName
      * @param BusinessDocumentView $view
      */
     protected function loadData($viewName, $view)
@@ -120,13 +115,12 @@ abstract class SalesDocumentController extends BusinessDocumentController
     }
 
     /**
-     * 
      * @param BusinessDocumentView $view
-     * @param array                $formData
+     * @param array $formData
      *
      * @return string
      */
-    protected function setSubject(&$view, $formData)
+    protected function setSubject(&$view, $formData): string
     {
         if (empty($formData['codcliente'])) {
             return 'ERROR: ' . $this->toolBox()->i18n()->trans('customer-not-found');

@@ -55,10 +55,6 @@
         <type>character varying(20)</type>
     </column>
     <column>
-        <name>codoperaciondoc</name>
-        <type>character varying(20)</type>
-    </column>
-    <column>
         <name>codpago</name>
         <type>character varying(10)</type>
         <null>NO</null>
@@ -75,10 +71,6 @@
         <name>codserie</name>
         <type>character varying(4)</type>
         <null>NO</null>
-    </column>
-    <column>
-        <name>codsubtipodoc</name>
-        <type>character varying(20)</type>
     </column>
     <column>
         <name>codtrans</name>

@@ -21,16 +21,16 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditReportAccounting;
-use FacturaScripts\Core\Model\ReportBalance;
 use FacturaScripts\Dinamic\Lib\Accounting\BalanceSheet;
 use FacturaScripts\Dinamic\Lib\Accounting\IncomeAndExpenditure;
 use FacturaScripts\Dinamic\Lib\Accounting\ProfitAndLoss;
+use FacturaScripts\Dinamic\Model\ReportBalance;
 
 /**
  * Description of EditReportBalance
  *
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
- * @author Jose Antonio Cuello  <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  */
 class EditReportBalance extends EditReportAccounting
 {
@@ -72,7 +72,7 @@ class EditReportBalance extends EditReportAccounting
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewsBalances(string $viewName = 'ListBalance')
@@ -102,14 +102,16 @@ class EditReportBalance extends EditReportAccounting
      * Generate Balance Amounts data for report
      *
      * @param ReportBalance $model
+     * @param string        $format
      *
      * @return array
      */
-    protected function generateReport($model)
+    protected function generateReport($model, $format)
     {
         $params = [
-            'idcompany' => $model->idcompany,
             'channel' => $model->channel,
+            'format' => $format,
+            'idcompany' => $model->idcompany,
             'subtype' => $model->subtype
         ];
 
@@ -134,7 +136,7 @@ class EditReportBalance extends EditReportAccounting
     }
 
     /**
-     * 
+     *
      * @return array
      */
     protected function getPreferencesWhere()
@@ -185,14 +187,14 @@ class EditReportBalance extends EditReportAccounting
      */
     protected function loadWidgetValues($view)
     {
-        $typeColumn = $view->columnForField('type');
-        if ($typeColumn) {
-            $typeColumn->widget->setValuesFromArray(ReportBalance::typeList());
+        $columnType = $view->columnForField('type');
+        if ($columnType && $columnType->widget->getType() === 'select') {
+            $columnType->widget->setValuesFromArray(ReportBalance::typeList());
         }
 
-        $formatColumn = $view->columnForField('subtype');
-        if ($formatColumn) {
-            $formatColumn->widget->setValuesFromArray(ReportBalance::subtypeList());
+        $columnFormat = $view->columnForField('subtype');
+        if ($columnFormat && $columnFormat->widget->getType() === 'select') {
+            $columnFormat->widget->setValuesFromArray(ReportBalance::subtypeList());
         }
     }
 }

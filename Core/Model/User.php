@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
@@ -43,19 +44,16 @@ class User extends Base\ModelClass
     public $admin;
 
     /**
-     *
      * @var string
      */
     public $codagente;
 
     /**
-     *
      * @var string
      */
     public $codalmacen;
 
     /**
-     *
      * @var string
      */
     public $creationdate;
@@ -130,15 +128,15 @@ class User extends Base\ModelClass
     {
         parent::clear();
         $this->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
-        $this->creationdate = \date(self::DATE_STYLE);
+        $this->creationdate = date(self::DATE_STYLE);
         $this->enabled = true;
         $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa', 1);
-        $this->langcode = \FS_LANG;
+        $this->langcode = FS_LANG;
         $this->level = self::DEFAULT_LEVEL;
     }
 
     /**
-     * 
+     *
      * @return bool
      */
     public function delete()
@@ -165,13 +163,13 @@ class User extends Base\ModelClass
         new DinPage();
         new DinEmpresa();
 
-        $nick = \defined('FS_INITIAL_USER') ? \FS_INITIAL_USER : 'admin';
-        $pass = \defined('FS_INITIAL_PASS') ? \FS_INITIAL_PASS : 'admin';
-        $email = \filter_var($this->nick, \FILTER_VALIDATE_EMAIL) ? $this->nick : '';
+        $nick = defined('FS_INITIAL_USER') ? FS_INITIAL_USER : 'admin';
+        $pass = defined('FS_INITIAL_PASS') ? FS_INITIAL_PASS : 'admin';
+        $email = filter_var($this->nick, FILTER_VALIDATE_EMAIL) ? $this->nick : '';
         $this->toolBox()->i18nLog()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,email,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
-            . " VALUES ('" . $nick . "','" . \password_hash($pass, \PASSWORD_DEFAULT) . "','" . $email
-            . "',TRUE,TRUE,'1','1','" . \FS_LANG . "','Wizard','99');";
+            . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT) . "','" . $email
+            . "',TRUE,TRUE,'1','1','" . FS_LANG . "','Wizard','99');";
     }
 
     /**
@@ -182,7 +180,7 @@ class User extends Base\ModelClass
      *
      * @return string
      */
-    public function newLogkey($ipAddress)
+    public function newLogkey(string $ipAddress): string
     {
         $this->updateActivity($ipAddress);
         $this->logkey = $this->toolBox()->utils()->randomString(99);
@@ -217,7 +215,27 @@ class User extends Base\ModelClass
      */
     public function test()
     {
-        if ($this->lastactivity === '') {
+        $this->nick = trim($this->nick);
+        if (1 !== preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
+            $this->toolBox()->i18nLog()->error(
+                'invalid-alphanumeric-code',
+                ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']
+            );
+            return false;
+        }
+
+        $this->email = $this->toolBox()->utils()->noHtml(mb_strtolower($this->email, 'UTF8'));
+        if ($this->email && false === filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
+            $this->email = null;
+            return false;
+        }
+
+        if (empty($this->creationdate)) {
+            $this->creationdate = date(self::DATE_STYLE);
+        }
+
+        if (empty($this->lastactivity)) {
             $this->lastactivity = null;
         }
 
@@ -227,33 +245,17 @@ class User extends Base\ModelClass
             $this->level = 0;
         }
 
-        $this->nick = \trim($this->nick);
-        if (1 !== \preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
-            $this->toolBox()->i18nLog()->error(
-                'invalid-alphanumeric-code',
-                ['%value%' => $this->nick, '%column%' => 'nick', '%min%' => '3', '%max%' => '50']
-            );
-            return false;
-        }
-
-        $this->email = $this->toolBox()->utils()->noHtml(\mb_strtolower($this->email, 'UTF8'));
-        if ($this->email && false === \filter_var($this->email, \FILTER_VALIDATE_EMAIL)) {
-            $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
-            $this->email = null;
-            return false;
-        }
-
         return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();
     }
 
     /**
      * Updates last ip address and last activity property.
-     * 
+     *
      * @param string $ipAddress
      */
-    public function updateActivity($ipAddress)
+    public function updateActivity(string $ipAddress)
     {
-        $this->lastactivity = \date(self::DATETIME_STYLE);
+        $this->lastactivity = date(self::DATETIME_STYLE);
         $this->lastip = $ipAddress;
     }
 
@@ -264,13 +266,13 @@ class User extends Base\ModelClass
      *
      * @return bool
      */
-    public function verifyLogkey($value)
+    public function verifyLogkey(string $value): bool
     {
         return $this->logkey === $value;
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool
@@ -286,31 +288,32 @@ class User extends Base\ModelClass
     }
 
     /**
-     * Assigns the first role to this user.
+     * Assigns the default role to this user.
      */
     protected function setNewRole()
     {
-        $roleModel = new Role();
-        foreach ($roleModel->all() as $role) {
-            $roleUser = new RoleUser();
-            $roleUser->codrole = $role->codrole;
-            $roleUser->nick = $this->nick;
-            $roleUser->save();
-
-            /// set user homepage
-            foreach ($roleUser->getRoleAccess() as $roleAccess) {
-                $this->homepage = $roleAccess->pagename;
-                if ('List' == \substr($this->homepage, 0, 4)) {
-                    break;
-                }
-            }
-            $this->save();
-            break;
+        $role = new Role();
+        $code = $this->toolBox()->appSettings()->get('default', 'codrole');
+        if (false === $role->loadFromCode($code)) {
+            return;
         }
+
+        $roleUser = new RoleUser();
+        $roleUser->codrole = $role->codrole;
+        $roleUser->nick = $this->nick;
+        $roleUser->save();
+
+        /// set user homepage
+        foreach ($roleUser->getRoleAccess() as $roleAccess) {
+            $this->homepage = $roleAccess->pagename;
+            if ('List' == substr($this->homepage, 0, 4)) {
+                break;
+            }
+        }
+        $this->save();
     }
 
     /**
-     * 
      * @return bool
      */
     protected function testAgent(): bool
@@ -329,7 +332,6 @@ class User extends Base\ModelClass
     }
 
     /**
-     * 
      * @return bool
      */
     protected function testWarehouse(): bool

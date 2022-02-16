@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -39,8 +40,8 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  *   - Supplier
  *   - Payment
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  */
 class AccountingAccounts
 {
@@ -59,13 +60,11 @@ class AccountingAccounts
     const SPECIAL_NEGATIVE_PREV_ACCOUNT = 'PRENEG';
 
     /**
-     *
      * @var AccountingCreation
      */
     protected $creation;
 
     /**
-     *
      * @var Ejercicio
      */
     public $exercise;
@@ -88,7 +87,7 @@ class AccountingAccounts
      *     and then search for a sub account belonging to the account
      *
      * @param Cliente $customer
-     * @param string  $specialAccount
+     * @param string $specialAccount
      *
      * @return Subcuenta
      */
@@ -126,7 +125,7 @@ class AccountingAccounts
      * Get the accounting sub-account for the group's customer and the fiscal year.
      *
      * @param GrupoClientes $group
-     * @param string        $specialAccount
+     * @param string $specialAccount
      *
      * @return Subcuenta
      */
@@ -175,7 +174,7 @@ class AccountingAccounts
      * Get the accounting sub-account for Purchase Retention.
      *
      * @param Retencion $retention
-     * @param string    $specialAccount
+     * @param string $specialAccount
      *
      * @return Subcuenta
      */
@@ -188,7 +187,7 @@ class AccountingAccounts
      * Get the accounting sub-account for Sales Retention.
      *
      * @param Retencion $retention
-     * @param string    $specialAccount
+     * @param string $specialAccount
      *
      * @return Subcuenta
      */
@@ -294,7 +293,7 @@ class AccountingAccounts
      * associated with the special type indicated
      *
      * @param Proveedor $supplier
-     * @param string    $specialAccount
+     * @param string $specialAccount
      *
      * @return Subcuenta
      */
@@ -327,7 +326,7 @@ class AccountingAccounts
      * Get the accounting sub-account for Impacted Tax.
      *
      * @param Impuesto $tax
-     * @param string   $specialAccount
+     * @param string $specialAccount
      *
      * @return Subcuenta
      */
@@ -340,7 +339,7 @@ class AccountingAccounts
      * Get the accounting sub-account for Supported Tax.
      *
      * @param Impuesto $tax
-     * @param string   $specialAccount
+     * @param string $specialAccount
      *
      * @return Subcuenta
      */

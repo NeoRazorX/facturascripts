@@ -65,7 +65,7 @@
             {% endif %}
             {{ _self.customSelect('doc_codalmacen', 'codalmacen', thisView.model.codalmacen, thisView.getSelectValues('Almacen')) }}
             {{ _self.customSelect('doc_codserie', 'codserie', thisView.model.codserie, thisView.getSelectValues('Serie')) }}
-            {{ _self.customInput('doc_fecha', 'fecha', thisView.model.fecha, 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
+            {{ _self.customInput('doc_fecha', 'fecha', thisView.model.fecha | date('Y-m-d'), 'date', '', {class: 'form-control'}) }}
             {% for field in fsc.getCustomFields() %}
                 {{ _self.customInput('doc_' ~ field.name, field.name, fsc.getViewModelValue(thisView.getViewName(), field.name),
                     'text', field.icon, {placeholder: i18n.trans(field.label)}) }}
@@ -125,14 +125,6 @@
                     {% endif %}
                 </p>
             </div>
-            {% if fsc.showDocSubType %}
-                {{ _self.customSelect('doc_codsubtipodoc', 'codsubtipodoc', thisView.model.codsubtipodoc,
-                    thisView.getSelectValues('BusinessDocSubType'), true, i18n.trans('doc-subtype')) }}
-            {% endif %}
-            {% if fsc.showDocOperation %}
-                {{ _self.customSelect('doc_codoperaciondoc', 'codoperaciondoc', thisView.model.codoperaciondoc,
-                    thisView.getSelectValues('BusinessDocTypeOperation'), true, i18n.trans('doc-operation')) }}
-            {% endif %}
             {{ _self.customInput('doc_netosindto', 'netosindto', thisView.model.netosindto, 'text', '',
                 {class: 'form-control', disabled: ''}, i18n.trans('subtotal')) }}
             {% if thisView.model.editable %}

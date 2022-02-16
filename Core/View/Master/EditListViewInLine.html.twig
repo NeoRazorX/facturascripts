@@ -124,7 +124,7 @@
             <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
             <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
             <div class="text-center pt-3">
-                <div class="btn-group bg-white">
+                <div class="btn-group">
                     {% for page in currentView.getPagination() %}
                         {% set btnClass = page.active ? 'btn btn-outline-dark active' : 'btn btn-outline-dark' %}
                         <button type="button" class="{{ btnClass }}" onclick="editListViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">

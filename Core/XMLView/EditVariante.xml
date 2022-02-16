@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -41,7 +41,7 @@
                 <widget type="select" fieldname="idatributovalor4" onclick="EditAtributo" />
             </column>
             <column name="barcode" numcolumns="2" order="160">
-                <widget type="text" fieldname="codbarras" icon="fas fa-barcode" />
+                <widget type="text" fieldname="codbarras" maxlength="20" icon="fas fa-barcode" />
             </column>
             <column name="cost-price" display="right" numcolumns="2" order="170">
                 <widget type="money" decimal="2" fieldname="coste" class="calc-cost" />

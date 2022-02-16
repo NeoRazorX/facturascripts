@@ -31,7 +31,7 @@
             <column name="position" numcolumns="3" order="120">
                 <widget type="text" fieldname="cargo" />
             </column>
-            <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="130">
+            <column name="fiscal-id" titleurl="EditSettings?activetab=EditIdentificadorFiscal" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipoidfiscal" required="true">
                     <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal" />
                 </widget>

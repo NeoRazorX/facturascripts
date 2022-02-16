@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,11 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use Exception;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
@@ -40,7 +42,6 @@ class GridView extends EditView
     const GRIDVIEW_TEMPLATE = 'Master/GridView.html.twig';
 
     /**
-     *
      * @var ModelClass
      */
     public $detailModel;
@@ -71,10 +72,10 @@ class GridView extends EditView
      * Master/Detail params:
      *   ['name' = 'viewName', 'model' => 'modelName']
      *
-     * @param array   $master
-     * @param array   $detail
-     * @param string  $title
-     * @param string  $icon
+     * @param array $master
+     * @param array $detail
+     * @param string $title
+     * @param string $icon
      */
     public function __construct($master, $detail, $title, $icon)
     {
@@ -89,14 +90,14 @@ class GridView extends EditView
     }
 
     /**
-     *
      * @param ExportManager $exportManager
+     * @param mixed $codes
      *
      * @return bool
      */
-    public function export(&$exportManager): bool
+    public function export(&$exportManager, $codes): bool
     {
-        if (false === parent::export($exportManager)) {
+        if (false === parent::export($exportManager, $codes)) {
             return false;
         }
 
@@ -105,7 +106,7 @@ class GridView extends EditView
         foreach ($this->gridData['rows'] as $row) {
             $formattedRow = [];
             foreach ($this->gridData['columns'] as $column) {
-                $formattedRow[] = isset($row[$column['data']]) ? $row[$column['data']] : '';
+                $formattedRow[] = $row[$column['data']] ?? '';
             }
             $formattedRows[] = array_combine($headers, $formattedRow);
         }
@@ -119,13 +120,13 @@ class GridView extends EditView
      *
      * @return ColumnItem[]
      */
-    public function getDetailColumns($key = '')
+    public function getDetailColumns(string $key = '')
     {
-        if (false === \array_key_exists($key, $this->detailView->columns)) {
+        if (false === array_key_exists($key, $this->detailView->columns)) {
             if ($key == 'master') {
                 return [];
             }
-            $key = \array_keys($this->detailView->columns)[0];
+            $key = array_keys($this->detailView->columns)[0];
         }
 
         return $this->detailView->columns[$key]->columns;
@@ -138,32 +139,31 @@ class GridView extends EditView
      */
     public function getGridData(): string
     {
-        return \json_encode($this->gridData);
+        return json_encode($this->gridData);
     }
 
     /**
-     *
      * @return int
      */
     public function getMaxLines(): int
     {
         $numColumns = 0;
         foreach ($this->detailView->columns as $group) {
-            $numColumns += \count($group->columns);
+            $numColumns += count($group->columns);
         }
-        return \intval(\ini_get('max_input_vars') / $numColumns);
+        return intval(ini_get('max_input_vars') / $numColumns);
     }
 
     /**
      * Load the data in the model property, according to the code specified.
      *
-     * @param string          $code
+     * @param string $code
      * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param int             $limit
+     * @param array $order
+     * @param int $offset
+     * @param int $limit
      */
-    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = \FS_ITEM_LIMIT)
+    public function loadData($code = '', $where = [], $order = [], $offset = 0, $limit = FS_ITEM_LIMIT)
     {
         parent::loadData($code, $where, $order, $offset, $limit);
 
@@ -185,9 +185,9 @@ class GridView extends EditView
      * Load detail data and set grid configuration
      *
      * @param DataBaseWhere[] $where
-     * @param array           $order
+     * @param array $order
      */
-    public function loadGridData($where = [], $order = [])
+    public function loadGridData(array $where = [], array $order = [])
     {
         // load columns configuration
         $this->gridData = $this->getGridColumns();
@@ -202,7 +202,7 @@ class GridView extends EditView
         foreach ($this->detailModel->all($where, $order, 0, 0) as $line) {
             /// do not change to (array) $line
             $row = [];
-            foreach (\array_keys($line->getModelFields()) as $field) {
+            foreach (array_keys($line->getModelFields()) as $field) {
                 $row[$field] = $line->{$field};
             }
 
@@ -211,15 +211,15 @@ class GridView extends EditView
     }
 
     /**
-     *
      * @param array $lines
+     *
      * @return array
      */
-    public function processFormLines(&$lines): array
+    public function processFormLines(array &$lines): array
     {
         $result = [];
         foreach ($lines as $data) {
-            if (false === \is_array($data)) {
+            if (false === is_array($data)) {
                 $result[] = [];
                 continue;
             }
@@ -234,12 +234,11 @@ class GridView extends EditView
     }
 
     /**
-     *
      * @param array $data
      *
      * @return array
      */
-    public function saveData($data): array
+    public function saveData(array $data): array
     {
         $result = [
             'error' => false,
@@ -251,10 +250,14 @@ class GridView extends EditView
             $data['lines'] = [];
         }
 
+        // start transaction
+        $dataBase = new DataBase();
+        $dataBase->beginTransaction();
+
         try {
             // load master document data and test it's ok
             if (false === $this->loadDocumentDataFromArray('code', $data['document'])) {
-                throw new Exception($this->toolBox()->i18n()->trans('parent-document-test-error'));
+                throw new Exception(ToolBox::i18n()->trans('parent-document-test-error'));
             }
 
             // load detail document data (old)
@@ -262,21 +265,17 @@ class GridView extends EditView
             $documentFieldValue = $this->model->primaryColumnValue();
             $linesOld = $this->detailModel->all([new DataBaseWhere($documentFieldKey, $documentFieldValue)]);
 
-            // start transaction
-            $dataBase = new DataBase();
-            $dataBase->beginTransaction();
-
             // delete old lines not used
             if (false === $this->deleteLinesOld($linesOld, $data['lines'])) {
-                throw new Exception($this->toolBox()->i18n()->trans('error-deleting-lines'));
+                throw new Exception(ToolBox::i18n()->trans('error-deleting-lines'));
             }
 
-            // Proccess detail document data (new)
+            // Process detail document data (new)
             // Master Model must implement GridModelInterface
             $this->model->initTotals();
             foreach ($data['lines'] as $newLine) {
                 if (false === $this->saveLines($documentFieldKey, $documentFieldValue, $newLine)) {
-                    throw new Exception($this->toolBox()->i18n()->trans('error-saving-lines'));
+                    throw new Exception(ToolBox::i18n()->trans('error-saving-lines'));
                 }
                 // Master Model must implement GridModelInterface
                 $this->model->accumulateAmounts($newLine);
@@ -284,7 +283,7 @@ class GridView extends EditView
 
             // save master document
             if (false === $this->model->save()) {
-                throw new Exception($this->toolBox()->i18n()->trans('record-save-error'));
+                throw new Exception(ToolBox::i18n()->trans('record-save-error'));
             }
 
             // confirm save data into database
@@ -294,7 +293,7 @@ class GridView extends EditView
             $result['url'] = $this->model->url('edit') . '&action=save-ok';
         } catch (Exception $err) {
             $result['error'] = true;
-            $result['message'] = \implode("\n", \array_merge([$err->getMessage()], $this->getErrors()));
+            $result['message'] = implode("\n", array_merge([$err->getMessage()], $this->getErrors()));
         } finally {
             if ($dataBase->inTransaction()) {
                 $dataBase->rollback();
@@ -305,20 +304,20 @@ class GridView extends EditView
 
     protected function assets()
     {
-        AssetManager::add('css', \FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css');
-        AssetManager::add('js', \FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js');
-        AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/GridView.js');
+        AssetManager::add('css', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css');
+        AssetManager::add('js', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js');
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/GridView.js');
     }
 
     /**
      * Removes from the database the non-existent detail
      *
      * @param ModelClass[] $linesOld
-     * @param array        $linesNew
+     * @param array $linesNew
      *
      * @return bool
      */
-    private function deleteLinesOld(&$linesOld, &$linesNew): bool
+    private function deleteLinesOld(array &$linesOld, array &$linesNew): bool
     {
         if (empty($linesOld)) {
             return true;
@@ -363,13 +362,12 @@ class GridView extends EditView
     }
 
     /**
-     *
      * @return array
      */
     private function getErrors(): array
     {
         $errors = [];
-        foreach ($this->toolBox()->log()->readAll() as $log) {
+        foreach (ToolBox::log()->read('', ['critical', 'error', 'warning']) as $log) {
             $errors[] = $log['message'];
         }
 
@@ -377,12 +375,11 @@ class GridView extends EditView
     }
 
     /**
-     * 
      * @param string $code
      *
      * @return string
      */
-    private function getCellAlign($code): string
+    private function getCellAlign(string $code): string
     {
         switch ($code) {
             case 'center':
@@ -418,7 +415,7 @@ class GridView extends EditView
             } else {
                 $data['columns'][] = $item;
                 $data['colwidths'][] = $col->htmlWidth();
-                $data['headers'][] = $this->toolBox()->i18n()->trans($col->title);
+                $data['headers'][] = ToolBox::i18n()->trans($col->title);
             }
         }
 
@@ -505,11 +502,11 @@ class GridView extends EditView
      * Load data of master document and set data from array
      *
      * @param string $field
-     * @param array  $data
+     * @param array $data
      *
      * @return bool
      */
-    private function loadDocumentDataFromArray($field, &$data): bool
+    private function loadDocumentDataFromArray(string $field, array &$data): bool
     {
         // old data
         if ($this->model->loadFromCode($data[$field])) {
@@ -522,23 +519,21 @@ class GridView extends EditView
     }
 
     /**
-     * 
      * @return bool
      */
-    private function readOnly()
+    private function readOnly(): bool
     {
-        return isset($this->model->editable) ? !$this->model->editable : false;
+        return isset($this->model->editable) && !$this->model->editable;
     }
 
     /**
-     *
      * @param string $documentFieldKey
-     * @param int    $documentFieldValue
-     * @param array  $data
+     * @param int $documentFieldValue
+     * @param array $data
      *
      * @return bool
      */
-    private function saveLines($documentFieldKey, $documentFieldValue, &$data)
+    private function saveLines(string $documentFieldKey, int $documentFieldValue, array &$data): bool
     {
         // load old data, if exits
         $field = $this->detailModel->primaryColumn();

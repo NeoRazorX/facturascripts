@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Dinamic\Lib\ExtendedController\SalesDocumentController;
@@ -49,7 +50,7 @@ class EditPresupuestoCliente extends SalesDocumentController
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'estimation';
-        $data['icon'] = 'fas fa-file-invoice';
+        $data['icon'] = 'far fa-file-powerpoint';
         return $data;
     }
 }

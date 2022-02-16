@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -24,13 +25,14 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Lib\Accounting\Ledger;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
 /**
  * Controller to edit a single item from the SubCuenta model
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author PC REDNET S.L.               <luismi@pcrednet.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
@@ -86,10 +88,30 @@ class EditSubcuenta extends EditController
         $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['partidas.concepto']);
 
-        /// disable column
+        $this->views[$viewName]->addFilterPeriod('date', 'date', 'fecha');
+        $this->views[$viewName]->addFilterNumber('debit-major', 'debit', 'debe');
+        $this->views[$viewName]->addFilterNumber('debit-minor', 'debit', 'debe', '<=');
+        $this->views[$viewName]->addFilterNumber('credit-major', 'credit', 'haber');
+        $this->views[$viewName]->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
+
+        $this->addButton($viewName, [
+            'action' => 'dot-accounting-on',
+            'color' => 'info',
+            'icon' => 'fas fa-check-double',
+            'label' => 'checked'
+        ]);
+
+        $this->addButton($viewName, [
+            'action' => 'dot-accounting-off',
+            'color' => 'warning',
+            'icon' => 'far fa-square',
+            'label' => 'unchecked'
+        ]);
+
+        // disable column
         $this->views[$viewName]->disableColumn('subaccount');
 
-        /// disable button
+        // disable button
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
@@ -99,9 +121,8 @@ class EditSubcuenta extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->setTabsPosition('bottom');
-
         $this->createDepartureView();
+        $this->setTabsPosition('bottom');
     }
 
     /**
@@ -115,16 +136,21 @@ class EditSubcuenta extends EditController
     {
         switch ($action) {
             case 'ledger':
-                $code = $this->request->query->get('code');
+                $code = (int)$this->request->query->get('code');
                 if (!empty($code)) {
                     $this->setTemplate(false);
                     $this->ledgerReport($code);
                 }
                 return true;
 
-            default:
-                return parent::execPreviousAction($action);
+            case 'dot-accounting-off':
+                return $this->dotAccountingAction(false);
+
+            case 'dot-accounting-on':
+                return $this->dotAccountingAction(true);
         }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -132,11 +158,10 @@ class EditSubcuenta extends EditController
      *
      * @param int $idSubAccount
      */
-    protected function ledgerReport($idSubAccount)
+    protected function ledgerReport(int $idSubAccount)
     {
         $subAccount = new Subcuenta();
         $subAccount->loadFromCode($idSubAccount);
-
         $request = $this->request->request->all();
         $params = [
             'grouped' => false,
@@ -147,7 +172,21 @@ class EditSubcuenta extends EditController
         $ledger = new Ledger();
         $ledger->setExercise($subAccount->codejercicio);
         $pages = $ledger->generate($request['dateFrom'], $request['dateTo'], $params);
-        $this->exportManager->newDoc($request['format']);
+        $title = self::toolBox()::i18n()->trans('ledger') . ' ' . $subAccount->codsubcuenta;
+        $this->exportManager->newDoc($request['format'], $title);
+
+        // añadimos la tabla de cabecera con la info del informe
+        if ($request['format'] === 'PDF') {
+            $titles = [[
+                self::toolBox()::i18n()->trans('subaccount') => $subAccount->codsubcuenta,
+                self::toolBox()::i18n()->trans('exercise') => $subAccount->codejercicio,
+                self::toolBox()::i18n()->trans('from-date') => $request['dateFrom'],
+                self::toolBox()::i18n()->trans('until-date') => $request['dateTo']
+            ]];
+            $this->exportManager->addTablePage(array_keys($titles[0]), $titles);
+        }
+
+        // tablas con los listados
         foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);
             $this->exportManager->addTablePage($headers, $data);
@@ -158,7 +197,7 @@ class EditSubcuenta extends EditController
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -188,7 +227,7 @@ class EditSubcuenta extends EditController
      *
      * @param BaseView $view
      */
-    protected function prepareSubcuenta($view)
+    protected function prepareSubcuenta(BaseView $view)
     {
         $cuenta = new Cuenta();
         $idcuenta = $this->request->query->get('idcuenta', '');
@@ -200,14 +239,39 @@ class EditSubcuenta extends EditController
     }
 
     /**
+     * Set dotted status to indicated value.
+     *
+     * @param bool $value
+     *
+     * @return bool
+     */
+    private function dotAccountingAction(bool $value): bool
+    {
+        $ids = $this->request->request->get('code', []);
+        if (empty($ids)) {
+            $this->toolBox()->i18nLog()->warning('no-selected-item');
+            return false;
+        }
+
+        $where = [new DataBaseWhere('idpartida', implode(',', $ids), 'IN')];
+        $partida = new Partida();
+        foreach ($partida->all($where) as $row) {
+            $row->setDottedStatus($value);
+        }
+
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        return true;
+    }
+
+    /**
      * Set export options to widget of modal form
      *
      * @param string $viewName
      */
-    private function setLedgerReportExportOptions($viewName)
+    private function setLedgerReportExportOptions(string $viewName)
     {
         $columnFormat = $this->views[$viewName]->columnModalForName('format');
-        if (isset($columnFormat)) {
+        if ($columnFormat && $columnFormat->widget->getType() === 'select') {
             $values = [];
             foreach ($this->exportManager->options() as $key => $options) {
                 $values[] = ['title' => $options['description'], 'value' => $key];
@@ -221,7 +285,7 @@ class EditSubcuenta extends EditController
      *
      * @param string $viewName
      */
-    private function setLedgerReportValues($viewName)
+    private function setLedgerReportValues(string $viewName)
     {
         $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
         $exercise = new Ejercicio();

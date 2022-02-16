@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Email;
 
 use FacturaScripts\Core\App\WebRender;
@@ -23,6 +24,7 @@ use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
+use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
@@ -36,83 +38,73 @@ class NewMail
     const DEFAULT_TEMPLATE = 'NewTemplate.html.twig';
 
     /**
-     *
      * @var Empresa
      */
     public $empresa;
 
     /**
-     *
      * @var string
      */
     public $fromEmail;
 
     /**
-     *
      * @var string
      */
     public $fromName;
 
     /**
-     *
      * @var string
      */
     public $fromNick;
 
     /**
-     *
      * @var BaseBlock[]
      */
     protected $footerBlocks = [];
 
     /**
-     * 
      * @var bool
      */
     protected $lowsecure;
 
     /**
-     *
      * @var PHPMailer
      */
     protected $mail;
 
     /**
-     *
      * @var BaseBlock[]
      */
     protected $mainBlocks = [];
 
     /**
-     *
      * @var string
      */
     public $signature;
 
     /**
-     *
      * @var string
      */
     public $template;
 
     /**
-     *
      * @var string
      */
     public $text;
 
     /**
-     *
      * @var string
      */
     public $title;
 
     /**
-     *
      * @var string
      */
     public $verificode;
 
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
         $appSettings = $this->toolBox()->appSettings();
@@ -126,20 +118,24 @@ class NewMail
         $this->mail = new PHPMailer();
         $this->mail->CharSet = PHPMailer::CHARSET_UTF8;
         $this->mail->Mailer = $appSettings->get('email', 'mailer');
-        $this->mail->SMTPAuth = true;
-        $this->mail->AuthType = $appSettings->get('email', 'authtype', '');
+
         $this->mail->SMTPSecure = $appSettings->get('email', 'enc', '');
+        if ($this->mail->SMTPSecure) {
+            $this->mail->SMTPAuth = true;
+            $this->mail->AuthType = $appSettings->get('email', 'authtype', '');
+        }
+
         $this->mail->Host = $appSettings->get('email', 'host');
         $this->mail->Port = $appSettings->get('email', 'port');
         $this->mail->Username = $appSettings->get('email', 'user') ? $appSettings->get('email', 'user') : $appSettings->get('email', 'email');
         $this->mail->Password = $appSettings->get('email', 'password');
-        $this->lowsecure = (bool) $appSettings->get('email', 'lowsecure');
+        $this->lowsecure = (bool)$appSettings->get('email', 'lowsecure');
 
-        foreach (static::splitEmails($appSettings->get('email', 'emailcc')) as $email) {
+        foreach (static::splitEmails($appSettings->get('email', 'emailcc', '')) as $email) {
             $this->addCC($email);
         }
 
-        foreach (static::splitEmails($appSettings->get('email', 'emailbcc')) as $email) {
+        foreach (static::splitEmails($appSettings->get('email', 'emailbcc', '')) as $email) {
             $this->addBCC($email);
         }
 
@@ -149,9 +145,9 @@ class NewMail
     }
 
     /**
-     * 
      * @param string $email
      * @param string $name
+     * @throws Exception
      */
     public function addAddress(string $email, string $name = '')
     {
@@ -160,9 +156,10 @@ class NewMail
 
     /**
      * Add attachments to the email.
-     * 
+     *
      * @param string $path
      * @param string $name
+     * @throws Exception
      */
     public function addAttachment(string $path, string $name)
     {
@@ -170,9 +167,9 @@ class NewMail
     }
 
     /**
-     * 
      * @param string $email
      * @param string $name
+     * @throws Exception
      */
     public function addBCC(string $email, string $name = '')
     {
@@ -180,9 +177,9 @@ class NewMail
     }
 
     /**
-     * 
      * @param string $email
      * @param string $name
+     * @throws Exception
      */
     public function addCC(string $email, string $name = '')
     {
@@ -190,7 +187,6 @@ class NewMail
     }
 
     /**
-     * 
      * @param BaseBlock $block
      */
     public function addFooterBlock($block)
@@ -200,7 +196,6 @@ class NewMail
     }
 
     /**
-     * 
      * @param BaseBlock $block
      */
     public function addMainBlock($block)
@@ -210,9 +205,9 @@ class NewMail
     }
 
     /**
-     * 
      * @param string $address
      * @param string $name
+     * @throws Exception
      */
     public function addReplyTo(string $address, string $name = '')
     {
@@ -221,19 +216,18 @@ class NewMail
 
     /**
      * Check if the email is configured
-     * 
+     *
      * @return bool
      */
-    public function canSendMail()
+    public function canSendMail(): bool
     {
         return !empty($this->fromEmail) && !empty($this->mail->Password) && !empty($this->mail->Host);
     }
 
     /**
-     * 
      * @return array
      */
-    public function getAttachmentNames()
+    public function getAttachmentNames(): array
     {
         $names = [];
         foreach ($this->mail->getAttachments() as $attach) {
@@ -245,16 +239,15 @@ class NewMail
 
     /**
      * Returns an array with available email trays
-     * 
+     *
      * @return array
      */
-    public function getAvailableMailboxes()
+    public function getAvailableMailboxes(): array
     {
         return empty($this->fromEmail) ? [] : [$this->fromEmail];
     }
 
     /**
-     * 
      * @return array
      */
     public function getBCCAddresses(): array
@@ -268,7 +261,6 @@ class NewMail
     }
 
     /**
-     * 
      * @return array
      */
     public function getCCAddresses(): array
@@ -282,7 +274,6 @@ class NewMail
     }
 
     /**
-     * 
      * @return array
      */
     public function getToAddresses(): array
@@ -296,8 +287,8 @@ class NewMail
     }
 
     /**
-     * 
      * @return bool
+     * @throws Exception
      */
     public function send(): bool
     {
@@ -325,16 +316,13 @@ class NewMail
     }
 
     /**
-     * 
      * @param string $emailFrom
      */
-    public function setMailbox($emailFrom)
+    public function setMailbox(string $emailFrom)
     {
-        ;
     }
 
     /**
-     * 
      * @param User $user
      */
     public function setUser($user)
@@ -343,16 +331,15 @@ class NewMail
     }
 
     /**
-     * 
      * @param string $emails
      *
      * @return array
      */
-    public static function splitEmails($emails): array
+    public static function splitEmails(string $emails): array
     {
         $return = [];
-        foreach (\explode(',', $emails) as $part) {
-            $email = \trim($part);
+        foreach (explode(',', $emails) as $part) {
+            $email = trim($part);
             if (!empty($part)) {
                 $return[] = $email;
             }
@@ -365,6 +352,7 @@ class NewMail
      * Test the PHPMailer connection. Return the result of the connection.
      *
      * @return bool
+     * @throws Exception
      */
     public function test(): bool
     {
@@ -380,25 +368,23 @@ class NewMail
     }
 
     /**
-     * 
      * @return array
      */
     protected function getFooterBlocks(): array
     {
-        return \array_merge([new TextBlock($this->signature)], $this->footerBlocks);
+        $signature = $this->toolBox()->utils()->fixHtml($this->signature);
+        return array_merge([new TextBlock($signature)], $this->footerBlocks);
     }
 
     /**
-     * 
      * @return array
      */
     protected function getMainBlocks(): array
     {
-        return \array_merge([new TextBlock($this->text)], $this->mainBlocks);
+        return array_merge([new TextBlock($this->text)], $this->mainBlocks);
     }
 
     /**
-     * 
      * @return string
      */
     protected function renderHTML(): string
@@ -418,10 +404,10 @@ class NewMail
     protected function saveMailSent()
     {
         /// get all email address
-        $addresses = \array_merge($this->getToAddresses(), $this->getCcAddresses(), $this->getBccAddresses());
+        $addresses = array_merge($this->getToAddresses(), $this->getCcAddresses(), $this->getBccAddresses());
 
         /// save email sent
-        foreach (\array_unique($addresses) as $address) {
+        foreach (array_unique($addresses) as $address) {
             $emailSent = new EmailSent();
             $emailSent->addressee = $address;
             $emailSent->body = $this->text;
@@ -453,10 +439,9 @@ class NewMail
     }
 
     /**
-     * 
      * @return ToolBox
      */
-    protected function toolBox()
+    protected function toolBox(): ToolBox
     {
         return new ToolBox();
     }

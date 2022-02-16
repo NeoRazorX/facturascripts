@@ -1,0 +1,275 @@
+{% extends 'Master/MenuBgTemplate.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h1 class="h3">
+                    <i class="fas fa-cut"></i> {{ fsc.title }}
+                </h1>
+                <p>{{ i18n.trans('copy-p') }}</p>
+                <form method="post">
+                    <input type="hidden" name="action" value="save"/>
+                    <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
+                    <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <div class="form-row">
+                                {% if fsc.model.codcliente %}
+                                    <div class="col-sm">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-search"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="hidden" id="codclienteAutocomplete" name="codcliente"
+                                                       value="{{ fsc.model.codcliente }}"/>
+                                                <input type="text" id="codcliente"
+                                                       value="{{ fsc.model.nombrecliente | raw }}"
+                                                       class="form-control autocomplete-dc"
+                                                       data-field="codcliente" data-source="Cliente"
+                                                       data-fieldcode="codcliente" data-fieldtitle="nombre"
+                                                       placeholder="{{ i18n.trans('customer') }}" autocomplete="off"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% elseif fsc.model.codproveedor %}
+                                    <div class="col-sm">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-search"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="hidden" id="codproveedorAutocomplete" name="codproveedor"
+                                                       value="{{ fsc.model.codproveedor }}"/>
+                                                <input type="text" id="codproveedor"
+                                                       value="{{ fsc.model.nombre | raw }}"
+                                                       class="form-control autocomplete-dc"
+                                                       data-field="codproveedor" data-source="Proveedor"
+                                                       data-fieldcode="codproveedor" data-fieldtitle="nombre"
+                                                       placeholder="{{ i18n.trans('supplier') }}" autocomplete="off"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <input type="date" name="fecha" value="{{ "now" | date('Y-m-d') }}"
+                                               class="form-control" required=""/>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <input type="time" name="hora" value="{{ "now" | date('H:i:s') }}"
+                                               class="form-control" required=""/>
+                                    </div>
+                                </div>
+                                {% if fsc.model.codcliente %}
+                                    <div class="col-sm">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-hashtag"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" name="numero2" class="form-control"
+                                                       placeholder="{{ i18n.trans('number2') }}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% elseif fsc.model.codproveedor %}
+                                    <div class="col-sm">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-hashtag"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" name="numproveedor" class="form-control"
+                                                       placeholder="{{ i18n.trans('numsupplier') }}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>{{ i18n.trans('reference') }}</th>
+                                    <th>{{ i18n.trans('description') }}</th>
+                                    <th class="text-right">{{ i18n.trans('quantity') }}</th>
+                                    <th class="text-right">{{ i18n.trans('price') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for line in fsc.model.getLines() %}
+                                    <tr>
+                                        <td>{{ line.referencia }}</td>
+                                        <td>{{ line.descripcion | raw | nl2br }}</td>
+                                        <td class="text-right">{{ line.cantidad }}</td>
+                                        <td class="text-right">{{ line.pvpunitario }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        {{ i18n.trans('warehouse') }}
+                                        <select name="codalmacen" class="form-control" required="">
+                                            {% for item in fsc.codeModel.all('almacenes', 'codalmacen', 'nombre', false) %}
+                                                {% if item.code == fsc.model.codalmacen %}
+                                                    <option value="{{ item.code }}" selected="">
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% else %}
+                                                    <option value="{{ item.code }}">
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        {{ i18n.trans('serie') }}
+                                        <select name="codserie" class="form-control" required="">
+                                            {% for item in fsc.codeModel.all('series', 'codserie', 'descripcion', false) %}
+                                                {% if item.code == fsc.model.codserie %}
+                                                    <option value="{{ item.code }}" selected="">
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% else %}
+                                                    <option value="{{ item.code }}">
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        {{ i18n.trans('payment-method') }}
+                                        <select name="codpago" class="form-control" required="">
+                                            {% for item in fsc.codeModel.all('formaspago', 'codpago', 'descripcion', false) %}
+                                                {% if item.code == fsc.model.codpago %}
+                                                    <option value="{{ item.code }}" selected="">
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% else %}
+                                                    <option value="{{ item.code }}">
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row align-items-end">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        {{ i18n.trans('observations') }}
+                                        <textarea name="observaciones"
+                                                  class="form-control">{{ fsc.model.observaciones }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-sm text-right">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> {{ i18n.trans('save') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.css') }}"/>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript">
+        function businessDocViewAutocompleteGetData(formId, formData, term) {
+            var rawForm = $("form[id=" + formId + "]").serializeArray();
+            $.each(rawForm, function (i, input) {
+                formData[input.name] = input.value;
+            });
+            formData["action"] = "autocomplete";
+            formData["term"] = term;
+            return formData;
+        }
+
+        $(document).ready(function () {
+            $(".autocomplete-dc").each(function () {
+                var data = {
+                    field: $(this).attr("data-field"),
+                    fieldcode: $(this).attr("data-fieldcode"),
+                    fieldtitle: $(this).attr("data-fieldtitle"),
+                    source: $(this).attr("data-source")
+                };
+                var formName = $(this).closest("form").attr("name");
+                $(this).autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            method: "POST",
+                            url: "{{ fsc.url() }}",
+                            data: businessDocViewAutocompleteGetData(formName, data, request.term),
+                            dataType: "json",
+                            success: function (results) {
+                                var values = [];
+                                results.forEach(function (element) {
+                                    if (element.key === null || element.key === element.value) {
+                                        values.push(element);
+                                    } else {
+                                        values.push({key: element.key, value: element.key + " | " + element.value});
+                                    }
+                                });
+                                response(values);
+                            },
+                            error: function (msg) {
+                                alert(msg.status + " " + msg.responseText);
+                            }
+                        });
+                    },
+                    select: function (event, ui) {
+                        if (ui.item.key !== null) {
+                            $("#" + data.field + "Autocomplete").val(ui.item.key);
+                            var value = ui.item.value.split(" | ");
+                            if (value.length > 1) {
+                                ui.item.value = value[1];
+                            } else {
+                                ui.item.value = value[0];
+                            }
+                        }
+                    },
+                    open: function (event, ui) {
+                        $(this).autocomplete('widget').css('z-index', 1500);
+                        return false;
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

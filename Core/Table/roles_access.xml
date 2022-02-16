@@ -29,6 +29,12 @@
         <null>NO</null>
     </column>
     <column>
+        <name>onlyownerdata</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
+    </column>
+    <column>
         <name>pagename</name>
         <type>character varying(40)</type>
         <null>NO</null>

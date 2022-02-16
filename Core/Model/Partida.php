@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -24,11 +25,11 @@ use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
- * The line of a accounting entry.
- * It is related to a accounting entry and a sub-account.
+ * The line of an accounting entry.
+ * It is related to an accounting entry and a sub-account.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class Partida extends Base\ModelOnChangeClass
 {
@@ -177,6 +178,11 @@ class Partida extends Base\ModelOnChangeClass
     public $recargo;
 
     /**
+     * @var float
+     */
+    public $saldo;
+
+    /**
      * Value of the conversion rate.
      *
      * @var float|int
@@ -199,11 +205,11 @@ class Partida extends Base\ModelOnChangeClass
         $this->orden = 0;
         $this->punteada = false;
         $this->recargo = 0.0;
+        $this->saldo = 0.0;
         $this->tasaconv = 1.0;
     }
 
     /**
-     *
      * @param string $codsubcuenta
      *
      * @return DinSubcuenta
@@ -213,7 +219,7 @@ class Partida extends Base\ModelOnChangeClass
         $accEntry = $this->getAccountingEntry();
         $subcta = new DinSubcuenta();
 
-        /// get by parameter
+        // get by parameter
         if (!empty($codsubcuenta)) {
             $where = [
                 new DataBaseWhere('codejercicio', $accEntry->codejercicio),
@@ -223,7 +229,7 @@ class Partida extends Base\ModelOnChangeClass
             return $subcta;
         }
 
-        /// get by id
+        // get by id
         if (!empty($this->idsubcuenta) &&
             $subcta->loadFromCode($this->idsubcuenta) &&
             $subcta->codsubcuenta === $this->codsubcuenta &&
@@ -231,7 +237,7 @@ class Partida extends Base\ModelOnChangeClass
             return $subcta;
         }
 
-        /// get by code and exercise
+        // get by code and exercise
         $where2 = [
             new DataBaseWhere('codejercicio', $accEntry->codejercicio),
             new DataBaseWhere('codsubcuenta', $this->codsubcuenta)
@@ -267,7 +273,6 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     *
      * @param Subcuenta $subaccount
      */
     public function setAccount($subaccount)
@@ -277,13 +282,27 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     *
      * @param Subcuenta $subaccount
      */
     public function setCounterpart($subaccount)
     {
         $this->codcontrapartida = $subaccount->codsubcuenta;
         $this->idcontrapartida = $subaccount->idsubcuenta;
+    }
+
+    /**
+     * Set dotted status to indicated value.
+     *
+     * @param bool $value
+     */
+    public function setDottedStatus(bool $value)
+    {
+        $sql = 'UPDATE ' . self::tableName() . ' SET punteada = ' . self::$dataBase->var2str($value)
+            . ' WHERE ' . self::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue());
+
+        if ($value !== $this->punteada && self::$dataBase->exec($sql)) {
+            $this->punteada = $value;
+        }
     }
 
     /**
@@ -305,22 +324,22 @@ class Partida extends Base\ModelOnChangeClass
     {
         $utils = $this->toolBox()->utils();
         $this->cifnif = $utils->noHtml($this->cifnif);
-        $this->codsubcuenta = \trim($this->codsubcuenta);
-        $this->codcontrapartida = \trim($this->codcontrapartida);
+        $this->codsubcuenta = trim($this->codsubcuenta);
+        $this->codcontrapartida = trim($this->codcontrapartida);
         $this->concepto = $utils->noHtml($this->concepto);
         $this->documento = $utils->noHtml($this->documento);
 
-        if (\strlen($this->concepto) < 1 || \strlen($this->concepto) > 255) {
+        if (strlen($this->concepto) < 1 || strlen($this->concepto) > 255) {
             $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']);
             return false;
         }
 
-        /// set missing subaccount id
+        // set missing subaccount id
         if (empty($this->idsubcuenta)) {
             $this->idsubcuenta = $this->getSubcuenta()->idsubcuenta;
         }
 
-        /// set missing contrapartida id
+        // set missing contrapartida id
         if (!empty($this->codcontrapartida) && empty($this->idcontrapartida)) {
             $this->idcontrapartida = $this->getSubcuenta($this->codcontrapartida)->idsubcuenta;
         }
@@ -329,7 +348,6 @@ class Partida extends Base\ModelOnChangeClass
     }
 
     /**
-     *
      * @param string $type
      * @param string $list
      *
@@ -368,7 +386,7 @@ class Partida extends Base\ModelOnChangeClass
      */
     protected function onDelete()
     {
-        /// update account balance
+        // update account balance
         $this->updateBalance($this->idsubcuenta);
         parent::onDelete();
     }
@@ -378,7 +396,7 @@ class Partida extends Base\ModelOnChangeClass
      */
     protected function onInsert()
     {
-        /// update account balance
+        // update account balance
         $this->updateBalance($this->idsubcuenta);
         parent::onInsert();
     }
@@ -388,24 +406,28 @@ class Partida extends Base\ModelOnChangeClass
      */
     protected function onUpdate()
     {
-        $this->updateBalance($this->idsubcuenta);
-
-        /// Has the subaccount been changed? Then we recalculate the balance of the old one too.
+        // if the subaccount has changed, we update the balances of the new and old
         if ($this->previousData['idsubcuenta'] != $this->idsubcuenta) {
+            $this->updateBalance($this->idsubcuenta);
             $this->updateBalance($this->previousData['idsubcuenta']);
+            parent::onUpdate();
+        }
+
+        // if debit or credit has changed, we recalculate the subaccount balance
+        if ($this->previousData['debe'] != $this->debe || $this->previousData['haber'] != $this->haber) {
+            $this->updateBalance($this->idsubcuenta);
         }
 
         parent::onUpdate();
     }
 
     /**
-     *
      * @param array $fields
      */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codcontrapartida', 'codsubcuenta', 'debe', 'haber', 'idcontrapartida', 'idsubcuenta'];
-        parent::setPreviousData(\array_merge($more, $fields));
+        parent::setPreviousData(array_merge($more, $fields));
     }
 
     /**

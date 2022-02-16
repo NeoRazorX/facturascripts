@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core;
 
+use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\FormaPago;
@@ -33,7 +35,6 @@ abstract class PurchasesTest extends CustomTest
 {
 
     /**
-     *
      * @var PurchaseDocument
      */
     public $model;
@@ -43,7 +44,7 @@ abstract class PurchasesTest extends CustomTest
         /// create supplier
         $supplier = new Proveedor();
         $supplier->cifnif = '1234';
-        $supplier->nombre = 'Pepe';
+        $supplier->nombre = 'Paco Purchases';
         $this->assertTrue($supplier->save(), 'proveedor-save-error');
 
         /// create document
@@ -63,20 +64,45 @@ abstract class PurchasesTest extends CustomTest
             $model->codserie = $serie->codserie;
         }
 
+        $model->dtopor1 = 10;
+        $model->dtopor2 = 10;
         $this->assertTrue($model->save(), $model->modelClassName() . '-save-error');
 
-        /// creating line
+        /// create line
         $newLine = $model->getNewLine();
         $newLine->descripcion = 'test';
+        $newLine->cantidad = 1;
+        $newLine->pvpunitario = 100;
+        $newLine->dtopor = 10;
+        $newLine->iva = 21;
+        $newLine->irpf = 13;
+        $newLine->recargo = 0.0;
         $this->assertTrue($newLine->save(), $newLine->modelClassName() . '-save-error');
 
-        /// remove line
-        $this->assertTrue($newLine->delete(), $newLine->modelClassName() . '-delete-error');
+        /// recalculate totals
+        $tool = new BusinessDocumentTools();
+        $tool->recalculate($model);
+        $this->assertEquals(90, $model->netosindto, $model->modelClassName() . '-netosindto-error');
+        $this->assertEquals(72.9, $model->neto, $model->modelClassName() . '-neto-error');
+        $this->assertEquals(15.31, $model->totaliva, $model->modelClassName() . '-totaliva-error');
+        $this->assertEquals(9.48, $model->totalirpf, $model->modelClassName() . '-totalirpf-error');
+        $this->assertEquals(0.0, $model->totalrecargo, $model->modelClassName() . '-totalrecargo-error');
+        $this->assertEquals(78.73, $model->total, $model->modelClassName() . '-total-error');
+        $this->assertTrue($model->save(), $model->modelClassName() . '-save2-error');
 
         /// remove document
         $this->assertTrue($model->delete(), $model->modelClassName() . '-delete-error');
 
+        /// test line deletion
+        $this->assertFalse($newLine->exists(), $newLine->modelClassName() . '-still-exists');
+
+        /// get the contacto to remove
+        $contact = $supplier->getDefaultAddress();
+
         /// remove supplier
         $this->assertTrue($supplier->delete(), 'proveedor-delete-error');
+
+        /// remove the pending contact
+        $this->assertTrue($contact->delete(), 'contacto-delete-error');
     }
 }

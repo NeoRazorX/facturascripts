@@ -1,43 +1,53 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see <http://www.gnu.org/licenses/>.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 #}
 
-{#
-    Loads and displays a list of messages from the given types
-#}
-{% macro message(log, types, style) %}
-    {% set messages = log.readAll(types) %}
+{# Muestra todos los mensajes con alguno de los niveles dados #}
+{% macro message(log, levels, style) %}
+    {% set messages = log.read('master', levels) | merge(log.read('database', levels)) %}
     {% if messages | length > 0 %}
         <div class="alert alert-{{ style }}" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
-            {% for msg in messages %}
-                <div>{{ msg.message | raw }}</div>
+            {% for item in messages %}
+                <div>{{ item.message | raw }}</div>
             {% endfor %}
         </div>
     {% endif %}
 {% endmacro %}
 
-{#
-    Returns the CSS code to display the user help
-#}
+{# Muestra todos los mensajes de los niveles dados, de forma que sea compatible con versiones antiguas de MiniLog #}
+{% macro messageCompat(log, levels, style) %}
+    {% for item in log.read() %}
+        {% if item.level in levels and item.channel == 'master' %}
+            <div class="alert alert-{{ style }}" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div>{{ item.message | raw }}</div>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{# Muestra los parámetros necesarios para el popover #}
 {% macro popoverTitle(msg, position = 'auto') %}
     {% if msg | length > 0 %}data-toggle="popover" data-placement="{{ position }}" data-trigger="hover" data-content="{{ msg }}"{% endif %}
 {% endmacro %}

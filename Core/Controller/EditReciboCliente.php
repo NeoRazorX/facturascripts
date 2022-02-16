@@ -16,9 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
@@ -31,7 +34,6 @@ class EditReciboCliente extends EditController
 {
 
     /**
-     * 
      * @return string
      */
     public function getModelClassName()
@@ -40,7 +42,6 @@ class EditReciboCliente extends EditController
     }
 
     /**
-     * 
      * @return array
      */
     public function getPageData()
@@ -57,34 +58,35 @@ class EditReciboCliente extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        /// disable company column if there is only one company
-        if ($this->empresa->count() < 2) {
+        // disable selects with only one option
+        if (count(Empresas::all()) <= 1) {
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }
+        if (count(Divisas::all()) <= 1) {
+            $this->views[$this->getMainViewName()]->disableColumn('currency');
+        }
 
-        /// disable new button
+        // disable new button
         $this->setSettings($this->getMainViewName(), 'btnNew', false);
 
         $this->createViewPayments();
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewPayments($viewName = 'ListPagoCliente')
     {
         $this->addListView($viewName, 'PagoCliente', 'payments');
 
-        /// settings
+        // settings
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'checkBoxes', false);
     }
 
     /**
-     * 
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)

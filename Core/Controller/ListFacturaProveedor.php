@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 
 /**
@@ -41,7 +44,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'invoices';
-        $data['icon'] = 'fas fa-copy';
+        $data['icon'] = 'fas fa-file-invoice-dollar';
         return $data;
     }
 
@@ -56,12 +59,11 @@ class ListFacturaProveedor extends ListBusinessDocument
     }
 
     /**
-     * 
      * @param string $viewName
      * @param string $modelName
      * @param string $label
      */
-    protected function createViewPurchases(string $viewName, $modelName, $label)
+    protected function createViewPurchases(string $viewName, string $modelName, string $label)
     {
         parent::createViewPurchases($viewName, $modelName, $label);
         $this->addFilterCheckbox('ListFacturaProveedor', 'pagada', 'unpaid', 'pagada', '=', false);
@@ -70,7 +72,6 @@ class ListFacturaProveedor extends ListBusinessDocument
     }
 
     /**
-     *
      * @param string $viewName
      */
     protected function createViewReceipts(string $viewName = 'ListReciboProveedor')
@@ -82,28 +83,28 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addOrderBy($viewName, ['importe'], 'amount');
         $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
 
-        /// filters
+        // filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
 
-        $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
-        if (\count($currencies) > 2) {
+        $currencies = Divisas::codeModel();
+        if (count($currencies) > 2) {
             $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
         }
 
-        $paymethods = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        if (\count($paymethods) > 2) {
+        $paymethods = FormasPago::codeModel();
+        if (count($paymethods) > 2) {
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymethods);
         }
 
         $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');
 
-        /// buttons
+        // buttons
         $this->addButtonPayReceipt($viewName);
 
-        /// settings
+        // settings
         $this->setSettings($viewName, 'btnNew', false);
     }
 }

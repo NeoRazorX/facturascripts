@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2019  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ class PresupuestoProveedor extends Base\PurchaseDocument
      *
      * @return LineaPresupuesto
      */
-    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpresupuesto'])
+    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpresupuesto', 'servido'])
     {
         $newLine = new LineaPresupuesto();
         $newLine->idpresupuesto = $this->idpresupuesto;

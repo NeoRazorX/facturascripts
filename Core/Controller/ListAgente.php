@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,13 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Agentes;
+use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Lib\CommissionTools;
-use FacturaScripts\Dinamic\Model\Agente;
-use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\LiquidacionComision;
 
@@ -36,13 +38,6 @@ class ListAgente extends ListController
 {
 
     /**
-     * Company list used by filters
-     *
-     * @var array
-     */
-    protected $companyList;
-
-    /**
      * Returns basic page attributes
      *
      * @return array
@@ -50,7 +45,7 @@ class ListAgente extends ListController
     public function getPageData()
     {
         $data = parent::getPageData();
-        $data['menu'] = 'sales';
+        $data['menu'] = 'admin';
         $data['title'] = 'agents';
         $data['icon'] = 'fas fa-user-tie';
         return $data;
@@ -68,15 +63,15 @@ class ListAgente extends ListController
         $this->addOrderBy($viewName, ['nombre'], 'name', 1);
         $this->addSearchFields($viewName, ['nombre', 'codagente', 'email', 'telefono1', 'telefono2', 'observaciones']);
 
-        /// Filters
+        // Filters
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $this->toolBox()->i18n()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
             ['label' => $this->toolBox()->i18n()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
             ['label' => $this->toolBox()->i18n()->trans('all'), 'where' => []]
         ]);
 
-        $selectValues = $this->codeModel->all('agentes', 'cargo', 'cargo');
-        $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $selectValues);
+        $cargos = $this->codeModel->all('agentes', 'cargo', 'cargo');
+        $this->addFilterSelect($viewName, 'cargo', 'position', 'cargo', $cargos);
     }
 
     /**
@@ -95,8 +90,8 @@ class ListAgente extends ListController
         $this->addOrderBy($viewName, ['codfamilia', 'idproducto', 'porcentaje'], 'family');
         $this->addSearchFields($viewName, ['codagente', 'codcliente']);
 
-        /// Filters
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyList);
+        // Filters
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
         $this->addFilterAutocomplete($viewName, 'agent', 'agent', 'codagente', 'agentes', 'codagente', 'nombre');
         $this->addFilterAutocomplete($viewName, 'customer', 'customer', 'codcliente', 'Cliente', 'codcliente');
         $this->addFilterAutocomplete($viewName, 'family', 'family', 'codfamilia', 'Familia', 'codfamilia');
@@ -116,15 +111,11 @@ class ListAgente extends ListController
         $this->addOrderBy($viewName, ['total', 'fecha'], 'amount');
         $this->addSearchFields($viewName, ['observaciones']);
 
-        /// Filters
+        // Filters
         $this->addFilterPeriod($viewName, 'fecha', 'date', 'fecha');
-        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $this->companyList);
-
-        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
-        $this->addFilterSelect($viewName, 'codserie', 'serie', 'codserie', $series);
-
-        $agents = $this->codeModel->all('agentes', 'codagente', 'nombre');
-        $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
+        $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', Empresas::codeModel());
+        $this->addFilterSelect($viewName, 'codserie', 'serie', 'codserie', Series::codeModel());
+        $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', Agentes::codeModel());
 
         $this->addButton($viewName, [
             'action' => 'gen-settlements',
@@ -139,15 +130,12 @@ class ListAgente extends ListController
      */
     protected function createViews()
     {
-        $this->companyList = $this->codeModel->all(Empresa::tableName(), Empresa::primaryColumn(), 'nombre');
-
         $this->createAgentView();
         $this->createCommissionView();
         $this->createSettlementView();
     }
 
     /**
-     * 
      * @param string $action
      *
      * @return bool
@@ -169,8 +157,7 @@ class ListAgente extends ListController
         $idempresa = $this->request->request->get('idempresa');
 
         $generated = 0;
-        $agenteModel = new Agente();
-        foreach ($agenteModel->all([], [], 0, 0) as $agente) {
+        foreach (Agentes::all() as $agente) {
             $invoiceModel = new FacturaCliente();
             $where = [
                 new DataBaseWhere('idliquidacion', null, 'IS'),
@@ -188,7 +175,7 @@ class ListAgente extends ListController
             }
 
             $invoices = $invoiceModel->all($where, [], 0, 0);
-            if (\count($invoices)) {
+            if (count($invoices)) {
                 $this->newSettlement($agente->codagente, $idempresa, $codserie, $invoices);
                 $generated++;
             }
@@ -198,10 +185,9 @@ class ListAgente extends ListController
     }
 
     /**
-     * 
-     * @param string           $codagente
-     * @param int              $idempresa
-     * @param string           $codserie
+     * @param string $codagente
+     * @param int $idempresa
+     * @param string $codserie
      * @param FacturaCliente[] $invoices
      */
     protected function newSettlement($codagente, $idempresa, $codserie, $invoices)
@@ -213,7 +199,7 @@ class ListAgente extends ListController
         if ($newSettlement->save()) {
             $commissionTools = new CommissionTools();
             foreach ($invoices as $invoice) {
-                /// recalculate commissions
+                // recalculate commissions
                 $lines = $invoice->getLines();
                 $commissionTools->recalculate($invoice, $lines);
 

@@ -16,70 +16,76 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal  <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
 -->
 <view>
     <columns>
         <group name="default" valign="bottom" numcolumns="12">
             <column name="name" display="none" order="0">
-                <widget type="text" fieldname="name" readonly="true" required="true" />
+                <widget type="text" fieldname="name" readonly="true" required="true"/>
             </column>
             <column name="country" numcolumns="3" order="100">
-                <widget type="select" fieldname="codpais" onclick="EditPais" icon="fas fa-globe-americas" required="true">
-                    <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
+                <widget type="select" fieldname="codpais" onclick="EditPais" icon="fas fa-globe-americas"
+                        required="true">
+                    <values source="paises" fieldcode="codpais" fieldtitle="nombre"/>
                 </widget>
             </column>
             <column name="company" numcolumns="3" order="110">
                 <widget type="select" fieldname="idempresa" onclick="EditEmpresa" required="true">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
                 </widget>
             </column>
             <column name="warehouse" numcolumns="3" order="120">
                 <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true">
-                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
+                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"/>
                 </widget>
             </column>
-            <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="3" order="130">
+            <column name="fiscal-id" titleurl="EditSettings?activetab=EditIdentificadorFiscal" numcolumns="3"
+                    order="130">
                 <widget type="select" fieldname="tipoidfiscal" icon="far fa-id-card" required="true">
-                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal" />
+                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"/>
                 </widget>
             </column>
             <column name="serie" numcolumns="3" order="140">
                 <widget type="select" fieldname="codserie" onclick="EditSerie" required="true">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"/>
                 </widget>
             </column>
             <column name="rectifying-serie" numcolumns="3" order="150">
                 <widget type="select" fieldname="codserierec" onclick="EditSerie" required="true">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"/>
                 </widget>
             </column>
             <column name="currency" numcolumns="3" order="160">
-                <widget type="select" fieldname="coddivisa" onclick="EditDivisa" icon="fas fa-money-bill-alt" required="true">
-                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion" />
+                <widget type="select" fieldname="coddivisa" onclick="EditDivisa" icon="fas fa-money-bill-alt"
+                        required="true">
+                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"/>
                 </widget>
             </column>
             <column name="payment-method" numcolumns="3" order="170">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago" required="true">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"/>
                 </widget>
             </column>
             <column name="tax" numcolumns="3" order="180">
                 <widget type="select" fieldname="codimpuesto" onclick="EditImpuesto">
-                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion" />
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"/>
                 </widget>
             </column>
             <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="190">
                 <widget type="select" fieldname="codretencion" onclick="EditRetencion">
-                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion" />
+                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"/>
                 </widget>
+            </column>
+            <column name="validate-iban" order="210">
+                <widget type="checkbox" fieldname="validate_iban"/>
             </column>
         </group>
         <group name="numericformat" title="numeric-formats" icon="fas fa-info-circle" numcolumns="12">
             <column name="decimals" numcolumns="3" order="100">
                 <widget type="select" fieldname="decimals" icon="fas fa-calculator" required="true">
-                    <values start="0" end="6" step="1" />
+                    <values start="0" end="6" step="1"/>
                 </widget>
             </column>
             <column name="decimal-separator" numcolumns="3" order="110">
@@ -92,7 +98,7 @@
                 <widget type="select" fieldname="thousands_separator" icon="fas fa-calculator" required="true">
                     <values title=",">,</values>
                     <values title=".">.</values>
-                    <values title=" "> </values>
+                    <values title=" "></values>
                 </widget>
             </column>
             <column name="currency-position" numcolumns="3" order="130">
@@ -111,29 +117,39 @@
                 </widget>
             </column>
             <column name="update-supplier-prices" numcolumns="3" order="110">
-                <widget type="checkbox" fieldname="updatesupplierprices" />
+                <widget type="checkbox" fieldname="updatesupplierprices"/>
             </column>
             <column name="allow-sale-without-stock-n" numcolumns="6" order="120">
-                <widget type="checkbox" fieldname="ventasinstock" />
+                <widget type="checkbox" fieldname="ventasinstock"/>
+            </column>
+        </group>
+        <group name="estimations" title="estimations" icon="fas fa-copy" valign="bottom" numcolumns="12">
+            <column name="days-until-expiration" numcolumns="3" order="100">
+                <widget type="number" fieldname="finofertadays" min="0" required="true"/>
             </column>
         </group>
         <group name="advanced" title="advanced" icon="fas fa-database" valign="bottom" numcolumns="12">
-            <column name="homepage" numcolumns="3" order="100">
-                <widget type="select" fieldname="homepage" icon="fas fa-home">
-                    <values source="pages" fieldcode="name" fieldtitle="name" />
+            <column name="default-role" titleurl="ListUser?activetab=ListRole" numcolumns="3" order="100">
+                <widget type="select" fieldname="codrole" onclick="EditRole" required="true" icon="fas fa-users">
+                    <values source="roles" fieldcode="codrole" fieldtitle="descripcion"/>
                 </widget>
             </column>
-            <column name="item-limit" numcolumns="3" order="110">
-                <widget type="number" fieldname="item_limit" icon="fas fa-list" required="true" />
+            <column name="homepage" numcolumns="3" order="110">
+                <widget type="select" fieldname="homepage" icon="fas fa-home">
+                    <values source="pages" fieldcode="name" fieldtitle="name"/>
+                </widget>
             </column>
-            <column name="table-size" numcolumns="3" order="120">
+            <column name="item-limit" numcolumns="3" order="120">
+                <widget type="number" fieldname="item_limit" min="10" max="100" icon="fas fa-list" required="true"/>
+            </column>
+            <column name="table-size" numcolumns="3" order="130">
                 <widget type="select" fieldname="tablesize" icon="fas fa-table" required="true" translate="true">
                     <values title="big">big</values>
                     <values title="small">small</values>
                 </widget>
             </column>
-            <column name="show-balance-graphic" numcolumns="3" order="130">
-                <widget type="checkbox" fieldname="balancegraphic" />
+            <column name="show-balance-graphic" numcolumns="3" order="140">
+                <widget type="checkbox" fieldname="balancegraphic"/>
             </column>
             <column name="login-logo" titleurl="ListAttachedFile" description="click-link-to-add" numcolumns="6" order="1400">
                 <widget type="select" fieldname="idloginlogo" onclick="EditAttachedFile" />

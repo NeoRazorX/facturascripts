@@ -291,7 +291,7 @@ class BusinessDocumentTools
             $save = true;
         }
 
-        if ($save) {
+        if ($save && $line->primaryColumnValue()) {
             $line->save();
         }
     }

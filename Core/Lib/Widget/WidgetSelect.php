@@ -242,7 +242,7 @@ class WidgetSelect extends BaseWidget
         }
 
         $found = false;
-        $html = '<select name="' . $this->fieldname . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '>';
+        $html = '<select name="' . $this->fieldname . '" id="' . $this->id . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '>';
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 

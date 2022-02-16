@@ -22,64 +22,68 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="short-name" numcolumns="2" order="100">
-                <widget type="text" fieldname="nombrecorto" maxlength="32" required="true" />
+            <column name="company-name" numcolumns="4" order="100">
+                <widget type="text" fieldname="nombre" maxlength="100" required="true"/>
             </column>
-            <column name="company-name" numcolumns="3" order="110">
-                <widget type="text" fieldname="nombre" maxlength="100" required="true" />
+            <column name="short-name" numcolumns="2" order="110">
+                <widget type="text" fieldname="nombrecorto" maxlength="32" required="true"/>
             </column>
-            <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="120">
-                <widget type="select" fieldname="tipoidfiscal" required="true">
-                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal" />
+            <column name="fiscal-mode" title="type" numcolumns="2" order="120">
+                <widget type="select" fieldname="personafisica" translate="true" required="true">
+                    <values title="is-person">1</values>
+                    <values title="company">0</values>
                 </widget>
             </column>
-            <column name="fiscal-number" numcolumns="2" order="130">            
-                <widget type="text" fieldname="cifnif" maxlength="30" icon="fas fa-id-card" />
+            <column name="fiscal-id" titleurl="EditSettings?activetab=EditIdentificadorFiscal" numcolumns="2"
+                    order="130">
+                <widget type="select" fieldname="tipoidfiscal" required="true">
+                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"/>
+                </widget>
             </column>
-            <column name="administrator" numcolumns="3" order="140">
-                <widget type="text" fieldname="administrador" />
-            </column>
-            <column name="fiscal-mode" title="is-person" order="150">
-                <widget type="checkbox" fieldname="personafisica" />
+            <column name="fiscal-number" numcolumns="2" order="140">
+                <widget type="text" fieldname="cifnif" maxlength="30"/>
             </column>
         </group>
         <group name="address" numcolumns="12">
             <column name="address" numcolumns="10" order="100">
-                <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked" required="true" />
+                <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked" required="true"/>
             </column>
             <column name="post-office-box" numcolumns="2" order="110">
-                <widget type="text" fieldname="apartado" maxlength="10" />
+                <widget type="text" fieldname="apartado" maxlength="10"/>
             </column>
             <column name="zip-code" numcolumns="2" order="120">
-                <widget type="text" fieldname="codpostal" maxlength="10" />
+                <widget type="text" fieldname="codpostal" maxlength="10"/>
             </column>
             <column name="city" numcolumns="4" order="130">
-                <widget type="text" fieldname="ciudad" />
+                <widget type="text" fieldname="ciudad"/>
             </column>
             <column name="province" numcolumns="3" order="140">
-                <widget type="text" fieldname="provincia" />
+                <widget type="text" fieldname="provincia"/>
             </column>
             <column name="country" titleurl="ListPais" numcolumns="3" order="150">
                 <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
-                    <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
+                    <values source="paises" fieldcode="codpais" fieldtitle="nombre"/>
                 </widget>
             </column>
         </group>
-        <group name="contact-data" numcolumns="12" icon="fas fa-address-card" title="contact-data">
-            <column name="phone" numcolumns="2" order="100">
+        <group name="contact-data" numcolumns="12">
+            <column name="phone" numcolumns="3" order="100">
                 <widget type="text" fieldname="telefono1" maxlength="30" icon="fas fa-phone"/>
             </column>
-            <column name="phone2" numcolumns="2" order="110">
+            <column name="phone2" numcolumns="3" order="110">
                 <widget type="text" fieldname="telefono2" maxlength="30" icon="fas fa-mobile-alt"/>
             </column>
-            <column name="fax" numcolumns="2" order="120">
-                <widget type="text" fieldname="fax" maxlength="30" icon="fas fa-fax" />
+            <column name="fax" numcolumns="3" order="120">
+                <widget type="text" fieldname="fax" maxlength="30" icon="fas fa-fax"/>
             </column>
             <column name="email" numcolumns="3" order="130">
-                <widget type="text" fieldname="email" maxlength="100" icon="fas fa-envelope" />
+                <widget type="text" fieldname="email" maxlength="100" icon="fas fa-envelope"/>
             </column>
-            <column name="website" numcolumns="3" order="140">
-                <widget type="link" fieldname="web" maxlength="100" />
+            <column name="administrator" numcolumns="3" order="140">
+                <widget type="text" fieldname="administrador"/>
+            </column>
+            <column name="website" numcolumns="3" order="150">
+                <widget type="link" fieldname="web" maxlength="100"/>
             </column>
         </group>
         <group name="management" numcolumns="12" icon="fas fa-cog" title="advanced">
@@ -88,14 +92,14 @@
             </column>
             <column name="vat-regime" numcolumns="3" order="110">
                 <widget type="select" fieldname="regimeniva" required="true">
-                    <values />
+                    <values/>
                 </widget>
             </column>
             <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" order="120">
-                <widget type="select" fieldname="idlogo" onclick="EditAttachedFile" />
+                <widget type="select" fieldname="idlogo" onclick="EditAttachedFile"/>
             </column>
             <column name="observations" numcolumns="12" order="130">
-                <widget type="textarea" fieldname="observaciones" />
+                <widget type="textarea" fieldname="observaciones"/>
             </column>
         </group>
     </columns>

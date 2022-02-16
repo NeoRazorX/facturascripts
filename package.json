@@ -30,7 +30,7 @@
     "bootstrap": "4.*",
     "chart.js": "2.*",
     "handsontable": "6.*",
-    "jquery": "3.5.*",
+    "jquery": "3.6.*",
     "jquery-ui-dist": "1.12.*",
     "pace-js": "1.*"
   }

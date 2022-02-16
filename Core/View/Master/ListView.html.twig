@@ -1,21 +1,21 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
 {% set currentView = fsc.getCurrentView() %}
 {% set formName = 'form' ~ currentView.getViewName() %}
@@ -31,27 +31,32 @@
     <input type="hidden" name="action"/>
     <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
     <input type="hidden" name="loadfilter" value="{{ currentView.pageFilterKey }}"/>
+    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <input type="hidden" name="offset" value="{{ currentView.offset }}"/>
     <input type="hidden" name="order" value="{{ currentView.orderKey }}"/>
     <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
         <div class="{{ currentView.settings.card ? 'container-fluid pt-3' : 'container-fluid' }}">
             <div class="form-row">
                 {# -- Left buttons -- #}
-                <div class="col mb-2">
+                <div class="col-md-auto mb-2">
                     <div class="btn-group">
                         {% if currentView.settings.btnNew %}
                             {% if currentView.settings.modalInsert %}
-                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal{{ currentView.settings.modalInsert }}">
+                                <button type="button" class="btn btn-success" data-toggle="modal"
+                                        data-target="#modal{{ currentView.settings.modalInsert }}">
                                     <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                                 </button>
                             {% else %}
-                                <a href="{{ asset(currentView.btnNewUrl()) }}" class="btn btn-success" title="{{ i18n.trans('new') }}">
+                                <a href="{{ asset(currentView.btnNewUrl()) }}" class="btn btn-success"
+                                   title="{{ i18n.trans('new') }}">
                                     <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                                 </a>
                             {% endif %}
                         {% endif %}
                         {% if currentView.settings.btnDelete %}
-                            <button type="button" class="btn btn-danger" onclick="listViewDelete('{{ currentView.getViewName() }}');" title="{{ i18n.trans('delete') }}">
+                            <button type="button" class="btn btn-danger"
+                                    onclick="listViewDelete('{{ currentView.getViewName() }}');"
+                                    title="{{ i18n.trans('delete') }}">
                                 <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
                             </button>
                         {% endif %}
@@ -70,18 +75,19 @@
                     {# -- Search field -- #}
                     {{ _self.searchControl(currentView, i18n) }}
                 </div>
-                <div class="col-md text-right mb-2">
+                <div class="col-sm-auto text-right mb-2">
                     {# -- Filters button -- #}
-                    {{ _self.filterButton(currentView, i18n) }}
-                    {# -- Legend button -- #}
-                    {{ _self.legendButton(currentView, i18n) }}
+                    {{ _self.filterButton(currentView, fsc, i18n) }}
+                    {# -- Colors button -- #}
+                    {{ _self.colorsButton(currentView, i18n) }}
                     {# -- OrderBy button -- #}
                     {{ _self.sortButton(currentView) }}
                 </div>
             </div>
             {# -- Filters -- #}
             {% set divFiltersStyle = currentView.showFilters ? '' : 'display: none;' %}
-            <div id="form{{ currentView.getViewName() }}Filters" class="form-row align-items-center border-bottom" style="{{ divFiltersStyle }}">
+            <div id="form{{ currentView.getViewName() }}Filters" class="form-row align-items-center border-bottom"
+                 style="{{ divFiltersStyle }}">
                 {% for filterName, filter in currentView.filters %}
                     {{ filter.render() | raw }}
                 {% endfor %}
@@ -96,76 +102,77 @@
             {% set tableClass = fsc.toolBox().appSettings().get('default', 'tablesize') == 'small' ? 'table-sm' : '' %}
             <table class="table table-hover mb-0 {{ tableClass }}">
                 <thead>
-                    <tr>
-                        {% if (currentView.cursor | length > 0) and currentView.settings.checkBoxes %}
-                            <th width="50">
-                                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                                    <input class="form-check-input listActionCB" type="checkbox" onclick="listViewCheckboxes('{{ currentView.getViewName() }}');" />
-                                </div>
-                            </th>
-                        {% endif %}
-                        {% for column in currentView.getColumns() %}
-                            {{ column.tableHeader() | raw }}
-                        {% endfor %}
-                    </tr>
+                <tr>
+                    {% if (currentView.cursor | length > 0) and currentView.settings.checkBoxes %}
+                        <th width="50">
+                            <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                <input class="form-check-input listActionCB" type="checkbox"
+                                       onclick="listViewCheckboxes('{{ currentView.getViewName() }}');"/>
+                            </div>
+                        </th>
+                    {% endif %}
+                    {% for column in currentView.getColumns() %}
+                        {{ column.tableHeader() | raw }}
+                    {% endfor %}
+                </tr>
                 </thead>
                 <tbody>
-                    {% set rowStatus = currentView.getRow('status') %}
-                    {% for model in currentView.cursor %}
-                        {% set trClass = currentView.settings.clickable ? 'clickableRow ' ~ rowStatus.trClass(model) : rowStatus.trClass(model) %}
-                        {% set trTitle = rowStatus.trTitle(model) %}
-                        <tr class="{{ trClass }}" title="{{ trTitle }}" data-href="{{ asset(model.url()) }}">
-                            {% if currentView.settings.checkBoxes %}
-                                <td class="cancelClickable">
-                                    <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                                        <input class="form-check-input listAction" type="checkbox" name="code[]" value="{{ model.primaryColumnValue() }}" />
-                                    </div>
-                                </td>
-                            {% endif %}
-                            {% for column in currentView.getColumns() %}
-                                {{ column.tableCell(model) | raw }}
-                            {% endfor %}
-                        </tr>
-                    {% else %}
-                        <tr class="table-warning">
-                            <td colspan="{{ 1 + currentView.getColumns() | length }}">{{ i18n.trans('no-data') }}</td>
-                        </tr>
-                    {% endfor %}
+                {% set rowStatus = currentView.getRow('status') %}
+                {% for model in currentView.cursor %}
+                    {% set trClass = currentView.settings.clickable ? 'clickableRow ' ~ rowStatus.trClass(model) : rowStatus.trClass(model) %}
+                    {% set trTitle = rowStatus.trTitle(model) %}
+                    <tr class="{{ trClass }}" title="{{ trTitle }}" data-href="{{ asset(model.url()) }}">
+                        {% if currentView.settings.checkBoxes %}
+                            <td class="cancelClickable">
+                                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                                    <input class="form-check-input listAction" type="checkbox" name="code[]"
+                                           value="{{ model.primaryColumnValue() }}"/>
+                                </div>
+                            </td>
+                        {% endif %}
+                        {% for column in currentView.getColumns() %}
+                            {{ column.tableCell(model) | raw }}
+                        {% endfor %}
+                    </tr>
+                {% else %}
+                    <tr class="table-warning">
+                        <td colspan="{{ 1 + currentView.getColumns() | length }}">{{ i18n.trans('no-data') }}</td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
         {# -- Totals -- #}
         {% if currentView.totalAmounts is not empty %}
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <table class="table table-sm table-hover mt-4 mb-0">
                     <thead>
-                        <tr>
-                            <th>
+                    <tr>
+                        <th></th>
+                        {% for item in currentView.totalAmounts %}
+                            <th class="text-right text-capitalize">
+                                {{ i18n.trans(item.title) }}
                             </th>
-                            {% for item in currentView.totalAmounts %}
-                                <th class="text-right text-capitalize">
-                                    {{ i18n.trans(item.title) }}
-                                </th>
-                            {% endfor %}
-                        </tr>
+                        {% endfor %}
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="text-right">{{ i18n.trans('page-total-amount') }}</td>
-                            {% for item in currentView.totalAmounts %}
-                                <td class="text-right">
-                                    {{ fsc.toolBox().numbers().format(item.page) }}
-                                </td>
-                            {% endfor %}
-                        </tr>
-                        <tr>
-                            <td class="text-right">{{ i18n.trans('total-amount') }}</td>
-                            {% for item in currentView.totalAmounts %}
-                                <td class="text-right">
-                                    {{ fsc.toolBox().numbers().format(item.total) }}
-                                </td>
-                            {% endfor %}
-                        </tr>
+                    <tr>
+                        <td class="text-right">{{ i18n.trans('page-total-amount') }}</td>
+                        {% for item in currentView.totalAmounts %}
+                            <td class="text-right">
+                                {{ fsc.toolBox().numbers().format(item.page) }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td class="text-right">{{ i18n.trans('total-amount') }}</td>
+                        {% for item in currentView.totalAmounts %}
+                            <td class="text-right">
+                                {{ fsc.toolBox().numbers().format(item.total) }}
+                            </td>
+                        {% endfor %}
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -174,10 +181,11 @@
         {% set pages = currentView.getPagination() %}
         {% if pages | length > 0 %}
             <div class="{{ currentView.settings.card ? 'card-footer text-center' : 'pt-3 text-center' }}">
-                <div class="btn-group bg-white">
+                <div class="btn-group">
                     {% for page in currentView.getPagination() %}
                         {% set btnClass = page.active ? 'btn btn-outline-dark active' : 'btn btn-outline-dark' %}
-                        <button type="button" class="{{ btnClass }}" onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
+                        <button type="button" class="{{ btnClass }}"
+                                onclick="listViewSetOffset('{{ currentView.getViewName() }}', '{{ page.offset }}');">
                             {{ page.num }}
                         </button>
                     {% endfor %}
@@ -204,7 +212,7 @@
 {% endfor %}
 
 {# -- Macros -- #}
-{% macro filterButton(currentView, i18n) %}
+{% macro filterButton(currentView, fsc, i18n) %}
     {% if currentView.filters is not empty %}
         {% set viewName = currentView.getViewName() %}
         {% set saveFilters = currentView.pageFilters %}
@@ -213,14 +221,16 @@
                 <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
             </button>
             {% if saveFilters is not empty %}
-                <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
                     <span class="sr-only"></span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
                     {% for pageFilter in saveFilters %}
                         {% set activeClass = (pageFilter.id == currentView.pageFilterKey) ? ' active' : '' %}
                         {% set icon = (pageFilter.nick is empty) ? 'fa-users' : 'fa-user' %}
-                        <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetLoadFilter('{{ viewName }}', '{{ pageFilter.id }}');">
+                        <a class="dropdown-item{{ activeClass }}" href="#"
+                           onclick="listViewSetLoadFilter('{{ viewName }}', '{{ pageFilter.id }}');">
                             <i class="fas {{ icon }} fa-fw" aria-hidden="true"></i> {{ pageFilter.description }}
                         </a>
                     {% endfor %}
@@ -229,15 +239,17 @@
         </div>
         {% if currentView.pageFilterKey %}
             <div class="btn-group ml-1">
-                <button type="button" class="btn btn-warning" onclick="listViewSetLoadFilter('{{ viewName }}', '');">
+                <a href="{{ fsc.url() }}?activetab={{ viewName }}" class="btn btn-warning">
                     <i class="fas fa-times fa-fw"></i>
-                </button>
-                <button type="button" class="btn btn-danger" title="{{ i18n.trans('remove-filter') }}" onclick="listViewSetAction('{{ viewName }}', 'delete-filter');">
+                </a>
+                <button type="button" class="btn btn-danger" title="{{ i18n.trans('remove-filter') }}"
+                        onclick="listViewSetAction('{{ viewName }}', 'delete-filter');">
                     <i class="fas fa-trash-alt fa-fw"></i>
                 </button>
             </div>
         {% elseif currentView.showFilters %}
-            <button type="button" class="btn btn-info ml-1" data-toggle="modal" data-target="#savefilter{{ viewName }}" title="{{ i18n.trans('save-filter') }}">
+            <button type="button" class="btn btn-info ml-1" data-toggle="modal" data-target="#savefilter{{ viewName }}"
+                    title="{{ i18n.trans('save-filter') }}">
                 <i class="fas fa-save fa-fw"></i>
             </button>
         {% endif %}
@@ -262,7 +274,8 @@
                         <div class="col">
                             <div class="form-group">
                                 <label>{{ i18n.trans('description') }}</label>
-                                <input type="text" name="filter-description" class="form-control noEnterKey" autofocus=""/>
+                                <input type="text" name="filter-description" class="form-control noEnterKey"
+                                       autofocus=""/>
                             </div>
                         </div>
                     </div>
@@ -271,7 +284,8 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         {{ i18n.trans('cancel') }}
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="listViewSetAction('{{ viewName }}', 'save-filter');">
+                    <button type="button" class="btn btn-primary"
+                            onclick="listViewSetAction('{{ viewName }}', 'save-filter');">
                         {{ i18n.trans('accept') }}
                     </button>
                 </div>
@@ -280,27 +294,20 @@
     </div>
 {% endmacro %}
 
-{% macro legendButton(currentView, i18n) %}
+{% macro colorsButton(currentView, i18n) %}
     {% set legend = currentView.getRow('status').legend() %}
     {% if legend %}
         {% set viewName = currentView.getViewName() %}
         <div class="btn-group">
-            <button type="button" class="btn btn-light" data-toggle="modal" data-target="#statuslegend{{ viewName }}">
-                <i class="fas fa-info fa-fw" aria-hidden="true"></i>
-                <span class="d-none d-xl-inline">{{ i18n.trans('colors') }}</span>
-            </button>
-        </div>
-        <div class="modal fade" id="statuslegend{{ viewName }}" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            <i class="fas fa-info-circle fa-fw"></i> {{ i18n.trans('colors') }}
-                        </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                    <i class="fas fa-fill-drip fa-fw" aria-hidden="true"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right pb-0">
+                    <h6 class="dropdown-header">
+                        {{ i18n.trans('colors') }}
+                    </h6>
                     {{ legend | raw }}
                 </div>
             </div>
@@ -310,12 +317,14 @@
 
 {% macro printButton(fsc, currentView, i18n) %}
     <div class="dropdown">
-        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
             <i class="fas fa-print fa-fw" aria-hidden="true"></i>
         </button>
         <div class="dropdown-menu">
             {% for key, option in fsc.exportManager.options() %}
-                <a href="#" class="dropdown-item" onclick="listViewPrintAction('{{ currentView.getViewName() }}', '{{ key }}');">
+                <a href="#" class="dropdown-item"
+                   onclick="listViewPrintAction('{{ currentView.getViewName() }}', '{{ key }}');">
                     <i class="{{ option.icon }} fa-fw" aria-hidden="true"></i>
                     {{ i18n.trans(option.description) }}
                 </a>
@@ -337,7 +346,8 @@
     {% if currentView.searchFields is not empty %}
         <div class="form-group">
             <div class="input-group">
-                <input class="form-control" type="text" name="query" value="{{ currentView.query }}" autocomplete="off" placeholder="{{ i18n.trans('search') }}"/>
+                <input class="form-control" type="text" name="query" value="{{ currentView.query }}" autocomplete="off"
+                       placeholder="{{ i18n.trans('search') }}"/>
                 <span class="input-group-append">
                     <button type="submit" class="btn btn-secondary">
                         <i class="fas fa-search" aria-hidden="true"></i>
@@ -351,8 +361,9 @@
 {% macro sortButton(currentView) %}
     {% if currentView.orderOptions is not empty %}
         <div class="btn-group">
-            <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fas fa-arrow-up' : 'fas fa-arrow-down' %}
+            <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="true">
+                {% set icon = (currentView.orderOptions[currentView.orderKey]['type'] == 'ASC') ? 'fas fa-sort-amount-down-alt' : 'fas fa-sort-amount-down' %}
                 <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
                 <span class="d-none d-lg-inline">{{ currentView.orderOptions[currentView.orderKey]['label'] }}</span>
                 <span class="caret"></span>
@@ -360,8 +371,9 @@
             <div class="dropdown-menu dropdown-menu-right">
                 {% for key, orderby in currentView.orderOptions %}
                     {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
-                    {% set icon = (orderby.type == 'ASC') ? 'fas fa-arrow-up' : 'fas fa-arrow-down' %}
-                    <a class="dropdown-item{{ activeClass }}" href="#" onclick="listViewSetOrder('{{ currentView.getViewName() }}', '{{ key }}');">
+                    {% set icon = (orderby.type == 'ASC') ? 'fas fa-sort-amount-down-alt' : 'fas fa-sort-amount-down' %}
+                    <a class="dropdown-item{{ activeClass }}" href="#"
+                       onclick="listViewSetOrder('{{ currentView.getViewName() }}', '{{ key }}');">
                         <i class="{{ icon }} fa-fw" aria-hidden="true"></i> {{ orderby.label }}
                     </a>
                 {% endfor %}

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
@@ -26,9 +27,9 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Controller that lists the data in table mode
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
- * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Cristo M. Estévez Hernández   <cristom.estevez@gmail.com>
  */
 abstract class ListController extends BaseController
 {
@@ -48,8 +49,8 @@ abstract class ListController extends BaseController
     /**
      * Runs the controller's private logic.
      *
-     * @param Response              $response
-     * @param User                  $user
+     * @param Response $response
+     * @param User $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -59,7 +60,7 @@ abstract class ListController extends BaseController
         // Get action to execute
         $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
-        // Execute actions before loaging data
+        // Execute actions before loading data
         if (false === $this->execPreviousAction($action) || false === $this->pipe('execPreviousAction', $action)) {
             return;
         }
@@ -76,7 +77,7 @@ abstract class ListController extends BaseController
             $this->pipe('loadData', $viewName, $view);
         }
 
-        // Execute actions after loaging data
+        // Execute actions after loading data
         $this->execAfterAction($action);
         $this->pipe('execAfterAction', $action);
     }
@@ -85,15 +86,15 @@ abstract class ListController extends BaseController
      * Add an autocomplete type filter to the ListView.
      *
      * @param string $viewName
-     * @param string $key        (Filter identifier)
-     * @param string $label      (Human reader description)
-     * @param string $field      (Field of the model to apply filter)
-     * @param string $table      (Table to search)
-     * @param string $fieldcode  (Primary column of the table to search and match)
+     * @param string $key (Filter identifier)
+     * @param string $label (Human reader description)
+     * @param string $field (Field of the model to apply filter)
+     * @param string $table (Table to search)
+     * @param string $fieldcode (Primary column of the table to search and match)
      * @param string $fieldtitle (Column to show name or description)
-     * @param array  $where      (Extra where conditions)
+     * @param array $where (Extra where conditions)
      */
-    protected function addFilterAutocomplete($viewName, $key, $label, $field, $table, $fieldcode = '', $fieldtitle = '', $where = [])
+    protected function addFilterAutocomplete(string $viewName, string $key, string $label, string $field, string $table, string $fieldcode = '', string $fieldtitle = '', array $where = [])
     {
         $this->views[$viewName]->addFilterAutocomplete($key, $label, $field, $table, $fieldcode, $fieldtitle, $where);
     }
@@ -101,15 +102,15 @@ abstract class ListController extends BaseController
     /**
      * Adds a boolean condition type filter to the ListView.
      *
-     * @param string          $viewName
-     * @param string          $key        (Filter identifier)
-     * @param string          $label      (Human reader description)
-     * @param string          $field      (Field of the model to apply filter)
-     * @param string          $operation  (operation to perform with match value)
-     * @param mixed           $matchValue (Value to match)
+     * @param string $viewName
+     * @param string $key (Filter identifier)
+     * @param string $label (Human reader description)
+     * @param string $field (Field of the model to apply filter)
+     * @param string $operation (operation to perform with match value)
+     * @param mixed $matchValue (Value to match)
      * @param DataBaseWhere[] $default (where to apply when filter is empty)
      */
-    protected function addFilterCheckbox($viewName, $key, $label = '', $field = '', $operation = '=', $matchValue = true, $default = [])
+    protected function addFilterCheckbox(string $viewName, string $key, string $label = '', string $field = '', string $operation = '=', $matchValue = true, array $default = [])
     {
         $this->views[$viewName]->addFilterCheckbox($key, $label, $field, $operation, $matchValue, $default);
     }
@@ -118,12 +119,12 @@ abstract class ListController extends BaseController
      * Adds a date type filter to the ListView.
      *
      * @param string $viewName
-     * @param string $key       (Filter identifier)
-     * @param string $label     (Human reader description)
-     * @param string $field     (Field of the table to apply filter)
+     * @param string $key (Filter identifier)
+     * @param string $label (Human reader description)
+     * @param string $field (Field of the table to apply filter)
      * @param string $operation (Operation to perform)
      */
-    protected function addFilterDatePicker($viewName, $key, $label = '', $field = '', $operation = '>=')
+    protected function addFilterDatePicker(string $viewName, string $key, string $label = '', string $field = '', string $operation = '>=')
     {
         $this->views[$viewName]->addFilterDatePicker($key, $label, $field, $operation);
     }
@@ -132,12 +133,12 @@ abstract class ListController extends BaseController
      * Adds a numeric type filter to the ListView.
      *
      * @param string $viewName
-     * @param string $key       (Filter identifier)
-     * @param string $label     (Human reader description)
-     * @param string $field     (Field of the table to apply filter)
+     * @param string $key (Filter identifier)
+     * @param string $label (Human reader description)
+     * @param string $field (Field of the table to apply filter)
      * @param string $operation (Operation to perform)
      */
-    protected function addFilterNumber($viewName, $key, $label = '', $field = '', $operation = '>=')
+    protected function addFilterNumber(string $viewName, string $key, string $label = '', string $field = '', string $operation = '>=')
     {
         $this->views[$viewName]->addFilterNumber($key, $label, $field, $operation);
     }
@@ -147,11 +148,11 @@ abstract class ListController extends BaseController
      * (period + start date + end date)
      *
      * @param string $viewName
-     * @param string $key       (Filter identifier)
-     * @param string $label     (Human reader description)
-     * @param string $field     (Field of the table to apply filter)
+     * @param string $key (Filter identifier)
+     * @param string $label (Human reader description)
+     * @param string $field (Field of the table to apply filter)
      */
-    protected function addFilterPeriod($viewName, $key, $label, $field)
+    protected function addFilterPeriod(string $viewName, string $key, string $label, string $field)
     {
         $this->views[$viewName]->addFilterPeriod($key, $label, $field);
     }
@@ -160,12 +161,12 @@ abstract class ListController extends BaseController
      * Add a select type filter to a ListView.
      *
      * @param string $viewName
-     * @param string $key       (Filter identifier)
-     * @param string $label     (Human reader description)
-     * @param string $field     (Field of the table to apply filter)
-     * @param array  $values    (Values to show)
+     * @param string $key (Filter identifier)
+     * @param string $label (Human reader description)
+     * @param string $field (Field of the table to apply filter)
+     * @param array $values (Values to show)
      */
-    protected function addFilterSelect($viewName, $key, $label, $field, $values = [])
+    protected function addFilterSelect(string $viewName, string $key, string $label, string $field, array $values = [])
     {
         $this->views[$viewName]->addFilterSelect($key, $label, $field, $values);
     }
@@ -174,8 +175,8 @@ abstract class ListController extends BaseController
      * Add a select where type filter to a ListView.
      *
      * @param string $viewName
-     * @param string $key       (Filter identifier)
-     * @param array  $values    (Values to show)
+     * @param string $key (Filter identifier)
+     * @param array $values (Values to show)
      *
      * Example of values:
      *   [
@@ -184,7 +185,7 @@ abstract class ListController extends BaseController
      *    ['label' => 'All records', 'where' => []],
      *   ]
      */
-    protected function addFilterSelectWhere($viewName, $key, $values)
+    protected function addFilterSelectWhere(string $viewName, string $key, array $values)
     {
         $this->views[$viewName]->addFilterSelectWhere($key, $values);
     }
@@ -193,9 +194,9 @@ abstract class ListController extends BaseController
      * Adds an order field to the ListView.
      *
      * @param string $viewName
-     * @param array  $fields
+     * @param array $fields
      * @param string $label
-     * @param int    $default   (0 = None, 1 = ASC, 2 = DESC)
+     * @param int $default (0 = None, 1 = ASC, 2 = DESC)
      */
     protected function addOrderBy(string $viewName, array $fields, string $label = '', int $default = 0)
     {
@@ -208,7 +209,7 @@ abstract class ListController extends BaseController
      * To use integer columns, use CAST(columnName AS CHAR(50)).
      *
      * @param string $viewName
-     * @param array  $fields
+     * @param array $fields
      */
     protected function addSearchFields(string $viewName, array $fields)
     {
@@ -223,7 +224,7 @@ abstract class ListController extends BaseController
      * @param string $viewTitle
      * @param string $icon
      */
-    protected function addView($viewName, $modelName, $viewTitle = '', $icon = 'fas fa-search')
+    protected function addView(string $viewName, string $modelName, string $viewTitle = '', string $icon = 'fas fa-search')
     {
         $title = empty($viewTitle) ? $this->title : $viewTitle;
         $view = new ListView($viewName, $title, self::MODEL_NAMESPACE . $modelName, $icon);
@@ -301,19 +302,22 @@ abstract class ListController extends BaseController
     protected function exportAction()
     {
         $this->setTemplate(false);
-        $this->exportManager->newDoc($this->request->get('option', ''));
-        $this->views[$this->active]->export($this->exportManager);
+
+        $codes = $this->request->request->get('code');
+        $option = $this->request->get('option', '');
+        $this->exportManager->newDoc($option);
+        $this->views[$this->active]->export($this->exportManager, $codes);
         $this->exportManager->show($this->response);
     }
 
     /**
-     *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
-        $view->loadData();
+        $where = $this->permissions->onlyOwnerData ? $this->getOwnerFilter($view->model) : [];
+        $view->loadData('', $where);
     }
 
     /**
@@ -337,7 +341,7 @@ abstract class ListController extends BaseController
                 'results' => []
             ];
 
-            $fields = \implode('|', $listView->searchFields);
+            $fields = implode('|', $listView->searchFields);
             $where = [new DataBaseWhere($fields, $this->request->get('query', ''), 'LIKE')];
             $listView->loadData(false, $where);
             foreach ($listView->cursor as $model) {
@@ -352,7 +356,7 @@ abstract class ListController extends BaseController
             }
         }
 
-        $this->response->setContent(\json_encode($json));
+        $this->response->setContent(json_encode($json));
     }
 
     /**
@@ -362,7 +366,7 @@ abstract class ListController extends BaseController
      *
      * @return array
      */
-    private function megaSearchColumns($view)
+    private function megaSearchColumns($view): array
     {
         $result = [];
         foreach ($view->getColumns() as $col) {

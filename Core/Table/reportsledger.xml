@@ -23,8 +23,8 @@
         <type>integer</type>
     </column>
     <column>
-        <name>grouped</name>
-        <type>boolean</type>
+        <name>groupingtype</name>
+        <type>character varying(1)</type>
     </column>
     <column>
         <name>id</name>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,7 +49,7 @@ class EditAlbaranProveedor extends PurchaseDocumentController
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
         $data['title'] = 'delivery-note';
-        $data['icon'] = 'fas fa-file-invoice';
+        $data['icon'] = 'fas fa-dolly-flatbed';
         return $data;
     }
 }

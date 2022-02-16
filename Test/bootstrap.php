@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,39 +17,34 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @author Carlos García Gómez
- */
-require_once __DIR__ . '/../vendor/autoload.php';
+define("FS_FOLDER", getcwd());
 
-define('FS_FOLDER', getcwd());
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $config = FS_FOLDER . '/config.php';
 if (__DIR__ === '/home/scrutinizer/build/Test') {
     echo 'Executing on scrutinizer ...' . "\n\n";
     $config = FS_FOLDER . '/Test/config-scrutinizer.php';
-} elseif (strpos(__DIR__, '/home/travis/build/') !== false) {
-    echo 'Executing on travis ...' . "\n\n";
-    $config = FS_FOLDER . '/Test/config-travis.php';
 } elseif (!file_exists($config)) {
     die($config . " not found!\n");
 }
 
-echo 'Edit "Test/bootstrap.php" if you want to use another config.php file.' . "\n";
-echo 'Using ' . $config . "\n\n";
+echo 'Edit "Test/bootstrap.php" if you want to use another config.php file.';
+echo "\n" . 'Using ' . $config . "\n";
 
 require_once $config;
 
-echo "\n" . 'Database connection details:' . "\n";
-echo "\n" . 'Host: ' . FS_DB_HOST;
-echo "\n" . 'Database: ' . FS_DB_NAME;
-echo "\n" . 'User: ' . FS_DB_USER;
-echo "\n" . 'Pass: ' . FS_DB_PASS . "\n\n";
+echo "\n" . 'Connection details:';
+echo "\n" . 'PHP: ' . phpversion();
+echo "\n" . 'DB Host: ' . FS_DB_HOST;
+echo "\n" . 'DB User: ' . FS_DB_USER;
+echo "\n" . 'DB Pass: ' . FS_DB_PASS;
+echo "\n" . 'Database: ' . FS_DB_NAME . "\n\n";
 
-/// clean cache
+// clean cache
 $cache = new FacturaScripts\Core\Base\Cache();
 $cache->clear();
 
-/// deploy
+// deploy
 $pluginManager = new FacturaScripts\Core\Base\PluginManager();
 $pluginManager->deploy();

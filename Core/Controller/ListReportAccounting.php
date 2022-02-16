@@ -19,6 +19,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\ReportAmount;
@@ -28,16 +29,10 @@ use FacturaScripts\Dinamic\Model\ReportLedger;
 /**
  * Description of ListReportAccounting
  *
- * @author Jose Antonio Cuello <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello <yopli2000@gmail.com>
  */
 class ListReportAccounting extends ListController
 {
-
-    /**
-     *
-     * @var array
-     */
-    private $companyList;
 
     /**
      * Return the basic data for this page.
@@ -60,16 +55,11 @@ class ListReportAccounting extends ListController
      */
     private function addCommonFilter(string $viewName)
     {
-        if (empty($this->companyList)) {
-            $this->companyList = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-        }
-
-        $this->addFilterSelect($viewName, 'idcompany', 'company', 'idcompany', $this->companyList);
+        $this->addFilterSelect($viewName, 'idcompany', 'company', 'idcompany', Empresas::codeModel());
         $this->addFilterNumber($viewName, 'channel', 'channel', 'channel', '=');
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function addGenerateButton(string $viewName)
@@ -171,7 +161,6 @@ class ListReportAccounting extends ListController
     }
 
     /**
-     * 
      * @param string $action
      *
      * @return bool
@@ -181,14 +170,12 @@ class ListReportAccounting extends ListController
         switch ($action) {
             case 'generate-balances':
                 return $this->generateBalancesAction();
-
-            default:
-                return parent::execPreviousAction($action);
         }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
-     * 
      * @return bool
      */
     protected function generateBalancesAction(): bool
@@ -204,13 +191,12 @@ class ListReportAccounting extends ListController
     }
 
     /**
-     * 
      * @param int       $total
      * @param Ejercicio $ejercicio
      */
     protected function generateBalances(&$total, $ejercicio)
     {
-        /// ledger
+        // ledger
         $ledger = new ReportLedger();
         $where = [
             new DataBaseWhere('startdate', $ejercicio->fechainicio),
@@ -225,7 +211,7 @@ class ListReportAccounting extends ListController
             $total += $ledger->save() ? 1 : 0;
         }
 
-        /// amounts
+        // amounts
         $amounts = new ReportAmount();
         if (false === $amounts->loadFromCode('', $where)) {
             $amounts->enddate = $ejercicio->fechafin;
@@ -235,7 +221,7 @@ class ListReportAccounting extends ListController
             $total += $amounts->save() ? 1 : 0;
         }
 
-        /// extra balances
+        // extra balances
         foreach ([ReportBalance::TYPE_INCOME, ReportBalance::TYPE_PROFIT, ReportBalance::TYPE_SHEET] as $type) {
             $balance = new ReportBalance();
             $where2 = [
@@ -262,14 +248,14 @@ class ListReportAccounting extends ListController
      */
     protected function loadWidgetValues($viewName)
     {
-        $typeColumn = $this->views[$viewName]->columnForField('type');
-        if ($typeColumn) {
-            $typeColumn->widget->setValuesFromArray(ReportBalance::typeList());
+        $columnType = $this->views[$viewName]->columnForField('type');
+        if ($columnType && $columnType->widget->getType() === 'select') {
+            $columnType->widget->setValuesFromArray(ReportBalance::typeList());
         }
 
-        $formatColumn = $this->views[$viewName]->columnForField('subtype');
-        if ($formatColumn) {
-            $formatColumn->widget->setValuesFromArray(ReportBalance::subtypeList());
+        $columnFormat = $this->views[$viewName]->columnForField('subtype');
+        if ($columnFormat && $columnFormat->widget->getType() === 'select') {
+            $columnFormat->widget->setValuesFromArray(ReportBalance::subtypeList());
         }
     }
 }

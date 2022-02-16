@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -52,25 +53,21 @@ class ColumnItem extends VisualItem
     public $level;
 
     /**
-     *
      * @var int
      */
     public $numcolumns;
 
     /**
-     *
      * @var int
      */
     public $order;
 
     /**
-     *
      * @var string
      */
     public $title;
 
     /**
-     *
      * @var string
      */
     public $titleurl;
@@ -83,39 +80,39 @@ class ColumnItem extends VisualItem
     public $widget;
 
     /**
-     *
      * @param array $data
      */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         parent::__construct($data);
-        $this->description = isset($data['description']) ? $data['description'] : '';
-        $this->display = isset($data['display']) ? $data['display'] : 'left';
-        $this->level = isset($data['level']) ? (int) $data['level'] : 0;
-        $this->numcolumns = isset($data['numcolumns']) ? (int) $data['numcolumns'] : 0;
-        $this->order = isset($data['order']) ? (int) $data['order'] : 0;
-        $this->title = isset($data['title']) ? $data['title'] : $this->name;
-        $this->titleurl = isset($data['titleurl']) ? $data['titleurl'] : '';
+        $this->description = $data['description'] ?? '';
+        $this->display = $data['display'] ?? 'left';
+        $this->level = isset($data['level']) ? (int)$data['level'] : 0;
+        $this->numcolumns = isset($data['numcolumns']) ? (int)$data['numcolumns'] : 0;
+        $this->order = isset($data['order']) ? (int)$data['order'] : 0;
+        $this->title = $data['title'] ?? $this->name;
+        $this->titleurl = $data['titleurl'] ?? '';
         $this->loadWidget($data['children']);
     }
 
     /**
-     *
      * @param object $model
-     * @param bool   $onlyField
+     * @param bool $onlyField
      *
      * @return string
      */
-    public function edit($model, $onlyField = false)
+    public function edit($model, bool $onlyField = false): string
     {
         if ($this->hidden()) {
             return $this->widget->inputHidden($model);
         }
 
-        $editHtml = $onlyField ? $this->widget->edit($model) : $this->widget->edit($model, $this->title, $this->description, $this->titleurl);
+        // para los checkbox forzamos el col-sm-auto
+        $colAuto = $this->widget->getType() === 'checkbox' ? 'col-sm-auto' : 'col-sm';
 
-        $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css('col-md');
+        $divClass = $this->numcolumns > 0 ? $this->css('col-md-') . $this->numcolumns : $this->css($colAuto);
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
+        $editHtml = $onlyField ? $this->widget->edit($model) : $this->widget->edit($model, $this->title, $this->description, $this->titleurl);
         return '<div' . $divID . ' class="' . $divClass . '">'
             . $editHtml
             . '</div>';
@@ -126,20 +123,16 @@ class ColumnItem extends VisualItem
      *
      * @return string
      */
-    public function htmlWidth()
+    public function htmlWidth(): string
     {
         if ($this->numcolumns < 1 || $this->numcolumns > 11) {
             return '100%';
         }
 
-        return \round((100.00 / 12 * $this->numcolumns), 5) . '%';
+        return round((100.00 / 12 * $this->numcolumns), 5) . '%';
     }
 
-    /**
-     *
-     * @return boolean
-     */
-    public function hidden()
+    public function hidden(): bool
     {
         if ($this->display === 'none') {
             return true;
@@ -149,8 +142,7 @@ class ColumnItem extends VisualItem
     }
 
     /**
-     *
-     * @param object  $model
+     * @param object $model
      * @param Request $request
      */
     public function processFormData(&$model, $request)
@@ -159,21 +151,19 @@ class ColumnItem extends VisualItem
     }
 
     /**
-     *
      * @param object $model
      *
      * @return string
      */
-    public function tableCell($model)
+    public function tableCell($model): string
     {
         return $this->hidden() ? '' : $this->widget->tableCell($model, $this->display);
     }
 
     /**
-     *
      * @return string
      */
-    public function tableHeader()
+    public function tableHeader(): string
     {
         if ($this->hidden()) {
             return '';
@@ -188,19 +178,15 @@ class ColumnItem extends VisualItem
             . '</th>';
     }
 
-    /**
-     *
-     * @param array $children
-     */
-    protected function loadWidget($children)
+    protected function loadWidget(array $children)
     {
         foreach ($children as $child) {
             if ($child['tag'] !== 'widget') {
                 continue;
             }
 
-            $className = VisualItemLoadEngine::getNamespace() . 'Widget' . \ucfirst($child['type']);
-            if (\class_exists($className)) {
+            $className = VisualItemLoadEngine::getNamespace() . 'Widget' . ucfirst($child['type']);
+            if (class_exists($className)) {
                 $this->widget = new $className($child);
                 break;
             }

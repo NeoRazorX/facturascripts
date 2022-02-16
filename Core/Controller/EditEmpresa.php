@@ -146,12 +146,12 @@ class EditEmpresa extends EditController
     protected function setCustomWidgetValues(&$view)
     {
         $columnVATType = $view->columnForName('vat-regime');
-        if ($columnVATType) {
+        if ($columnVATType && $columnVATType->widget->getType() === 'select') {
             $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
         }
 
         $columnLogo = $view->columnForName('logo');
-        if ($columnLogo) {
+        if ($columnLogo && $columnLogo->widget->getType() === 'select') {
             $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
                 new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
             ]);

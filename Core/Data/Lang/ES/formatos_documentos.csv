@@ -1,3 +1,4 @@
-"codserie";"idempresa";"nombre";"tipodoc";"titulo"
-"R";"1";"Rectificativa";"FacturaCliente";"Factura Rectificativa"
-"S";"1";"Simplificada";"FacturaCliente";"Factura Simplificada"
+"codserie";"idempresa";"nombre";"tipodoc";"titulo";"autoaplicar"
+"R";"1";"Rectificativa";"FacturaCliente";"Factura Rectificativa";"1"
+"S";"1";"Simplificada";"FacturaCliente";"Factura Simplificada";"1"
+"A";"1";"Proforma";"PresupuestoCliente";"Factura Proforma";"0"

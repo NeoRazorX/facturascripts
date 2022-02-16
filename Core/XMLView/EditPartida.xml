@@ -28,7 +28,7 @@
                 </widget>
             </column>
             <column name="date" numcolumns="2" order="100">
-                <widget type="date" fieldname="fecha" icon="fas fa-calendar-alt" readonly="true" />
+                <widget type="date" fieldname="fecha" readonly="true" />
             </column>
             <column name="concept" order="120">
                 <widget type="text" fieldname="concepto" required="true" />

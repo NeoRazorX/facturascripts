@@ -15,6 +15,7 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
    RewriteEngine On
+   RewriteCond %{REQUEST_URI} !Dinamic/Assets/ [NC]
    RewriteCond %{REQUEST_URI} !node_modules/ [NC]
    RewriteRule . index.php [L]
 </IfModule>

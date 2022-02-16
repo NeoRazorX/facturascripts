@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,19 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
+
+use FacturaScripts\Core\Base\Contract\MiniLogStorageInterface;
 
 /**
  * Manage all log message information types.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class MiniLog
+final class MiniLog
 {
 
-    const ALL_LEVELS = ['critical', 'debug', 'error', 'info', 'notice', 'warning'];
     const DEFAULT_CHANNEL = 'master';
-    const DEFAULT_LEVELS = ['critical', 'error', 'info', 'notice', 'warning'];
+    const LIMIT = 5000;
 
     /**
      * Current channel.
@@ -38,27 +40,50 @@ class MiniLog
     private $channel;
 
     /**
+     * @var array
+     */
+    private static $context = [];
+
+    /**
      * Contains the log data.
      *
      * @var array
      */
-    private static $dataLog = [];
+    private static $data = [];
 
     /**
-     * 
-     * @param string $channel
+     * @var MiniLogStorageInterface
      */
-    public function __construct(string $channel = '')
+    private static $storage;
+
+    /**
+     * @var Translator|null
+     */
+    private $translator;
+
+    public function __construct(string $channel = '', $translator = null)
     {
         $this->channel = empty($channel) ? self::DEFAULT_CHANNEL : $channel;
+        $this->translator = $translator;
     }
 
     /**
-     * Clean the log.
+     * Clears all data for one or all channels.
+     *
+     * @param string $channel
      */
-    public function clear()
+    public static function clear(string $channel = '')
     {
-        self::$dataLog = [];
+        if (empty($channel)) {
+            self::$data = [];
+            return;
+        }
+
+        foreach (self::$data as $key => $item) {
+            if ($item['channel'] === $channel) {
+                unset(self::$data[$key]);
+            }
+        }
     }
 
     /**
@@ -67,7 +92,7 @@ class MiniLog
      * Example: Application component unavailable, unexpected exception.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function critical(string $message, array $context = [])
     {
@@ -78,11 +103,13 @@ class MiniLog
      * Detailed debug information.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function debug(string $message, array $context = [])
     {
-        $this->log('debug', $message, $context);
+        if (FS_DEBUG) {
+            $this->log('debug', $message, $context);
+        }
     }
 
     /**
@@ -90,7 +117,7 @@ class MiniLog
      * be logged and monitored.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function error(string $message, array $context = [])
     {
@@ -98,10 +125,22 @@ class MiniLog
     }
 
     /**
+     * Gets the stored context value for a given key.
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    public static function getContext(string $key): string
+    {
+        return self::$context[$key] ?? '';
+    }
+
+    /**
      * Interesting information, advices.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function info(string $message, array $context = [])
     {
@@ -112,7 +151,7 @@ class MiniLog
      * Normal but significant events.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function notice(string $message, array $context = [])
     {
@@ -120,41 +159,72 @@ class MiniLog
     }
 
     /**
-     * Returns specified level messages of this channel.
-     * 
+     * Returns all messages for a given channel (or all channels) and some levels.
+     *
+     * @param string $channel
      * @param array $levels
      *
      * @return array
      */
-    public function read(array $levels = self::DEFAULT_LEVELS): array
+    public static function read(string $channel = '', array $levels = []): array
     {
         $messages = [];
-        foreach (self::$dataLog as $data) {
-            if ($data['channel'] === $this->channel && in_array($data['level'], $levels, false)) {
-                $messages[] = $data;
+        foreach (self::$data as $data) {
+            if ($channel && $data['channel'] != $channel) {
+                continue;
             }
+
+            if ($levels && false === in_array($data['level'], $levels)) {
+                continue;
+            }
+
+            $messages[] = $data;
         }
 
         return $messages;
     }
 
     /**
-     * Returns specified level messages of all channels.
-     * 
-     * @param array $levels
+     * Stores all messages on the default storage.
      *
-     * @return array
+     * @param string $channel
+     *
+     * @return bool
      */
-    public function readAll(array $levels = self::DEFAULT_LEVELS): array
+    public static function save(string $channel = ''): bool
     {
-        $messages = [];
-        foreach (self::$dataLog as $data) {
-            if (in_array($data['level'], $levels, false)) {
-                $messages[] = $data;
-            }
+        if (!isset(self::$storage)) {
+            self::$storage = new MiniLogStorage();
         }
 
-        return $messages;
+        $data = empty($channel) ? self::$data : self::read($channel);
+        if (self::$storage->save($data)) {
+            self::clear($channel);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Sets the context value for a given key.
+     *
+     * @param string $key
+     * @param string $value
+     */
+    public static function setContext(string $key, string $value)
+    {
+        self::$context[$key] = $value;
+    }
+
+    /**
+     * Sets a new storage.
+     *
+     * @param MiniLogStorageInterface $storage
+     */
+    public static function setStorage(MiniLogStorageInterface $storage)
+    {
+        self::$storage = $storage;
     }
 
     /**
@@ -164,7 +234,7 @@ class MiniLog
      * that are not necessarily wrong.
      *
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     public function warning(string $message, array $context = [])
     {
@@ -176,19 +246,45 @@ class MiniLog
      *
      * @param string $level
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
-    protected function log(string $level, string $message, array $context = [])
+    private function log(string $level, string $message, array $context = [])
     {
-        if (!empty($message)) {
-            self::$dataLog[] = [
-                'channel' => $this->channel,
-                'context' => $context,
-                'level' => $level,
-                'message' => $message,
-                'microtime' => microtime(true),
-                'time' => time(),
-            ];
+        if (empty($message)) {
+            return;
+        }
+
+        // if we find this message in the log, we increase the counter
+        $finalContext = array_merge($context, self::$context);
+        $transMessage = is_null($this->translator) ? $message : $this->translator->trans($message, $context);
+        foreach (self::$data as $key => $value) {
+            if ($value['channel'] === $this->channel && $value['level'] === $level &&
+                $value['message'] === $transMessage && $value['context'] === $finalContext) {
+                self::$data[$key]['count']++;
+                return;
+            }
+        }
+
+        // add message
+        self::$data[] = [
+            'channel' => $this->channel,
+            'context' => $finalContext,
+            'count' => 1,
+            'level' => $level,
+            'message' => $transMessage,
+            'original' => $message,
+            'time' => microtime(true)
+        ];
+        $this->reduce();
+    }
+
+    /**
+     * Saves on the default storage and clear all data.
+     */
+    protected function reduce()
+    {
+        if (count(self::$data) > self::LIMIT) {
+            self::save($this->channel);
         }
     }
 }

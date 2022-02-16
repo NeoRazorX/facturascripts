@@ -16,9 +16,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Agentes;
+use FacturaScripts\Core\DataSrc\Almacenes;
+use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
 
 /**
@@ -32,11 +40,10 @@ abstract class ListBusinessDocument extends ListController
     use ListBusinessActionTrait;
 
     /**
-     *
      * @param string $viewName
      * @param string $modelName
      */
-    protected function addCommonViewFilters(string $viewName, $modelName)
+    protected function addCommonViewFilters(string $viewName, string $modelName)
     {
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
         $this->addFilterNumber($viewName, 'min-total', 'total', 'total', '>=');
@@ -47,32 +54,32 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterSelect($viewName, 'idestado', 'state', 'idestado', $statusValues);
 
         $users = $this->codeModel->all('users', 'nick', 'nick');
-        if (\count($users) > 2) {
+        if (count($users) > 2) {
             $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
         }
 
-        $companies = $this->codeModel->all('empresas', 'idempresa', 'nombrecorto');
-        if (\count($companies) > 2) {
+        $companies = Empresas::codeModel();
+        if (count($companies) > 2) {
             $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $companies);
         }
 
-        $warehouses = $this->codeModel->all('almacenes', 'codalmacen', 'nombre');
-        if (\count($warehouses) > 2) {
+        $warehouses = Almacenes::codeModel();
+        if (count($warehouses) > 2) {
             $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
         }
 
-        $series = $this->codeModel->all('series', 'codserie', 'descripcion');
-        if (\count($series) > 2) {
+        $series = Series::codeModel();
+        if (count($series) > 2) {
             $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', $series);
         }
 
-        $paymethods = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
-        if (\count($paymethods) > 2) {
+        $paymethods = FormasPago::codeModel();
+        if (count($paymethods) > 2) {
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymethods);
         }
 
-        $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
-        if (\count($currencies) > 2) {
+        $currencies = Divisas::codeModel();
+        if (count($currencies) > 2) {
             $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
         }
 
@@ -82,11 +89,10 @@ abstract class ListBusinessDocument extends ListController
     }
 
     /**
-     *
      * @param string $viewName
      * @param string $modelName
      */
-    protected function createViewLines(string $viewName, $modelName)
+    protected function createViewLines(string $viewName, string $modelName)
     {
         $this->addView($viewName, $modelName, 'lines', 'fas fa-list');
         $this->addSearchFields($viewName, ['referencia', 'descripcion']);
@@ -96,12 +102,9 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['pvptotal'], 'amount');
         $this->addOrderBy($viewName, ['idlinea'], 'code', 2);
 
-        /// filters
+        // filters
         $this->addFilterAutocomplete($viewName, 'idproducto', 'product', 'idproducto', 'productos', 'idproducto', 'referencia');
-
-        $taxValues = $this->codeModel->all('impuestos', 'codimpuesto', 'descripcion');
-        $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxValues);
-
+        $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', Impuestos::codeModel());
         $this->addFilterNumber($viewName, 'cantidad', 'quantity', 'cantidad');
         $this->addFilterNumber($viewName, 'dtopor', 'discount', 'dtopor');
         $this->addFilterNumber($viewName, 'pvpunitario', 'pvp', 'pvpunitario');
@@ -110,7 +113,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterCheckbox($viewName, 'irpf', 'retention', 'irpf', '!=', 0);
         $this->addFilterCheckbox($viewName, 'suplido', 'supplied', 'suplido');
 
-        /// settings
+        // settings
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'checkBoxes', false);
@@ -118,12 +121,11 @@ abstract class ListBusinessDocument extends ListController
     }
 
     /**
-     *
      * @param string $viewName
      * @param string $modelName
      * @param string $label
      */
-    protected function createViewPurchases(string $viewName, $modelName, $label)
+    protected function createViewPurchases(string $viewName, string $modelName, string $label)
     {
         $this->addView($viewName, $modelName, $label, 'fas fa-copy');
         $this->addSearchFields($viewName, ['codigo', 'nombre', 'numproveedor', 'observaciones']);
@@ -134,22 +136,21 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['codproveedor'], 'supplier-code');
         $this->addOrderBy($viewName, ['total'], 'total');
 
-        /// filters
+        // filters
         $this->addCommonViewFilters($viewName, $modelName);
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
     }
 
     /**
-     *
      * @param string $viewName
      * @param string $modelName
      * @param string $label
      */
-    protected function createViewSales(string $viewName, $modelName, $label)
+    protected function createViewSales(string $viewName, string $modelName, string $label)
     {
         $this->addView($viewName, $modelName, $label, 'fas fa-copy');
-        $this->addSearchFields($viewName, ['codigo', 'nombrecliente', 'numero2', 'observaciones']);
+        $this->addSearchFields($viewName, ['codigo', 'codigoenv', 'nombrecliente', 'numero2', 'observaciones']);
         $this->addOrderBy($viewName, ['codigo'], 'code');
         $this->addOrderBy($viewName, ['codcliente'], 'customer-code');
         $this->addOrderBy($viewName, ['fecha', $this->tableColToNumber('numero')], 'date', 2);
@@ -157,16 +158,19 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['numero2'], 'number2');
         $this->addOrderBy($viewName, ['total'], 'total');
 
-        /// filters
+        // filters
         $this->addCommonViewFilters($viewName, $modelName);
         $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterAutocomplete($viewName, 'idcontactofact', 'billing-address', 'idcontactofact', 'contactos', 'idcontacto', 'direccion');
         $this->addFilterautocomplete($viewName, 'idcontactoenv', 'shipping-address', 'idcontactoenv', 'contactos', 'idcontacto', 'direccion');
 
-        $agents = $this->codeModel->all('agentes', 'codagente', 'nombre');
-        if (\count($agents) > 1) {
+        $agents = Agentes::codeModel();
+        if (count($agents) > 2) {
             $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
         }
+
+        $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
+        $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
 
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
     }
@@ -206,13 +210,12 @@ abstract class ListBusinessDocument extends ListController
     }
 
     /**
-     * 
      * @param string $name
      *
      * @return string
      */
-    private function tableColToNumber(string $name)
+    private function tableColToNumber(string $name): string
     {
-        return \strtolower(\FS_DB_TYPE) == 'postgresql' ? 'CAST(' . $name . ' as integer)' : 'CAST(' . $name . ' as unsigned)';
+        return strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(' . $name . ' as integer)' : 'CAST(' . $name . ' as unsigned)';
     }
 }

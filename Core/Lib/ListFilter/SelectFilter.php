@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,32 +30,29 @@ class SelectFilter extends BaseFilter
 {
 
     /**
-     *
      * @var string
      */
     public $icon = '';
 
     /**
-     *
      * @var array
      */
     public $values;
 
     /**
-     *
      * @param string $key
      * @param string $field
      * @param string $label
-     * @param array  $values
+     * @param array $values
      */
-    public function __construct($key, $field, $label, $values = [])
+    public function __construct(string $key, string $field, string $label, array $values = [])
     {
         parent::__construct($key, $field, $label);
+        $this->autosubmit = true;
         $this->values = $values;
     }
 
     /**
-     *
      * @param array $where
      *
      * @return bool
@@ -70,16 +68,15 @@ class SelectFilter extends BaseFilter
     }
 
     /**
-     *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         if (empty($this->icon)) {
             return '<div class="col-sm-3 col-lg-2">'
                 . '<div class="form-group">'
-                . '<select name="' . $this->name() . '" class="form-control"' . $this->onChange() . '>'
-                . $this->getHtmlOptions()
+                . '<select name="' . $this->name() . '" class="form-control"' . $this->onChange()
+                . ' title="' . static::$i18n->trans($this->label) . '">' . $this->getHtmlOptions()
                 . '</select>'
                 . '</div>'
                 . '</div>';
@@ -87,7 +84,7 @@ class SelectFilter extends BaseFilter
 
         return '<div class="col-sm-3 col-lg-2">'
             . '<div class="form-group">'
-            . '<div class="input-group">'
+            . '<div class="input-group" title="' . static::$i18n->trans($this->label) . '">'
             . '<span class="input-group-prepend">'
             . '<span class="input-group-text">'
             . '<i class="' . $this->icon . ' fa-fw" aria-hidden="true"></i>'
@@ -102,10 +99,9 @@ class SelectFilter extends BaseFilter
     }
 
     /**
-     *
      * @return string
      */
-    protected function getHtmlOptions()
+    protected function getHtmlOptions(): string
     {
         $html = '<option value="">' . static::$i18n->trans($this->label) . '</option>';
         foreach ($this->values as $data) {

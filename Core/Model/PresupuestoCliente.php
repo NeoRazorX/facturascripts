@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2020  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014       Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -46,6 +46,17 @@ class PresupuestoCliente extends Base\SalesDocument
      */
     public $idpresupuesto;
 
+    public function clear()
+    {
+        parent::clear();
+
+        /// set default expiration
+        $expirationDays = $this->toolBox()->appSettings()->get('default', 'finofertadays');
+        if ($expirationDays) {
+            $this->finoferta = \date(self::DATE_STYLE, \strtotime('+' . $expirationDays . ' days'));
+        }
+    }
+
     /**
      * Returns the lines associated with the estimation.
      *
@@ -67,7 +78,7 @@ class PresupuestoCliente extends Base\SalesDocument
      * 
      * @return LineaPresupuesto
      */
-    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpresupuesto'])
+    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpresupuesto', 'servido'])
     {
         $newLine = new LineaPresupuesto();
         $newLine->idpresupuesto = $this->idpresupuesto;

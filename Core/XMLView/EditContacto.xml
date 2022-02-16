@@ -33,7 +33,7 @@
             <column name="surname" numcolumns="3" order="130">
                 <widget type="text" fieldname="apellidos" maxlength="150" />
             </column>
-            <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="140">
+            <column name="fiscal-id" titleurl="EditSettings?activetab=EditIdentificadorFiscal" numcolumns="2" order="140">
                 <widget type="select" fieldname="tipoidfiscal" required="true">
                     <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal" />
                 </widget>

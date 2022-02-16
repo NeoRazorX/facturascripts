@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -49,6 +49,7 @@ class ListPais extends ListController
     protected function createViews()
     {
         $this->createViewCountries();
+        $this->createViewsDivisas();
         $this->createViewProvinces();
         $this->createViewCities();
     }
@@ -57,7 +58,7 @@ class ListPais extends ListController
      * 
      * @param string $viewName
      */
-    protected function createViewCities($viewName = 'ListCiudad')
+    protected function createViewCities(string $viewName = 'ListCiudad')
     {
         $this->addView($viewName, 'Ciudad', 'cities', 'fas fa-city');
         $this->addOrderBy($viewName, ['ciudad'], 'name');
@@ -69,7 +70,7 @@ class ListPais extends ListController
      * 
      * @param string $viewName
      */
-    protected function createViewCountries($viewName = 'ListPais')
+    protected function createViewCountries(string $viewName = 'ListPais')
     {
         $this->addView($viewName, 'Pais', 'countries', 'fas fa-globe-americas');
         $this->addOrderBy($viewName, ['codpais'], 'code');
@@ -82,7 +83,20 @@ class ListPais extends ListController
      * 
      * @param string $viewName
      */
-    protected function createViewProvinces($viewName = 'ListProvincia')
+    protected function createViewsDivisas(string $viewName = 'ListDivisa')
+    {
+        $this->addView($viewName, 'Divisa', 'currency', 'fas fa-money-bill-alt');
+        $this->addOrderBy($viewName, ['coddivisa'], 'code');
+        $this->addOrderBy($viewName, ['descripcion'], 'description', 1);
+        $this->addOrderBy($viewName, ['codiso'], 'codiso');
+        $this->addSearchFields($viewName, ['descripcion', 'coddivisa']);
+    }
+
+    /**
+     * 
+     * @param string $viewName
+     */
+    protected function createViewProvinces(string $viewName = 'ListProvincia')
     {
         $this->addView($viewName, 'Provincia', 'province', 'fas fa-map-signs');
         $this->addOrderBy($viewName, ['provincia'], 'name');

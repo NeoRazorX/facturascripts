@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -31,7 +32,7 @@ use FacturaScripts\Core\Base\ToolBox;
 class CodeModel
 {
 
-    const ALL_LIMIT = 500;
+    const ALL_LIMIT = 1000;
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
     const SEARCH_LIMIT = 50;
 
@@ -61,7 +62,7 @@ class CodeModel
      *
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         if (empty($data)) {
             $this->code = '';
@@ -78,19 +79,19 @@ class CodeModel
      * @param string $tableName
      * @param string $fieldCode
      * @param string $fieldDescription
-     * @param bool   $addEmpty
-     * @param array  $where
+     * @param bool $addEmpty
+     * @param array $where
      *
      * @return static[]
      */
-    public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = true, $where = [])
+    public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = true, $where = []): array
     {
         $result = [];
         if ($addEmpty) {
             $result[] = new static(['code' => null, 'description' => '------']);
         }
 
-        /// is a table or a model?
+        // is a table or a model?
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if (class_exists($modelClass)) {
             $model = new $modelClass();
@@ -99,7 +100,7 @@ class CodeModel
 
         self::initDataBase();
         if (!self::$dataBase->tableExists($tableName)) {
-            static::toolBox()->i18nLog()->error('table-not-found', ['%tableName%' => $tableName]);
+            ToolBox::i18nLog()->error('table-not-found', ['%tableName%' => $tableName]);
             return $result;
         }
 
@@ -114,14 +115,19 @@ class CodeModel
 
     /**
      * Convert an associative array (code and value) into a CodeModel array.
-     * 
+     *
      * @param array $data
+     * @param bool $addEmpty
      *
      * @return static[]
      */
-    public static function array2codeModel(array $data)
+    public static function array2codeModel(array $data, bool $addEmpty = true): array
     {
         $result = [];
+        if ($addEmpty) {
+            $result[] = new static(['code' => null, 'description' => '------']);
+        }
+
         foreach ($data as $key => $value) {
             $row = ['code' => $key, 'description' => $value];
             $result[] = new static($row);
@@ -133,25 +139,25 @@ class CodeModel
     /**
      * Load a CodeModel list (code and description) for the indicated table and search.
      *
-     * @param string          $tableName
-     * @param string          $fieldCode
-     * @param string          $fieldDescription
-     * @param string          $query
+     * @param string $tableName
+     * @param string $fieldCode
+     * @param string $fieldDescription
+     * @param string $query
      * @param DataBaseWhere[] $where
      *
      * @return static[]
      */
-    public static function search($tableName, $fieldCode, $fieldDescription, $query, $where = [])
+    public static function search($tableName, $fieldCode, $fieldDescription, $query, $where = []): array
     {
-        /// is a table or a model?
+        // is a table or a model?
         $modelClass = self::MODEL_NAMESPACE . $tableName;
-        if (\class_exists($modelClass)) {
+        if (class_exists($modelClass)) {
             $model = new $modelClass();
             return $model->codeModelSearch($query, $fieldCode, $where);
         }
 
         $fields = $fieldCode . '|' . $fieldDescription;
-        $where[] = new DataBaseWhere($fields, \mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
         return self::all($tableName, $fieldCode, $fieldDescription, false, $where);
     }
 
@@ -167,7 +173,7 @@ class CodeModel
      */
     public function get($tableName, $fieldCode, $code, $fieldDescription)
     {
-        /// is a table or a model?
+        // is a table or a model?
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if (class_exists($modelClass)) {
             $model = new $modelClass();
@@ -200,10 +206,10 @@ class CodeModel
      *
      * @return string
      */
-    public function getDescription($tableName, $fieldCode, $code, $fieldDescription)
+    public function getDescription($tableName, $fieldCode, $code, $fieldDescription): string
     {
         $model = $this->get($tableName, $fieldCode, $code, $fieldDescription);
-        return empty($model->description) ? $code : $model->description;
+        return empty($model->description) ? (string)$code : $model->description;
     }
 
     /**
@@ -214,14 +220,5 @@ class CodeModel
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
         }
-    }
-
-    /**
-     *
-     * @return ToolBox
-     */
-    protected static function toolBox()
-    {
-        return new ToolBox();
     }
 }

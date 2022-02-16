@@ -1,23 +1,23 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
-{% extends "Master/MenuTemplate.html.twig" %}
+{% extends "Master/MenuBghTemplate.html.twig" %}
 
 {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 {% set allPlugins = fsc.getAllPlugins() %}
@@ -28,28 +28,32 @@
     <div class="container-fluid mb-2">
         <div class="row">
             <div class="col-sm-6">
-                <div class="btn-group bg-white">
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" title="{{ i18n.trans('refresh') }}">
+                <div class="btn-group">
+                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}"
+                       title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                     {% if fsc.getPageData()['name'] == fsc.user.homepage %}
-                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE" title="{{ i18n.trans('marked-as-homepage') }}">
+                        <a class="btn btn-sm btn-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE"
+                           title="{{ i18n.trans('marked-as-homepage') }}">
                             <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
-                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE" title="{{ i18n.trans('mark-as-homepage') }}">
-                            <i class="fas fa-bookmark" aria-hidden="true"></i>
+                        <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
+                           title="{{ i18n.trans('mark-as-homepage') }}">
+                            <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                 </div>
                 {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
-                    <button class="btn btn-sm btn-success" type="button" data-toggle="modal" data-target="#modalAddPlugin">
+                    <button class="btn btn-sm btn-success" type="button" data-toggle="modal"
+                            data-target="#modalAddPlugin">
                         <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ i18n.trans('add') }}</span>
                     </button>
                 {% endif %}
-                <div class="btn-group bg-white">
-                    <a href="{{ fsc.url() }}?action=rebuild" class="btn btn-sm btn-outline-warning">
+                <div class="btn-group">
+                    <a href="{{ fsc.url() }}?action=rebuild" class="btn btn-sm btn-warning">
                         <i class="fas fa-hammer fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ i18n.trans('rebuild') }}</span>
                     </a>
@@ -101,13 +105,15 @@
     {# Modal for add new plugins #}
     {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
         <form action="{{ fsc.url() }}" name="upload-plugins" method="post" class="form" enctype="multipart/form-data">
-            <input type="hidden" name="action" value="upload" />
+            <input type="hidden" name="action" value="upload"/>
+            <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
             <div class="modal fade" id="modalAddPlugin" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">{{ i18n.trans('add-new-plugin') }}</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="{{ i18n.trans('close') }}">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -127,7 +133,8 @@
                                 {% endif %}
                             </div>
                             <div class="text-right mt-5">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ i18n.trans('cancel') }}</button>
+                                <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">{{ i18n.trans('cancel') }}</button>
                                 <button type="submit" class="btn btn-primary">{{ i18n.trans('continue') }}</button>
                             </div>
                         </div>
@@ -136,15 +143,6 @@
             </div>
         </form>
     {% endif %}
-{% endblock %}
-
-{% block css %}
-    {{ parent() }}
-    <style>
-        .bg-header {
-            background-color: #FAFBFC;
-        }
-    </style>
 {% endblock %}
 
 {% block javascripts %}
@@ -167,7 +165,7 @@
                     },
                     callback: function (result) {
                         if (result) {
-                            window.location = "{{fsc.url()}}?action=remove" + "\u0026" + "plugin=" + pluginName;
+                            window.location = "{{ fsc.url() }}?action=remove" + "\u0026" + "plugin=" + pluginName;
                         }
                     }
                 });
@@ -220,32 +218,32 @@
     <div class="table-responsive">
         <table class="table table-striped table-hover">
             <thead>
-                <tr>
-                    <th width="140">{{ i18n.trans('health') }}</th>
-                    <th>{{ i18n.trans('name') }}</th>
-                    <th>{{ i18n.trans('description') }}</th>
-                    <th></th>
-                </tr>
+            <tr>
+                <th width="140">{{ i18n.trans('health') }}</th>
+                <th>{{ i18n.trans('name') }}</th>
+                <th>{{ i18n.trans('description') }}</th>
+                <th></th>
+            </tr>
             </thead>
             <tbody>
-                {% for plugin in allPlugins %}
-                    {% set extraClass = plugin.health > 2 ? 'table-success' : plugin.health == 0 ? 'table-danger' : 'table-warning' %}
-                    <tr class="clickableRow {{ extraClass }}" data-href="{{ plugin.url }}" data-target="_blank">
-                        <td>{{ _self.healthStatus(plugin.health) }}</td>
-                        <td>{{ plugin.name }}</td>
-                        <td>{{ plugin.description | nl2br }}</td>
-                        <td class="text-center">
-                            {% if plugin.installed %}
-                                <i class="fas fa-box-open fa-fw" aria-hidden="true"></i>
-                                {{ i18n.trans('installed') }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr class="table-warning">
-                        <td colspan="4"><b>{{ i18n.trans('no-data') }}</b></td>
-                    </tr>
-                {% endfor %}
+            {% for plugin in allPlugins %}
+                {% set extraClass = plugin.health > 2 ? 'table-success' : plugin.health == 0 ? 'table-danger' : 'table-warning' %}
+                <tr class="clickableRow {{ extraClass }}" data-href="{{ plugin.url }}" data-target="_blank">
+                    <td>{{ _self.healthStatus(plugin.health) }}</td>
+                    <td>{{ plugin.name }}</td>
+                    <td>{{ plugin.description | nl2br }}</td>
+                    <td class="text-center">
+                        {% if plugin.installed %}
+                            <i class="fas fa-box-open fa-fw" aria-hidden="true"></i>
+                            {{ i18n.trans('installed') }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr class="table-warning">
+                    <td colspan="4"><b>{{ i18n.trans('no-data') }}</b></td>
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
@@ -255,64 +253,67 @@
     <div class="table-responsive">
         <table class="table table-striped table-hover">
             <thead>
-                <tr>
-                    <th>{{ i18n.trans('name') }}</th>
-                    <th class="text-right">{{ i18n.trans('version') }}</th>
-                    <th>{{ i18n.trans('description') }}</th>
-                    <th></th>
-                    <th class="text-center">{{ i18n.trans('actions') }}</th>
-                </tr>
+            <tr>
+                <th>{{ i18n.trans('name') }}</th>
+                <th class="text-right">{{ i18n.trans('version') }}</th>
+                <th>{{ i18n.trans('description') }}</th>
+                <th></th>
+                <th class="text-center">{{ i18n.trans('actions') }}</th>
+            </tr>
             </thead>
             <tbody>
-                {% for plugin in installedPlugins %}
-                    {% set trClass = ' class="table-danger"' %}
-                    {% if plugin.enabled %}
-                        {% set trClass = ' class="table-success"' %}
-                    {% elseif plugin.compatible %}
-                        {% set trClass = '' %}
+            {% for plugin in installedPlugins %}
+                {% set trClass = ' class="table-danger"' %}
+                {% if plugin.enabled %}
+                    {% set trClass = ' class="table-success"' %}
+                {% elseif plugin.compatible %}
+                    {% set trClass = '' %}
+                {% endif %}
+                <tr{{ trClass | raw }}>
+                    <td>{{ plugin.name }}</td>
+                    {% if plugin.version == 0 %}
+                        <td class="text-right text-danger">v{{ plugin.version }}</td>
+                    {% elseif plugin.version < 1 %}
+                        <td class="text-right text-warning">v{{ plugin.version }}</td>
+                    {% else %}
+                        <td class="text-right">v{{ plugin.version }}</td>
                     {% endif %}
-                    <tr{{ trClass | raw }}>
-                        <td>{{ plugin.name }}</td>
-                        {% if plugin.version == 0 %}
-                            <td class="text-right text-danger">v{{ plugin.version }}</td>
-                        {% elseif plugin.version < 1 %}
-                            <td class="text-right text-warning">v{{ plugin.version }}</td>
-                        {% else %}
-                            <td class="text-right">v{{ plugin.version }}</td>
-                        {% endif %}
-                        <td>{{ plugin.description | nl2br }}</td>
-                        {% if plugin.enabled %}
-                            <td></td>
-                            <td>
-                                <a class="btn btn-block btn-sm btn-secondary" href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin.name }}">
-                                    <i class="fas fa-times fa-fw" aria-hidden="true"></i>
-                                    <span class="d-none d-sm-inline-block">{{ i18n.trans('disable') }}</span>
+                    <td>{{ plugin.description | nl2br }}</td>
+                    {% if plugin.enabled %}
+                        <td></td>
+                        <td>
+                            <a class="btn btn-block btn-sm btn-secondary"
+                               href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin.name }}">
+                                <i class="fas fa-times fa-fw" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">{{ i18n.trans('disable') }}</span>
+                            </a>
+                        </td>
+                    {% elseif plugin.compatible %}
+                        <td>
+                            {% if not constant('FS_DISABLE_RM_PLUGINS') %}
+                                <a class="btn btn-block btn-sm btn-danger" href="#"
+                                   onclick="deletePlugin('{{ plugin.name }}');">
+                                    <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+                                    <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
                                 </a>
-                            </td>
-                        {% elseif plugin.compatible %}
-                            <td>
-                                {% if not constant('FS_DISABLE_RM_PLUGINS') %}
-                                    <a class="btn btn-block btn-sm btn-danger" href="#" onclick="deletePlugin('{{ plugin.name }}');">
-                                        <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
-                                        <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
-                                    </a>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a class="btn btn-block btn-sm btn-success" href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}">
-                                    <i class="fas fa-check fa-fw" aria-hidden="true"></i>
-                                    <span class="d-none d-sm-inline-block">{{ i18n.trans('enable') }}</span>
-                                </a>
-                            </td>
-                        {% else %}
-                            <td colspan="2"></td>
-                        {% endif %}
-                    </tr>
-                {% else %}
-                    <tr class="table-warning">
-                        <td colspan="5"><b>{{ i18n.trans('no-data') }}</b></td>
-                    </tr>
-                {% endfor %}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="btn btn-block btn-sm btn-success"
+                               href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}">
+                                <i class="fas fa-check fa-fw" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline-block">{{ i18n.trans('enable') }}</span>
+                            </a>
+                        </td>
+                    {% else %}
+                        <td colspan="2"></td>
+                    {% endif %}
+                </tr>
+            {% else %}
+                <tr class="table-warning">
+                    <td colspan="5"><b>{{ i18n.trans('no-data') }}</b></td>
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>

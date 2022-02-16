@@ -23,96 +23,102 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" description="optional" numcolumns="2" order="100">
-                <widget type="text" fieldname="codproveedor" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" />
+            <column name="code" description="optional" display="none" numcolumns="2" order="100">
+                <widget type="text" fieldname="codproveedor" icon="fas fa-hashtag" maxlength="10" readonly="dinamic"/>
             </column>
-            <column name="name" numcolumns="3" order="110" description="desc-provider-name">
+            <column name="name" description="desc-provider-name" order="110">
                 <widget type="text" fieldname="nombre" maxlength="100" required="true"/>
             </column>
-            <column name="business-name" numcolumns="3" order="120" description="desc-provider-business-name">
-                <widget type="text" fieldname="razonsocial" maxlength="100" />
-            </column>
-            <column name="fiscal-id" titleurl="ListIdentificadorFiscal" numcolumns="2" order="130">
-                <widget type="select" fieldname="tipoidfiscal" required="true">
-                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal" />
+            <column name="fiscal-mode" title="type" numcolumns="2" order="120">
+                <widget type="select" fieldname="personafisica" translate="true" required="true">
+                    <values title="is-person">1</values>
+                    <values title="company">0</values>
                 </widget>
             </column>
-            <column name="fiscal-number" numcolumns="2" order="140">
-                <widget type="text" fieldname="cifnif" maxlength="30" icon="fas fa-id-card" />
+            <column name="is-creditor" title="is-creditor" numcolumns="2" order="130">
+                <widget type="select" fieldname="acreedor" translate="true" required="true">
+                    <values title="yes">1</values>
+                    <values title="no">0</values>
+                </widget>
             </column>
-            <column name="fiscal-mode" title="is-person" numcolumns="4" order="150">
-                <widget type="checkbox" fieldname="personafisica" />
+            <column name="fiscal-id" titleurl="EditSettings?activetab=EditIdentificadorFiscal" numcolumns="2"
+                    order="140">
+                <widget type="select" fieldname="tipoidfiscal" required="true">
+                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"/>
+                </widget>
             </column>
-            <column name="is-creditor" title="is-creditor" numcolumns="3" order="160">
-                <widget type="checkbox" fieldname="acreedor" />
+            <column name="fiscal-number" numcolumns="2" order="150">
+                <widget type="text" fieldname="cifnif" maxlength="30"/>
             </column>
         </group>
         <group name="contact" title="contact-info" numcolumns="12">
-            <column name="contact" titleurl="ListProveedor?activetab=ListContacto" order="100">
-                <widget type="select" fieldname="idcontacto" onclick="EditContacto" />
+            <column name="business-name" description="desc-provider-business-name" numcolumns="3" order="90">
+                <widget type="text" fieldname="razonsocial" maxlength="100"/>
             </column>
-            <column name="phone" order="110">
-                <widget type="tel" fieldname="telefono1" maxlength="30" icon="fas fa-phone" />
+            <column name="contact" titleurl="ListProveedor?activetab=ListContacto" numcolumns="3" order="100">
+                <widget type="select" fieldname="idcontacto" onclick="EditContacto"/>
             </column>
-            <column name="phone2" order="120">
-                <widget type="tel" fieldname="telefono2" maxlength="30" icon="fas fa-mobile-alt" />
+            <column name="phone" numcolumns="2" order="110">
+                <widget type="tel" fieldname="telefono1" maxlength="30" icon="fas fa-phone"/>
             </column>
-            <column name="fax" display="none" order="130">
-                <widget type="tel" fieldname="fax" maxlength="30" icon="fas fa-fax" />
+            <column name="phone2" numcolumns="2" order="120">
+                <widget type="tel" fieldname="telefono2" maxlength="30" icon="fas fa-mobile-alt"/>
             </column>
-            <column name="email" order="140">
-                <widget type="email" fieldname="email" maxlength="100" icon="fas fa-envelope" />
+            <column name="fax" display="none" numcolumns="2" order="130">
+                <widget type="tel" fieldname="fax" maxlength="30" icon="fas fa-fax"/>
             </column>
-            <column name="website" order="150">
-                <widget type="link" fieldname="web" maxlength="100" />
+            <column name="email" numcolumns="2" order="140">
+                <widget type="email" fieldname="email" maxlength="100" icon="fas fa-envelope"/>
+            </column>
+            <column name="website" numcolumns="2" order="150">
+                <widget type="link" fieldname="web" maxlength="100"/>
+            </column>
+            <column name="creation-date" numcolumns="2" order="160">
+                <widget type="date" fieldname="fechaalta" readonly="true"/>
+            </column>
+            <column name="date-of-suspension" numcolumns="2" order="170">
+                <widget type="date" fieldname="fechabaja"/>
             </column>
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
-            <column name="serie" titleurl="ListSerie" numcolumns="3" order="100">
+            <column name="serie" titleurl="ListSerie" numcolumns="2" order="100">
                 <widget type="select" fieldname="codserie" onclick="EditSerie">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
+                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"/>
                 </widget>
             </column>
-            <column name="payment-method" numcolumns="3" titleurl="ListFormaPago" order="110">
+            <column name="payment-method" numcolumns="2" titleurl="ListFormaPago" order="110">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"/>
                 </widget>
             </column>
-            <column name="tax-transport" titleurl="ListImpuesto" display="none" numcolumns="3" order="120">
+            <column name="tax-transport" titleurl="ListImpuesto" display="none" numcolumns="2" order="120">
                 <widget type="select" fieldname="codimpuestoportes">
-                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion" />
+                    <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"/>
                 </widget>
             </column>
-            <column name="vat-regime" numcolumns="3" order="130">
-                <widget type="select" fieldname="regimeniva" required="true" />
+            <column name="vat-regime" numcolumns="2" order="130">
+                <widget type="select" fieldname="regimeniva" required="true"/>
             </column>
-            <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="3" order="140">
+            <column name="retention" titleurl="ListImpuesto?activetab=ListRetencion" numcolumns="2" order="140">
                 <widget type="select" fieldname="codretencion" onclick="EditRetencion">
-                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion" />
+                    <values source="retenciones" fieldcode="codretencion" fieldtitle="descripcion"/>
                 </widget>
             </column>
-            <column name="subaccount" description="customer-subaccount-p" titleurl="ListCuenta" display="none" numcolumns="3" order="150">
-                <widget type="text" fieldname="codsubcuenta" maxlength="15" icon="fas fa-balance-scale" />
+            <column name="subaccount" description="customer-subaccount-p" titleurl="ListCuenta" display="none"
+                    numcolumns="2" order="150">
+                <widget type="text" fieldname="codsubcuenta" maxlength="15" icon="fas fa-balance-scale"/>
             </column>
         </group>
-        <group name="notes" numcolumns="9">
+        <group name="notes" numcolumns="12">
             <column name="observations" order="100">
-                <widget type="textarea" fieldname="observaciones" rows="5" />
-            </column>
-        </group>
-        <group name="other" numcolumns="3">
-            <column name="creation-date" numcolumns="12" order="100">
-                <widget type="date" fieldname="fechaalta" icon="fas fa-calendar-alt" readonly="true" />
-            </column>
-            <column name="date-of-suspension" numcolumns="12" order="110">
-                <widget type="date" fieldname="fechabaja" icon="fas fa-calendar-alt" />
+                <widget type="textarea" fieldname="observaciones"/>
             </column>
         </group>
     </columns>
     <rows>
         <row type="statistics">
-            <datalabel icon="fas fa-copy" label="delivery-notes-button" function="getDeliveryNotesRisk" />
-            <datalabel icon="fas fa-money-bill-alt" label="pending-invoices-button" function="getInvoicesRisk" />
+            <datalabel icon="fas fa-copy" label="delivery-notes-button" function="getDeliveryNotesRisk"/>
+            <datalabel icon="fas fa-money-bill-alt" label="pending-invoices-button" function="getInvoicesRisk"/>
         </row>
     </rows>
 </view>

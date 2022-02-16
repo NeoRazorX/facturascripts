@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
@@ -58,7 +59,6 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     *
      * @return string
      */
     public function getImageUrl()
@@ -69,32 +69,32 @@ abstract class PanelController extends BaseController
     /**
      * Runs the controller's private logic.
      *
-     * @param Response              $response
-     * @param User                  $user
+     * @param Response $response
+     * @param User $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
 
-        /// Get any operations that have to be performed
+        // Get any operations that have to be performed
         $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
-        /// Runs operations before reading data
+        // Runs operations before reading data
         if ($this->execPreviousAction($action) === false || $this->pipe('execPreviousAction', $action) === false) {
             return;
         }
 
-        /// Load the data for each view
+        // Load the data for each view
         $mainViewName = $this->getMainViewName();
         foreach ($this->views as $viewName => $view) {
-            /// disable views if main view has no data
+            // disable views if main view has no data
             if ($viewName != $mainViewName && false === $this->hasData) {
                 $this->setSettings($viewName, 'active', false);
             }
 
             if (false === $view->settings['active']) {
-                /// exclude inactive views
+                // exclude inactive views
                 continue;
             } elseif ($this->active == $viewName) {
                 $view->processFormData($this->request, 'load');
@@ -110,7 +110,7 @@ abstract class PanelController extends BaseController
             }
         }
 
-        /// General operations with the loaded data
+        // General operations with the loaded data
         $this->execAfterAction($action);
         $this->pipe('execAfterAction', $action);
     }
@@ -120,7 +120,7 @@ abstract class PanelController extends BaseController
      *
      * @param string $position
      */
-    public function setTabsPosition($position)
+    public function setTabsPosition(string $position)
     {
         $this->tabsPosition = $position;
         switch ($this->tabsPosition) {
@@ -137,7 +137,7 @@ abstract class PanelController extends BaseController
                 $this->setTemplate('Master/PanelController');
         }
 
-        foreach (\array_keys($this->views) as $viewName) {
+        foreach (array_keys($this->views) as $viewName) {
             $this->views[$viewName]->settings['card'] = $this->tabsPosition !== 'top';
         }
     }
@@ -150,7 +150,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addEditListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-bars')
+    protected function addEditListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-bars')
     {
         $view = new EditListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -165,7 +165,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addEditView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-edit')
+    protected function addEditView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-edit')
     {
         $view = new EditView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -177,12 +177,14 @@ abstract class PanelController extends BaseController
      * Master/Detail params:
      *   ['name' = 'viewName', 'model' => 'modelName']
      *
-     * @param array  $master
-     * @param array  $detail
+     * @param array $master
+     * @param array $detail
      * @param string $viewTitle
      * @param string $viewIcon
+     * @deprecated will be removed in the next year
+     *
      */
-    protected function addGridView($master, $detail, $viewTitle, $viewIcon = 'fas fa-list-alt')
+    protected function addGridView(array $master, array $detail, string $viewTitle, string $viewIcon = 'fas fa-list-alt')
     {
         // Create master and detail views
         $master['model'] = self::MODEL_NAMESPACE . $master['model'];
@@ -192,7 +194,7 @@ abstract class PanelController extends BaseController
         // load columns definition for detail view
         $view->detailView->loadPageOptions($this->user);
 
-        // Add view to views container
+        // Add view to the views list
         $this->addCustomView($master['name'], $view);
     }
 
@@ -205,7 +207,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addHtmlView($viewName, $fileName, $modelName, $viewTitle, $viewIcon = 'fab fa-html5')
+    protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5')
     {
         $view = new HtmlView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $fileName, $viewIcon);
         $this->addCustomView($viewName, $view);
@@ -219,7 +221,7 @@ abstract class PanelController extends BaseController
      * @param string $viewTitle
      * @param string $viewIcon
      */
-    protected function addListView($viewName, $modelName, $viewTitle, $viewIcon = 'fas fa-list')
+    protected function addListView(string $viewName, string $modelName, string $viewTitle, string $viewIcon = 'fas fa-list')
     {
         $view = new ListView($viewName, $viewTitle, self::MODEL_NAMESPACE . $modelName, $viewIcon);
         $view->settings['card'] = $this->tabsPosition !== 'top';
@@ -233,14 +235,10 @@ abstract class PanelController extends BaseController
      */
     protected function editAction()
     {
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
-        }
-
-        // duplicated request?
-        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
-            $this->toolBox()->i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFormToken()) {
             return false;
         }
 
@@ -323,7 +321,7 @@ abstract class PanelController extends BaseController
 
             case 'insert':
                 if ($this->insertAction() || !empty($this->views[$this->active]->model->primaryColumnValue())) {
-                    /// wee need to clear model in these scenarios
+                    // we need to clear model in these scenarios
                     $this->views[$this->active]->model->clear();
                 }
                 break;
@@ -345,19 +343,15 @@ abstract class PanelController extends BaseController
 
     /**
      * Runs data insert action.
-     * 
+     *
      * @return bool
      */
     protected function insertAction()
     {
-        if (!$this->permissions->allowUpdate) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return false;
-        }
-
-        // duplicated request?
-        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
-            $this->toolBox()->i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFormToken()) {
             return false;
         }
 
@@ -369,19 +363,19 @@ abstract class PanelController extends BaseController
         }
 
         // save in database
-        if ($this->views[$this->active]->model->save()) {
-            /// redir to new model url only if this is the first view
-            if ($this->active === $this->getMainViewName()) {
-                $this->redirect($this->views[$this->active]->model->url() . '&action=save-ok');
-            }
-
-            $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
-            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-            return true;
+        if (false === $this->views[$this->active]->model->save()) {
+            $this->toolBox()->i18nLog()->error('record-save-error');
+            return false;
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
-        return false;
+        // redirect to new model url only if this is the first view
+        if ($this->active === $this->getMainViewName()) {
+            $this->redirect($this->views[$this->active]->model->url() . '&action=save-ok');
+        }
+
+        $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        return true;
     }
 
     /**

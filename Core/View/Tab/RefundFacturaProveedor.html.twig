@@ -1,166 +1,193 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
 {% set currentView = fsc.getCurrentView() %}
-{% set mainViewName = fsc.getMainViewName() %}
+{% set firstView = fsc.views | first %}
 
-{% if currentView.model.exists() %}
-    <script>
-        function refundAll() {
-            var refundableQty = document.getElementsByClassName("refundable");
-            var inputToBeRefunded = document.getElementsByClassName("to_refund");
-            for (i = 0; i < inputToBeRefunded.length; i++) {
-                inputToBeRefunded.item(i).value = refundableQty.item(i).innerHTML;
-            }
-
-            return false;
+<script>
+    function refundAll() {
+        const refundableQty = document.getElementsByClassName("refundable");
+        const inputToBeRefunded = document.getElementsByClassName("to_refund");
+        for (let i = 0; i < inputToBeRefunded.length; i++) {
+            inputToBeRefunded.item(i).value = refundableQty.item(i).value;
         }
-        function refundNone() {
-            var inputToBeRefunded = document.getElementsByClassName("to_refund");
-            for (i = 0; i < inputToBeRefunded.length; i++) {
-                inputToBeRefunded.item(i).value = 0;
-            }
+        return false;
+    }
 
-            return false;
+    function refundNone() {
+        const inputToBeRefunded = document.getElementsByClassName("to_refund");
+        for (let i = 0; i < inputToBeRefunded.length; i++) {
+            inputToBeRefunded.item(i).value = 0;
         }
-    </script>
-    <form method="post">
-        <input type="hidden" name="action" value="new-refund"/>
-        <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
-        <input type="hidden" name="idfactura" value="{{ currentView.model.primaryColumnValue() }}"/>
-        <div class="container-fluid">
-            <div class="form-row">
-                {{ _self.customSelect('codserie', 'codserie', appSettings.get('default', 'codserierec', 'R'), fsc.views[mainViewName].getSelectValues('Serie')) }}
-                {{ _self.customInput('fecha', 'fecha', fsc.toolBox().today(), 'text', 'fas fa-calendar-alt', {class: 'form-control datepicker'}) }}
-                {{ _self.customInput('numproveedor', 'numproveedor', '', 'text', 'fas fa-hashtag') }}
-                <div class="col text-right">
-                    <div class="btn-group">
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-check-square fa-fw"></i> {{ i18n.trans('select') }}
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#" onClick="return refundNone();">
-                                    {{ i18n.trans('select-none') }}
-                                </a>
-                                <a class="dropdown-item" href="#" onClick="return refundAll();">
-                                    {{ i18n.trans('select-all') }}
-                                </a>
+        return false;
+    }
+</script>
+
+{% if currentView.count > 0 %}
+    <div class="table-responsive">
+        <table class="table table-hover mb-5">
+            <thead>
+            <tr>
+                <th>{{ i18n.trans('code') }}</th>
+                <th>{{ i18n.trans('numsupplier') }}</th>
+                <th>{{ i18n.trans('observations') }}</th>
+                <th class="text-right">{{ i18n.trans('total') }}</th>
+                <th class="text-right">{{ i18n.trans('date') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for rectified in currentView.cursor %}
+                <tr class="table-danger clickableRow" data-href="{{ rectified.url() }}">
+                    <td>{{ rectified.codigo }}</td>
+                    <td>{{ rectified.numproveedor | raw }}</td>
+                    <td>{{ rectified.observaciones | raw }}</td>
+                    <td class="text-right">{{ fsc.toolBox().coins().format(rectified.total) }}</td>
+                    <td class="text-right">{{ rectified.fecha }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+
+<form action="{{ firstView.model.url() }}" method="post">
+    <input type="hidden" name="action" value="new-refund"/>
+    <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
+    <input type="hidden" name="idfactura" value="{{ firstView.model.primaryColumnValue() }}"/>
+    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <div class="card border-warning shadow mb-4">
+                    <div class="card-header bg-warning">
+                        <i class="fas fa-share fa-fw" aria-hidden="true"></i> {{ i18n.trans('new-refund') }}
+                    </div>
+                    <div class="card-body">
+                        <p>{{ i18n.trans('rectified-invoice-p') }}</p>
+                        <div class="form-row align-items-end">
+                            <div class="col-sm">
+                                <div class="form-group">
+                                    {{ i18n.trans('serie') }}
+                                    <select name="codserie" class="form-control">
+                                        {% for codserie, descripcion in firstView.getSelectValues('Serie') %}
+                                            {% if codserie == appSettings.get('default','codserierec','R') %}
+                                                <option value="{{ codserie }}" selected>
+                                                    {{ descripcion }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ codserie }}">{{ descripcion }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-group">
+                                    {{ i18n.trans('date') }}
+                                    <input type="date" name="fecha" value="{{ task.end | date('Y-m-d') }}"
+                                           class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="form-group">
+                                    {{ i18n.trans('numsupplier') }}
+                                    <input type="text" name="numproveedor" class="form-control" maxlength="50">
+                                </div>
+                            </div>
+                            <div class="col-sm text-right">
+                                <div class="btn-group mb-3">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-check-square fa-fw"></i> {{ i18n.trans('select') }}
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="#" onClick="return refundNone();">
+                                                <i class="far fa-square fa-fw"></i> {{ i18n.trans('select-none') }}
+                                            </a>
+                                            <a class="dropdown-item" href="#" onClick="return refundAll();">
+                                                <i class="fas fa-square fa-fw"></i> {{ i18n.trans('select-all') }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="btn-group mb-3">
+                                    <button type="submit" class="btn btn-warning ml-3">
+                                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    &nbsp;
-                    <button type="submit" class="btn btn-sm btn-primary">
-                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
-                    </button>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                            <tr>
+                                <th>{{ i18n.trans('description') }}</th>
+                                <th class="text-right">{{ i18n.trans('quantity') }}</th>
+                                <th class="text-right">{{ i18n.trans('to-refund') }}</th>
+                                <th class="text-right">{{ i18n.trans('refund-amount') }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for line in firstView.model.getLines() %}
+                                {% set refunded = line.refundedQuantity() %}
+                                <tr>
+                                    <td class="align-middle">
+                                        <a href="{{ line.getProducto().url() }}">{{ line.referencia }}</a>
+                                        {{ line.descripcion | raw }}
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        {{ fsc.toolBox().numbers().format(line.cantidad) }}
+                                    </td>
+                                    <td class="table-warning">
+                                        <input type="hidden" value="{{ line.cantidad }}" class="refundable">
+                                        {% if line.cantidad > 0 %}
+                                            <input type="number" name="refund_{{ line.primaryColumnValue() }}"
+                                                   value="0" min="0" max="{{ line.cantidad - refunded }}" step="any"
+                                                   class="form-control text-right to_refund" autocomplete="off"/>
+                                        {% else %}
+                                            <input type="number" name="refund_{{ line.primaryColumnValue() }}"
+                                                   value="0" step="any" class="form-control text-right to_refund"
+                                                   autocomplete="off"/>
+                                        {% endif %}
+                                    </td>
+                                    <td class="align-middle table-warning text-right">
+                                        {% if refunded == 0 %}
+                                            -
+                                        {% else %}
+                                            {{ fsc.toolBox().numbers().format(refunded) }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                                <textarea name="observaciones" class="form-control"
+                                          placeholder="{{ i18n.trans('observations') }}"></textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>{{ i18n.trans('product') }}</th>
-                        <th>{{ i18n.trans('description') }}</th>
-                        <th class="text-right" width="200">{{ i18n.trans('quantity') }}</th>
-                        <th class="text-right" width="200">{{ i18n.trans('new-refund') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for line in currentView.model.getLines() %}
-                        {% set refunded = currentView.model.refundedItemAmount(line.referencia) %}
-                        <tr>
-                            <td>
-                                <div class="form-control">{{ line.referencia | raw }}</div>
-                            </td>
-                            <td>
-                                <div class="form-control">{{ line.descripcion | raw }}</div>
-                            </td>
-                            <td>
-                                <div class="form-control text-right refundable">{{ line.cantidad }}</div>
-                            </td>
-                            <td class="table-warning">
-                                <input type="number" name="refund_{{ line.primaryColumnValue() }}" value="0" min="0" max="{{ line.cantidad - refunded }}"
-                                       step="any" class="form-control text-right to_refund" autocomplete="off"/>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div class="container-fluid">
-            <div class="form-row">
-                <div class="col mb-2">
-                    <textarea name="observaciones" class="form-control" placeholder="{{ i18n.trans('observations') }}"></textarea>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="col text-right">
-                    <button type="submit" class="btn btn-sm btn-primary">
-                        <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
-                    </button>
-                </div>
-            </div>
-        </div>
-    </form>
-{% endif %}
-
-{% macro customSelect(id, name, value, allValues = {}, allowHide = true) %}
-    {% if allowHide and allValues | length == 1 %}
-        {% for key, option in allValues %}
-            <input type="hidden" id="{{ id }}" name="{{ name }}" value="{{ key }}"/>
-        {% endfor %}
-    {% else %}
-        <div class="col-sm-2 mb-2">
-            <select id="{{ id }}" name="{{ name }}" class="form-control">
-                {% for key, option in allValues %}
-                    <option value="{{ key }}"{% if value == key %} selected=""{% endif %}>
-                        {{ option }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-    {% endif %}
-{% endmacro %}
-
-{% macro customInput(id, name, value, type = "text", icon = NULL, attributes = NULL) %}
-    <div class="col-sm-2 mb-2">
-        {% if icon %}
-            <div class="input-group">
-                <span class="input-group-prepend">
-                    <span class="input-group-text">
-                        <i class="{{ icon }} fa-fw" aria-hidden="true"></i>
-                    </span>
-                </span>
-            {% endif %}
-
-            <input type="{{ type }}" id="{{ id }}" name="{{ name }}" value="{{ value }}"
-                   {% if attributes.class is not defined %}
-                       class="form-control"
-                   {% endif %}
-
-                   {% for attribute,attrValue in attributes %}
-                       {{ attribute }}="{{ attrValue }}"
-                   {% endfor %} /> {# end input #}
-
-            {% if icon %}
-            </div>
-        {% endif %}
     </div>
-{% endmacro %}
+</form>

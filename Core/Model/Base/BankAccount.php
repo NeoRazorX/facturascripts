@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use PHP_IBAN\IBAN;
@@ -24,8 +25,8 @@ use PHP_IBAN\IBAN;
  * This class groups the data and bank calculation methods
  * for a generic use.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class BankAccount extends ModelClass
 {
@@ -47,7 +48,6 @@ abstract class BankAccount extends ModelClass
     public $descripcion;
 
     /**
-     *
      * @var bool
      */
     private $disableIbanTest = false;
@@ -70,22 +70,30 @@ abstract class BankAccount extends ModelClass
      * Returns the IBAN with or without spaces.
      *
      * @param bool $spaced
+     * @param bool $censure
      *
      * @return string
      */
-    public function getIban(bool $spaced = false)
+    public function getIban(bool $spaced = false, bool $censure = false): string
     {
-        $iban = \str_replace(' ', '', $this->iban);
+        $iban = str_replace(' ', '', $this->iban);
+
+        /// split in groups
         $groups = [];
-        for ($num = 0; $num < \strlen($iban); $num += self::GROUP_LENGTH) {
-            $groups[] = \substr($iban, $num, self::GROUP_LENGTH);
+        for ($num = 0; $num < strlen($iban); $num += self::GROUP_LENGTH) {
+            $groups[] = substr($iban, $num, self::GROUP_LENGTH);
         }
 
-        return $spaced ? \implode(' ', $groups) : $iban;
+        /// censor
+        if ($censure) {
+            $groups[1] = $groups[2] = $groups[3] = $groups[4] = 'XXXX';
+        }
+
+        return $spaced ? implode(' ', $groups) : implode('', $groups);
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public static function primaryColumn()
@@ -94,10 +102,10 @@ abstract class BankAccount extends ModelClass
     }
 
     /**
-     * 
+     *
      * @param bool $value
      */
-    public function setDisableIbanTest($value)
+    public function setDisableIbanTest(bool $value)
     {
         $this->disableIbanTest = $value;
     }
@@ -109,7 +117,7 @@ abstract class BankAccount extends ModelClass
      */
     public function test()
     {
-        if (!empty($this->codcuenta) && false === \is_numeric($this->codcuenta)) {
+        if (!empty($this->codcuenta) && false === is_numeric($this->codcuenta)) {
             $this->toolBox()->i18nLog()->error('invalid-number', ['%number%' => $this->codcuenta]);
             return false;
         }
@@ -129,14 +137,18 @@ abstract class BankAccount extends ModelClass
      *
      * @return bool
      */
-    public function verifyIBAN(string $iban)
+    public function verifyIBAN(string $iban): bool
     {
-        $object = new IBAN($iban);
-        return $object->Verify();
+        if ($this->toolBox()->appSettings()->get('default', 'validate_iban', false)) {
+            $object = new IBAN($iban);
+            return $object->Verify();
+        }
+
+        return true;
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool
@@ -155,7 +167,7 @@ abstract class BankAccount extends ModelClass
      *
      * @return bool
      */
-    protected function testBankAccount()
+    protected function testBankAccount(): bool
     {
         if (empty($this->iban) || $this->disableIbanTest || $this->verifyIBAN($this->getIban())) {
             return true;

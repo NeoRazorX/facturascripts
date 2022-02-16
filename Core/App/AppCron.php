@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
+
+use DateTime;
+use FacturaScripts\Core\Base\ToolBox;
 
 /**
  * App description
@@ -33,9 +37,22 @@ final class AppCron extends App
     {
         $this->response->headers->set('Content-Type', 'text/plain');
 
-        $content = $this->response->getContent();
-        foreach ($this->toolBox()->log()->readAll() as $log) {
-            $content .= empty($content) ? $log["message"] : "\n" . $log["message"];
+        $title = <<<END
+  ______         _                    _____           _       _       
+ |  ____|       | |                  / ____|         (_)     | |      
+ | |__ __ _  ___| |_ _   _ _ __ __ _| (___   ___ _ __ _ _ __ | |_ ___ 
+ |  __/ _` |/ __| __| | | | '__/ _` |\___ \ / __| '__| | '_ \| __/ __|
+ | | | (_| | (__| |_| |_| | | | (_| |____) | (__| |  | | |_) | |_\__ \
+ |_|  \__,_|\___|\__|\__,_|_|  \__,_|_____/ \___|_|  |_| .__/ \__|___/
+                                                       | |            
+                                                       |_|                                   
+END;
+
+        $content = $this->response->getContent() . $title;
+        foreach (ToolBox::log()::read('', ['critical', 'error', 'info', 'notice', 'warning']) as $log) {
+            if ($log['channel'] != 'audit') {
+                $content .= "\n" . $log["message"];
+            }
         }
 
         $this->response->setContent($content . "\n");
@@ -49,29 +66,28 @@ final class AppCron extends App
      */
     public function run(): bool
     {
-        if (!parent::run()) {
+        if (false === parent::run()) {
             return false;
         }
 
-        $startTime = new \DateTime();
-        $this->toolBox()->i18nLog()->notice('starting-cron');
+        $startTime = new DateTime();
+        ToolBox::i18nLog()->notice('starting-cron');
 
         $this->runPlugins();
 
-        $endTime = new \DateTime();
+        $endTime = new DateTime();
         $executionTime = $startTime->diff($endTime);
-        $this->toolBox()->i18nLog()->notice('finished-cron', ['%timeNeeded%' => $executionTime->format("%H:%I:%S")]);
+        ToolBox::i18nLog()->notice('finished-cron', ['%timeNeeded%' => $executionTime->format("%H:%I:%S")]);
         return true;
     }
 
     /**
-     * 
-     * @param int    $status
+     * @param int $status
      * @param string $message
      */
     protected function die(int $status, string $message = '')
     {
-        $content = $this->toolBox()->i18n()->trans($message);
+        $content = ToolBox::i18n()->trans($message);
         $this->response->setContent($content);
         $this->response->setStatusCode($status);
     }
@@ -84,7 +100,7 @@ final class AppCron extends App
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             $cronClass = '\\FacturaScripts\\Plugins\\' . $pluginName . '\\Cron';
             if (class_exists($cronClass)) {
-                $this->toolBox()->i18nLog()->notice('running-plugin-cron', ['%pluginName%' => $pluginName]);
+                ToolBox::i18nLog()->notice('running-plugin-cron', ['%pluginName%' => $pluginName]);
                 $cron = new $cronClass($pluginName);
                 $cron->run();
             }

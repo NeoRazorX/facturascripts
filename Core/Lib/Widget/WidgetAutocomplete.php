@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Dinamic\Lib\AssetManager;
@@ -37,8 +38,8 @@ class WidgetAutocomplete extends WidgetSelect
 
     /**
      * Descriptive text of the selected value
-     * 
-     * @var string 
+     *
+     * @var string
      */
     protected $selected = null;
 
@@ -52,7 +53,6 @@ class WidgetAutocomplete extends WidgetSelect
     public $strict = true;
 
     /**
-     *
      * @param object $model
      * @param string $title
      * @param string $description
@@ -65,7 +65,7 @@ class WidgetAutocomplete extends WidgetSelect
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
         $inputHtml = $this->inputHtml();
-        $labelHtml = '<label>' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
+        $labelHtml = '<label class="mb-1">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
         if ('' === $this->value || null === $this->value) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
@@ -94,7 +94,7 @@ class WidgetAutocomplete extends WidgetSelect
 
     /**
      * Set a descriptive text for the selected value
-     * 
+     *
      * @param string $text
      */
     public function setSelected($text)
@@ -104,7 +104,7 @@ class WidgetAutocomplete extends WidgetSelect
 
     /**
      * Get the descriptive text of the selected value
-     * 
+     *
      * @return string
      */
     protected function getSelected()
@@ -117,11 +117,12 @@ class WidgetAutocomplete extends WidgetSelect
      */
     protected function assets()
     {
+        AssetManager::add('css', \FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
+        AssetManager::add('js', \FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
         AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
     }
 
     /**
-     * 
      * @return string
      */
     protected function inputGroupClearBtn()
@@ -140,7 +141,6 @@ class WidgetAutocomplete extends WidgetSelect
     }
 
     /**
-     *
      * @param string $type
      * @param string $extraClass
      *
@@ -172,7 +172,6 @@ class WidgetAutocomplete extends WidgetSelect
     }
 
     /**
-     * 
      * @return string
      */
     protected function strictStr()

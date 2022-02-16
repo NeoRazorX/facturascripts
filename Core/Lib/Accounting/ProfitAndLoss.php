@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -25,6 +26,8 @@ use FacturaScripts\Dinamic\Model\BalanceCuenta;
 use FacturaScripts\Dinamic\Model\BalanceCuentaA;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Partida;
+use function implode;
+use function number_format;
 
 /**
  * Description of ProfitAndLoss
@@ -51,10 +54,14 @@ class ProfitAndLoss extends AccountingBase
     protected $dateToPrev;
 
     /**
-     * 
      * @var Ejercicio
      */
     protected $exercisePrev;
+
+    /**
+     * @var string
+     */
+    protected $format;
 
     /**
      * ProfitAndLoss class constructor
@@ -74,7 +81,7 @@ class ProfitAndLoss extends AccountingBase
      *
      * @param string $dateFrom
      * @param string $dateTo
-     * @param array  $params
+     * @param array $params
      *
      * @return array
      */
@@ -84,7 +91,6 @@ class ProfitAndLoss extends AccountingBase
         $this->dateTo = $dateTo;
         $this->dateFromPrev = $this->addToDate($dateFrom, '-1 year');
         $this->dateToPrev = $this->addToDate($dateTo, '-1 year');
-
         $this->exercisePrev = new Ejercicio();
         $where = [
             new DataBaseWhere('fechainicio', $this->dateFromPrev, '<='),
@@ -92,18 +98,18 @@ class ProfitAndLoss extends AccountingBase
             new DataBaseWhere('idempresa', $this->exercise->idempresa)
         ];
         $this->exercisePrev->loadFromCode('', $where);
+        $this->format = $params['format'];
 
         return [$this->getData('PG', $params)];
     }
 
     /**
-     * 
-     * @param array     $rows
+     * @param array $rows
      * @param Balance[] $balances
-     * @param string    $code1
-     * @param array     $amouns1
-     * @param string    $code2
-     * @param array     $amouns2
+     * @param string $code1
+     * @param array $amouns1
+     * @param string $code2
+     * @param array $amouns2
      */
     protected function addTotalsRow(&$rows, $balances, $code1, $amouns1, $code2, $amouns2)
     {
@@ -122,17 +128,42 @@ class ProfitAndLoss extends AccountingBase
         }
 
         $rows[] = [
-            'descripcion' => '<b>Total (' . \implode('+', $levels) . ')</b>',
-            $code1 => '<b>' . $this->toolBox()->coins()->format($total1, FS_NF0, '') . '</b>',
-            $code2 => '<b>' . $this->toolBox()->coins()->format($total2, FS_NF0, '') . '</b>'
+            'descripcion' => $this->formatValue('Total (' . implode('+', $levels) . ')', 'text', true),
+            $code1 => $this->formatValue($total1, 'money', true),
+            $code2 => $this->formatValue($total2, 'money', true)
         ];
     }
 
     /**
-     * 
+     * @param string $value
+     * @param string $type
+     * @param bool $bold
+     *
+     * @return string
+     */
+    protected function formatValue($value, $type = 'money', $bold = false)
+    {
+        $prefix = $bold ? '<b>' : '';
+        $suffix = $bold ? '</b>' : '';
+        switch ($type) {
+            case 'money':
+                if ($this->format === 'PDF') {
+                    return $prefix . $this->toolBox()->coins()->format($value, FS_NF0, '') . $suffix;
+                }
+                return number_format($value, FS_NF0, '.', '');
+
+            default:
+                if ($this->format === 'PDF') {
+                    return $prefix . $this->toolBox()->utils()->fixHtml($value) . $suffix;
+                }
+                return $this->toolBox()->utils()->fixHtml($value);
+        }
+    }
+
+    /**
      * @param Balance $balance
-     * @param string  $codejercicio
-     * @param array   $params
+     * @param string $codejercicio
+     * @param array $params
      *
      * @return float
      */
@@ -158,18 +189,27 @@ class ProfitAndLoss extends AccountingBase
                     . " AND (subcuentas.codcuenta LIKE '6%' OR subcuentas.codcuenta LIKE '7%')";
             }
 
+            if ($codejercicio === $this->exercise->codejercicio) {
+                $sql .= ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFrom)
+                    . ' AND ' . $this->dataBase->var2str($this->dateTo);
+            } elseif ($codejercicio === $this->exercisePrev->codejercicio) {
+                $sql .= ' AND asientos.fecha BETWEEN ' . $this->dataBase->var2str($this->dateFromPrev)
+                    . ' AND ' . $this->dataBase->var2str($this->dateToPrev);
+            }
+
             $channel = $params['channel'] ?? '';
             if (!empty($channel)) {
                 $sql .= ' AND asientos.canal = ' . $this->dataBase->var2str($channel);
             }
 
-            $sql .= ' AND (asientos.operacion IS NULL OR asientos.operacion NOT IN (' . $this->dataBase->var2str(Asiento::OPERATION_REGULARIZATION)
+            $sql .= ' AND (asientos.operacion IS NULL OR asientos.operacion NOT IN '
+                . '(' . $this->dataBase->var2str(Asiento::OPERATION_REGULARIZATION)
                 . ',' . $this->dataBase->var2str(Asiento::OPERATION_CLOSING) . '))';
 
             foreach ($this->dataBase->select($sql) as $row) {
                 $total += $balance->naturaleza === 'A' ?
-                    (float) $row['debe'] - (float) $row['haber'] :
-                    (float) $row['haber'] - (float) $row['debe'];
+                    (float)$row['debe'] - (float)$row['haber'] :
+                    (float)$row['haber'] - (float)$row['debe'];
             }
         }
 
@@ -177,9 +217,8 @@ class ProfitAndLoss extends AccountingBase
     }
 
     /**
-     * 
      * @param string $nature
-     * @param array  $params
+     * @param array $params
      *
      * @return array
      */
@@ -209,16 +248,15 @@ class ProfitAndLoss extends AccountingBase
         }
 
         /// add to table
-        $coins = $this->toolBox()->coins();
         $nivel1 = $nivel2 = $nivel3 = $nivel4 = '';
         foreach ($balances as $bal) {
             if ($bal->nivel1 != $nivel1 && !empty($bal->nivel1)) {
                 $nivel1 = $bal->nivel1;
                 $rows[] = ['descripcion' => '', $code1 => '', $code2 => ''];
                 $rows[] = [
-                    'descripcion' => '<b>' . $bal->descripcion1 . '</b>',
-                    $code1 => '<b>' . $coins->format($amountsNE1[$bal->nivel1], FS_NF0, '') . '</b>',
-                    $code2 => '<b>' . $coins->format($amountsNE2[$bal->nivel1], FS_NF0, '') . '</b>'
+                    'descripcion' => $this->formatValue($bal->descripcion1, 'text', true),
+                    $code1 => $this->formatValue($amountsNE1[$bal->nivel1], 'money', true),
+                    $code2 => $this->formatValue($amountsNE2[$bal->nivel1], 'money', true)
                 ];
             }
 
@@ -226,8 +264,8 @@ class ProfitAndLoss extends AccountingBase
                 $nivel2 = $bal->nivel2;
                 $rows[] = [
                     'descripcion' => '  ' . $bal->descripcion2,
-                    $code1 => $coins->format($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2], FS_NF0, ''),
-                    $code2 => $coins->format($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2], FS_NF0, '')
+                    $code1 => $this->formatValue($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2]),
+                    $code2 => $this->formatValue($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2])
                 ];
             }
 
@@ -235,8 +273,8 @@ class ProfitAndLoss extends AccountingBase
                 $nivel3 = $bal->nivel3;
                 $rows[] = [
                     'descripcion' => '    ' . $bal->descripcion3,
-                    $code1 => $coins->format($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3], FS_NF0, ''),
-                    $code2 => $coins->format($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3], FS_NF0, '')
+                    $code1 => $this->formatValue($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3]),
+                    $code2 => $this->formatValue($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3])
                 ];
             }
 
@@ -248,8 +286,8 @@ class ProfitAndLoss extends AccountingBase
 
                 $rows[] = [
                     'descripcion' => '      ' . $bal->descripcion4,
-                    $code1 => $coins->format($amountsE1[$bal->codbalance], FS_NF0, ''),
-                    $code2 => $coins->format($amountsE2[$bal->codbalance], FS_NF0, '')
+                    $code1 => $this->formatValue($amountsE1[$bal->codbalance]),
+                    $code2 => $this->formatValue($amountsE2[$bal->codbalance])
                 ];
             }
         }
@@ -259,12 +297,11 @@ class ProfitAndLoss extends AccountingBase
     }
 
     /**
-     * 
-     * @param array   $amounts
-     * @param array   $amountsN
+     * @param array $amounts
+     * @param array $amountsN
      * @param Balance $balance
-     * @param string  $codejercicio
-     * @param array   $params
+     * @param string $codejercicio
+     * @param array $params
      */
     protected function sumAmounts(&$amounts, &$amountsN, $balance, $codejercicio, $params)
     {

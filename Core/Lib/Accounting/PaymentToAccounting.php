@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -33,19 +34,16 @@ class PaymentToAccounting extends AccountingClass
 {
 
     /**
-     *
      * @var PagoCliente|PagoProveedor
      */
     protected $document;
 
     /**
-     *
      * @var ReciboCliente|ReciboProveedor
      */
     protected $receipt;
 
     /**
-     * 
      * @param PagoCliente|PagoProveedor $model
      */
     public function generate($model)
@@ -77,7 +75,6 @@ class PaymentToAccounting extends AccountingClass
     }
 
     /**
-     * 
      * @return bool
      */
     protected function customerPaymentAccountingEntry()
@@ -113,14 +110,13 @@ class PaymentToAccounting extends AccountingClass
     }
 
     /**
-     * 
      * @param Asiento $accEntry
      *
      * @return bool
      */
     protected function customerPaymentBankLine(&$accEntry)
     {
-        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago);
+        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago ?? '');
         if (false === $paymentSubaccount->exists()) {
             return false;
         }
@@ -132,7 +128,6 @@ class PaymentToAccounting extends AccountingClass
     }
 
     /**
-     * 
      * @param Asiento $accEntry
      *
      * @return bool
@@ -144,7 +139,7 @@ class PaymentToAccounting extends AccountingClass
         }
 
         $expLine = $accEntry->getNewLine();
-        $subacountExpense = $this->getExpenseAccount($this->document->codpago);
+        $subacountExpense = $this->getExpenseAccount($this->document->codpago ?? '');
         $expLine->setAccount($subacountExpense);
         $expLine->concepto = $this->toolBox()->i18n()->trans('receipt-expense-account', ['%document%' => $accEntry->documento]);
         $expLine->haber = $this->document->gastos;
@@ -152,7 +147,6 @@ class PaymentToAccounting extends AccountingClass
     }
 
     /**
-     * 
      * @param Asiento $accEntry
      *
      * @return bool
@@ -172,7 +166,6 @@ class PaymentToAccounting extends AccountingClass
     }
 
     /**
-     * 
      * @return bool
      */
     protected function supplierPaymentAccountingEntry()
@@ -204,14 +197,13 @@ class PaymentToAccounting extends AccountingClass
     }
 
     /**
-     * 
      * @param Asiento $accEntry
      *
      * @return bool
      */
     protected function supplierPaymentBankLine(&$accEntry)
     {
-        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago);
+        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago ?? '');
         if (false === $paymentSubaccount->exists()) {
             return false;
         }
@@ -223,7 +215,6 @@ class PaymentToAccounting extends AccountingClass
     }
 
     /**
-     * 
      * @param Asiento $accEntry
      *
      * @return bool
@@ -246,7 +237,7 @@ class PaymentToAccounting extends AccountingClass
      * Establishes the common data of the accounting entry
      *
      * @param Asiento $accEntry
-     * @param string  $concept
+     * @param string $concept
      */
     protected function setCommonData(&$accEntry, string $concept)
     {

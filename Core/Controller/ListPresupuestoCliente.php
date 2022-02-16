@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -43,7 +44,7 @@ class ListPresupuestoCliente extends ListBusinessDocument
         $data = parent::getPageData();
         $data['menu'] = 'sales';
         $data['title'] = 'estimations';
-        $data['icon'] = 'fas fa-copy';
+        $data['icon'] = 'far fa-file-powerpoint';
         return $data;
     }
 
@@ -52,19 +53,18 @@ class ListPresupuestoCliente extends ListBusinessDocument
      */
     protected function createViews()
     {
-        /// main view/tab
+        // main view/tab
         $mainViewName = 'ListPresupuestoCliente';
         $this->createViewSales($mainViewName, 'PresupuestoCliente', 'estimations');
         $this->views[$mainViewName]->addOrderBy(['finoferta'], 'expiration');
         $this->addButtonGroupDocument($mainViewName);
         $this->addButtonApproveDocument($mainViewName);
 
-        /// lines view/tab
+        // lines view/tab
         $this->createViewLines('ListLineaPresupuestoCliente', 'LineaPresupuestoCliente');
     }
 
     /**
-     * 
      * @param string $action
      *
      * @return bool
@@ -80,11 +80,11 @@ class ListPresupuestoCliente extends ListBusinessDocument
 
     protected function setExpiredItems()
     {
-        $presupuestoModel = new PresupuestoCliente;
+        $model = new PresupuestoCliente();
 
-        /// select the avaliable expired status
+        // select the available expired status
         $expiredStatus = null;
-        foreach ($presupuestoModel->getAvaliableStatus() as $status) {
+        foreach ($model->getAvaliableStatus() as $status) {
             if ($status->idestado == 23 && !$status->editable && empty($status->generadoc)) {
                 $expiredStatus = $status->idestado;
                 break;
@@ -100,8 +100,8 @@ class ListPresupuestoCliente extends ListBusinessDocument
             new DataBaseWhere('editable', true),
             new DataBaseWhere('finoferta', null, 'IS NOT')
         ];
-        foreach ($presupuestoModel->all($where, ['finoferta' => 'ASC']) as $item) {
-            if (\time() < \strtotime($item->finoferta)) {
+        foreach ($model->all($where, ['finoferta' => 'ASC']) as $item) {
+            if (time() < strtotime($item->finoferta)) {
                 continue;
             }
 

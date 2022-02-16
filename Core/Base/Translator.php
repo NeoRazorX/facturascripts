@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use Symfony\Component\Translation\Loader\JsonFileLoader;
@@ -32,7 +33,6 @@ class Translator
     const FALLBACK_LANG = 'es_ES';
 
     /**
-     *
      * @var string
      */
     private $currentLang;
@@ -90,11 +90,11 @@ class Translator
      * Translate the text into the default language.
      *
      * @param string $txt
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return string
      */
-    public function trans($txt, $parameters = []): string
+    public function trans(string $txt, array $parameters = []): string
     {
         return empty($txt) ? '' : $this->customTrans($this->currentLang, $txt, $parameters);
     }
@@ -104,7 +104,7 @@ class Translator
      *
      * @param string $langCode
      * @param string $txt
-     * @param array  $parameters
+     * @param array $parameters
      *
      * @return string
      */
@@ -137,7 +137,7 @@ class Translator
     public function getAvailableLanguages(): array
     {
         $languages = [];
-        $dir = \FS_FOLDER . '/Core/Translation';
+        $dir = FS_FOLDER . '/Core/Translation';
         foreach (scandir($dir, SCANDIR_SORT_ASCENDING) as $fileName) {
             if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
                 $key = substr($fileName, 0, -5);
@@ -149,12 +149,11 @@ class Translator
     }
 
     /**
-     * 
      * @return string
      */
     private function getDefaultLang(): string
     {
-        return isset(self::$defaultLang) ? self::$defaultLang : \FS_LANG;
+        return self::$defaultLang ?? FS_LANG;
     }
 
     /**
@@ -178,7 +177,7 @@ class Translator
     }
 
     /**
-     * 
+     *
      * @param string $txt
      *
      * @return string
@@ -204,7 +203,7 @@ class Translator
             'PresupuestoProveedor-min' => 'estimation',
         ];
 
-        return isset($specialKeys[$txt]) ? $specialKeys[$txt] : $txt;
+        return $specialKeys[$txt] ?? $txt;
     }
 
     /**
@@ -218,7 +217,6 @@ class Translator
     }
 
     /**
-     * 
      * @param string $langCode
      */
     public function setDefaultLang(string $langCode)
@@ -228,7 +226,7 @@ class Translator
 
     /**
      * Sets the language code in use.
-     * 
+     *
      * @param string $langCode
      */
     public function setLang(string $langCode)
@@ -237,7 +235,6 @@ class Translator
     }
 
     /**
-     * 
      * @param string $langCode
      *
      * @return string
@@ -274,17 +271,22 @@ class Translator
     {
         self::$languages[] = $langCode;
 
-        $file = \FS_FOLDER . '/Core/Translation/' . $langCode . '.json';
-        if (file_exists($file)) {
-            self::$translator->addResource('json', $file, $langCode);
+        $coreFile = FS_FOLDER . '/Core/Translation/' . $langCode . '.json';
+        if (file_exists($coreFile)) {
+            self::$translator->addResource('json', $coreFile, $langCode);
         }
 
         $pluginManager = new PluginManager();
         foreach ($pluginManager->enabledPlugins() as $pluginName) {
-            $file2 = \FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . $langCode . '.json';
+            $file2 = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . $langCode . '.json';
             if (file_exists($file2)) {
                 self::$translator->addResource('json', $file2, $langCode);
             }
+        }
+
+        $myFile = FS_FOLDER . '/MyFiles/Translation/' . $langCode . '.json';
+        if (file_exists($myFile)) {
+            self::$translator->addResource('json', $myFile, $langCode);
         }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -35,7 +36,6 @@ class XLSExport extends ExportBase
     const LIST_LIMIT = 10000;
 
     /**
-     *
      * @var int
      */
     protected $numSheets = 0;
@@ -82,12 +82,12 @@ class XLSExport extends ExportBase
     /**
      * Adds a new page with a table listing all models data.
      *
-     * @param ModelClass      $model
+     * @param ModelClass $model
      * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param array           $columns
-     * @param string          $title
+     * @param array $order
+     * @param int $offset
+     * @param array $columns
+     * @param string $title
      *
      * @return bool
      */
@@ -116,8 +116,8 @@ class XLSExport extends ExportBase
      * Adds a new page with the model data.
      *
      * @param ModelClass $model
-     * @param array      $columns
-     * @param string     $title
+     * @param array $columns
+     * @param string $title
      *
      * @return bool
      */
@@ -157,15 +157,17 @@ class XLSExport extends ExportBase
      */
     public function getDoc()
     {
-        return (string) $this->writer->writeToString();
+        return (string)$this->writer->writeToString();
     }
 
     /**
      * Blank document.
      *
      * @param string $title
+     * @param int $idformat
+     * @param string $langcode
      */
-    public function newDoc(string $title)
+    public function newDoc(string $title, int $idformat, string $langcode)
     {
         $this->setFileName($title);
         $this->writer = new XLSXWriter();
@@ -174,7 +176,6 @@ class XLSExport extends ExportBase
     }
 
     /**
-     *
      * @param string $orientation
      */
     public function setOrientation(string $orientation)
@@ -195,12 +196,11 @@ class XLSExport extends ExportBase
     }
 
     /**
-     *
      * @param array $columns
      *
      * @return array
      */
-    protected function getColumnHeaders($columns): array
+    protected function getColumnHeaders(array $columns): array
     {
         $headers = [];
         foreach ($this->getColumnTitles($columns) as $col) {
@@ -211,13 +211,12 @@ class XLSExport extends ExportBase
     }
 
     /**
-     *
      * @param array $cursor
      * @param array $fields
      *
      * @return array
      */
-    protected function getCursorRawData($cursor, $fields = []): array
+    protected function getCursorRawData(array $cursor, array $fields = []): array
     {
         $data = parent::getCursorRawData($cursor, $fields);
         foreach ($data as $num => $row) {
@@ -230,7 +229,6 @@ class XLSExport extends ExportBase
     }
 
     /**
-     *
      * @param ModelClass $model
      *
      * @return array

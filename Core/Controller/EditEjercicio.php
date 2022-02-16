@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -139,7 +140,7 @@ class EditEjercicio extends EditController
         $data = [
             'journalClosing' => $this->request->request->get('iddiario-closing'),
             'journalOpening' => $this->request->request->get('iddiario-opening'),
-            'copySubAccounts' => (bool) $this->request->request->get('copysubaccounts', false)
+            'copySubAccounts' => (bool)$this->request->request->get('copysubaccounts', false)
         ];
 
         $model = $this->getModel();
@@ -238,10 +239,9 @@ class EditEjercicio extends EditController
 
             case 'open-exercise':
                 return $this->openExerciseAction();
-
-            default:
-                return parent::execPreviousAction($action);
         }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -249,7 +249,7 @@ class EditEjercicio extends EditController
      *
      * @return bool
      */
-    protected function exportAccountingPlan()
+    protected function exportAccountingPlan(): bool
     {
         $codejercicio = $this->request->get('code', '');
         if (empty($codejercicio)) {
@@ -270,7 +270,7 @@ class EditEjercicio extends EditController
      *
      * @return bool
      */
-    protected function importAccountingPlan()
+    protected function importAccountingPlan(): bool
     {
         $codejercicio = $this->request->request->get('codejercicio', '');
         if (empty($codejercicio)) {
@@ -314,11 +314,15 @@ class EditEjercicio extends EditController
      *
      * @return bool
      */
-    protected function importDefaultPlan(string $codejercicio)
+    protected function importDefaultPlan(string $codejercicio): bool
     {
-        $codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
-        $filePath = \FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
-        if (false === \file_exists($filePath)) {
+        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . FS_LANG . '/defaultPlan.csv';
+        if (false === file_exists($filePath)) {
+            $codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
+            $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/defaultPlan.csv';
+        }
+
+        if (false === file_exists($filePath)) {
             $this->toolBox()->i18nLog()->warning('file-not-found', ['%fileName%' => $filePath]);
             return true;
         }
@@ -336,7 +340,7 @@ class EditEjercicio extends EditController
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -367,7 +371,7 @@ class EditEjercicio extends EditController
 
     /**
      * Re-open closed exercise.
-     * 
+     *
      * @return bool
      */
     protected function openExerciseAction(): bool

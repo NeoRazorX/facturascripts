@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Lib\PDF\PDFDocument;
+use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -45,27 +47,42 @@ class PDFExport extends PDFDocument
      */
     public function addBusinessDocPage($model): bool
     {
-        $this->format = $this->getDocumentFormat($model);
+        if (null === $this->format) {
+            $this->format = $this->getDocumentFormat($model);
+        }
 
-        $this->newPage();
+        // new page
+        if ($this->pdf === null) {
+            $this->newPage();
+        } else {
+            $this->pdf->ezNewPage();
+            $this->insertedHeader = false;
+        }
+
         $this->insertHeader($model->idempresa);
         $this->insertBusinessDocHeader($model);
         $this->insertBusinessDocBody($model);
         $this->insertBusinessDocFooter($model);
 
-        /// do not continue with export
+        if (in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor']) && $model->editable) {
+            $this->pdf->setColor(200, 0, 0);
+            $this->pdf->addText(0, 230, 15, $this->i18n->trans('sketch-invoice-warning'), 600, 'center', -35);
+            $this->pdf->setColor(0, 0, 0);
+        }
+
+        // do not continue with export
         return false;
     }
 
     /**
-     * Adds a new page with a table listing the models data.
+     * Adds a new page with a table listing the model's data.
      *
-     * @param ModelClass      $model
+     * @param ModelClass $model
      * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param array           $columns
-     * @param string          $title
+     * @param array $order
+     * @param int $offset
+     * @param array $columns
+     * @param string $title
      *
      * @return bool
      */
@@ -80,7 +97,7 @@ class PDFExport extends PDFDocument
         $tableData = [];
         $longTitles = [];
 
-        /// turns widget columns into needed arrays
+        // turns widget columns into needed arrays
         $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
         if (count($tableCols) > 5) {
             $orientation = 'landscape';
@@ -100,7 +117,7 @@ class PDFExport extends PDFDocument
             $this->removeEmptyCols($tableData, $tableColsTitle, $this->numberTools->format(0));
             $this->pdf->ezTable($tableData, $tableColsTitle, $title, $tableOptions);
 
-            /// Advance within the results
+            // Advance within the results
             $offset += self::LIST_LIMIT;
             $cursor = $model->all($where, $order, $offset, self::LIST_LIMIT);
         }
@@ -114,15 +131,16 @@ class PDFExport extends PDFDocument
      * Adds a new page with the model data.
      *
      * @param ModelClass $model
-     * @param array      $columns
-     * @param string     $title
+     * @param array $columns
+     * @param string $title
      *
      * @return bool
      */
     public function addModelPage($model, $columns, $title = ''): bool
     {
         $this->newPage();
-        $this->insertHeader();
+        $idempresa = $model->idempresa ?? null;
+        $this->insertHeader($idempresa);
 
         $tableCols = [];
         $tableColsTitle = [];
@@ -131,10 +149,10 @@ class PDFExport extends PDFDocument
             'showHeadings' => 0,
             'shaded' => 0,
             'lineCol' => [1, 1, 1],
-            'cols' => [],
+            'cols' => []
         ];
 
-        /// Get the columns
+        // Get the columns
         $this->setTableColumns($columns, $tableCols, $tableColsTitle, $tableOptions);
 
         $tableDataAux = [];
@@ -147,7 +165,7 @@ class PDFExport extends PDFDocument
         $this->pdf->ezText("\n" . $this->fixValue($title) . "\n", self::FONT_SIZE + 6);
         $this->newLine();
 
-        $this->insertParalellTable($tableDataAux, '', $tableOptions);
+        $this->insertParallelTable($tableDataAux, '', $tableOptions);
         $this->insertFooter();
         return true;
     }
@@ -171,8 +189,8 @@ class PDFExport extends PDFDocument
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'cols' => []
         ];
-        foreach (\array_keys($headers) as $key) {
-            if (\in_array($key, ['debe', 'haber', 'saldo', 'saldoprev'])) {
+        foreach (array_keys($headers) as $key) {
+            if (in_array($key, ['debe', 'haber', 'saldo', 'saldoprev', 'total'])) {
                 $tableOptions['cols'][$key]['justification'] = 'right';
             }
         }
@@ -200,12 +218,23 @@ class PDFExport extends PDFDocument
 
     /**
      * Blank document.
-     * 
+     *
      * @param string $title
+     * @param int $idformat
+     * @param string $langcode
      */
-    public function newDoc(string $title)
+    public function newDoc(string $title, int $idformat, string $langcode)
     {
         $this->setFileName($title);
+
+        if (!empty($idformat)) {
+            $this->format = new FormatoDocumento();
+            $this->format->loadFromCode($idformat);
+        }
+
+        if (!empty($langcode)) {
+            $this->i18n->setLang($langcode);
+        }
     }
 
     /**

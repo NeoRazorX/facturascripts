@@ -22,11 +22,22 @@
 <view>
     <columns> 
         <group name="data" numcolumns="12">
-            <column name="id" display="none" order="0">
-                <widget type="text" fieldname="id" onclick="EditFormatoDocumento" />
-            </column>
             <column name="name" order="100">
                 <widget type="text" fieldname="nombre" maxlength="30" />
+            </column>
+            <column name="title" order="110" >
+                <widget type="text" fieldname="titulo" maxlength="30" />
+            </column>
+            <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" order="120">
+                <widget type="select" fieldname="idlogo" onclick="EditAttachedFile" />
+            </column>
+            <column name="additional-text" numcolumns="12" order="130">
+                <widget type="textarea" fieldname="texto" />
+            </column>
+        </group>
+        <group name="apply" numcolumns="12">
+            <column name="auto-apply-to" numcolumns="12" order="100">
+                <widget type="checkbox" fieldname="autoaplicar" />
             </column>
             <column name="doc-type" order="110">
                 <widget type="select" fieldname="tipodoc" translate="true">
@@ -49,15 +60,6 @@
                 <widget type="select" fieldname="codserie" onclick="EditSerie">
                     <values source="series" fieldcode="codserie" fieldtitle="descripcion" />
                 </widget>
-            </column>
-            <column name="title" order="140" >
-                <widget type="text" fieldname="titulo" maxlength="30" />
-            </column>
-            <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" order="150">
-                <widget type="select" fieldname="idlogo" onclick="EditAttachedFile" />
-            </column>
-            <column name="additional-text" numcolumns="12" order="160">
-                <widget type="textarea" fieldname="texto" />
             </column>
         </group>
     </columns>

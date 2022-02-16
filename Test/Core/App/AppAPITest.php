@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\App;
 
 use FacturaScripts\Core\App\AppAPI;
@@ -28,33 +29,19 @@ use PHPUnit\Framework\TestCase;
  * @author Carlos Carlos Garcia Gomez <carlos@facturascripts.com>
  * @covers \FacturaScripts\Core\App\AppAPI
  */
-class AppAPITest extends TestCase
+final class AppAPITest extends TestCase
 {
 
-    /**
-     * @var AppAPI
-     */
-    protected $object;
-
-    protected function setUp()
+    public function testApiRun()
     {
-        $this->object = new AppAPI();
-    }
+        $app = new AppAPI();
+        $this->assertTrue($app->connect(), 'db-connection-error');
 
-    /**
-     * @covers \FacturaScripts\Core\App\AppAPI::connect
-     */
-    public function testConnect()
-    {
-        $this->assertTrue($this->object->connect());
-    }
+        $appSettings = new AppSettings();
+        $appSettings->set('default', 'enable_api', false);
+        $this->assertFalse($app->run(), 'api-should-not-be-executed');
 
-    /**
-     * @covers \FacturaScripts\Core\App\AppAPI::run
-     */
-    public function testRun()
-    {
-        $mustRun = ('true' == AppSettings::get('default', 'enable_api', false));
-        $this->assertEquals($this->object->run(), $mustRun);
+        $appSettings->set('default', 'enable_api', true);
+        $this->assertTrue($app->run(), 'api-should-be-executed');
     }
 }

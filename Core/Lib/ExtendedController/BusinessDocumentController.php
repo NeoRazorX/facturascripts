@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
@@ -30,26 +31,12 @@ abstract class BusinessDocumentController extends PanelController
 {
 
     use DocFilesTrait;
+    use LogAuditTrait;
 
     /**
-     *
      * @var BusinessDocumentFormTools
      */
     protected $documentTools;
-
-    /**
-     * Shows the document opertation type selector.
-     *
-     * @var bool
-     */
-    public $showDocOperation = false;
-
-    /**
-     * Shows the document sub-type selector.
-     *
-     * @var bool
-     */
-    public $showDocSubType = false;
 
     /**
      * Returns an array of custom fields to add on the header.
@@ -62,7 +49,7 @@ abstract class BusinessDocumentController extends PanelController
     abstract public function getModelClassName();
 
     /**
-     * Retuns an url to create a new subject.
+     * Returns an url to create a new subject.
      */
     abstract public function getNewSubjectUrl();
 
@@ -96,24 +83,25 @@ abstract class BusinessDocumentController extends PanelController
      */
     protected function createViews()
     {
-        /// tabs on top
+        // tabs on top
         $this->setTabsPosition('top');
 
-        /// document tab
+        // document tab
         $fullModelName = self::MODEL_NAMESPACE . $this->getModelClassName();
         $view = new BusinessDocumentView($this->getLineXMLView(), 'new', $fullModelName);
         $this->addCustomView($view->getViewName(), $view);
         $this->setSettings($view->getViewName(), 'btnPrint', true);
 
-        /// edit tab
+        // edit tab
         $viewName = 'Edit' . $this->getModelClassName();
         $this->addEditView($viewName, $this->getModelClassName(), 'detail', 'fas fa-edit');
 
-        /// disable delete button
+        // disable delete button
         $this->setSettings($viewName, 'btnDelete', false);
 
-        /// files tab
+        // files and audit log tabs
         $this->createViewDocFiles();
+        $this->createViewLogAudit();
     }
 
     /**
@@ -152,10 +140,9 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
-     * 
      * @return array
      */
-    protected function getBusinessFormData()
+    protected function getBusinessFormData(): array
     {
         $data = ['custom' => [], 'final' => [], 'form' => [], 'lines' => [], 'subject' => []];
         foreach ($this->request->request->all() as $field => $value) {
@@ -190,7 +177,7 @@ abstract class BusinessDocumentController extends PanelController
     /**
      * Load view data procedure
      *
-     * @param string               $viewName
+     * @param string $viewName
      * @param BusinessDocumentView $view
      */
     protected function loadData($viewName, $view)
@@ -207,14 +194,25 @@ abstract class BusinessDocumentController extends PanelController
                 $view->loadData($code);
                 break;
 
+            case 'ListLogMessage':
+                $this->loadDataLogAudit($view, $this->getModelClassName(), $code);
+                break;
+
             case $this->getLineXMLView():
                 if (empty($code)) {
                     $view->model->setAuthor($this->user);
                     break;
                 }
 
-                /// data not found?
+                // data not found?
                 $view->loadData($code);
+
+                // User can access to data?
+                if (false === $this->checkOwnerData($view->model)) {
+                    $this->setTemplate('Error/AccessDenied');
+                    break;
+                }
+
                 $action = $this->request->request->get('action', '');
                 if ('' === $action && false === $view->model->exists()) {
                     $this->toolBox()->i18nLog()->warning('record-not-found');
@@ -222,6 +220,12 @@ abstract class BusinessDocumentController extends PanelController
                 }
 
                 $this->title .= ' ' . $view->model->primaryDescription();
+                $this->addButton($view->getViewName(), [
+                    'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $code,
+                    'icon' => 'fas fa-cut',
+                    'label' => 'copy',
+                    'type' => 'link'
+                ]);
                 break;
         }
     }
@@ -231,21 +235,21 @@ abstract class BusinessDocumentController extends PanelController
      *
      * @return bool
      */
-    protected function recalculateDocumentAction()
+    protected function recalculateDocumentAction(): bool
     {
         $this->setTemplate(false);
 
-        /// loads model
+        // loads model
         $data = $this->getBusinessFormData();
-        $merged = \array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
+        $merged = array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
         $this->views[$this->active]->loadFromData($merged);
 
-        /// update subject data?
+        // update subject data?
         if (false === $this->views[$this->active]->model->exists()) {
             $this->views[$this->active]->model->updateSubject();
         }
 
-        /// recalculate
+        // recalculate
         $result = $this->documentTools->recalculateForm($this->views[$this->active]->model, $data['lines']);
         $this->response->setContent($result);
         return false;
@@ -256,7 +260,7 @@ abstract class BusinessDocumentController extends PanelController
      *
      * @return bool
      */
-    protected function saveDocumentAction()
+    protected function saveDocumentAction(): bool
     {
         $this->setTemplate(false);
         if (false === $this->permissions->allowUpdate) {
@@ -264,67 +268,72 @@ abstract class BusinessDocumentController extends PanelController
             return false;
         }
 
-        /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($this->request->request->get('multireqtoken', ''))) {
+        // valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+            $this->response->setContent($this->toolBox()->i18n()->trans('invalid-request'));
+            return false;
+        }
+
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($token)) {
             $this->response->setContent($this->toolBox()->i18n()->trans('duplicated-request'));
             return false;
         }
 
-        /// loads model
+        // loads model
         $data = $this->getBusinessFormData();
         $this->views[$this->active]->model->setAuthor($this->user);
         $this->views[$this->active]->loadFromData($data['form']);
         $this->views[$this->active]->lines = $this->views[$this->active]->model->getLines();
 
-        /// save
+        // save
         $result = $this->saveDocumentResult($this->views[$this->active], $data);
         $this->response->setContent($result);
 
-        /// event finish
+        // event finish
         $this->views[$this->active]->model->pipe('finish');
         return false;
     }
 
     /**
-     * 
      * @param string $message
      *
      * @return string
      */
-    protected function saveDocumentError($message)
+    protected function saveDocumentError(string $message): string
     {
-        foreach ($this->toolBox()->log()->readAll() as $msg) {
+        foreach ($this->toolBox()->log()->read('', ['critical', 'error', 'warning']) as $msg) {
             $message .= "\n" . $msg['message'];
         }
 
-        /// undo transaction
+        // undo transaction
         $this->dataBase->rollback();
 
         return $message;
     }
 
     /**
-     * 
      * @param BusinessDocumentView $view
-     * @param array                $data
+     * @param array $data
      *
      * @return string
      */
-    protected function saveDocumentResult(BusinessDocumentView &$view, array &$data)
+    protected function saveDocumentResult(BusinessDocumentView &$view, array &$data): string
     {
-        /// start transaction
+        // start transaction
         $this->dataBase->beginTransaction();
 
-        /// sets subjects
+        // sets subjects
         $result = $this->setSubject($view, $data['subject']);
         if ('OK' !== $result) {
             return $this->saveDocumentError($result);
         }
 
-        /// custom data fields
+        // custom data fields
         $view->model->loadFromData($data['custom']);
         if ($view->model->save() && $this->saveLines($view, $data['lines'])) {
-            /// final data fields
+            // final data fields
             $view->model->loadFromData($data['final']);
 
             $this->documentTools->recalculate($view->model);
@@ -340,17 +349,17 @@ abstract class BusinessDocumentController extends PanelController
      * Save the lines of the document.
      *
      * @param BusinessDocumentView $view
-     * @param array                $newLines
+     * @param array $newLines
      *
      * @return bool
      */
-    protected function saveLines(BusinessDocumentView &$view, array &$newLines)
+    protected function saveLines(BusinessDocumentView &$view, array &$newLines): bool
     {
         if (false === $view->model->editable) {
             return true;
         }
 
-        /// remove or modify old lines
+        // remove or modify old lines
         foreach ($view->lines as $oldLine) {
             $found = false;
             foreach ($newLines as $newLine) {
@@ -371,8 +380,8 @@ abstract class BusinessDocumentController extends PanelController
             }
         }
 
-        /// add new lines
-        foreach (\array_reverse($newLines) as $fLine) {
+        // add new lines
+        foreach (array_reverse($newLines) as $fLine) {
             if ($fLine['idlinea']) {
                 continue;
             }
@@ -387,24 +396,23 @@ abstract class BusinessDocumentController extends PanelController
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function subjectChangedAction()
+    protected function subjectChangedAction(): bool
     {
         $this->setTemplate(false);
 
-        /// loads model
+        // loads model
         $data = $this->getBusinessFormData();
-        $merged = \array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
+        $merged = array_merge($data['custom'], $data['final'], $data['form'], $data['subject']);
         $this->views[$this->active]->loadFromData($merged);
 
-        /// update subject data?
+        // update subject data?
         if (false === $this->views[$this->active]->model->exists()) {
             $this->views[$this->active]->model->updateSubject();
         }
 
-        $this->response->setContent(\json_encode($this->views[$this->active]->model));
+        $this->response->setContent(json_encode($this->views[$this->active]->model));
         return false;
     }
 
@@ -412,13 +420,13 @@ abstract class BusinessDocumentController extends PanelController
      * Updates oldLine with newLine data.
      *
      * @param BusinessDocumentLine $oldLine
-     * @param array                $newLine
+     * @param array $newLine
      *
      * @return bool
      */
-    protected function updateLine($oldLine, array $newLine)
+    protected function updateLine($oldLine, array $newLine): bool
     {
-        /// reload line data from database to get last changes
+        // reload line data from database to get last changes
         $oldLine->loadFromCode($oldLine->primaryColumnValue());
 
         $oldLine->loadFromData($newLine, ['actualizastock']);

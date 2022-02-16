@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Model;
  * Visual configuration of the FacturaScripts views,
  * each PageOption corresponds to a view or tab.
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class PageOption extends Base\ModelClass

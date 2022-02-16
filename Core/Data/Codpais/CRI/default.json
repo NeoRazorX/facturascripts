@@ -4,7 +4,8 @@
         "codimpuesto": "002",
         "codserie": "A",
         "codpago": "CONT",
-        "tipoidfiscal": "RFC"
+        "tipoidfiscal": "RFC",
+        "validate_iban": false
     },
     "email": {
         "enc": "ssl",

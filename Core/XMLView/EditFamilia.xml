@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,31 +23,34 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" description="optional" numcolumns="2" order="100">
-                <widget type="text" fieldname="codfamilia" icon="fas fa-hashtag" maxlength="8" readonly="dinamic" />
+                <widget type="text" fieldname="codfamilia" icon="fas fa-hashtag" maxlength="8" readonly="dinamic"/>
             </column>
-            <column name="description" numcolumns="6" order="110">
-                <widget type="text" fieldname="descripcion" maxlength="100" required="true" />
+            <column name="description" order="110">
+                <widget type="text" fieldname="descripcion" maxlength="100" required="true" decimal="0"/>
             </column>
             <column name="parent" description="desc-parent-family" numcolumns="4" order="120">
                 <widget type="select" fieldname="madre" onclick="EditFamilia">
-                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion" />
+                    <values source="familias" fieldcode="codfamilia" fieldtitle="descripcion"/>
                 </widget>
             </column>
         </group>
-        <group name="accounts" title="accounting" icon="fas fa-balance-scale" numcolumns="12">
-            <column name="codsubcuentacom" title="subaccount-purchases" titleurl="ListCuenta" description="optional" order="100">
+        <group name="advanced" numcolumns="12">
+            <column name="codsubcuentacom" title="subaccount-purchases" titleurl="ListCuenta" description="optional"
+                    numcolumns="2" order="100">
                 <widget type="autocomplete" fieldname="codsubcuentacom">
-                    <values source="subcuentas" fieldcode="codsubcuenta" />
+                    <values source="subcuentas" fieldcode="codsubcuenta"/>
                 </widget>
             </column>
-            <column name="codsubcuentaven" title="subaccount-sales" titleurl="ListCuenta" description="optional" order="110">
+            <column name="codsubcuentaven" title="subaccount-sales" titleurl="ListCuenta" description="optional"
+                    numcolumns="2" order="110">
                 <widget type="autocomplete" fieldname="codsubcuentaven">
-                    <values source="subcuentas" fieldcode="codsubcuenta" />
+                    <values source="subcuentas" fieldcode="codsubcuenta"/>
                 </widget>
             </column>
-            <column name="codsubcuentairpcomf" title="subaccount-irpf" titleurl="ListCuenta" description="optional" order="120">
+            <column name="codsubcuentairpcomf" title="subaccount-irpf" titleurl="ListCuenta" description="optional"
+                    numcolumns="2" order="120">
                 <widget type="autocomplete" fieldname="codsubcuentairpfcom">
-                    <values source="subcuentas" fieldcode="codsubcuenta" />
+                    <values source="subcuentas" fieldcode="codsubcuenta"/>
                 </widget>
             </column>
         </group>

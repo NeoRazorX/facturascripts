@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,12 +27,12 @@ use FacturaScripts\Dinamic\Model\Familia;
 /**
  * Auxiliary model to get sub-accounts of purchases document lines
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
- * 
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ *
  * @property string $codfamilia
  * @property string $codsubcuenta
- * @property float  $total
+ * @property float $total
  */
 class PurchasesDocLineAccount extends JoinModel
 {
@@ -40,11 +41,11 @@ class PurchasesDocLineAccount extends JoinModel
      * Get totals for subaccount of sale document
      *
      * @param FacturaProveedor $document
-     * @param string           $defaultSubacode
+     * @param string $defaultSubacode
      *
      * @return array
      */
-    public function getTotalsForDocument($document, $defaultSubacode)
+    public function getTotalsForDocument($document, string $defaultSubacode): array
     {
         $totals = [];
         $where = [
@@ -69,25 +70,24 @@ class PurchasesDocLineAccount extends JoinModel
     }
 
     /**
-     * 
-     * @param array            $totals
+     * @param array $totals
      * @param FacturaProveedor $document
-     * @param string           $defaultSubacode
+     * @param string $defaultSubacode
      *
      * @return array
      */
-    protected function checkTotals(&$totals, $document, $defaultSubacode)
+    protected function checkTotals(array &$totals, $document, string $defaultSubacode): array
     {
         /// round and add the totals
         $sum = 0.0;
         foreach ($totals as $key => $value) {
-            $totals[$key] = \round($value, \FS_NF0);
+            $totals[$key] = round($value, FS_NF0);
             $sum += $totals[$key];
         }
 
         /// fix occasional penny mismatch
-        if (!$this->toolBox()->utils()->floatcmp($document->neto, $sum, \FS_NF0, true)) {
-            $diff = \round($document->neto - $sum, \FS_NF0);
+        if (!$this->toolBox()->utils()->floatcmp($document->neto, $sum, FS_NF0, true)) {
+            $diff = round($document->neto - $sum, FS_NF0);
             $totals[$defaultSubacode] = isset($totals[$defaultSubacode]) ? $totals[$defaultSubacode] + $diff : $diff;
         }
 
@@ -96,7 +96,7 @@ class PurchasesDocLineAccount extends JoinModel
 
     /**
      * List of fields or columns to select.
-     * 
+     *
      * @return array
      */
     protected function getFields(): array
@@ -123,25 +123,21 @@ class PurchasesDocLineAccount extends JoinModel
 
     /**
      * List of tables related to from sql.
-     * 
+     *
      * @return string
      */
     protected function getSQLFrom(): string
     {
-        return 'lineasfacturasprov'
-            . ' LEFT JOIN productos ON productos.idproducto = lineasfacturasprov.idproducto';
+        return 'lineasfacturasprov LEFT JOIN productos ON productos.idproducto = lineasfacturasprov.idproducto';
     }
 
     /**
      * List of tables required for the execution of the view.
-     * 
+     *
      * @return array
      */
     protected function getTables(): array
     {
-        return [
-            'lineasfacturasprov',
-            'productos'
-        ];
+        return ['lineasfacturasprov', 'productos'];
     }
 }

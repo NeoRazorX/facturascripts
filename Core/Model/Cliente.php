@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\CuentaBancoCliente as DinCuentaBancoCliente;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
+use FacturaScripts\Dinamic\Model\CuentaBancoCliente as DinCuentaBancoCliente;
 
 /**
  * The client. You can have one or more associated addresses and sub-accounts.
@@ -47,7 +48,6 @@ class Cliente extends Base\ComercialContact
     public $codgrupo;
 
     /**
-     *
      * @var string
      */
     public $codtarifa;
@@ -75,13 +75,11 @@ class Cliente extends Base\ComercialContact
     public $idcontactofact;
 
     /**
-     *
      * @var float
      */
     public $riesgoalcanzado;
 
     /**
-     *
      * @var float
      */
     public $riesgomax;
@@ -93,18 +91,17 @@ class Cliente extends Base\ComercialContact
     }
 
     /**
-     *
-     * @param string          $query
-     * @param string          $fieldcode
+     * @param string $query
+     * @param string $fieldCode
      * @param DataBaseWhere[] $where
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldcode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
     {
-        $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
+        $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $fields = 'cifnif|codcliente|email|nombre|observaciones|razonsocial|telefono1|telefono2';
-        $where[] = new DataBaseWhere($fields, \mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
         $where[] = new DataBaseWhere('fechabaja', null, 'IS');
         return CodeModel::all($this->tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
@@ -123,7 +120,7 @@ class Cliente extends Base\ComercialContact
 
     /**
      * Returns the bank accounts associated with this customer.
-     * 
+     *
      * @return DinCuentaBancoCliente[]
      */
     public function getBankAccounts()
@@ -141,22 +138,22 @@ class Cliente extends Base\ComercialContact
     public function getDefaultAddress($type = 'billing')
     {
         $contact = new DinContacto();
-        $idcontact = $type === 'shipping' ? $this->idcontactoenv : $this->idcontactofact;
-        $contact->loadFromCode($idcontact);
+        $idcontacto = $type === 'shipping' ? $this->idcontactoenv : $this->idcontactofact;
+        $contact->loadFromCode($idcontacto);
         return $contact;
     }
 
     /**
      * Returns the preferred payment days for this customer.
-     * 
+     *
      * @return array
      */
     public function getPaymentDays()
     {
         $days = [];
-        foreach (\explode(',', $this->diaspago . ',') as $str) {
-            if (\is_numeric(\trim($str))) {
-                $days[] = \trim($str);
+        foreach (explode(',', $this->diaspago . ',') as $str) {
+            if (is_numeric(trim($str))) {
+                $days[] = trim($str);
             }
         }
 
@@ -172,8 +169,8 @@ class Cliente extends Base\ComercialContact
      */
     public function install()
     {
-        /// we need exits Contacto before, but we can't check it because it would create a cyclic check
-        /// we need to check Agente and GrupoClientes models before
+        // we need exits Contacto before, but we can't check it because it would create a cyclic check
+        // we need to check Agente and GrupoClientes models before
         new Agente();
         new GrupoClientes();
 
@@ -217,7 +214,7 @@ class Cliente extends Base\ComercialContact
      */
     public function test()
     {
-        if (!empty($this->codcliente) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcliente)) {
+        if (!empty($this->codcliente) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcliente)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codcliente, '%column%' => 'codcliente', '%min%' => '1', '%max%' => '10']
@@ -225,19 +222,18 @@ class Cliente extends Base\ComercialContact
             return false;
         }
 
-        /// we validate the days of payment
+        // we validate the days of payment
         $arrayDias = [];
-        foreach (\str_getcsv($this->diaspago) as $day) {
-            if ((int) $day >= 1 && (int) $day <= 31) {
-                $arrayDias[] = (int) $day;
+        foreach (str_getcsv($this->diaspago) as $day) {
+            if ((int)$day >= 1 && (int)$day <= 31) {
+                $arrayDias[] = (int)$day;
             }
         }
-        $this->diaspago = empty($arrayDias) ? null : \implode(',', $arrayDias);
+        $this->diaspago = empty($arrayDias) ? null : implode(',', $arrayDias);
         return parent::test();
     }
 
     /**
-     *
      * @param array $values
      *
      * @return bool
@@ -245,16 +241,16 @@ class Cliente extends Base\ComercialContact
     protected function saveInsert(array $values = [])
     {
         if (empty($this->codcliente)) {
-            $this->codcliente = (string) $this->newCode();
+            $this->codcliente = (string)$this->newCode();
         }
 
         $return = parent::saveInsert($values);
         if ($return && empty($this->idcontactofact)) {
-            $parts = \explode(' ', $this->nombre);
+            $parts = explode(' ', $this->nombre);
 
-            /// creates new contact
+            // creates new contact
             $contact = new DinContacto();
-            $contact->apellidos = \count($parts) > 1 ? \implode(' ', \array_slice($parts, 1)) : '';
+            $contact->apellidos = count($parts) > 1 ? implode(' ', array_slice($parts, 1)) : '';
             $contact->cifnif = $this->cifnif;
             $contact->codcliente = $this->codcliente;
             $contact->descripcion = $this->nombre;
