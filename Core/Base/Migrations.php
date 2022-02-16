@@ -39,6 +39,7 @@ final class Migrations
         self::clearLogs();
         self::fixCodagente();
         self::initModels();
+        self::updateProductsBlock();
         self::updateSettings();
         self::updateInvoiceStatus();
     }
@@ -76,6 +77,13 @@ final class Migrations
     private static function initModels()
     {
         new FormatoDocumento();
+    }
+
+    private static function updateProductsBlock()
+    {
+        $dataBase = new DataBase();
+        $sql = 'UPDATE productos SET bloqueado=0 WHERE bloqueado IS NULL;';
+        $dataBase->exec($sql);
     }
 
     private static function updateInvoiceStatus()
