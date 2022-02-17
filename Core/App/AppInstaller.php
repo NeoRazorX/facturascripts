@@ -281,16 +281,14 @@ final class AppInstaller
 
         // Omit the DB name because it will be checked on a later stage
         $connection = @new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int)$dbData['port']);
-        if (!$connection->connect_error) {
-            $sqlCrearBD = 'CREATE DATABASE IF NOT EXISTS `' . $dbData['name'] . '`;';
-            if ($connection->query($sqlCrearBD)) {
-                return true;
-            }
+        if ($connection->connect_error) {
+            ToolBox::i18nLog()->critical('cant-connect-database');
+            ToolBox::log()->critical($connection->connect_errno . ': ' . $connection->connect_error);
+            return false;
         }
 
-        ToolBox::i18nLog()->critical('cant-connect-database');
-        ToolBox::log()->critical($connection->connect_errno . ': ' . $connection->connect_error);
-        return false;
+        $sqlCrearBD = 'CREATE DATABASE IF NOT EXISTS `' . $dbData['name'] . '`;';
+        return $connection->query($sqlCrearBD);
     }
 
     /**
