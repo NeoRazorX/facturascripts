@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
  * Description of WidgetSelect
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class WidgetSelect extends BaseWidget
 {
@@ -159,7 +159,7 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
-     * 
+     *
      * @param array $values
      * @param bool  $translate
      * @param bool  $addEmpty
