@@ -42,6 +42,8 @@ final class DivisaTest extends TestCase
         $this->assertTrue($currency->save(), 'currency-cant-save');
         $this->assertNotNull($currency->primaryColumnValue(), 'currency-not-stored');
         $this->assertTrue($currency->exists(), 'currency-cant-persist');
+
+        // eliminamos
         $this->assertTrue($currency->delete(), 'currency-cant-delete');
     }
 
@@ -67,7 +69,7 @@ final class DivisaTest extends TestCase
         $currency->descripcion = 'Test Currency with new code';
         $this->assertFalse($currency->save(), 'currency-can-save');
 
-        // No se puede añadir un coddivisa con espacios
+        // No se pueden añadir espacios en el código
         $currency->coddivisa = 'Te ';
         $this->assertFalse($currency->save(), 'currency-can-save');
     }
