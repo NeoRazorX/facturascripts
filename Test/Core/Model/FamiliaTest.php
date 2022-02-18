@@ -47,6 +47,24 @@ final class FamiliaTest extends TestCase
         $this->assertTrue($family->delete(), 'family-cant-delete');
     }
 
+    public function testCreateWithoutCode()
+    {
+        $family = new Familia();
+        $family->descripcion = 'Test without code';
+        $this->assertTrue($family->save(), 'family-cant-save');
+
+        // eliminamos
+        $this->assertTrue($family->delete(), 'family-cant-delete');
+    }
+
+    public function testCreateSpaceCode()
+    {
+        $family = new Familia();
+        $family->codfamilia = 'Te st';
+        $family->descripcion = 'Test with space code';
+        $this->assertFalse($family->save(), 'family-can-save');
+    }
+
     public function testCreateHtml()
     {
         // creamos contenido con html
@@ -61,35 +79,6 @@ final class FamiliaTest extends TestCase
 
         // eliminamos
         $this->assertTrue($family->delete(), 'family-cant-delete');
-    }
-
-    public function testCreateSpaceCode()
-    {
-        $family = new Familia();
-        $family->codfamilia = 'Te st';
-        $family->descripcion = 'Test with space code';
-        $this->assertFalse($family->save(), 'family-can-save');
-    }
-
-    public function testCreateWithoutCode()
-    {
-        $family = new Familia();
-        $family->descripcion = 'Test without code';
-        $this->assertTrue($family->save(), 'family-cant-save');
-
-        // eliminamos
-        $this->assertTrue($family->delete(), 'family-cant-delete');
-    }
-
-    public function testCreateSubaccount()
-    {
-        $family = new Familia();
-        $family->codfamilia = 'Test';
-        $family->descripcion = 'Test Subaccount';
-        $family->codsubcuentacom = '0000000000';
-        $family->codsubcuentairpfcom = '0000000000';
-        $family->codsubcuentaven = '0000000000';
-        $this->assertFalse($family->save(), 'family-can-save');
     }
 
     public function testCreateMother()
@@ -124,6 +113,17 @@ final class FamiliaTest extends TestCase
         // eliminamos
         $this->assertTrue($family1->delete(), 'family-cant-delete');
         $this->assertTrue($family2->delete(), 'family-cant-delete');
+    }
+
+    public function testCreateSubaccount()
+    {
+        $family = new Familia();
+        $family->codfamilia = 'Test';
+        $family->descripcion = 'Test Subaccount';
+        $family->codsubcuentacom = '0000000000';
+        $family->codsubcuentairpfcom = '0000000000';
+        $family->codsubcuentaven = '0000000000';
+        $this->assertFalse($family->save(), 'family-can-save');
     }
 
     protected function tearDown()
