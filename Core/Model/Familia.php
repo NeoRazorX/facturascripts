@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Subcuenta;
+
 /**
  * A family of products.
  *
@@ -173,6 +176,33 @@ class Familia extends Base\ModelClass
 
         if (empty($this->madre) || $this->madre === $this->codfamilia) {
             $this->madre = null;
+        }
+
+        if (false === empty($this->codsubcuentacom)) {
+            $subaccount = new Subcuenta();
+            $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentacom)];
+            if (false === $subaccount->loadFromCode('', $where)) {
+                $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
+                return false;
+            }
+        }
+
+        if (false === empty($this->codsubcuentairpfcom)) {
+            $subaccount = new Subcuenta();
+            $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentairpfcom)];
+            if (false === $subaccount->loadFromCode('', $where)) {
+                $this->toolBox()->i18nLog()->warning('irpf-subaccount-not-found');
+                return false;
+            }
+        }
+
+        if (false === empty($this->codsubcuentaven)) {
+            $subaccount = new Subcuenta();
+            $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentaven)];
+            if (false === $subaccount->loadFromCode('', $where)) {
+                $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');
+                return false;
+            }
         }
 
         return parent::test();
