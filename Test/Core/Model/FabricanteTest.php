@@ -42,12 +42,14 @@ final class FabricanteTest extends TestCase
         $this->assertTrue($manufacturer->save(), 'manufacturer-cant-save');
         $this->assertNotNull($manufacturer->primaryColumnValue(), 'manufacturer-not-stored');
         $this->assertTrue($manufacturer->exists(), 'manufacturer-cant-persist');
+
+        // eliminamos
         $this->assertTrue($manufacturer->delete(), 'manufacturer-cant-delete');
     }
 
     public function testCreateHtml()
     {
-        // creamos una divisa con una descripción con html
+        // creamos contenido con html
         $manufacturer = new Fabricante();
         $manufacturer->codfabricante = 'Test';
         $manufacturer->nombre = '<b>Test Manufacturer</b>';
@@ -67,7 +69,7 @@ final class FabricanteTest extends TestCase
         $manufacturer->nombre = 'Test Manufacturer with new code';
         $this->assertTrue($manufacturer->save(), 'manufacturer-cant-save');
 
-        // No se puede añadir un codfabricante con espacios
+        // No se puede añadir un código con espacios
         $manufacturer->codfabricante = 'Te st';
         $this->assertFalse($manufacturer->save(), 'manufacturer-can-save');
     }
