@@ -19,8 +19,11 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\AlbaranCliente;
+use FacturaScripts\Core\Model\Almacen;
+use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Test\Core\DefaultSettingsTrait;
 use FacturaScripts\Test\Core\LogErrorsTrait;
@@ -61,8 +64,8 @@ final class AlbaranClienteTest extends TestCase
         // asignamos el usuario
         $doc = new AlbaranCliente();
         $this->assertTrue($doc->setAuthor($user), 'can-not-set-user');
-        $this->assertEquals($user->codalmacen, $doc->codalmacen, 'albaran-cliente-bad-warehouse');
-        $this->assertEquals($user->nick, $doc->nick, 'albaran-cliente-bad-nick');
+        $this->assertEquals($user->codalmacen, $doc->codalmacen, 'albaran-usuario-bad-warehouse');
+        $this->assertEquals($user->nick, $doc->nick, 'albaran-usuario-bad-nick');
 
         // eliminamos
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
@@ -177,6 +180,9 @@ final class AlbaranClienteTest extends TestCase
 
         // recargamos producto y comprobamos el stock
         $product->loadFromCode($product->idproducto);
+        $stock->loadFromCode($stock->idstock);
+        $this->assertEquals(1, $stock->cantidad, 'albaran-cliente-do-not-update-stock');
+        $this->assertEquals(1, $stock->disponible, 'albaran-cliente-do-not-update-stock');
         $this->assertEquals(1, $product->stockfis, 'albaran-cliente-product-do-not-update-stock');
 
         // actualizamos los totales
@@ -196,10 +202,69 @@ final class AlbaranClienteTest extends TestCase
 
         // recargamos producto y comprobamos el stock
         $product->loadFromCode($product->idproducto);
+        $stock->loadFromCode($stock->idstock);
+        $this->assertEquals(2, $stock->cantidad, 'albaran-cliente-do-not-update-stock');
+        $this->assertEquals(2, $stock->disponible, 'albaran-cliente-do-not-update-stock');
         $this->assertEquals(2, $product->stockfis, 'albaran-cliente-product-do-not-update-stock');
 
         // eliminamos el producto
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
+    }
+
+    public function testSecondCompany()
+    {
+        // creamos la empresa 2
+        $company2 = new Empresa();
+        $company2->nombre = 'Company 2';
+        $company2->nombrecorto = 'Company-2';
+        $this->assertTrue($company2->save(), 'company-cant-save');
+
+        // obtenemos el almacén de la empresa 2
+        $warehouse = new Almacen();
+        $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
+        $warehouse->loadFromCode('', $where);
+
+        // creamos el cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+
+        // creamos el albarán
+        $doc = new AlbaranCliente();
+        $doc->codalmacen = $warehouse->codalmacen;
+        $doc->setSubject($subject);
+        $this->assertTrue($doc->save(), 'albaran-cant-save');
+
+        // añadimos una línea
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $this->assertTrue($line->save(), 'can-not-save-line-2');
+
+        foreach ($doc->getAvaliableStatus() as $status) {
+            if (empty($status->generadoc)) {
+                continue;
+            }
+
+            // al cambiar el estado genera una nueva factura
+            $doc->idestado = $status->idestado;
+            $this->assertTrue($doc->save(), 'albaran-cant-save');
+
+            $children = $doc->childrenDocuments();
+            $this->assertNotEmpty($children, 'facturas-no-creadas');
+            foreach ($children as $child) {
+                $this->assertEquals($doc->idempresa, $child->idempresa, 'factura-bad-idempresa');
+            }
+        }
+
+        // eliminamos
+        $children = $doc->childrenDocuments();
+        $this->assertNotEmpty($children, 'facturas-no-creadas');
+        foreach ($children as $child) {
+            $this->assertTrue($child->delete(), 'factura-cant-delete');
+        }
+        $this->assertTrue($doc->delete(), 'albaran-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
+        $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }
 
     protected function tearDown()
