@@ -107,7 +107,7 @@ final class PresupuestoClienteTest extends TestCase
     public function testCreateWithoutSubject()
     {
         $doc = new PresupuestoCliente();
-        $this->assertFalse($doc->save(), 'can-create-presupuesto-cliente-without-subject');
+        $this->assertTrue($doc->save(), 'can-not-create-presupuesto-cliente-without-subject');
     }
 
     public function testCreateOneLine()
