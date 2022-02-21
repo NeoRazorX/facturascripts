@@ -58,7 +58,7 @@ trait RandomDataTrait
         return $cliente;
     }
 
-    protected function getRandomCustomerInvoice(): FacturaCliente
+    protected function getRandomCustomerInvoice(string $codejercicio = ''): FacturaCliente
     {
         // creamos el cliente
         $subject = $this->getRandomCustomer();
@@ -66,6 +66,11 @@ trait RandomDataTrait
 
         $invoice = new FacturaCliente();
         $invoice->setSubject($subject);
+
+        if (false === empty($codejercicio)) {
+            $invoice->codejercicio = $codejercicio;
+        }
+
         if ($invoice->save()) {
             $line = $invoice->getNewLine();
             $line->cantidad = 1;
@@ -108,7 +113,7 @@ trait RandomDataTrait
         return $proveedor;
     }
 
-    protected function getRandomSupplierInvoice(): FacturaProveedor
+    protected function getRandomSupplierInvoice(string $codejercicio = ''): FacturaProveedor
     {
         // creamos el proveedor
         $subject = $this->getRandomSupplier();
@@ -116,6 +121,11 @@ trait RandomDataTrait
 
         $invoice = new FacturaProveedor();
         $invoice->setSubject($subject);
+
+        if (false === empty($codejercicio)) {
+            $invoice->codejercicio = $codejercicio;
+        }
+
         if ($invoice->save()) {
             $line = $invoice->getNewLine();
             $line->cantidad = 1;
