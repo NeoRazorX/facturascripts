@@ -67,7 +67,7 @@
                 <widget type="checkbox" fieldname="usarhuecos" />
             </column>
             <column name="pattern" order="140">
-                <widget type="text" fieldname="patron" maxlength="30" required="true" />
+                <widget type="text" fieldname="patron" maxlength="50" required="true" />
             </column>
         </group>
     </columns>
