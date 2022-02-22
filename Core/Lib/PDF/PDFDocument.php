@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -76,7 +76,7 @@ abstract class PDFDocument extends PDFCore
     /**
      * Returns the combination of the address.
      * If it is a supplier invoice, it returns the supplier's default address.
-     * If it is a a customer invoice, return the invoice address
+     * If it is a customer invoice, return the invoice address
      *
      * @param Cliente|Proveedor $subject
      * @param BusinessDocument|Contacto $model
@@ -414,7 +414,6 @@ abstract class PDFDocument extends PDFCore
 
         $subject = $model->getSubject();
         $tipoidfiscal = empty($subject->tipoidfiscal) ? $this->i18n->trans('cifnif') : $subject->tipoidfiscal;
-
         $serie = $model->getSerie();
 
         $tableData = [
