@@ -216,29 +216,22 @@
     {% if currentView.filters is not empty %}
         {% set viewName = currentView.getViewName() %}
         {% set saveFilters = currentView.pageFilters %}
-        <div class="btn-group">
-            <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
-                <i class="fas fa-filter fa-fw" aria-hidden="true"></i> {{ i18n.trans('filters') }}
-            </button>
-            {% if saveFilters is not empty %}
-                <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                    <span class="sr-only"></span>
+        <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
+            <i class="fas fa-filter fa-fw"></i> {{ i18n.trans('filters') }}
+        </button>
+        {% if saveFilters is not empty %}
+            {% for pageFilter in saveFilters %}
+                {% set activeClass = (pageFilter.id == currentView.pageFilterKey) ? ' active' : '' %}
+                {% set icon = (pageFilter.nick is empty) ? 'fa-users' : 'fa-user' %}
+                {% set filterDesc = pageFilter.description|length > 10 ? pageFilter.description ~ '...' : pageFilter.description %}
+                <button title="{{ pageFilter.description }}" class="btn btn-light {{ activeClass }}"
+                   onclick="listViewSetLoadFilter('{{ viewName }}', '{{ pageFilter.id }}');">
+                    <i class="fas fa-filter fa-fw"></i> {{ filterDesc }}
                 </button>
-                <div class="dropdown-menu dropdown-menu-right">
-                    {% for pageFilter in saveFilters %}
-                        {% set activeClass = (pageFilter.id == currentView.pageFilterKey) ? ' active' : '' %}
-                        {% set icon = (pageFilter.nick is empty) ? 'fa-users' : 'fa-user' %}
-                        <a class="dropdown-item{{ activeClass }}" href="#"
-                           onclick="listViewSetLoadFilter('{{ viewName }}', '{{ pageFilter.id }}');">
-                            <i class="fas {{ icon }} fa-fw" aria-hidden="true"></i> {{ pageFilter.description }}
-                        </a>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
+            {% endfor %}
+        {% endif %}
         {% if currentView.pageFilterKey %}
-            <div class="btn-group ml-1">
+            <div class="btn-group">
                 <a href="{{ fsc.url() }}?activetab={{ viewName }}" class="btn btn-warning">
                     <i class="fas fa-times fa-fw"></i>
                 </a>
@@ -275,7 +268,7 @@
                             <div class="form-group">
                                 <label>{{ i18n.trans('description') }}</label>
                                 <input type="text" name="filter-description" class="form-control noEnterKey"
-                                       autofocus=""/>
+                                       autofocus="" />
                             </div>
                         </div>
                     </div>
