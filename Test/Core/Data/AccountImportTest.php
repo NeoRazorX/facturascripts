@@ -70,33 +70,27 @@ final class AccountImportTest extends TestCase
         // comprobamos el total de subcuentas importadas
         $this->assertEquals(self::TOTAL_SUBACCOUNT, $subaccount->count($where), 'subaccount-count-error');
 
-        $exercise = self::getTestExercise();
-        $subaccount = new Subcuenta();
+        // comprobamos que exista la subcuenta 1000000000 y que pertenezca al grupo correcto
         $where1 = [
             new DataBaseWhere('codejercicio', $exercise->codejercicio),
             new DataBaseWhere('codsubcuenta', '1000000000'),
         ];
-
-        // comprobamos que exista la subcuenta 1000000000 y que pertenezca al grupo correcto
         $this->assertTrue($subaccount->loadFromCode('', $where1), 'subaccount-1000000000-not-found');
         $this->assertEquals('100', $subaccount->codcuenta, 'subaccount-1000000000-account-error');
 
-        $account = new Cuenta();
+        // comprobamos que exista la cuenta 100 y que pertenezca al grupo correcto
         $where2 = [
             new DataBaseWhere('codejercicio', $exercise->codejercicio),
             new DataBaseWhere('codcuenta', '100'),
         ];
-
-        // comprobamos que exista la cuenta 100 y que pertenezca al grupo correcto
         $this->assertTrue($account->loadFromCode('', $where2), 'account-100-not-found');
         $this->assertEquals('10', $account->parent_codcuenta, 'account-100-parent-error');
 
+        // comprobamos que exista la cuenta 10 y que pertenezca al grupo correcto
         $where3 = [
             new DataBaseWhere('codejercicio', $exercise->codejercicio),
             new DataBaseWhere('codcuenta', '10'),
         ];
-
-        // comprobamos que exista la cuenta 10 y que pertenezca al grupo correcto
         $this->assertTrue($account->loadFromCode('', $where3), 'account-10-not-found');
         $this->assertEquals('1', $account->parent_codcuenta, 'account-10-parent-error');
 
