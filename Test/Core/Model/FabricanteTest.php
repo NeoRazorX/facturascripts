@@ -72,6 +72,9 @@ final class FabricanteTest extends TestCase
         // No se puede añadir un código con espacios
         $manufacturer->codfabricante = 'Te st';
         $this->assertFalse($manufacturer->save(), 'manufacturer-can-save');
+
+        // eliminamos
+        $this->assertTrue($manufacturer->delete(), 'manufacturer-cant-delete');
     }
 
     protected function tearDown()
