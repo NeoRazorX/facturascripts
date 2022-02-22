@@ -99,20 +99,20 @@ final class FamiliaTest extends TestCase
         $family1 = new Familia();
         $family1->codfamilia = 'Test1';
         $family1->descripcion = 'Test 1';
-        $this->assertTrue($family1->save(), 'family-cant-save');
+        $this->assertTrue($family1->save(), 'family1-cant-save');
 
         $family2 = new Familia();
         $family2->codfamilia = 'Test2';
         $family2->descripcion = 'Test 2';
         $family2->madre = 'Test1';
-        $this->assertTrue($family2->save(), 'family-cant-save');
+        $this->assertTrue($family2->save(), 'family2-cant-save');
 
         $family1->madre = 'Test2';
-        $this->assertFalse($family2->save(), 'family-can-save');
+        $this->assertFalse($family1->save(), 'family2-can-loop');
 
         // eliminamos
-        $this->assertTrue($family1->delete(), 'family-cant-delete');
-        $this->assertTrue($family2->delete(), 'family-cant-delete');
+        $this->assertTrue($family1->delete(), 'family1-cant-delete');
+        $this->assertTrue($family2->delete(), 'family1-cant-delete');
     }
 
     public function testCreateSubaccount()
