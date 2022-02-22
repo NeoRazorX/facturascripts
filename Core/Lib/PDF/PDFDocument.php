@@ -415,6 +415,8 @@ abstract class PDFDocument extends PDFCore
         $subject = $model->getSubject();
         $tipoidfiscal = empty($subject->tipoidfiscal) ? $this->i18n->trans('cifnif') : $subject->tipoidfiscal;
 
+        $serie = $model->getSerie();
+
         $tableData = [
             ['key' => $headerData['subject'], 'value' => Utils::fixHtml($model->{$headerData['fieldName']})],
             ['key' => $this->i18n->trans('date'), 'value' => $model->fecha],
@@ -422,7 +424,7 @@ abstract class PDFDocument extends PDFCore
             ['key' => $this->i18n->trans('code'), 'value' => $model->codigo],
             ['key' => $tipoidfiscal, 'value' => $model->cifnif],
             ['key' => $this->i18n->trans('number'), 'value' => $model->numero],
-            ['key' => $this->i18n->trans('serie'), 'value' => $model->codserie]
+            ['key' => $this->i18n->trans('serie'), 'value' => $serie->descripcion]
         ];
 
         // rectified invoice?
@@ -433,7 +435,7 @@ abstract class PDFDocument extends PDFCore
         } elseif (property_exists($model, 'numpero2') && $model->numero2) {
             $tableData[3] = ['key' => $this->i18n->trans('number2'), 'value' => $model->numero2];
         } else {
-            $tableData[3] = ['key' => $this->i18n->trans('serie'), 'value' => $model->codserie];
+            $tableData[3] = ['key' => $this->i18n->trans('serie'), 'value' => $serie->descripcion];
             unset($tableData[6]);
         }
 
