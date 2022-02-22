@@ -69,11 +69,8 @@ final class AccountImportTest extends TestCase
 
         // comprobamos el total de subcuentas importadas
         $this->assertEquals(self::TOTAL_SUBACCOUNT, $subaccount->count($where), 'subaccount-count-error');
-    }
 
-    public function testAccountTree()
-    {
-        $exercise = $this->getTestExercise();
+        $exercise = self::getTestExercise();
         $subaccount = new Subcuenta();
         $where1 = [
             new DataBaseWhere('codejercicio', $exercise->codejercicio),
@@ -104,7 +101,7 @@ final class AccountImportTest extends TestCase
         $this->assertEquals('1', $account->parent_codcuenta, 'account-10-parent-error');
 
         // eliminamos
-        $this->assertTrue($exercise->delete(), 'exercise-cant-delete');
+        $this->assertTrue($exercise->delete(), 'can-not-delete-exercise');
     }
 
     private function getTestExercise(): Ejercicio
