@@ -102,6 +102,9 @@ final class AccountImportTest extends TestCase
         // comprobamos que exista la cuenta 10 y que pertenezca al grupo correcto
         $this->assertTrue($account->loadFromCode('', $where3), 'account-10-not-found');
         $this->assertEquals('1', $account->parent_codcuenta, 'account-10-parent-error');
+
+        // eliminamos
+        $this->assertTrue($exercise->delete(), 'exercise-cant-delete');
     }
 
     private function getTestExercise(): Ejercicio
