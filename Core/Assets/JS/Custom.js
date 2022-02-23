@@ -79,4 +79,7 @@ $(document).ready(function () {
     $(document).on("click", "nav .dropdown-submenu", function (e) {
         e.stopPropagation();
     });
+    $(document).on('shown.bs.modal', '.modal', function() {
+        $(this).find('[autofocus]').focus();
+    });
 });
