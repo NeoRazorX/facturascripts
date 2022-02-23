@@ -347,6 +347,7 @@ class EditSettings extends PanelController
                 }
                 $this->loadPaymentMethodValues($viewName);
                 $this->loadWarehouseValues($viewName);
+                $this->loadLogoImageValues($viewName);
                 break;
 
             default:
@@ -360,6 +361,22 @@ class EditSettings extends PanelController
     }
 
     /**
+     *
+     * @param string $viewName
+     */
+    protected function loadLogoImageValues($viewName)
+    {
+        $columnLogo = $this->views[$viewName]->columnForName('login-logo');
+        if ($columnLogo) {
+            $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
+                new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
+            ]);
+            $columnLogo->widget->setValuesFromCodeModel($images);
+        }
+    }
+
+    /**
+     *
      * @param string $viewName
      */
     protected function loadPaymentMethodValues(string $viewName)

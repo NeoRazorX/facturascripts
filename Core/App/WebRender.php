@@ -23,12 +23,14 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Model\AttachedFile;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+
 
 /**
  * Description of WebRender
@@ -84,15 +86,9 @@ final class WebRender
     {
         $twig = new Environment($this->loader, $this->getOptions());
 
-        // asset functions
-        $assetFunction = new TwigFunction('asset', function ($string) {
-            $path = FS_ROUTE . '/';
-            if (substr($string, 0, strlen($path)) == $path) {
-                return $string;
-            }
-            return str_replace('//', '/', $path . $string);
-        });
-        $twig->addFunction($assetFunction);
+        /// asset functions
+        $twig->addFunction($this->assetFunction());
+        $twig->addFunction($this->attachedFileFunction());
 
         // fixHtml functions
         $fixHtmlFunction = new TwigFilter('fixHtml', function ($string) {
@@ -149,6 +145,34 @@ final class WebRender
 
         $twig = $this->getTwig();
         return $twig->render($template, $templateVars);
+    }
+
+    /**
+     *
+     * @return TwigFunction
+     */
+    private function assetFunction()
+    {
+        return new TwigFunction('asset', function ($string) {
+            $path = \FS_ROUTE . '/';
+            if (substr($string, 0, strlen($path)) == $path) {
+                return $string;
+            }
+            return str_replace('//', '/', $path . $string);
+        });
+    }
+
+    /**
+     *
+     * @return TwigFunction
+     */
+    private function attachedFileFunction()
+    {
+        return new TwigFunction('attachedFile', function ($idfile) {
+            $attached = new AttachedFile();
+            $attached->loadFromCode($idfile);
+            return $attached;
+        });
     }
 
     /**
