@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,23 +28,14 @@ use FacturaScripts\Dinamic\Lib\AssetManager;
  */
 class WidgetPassword extends WidgetText
 {
-    /**
-     * @param array $data
-     */
-    public function __construct($data)
-    {
-        parent::__construct($data);
-        $this->autocomplete = isset($data['autocomplete']) && $data['autocomplete'] == 'true' || isset($data['autocomplete']) === false ? true : false;
-    }
 
     /**
      * Adds assets to the asset manager.
      */
     protected function assets()
     {
-        AssetManager::add('js', \FS_ROUTE . '/Dinamic/Assets/JS/WidgetPassword.js', 2);
-        AssetManager::add('css', \FS_ROUTE . '/Dinamic/Assets/CSS/WidgetPassword.css', 2);
-
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetPassword.js', 2);
+        AssetManager::add('css', FS_ROUTE . '/Dinamic/Assets/CSS/WidgetPassword.css', 2);
     }
 
     /**
@@ -55,27 +46,17 @@ class WidgetPassword extends WidgetText
      *
      * @return string
      */
-    public function edit($model, $title = '', $description = '', $titleurl = '')
+    public function edit($model, $title = '', $description = '', $titleurl = ''): string
     {
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
         $labelHtml = '<label class="mb-1">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
-        if (empty($this->icon)) {
-            return '<div class="form-group">'
-                . $labelHtml
-                . $this->inputHtml()
-                . $descriptionHtml
-                . '</div>';
-        }
-
-        $cssPsw = $this->autocomplete === false ? 'edit-psw' : '';
-
         return '<div class="form-group">'
             . $labelHtml
             . '<div class="input-group">'
             . '<div class="' . $this->css('input-group-prepend') . ' d-flex d-sm-none d-xl-flex">'
-            . '<span class="input-group-text ' . $cssPsw . '"><i class="' . $this->icon . ' fa-fw"></i></span>'
+            . '<span class="input-group-text edit-psw"><i class="fas fa-eye fa-fw"></i></span>'
             . '</div>'
             . $this->inputHtml()
             . '</div>'
@@ -92,12 +73,6 @@ class WidgetPassword extends WidgetText
     protected function inputHtml($type = 'password', $extraClass = '')
     {
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
-
-        if ($this->autocomplete) {
-            return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $this->value
-                . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
-        }
-
         return '<input type="text" name="' . $this->fieldname . '" value="' . $this->value
             . '" class="fs-psw ' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
     }
