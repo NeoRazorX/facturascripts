@@ -714,6 +714,7 @@
     "log": "Log",
     "login": "Login",
     "login-cookie-fail": "Session cookie failed",
+    "login-image": "Imagen de login",
     "login-ok": "Login successfully (cookie). User: '%nick%'",
     "login-password-fail": "Login failed",
     "login-text": "Type your user name and password to login",

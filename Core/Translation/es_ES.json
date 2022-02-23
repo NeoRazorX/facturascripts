@@ -714,6 +714,7 @@
     "log": "Log",
     "login": "Iniciar sesión",
     "login-cookie-fail": "Cookie de sesión no válida",
+    "login-image": "Imagen de login",
     "login-ok": "Sesión iniciada satisfactoriamente (cookie). Usuario: '%nick%'",
     "login-password-fail": "El usuario o la contraseña son incorrectos",
     "login-text": "Escriba su nombre de usuario y contraseña para iniciar sesión",

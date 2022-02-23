@@ -714,6 +714,7 @@
     "log": "Register",
     "login": "Anmeldung",
     "login-cookie-fail": "Session-Cookie ist fehlgeschlagen",
+    "login-image": "Imagen de login",
     "login-ok": "Melden Sie sich erfolgreich an (Cookie). Benutzer: '0'",
     "login-password-fail": "Anmeldung fehlgeschlagen",
     "login-text": "Anmeldung",

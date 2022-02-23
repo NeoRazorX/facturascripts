@@ -714,6 +714,7 @@
     "log": "Log",
     "login": "Saioa hasi",
     "login-cookie-fail": "Saioaren cookie-a baliogabea da",
+    "login-image": "Imagen de login",
     "login-ok": "Saioa ondo hasi da (cookie). Erabiltzailea: '%nick%'",
     "login-password-fail": "Erabiltzailea edo pasahitza ez dira zuzenak",
     "login-text": "Idatzi zure erabiltzaile izena eta pasahitza saioa hasteko",

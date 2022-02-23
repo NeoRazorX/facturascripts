@@ -714,6 +714,7 @@
     "log": "Log",
     "login": "Entrar",
     "login-cookie-fail": "O cookie da sessão falhou",
+    "login-image": "Imagen de login",
     "login-ok": "Faça o login com sucesso (cookie). Usuário: '0'",
     "login-password-fail": "Falha na autenticação",
     "login-text": "Entrar",

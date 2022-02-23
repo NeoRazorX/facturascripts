@@ -714,6 +714,7 @@
     "log": "Bûche",
     "login": "S'identifier",
     "login-cookie-fail": "Le cookie de session a échoué",
+    "login-image": "Imagen de login",
     "login-ok": "Connectez-vous avec succès (cookie). Utilisateur: '%nick'",
     "login-password-fail": "Échec de la connexion",
     "login-text": "Entrez votre nom d'utilisateur et mot de passe pour vous connecter",

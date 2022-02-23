@@ -714,6 +714,7 @@
     "log": "Registre",
     "login": "Iniciar sessió",
     "login-cookie-fail": "La cookie de sessió no és vàlida",
+    "login-image": "Imagen de login",
     "login-ok": "Has iniciat sessió correctament (cookie) com a usuari: '%nick%'",
     "login-password-fail": "L'usuari o la contrasenya no són correctes",
     "login-text": "Escriu el teu nom d'usuari i la contrasenya per a iniciar la sessió",
