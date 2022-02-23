@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,6 @@ use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
-
 
 /**
  * Description of WebRender
@@ -86,7 +85,7 @@ final class WebRender
     {
         $twig = new Environment($this->loader, $this->getOptions());
 
-        /// asset functions
+        // asset functions
         $twig->addFunction($this->assetFunction());
         $twig->addFunction($this->attachedFileFunction());
 
@@ -147,14 +146,10 @@ final class WebRender
         return $twig->render($template, $templateVars);
     }
 
-    /**
-     *
-     * @return TwigFunction
-     */
-    private function assetFunction()
+    private function assetFunction(): TwigFunction
     {
         return new TwigFunction('asset', function ($string) {
-            $path = \FS_ROUTE . '/';
+            $path = FS_ROUTE . '/';
             if (substr($string, 0, strlen($path)) == $path) {
                 return $string;
             }
@@ -162,11 +157,7 @@ final class WebRender
         });
     }
 
-    /**
-     *
-     * @return TwigFunction
-     */
-    private function attachedFileFunction()
+    private function attachedFileFunction(): TwigFunction
     {
         return new TwigFunction('attachedFile', function ($idfile) {
             $attached = new AttachedFile();

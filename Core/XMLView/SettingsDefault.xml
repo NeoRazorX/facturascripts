@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -128,7 +128,7 @@
                 <widget type="number" fieldname="finofertadays" min="0" required="true"/>
             </column>
         </group>
-        <group name="advanced" title="advanced" icon="fas fa-database" valign="bottom" numcolumns="12">
+        <group name="advanced" title="advanced" icon="fas fa-database" numcolumns="12">
             <column name="default-role" titleurl="ListUser?activetab=ListRole" numcolumns="3" order="100">
                 <widget type="select" fieldname="codrole" onclick="EditRole" required="true" icon="fas fa-users">
                     <values source="roles" fieldcode="codrole" fieldtitle="descripcion"/>
@@ -148,11 +148,9 @@
                     <values title="small">small</values>
                 </widget>
             </column>
-            <column name="show-balance-graphic" numcolumns="3" order="140">
-                <widget type="checkbox" fieldname="balancegraphic"/>
-            </column>
-            <column name="login-logo" titleurl="ListAttachedFile" description="click-link-to-add" numcolumns="6" order="1400">
-                <widget type="select" fieldname="idloginlogo" onclick="EditAttachedFile" />
+            <column name="login-image" titleurl="ListAttachedFile" description="click-link-to-add" numcolumns="3"
+                    order="140">
+                <widget type="select" fieldname="idloginimage" onclick="EditAttachedFile"/>
             </column>
         </group>
         <group name="api" title="api" icon="fas fa-laptop-code" numcolumns="12">

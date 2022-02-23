@@ -24,7 +24,6 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\EditView;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
-use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
@@ -52,9 +51,6 @@ class EditSettings extends PanelController
         return $data;
     }
 
-    /**
-     * @return bool
-     */
     protected function checkPaymentMethod(): bool
     {
         $appSettings = $this->toolBox()->appSettings();
@@ -82,9 +78,6 @@ class EditSettings extends PanelController
         return false;
     }
 
-    /**
-     * @return bool
-     */
     protected function checkWarehouse(): bool
     {
         $appSettings = $this->toolBox()->appSettings();
@@ -112,9 +105,6 @@ class EditSettings extends PanelController
         return false;
     }
 
-    /**
-     * @return bool
-     */
     protected function checkTax(): bool
     {
         $appSettings = $this->toolBox()->appSettings();
@@ -135,9 +125,6 @@ class EditSettings extends PanelController
         return false;
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createDocTypeFilter(string $viewName)
     {
         $types = $this->codeModel->all('estados_documentos', 'tipodoc', 'tipodoc');
@@ -180,9 +167,6 @@ class EditSettings extends PanelController
         $this->createViewFormats();
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsApiKeys(string $viewName = 'ListApiKey')
     {
         $this->addListView($viewName, 'ApiKey', 'api-keys', 'fas fa-key');
@@ -192,18 +176,12 @@ class EditSettings extends PanelController
         $this->views[$viewName]->addSearchFields(['description', 'apikey', 'nick']);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsIdFiscal(string $viewName = 'EditIdentificadorFiscal')
     {
         $this->addEditListView($viewName, 'IdentificadorFiscal', 'fiscal-id', 'far fa-id-card');
         $this->views[$viewName]->setInLine(true);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewFormats(string $viewName = 'ListFormatoDocumento')
     {
         $this->addListView($viewName, 'FormatoDocumento', 'printing-formats', 'fas fa-print');
@@ -243,9 +221,6 @@ class EditSettings extends PanelController
         $this->setSettings($name, 'btnNew', false);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewSequences(string $viewName = 'ListSecuenciaDocumento')
     {
         $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code');
@@ -264,9 +239,6 @@ class EditSettings extends PanelController
         $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewStates(string $viewName = 'ListEstadoDocumento')
     {
         $this->addListView($viewName, 'EstadoDocumento', 'states', 'fas fa-tags');
@@ -360,14 +332,10 @@ class EditSettings extends PanelController
         }
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function loadLogoImageValues($viewName)
     {
-        $columnLogo = $this->views[$viewName]->columnForName('login-logo');
-        if ($columnLogo) {
+        $columnLogo = $this->views[$viewName]->columnForName('login-image');
+        if ($columnLogo && $columnLogo->widget->getType() === 'select') {
             $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
                 new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
             ]);
@@ -375,10 +343,6 @@ class EditSettings extends PanelController
         }
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function loadPaymentMethodValues(string $viewName)
     {
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
@@ -391,9 +355,6 @@ class EditSettings extends PanelController
         }
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function loadWarehouseValues(string $viewName)
     {
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');

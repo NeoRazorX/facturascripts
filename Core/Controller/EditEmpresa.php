@@ -56,9 +56,6 @@ class EditEmpresa extends EditController
         return $data;
     }
 
-    /**
-     * Create views
-     */
     protected function createViews()
     {
         parent::createViews();
@@ -68,40 +65,24 @@ class EditEmpresa extends EditController
         $this->createViewExercises();
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
     protected function createViewBankAccounts(string $viewName = 'ListCuentaBanco')
     {
         $this->addListView($viewName, 'CuentaBanco', 'bank-accounts', 'fas fa-piggy-bank');
         $this->views[$viewName]->disableColumn('company');
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
     protected function createViewExercises(string $viewName = 'ListEjercicio')
     {
         $this->addListView($viewName, 'Ejercicio', 'exercises', 'fas fa-calendar-alt');
         $this->views[$viewName]->disableColumn('company');
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
     protected function createViewPaymentMethods(string $viewName = 'ListFormaPago')
     {
         $this->addListView($viewName, 'FormaPago', 'payment-method', 'fas fa-credit-card');
         $this->views[$viewName]->disableColumn('company');
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
     protected function createViewWarehouse(string $viewName = 'EditAlmacen')
     {
         $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse');
@@ -140,7 +121,6 @@ class EditEmpresa extends EditController
     }
 
     /**
-     * 
      * @param BaseView $view
      */
     protected function setCustomWidgetValues(&$view)
