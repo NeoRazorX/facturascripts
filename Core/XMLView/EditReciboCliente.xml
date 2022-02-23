@@ -22,63 +22,64 @@
     <columns>
         <group name="main" numcolumns="12">
             <column name="id" display="none" order="100">
-                <widget type="text" fieldname="idrecibo" />
+                <widget type="text" fieldname="idrecibo"/>
             </column>
             <column name="customer" order="110">
-                <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente" required="true" readonly="dinamic">
-                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre" />
+                <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente" required="true"
+                        readonly="dinamic">
+                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"/>
                 </widget>
             </column>
             <column name="invoice" order="120">
                 <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaCliente" readonly="dinamic">
-                    <values source="facturascli" fieldcode="idfactura" fieldtitle="codigo" />
+                    <values source="facturascli" fieldcode="idfactura" fieldtitle="codigo"/>
                 </widget>
             </column>
             <column name="number" order="130">
-                <widget type="number" fieldname="numero" icon="fas fa-hashtag" readonly="dinamic" />
+                <widget type="number" fieldname="numero" icon="fas fa-hashtag" readonly="dinamic"/>
             </column>
             <column name="date" order="140">
-                <widget type="date" fieldname="fecha" />
+                <widget type="date" fieldname="fecha"/>
             </column>
             <column name="expiration" order="150">
-                <widget type="date" fieldname="vencimiento" />
+                <widget type="date" fieldname="vencimiento"/>
             </column>
             <column name="user" display="none" order="160">
                 <widget type="select" fieldname="nick" readonly="true">
-                    <values source="users" fieldcode="nick" fieldtitle="nick" />
+                    <values source="users" fieldcode="nick" fieldtitle="nick"/>
                 </widget>
             </column>
             <column name="company" order="170">
                 <widget type="select" fieldname="idempresa" onclick="EditEmpresa" readonly="dinamic" required="true">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
                 </widget>
             </column>
         </group>
         <group name="payment" numcolumns="12">
             <column name="amount" order="100">
-                <widget type="money" fieldname="importe" />
+                <widget type="money" fieldname="importe"/>
             </column>
             <column name="expenses" order="110">
-                <widget type="money" fieldname="gastos" />
+                <widget type="money" fieldname="gastos"/>
             </column>
             <column name="currency" order="120">
                 <widget type="select" fieldname="coddivisa" onclick="EditDivisa" required="true" readonly="dinamic">
-                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion" />
+                    <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"/>
                 </widget>
             </column>
             <column name="payment" title="method-payment" order="130">
                 <widget type="select" fieldname="codpago" onclick="EditFormaPago" required="true">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"/>
                 </widget>
             </column>
             <column name="payment-date" order="140">
-                <widget type="date" fieldname="fechapago" readonly="dinamic" />
+                <widget type="date" fieldname="fechapago" readonly="dinamic"/>
             </column>
             <column name="paid" numcolumns="12" order="150">
-                <widget type="checkbox" fieldname="pagado" />
+                <widget type="checkbox" fieldname="pagado"/>
             </column>
             <column name="observations" numcolumns="12" order="160">
-                <widget type="textarea" fieldname="observaciones" />
+                <widget type="textarea" fieldname="observaciones"/>
             </column>
         </group>
     </columns>

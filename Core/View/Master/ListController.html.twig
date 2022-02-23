@@ -1,28 +1,28 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
-{% extends "Master/MenuTemplate.html.twig" %}
+{% extends "Master/MenuBghTemplate.html.twig" %}
 
 {% block bodyHeaderOptions %}
     {{ parent() }}
     {% set pageData = fsc.getPageData() %}
-    <div class="container-fluid mb-1 d-print-none">
+    <div class="container-fluid mb-3 d-print-none">
         <div class="row">
             <div class="col-md-7">
                 {# -- Page data for small devices -- #}
@@ -39,29 +39,34 @@
                         <li class="breadcrumb-item active" aria-current="page">{{ fsc.title }}</li>
                     </ol>
                 </nav>
-                <div class="btn-group bg-white">
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}" title="{{ i18n.trans('refresh') }}">
+                <div class="btn-group">
+                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}"
+                       title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                     {% if pageData.name == fsc.user.homepage %}
-                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE" title="{{ i18n.trans('marked-as-homepage') }}">
+                        <a class="btn btn-sm btn-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE"
+                           title="{{ i18n.trans('marked-as-homepage') }}">
                             <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
-                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE" title="{{ i18n.trans('mark-as-homepage') }}">
-                            <i class="fas fa-bookmark" aria-hidden="true"></i>
+                        <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
+                           title="{{ i18n.trans('mark-as-homepage') }}">
+                            <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                 </div>
                 {# -- Options button -- #}
                 <div class="btn-group">
                     <div class="dropdown">
-                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ i18n.trans('options') }}
                         </button>
                         <div class="dropdown-menu">
                             {% for viewName, view in fsc.views %}
-                                <a class="dropdown-item" href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}">
+                                <a class="dropdown-item"
+                                   href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}">
                                     <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
                                 </a>
                             {% endfor %}
@@ -70,10 +75,9 @@
                 </div>
             </div>
             <div class="col-md-5 text-right">
-                <h1 class="h3 d-none d-md-inline-block">
-                    {{ fsc.title }} <i class="{{ pageData.icon }}" aria-hidden="true"></i>
+                <h1 class="h4 mb-0 d-none d-md-inline-block">
+                    {{ fsc.title }}<i class="{{ pageData.icon }} ml-3" aria-hidden="true"></i>
                 </h1>
-                <br class="d-md-none"/>
             </div>
         </div>
     </div>
@@ -82,10 +86,13 @@
         {% for viewName, view in fsc.views %}
             <li class="nav-item">
                 {% set active = (viewName == fsc.active) ? ' active' : '' %}
-                <a href="#{{ viewName }}" class="nav-link{{ active }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
-                    <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i>
+                <a href="#{{ viewName }}" class="nav-link{{ active }}" data-toggle="tab" role="tab"
+                   aria-controls="{{ viewName }}">
+                    <i class="{{ view.icon }}" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">{{ view.title }}</span>
-                    {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>{% endif %}
+                    {% if view.count > 0 %}
+                        <span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>
+                    {% endif %}
                 </a>
             </li>
         {% endfor %}
@@ -106,15 +113,6 @@
     </div>
 {% endblock %}
 
-{% block css %}
-    {{ parent() }}
-    <style>
-        .bg-header {
-            background-color: #FAFBFC;
-        }
-    </style>
-{% endblock %}
-
 {% block javascripts %}
     {{ parent() }}
     <script>
@@ -122,11 +120,19 @@
             if (document.location.hash) {
                 $(".nav-tabs a[href=\\" + document.location.hash + "]").tab('show');
             }
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
+                $("input[name='query']:visible").focus();
+            }
             $('.nav-tabs a').click(function (e) {
                 $(this).tab('show');
                 var scrollmem = $('body').scrollTop();
                 window.location.hash = this.hash;
                 $('html,body').scrollTop(scrollmem);
+            });
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
+                    $("input[name='query']:visible").focus();
+                }
             });
         });
     </script>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -34,7 +35,6 @@ class EditRole extends EditController
 {
 
     /**
-     * 
      * @return array
      */
     public function getAccessRules(): array
@@ -64,7 +64,6 @@ class EditRole extends EditController
     }
 
     /**
-     * 
      * @return string
      */
     public function getModelClassName()
@@ -98,7 +97,6 @@ class EditRole extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsAccess(string $viewName = 'RoleAccess')
@@ -107,7 +105,6 @@ class EditRole extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsUsers(string $viewName = 'EditRoleUser')
@@ -115,40 +112,47 @@ class EditRole extends EditController
         $this->addEditListView($viewName, 'RoleUser', 'users', 'fas fa-address-card');
         $this->views[$viewName]->setInLine(true);
 
-        /// Disable column
+        // Disable column
         $this->views[$viewName]->disableColumn('role', true);
     }
 
     /**
-     * 
      * @return bool
      */
     protected function editRulesAction(): bool
     {
-        $show = $this->request->request->get('show');
-        $onlyOwner = $this->request->request->get('onlyOwner');
-        $update = $this->request->request->get('update');
-        $delete = $this->request->request->get('delete');
+        // check user permissions
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return true;
+        }
 
-        /// update or delete current access rules
+        $show = $this->request->request->get('show', []);
+        $onlyOwner = $this->request->request->get('onlyOwner', []);
+        $update = $this->request->request->get('update', []);
+        $delete = $this->request->request->get('delete', []);
+
+        // update or delete current access rules
         $roleAccessModel = new RoleAccess();
         $where = [new DataBaseWhere('codrole', $this->request->query->get('code'))];
         $rules = $roleAccessModel->all($where, [], 0, 0);
         foreach ($rules as $roleAccess) {
-            /// delete rule?
-            if (false === \is_array($show) || false === \in_array($roleAccess->pagename, $show)) {
+            // delete rule?
+            if (false === is_array($show) || false === in_array($roleAccess->pagename, $show)) {
                 $roleAccess->delete();
                 continue;
             }
 
-            /// update
-            $roleAccess->onlyownerdata = \is_array($onlyOwner) && \in_array($roleAccess->pagename, $onlyOwner);
-            $roleAccess->allowupdate = \is_array($update) && \in_array($roleAccess->pagename, $update);
-            $roleAccess->allowdelete = \is_array($delete) && \in_array($roleAccess->pagename, $delete);
+            // update
+            $roleAccess->onlyownerdata = is_array($onlyOwner) && in_array($roleAccess->pagename, $onlyOwner);
+            $roleAccess->allowupdate = is_array($update) && in_array($roleAccess->pagename, $update);
+            $roleAccess->allowdelete = is_array($delete) && in_array($roleAccess->pagename, $delete);
             $roleAccess->save();
         }
 
-        /// add new rules
+        // add new rules
         foreach ($show as $pageName) {
             $found = false;
             foreach ($rules as $rule) {
@@ -161,13 +165,13 @@ class EditRole extends EditController
                 continue;
             }
 
-            /// add
+            // add
             $newRoleAccess = new RoleAccess();
             $newRoleAccess->codrole = $this->request->query->get('code');
             $newRoleAccess->pagename = $pageName;
-            $newRoleAccess->onlyownerdata = \is_array($onlyOwner) && \in_array($pageName, $onlyOwner);
-            $newRoleAccess->allowupdate = \is_array($update) && \in_array($pageName, $update);
-            $newRoleAccess->allowdelete = \is_array($delete) && \in_array($pageName, $delete);
+            $newRoleAccess->onlyownerdata = is_array($onlyOwner) && in_array($pageName, $onlyOwner);
+            $newRoleAccess->allowupdate = is_array($update) && in_array($pageName, $update);
+            $newRoleAccess->allowdelete = is_array($delete) && in_array($pageName, $delete);
             $newRoleAccess->save();
         }
 
@@ -184,9 +188,8 @@ class EditRole extends EditController
      */
     protected function execPreviousAction($action)
     {
-        switch ($action) {
-            case 'edit-rules':
-                return $this->editRulesAction();
+        if ($action == 'edit-rules') {
+            return $this->editRulesAction();
         }
 
         return parent::execPreviousAction($action);
@@ -207,15 +210,15 @@ class EditRole extends EditController
     /**
      * Load view data
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
             case 'EditRoleUser':
-                $codrole = $this->getViewModelValue($this->getMainViewName(), 'codrole');
-                $where = [new DataBaseWhere('codrole', $codrole)];
+                $code = $this->getViewModelValue($this->getMainViewName(), 'codrole');
+                $where = [new DataBaseWhere('codrole', $code)];
                 $view->loadData('', $where, ['id' => 'DESC']);
                 break;
 

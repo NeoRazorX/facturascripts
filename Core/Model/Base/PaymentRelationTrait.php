@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,12 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Dinamic\Model\FormaPago;
 
 /**
- * 
+ *
  * @author Oscar G. Villa <ogvilla@gmail.com>
  */
 trait PaymentRelationTrait
@@ -35,13 +37,10 @@ trait PaymentRelationTrait
     public $codpago;
 
     /**
-     * 
      * @return FormaPago
      */
-    public function getPaymentMethod()
+    public function getPaymentMethod(): FormaPago
     {
-        $paymentMethod = new FormaPago();
-        $paymentMethod->loadFromCode($this->codpago);
-        return $paymentMethod;
+        return FormasPago::get($this->codpago);
     }
 }

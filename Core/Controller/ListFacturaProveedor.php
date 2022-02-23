@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 
 /**
@@ -52,12 +54,13 @@ class ListFacturaProveedor extends ListBusinessDocument
     protected function createViews()
     {
         $this->createViewPurchases('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
-        $this->createViewLines('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
+        if ($this->permissions->onlyOwnerData === false) {
+            $this->createViewLines('ListLineaFacturaProveedor', 'LineaFacturaProveedor');
+        }
         $this->createViewReceipts();
     }
 
     /**
-     *
      * @param string $viewName
      * @param string $modelName
      * @param string $label
@@ -71,7 +74,6 @@ class ListFacturaProveedor extends ListBusinessDocument
     }
 
     /**
-     *
      * @param string $viewName
      */
     protected function createViewReceipts(string $viewName = 'ListReciboProveedor')
@@ -83,28 +85,28 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addOrderBy($viewName, ['importe'], 'amount');
         $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
 
-        /// filters
+        // filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
 
-        $currencies = $this->codeModel->all('divisas', 'coddivisa', 'descripcion');
+        $currencies = Divisas::codeModel();
         if (count($currencies) > 2) {
             $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
         }
 
-        $paymethods = $this->codeModel->all('formaspago', 'codpago', 'descripcion');
+        $paymethods = FormasPago::codeModel();
         if (count($paymethods) > 2) {
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymethods);
         }
 
         $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');
 
-        /// buttons
+        // buttons
         $this->addButtonPayReceipt($viewName);
 
-        /// settings
+        // settings
         $this->setSettings($viewName, 'btnNew', false);
     }
 }

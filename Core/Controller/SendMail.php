@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
@@ -24,8 +25,10 @@ use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\User;
+use PHPMailer\PHPMailer\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -38,7 +41,7 @@ use Symfony\Component\HttpFoundation\Response;
 class SendMail extends Controller
 {
 
-    /// 30 days
+    // 30 days
     const MAX_FILE_AGE = 2592000;
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
@@ -72,9 +75,10 @@ class SendMail extends Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response              $response
-     * @param User                  $user
+     * @param Response $response
+     * @param User $user
      * @param ControllerPermissions $permissions
+     * @throws Exception
      */
     public function privateCore(&$response, $user, $permissions)
     {
@@ -83,7 +87,7 @@ class SendMail extends Controller
         $this->newMail = new NewMail();
         $this->newMail->setUser($this->user);
 
-        /// Check if the email is configurate
+        // Check if the email is configurate
         if (false === $this->newMail->canSendMail()) {
             $this->toolBox()->i18nLog()->warning('email-not-configured');
         }
@@ -130,10 +134,23 @@ class SendMail extends Controller
         return $results;
     }
 
+    protected function checkInvoices()
+    {
+        if ($this->request->query->get('modelClassName') != 'FacturaCliente') {
+            return;
+        }
+
+        $invoice = new FacturaCliente();
+        if ($invoice->loadFromCode($this->request->query->getAlnum('modelCode')) && $invoice->editable) {
+            self::toolBox()::i18nLog()->warning('sketch-invoice-warning');
+        }
+    }
+
     /**
      * Execute main actions.
      *
      * @param string $action
+     * @throws Exception
      */
     protected function execAction(string $action)
     {
@@ -158,6 +175,7 @@ class SendMail extends Controller
                 $this->removeOld();
                 $this->setEmailAddress();
                 $this->setAttachment();
+                $this->checkInvoices();
                 break;
         }
     }
@@ -196,7 +214,7 @@ class SendMail extends Controller
     {
         foreach (glob(FS_FOLDER . '/MyFiles/*_mail_*.pdf') as $fileName) {
             $parts = explode('_', $fileName);
-            $time = (int) substr(end($parts), 0, -4);
+            $time = (int)substr(end($parts), 0, -4);
             if ($time < (time() - self::MAX_FILE_AGE)) {
                 unlink($fileName);
             }
@@ -222,14 +240,13 @@ class SendMail extends Controller
 
     /**
      * Send and email with data posted from form.
-     * 
+     *
      * @return bool
+     * @throws Exception
      */
     protected function send(): bool
     {
-        if ($this->newMail->fromEmail === $this->user->email) {
-            /// do not add replyTo
-        } elseif ($this->request->request->get('replyto', '0')) {
+        if ($this->newMail->fromEmail != $this->user->email && $this->request->request->get('replyto', '0')) {
             $this->newMail->addReplyTo($this->user->email, $this->user->nick);
         }
 
@@ -265,12 +282,18 @@ class SendMail extends Controller
         return false;
     }
 
+    /**
+     * @throws Exception
+     */
     protected function setAttachment()
     {
         $fileName = $this->request->get('fileName', '');
         $this->newMail->addAttachment(FS_FOLDER . '/MyFiles/' . $fileName, $fileName);
     }
 
+    /**
+     * @throws Exception
+     */
     protected function setEmailAddress()
     {
         $className = self::MODEL_NAMESPACE . $this->request->get('modelClassName', '');

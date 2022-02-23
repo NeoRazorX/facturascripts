@@ -66,18 +66,13 @@ class PeriodFilter extends BaseFilter
         $this->endDate = new DateFilter(self::ENDDATE_ID . $key, $field, 'until-date', '<=');
     }
 
-    /**
-     * @param array $where
-     *
-     * @return bool
-     */
     public function getDataBaseWhere(array &$where): bool
     {
-        /// apply both
+        // apply both
         $start = $this->startDate->getDataBaseWhere($where);
         $end = $this->endDate->getDataBaseWhere($where);
 
-        /// return true if anyone is true
+        // return true if anyone is true
         return $start || $end;
     }
 
@@ -101,11 +96,14 @@ class PeriodFilter extends BaseFilter
         return $this->select->getValue();
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
+        if ($this->readonly) {
+            $this->select->readonly = true;
+            $this->startDate->readonly = true;
+            $this->endDate->readonly = true;
+        }
+
         return $this->select->render()
             . $this->startDate->render()
             . $this->endDate->render();
@@ -143,11 +141,11 @@ class PeriodFilter extends BaseFilter
     {
         $selectValue = $request->request->get($this->select->name());
         if (empty($selectValue)) {
-            /// start
+            // start
             $startValue = $request->request->get($this->startDate->name());
             $this->setValue($startValue, self::STARTDATE_ID);
 
-            /// end
+            // end
             $endValue = $request->request->get($this->endDate->name());
             $this->setValue($endValue, self::ENDDATE_ID);
             return;

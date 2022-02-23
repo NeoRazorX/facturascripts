@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\MiniLogSave;
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Base\ToolBox;
@@ -80,7 +81,7 @@ abstract class App
     {
         $this->request = Request::createFromGlobals();
         if ($this->request->cookies->get('fsLang')) {
-            $this->toolBox()->i18n()->setDefaultLang($this->request->cookies->get('fsLang'));
+            ToolBox::i18n()->setDefaultLang($this->request->cookies->get('fsLang'));
         }
 
         $this->dataBase = new DataBase();
@@ -88,10 +89,17 @@ abstract class App
         $this->response = new Response();
         $this->uri = $uri;
 
-        /// timezone
-        \date_default_timezone_set(\FS_TIMEZONE);
+        // timezone
+        date_default_timezone_set(FS_TIMEZONE);
 
-        $this->toolBox()->log()->debug('URI: ' . $this->uri);
+        // add security headers
+        $this->response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+        $this->response->headers->set('X-XSS-Protection', '1; mode=block');
+        $this->response->headers->set('X-Content-Type-Options', 'nosniff');
+        $this->response->headers->set('Strict-Transport-Security', 'max-age=31536000');
+
+        ToolBox::log()->debug('URI: ' . $this->uri);
+        ToolBox::log()::setContext('uri', $this->uri);
     }
 
     /**
@@ -102,7 +110,7 @@ abstract class App
     public function connect(): bool
     {
         if ($this->dataBase->connect()) {
-            $this->toolBox()->appSettings()->load();
+            ToolBox::appSettings()->load();
             $this->loadPlugins();
             return true;
         }
@@ -112,17 +120,15 @@ abstract class App
 
     /**
      * Save log and disconnects from the database.
-     *
-     * @param string $nick
      */
-    public function close(string $nick = '')
+    public function close()
     {
-        /// send telemetry (if configured)
+        // send telemetry (if configured)
         $telemetry = new TelemetryManager();
         $telemetry->update();
 
-        /// save log
-        new MiniLogSave($this->toolBox()->ipFilter()->getClientIp(), $nick, $this->uri);
+        // save log
+        MiniLog::save();
 
         $this->dataBase->close();
     }
@@ -137,17 +143,17 @@ abstract class App
 
     /**
      * Runs the application core.
-     * 
+     *
      * @return bool
      */
     public function run(): bool
     {
         if (false === $this->dataBase->connected()) {
-            $this->toolBox()->i18nLog()->critical('cant-connect-database');
+            ToolBox::i18nLog()->critical('cant-connect-database');
             $this->die(Response::HTTP_INTERNAL_SERVER_ERROR);
             return false;
         } elseif ($this->isIPBanned()) {
-            $this->toolBox()->i18nLog()->critical('ip-banned');
+            ToolBox::i18nLog()->critical('ip-banned');
             $this->die(Response::HTTP_TOO_MANY_REQUESTS);
             return false;
         }
@@ -158,14 +164,14 @@ abstract class App
     /**
      * Returns param number $num in uri.
      *
-     * @param int $num
+     * @param string $num
      *
      * @return string
      */
     protected function getUriParam(string $num): string
     {
-        $params = \explode('/', \substr($this->uri, 1));
-        return isset($params[$num]) ? $params[$num] : '';
+        $params = explode('/', substr($this->uri, 1));
+        return $params[$num] ?? '';
     }
 
     /**
@@ -173,7 +179,7 @@ abstract class App
      */
     protected function ipWarning()
     {
-        $ipFilter = $this->toolBox()->ipFilter();
+        $ipFilter = ToolBox::ipFilter();
         $ipFilter->setAttempt($ipFilter->getClientIp());
     }
 
@@ -184,7 +190,7 @@ abstract class App
      */
     protected function isIPBanned(): bool
     {
-        $ipFilter = $this->toolBox()->ipFilter();
+        $ipFilter = ToolBox::ipFilter();
         return $ipFilter->isBanned($ipFilter->getClientIp());
     }
 
@@ -195,19 +201,10 @@ abstract class App
     {
         foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
             $initClass = '\\FacturaScripts\\Plugins\\' . $pluginName . '\\Init';
-            if (\class_exists($initClass)) {
+            if (class_exists($initClass)) {
                 $initObject = new $initClass();
                 $initObject->init();
             }
         }
-    }
-
-    /**
-     * 
-     * @return ToolBox
-     */
-    protected function toolBox()
-    {
-        return new ToolBox();
     }
 }

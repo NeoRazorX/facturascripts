@@ -47,6 +47,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>idlinearect</name>
+        <type>integer</type>
+    </column>
+    <column>
         <name>idproducto</name>
         <type>integer</type>
     </column>
@@ -104,8 +108,13 @@
         <type>PRIMARY KEY (idlinea)</type>
     </constraint>
     <constraint>
-        <name>ca_linea_facturasprov2</name>
+        <name>ca_lineasfacturasprov_facturasprov2</name>
         <type>FOREIGN KEY (idfactura) REFERENCES facturasprov (idfactura) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>ca_lineasfacturasprov_linearect2</name>
+        <type>FOREIGN KEY (idlinearect) REFERENCES lineasfacturasprov (idlinea) ON DELETE SET NULL ON UPDATE CASCADE
+        </type>
     </constraint>
     <constraint>
         <name>ca_lineasfacturasprov_impuestos</name>

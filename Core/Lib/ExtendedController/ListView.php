@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
@@ -140,12 +141,12 @@ class ListView extends BaseView
      */
     public function export(&$exportManager, $codes): bool
     {
-        /// no data
+        // no data
         if ($this->count < 1) {
             return true;
         }
 
-        /// selected items?
+        // selected items?
         if (is_array($codes) && count($codes) > 0) {
             foreach ($this->cursor as $model) {
                 if (false === in_array($model->primaryColumnValue(), $codes)) {
@@ -162,12 +163,12 @@ class ListView extends BaseView
             return false;
         }
 
-        /// print list
+        // print list
         $exportManager->addListModelPage(
             $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
         );
 
-        /// print totals
+        // print totals
         if ($this->totalAmounts) {
             $total = [];
             foreach ($this->totalAmounts as $key => $value) {
@@ -207,12 +208,12 @@ class ListView extends BaseView
         $this->where = array_merge($where, $this->where);
         $this->count = is_null($this->model) ? 0 : $this->model->count($this->where);
 
-        /// avoid overflow
+        // avoid overflow
         if ($this->offset > $this->count) {
             $this->offset = 0;
         }
 
-        /// needed when megasearch force data reload
+        // needed when mega-search force data reload
         $this->cursor = [];
         if ($this->count > 0) {
             $this->cursor = $this->model->all($this->where, $this->order, $this->offset, $limit);
@@ -274,6 +275,31 @@ class ListView extends BaseView
         AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/ListView.js');
     }
 
+    /**
+     * @param string $tableName
+     * @param string $fieldName
+     * @param array $where
+     *
+     * @return float
+     */
+    private function getTotalSum(string $tableName, string $fieldName, array $where): float
+    {
+        if ($where) {
+            return TotalModel::sum($tableName, $fieldName, $where);
+        }
+
+        // if there are no filters, then read from the cache
+        $cache = new Cache();
+        $key = 'sum-' . $tableName . '-' . $fieldName;
+        $sum = $cache->get($key);
+        if (is_null($sum)) {
+            // empty cache value? Then get the value from the database and store on the cache
+            $sum = TotalModel::sum($tableName, $fieldName, $where);
+            $cache->set($key, $sum);
+        }
+        return $sum;
+    }
+
     private function loadTotalAmounts()
     {
         $tableName = count($this->cursor) > 1 && method_exists($this->model, 'tableName') ? $this->model->tableName() : '';
@@ -294,7 +320,7 @@ class ListView extends BaseView
             $this->totalAmounts[$col->widget->fieldname] = [
                 'title' => $col->title,
                 'page' => $pageTotalAmount,
-                'total' => TotalModel::sum($tableName, $col->widget->fieldname, $this->where)
+                'total' => $this->getTotalSum($tableName, $col->widget->fieldname, $this->where)
             ];
         }
     }
@@ -307,26 +333,40 @@ class ListView extends BaseView
         $this->offset = (int)$request->request->get('offset', 0);
         $this->setSelectedOrderBy($request->request->get('order', ''));
 
-        /// query
+        // query
         $this->query = $request->request->get('query', '');
         if ('' !== $this->query) {
             $fields = implode('|', $this->searchFields);
             $this->where[] = new DataBaseWhere($fields, ToolBox::utils()::noHtml($this->query), 'XLIKE');
         }
 
-        /// select saved filter
+        // filtro guardado seleccionado?
         $this->pageFilterKey = $request->request->get('loadfilter', 0);
-        if (!empty($this->pageFilterKey)) {
-            // Load saved filter into page parameters
+        if ($this->pageFilterKey) {
+            $filterLoad = [];
+            // cargamos los valores en la request
             foreach ($this->pageFilters as $item) {
                 if ($item->id == $this->pageFilterKey) {
                     $request->request->add($item->filters);
+                    $filterLoad = $item->filters;
                     break;
                 }
             }
+            // aplicamos los valores de la request a los filtros
+            foreach ($this->filters as $filter) {
+                $key = 'filter' . $filter->key;
+                $filter->readonly = true;
+                if (array_key_exists($key, $filterLoad)) {
+                    $filter->setValueFromRequest($request);
+                    if ($filter->getDataBaseWhere($this->where)) {
+                        $this->showFilters = true;
+                    }
+                }
+            }
+            return;
         }
 
-        /// filters
+        // filters
         foreach ($this->filters as $filter) {
             $filter->setValueFromRequest($request);
             if ($filter->getDataBaseWhere($this->where)) {

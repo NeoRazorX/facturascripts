@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,28 +44,16 @@ class CheckboxFilter extends BaseFilter
      */
     public $operation;
 
-    /**
-     * @param string $key
-     * @param string $field
-     * @param string $label
-     * @param string $operation
-     * @param mixed $matchValue
-     * @param array $default
-     */
     public function __construct(string $key, string $field = '', string $label = '', string $operation = '=', $matchValue = true, array $default = [])
     {
         parent::__construct($key, $field, $label);
+        $this->autosubmit = true;
         $this->default = $default;
         $this->matchValue = $matchValue;
         $this->operation = $operation;
         $this->ordernum += 100;
     }
 
-    /**
-     * @param array $where
-     *
-     * @return bool
-     */
     public function getDataBaseWhere(array &$where): bool
     {
         if ('TRUE' === $this->value) {
@@ -82,17 +70,14 @@ class CheckboxFilter extends BaseFilter
         return $result;
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
         $extra = is_null($this->value) ? '' : ' checked=""';
-        return '<div class="col-2">'
+        return '<div class="col-sm-auto">'
             . '<div class="form-group">'
             . '<div class="form-check mb-2 mb-sm-0">'
-            . '<label class="form-check-label">'
-            . '<input class="form-check-input" type="checkbox" name="' . $this->name() . '" value="TRUE"' . $extra . $this->onChange() . '/>'
+            . '<label class="form-check-label mr-3">'
+            . '<input class="form-check-input" type="checkbox" name="' . $this->name() . '" value="TRUE"' . $extra . $this->onChange() . $this->readonly() . '/>'
             . static::$i18n->trans($this->label)
             . '</label>'
             . '</div>'

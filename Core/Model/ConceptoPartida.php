@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -40,7 +41,7 @@ class ConceptoPartida extends Base\ModelClass
      *
      * @var string
      */
-    public $concepto;
+    public $descripcion;
 
     /**
      * Returns the name of the column that is the model's primary key.
@@ -79,7 +80,7 @@ class ConceptoPartida extends Base\ModelClass
      */
     public function test()
     {
-        $this->concepto = $this->toolBox()->utils()->noHtml($this->concepto);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         return parent::test();
     }
 
@@ -97,7 +98,6 @@ class ConceptoPartida extends Base\ModelClass
     }
 
     /**
-     * 
      * @param array $values
      *
      * @return bool

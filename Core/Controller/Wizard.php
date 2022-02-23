@@ -40,7 +40,7 @@ class Wizard extends Controller
 {
 
     const ITEM_SELECT_LIMIT = 500;
-    const NEW_DEFAULT_PAGE = 'ListFacturaCliente';
+    const NEW_DEFAULT_PAGE = 'Dashboard';
 
     /**
      * @var AppSettings
@@ -181,18 +181,6 @@ class Wizard extends Controller
             $this->toolBox()->log()->error($exc->getMessage());
             return;
         }
-    }
-
-    /**
-     * Enable all logs by default.
-     */
-    private function enableLogs()
-    {
-        foreach (['critical', 'error', 'warning'] as $type) {
-            $this->appSettings->set('log', $type, 'true');
-        }
-
-        $this->appSettings->save();
     }
 
     protected function finalRedirect()
@@ -360,9 +348,6 @@ class Wizard extends Controller
             return;
         }
 
-        // change default log values to enabled
-        $this->enableLogs();
-
         // change template
         $this->setTemplate('Wizard-2');
     }
@@ -372,7 +357,7 @@ class Wizard extends Controller
         $this->empresa->regimeniva = $this->request->request->get('regimeniva');
         $this->empresa->save();
 
-        foreach (['codimpuesto', 'codretencion', 'costpricepolicy'] as $key) {
+        foreach (['codimpuesto', 'costpricepolicy'] as $key) {
             $value = $this->request->request->get($key);
             $finalValue = empty($value) ? null : $value;
             $this->appSettings->set('default', $key, $finalValue);

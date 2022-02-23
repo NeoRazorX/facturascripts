@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -37,19 +38,16 @@ class CronJob extends Base\ModelClass
     public $date;
 
     /**
-     *
      * @var bool
      */
     public $done;
 
     /**
-     *
      * @var float
      */
     public $duration;
 
     /**
-     *
      * @var bool
      */
     public $enabled;
@@ -81,7 +79,7 @@ class CronJob extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->date = \date(self::DATETIME_STYLE);
+        $this->date = date(self::DATETIME_STYLE);
         $this->done = false;
         $this->duration = 0.0;
         $this->enabled = true;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,25 +22,28 @@
 <view>
     <columns>
         <column name="code" order="100">
-            <widget type="text" fieldname="idempresa" onclick="EditEmpresa" />
+            <widget type="text" fieldname="idempresa" onclick="EditEmpresa"/>
         </column>
         <column name="name" order="110">
-            <widget type="text" fieldname="nombre" />
+            <widget type="text" fieldname="nombre"/>
         </column>
-        <column name="short-name" order="120">
-            <widget type="text" fieldname="nombrecorto" />
+        <column name="short-name" display="none" order="120">
+            <widget type="text" fieldname="nombrecorto"/>
         </column>
-        <column name="phone" order="130">
-            <widget type="text" fieldname="telefono1" />
+        <column name="fiscal-number" order="130">
+            <widget type="text" fieldname="cifnif"/>
         </column>
-        <column name="email" order="140">
-            <widget type="text" fieldname="email" />
+        <column name="phone" order="140">
+            <widget type="text" fieldname="telefono1"/>
         </column>
-        <column name="web" order="150">
-            <widget type="link" fieldname="web" />
+        <column name="email" display="none" order="150">
+            <widget type="text" fieldname="email"/>
         </column>
-        <column name="observations" order="160">
-            <widget type="textarea" fieldname="observaciones" />
+        <column name="web" display="none" order="160">
+            <widget type="link" fieldname="web"/>
+        </column>
+        <column name="observations" order="170">
+            <widget type="textarea" fieldname="observaciones"/>
         </column>
     </columns>
 </view>

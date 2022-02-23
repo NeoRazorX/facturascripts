@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 /**
@@ -27,31 +28,26 @@ class RowButton extends VisualItem
 {
 
     /**
-     *
      * @var string
      */
     public $action;
 
     /**
-     *
      * @var string
      */
     public $color;
 
     /**
-     *
      * @var bool
      */
     public $confirm;
 
     /**
-     *
      * @var string
      */
     public $icon;
 
     /**
-     *
      * @var string
      */
     public $label;
@@ -64,13 +60,16 @@ class RowButton extends VisualItem
     public $level;
 
     /**
-     *
+     * @var string
+     */
+    public $target;
+
+    /**
      * @var string
      */
     public $type;
 
     /**
-     *
      * @param array $data
      */
     public function __construct($data)
@@ -81,13 +80,13 @@ class RowButton extends VisualItem
         $this->confirm = isset($data['confirm']);
         $this->icon = $data['icon'] ?? '';
         $this->label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
-        $this->level = isset($data['level']) ? (int) $data['level'] : 0;
+        $this->level = isset($data['level']) ? (int)$data['level'] : 0;
+        $this->target = $data['target'] ?? '';
         $this->type = $data['type'] ?? 'action';
     }
 
     /**
-     *
-     * @param bool   $small
+     * @param bool $small
      * @param string $viewName
      * @param string $jsFunction
      *
@@ -114,12 +113,15 @@ class RowButton extends VisualItem
                     . '" title="' . $this->label . '">' . $icon . $label . '</button>';
 
             case 'link':
-                return '<a ' . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
+                $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
+                return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
                     . ' title="' . $this->label . '">' . $icon . $label . '</a>';
 
             case 'modal':
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
-                    . $this->action . '" title="' . $this->label . '">' . $icon . $label . '</button>';
+                $modal = 'modal' . $this->action;
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#'
+                    . $modal . '" title="' . $this->label . '" onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
+                    . $icon . $label . '</button>';
 
             default:
                 $onclick = $this->getOnClickValue($viewName, $jsFunction);
@@ -138,7 +140,7 @@ class RowButton extends VisualItem
         }
 
         $cssClass = 'btn btn-sm ';
-        $cssClass .= empty($this->color) ? 'btn-outline-secondary' : $this->colorToClass($this->color, 'btn-outline-');
+        $cssClass .= empty($this->color) ? 'btn-secondary' : $this->colorToClass($this->color, 'btn-');
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
 
@@ -148,7 +150,8 @@ class RowButton extends VisualItem
                     . '" title="' . $this->label . '">' . $icon . $this->label . '</button> ';
 
             case 'link':
-                return '<a ' . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
+                $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
+                return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
                     . ' title="' . $this->label . '">' . $icon . $this->label . '</a> ';
         }
 
@@ -179,7 +182,6 @@ class RowButton extends VisualItem
     }
 
     /**
-     * 
      * @param string $viewName
      * @param string $jsFunction
      *

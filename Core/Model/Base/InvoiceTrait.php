@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -81,37 +82,7 @@ trait InvoiceTrait
 
     abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50);
 
-    abstract public function getLines();
-
     abstract public function getReceipts();
-
-    abstract protected static function toolBox();
-
-    /**
-     * Returns all children documents of this one.
-     *
-     * @return TransformerDocument[]
-     */
-    public function childrenDocuments()
-    {
-        $children = parent::childrenDocuments();
-        foreach ($this->getRefunds() as $invoice) {
-            /// is this invoice in children?
-            $found = false;
-            foreach ($children as $child) {
-                if ($child->idfactura == $invoice->idfactura) {
-                    $found = true;
-                    break;
-                }
-            }
-
-            if (false === $found) {
-                $children[] = $invoice;
-            }
-        }
-
-        return $children;
-    }
 
     /**
      * @return bool
@@ -119,24 +90,24 @@ trait InvoiceTrait
     public function delete()
     {
         if (false === $this->editable) {
-            $this->toolBox()->i18nLog()->warning('non-editable-document');
+            ToolBox::i18nLog()->warning('non-editable-document');
             return false;
         }
 
-        /// remove receipts
+        // remove receipts
         foreach ($this->getReceipts() as $receipt) {
             $receipt->disableInvoiceUpdate(true);
             if (false === $receipt->delete()) {
-                $this->toolBox()->i18nLog()->warning('cant-remove-receipt');
+                ToolBox::i18nLog()->warning('cant-remove-receipt');
                 return false;
             }
         }
 
-        /// remove accounting
+        // remove accounting
         $acEntry = $this->getAccountingEntry();
         $acEntry->editable = true;
         if ($acEntry->exists() && false === $acEntry->delete()) {
-            $this->toolBox()->i18nLog()->warning('cant-remove-accounting-entry');
+            ToolBox::i18nLog()->warning('cant-remove-accounting-entry');
             return false;
         }
 
@@ -178,7 +149,7 @@ trait InvoiceTrait
     /**
      * @return bool
      */
-    public function paid()
+    public function paid(): bool
     {
         return $this->pagada;
     }
@@ -193,18 +164,14 @@ trait InvoiceTrait
         $parents = parent::parentDocuments();
         $where = [new DataBaseWhere('idfactura', $this->idfacturarect)];
         foreach ($this->all($where, ['idfactura' => 'DESC'], 0, 0) as $invoice) {
-            /// is this invoice in parents?
-            $found = false;
+            // is this invoice in parents?
             foreach ($parents as $parent) {
                 if ($parent->primaryColumnValue() == $invoice->primaryColumnValue()) {
-                    $found = true;
-                    break;
+                    continue 2;
                 }
             }
 
-            if (false === $found) {
-                $parents[] = $invoice;
-            }
+            $parents[] = $invoice;
         }
 
         return $parents;
@@ -221,25 +188,6 @@ trait InvoiceTrait
     }
 
     /**
-     * Returns the refunded items amount associated with the invoice.
-     *
-     * @return float|int
-     */
-    public function refundedItemAmount($ref)
-    {
-        $amount = 0;
-        foreach ($this->getRefunds() as $invoice) {
-            foreach ($invoice->getLines() as $line) {
-                if ($line->referencia == $ref) {
-                    $amount += abs($line->cantidad);
-                }
-            }
-        }
-
-        return $amount;
-    }
-
-    /**
      * @param string $field
      *
      * @return bool
@@ -253,23 +201,23 @@ trait InvoiceTrait
         switch ($field) {
             case 'codcliente':
             case 'codproveedor':
-                /// prevent from removing paid receipts
+                // prevent from removing paid receipts
                 foreach ($this->getReceipts() as $receipt) {
                     if ($receipt->pagado) {
-                        $this->toolBox()->i18nLog()->warning('paid-receipts-prevent-action');
+                        ToolBox::i18nLog()->warning('paid-receipts-prevent-action');
                         return false;
                     }
                 }
-            /// no break
+            // no break
             case 'codpago':
-                /// remove unpaid receipts
+                // remove unpaid receipts
                 foreach ($this->getReceipts() as $receipt) {
                     if (false === $receipt->pagado && false === $receipt->delete()) {
-                        $this->toolBox()->i18nLog()->warning('cant-remove-receipt');
+                        ToolBox::i18nLog()->warning('cant-remove-receipt');
                         return false;
                     }
                 }
-            /// no break
+            // no break
             case 'fecha':
             case 'total':
                 return $this->onChangeTotal();
@@ -283,20 +231,20 @@ trait InvoiceTrait
      */
     protected function onChangeTotal()
     {
-        /// remove accounting entry
+        // remove accounting entry
         $asiento = $this->getAccountingEntry();
         $asiento->editable = true;
         if ($asiento->exists() && false === $asiento->delete()) {
-            $this->toolBox()->i18nLog()->warning('cant-remove-account-entry');
+            ToolBox::i18nLog()->warning('cant-remove-account-entry');
             return false;
         }
 
-        /// create a new accounting entry
+        // create a new accounting entry
         $this->idasiento = null;
         $tool = new InvoiceToAccounting();
         $tool->generate($this);
 
-        /// check receipts
+        // check receipts
         $generator = new ReceiptGenerator();
         $generator->generate($this);
         $generator->update($this);

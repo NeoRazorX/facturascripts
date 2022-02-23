@@ -16,17 +16,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Model\Base\InvoiceLineTrait;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 
 /**
  * Line of a customer invoice.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class LineaFacturaCliente extends Base\SalesDocumentLine
+class LineaFacturaCliente extends SalesDocumentLine
 {
 
-    use Base\ModelTrait;
+    use ModelTrait;
+    use InvoiceLineTrait;
 
     /**
      * Invoice ID of this line.
@@ -36,7 +42,11 @@ class LineaFacturaCliente extends Base\SalesDocumentLine
     public $idfactura;
 
     /**
-     * 
+     * @var int
+     */
+    public $idlinearect;
+
+    /**
      * @return string
      */
     public function documentColumn()
@@ -45,7 +55,6 @@ class LineaFacturaCliente extends Base\SalesDocumentLine
     }
 
     /**
-     * 
      * @return FacturaCliente
      */
     public function getDocument()
@@ -56,14 +65,12 @@ class LineaFacturaCliente extends Base\SalesDocumentLine
     }
 
     /**
-     * 
      * @return string
      */
     public function install()
     {
-        /// needed dependency
+        // needed dependency
         new FacturaCliente();
-
         return parent::install();
     }
 
@@ -78,18 +85,16 @@ class LineaFacturaCliente extends Base\SalesDocumentLine
     }
 
     /**
-     * 
      * @return bool
      */
     public function test()
     {
-        /// servido will always be 0 to prevent stock problems when removing rectified invoices
+        // servido will always be 0 to prevent stock problems when removing rectified invoices
         $this->servido = 0.0;
         return parent::test();
     }
 
     /**
-     * 
      * @param string $type
      * @param string $list
      *
@@ -97,10 +102,6 @@ class LineaFacturaCliente extends Base\SalesDocumentLine
      */
     public function url(string $type = 'auto', string $list = 'List')
     {
-        if (null !== $this->idfactura) {
-            return 'EditFacturaCliente?code=' . $this->idfactura;
-        }
-
-        return parent::url($type, $list);
+        return $this->idfactura ? 'EditFacturaCliente?code=' . $this->idfactura : parent::url($type, $list);
     }
 }

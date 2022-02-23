@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Dinamic\Model\Divisa;
 
@@ -30,13 +32,6 @@ class DivisaTools extends NumberTools
 {
 
     /**
-     *
-     * @var Divisa[]
-     */
-    private static $divisas;
-
-    /**
-     *
      * @var Divisa
      */
     private static $selectedDivisa;
@@ -48,59 +43,56 @@ class DivisaTools extends NumberTools
     {
         parent::__construct();
 
-        if (false === \defined('FS_CURRENCY_POS')) {
-            \define('FS_CURRENCY_POS', 'right');
+        if (false === defined('FS_CURRENCY_POS')) {
+            define('FS_CURRENCY_POS', 'right');
         }
 
-        if (!isset(self::$divisas)) {
-            $divisa = new Divisa();
-            self::$divisas = $divisa->all();
-
+        if (!isset(self::$selectedDivisa)) {
             $coddivisa = AppSettings::get('default', 'coddivisa');
-            self::$selectedDivisa = static::get($coddivisa);
+            self::$selectedDivisa = Divisas::get($coddivisa);
         }
     }
 
     /**
      * Convert the amount form currency1 to currency2.
      *
-     * @param float  $amount
+     * @param float $amount
      * @param string $coddivisa1
      * @param string $coddivisa2
      *
      * @return float
      */
-    public static function convert($amount, $coddivisa1, $coddivisa2)
+    public static function convert($amount, $coddivisa1, $coddivisa2): float
     {
         if ($coddivisa1 != $coddivisa2) {
-            return (float) $amount / static::get($coddivisa1)->tasaconv * static::get($coddivisa2)->tasaconv;
+            return (float)$amount / Divisas::get($coddivisa1)->tasaconv * Divisas::get($coddivisa2)->tasaconv;
         }
 
-        return (float) $amount;
+        return (float)$amount;
     }
 
     /**
      * Finds a coddivisa and uses it as selected currency.
-     * 
+     *
      * @param object $model
      */
     public function findDivisa($model)
     {
         if (isset($model->coddivisa)) {
-            self::$selectedDivisa = static::get($model->coddivisa);
+            self::$selectedDivisa = Divisas::get($model->coddivisa);
         }
     }
 
     /**
      * Returns the value of the formatted currency.
      *
-     * @param mixed  $number
-     * @param mixed  $decimals
+     * @param mixed $number
+     * @param mixed $decimals
      * @param string $decoration
      *
      * @return string
      */
-    public static function format($number, $decimals = FS_NF0, $decoration = 'symbol')
+    public static function format($number, $decimals = FS_NF0, string $decoration = 'symbol'): string
     {
         $txt = parent::format($number, $decimals);
         switch ($decoration) {
@@ -109,35 +101,16 @@ class DivisaTools extends NumberTools
 
             case 'coddivisa':
                 return isset(self::$selectedDivisa) ? $txt . ' ' . self::$selectedDivisa->coddivisa : $txt . ' ???';
-
-            default:
-                return $txt;
         }
+
+        return $txt;
     }
 
     /**
-     * 
      * @return string
      */
-    public static function getSymbol()
+    public static function getSymbol(): string
     {
-        return isset(self::$selectedDivisa) ? (string) self::$selectedDivisa->simbolo : '?';
-    }
-
-    /**
-     * 
-     * @param string $coddivisa
-     *
-     * @return Divisa
-     */
-    private static function get($coddivisa)
-    {
-        foreach (self::$divisas as $div) {
-            if ($div->coddivisa == $coddivisa) {
-                return $div;
-            }
-        }
-
-        return new Divisa();
+        return isset(self::$selectedDivisa) ? self::$selectedDivisa->simbolo : '?';
     }
 }

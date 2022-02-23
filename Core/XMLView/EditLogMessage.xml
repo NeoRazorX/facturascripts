@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,29 +22,36 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" display="none" order="0">
-                <widget type="text" fieldname="id" icon="fas fa-hashtag" required="true" />
-            </column>
             <column name="time" order="100">
-                <widget type="text" fieldname="time" required="true" readonly="true" />
+                <widget type="text" fieldname="time" readonly="true"/>
             </column>
             <column name="channel" order="110">
-                <widget type="text" fieldname="channel" readonly="true" />
+                <widget type="text" fieldname="channel" readonly="true"/>
             </column>
             <column name="level" order="120">
-                <widget type="text" fieldname="level" required="true" readonly="true" />
+                <widget type="text" fieldname="level" readonly="true"/>
             </column>
-            <column name="user" order="130">
-                <widget type="text" fieldname="nick" icon="fas fa-user-circle" onclick="EditUser" readonly="true" />
+            <column name="url" order="130">
+                <widget type="link" fieldname="uri" readonly="true"/>
             </column>
-            <column name="ip" order="140">
-                <widget type="text" fieldname="ip" readonly="true" />
+        </group>
+        <group name="user" numcolumns="12">
+            <column name="ip" order="100">
+                <widget type="text" fieldname="ip" readonly="true"/>
             </column>
-            <column name="url" numcolumns="12" order="150">
-                <widget type="link" fieldname="uri" readonly="true" />
+            <column name="user" order="110">
+                <widget type="text" fieldname="nick" icon="fas fa-user-circle" onclick="EditUser" readonly="true"/>
             </column>
-            <column name="message" numcolumns="12" order="160">
-                <widget type="textarea" fieldname="message" required="true" readonly="true" />
+            <column name="contact" order="120">
+                <widget type="text" fieldname="idcontacto" icon="fas fa-user" onclick="EditContacto" readonly="true"/>
+            </column>
+        </group>
+        <group name="message" numcolumns="12">
+            <column name="message" numcolumns="6" order="100">
+                <widget type="textarea" fieldname="message" readonly="true"/>
+            </column>
+            <column name="context" numcolumns="6" order="110">
+                <widget type="textarea" fieldname="context" readonly="true"/>
             </column>
         </group>
     </columns>

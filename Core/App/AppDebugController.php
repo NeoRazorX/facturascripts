@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,6 @@ final class AppDebugController extends AppController
 {
 
     /**
-     * 
      * @param string $uri
      * @param string $pageName
      */
@@ -42,7 +41,6 @@ final class AppDebugController extends AppController
     }
 
     /**
-     * 
      * @return bool
      */
     public function connect(): bool
@@ -54,7 +52,6 @@ final class AppDebugController extends AppController
     }
 
     /**
-     * 
      * @return DebugBar
      */
     public function debugBar()
@@ -63,7 +60,6 @@ final class AppDebugController extends AppController
     }
 
     /**
-     * 
      * @param string $pageName
      */
     protected function loadController(string $pageName)
@@ -73,14 +69,13 @@ final class AppDebugController extends AppController
     }
 
     /**
-     * 
      * @param string $template
      * @param string $controllerName
      */
     protected function renderHtml(string $template, string $controllerName = '')
     {
-        $parts = \explode('\\', $controllerName);
-        DebugBar::end(\end($parts));
+        $parts = explode('\\', $controllerName);
+        DebugBar::end(end($parts));
         DebugBar::start($template);
         parent::renderHtml($template, $controllerName);
     }

@@ -16,12 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * Model for ledger report
  *
- * @author Jose Antonio Cuello <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello <yopli2000@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class ReportLedger extends Base\ReportAccounting
 {
@@ -29,43 +31,29 @@ class ReportLedger extends Base\ReportAccounting
     use Base\ModelTrait;
 
     /**
-     *
      * @var string
      */
     public $endcodsubaccount;
 
     /**
-     *
      * @var int
      */
     public $endentry;
 
     /**
-     *
      * @var bool
      */
-    public $grouped;
+    public $groupingtype;
 
     /**
-     *
      * @var string
      */
     public $startcodsubaccount;
 
     /**
-     *
      * @var int
      */
     public $startentry;
-
-    /**
-     * Reset the values of all model properties.
-     */
-    public function clear()
-    {
-        parent::clear();
-        $this->grouped = false;
-    }
 
     /**
      * Returns the name of the table that uses this model.

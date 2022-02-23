@@ -55,6 +55,8 @@ class ListPresupuestoProveedor extends ListBusinessDocument
         $this->addButtonGroupDocument('ListPresupuestoProveedor');
         $this->addButtonApproveDocument('ListPresupuestoProveedor');
 
-        $this->createViewLines('ListLineaPresupuestoProveedor', 'LineaPresupuestoProveedor');
+        if ($this->permissions->onlyOwnerData === false) {
+            $this->createViewLines('ListLineaPresupuestoProveedor', 'LineaPresupuestoProveedor');
+        }
     }
 }

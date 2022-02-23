@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
-use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\PurchaseDocumentController;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
@@ -61,26 +62,24 @@ class EditFacturaProveedor extends PurchaseDocumentController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createAccountsView(string $viewName = 'ListAsiento')
     {
         $this->addListView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
 
-        /// buttons
+        // buttons
         $this->addButton($viewName, [
             'action' => 'generate-accounting',
             'icon' => 'fas fa-magic',
             'label' => 'generate-accounting-entry'
         ]);
 
-        /// settings
+        // settings
         $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createReceiptsView(string $viewName = 'ListReciboProveedor')
@@ -88,7 +87,7 @@ class EditFacturaProveedor extends PurchaseDocumentController
         $this->addListView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
         $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
 
-        /// buttons
+        // buttons
         $this->addButton($viewName, [
             'action' => 'generate-receipts',
             'confirm' => 'true',
@@ -103,11 +102,11 @@ class EditFacturaProveedor extends PurchaseDocumentController
             'label' => 'paid'
         ]);
 
-        /// disable columns
+        // disable columns
         $this->views[$viewName]->disableColumn('invoice');
         $this->views[$viewName]->disableColumn('supplier');
 
-        /// settings
+        // settings
         $this->setSettings($viewName, 'modalInsert', 'generate-receipts');
     }
 
@@ -117,13 +116,17 @@ class EditFacturaProveedor extends PurchaseDocumentController
     protected function createViews()
     {
         parent::createViews();
+
+        // prevent users to change readonly property of numero field
+        $editViewName = 'Edit' . $this->getModelClassName();
+        $this->views[$editViewName]->disableColumn('number', false, 'true');
+
         $this->createReceiptsView();
         $this->createAccountsView();
-        $this->addHtmlView('Refund', 'Tab/RefundFacturaProveedor', 'FacturaProveedor', 'refunds', 'fas fa-share-square');
+        $this->addHtmlView('refunds', 'Tab/RefundFacturaProveedor', 'FacturaProveedor', 'refunds', 'fas fa-share-square');
     }
 
     /**
-     * 
      * @param string $action
      *
      * @return bool
@@ -132,16 +135,13 @@ class EditFacturaProveedor extends PurchaseDocumentController
     {
         switch ($action) {
             case 'generate-accounting':
-                $this->generateAccountingAction();
-                break;
+                return $this->generateAccountingAction();
 
             case 'generate-receipts':
-                $this->generateReceiptsAction();
-                break;
+                return $this->generateReceiptsAction();
 
             case 'new-refund':
-                $this->newRefundAction();
-                break;
+                return $this->newRefundAction();
 
             case 'paid':
                 return $this->paidAction();
@@ -151,22 +151,26 @@ class EditFacturaProveedor extends PurchaseDocumentController
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function generateAccountingAction()
+    protected function generateAccountingAction(): bool
     {
         $invoice = new FacturaProveedor();
         if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
             $this->toolBox()->i18nLog()->warning('record-not-found');
-            return false;
+            return true;
+        } elseif (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return true;
         }
 
         $generator = new InvoiceToAccounting();
         $generator->generate($invoice);
         if (empty($invoice->idasiento)) {
             $this->toolBox()->i18nLog()->error('record-save-error');
-            return false;
+            return true;
         }
 
         if ($invoice->save()) {
@@ -175,123 +179,178 @@ class EditFacturaProveedor extends PurchaseDocumentController
         }
 
         $this->toolBox()->i18nLog()->error('record-save-error');
-        return false;
+        return true;
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function generateReceiptsAction()
+    protected function generateReceiptsAction(): bool
     {
         $invoice = new FacturaProveedor();
         if (false === $invoice->loadFromCode($this->request->query->get('code'))) {
             $this->toolBox()->i18nLog()->warning('record-not-found');
-            return false;
+            return true;
+        } elseif (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return true;
         }
 
         $generator = new ReceiptGenerator();
-        $number = (int) $this->request->request->get('number', '0');
+        $number = (int)$this->request->request->get('number', '0');
         if ($generator->generate($invoice, $number)) {
             $generator->update($invoice);
-            $invoice->save();
-
             $this->toolBox()->i18nLog()->notice('record-updated-correctly');
             return true;
         }
 
         $this->toolBox()->i18nLog()->error('record-save-error');
-        return false;
+        return true;
     }
 
     /**
      * Load data view procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
+        $mvn = $this->getMainViewName();
+
         switch ($viewName) {
             case 'ListReciboProveedor':
-                $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($this->getLineXMLView(), 'idfactura'))];
+                $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($mvn, 'idfactura'))];
                 $view->loadData('', $where);
                 break;
 
             case 'ListAsiento':
-                $where = [new DataBaseWhere('idasiento', $this->getViewModelValue($this->getLineXMLView(), 'idasiento'))];
+                $where = [new DataBaseWhere('idasiento', $this->getViewModelValue($mvn, 'idasiento'))];
+                $view->loadData('', $where);
+                break;
+
+            case 'refunds':
+                if ($this->getViewModelValue($mvn, 'idfacturarect')) {
+                    $this->setSettings($viewName, 'active', false);
+                    break;
+                }
+                $where = [new DataBaseWhere('idfacturarect', $this->getViewModelValue($mvn, 'idfactura'))];
                 $view->loadData('', $where);
                 break;
 
             default:
                 parent::loadData($viewName, $view);
+                break;
         }
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function newRefundAction()
+    protected function newRefundAction(): bool
     {
         $invoice = new FacturaProveedor();
         if (false === $invoice->loadFromCode($this->request->request->get('idfactura'))) {
             $this->toolBox()->i18nLog()->warning('record-not-found');
-            return false;
+            return true;
+        } elseif (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return true;
         }
 
         $lines = [];
-        $quantities = [];
         foreach ($invoice->getLines() as $line) {
-            $quantity = (float) $this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
-            if (empty($quantity)) {
-                continue;
+            $quantity = (float)$this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
+            if (!empty($quantity)) {
+                $lines[] = $line;
             }
-
-            $quantities[$line->primaryColumnValue()] = 0 - $quantity;
-            $lines[] = $line;
         }
-
-        if (empty($quantities)) {
+        if (empty($lines)) {
             $this->toolBox()->i18nLog()->warning('no-selected-item');
-            return false;
+            return true;
         }
 
-        $generator = new BusinessDocumentGenerator();
-        $properties = [
-            'codigorect' => $invoice->codigo,
-            'codserie' => $this->request->request->get('codserie'),
-            'fecha' => $this->request->request->get('fecha'),
-            'idfacturarect' => $invoice->idfactura,
-            'numproveedor' => $this->request->request->get('numproveedor'),
-            'observaciones' => $this->request->request->get('observaciones')
-        ];
-        if ($generator->generate($invoice, $invoice->modelClassName(), $lines, $quantities, $properties)) {
-            foreach ($generator->getLastDocs() as $doc) {
-                $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-                $this->redirect($doc->url() . '&action=save-ok');
+        $this->dataBase->beginTransaction();
+
+        if ($invoice->editable) {
+            foreach ($invoice->getAvaliableStatus() as $status) {
+                if ($status->editable) {
+                    continue;
+                }
+
+                $invoice->idestado = $status->idestado;
+                if (false === $invoice->save()) {
+                    $this->toolBox()->i18nLog()->error('record-save-error');
+                    $this->dataBase->rollback();
+                    return true;
+                }
+            }
+        }
+
+        $excludeFields = ['codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora', 'idasiento', 'idestado',
+            'idfacturarect', 'neto', 'netosindto', 'numero', 'pagada', 'total', 'totalirpf', 'totaliva', 'totalrecargo',
+            'totalsuplidos', $invoice->primaryColumn()];
+
+        $newRefund = new FacturaProveedor();
+        $newRefund->loadFromData($invoice->toArray(), $excludeFields);
+        $newRefund->codigorect = $invoice->codigo;
+        $newRefund->codserie = $this->request->request->get('codserie');
+        $newRefund->idfacturarect = $invoice->idfactura;
+        $newRefund->nick = $this->user->nick;
+        $newRefund->numproveedor = $this->request->request->get('numproveedor');
+        $newRefund->observaciones = $this->request->request->get('observaciones');
+        $newRefund->setDate($this->request->request->get('fecha'), date(FacturaProveedor::HOUR_STYLE));
+        if (false === $newRefund->save()) {
+            $this->toolBox()->i18nLog()->error('record-save-error');
+            $this->dataBase->rollback();
+            return true;
+        }
+
+        foreach ($lines as $line) {
+            $newLine = $newRefund->getNewLine($line->toArray());
+            $newLine->cantidad = 0 - (float)$this->request->request->get('refund_' . $line->primaryColumnValue(), '0');
+            $newLine->idlinearect = $line->idlinea;
+            if (false === $newLine->save()) {
+                $this->toolBox()->i18nLog()->error('record-save-error');
+                $this->dataBase->rollback();
                 return true;
             }
         }
 
-        $this->toolBox()->i18nLog()->error('record-save-error');
+        $tool = new BusinessDocumentTools();
+        $tool->recalculate($newRefund);
+        $newRefund->idestado = $invoice->idestado;
+        if (false === $newRefund->save()) {
+            $this->toolBox()->i18nLog()->error('record-save-error');
+            $this->dataBase->rollback();
+            return true;
+        }
+
+        $this->dataBase->commit();
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        $this->redirect($newRefund->url() . '&action=save-ok');
         return false;
     }
 
     /**
-     * 
      * @return bool
      */
-    protected function paidAction()
+    protected function paidAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
             return true;
         }
 
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
-        if (false === \is_array($codes) || empty($model)) {
+        if (false === is_array($codes) || empty($model)) {
             $this->toolBox()->i18nLog()->warning('no-selected-item');
             return true;
         }

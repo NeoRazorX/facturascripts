@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\EditReportAccounting;
@@ -26,7 +27,7 @@ use FacturaScripts\Dinamic\Model\ReportAmount;
  * Description of EditReportAmount
  *
  * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
- * @author Jose Antonio Cuello  <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  */
 class EditReportAmount extends EditReportAccounting
 {
@@ -59,7 +60,7 @@ class EditReportAmount extends EditReportAccounting
     {
         parent::createViews();
 
-        /// disable company column if there is only one company
+        // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }
@@ -69,7 +70,7 @@ class EditReportAmount extends EditReportAccounting
      * Generate Balance Amounts data for report
      *
      * @param ReportAmount $model
-     * @param string       $format
+     * @param string $format
      *
      * @return array
      */
@@ -87,7 +88,11 @@ class EditReportAmount extends EditReportAccounting
         ];
 
         $balanceAmount = new BalanceAmounts();
-        $balanceAmount->setExerciseFromDate($model->idcompany, $model->startdate);
-        return $balanceAmount->generate($model->startdate, $model->enddate, $params);
+        if ($balanceAmount->setExerciseFromDate($model->idcompany, $model->startdate)) {
+            return $balanceAmount->generate($model->startdate, $model->enddate, $params);
+        }
+
+        self::toolBox()::i18nLog()->warning('exercise-not-found');
+        return [];
     }
 }

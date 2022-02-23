@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
@@ -50,7 +51,7 @@ abstract class JoinModel
      *
      * @var ModelClass
      */
-    private $masterModel;
+    protected $masterModel;
 
     /**
      * List of values for record view
@@ -117,14 +118,14 @@ abstract class JoinModel
      */
     public function __isset($name)
     {
-        return \array_key_exists($name, $this->values);
+        return array_key_exists($name, $this->values);
     }
 
     /**
      * Set value to model view field
      *
      * @param string $name
-     * @param mixed  $value
+     * @param mixed $value
      */
     public function __set($name, $value)
     {
@@ -134,10 +135,10 @@ abstract class JoinModel
     /**
      * Load data for the indicated where.
      *
-     * @param DataBaseWhere[] $where  filters to apply to model records.
-     * @param array           $order  fields to use in the sorting. For example ['code' => 'ASC']
-     * @param int             $offset
-     * @param int             $limit
+     * @param DataBaseWhere[] $where filters to apply to model records.
+     * @param array $order fields to use in the sorting. For example ['code' => 'ASC']
+     * @param int $offset
+     * @param int $limit
      *
      * @return static[]
      */
@@ -160,7 +161,7 @@ abstract class JoinModel
      */
     public function clear()
     {
-        foreach (\array_keys($this->getFields()) as $field) {
+        foreach (array_keys($this->getFields()) as $field) {
             $this->values[$field] = null;
         }
     }
@@ -186,7 +187,7 @@ abstract class JoinModel
 
         $data = self::$dataBase->select($sql);
         $count = count($data);
-        return ($count == 1) ? (int) $data[0]['count_total'] : $count;
+        return ($count == 1) ? (int)$data[0]['count_total'] : $count;
     }
 
     /**
@@ -216,7 +217,6 @@ abstract class JoinModel
     }
 
     /**
-     *
      * @return array
      */
     public function getModelFields()
@@ -241,8 +241,8 @@ abstract class JoinModel
      * Returns True if the record exists and False otherwise.
      *
      * @param string $cod
-     * @param array  $where
-     * @param array  $orderby
+     * @param array $where
+     * @param array $orderby
      *
      * @return bool
      */
@@ -379,23 +379,23 @@ abstract class JoinModel
      * the master key of the master model.
      *
      * @param string $cod
-     * @param array  $where
+     * @param array $where
      *
      * @return bool
      */
     private function loadFilterWhere($cod, &$where): bool
     {
-        /// If there is no search by code we use the where informed
+        // If there is no search by code we use the where informed
         if (empty($cod)) {
             return true;
         }
 
-        /// If dont define master model cant load from code
+        // If dont define master model cant load from code
         if (!isset($this->masterModel)) {
             return false;
         }
 
-        /// Search primary key from field list
+        // Search primary key from field list
         $primaryColumn = $this->masterModel->primaryColumn();
         foreach ($this->getFields() as $field => $sqlField) {
             if ($field == $primaryColumn) {
@@ -404,7 +404,7 @@ abstract class JoinModel
             }
         }
 
-        /// The PK field is not defined in the field list. No posible search by PK
+        // The PK field is not defined in the field list. No posible search by PK
         return false;
     }
 
@@ -431,7 +431,6 @@ abstract class JoinModel
     }
 
     /**
-     *
      * @return ToolBox
      */
     protected function toolBox()

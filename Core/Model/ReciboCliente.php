@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,13 +32,11 @@ class ReciboCliente extends Base\Receipt
     use Base\ModelTrait;
 
     /**
-     *
      * @var string
      */
     public $codcliente;
 
     /**
-     *
      * @var float
      */
     public $gastos;
@@ -49,7 +48,6 @@ class ReciboCliente extends Base\Receipt
     }
 
     /**
-     * 
      * @return FacturaCliente
      */
     public function getInvoice()
@@ -61,7 +59,7 @@ class ReciboCliente extends Base\Receipt
 
     /**
      * Returns all payment history for this receipt
-     * 
+     *
      * @return PagoCliente[]
      */
     public function getPayments()
@@ -72,7 +70,6 @@ class ReciboCliente extends Base\Receipt
     }
 
     /**
-     * 
      * @return Cliente
      */
     public function getSubject()
@@ -83,19 +80,17 @@ class ReciboCliente extends Base\Receipt
     }
 
     /**
-     * 
      * @return string
      */
     public function install()
     {
-        /// needed dependencies
+        // needed dependencies
         new Cliente();
 
         return parent::install();
     }
 
     /**
-     * 
      * @param string $date
      */
     public function setExpiration($date)
@@ -107,24 +102,26 @@ class ReciboCliente extends Base\Receipt
             return;
         }
 
-        /// try to select consumer defined days for expiration date
+        // try to select consumer defined days for expiration date
         $newDates = [];
-        $maxDay = \date('t', \strtotime($this->vencimiento));
+        $maxDay = date('t', strtotime($this->vencimiento));
         foreach ($days as $numDay) {
             $day = min([$numDay, $maxDay]);
             for ($num = 0; $num < 30; $num++) {
-                $newDay = \date('d', \strtotime($this->vencimiento . ' +' . $num . ' days'));
+                $newDay = date('d', strtotime($this->vencimiento . ' +' . $num . ' days'));
                 if ($newDay == $day) {
-                    $newDates[] = \strtotime($this->vencimiento . ' +' . $num . ' days');
+                    $newDates[] = strtotime($this->vencimiento . ' +' . $num . ' days');
                 }
             }
         }
+        if (empty($newDates)) {
+            return;
+        }
 
-        $this->vencimiento = \date(self::DATE_STYLE, min($newDates));
+        $this->vencimiento = date(self::DATE_STYLE, min($newDates));
     }
 
     /**
-     * 
      * @return string
      */
     public static function tableName()
@@ -133,7 +130,6 @@ class ReciboCliente extends Base\Receipt
     }
 
     /**
-     * 
      * @param string $type
      * @param string $list
      *
@@ -151,8 +147,8 @@ class ReciboCliente extends Base\Receipt
     }
 
     /**
-     * Creates a new payment fro this receipt.
-     * 
+     * Creates a new payment for this receipt.
+     *
      * @return bool
      */
     protected function newPayment()

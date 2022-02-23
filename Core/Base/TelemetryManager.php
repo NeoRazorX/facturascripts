@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,11 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\DownloadTools;
-use FacturaScripts\Core\Base\PluginManager;
 
 /**
  * This class allow sending telemetry data to the master server,
@@ -39,25 +38,21 @@ final class TelemetryManager
     const UPDATE_INTERVAL = 604800;
 
     /**
-     *
      * @var AppSettings
      */
     private $appSettings;
 
     /**
-     *
      * @var int
      */
     private $idinstall;
 
     /**
-     *
      * @var int
      */
     private $lastupdate;
 
     /**
-     *
      * @var string
      */
     private $signkey;
@@ -65,18 +60,18 @@ final class TelemetryManager
     public function __construct()
     {
         $this->appSettings = new AppSettings();
-        $this->idinstall = (int) $this->appSettings->get('default', 'telemetryinstall');
-        $this->lastupdate = (int) $this->appSettings->get('default', 'telemetrylastu');
+        $this->idinstall = (int)$this->appSettings->get('default', 'telemetryinstall');
+        $this->lastupdate = (int)$this->appSettings->get('default', 'telemetrylastu');
         $this->signkey = $this->appSettings->get('default', 'telemetrykey');
 
         /**
          * Is telemetry data defined in the config.php?
          * FS_TELEMETRY_TOKEN = IDINSTALL:SIGNKEY
          */
-        if (empty($this->idinstall) && \defined('FS_TELEMETRY_TOKEN')) {
-            $data = \explode(':', \FS_TELEMETRY_TOKEN);
-            if (\count($data) === 2) {
-                $this->idinstall = (int) $data[0];
+        if (empty($this->idinstall) && defined('FS_TELEMETRY_TOKEN')) {
+            $data = explode(':', FS_TELEMETRY_TOKEN);
+            if (count($data) === 2) {
+                $this->idinstall = (int)$data[0];
                 $this->signkey = $data[1];
                 $this->update();
             }
@@ -84,7 +79,6 @@ final class TelemetryManager
     }
 
     /**
-     * 
      * @return string
      */
     public function claimUrl(): string
@@ -92,28 +86,27 @@ final class TelemetryManager
         $params = $this->collectData(true);
         $params['action'] = 'claim';
         $this->calculateHash($params);
-        return self::TELEMETRY_URL . '?' . \http_build_query($params);
+        return self::TELEMETRY_URL . '?' . http_build_query($params);
     }
 
-    /**
-     * 
-     * @return string
-     */
     public function id()
     {
         return $this->idinstall;
     }
 
     /**
-     * 
      * @return bool
      */
     public function install(): bool
     {
+        if ($this->idinstall) {
+            return true;
+        }
+
         $params = $this->collectData();
         $params['action'] = 'install';
-        $json = DownloadTools::getContents(self::TELEMETRY_URL . '?' . \http_build_query($params), 3);
-        $data = \json_decode($json, true);
+        $json = DownloadTools::getContents(self::TELEMETRY_URL . '?' . http_build_query($params), 10);
+        $data = json_decode($json, true);
         if ($data['idinstall']) {
             $this->idinstall = $data['idinstall'];
             $this->signkey = $data['signkey'];
@@ -125,16 +118,14 @@ final class TelemetryManager
     }
 
     /**
-     * 
      * @return bool
      */
     public function ready(): bool
     {
-        return empty($this->idinstall) ? false : true;
+        return !empty($this->idinstall);
     }
 
     /**
-     * 
      * @param string $url
      *
      * @return string
@@ -147,16 +138,15 @@ final class TelemetryManager
 
         $params = $this->collectData(true);
         $this->calculateHash($params);
-        return $url . '?' . \http_build_query($params);
+        return $url . '?' . http_build_query($params);
     }
 
     /**
-     * 
      * @return bool
      */
     public function update(): bool
     {
-        if (false === $this->ready() || \time() - $this->lastupdate < self::UPDATE_INTERVAL) {
+        if (false === $this->ready() || time() - $this->lastupdate < self::UPDATE_INTERVAL) {
             return false;
         }
 
@@ -164,24 +154,22 @@ final class TelemetryManager
         $params['action'] = 'update';
         $this->calculateHash($params);
 
-        $json = DownloadTools::getContents(self::TELEMETRY_URL . '?' . \http_build_query($params), 3);
-        $data = \json_decode($json, true);
+        $json = DownloadTools::getContents(self::TELEMETRY_URL . '?' . http_build_query($params), 3);
+        $data = json_decode($json, true);
 
         $this->save();
-        return isset($data['ok']) ? (bool) $data['ok'] : false;
+        return isset($data['ok']) && $data['ok'];
     }
 
     /**
-     * 
      * @param array $data
      */
     private function calculateHash(array &$data)
     {
-        $data['hash'] = \sha1($data['randomnum'] . $this->signkey);
+        $data['hash'] = sha1($data['randomnum'] . $this->signkey);
     }
 
     /**
-     * 
      * @param bool $minimum
      *
      * @return array
@@ -189,17 +177,17 @@ final class TelemetryManager
     private function collectData(bool $minimum = false): array
     {
         $data = [
-            'codpais' => \FS_CODPAIS,
+            'codpais' => FS_CODPAIS,
             'coreversion' => PluginManager::CORE_VERSION,
             'idinstall' => $this->idinstall,
-            'langcode' => \FS_LANG,
-            'phpversion' => (float) \PHP_VERSION,
-            'randomnum' => \mt_rand()
+            'langcode' => FS_LANG,
+            'phpversion' => (float)PHP_VERSION,
+            'randomnum' => mt_rand()
         ];
 
         if (false === $minimum) {
             $pluginManager = new PluginManager();
-            $data['pluginlist'] = \implode(',', $pluginManager->enabledPlugins());
+            $data['pluginlist'] = implode(',', $pluginManager->enabledPlugins());
         }
 
         return $data;
@@ -207,7 +195,7 @@ final class TelemetryManager
 
     private function save()
     {
-        $this->lastupdate = \time();
+        $this->lastupdate = time();
         $this->appSettings->set('default', 'telemetryinstall', $this->idinstall);
         $this->appSettings->set('default', 'telemetrykey', $this->signkey);
         $this->appSettings->set('default', 'telemetrylastu', $this->lastupdate);

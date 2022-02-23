@@ -27,6 +27,18 @@
                     suffix="Test.php"
                     phpVersion="7.1"
                     phpVersionOperator=">=">
+                Test/Core/Data/
+            </directory>
+            <directory
+                    suffix="Test.php"
+                    phpVersion="7.1"
+                    phpVersionOperator=">=">
+                Test/Core/Lib/
+            </directory>
+            <directory
+                    suffix="Test.php"
+                    phpVersion="7.1"
+                    phpVersionOperator=">=">
                 Test/Core/Model/
             </directory>
             <directory

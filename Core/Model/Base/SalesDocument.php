@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Cliente as CoreCliente;
+use FacturaScripts\Core\Model\Contacto as CoreContacto;
+use FacturaScripts\Core\Model\User;
 use FacturaScripts\Dinamic\Lib\CommissionTools;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Model\Cliente;
@@ -27,7 +30,6 @@ use FacturaScripts\Dinamic\Model\Contacto;
 use FacturaScripts\Dinamic\Model\GrupoClientes;
 use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Tarifa;
-use FacturaScripts\Dinamic\Model\User;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
@@ -304,34 +306,34 @@ abstract class SalesDocument extends TransformerDocument
     /**
      * Sets the author for this document.
      *
-     * @param User $author
+     * @param User $user
      *
      * @return bool
      */
-    public function setAuthor($author)
+    public function setAuthor($user): bool
     {
-        if (!isset($author->nick)) {
+        if (!isset($user->nick)) {
             return false;
         }
 
-        $this->codagente = $author->codagente ?? $this->codagente;
-        $this->codalmacen = $author->codalmacen ?? $this->codalmacen;
-        $this->idempresa = $author->idempresa ?? $this->idempresa;
-        $this->nick = $author->nick;
+        $this->codagente = $user->codagente ?? $this->codagente;
+        $this->codalmacen = $user->codalmacen ?? $this->codalmacen;
+        $this->idempresa = $user->idempresa ?? $this->idempresa;
+        $this->nick = $user->nick;
 
         // allow extensions
-        $this->pipe('setAuthor', $author);
+        $this->pipe('setAuthor', $user);
         return true;
     }
 
     /**
      * Assign the customer to the document.
      *
-     * @param Cliente|Contacto $subject
+     * @param CoreCliente|CoreContacto $subject
      *
      * @return bool
      */
-    public function setSubject($subject)
+    public function setSubject($subject): bool
     {
         $return = false;
         switch ($subject->modelClassName()) {
@@ -386,7 +388,7 @@ abstract class SalesDocument extends TransformerDocument
      *
      * @return bool
      */
-    public function updateSubject()
+    public function updateSubject(): bool
     {
         $cliente = new Cliente();
         return $this->codcliente && $cliente->loadFromCode($this->codcliente) && $this->setSubject($cliente);
@@ -472,11 +474,11 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * @param Contacto $subject
+     * @param CoreContacto $subject
      *
      * @return bool
      */
-    protected function setContact($subject)
+    protected function setContact($subject): bool
     {
         $this->apartado = $subject->apartado;
         $this->cifnif = $subject->cifnif ?? '';
@@ -493,11 +495,11 @@ abstract class SalesDocument extends TransformerDocument
     }
 
     /**
-     * @param Cliente $subject
+     * @param CoreCliente $subject
      *
      * @return bool
      */
-    protected function setCustomer($subject)
+    protected function setCustomer($subject): bool
     {
         $this->cifnif = $subject->cifnif ?? '';
         $this->codcliente = $subject->codcliente;

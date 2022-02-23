@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,21 +16,62 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\CuentaEspecial;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \CuentaEspecial
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- */
-final class CuentaEspecialTest extends CustomTest
+final class CuentaEspecialTest extends TestCase
 {
+    use LogErrorsTrait;
 
-    protected function setUp()
+    public function testDataInstalled()
     {
-        $this->model = new CuentaEspecial();
+        $account = new CuentaEspecial();
+        $this->assertNotEmpty($account->all(), 'account-special-data-not-installed-from-csv');
+    }
+
+    public function testCreate()
+    {
+        // creamos una cuenta
+        $account = new CuentaEspecial();
+        $account->codcuentaesp = 'Test';
+        $account->descripcion = 'Test Special Account';
+        $this->assertTrue($account->save(), 'account-special-cant-save');
+        $this->assertTrue($account->exists(), 'account-special-cant-persist');
+
+        // eliminamos
+        $this->assertTrue($account->delete(), 'account-special-cant-delete');
+    }
+
+    public function testCreateHTMLDescription()
+    {
+        // creamos una cuenta con html en la descripción
+        $account = new CuentaEspecial();
+        $account->codcuentaesp = 'Test';
+        $account->descripcion = 'Test <b>Special Account</b>';
+        $this->assertTrue($account->save(), 'account-special-cant-save');
+
+        // comprobamos que el html haya sido escapado
+        $noHtml = ToolBox::utils()::noHtml('Test <b>Special Account</b>');
+        $this->assertEquals($noHtml, $account->descripcion, 'account-html-description');
+
+        // eliminamos
+        $this->assertTrue($account->delete(), 'account-special-cant-delete');
+    }
+
+    public function testCreateWithoutCode()
+    {
+        $account = new CuentaEspecial();
+        $account->descripcion = 'Test Special Account';
+        $this->assertFalse($account->save(), 'account-special-cant-save-without-code');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
     }
 }

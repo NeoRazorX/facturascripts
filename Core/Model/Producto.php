@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -173,21 +174,20 @@ class Producto extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->actualizado = \date(self::DATETIME_STYLE);
+        $this->actualizado = date(self::DATETIME_STYLE);
         $this->bloqueado = false;
         $this->codimpuesto = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
-        $this->fechaalta = \date(self::DATE_STYLE);
+        $this->fechaalta = date(self::DATE_STYLE);
         $this->nostock = false;
         $this->precio = 0.0;
         $this->publico = false;
         $this->secompra = true;
         $this->sevende = true;
         $this->stockfis = 0.0;
-        $this->ventasinstock = (bool) $this->toolBox()->appSettings()->get('default', 'ventasinstock', false);
+        $this->ventasinstock = (bool)$this->toolBox()->appSettings()->get('default', 'ventasinstock', false);
     }
 
     /**
-     * 
      * @return Variante[]
      */
     public function getVariants()
@@ -217,7 +217,6 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
      * @return float
      */
     public function priceWithTax()
@@ -236,7 +235,6 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
      * @return string
      */
     public function primaryDescriptionColumn()
@@ -245,7 +243,6 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
      * @param float $price
      */
     public function setPriceWithTax($price)
@@ -253,12 +250,12 @@ class Producto extends Base\ModelClass
         $newPrice = (100 * $price) / (100 + $this->getTax()->iva);
         foreach ($this->getVariants() as $variant) {
             if ($variant->referencia == $this->referencia) {
-                $variant->precio = \round($newPrice, self::ROUND_DECIMALS);
+                $variant->precio = round($newPrice, self::ROUND_DECIMALS);
                 return $variant->save();
             }
         }
 
-        $this->precio = \round($newPrice, self::ROUND_DECIMALS);
+        $this->precio = round($newPrice, self::ROUND_DECIMALS);
     }
 
     /**
@@ -283,7 +280,7 @@ class Producto extends Base\ModelClass
         $this->observaciones = $utils->noHtml($this->observaciones);
         $this->referencia = $utils->noHtml($this->referencia);
 
-        if (\strlen($this->referencia) < 1 || \strlen($this->referencia) > 30) {
+        if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
@@ -305,9 +302,11 @@ class Producto extends Base\ModelClass
 
         if ($this->bloqueado) {
             $this->publico = false;
+            $this->sevende = false;
+            $this->secompra = false;
         }
 
-        $this->actualizado = \date(self::DATETIME_STYLE);
+        $this->actualizado = date(self::DATETIME_STYLE);
         return parent::test();
     }
 
@@ -320,7 +319,7 @@ class Producto extends Base\ModelClass
         $newReferencia = null;
 
         foreach ($this->getVariants() as $variant) {
-            if ($variant->referencia == $this->referencia || \is_null($newReferencia)) {
+            if ($variant->referencia == $this->referencia || is_null($newReferencia)) {
                 $newPrecio = $variant->precio;
                 $newReferencia = $variant->referencia;
                 break;
@@ -335,7 +334,6 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * 
      * @param array $values
      *
      * @return bool

@@ -94,11 +94,13 @@ abstract class AccountingBase
      *
      * @param int $idcompany
      * @param string $date
+     *
+     * @return bool
      */
-    public function setExerciseFromDate($idcompany, $date)
+    public function setExerciseFromDate($idcompany, $date): bool
     {
         $this->exercise->idempresa = $idcompany;
-        $this->exercise->loadFromDate($date, false, false);
+        return $this->exercise->loadFromDate($date, false, false);
     }
 
     /**
@@ -111,7 +113,7 @@ abstract class AccountingBase
      */
     protected function addToDate($date, $add)
     {
-        return \date('d-m-Y', \strtotime($add, \strtotime($date)));
+        return date('d-m-Y', strtotime($add, strtotime($date)));
     }
 
     /**

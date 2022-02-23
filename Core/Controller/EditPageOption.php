@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Edit option for any page.
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello          <yopli2000@gmail.com>
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
 class EditPageOption extends Controller
@@ -108,7 +108,9 @@ class EditPageOption extends Controller
         $result = [];
         $users = CodeModel::all(User::tableName(), 'nick', 'nick', false);
         foreach ($users as $codeModel) {
-            $result[$codeModel->code] = $codeModel->description;
+            if ($codeModel->code != 'admin') {
+                $result[$codeModel->code] = $codeModel->description;
+            }
         }
 
         return $result;
@@ -127,7 +129,7 @@ class EditPageOption extends Controller
         $this->model = new PageOption();
         $this->loadSelectedViewName();
         $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
-        $this->selectedUser = $this->user->admin ? $this->request->get('nick', $this->user->nick) : $this->user->nick;
+        $this->selectedUser = $this->user->admin ? $this->request->get('nick') : $this->user->nick;
         $this->loadPageOptions();
 
         $action = $this->request->get('action', '');
@@ -162,17 +164,17 @@ class EditPageOption extends Controller
     }
 
     /**
-     *
+     * Load the display options to edit.
+     * If it does not find them in the database,
+     * it loads the default options of the xml view.
      */
     protected function loadPageOptions()
     {
-        $order = ['nick' => 'ASC'];
-        $where = [
-            new DataBaseWhere('name', $this->selectedViewName),
-            new DataBaseWhere('nick', $this->selectedUser),
-            new DataBaseWhere('nick', null, 'IS', 'OR')
-        ];
-        if (false === $this->model->loadFromCode('', $where, $order)) {
+        if ($this->selectedUser && false === $this->loadPageOptionsForUser()) {
+            VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
+        }
+
+        if (empty($this->selectedUser) && false === $this->loadPageOptionsForAll()) {
             VisualItemLoadEngine::installXML($this->selectedViewName, $this->model);
         }
 
@@ -236,7 +238,51 @@ class EditPageOption extends Controller
     }
 
     /**
-     * 
+     * Loads the general display options for all users,
+     * and indicates if they exist or not.
+     *
+     * @return bool
+     */
+    private function loadPageOptionsForAll(): bool
+    {
+        $where = [
+            new DataBaseWhere('name', $this->selectedViewName),
+            new DataBaseWhere('nick', null, 'IS'),
+        ];
+        return $this->model->loadFromCode('', $where);
+    }
+
+    /**
+     * Loads the display options specific to the user.
+     * If they do not exist, look for the display options common to all users.
+     * In either case, it indicates whether it has found a configuration.
+     *
+     * @return bool
+     */
+    private function loadPageOptionsForUser(): bool
+    {
+        $where = [
+            new DataBaseWhere('name', $this->selectedViewName),
+            new DataBaseWhere('nick', $this->selectedUser),
+        ];
+        if ($this->model->loadFromCode('', $where)) {
+            return true;  // Existen opciones para el usuario.
+        }
+
+        if (false == $this->loadPageOptionsForAll()) {
+            // No existe opciones general. Asignamos las opciones por defecto de la vista xml al usuario.
+            $this->model->nick = $this->selectedUser;
+            return false;
+        }
+
+        // No existe opciones para el usuario. Clonamos las generales.
+        $this->model->id = null;
+        $this->model->nick = $this->selectedUser;
+        return true;
+    }
+
+    /**
+     *
      * @param array  $column
      * @param string $name
      * @param string $key

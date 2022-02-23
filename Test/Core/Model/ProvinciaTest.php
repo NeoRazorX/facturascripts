@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,21 +16,62 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Provincia;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Provincia
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- */
-final class ProvinciaTest extends CustomTest
+final class ProvinciaTest extends TestCase
 {
+    use LogErrorsTrait;
 
-    protected function setUp()
+    public function testDataInstalled()
     {
-        $this->model = new Provincia();
+        $state = new Provincia();
+        $this->assertNotEmpty($state->all(), 'state-data-not-installed-from-csv');
+    }
+
+    public function testCreate()
+    {
+        $state = new Provincia();
+        $state->provincia = 'Test';
+        $state->codpais = 'ESP';
+        $this->assertTrue($state->save(), 'state-cant-save');
+        $this->assertTrue($state->exists(), 'state-cant-persist');
+
+        // eliminamos
+        $this->assertTrue($state->delete(), 'state-cant-delete');
+    }
+
+    public function testCreateWithoutCountry()
+    {
+        $state = new Provincia();
+        $state->provincia = 'Test without country';
+        $state->codpais = 'XXX';
+        $this->assertFalse($state->save(), 'state-can-save');
+    }
+
+    public function testCreateHtml()
+    {
+        // creamos contenido con html
+        $state = new Provincia();
+        $state->codpais = 'ESP';
+        $state->provincia = '<b>Test Html</b>';
+        $this->assertTrue($state->save(), 'state-cant-save');
+
+        // comprobamos que el html ha sido escapado
+        $noHtml = ToolBox::utils()::noHtml('<b>Test Html</b>');
+        $this->assertEquals($noHtml, $state->provincia, 'state-wrong-html');
+
+        // eliminamos
+        $this->assertTrue($state->delete(), 'state-cant-delete');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
     }
 }

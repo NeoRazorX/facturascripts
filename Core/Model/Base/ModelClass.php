@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -35,8 +36,8 @@ abstract class ModelClass extends ModelCore
      *
      * @param array $where filters to apply to model records.
      * @param array $order fields to use in the sorting. For example ['code' => 'ASC']
-     * @param int   $offset
-     * @param int   $limit
+     * @param int $offset
+     * @param int $limit
      *
      * @return static[]
      */
@@ -53,9 +54,9 @@ abstract class ModelClass extends ModelCore
 
     /**
      * Allows to use this model as source in CodeModel special model.
-     * 
+     *
      * @param string $fieldCode
-     * 
+     *
      * @return CodeModel[]
      */
     public function codeModelAll(string $fieldCode = '')
@@ -74,9 +75,9 @@ abstract class ModelClass extends ModelCore
 
     /**
      * Allows to use this model as source in CodeModel special model.
-     * 
-     * @param string          $query
-     * @param string          $fieldCode
+     *
+     * @param string $query
+     * @param string $fieldCode
      * @param DataBaseWhere[] $where
      *
      * @return CodeModel[]
@@ -85,7 +86,7 @@ abstract class ModelClass extends ModelCore
     {
         $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
         $fields = $field . '|' . $this->primaryDescriptionColumn();
-        $where[] = new DataBaseWhere($fields, \mb_strtolower($query, 'UTF8'), 'LIKE');
+        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
         return CodeModel::all(static::tableName(), $field, $this->primaryDescriptionColumn(), false, $where);
     }
 
@@ -96,11 +97,22 @@ abstract class ModelClass extends ModelCore
      *
      * @return int
      */
-    public function count(array $where = [])
+    public function count(array $where = []): int
     {
-        $sql = 'SELECT COUNT(1) AS total FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where);
-        $data = self::$dataBase->select($sql);
-        return empty($data) ? 0 : (int) $data[0]['total'];
+        if ($where) {
+            $sql = 'SELECT COUNT(1) AS total FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where);
+            $data = self::$dataBase->select($sql);
+            return empty($data) ? 0 : (int)$data[0]['total'];
+        }
+
+        $key = 'model-' . $this->modelClassName() . '-count';
+        $count = self::toolBox()::cache()->get($key);
+        if (is_null($count)) {
+            $data = self::$dataBase->select('SELECT COUNT(1) AS total FROM ' . static::tableName());
+            $count = empty($data) ? 0 : (int)$data[0]['total'];
+            self::toolBox()::cache()->set($key, $count);
+        }
+        return $count;
     }
 
     /**
@@ -118,6 +130,7 @@ abstract class ModelClass extends ModelCore
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
         if (self::$dataBase->exec($sql)) {
+            self::toolBox()::cache()->delete('model-' . $this->modelClassName() . '-count');
             $this->pipe('delete');
             return true;
         }
@@ -135,7 +148,7 @@ abstract class ModelClass extends ModelCore
         $sql = 'SELECT 1 FROM ' . static::tableName() . ' WHERE ' . static::primaryColumn()
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
-        return empty($this->primaryColumnValue()) ? false : (bool) self::$dataBase->select($sql);
+        return !empty($this->primaryColumnValue()) && self::$dataBase->select($sql);
     }
 
     /**
@@ -160,12 +173,12 @@ abstract class ModelClass extends ModelCore
      * Returns True if the record exists and False otherwise.
      *
      * @param string $code
-     * @param array  $where
-     * @param array  $orderby
+     * @param array $where
+     * @param array $orderby
      *
      * @return bool
      */
-    public function loadFromCode($code, array $where = [], array $orderby = [])
+    public function loadFromCode($code, array $where = [], array $orderby = []): bool
     {
         $data = $this->getRecord($code, $where, $orderby);
         if (empty($data)) {
@@ -181,32 +194,32 @@ abstract class ModelClass extends ModelCore
      * Returns the following code for the reported field or the primary key of the model.
      *
      * @param string $field
-     * @param array  $where
+     * @param array $where
      *
      * @return int
      */
     public function newCode(string $field = '', array $where = [])
     {
-        /// if not field value take PK Field
+        // if not field value take PK Field
         if (empty($field)) {
             $field = static::primaryColumn();
         }
 
-        /// get fields list
+        // get fields list
         $modelFields = $this->getModelFields();
 
-        /// Set Cast to Integer if field it's not
-        if (false === \in_array($modelFields[$field]['type'], ['integer', 'int', 'serial'])) {
-            /// Set Where to Integers values only
+        // Set Cast to Integer if field it's not
+        if (false === in_array($modelFields[$field]['type'], ['integer', 'int', 'serial'])) {
+            // Set Where to Integers values only
             $where[] = new DataBaseWhere($field, '^-?[0-9]+$', 'REGEXP');
             $field = self::$dataBase->getEngine()->getSQL()->sql2Int($field);
         }
 
-        /// Search for new code value
+        // Search for new code value
         $sqlWhere = DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT MAX(' . $field . ') as cod FROM ' . static::tableName() . $sqlWhere . ';';
         $data = self::$dataBase->select($sql);
-        return empty($data) ? 1 : 1 + (int) $data[0]['cod'];
+        return empty($data) ? 1 : 1 + (int)$data[0]['cod'];
     }
 
     /**
@@ -228,7 +241,7 @@ abstract class ModelClass extends ModelCore
     public function primaryDescription()
     {
         $field = $this->primaryDescriptionColumn();
-        return isset($this->{$field}) ? $this->{$field} : (string) $this->primaryColumnValue();
+        return $this->{$field} ?? (string)$this->primaryColumnValue();
     }
 
     /**
@@ -248,6 +261,7 @@ abstract class ModelClass extends ModelCore
         }
 
         if ($done) {
+            self::toolBox()::cache()->delete('model-' . $this->modelClassName() . '-count');
             $this->pipe('save');
         }
 
@@ -294,7 +308,7 @@ abstract class ModelClass extends ModelCore
         $model = $this->modelClassName();
         switch ($type) {
             case 'edit':
-                return \is_null($value) ? 'Edit' . $model : 'Edit' . $model . '?code=' . \rawurlencode($value);
+                return is_null($value) ? 'Edit' . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
 
             case 'list':
                 return $list . $model;
@@ -303,8 +317,8 @@ abstract class ModelClass extends ModelCore
                 return 'Edit' . $model;
         }
 
-        /// default
-        return empty($value) ? $list . $model : 'Edit' . $model . '?code=' . \rawurlencode($value);
+        // default
+        return empty($value) ? $list . $model : 'Edit' . $model . '?code=' . rawurlencode($value);
     }
 
     /**
@@ -325,14 +339,14 @@ abstract class ModelClass extends ModelCore
         foreach ($this->getModelFields() as $field) {
             if (isset($this->{$field['name']})) {
                 $fieldName = $field['name'];
-                $fieldValue = isset($values[$fieldName]) ? $values[$fieldName] : $this->{$fieldName};
+                $fieldValue = $values[$fieldName] ?? $this->{$fieldName};
 
                 $insertFields[] = self::$dataBase->escapeColumn($fieldName);
                 $insertValues[] = self::$dataBase->var2str($fieldValue);
             }
         }
 
-        $sql = 'INSERT INTO ' . static::tableName() . ' (' . \implode(',', $insertFields) . ') VALUES (' . \implode(',', $insertValues) . ');';
+        $sql = 'INSERT INTO ' . static::tableName() . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
         if (self::$dataBase->exec($sql)) {
             if ($this->primaryColumnValue() === null) {
                 $this->{static::primaryColumn()} = self::$dataBase->lastval();
@@ -366,7 +380,7 @@ abstract class ModelClass extends ModelCore
         foreach ($this->getModelFields() as $field) {
             if ($field['name'] !== static::primaryColumn()) {
                 $fieldName = $field['name'];
-                $fieldValue = isset($values[$fieldName]) ? $values[$fieldName] : $this->{$fieldName};
+                $fieldValue = $values[$fieldName] ?? $this->{$fieldName};
                 $sql .= $coma . ' ' . self::$dataBase->escapeColumn($fieldName) . ' = ' . self::$dataBase->var2str($fieldValue);
                 $coma = ', ';
             }
@@ -405,8 +419,8 @@ abstract class ModelClass extends ModelCore
      * or the first that meets the indicated condition.
      *
      * @param string $code
-     * @param array  $where
-     * @param array  $orderby
+     * @param array $where
+     * @param array $orderby
      *
      * @return array
      */

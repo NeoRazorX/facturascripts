@@ -63,6 +63,7 @@ class AutocompleteFilter extends BaseFilter
     public function __construct(string $key, string $field, string $label, string $table, string $fieldcode = '', string $fieldtitle = '', array $where = [])
     {
         parent::__construct($key, $field, $label);
+        $this->autosubmit = true;
         $this->table = $table;
         $this->fieldcode = empty($fieldcode) ? $this->field : $fieldcode;
         $this->fieldtitle = empty($fieldtitle) ? $this->fieldcode : $fieldtitle;
@@ -111,7 +112,7 @@ class AutocompleteFilter extends BaseFilter
 
         $html .= '<input type="text" value="' . $this->getDescription() . '" class="form-control filter-autocomplete"'
             . ' data-name="' . $this->name() . '" data-field="' . $this->field . '" data-source="' . $this->table . '" data-fieldcode="' . $this->fieldcode
-            . '" data-fieldtitle="' . $this->fieldtitle . '" placeholder = "' . $label . '" autocomplete="off"/>'
+            . '" data-fieldtitle="' . $this->fieldtitle . '" placeholder = "' . $label . '" autocomplete="off" ' . $this->readonly() . '/>'
             . '</div>'
             . '</div>'
             . '</div>';

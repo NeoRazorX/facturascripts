@@ -131,6 +131,8 @@ class GroupItem extends VisualItem
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         $html = '<form id="formModal' . $this->getUniqueId() . '" method="post" enctype="multipart/form-data">'
             . '<input type="hidden" name="activetab" value="' . $viewName . '"/>'
+            . '<input type="hidden" name="code" value=""/>'
+            . '<input type="hidden" name="multireqtoken" value="' . self::getToken() . '"/>'
             . '<div class="modal" id="modal' . $this->name . '" tabindex="-1" role="dialog">'
             . '<div class="modal-dialog ' . $this->class . '" role="document">'
             . '<div class="modal-content">'
@@ -200,11 +202,11 @@ class GroupItem extends VisualItem
     {
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         if (empty($this->description)) {
-            return '<legend class="text-info mt-3">' . $icon . static::$i18n->trans($this->title) . '</legend>';
+            return '<legend class="text-info mt-2 mb-0">' . $icon . static::$i18n->trans($this->title) . '</legend>';
         }
 
-        return '<legend class="text-info mt-3 mb-0">' . $icon . static::$i18n->trans($this->title) . '</legend>'
-            . '<small class="form-text text-muted w-100 mb-3">' . static::$i18n->trans($this->description) . '</small>';
+        return '<legend class="text-info mt-2 mb-1">' . $icon . static::$i18n->trans($this->title) . '</legend>'
+            . '<small class="form-text text-muted w-100 mb-2">' . static::$i18n->trans($this->description) . '</small>';
     }
 
     /**

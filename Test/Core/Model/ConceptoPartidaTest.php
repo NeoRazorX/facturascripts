@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,21 +16,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\ConceptoPartida;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \ConceptoPartida
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- */
-final class ConceptoPartidaTest extends CustomTest
+final class ConceptoPartidaTest extends TestCase
 {
 
-    protected function setUp()
+    use LogErrorsTrait;
+
+    public function testCreate()
     {
-        $this->model = new ConceptoPartida();
+        $concept = new ConceptoPartida();
+        $concept->codconcepto = 'Test';
+        $concept->descripcion = 'Test Concept';
+        $this->assertTrue($concept->save(), 'concept-cant-save');
+        $this->assertNotNull($concept->primaryColumnValue(), 'concept-not-stored');
+        $this->assertTrue($concept->exists(), 'concept-cant-persist');
+        $this->assertTrue($concept->delete(), 'concept-cant-delete');
+    }
+
+    public function testCreateWithNoCode()
+    {
+        $concept = new ConceptoPartida();
+        $concept->descripcion = 'Test Concept with new code';
+        $this->assertTrue($concept->save(), 'concept-cant-save');
+        $this->assertTrue($concept->delete(), 'concept-cant-delete');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
     }
 }

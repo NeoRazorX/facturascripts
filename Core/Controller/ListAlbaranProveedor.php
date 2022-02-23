@@ -54,6 +54,8 @@ class ListAlbaranProveedor extends ListBusinessDocument
         $this->addButtonGroupDocument('ListAlbaranProveedor');
         $this->addButtonApproveDocument('ListAlbaranProveedor');
 
-        $this->createViewLines('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor');
+        if ($this->permissions->onlyOwnerData === false) {
+            $this->createViewLines('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor');
+        }
     }
 }

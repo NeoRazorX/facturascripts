@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,10 +23,10 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" description="optional" numcolumns="2" order="100">
-                <widget type="text" fieldname="codfabricante" icon="fas fa-hashtag" maxlength="8" readonly="dinamic" />
+                <widget type="text" fieldname="codfabricante" icon="fas fa-hashtag" maxlength="8" readonly="dinamic"/>
             </column>
-            <column name="name" numcolumns="10" order="110">
-                <widget type="text" fieldname="nombre" maxlength="100" required="true" />
+            <column name="name" order="110">
+                <widget type="text" fieldname="nombre" maxlength="100" required="true"/>
             </column>
         </group>
     </columns>

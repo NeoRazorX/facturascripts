@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,27 +34,12 @@ trait DocFilesTrait
 
     abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5');
 
-    /**
-     *
-     * @return bool
-     */
     private function addFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
             ToolBox::i18nLog()->warning('not-allowed-modify');
             return true;
-        }
-
-        /// valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
-            ToolBox::i18nLog()->warning('invalid-request');
-            return true;
-        }
-
-        /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            ToolBox::i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFileActionToken()) {
             return true;
         }
 
@@ -75,7 +60,7 @@ trait DocFilesTrait
             $fileRelation->nick = $this->user->nick;
             $fileRelation->observations = $this->request->request->get('observations');
             if (false === $fileRelation->save()) {
-                ToolBox::i18nLog()->error('fail');
+                ToolBox::i18nLog()->error('fail-relation');
                 return true;
             }
         }
@@ -84,36 +69,17 @@ trait DocFilesTrait
         return true;
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewDocFiles(string $viewName = 'docfiles', string $template = 'Tab/DocFiles')
     {
         $this->addHtmlView($viewName, $template, 'AttachedFileRelation', 'files', 'fas fa-paperclip');
     }
 
-    /**
-     *
-     * @return bool
-     */
     private function deleteFileAction(): bool
     {
         if (false === $this->permissions->allowDelete) {
             ToolBox::i18nLog()->warning('not-allowed-delete');
             return true;
-        }
-
-        /// valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
-            ToolBox::i18nLog()->warning('invalid-request');
-            return true;
-        }
-
-        /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            ToolBox::i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFileActionToken()) {
             return true;
         }
 
@@ -129,27 +95,12 @@ trait DocFilesTrait
         return true;
     }
 
-    /**
-     *
-     * @return bool
-     */
     private function editFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
             ToolBox::i18nLog()->warning('not-allowed-modify');
             return true;
-        }
-
-        /// valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
-            ToolBox::i18nLog()->warning('invalid-request');
-            return true;
-        }
-
-        /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            ToolBox::i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFileActionToken()) {
             return true;
         }
 
@@ -165,41 +116,25 @@ trait DocFilesTrait
     }
 
     /**
-     *
      * @param BaseView $view
      * @param string $model
      * @param string $modelid
      */
     private function loadDataDocFiles($view, $model, $modelid)
     {
-        $where = [
-            new DataBaseWhere('model', $model),
-            new DataBaseWhere('modelid|modelcode', $modelid)
-        ];
+        $where = [new DataBaseWhere('model', $model)];
+        $where[] = is_numeric($modelid) ?
+            new DataBaseWhere('modelid|modelcode', $modelid) :
+            new DataBaseWhere('modelcode', $modelid);
         $view->loadData('', $where, ['creationdate' => 'DESC']);
     }
 
-    /**
-     *
-     * @return bool
-     */
     private function unlinkFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
             ToolBox::i18nLog()->warning('not-allowed-modify');
             return true;
-        }
-
-        /// valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token, $this->user->logkey)) {
-            ToolBox::i18nLog()->warning('invalid-request');
-            return true;
-        }
-
-        /// duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            ToolBox::i18nLog()->warning('duplicated-request');
+        } elseif (false === $this->validateFileActionToken()) {
             return true;
         }
 
@@ -210,6 +145,24 @@ trait DocFilesTrait
         }
 
         ToolBox::i18nLog()->notice('record-updated-correctly');
+        return true;
+    }
+
+    private function validateFileActionToken(): bool
+    {
+        // valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+            ToolBox::i18nLog()->warning('invalid-request');
+            return false;
+        }
+
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($token)) {
+            ToolBox::i18nLog()->warning('duplicated-request');
+            return false;
+        }
+
         return true;
     }
 }

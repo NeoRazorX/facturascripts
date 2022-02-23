@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,44 +16,37 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-namespace FacturaScripts\Core\Base;
+namespace FacturaScripts\Core\Controller;
+
+use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
- * Description of TranslateLog
+ * Description of EditEmailNotification
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Translate2Log extends MiniLog
+class EditEmailNotification extends EditController
 {
 
     /**
-     *
-     * @var Translator
-     */
-    private static $i18n;
-
-    /**
      * 
-     * @return Translator
+     * @return array
      */
-    protected function i18n()
+    public function getPageData()
     {
-        if (!isset(self::$i18n)) {
-            self::$i18n = new Translator();
-        }
-
-        return self::$i18n;
+        $pageData = parent::getPageData();
+        $pageData['title'] = 'email-notification';
+        $pageData['menu'] = 'crm';
+        $pageData['icon'] = 'fas fa-bell';
+        return $pageData;
     }
 
     /**
      * 
-     * @param string $level
-     * @param string $message
-     * @param array  $context
+     * @return string
      */
-    protected function log(string $level, string $message, array $context = [])
+    public function getModelClassName()
     {
-        $translation = $this->i18n()->trans($message, $context);
-        parent::log($level, $translation);
+        return 'EmailNotification';
     }
 }

@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,21 +16,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\GrupoClientes;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \GrupoClientes
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- */
-final class GrupoClientesTest extends CustomTest
+final class GrupoClientesTest extends TestCase
 {
 
-    protected function setUp()
+    use LogErrorsTrait;
+
+    public function testCreate()
     {
-        $this->model = new GrupoClientes();
+        $group = new GrupoClientes();
+        $group->codgrupo = 'Test';
+        $group->nombre = 'Test Customer Group';
+        $this->assertTrue($group->save(), 'customer-group-cant-save');
+        $this->assertNotNull($group->primaryColumnValue(), 'customer-group-not-stored');
+        $this->assertTrue($group->exists(), 'customer-group-cant-persist');
+        $this->assertTrue($group->delete(), 'customer-group-cant-delete');
+    }
+
+    public function testCreateWithNoCode()
+    {
+        $group = new GrupoClientes();
+        $group->nombre = 'Test Customer Group';
+        $this->assertTrue($group->save(), 'customer-group-cant-save');
+        $this->assertTrue($group->delete(), 'customer-group-cant-delete');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
     }
 }

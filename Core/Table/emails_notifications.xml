@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : emails_notifications.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Structure for the emails_notifications table.
+-->
+<table>
+    <column>
+        <name>body</name>
+        <type>text</type>
+    </column>
+    <column>
+        <name>creationdate</name>
+        <type>date</type>
+    </column>
+    <column>
+        <name>enabled</name>
+        <type>boolean</type>
+    </column>
+    <column>
+        <name>name</name>
+        <type>character varying(100)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>subject</name>
+        <type>character varying(150)</type>
+        <null>NO</null>
+    </column>
+    <constraint>
+        <name>emails_templates_pkey</name>
+        <type>PRIMARY KEY (name)</type>
+    </constraint>
+</table>

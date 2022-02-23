@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,29 +16,118 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Familia;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Familia
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- */
-final class FamiliaTest extends CustomTest
+final class FamiliaTest extends TestCase
 {
+    use LogErrorsTrait;
 
-    protected function setUp()
+    public function testDataInstalled()
     {
-        $this->model = new Familia();
+        $family = new Familia();
+        $this->assertNotEmpty($family->all(), 'family-data-not-installed-from-csv');
     }
-    
-    public function testPrimaryColumnValue()
+
+    public function testCreate()
     {
-        $this->model->descripcion = 'test description';
-        
-        $this->model->{$this->model->primaryColumn()} = 'n"l123';
-        $this->assertFalse($this->model->test());
-    }    
+        $family = new Familia();
+        $family->codfamilia = 'Test';
+        $family->descripcion = 'Test Family';
+        $this->assertTrue($family->save(), 'family-cant-save');
+        $this->assertNotNull($family->primaryColumnValue(), 'family-not-stored');
+        $this->assertTrue($family->exists(), 'family-cant-persist');
+
+        // eliminamos
+        $this->assertTrue($family->delete(), 'family-cant-delete');
+    }
+
+    public function testCreateWithoutCode()
+    {
+        $family = new Familia();
+        $family->descripcion = 'Test without code';
+        $this->assertTrue($family->save(), 'family-cant-save');
+
+        // eliminamos
+        $this->assertTrue($family->delete(), 'family-cant-delete');
+    }
+
+    public function testCreateSpaceCode()
+    {
+        $family = new Familia();
+        $family->codfamilia = 'Te st';
+        $family->descripcion = 'Test with space code';
+        $this->assertFalse($family->save(), 'family-can-save');
+    }
+
+    public function testCreateHtml()
+    {
+        // creamos contenido con html
+        $family = new Familia();
+        $family->codfamilia = 'Test';
+        $family->descripcion = '<b>Test Html</b>';
+        $this->assertTrue($family->save(), 'family-cant-save');
+
+        // comprobamos que el html ha sido escapado
+        $noHtml = ToolBox::utils()::noHtml('<b>Test Html</b>');
+        $this->assertEquals($noHtml, $family->descripcion, 'family-wrong-html');
+
+        // eliminamos
+        $this->assertTrue($family->delete(), 'family-cant-delete');
+    }
+
+    public function testCreateMother()
+    {
+        $family = new Familia();
+        $family->codfamilia = 'Test';
+        $family->descripcion = 'Test Mother';
+        $family->madre = 'Test';
+        $this->assertTrue($family->save(), 'family-cant-save');
+        $this->assertNull($family->madre, 'family-bad-mother');
+
+        // eliminamos
+        $this->assertTrue($family->delete(), 'family-cant-delete');
+    }
+
+    public function testFamiliesMother()
+    {
+        $family1 = new Familia();
+        $family1->codfamilia = 'Test1';
+        $family1->descripcion = 'Test 1';
+        $this->assertTrue($family1->save(), 'family1-cant-save');
+
+        $family2 = new Familia();
+        $family2->codfamilia = 'Test2';
+        $family2->descripcion = 'Test 2';
+        $family2->madre = 'Test1';
+        $this->assertTrue($family2->save(), 'family2-cant-save');
+
+        $family1->madre = 'Test2';
+        $this->assertFalse($family1->save(), 'family2-can-loop');
+
+        // eliminamos
+        $this->assertTrue($family1->delete(), 'family1-cant-delete');
+        $this->assertTrue($family2->delete(), 'family1-cant-delete');
+    }
+
+    public function testCreateSubaccount()
+    {
+        $family = new Familia();
+        $family->codfamilia = 'Test';
+        $family->descripcion = 'Test Subaccount';
+        $family->codsubcuentacom = '0000000000';
+        $family->codsubcuentairpfcom = '0000000000';
+        $family->codsubcuentaven = '0000000000';
+        $this->assertFalse($family->save(), 'family-can-save');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
+    }
 }

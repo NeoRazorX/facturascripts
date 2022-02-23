@@ -20,32 +20,35 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+
 /**
- * A state associated with documents to distinguish them by groups.
- * For example: Earrings, Approved, ...
+ * Defines the status and attributes of a purchase or sale document.
  *
  * @author Francesc Pineda Segarra <francesc.pìneda.segarra@gmail.com>
  * @author Carlos García Gómez     <carlos@facturascripts.com>
  */
-class EstadoDocumento extends Base\ModelClass
+class EstadoDocumento extends Base\ModelOnChangeClass
 {
 
     use Base\ModelTrait;
 
     /**
-     * True if this states must update product stock.
+     * Mode in which the stock of purchased or sold products is updated.
      *
      * @var int
      */
     public $actualizastock;
 
     /**
+     * True to prevent modification of this state.
+     *
      * @var bool
      */
     public $bloquear;
 
     /**
-     * If the state is editable or not.
+     * Indicates whether the document will be editable or not.
      *
      * @var bool
      */
@@ -87,7 +90,7 @@ class EstadoDocumento extends Base\ModelClass
     public $predeterminado;
 
     /**
-     * Document type: custommer invoice, supplier order, etc...
+     * Document type: customer invoice, supplier order, etc...
      *
      * @var string
      */
@@ -103,7 +106,6 @@ class EstadoDocumento extends Base\ModelClass
         $this->bloquear = false;
         $this->editable = true;
         $this->predeterminado = false;
-        $this->tipodoc = 'PedidoProveedor';
     }
 
     /**
@@ -144,31 +146,6 @@ class EstadoDocumento extends Base\ModelClass
     }
 
     /**
-     * @return bool
-     */
-    public function save()
-    {
-        if ($this->bloquear) {
-            $this->toolBox()->i18nLog()->warning('locked');
-            return false;
-        }
-
-        if (false === parent::save()) {
-            return false;
-        }
-
-        if ($this->predeterminado) {
-            $sql = "UPDATE " . static::tableName() . " SET predeterminado = false"
-                . " WHERE predeterminado = true"
-                . " AND tipodoc = " . self::$dataBase->var2str($this->tipodoc)
-                . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
-            return self::$dataBase->exec($sql);
-        }
-
-        return true;
-    }
-
-    /**
      * Returns the name of the table that uses this model.
      *
      * @return string
@@ -192,6 +169,11 @@ class EstadoDocumento extends Base\ModelClass
 
         if (!empty($this->generadoc)) {
             $this->editable = false;
+
+            if (in_array($this->tipodoc, ['FacturaCliente', 'FacturaProveedor'])) {
+                self::toolBox()::i18nLog()->warning('invoices-cant-generate-new-docs');
+                return false;
+            }
         }
 
         return parent::test();
@@ -206,5 +188,105 @@ class EstadoDocumento extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
     {
         return parent::url($type, $list);
+    }
+
+    /**
+     * @param string $field
+     *
+     * @return bool
+     */
+    protected function onChange($field)
+    {
+        if ($this->bloquear && $this->previousData['bloquear']) {
+            $this->toolBox()->i18nLog()->warning('locked');
+            return false;
+        }
+
+        if ($field === 'predeterminado') {
+            return $this->onChangePredeterminado();
+        }
+
+        return parent::onChange($field);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function onChangePredeterminado(): bool
+    {
+        if ($this->predeterminado) {
+            $sql = "UPDATE " . static::tableName() . " SET predeterminado = false"
+                . " WHERE predeterminado = true"
+                . " AND tipodoc = " . self::$dataBase->var2str($this->tipodoc)
+                . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
+            return self::$dataBase->exec($sql);
+        }
+
+        // set other status as default
+        $where = [
+            new DataBaseWhere('editable', true),
+            new DataBaseWhere('tipodoc', $this->tipodoc)
+        ];
+        foreach ($this->all($where) as $item) {
+            $sql = "UPDATE " . static::tableName() . " SET predeterminado = true"
+                . " WHERE idestado = " . self::$dataBase->var2str($item->idestado) . ";";
+            return self::$dataBase->exec($sql);
+        }
+
+        return false;
+    }
+
+    protected function onDelete()
+    {
+        if ($this->predeterminado) {
+            $where = [
+                new DataBaseWhere('editable', true),
+                new DataBaseWhere('tipodoc', $this->tipodoc)
+            ];
+            foreach ($this->all($where) as $item) {
+                $sql = "UPDATE " . static::tableName() . " SET predeterminado = true"
+                    . " WHERE idestado = " . self::$dataBase->var2str($item->idestado) . ";";
+                self::$dataBase->exec($sql);
+                break;
+            }
+        }
+    }
+
+    protected function onInsert()
+    {
+        if ($this->predeterminado) {
+            $sql = "UPDATE " . static::tableName() . " SET predeterminado = false"
+                . " WHERE predeterminado = true"
+                . " AND tipodoc = " . self::$dataBase->var2str($this->tipodoc)
+                . " AND idestado != " . self::$dataBase->var2str($this->idestado) . ";";
+            self::$dataBase->exec($sql);
+        }
+    }
+
+    /**
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->idestado)) {
+            /**
+             * postgresql does not correctly update the serial when inserting the values from a csv.
+             * So we use this to get the new id manually.
+             */
+            $this->idestado = $this->newCode();
+        }
+
+        return parent::saveInsert($values);
+    }
+
+    /**
+     * @param array $fields
+     */
+    protected function setPreviousData(array $fields = [])
+    {
+        $more = ['actualizastock', 'bloquear', 'editable', 'generadoc', 'predeterminado', 'tipodoc'];
+        parent::setPreviousData(array_merge($more, $fields));
     }
 }

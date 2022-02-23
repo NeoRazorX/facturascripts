@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -34,7 +35,7 @@ class EditAlmacen extends EditController
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -57,20 +58,24 @@ class EditAlmacen extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createStockView(string $viewName = 'ListStock')
     {
-        $this->addListView($viewName, 'Stock', 'stock', 'fas fa-cubes');
-        $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
-        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
-        $this->views[$viewName]->searchFields = ['referencia'];
+        $this->addListView($viewName, 'Join\StockProducto', 'stock', 'fas fa-dolly');
+        $this->views[$viewName]->addOrderBy(['stocks.referencia'], 'reference');
+        $this->views[$viewName]->addOrderBy(['stocks.cantidad'], 'quantity');
+        $this->views[$viewName]->addOrderBy(['stocks.disponible'], 'available');
+        $this->views[$viewName]->addOrderBy(['stocks.reservada'], 'reserved');
+        $this->views[$viewName]->addOrderBy(['stocks.pterecibir'], 'pending-reception');
+        $this->views[$viewName]->addOrderBy(['productos.descripcion', 'stocks.referencia'], 'product');
+        $this->views[$viewName]->addSearchFields(['stocks.referencia', 'productos.descripcion']);
 
-        /// disable column
+        // disable column
         $this->views[$viewName]->disableColumn('warehouse');
 
-        /// disable buttons
+        // disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
     }
 
@@ -82,7 +87,7 @@ class EditAlmacen extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        /// disable company column if there is only one company
+        // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }
@@ -93,15 +98,15 @@ class EditAlmacen extends EditController
     /**
      * Load data view procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
             case 'ListStock':
-                $codalmacen = $this->getViewModelValue($this->getMainViewName(), 'codalmacen');
-                $where = [new DataBaseWhere('codalmacen', $codalmacen)];
+                $code = $this->getViewModelValue($this->getMainViewName(), 'codalmacen');
+                $where = [new DataBaseWhere('codalmacen', $code)];
                 $view->loadData('', $where);
                 break;
 

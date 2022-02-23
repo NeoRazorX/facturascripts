@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
@@ -203,12 +204,12 @@ abstract class BusinessDocument extends ModelOnChangeClass
     /**
      * Sets the author for this document.
      */
-    abstract public function setAuthor($author);
+    abstract public function setAuthor($user): bool;
 
     /**
      * Sets subject for this document.
      */
-    abstract public function setSubject($subject);
+    abstract public function setSubject($subject): bool;
 
     /**
      * Returns the name of the column for subject.
@@ -218,7 +219,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     /**
      * Updates subjects data in this document.
      */
-    abstract public function updateSubject();
+    abstract public function updateSubject(): bool;
 
     /**
      * Reset the values of all model properties.
@@ -233,8 +234,8 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->codserie = $appSettings->get('default', 'codserie');
         $this->dtopor1 = 0.0;
         $this->dtopor2 = 0.0;
-        $this->fecha = \date(self::DATE_STYLE);
-        $this->hora = \date(self::HOUR_STYLE);
+        $this->fecha = date(self::DATE_STYLE);
+        $this->hora = date(self::HOUR_STYLE);
         $this->idempresa = $appSettings->get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
@@ -250,7 +251,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
     /**
      * Returns the Equivalent Unified Discount.
-     * 
+     *
      * @return float
      */
     public function getEUDiscount()
@@ -272,7 +273,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     public function install()
     {
-        /// needed dependencies
+        // needed dependencies
         new Serie();
         new Ejercicio();
         new Almacen();
@@ -282,10 +283,9 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * 
      * @return bool
      */
-    public function paid()
+    public function paid(): bool
     {
         return false;
     }
@@ -307,12 +307,12 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     public function save()
     {
-        /// check accounting exercise
+        // check accounting exercise
         if (empty($this->codejercicio)) {
             $this->setDate($this->fecha, $this->hora);
         }
 
-        /// empty code?
+        // empty code?
         if (empty($this->codigo)) {
             BusinessDocumentCode::getNewCode($this);
         }
@@ -330,7 +330,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     public function setDate(string $date, string $hour): bool
     {
-        /// force check of warehouse-company relation
+        // force check of warehouse-company relation
         if (false === $this->setWarehouse($this->codalmacen)) {
             return false;
         }
@@ -349,7 +349,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
-     * 
      * @return string
      */
     public function subjectColumnValue()
@@ -367,15 +366,15 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $utils = $this->toolBox()->utils();
         $this->observaciones = $utils->noHtml($this->observaciones);
 
-        /// check number
-        if ((int) $this->numero < 1) {
+        // check number
+        if ((int)$this->numero < 1) {
             $this->toolBox()->i18nLog()->error('invalid-number', ['%number%' => $this->numero]);
             return false;
         }
 
-        /// check total
+        // check total
         $total = $this->neto + $this->totalsuplidos + $this->totaliva - $this->totalirpf + $this->totalrecargo;
-        if (false === $utils->floatcmp($this->total, $total, \FS_NF0, true)) {
+        if (false === $utils->floatcmp($this->total, $total, FS_NF0, true)) {
             $this->toolBox()->i18nLog()->error('bad-total-error');
             return false;
         }
@@ -385,7 +384,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
          * or convert amounts in several currencies. For this reason we need
          * many decimals.
          */
-        $this->totaleuros = empty($this->tasaconv) ? 0 : \round($this->total / $this->tasaconv, 5);
+        $this->totaleuros = empty($this->tasaconv) ? 0 : round($this->total / $this->tasaconv, 5);
 
         return parent::test();
     }
@@ -432,8 +431,31 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveUpdate(array $values = [])
+    {
+        if (false === parent::saveUpdate($values)) {
+            return false;
+        }
+
+        // add audit log
+        self::toolBox()::i18nLog(self::AUDIT_CHANNEL)->info('updated-model', [
+            '%model%' => $this->modelClassName(),
+            '%key%' => $this->primaryColumnValue(),
+            '%desc%' => $this->primaryDescription(),
+            'model-class' => $this->modelClassName(),
+            'model-code' => $this->primaryColumnValue(),
+            'model-data' => $this->toArray()
+        ]);
+        return true;
+    }
+
+    /**
      * Sets fields to be watched.
-     * 
+     *
      * @param array $fields
      */
     protected function setPreviousData(array $fields = [])
@@ -442,17 +464,17 @@ abstract class BusinessDocument extends ModelOnChangeClass
             'codalmacen', 'coddivisa', 'codpago', 'codserie',
             'fecha', 'hora', 'idempresa', 'numero', 'total'
         ];
-        parent::setPreviousData(\array_merge($more, $fields));
+        parent::setPreviousData(array_merge($more, $fields));
     }
 
     /**
      * Sets warehouse and company for this document.
-     * 
+     *
      * @param string $codalmacen
      *
      * @return bool
      */
-    protected function setWarehouse($codalmacen)
+    protected function setWarehouse(string $codalmacen): bool
     {
         $almacen = new Almacen();
         if ($almacen->loadFromCode($codalmacen)) {

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
@@ -51,12 +52,11 @@ class ListLogMessage extends ListController
     {
         $this->createLogMessageView();
         $this->createCronJobView();
-        $this->createEmailSentView();
     }
 
     /**
      * Create view to view all information about crons.
-     * 
+     *
      * @param string $viewName
      */
     protected function createCronJobView(string $viewName = 'ListCronJob')
@@ -68,49 +68,30 @@ class ListLogMessage extends ListController
         $this->addOrderBy($viewName, ['date'], 'date');
         $this->addOrderBy($viewName, ['duration'], 'duration');
 
-        /// filters
+        // filters
         $plugins = $this->codeModel->all('cronjobs', 'pluginname', 'pluginname');
         $this->addFilterSelect($viewName, 'pluginname', 'plugin', 'pluginname', $plugins);
 
         $this->addFilterPeriod($viewName, 'date', 'period', 'date');
 
-        /// settings
-        $this->setSettings($viewName, 'btnNew', false);
-    }
-
-    /**
-     * 
-     * @param string $viewName
-     */
-    protected function createEmailSentView(string $viewName = 'ListEmailSent')
-    {
-        $this->addView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
-        $this->addOrderBy($viewName, ['date'], 'date', 2);
-        $this->addSearchFields($viewName, ['addressee', 'body', 'subject']);
-
-        /// filters
-        $users = $this->codeModel->all('users', 'nick', 'nick');
-        $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
-        $this->addFilterPeriod($viewName, 'date', 'period', 'date');
-        $this->addFilterCheckbox($viewName, 'opened');
-
-        /// settings
+        // settings
         $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
      * Create view to get information about all logs.
-     * 
+     *
      * @param string $viewName
      */
     protected function createLogMessageView(string $viewName = 'ListLogMessage')
     {
-        $this->addView($viewName, 'LogMessage', 'logs', 'fas fa-file-medical-alt');
-        $this->addSearchFields($viewName, ['message', 'uri']);
+        $this->addView($viewName, 'LogMessage', 'history', 'fas fa-history');
+        $this->addSearchFields($viewName, ['context', 'message', 'uri']);
         $this->addOrderBy($viewName, ['time', 'id'], 'date', 2);
         $this->addOrderBy($viewName, ['level'], 'level');
+        $this->addOrderBy($viewName, ['ip'], 'ip');
 
-        /// filters
+        // filters
         $channels = $this->codeModel->all('logs', 'channel', 'channel');
         $this->addFilterSelect($viewName, 'channel', 'channel', 'channel', $channels);
 
@@ -123,9 +104,12 @@ class ListLogMessage extends ListController
         $uris = $this->codeModel->all('logs', 'uri', 'uri');
         $this->addFilterSelect($viewName, 'url', 'url', 'uri', $uris);
 
+        $models = $this->codeModel->all('logs', 'model', 'model');
+        $this->addFilterSelect($viewName, 'model', 'doc-type', 'model', $models);
+
         $this->addFilterPeriod($viewName, 'time', 'period', 'time');
 
-        /// settings
+        // settings
         $this->setSettings($viewName, 'btnNew', false);
     }
 }
