@@ -78,10 +78,10 @@
                 <div class="col-sm-auto text-right mb-2">
                     {# -- Filters button -- #}
                     {{ _self.filterButton(currentView, fsc, i18n) }}
-                    {# -- Colors button -- #}
-                    {{ _self.colorsButton(currentView, i18n) }}
                     {# -- OrderBy button -- #}
                     {{ _self.sortButton(currentView) }}
+                    {# -- Colors button -- #}
+                    {{ _self.colorsButton(currentView, i18n) }}
                 </div>
             </div>
             {# -- Filters -- #}
@@ -215,36 +215,51 @@
 {% macro filterButton(currentView, fsc, i18n) %}
     {% if currentView.filters is not empty %}
         {% set viewName = currentView.getViewName() %}
+        {% if currentView.pageFilterKey %}
+            {# -- Disable user filters -- #}
+            <a href="{{ fsc.url() }}?activetab={{ viewName }}" class="btn btn-light" title="{{ i18n.trans('all') }}">
+                <i class="fas fa-filter fa-fw"></i> {{ i18n.trans('all') }}
+            </a>
+        {% else %}
+            <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
+                <i class="fas fa-filter fa-fw"></i> {{ i18n.trans('filters') }}
+            </button>
+            {% if currentView.showFilters %}
+                {# -- Save user filters -- #}
+                <button type="button" class="btn btn-success" data-toggle="modal"
+                        data-target="#savefilter{{ viewName }}"
+                        title="{{ i18n.trans('save-filter') }}">
+                    <i class="fas fa-save fa-fw"></i> {{ i18n.trans('save') }}
+                </button>
+            {% endif %}
+        {% endif %}
         {% set saveFilters = currentView.pageFilters %}
-        <button type="button" class="btn btn-light" onclick="listViewShowFilters('{{ viewName }}');">
-            <i class="fas fa-filter fa-fw"></i> {{ i18n.trans('filters') }}
-        </button>
         {% if saveFilters is not empty %}
             {% for pageFilter in saveFilters %}
-                {% set activeClass = (pageFilter.id == currentView.pageFilterKey) ? ' active' : '' %}
                 {% set icon = (pageFilter.nick is empty) ? 'fa-users' : 'fa-user' %}
-                {% set filterDesc = pageFilter.description|length > 10 ? pageFilter.description ~ '...' : pageFilter.description %}
-                <button title="{{ pageFilter.description }}" class="btn btn-light {{ activeClass }}"
-                   onclick="listViewSetLoadFilter('{{ viewName }}', '{{ pageFilter.id }}');">
-                    <i class="fas fa-filter fa-fw"></i> {{ filterDesc }}
-                </button>
+                {% set filterDesc = pageFilter.description|length > 10 ? pageFilter.description|slice(0,10) ~ '...' : pageFilter.description %}
+                {% if pageFilter.id == currentView.pageFilterKey %}
+                    <div class="btn-group">
+                        {# -- Selected user filter -- #}
+                        <button title="{{ pageFilter.description }}" class="btn btn-light active"
+                                onclick="listViewSetLoadFilter('{{ viewName }}', '{{ pageFilter.id }}');">
+                            <i class="fas fa-filter fa-fw"></i> {{ filterDesc }}
+                        </button>
+                        {# -- Delete user filter -- #}
+                        <button type="button" class="btn btn-light text-danger"
+                                title="{{ i18n.trans('remove-filter') }}"
+                                onclick="listViewSetAction('{{ viewName }}', 'delete-filter');">
+                            <i class="fas fa-trash-alt fa-fw"></i>
+                        </button>
+                    </div>
+                {% else %}
+                    {# -- Select user filters -- #}
+                    <button title="{{ pageFilter.description }}" class="btn btn-light"
+                            onclick="listViewSetLoadFilter('{{ viewName }}', '{{ pageFilter.id }}');">
+                        <i class="fas fa-filter fa-fw"></i> {{ filterDesc }}
+                    </button>
+                {% endif %}
             {% endfor %}
-        {% endif %}
-        {% if currentView.pageFilterKey %}
-            <div class="btn-group">
-                <a href="{{ fsc.url() }}?activetab={{ viewName }}" class="btn btn-warning">
-                    <i class="fas fa-times fa-fw"></i>
-                </a>
-                <button type="button" class="btn btn-danger" title="{{ i18n.trans('remove-filter') }}"
-                        onclick="listViewSetAction('{{ viewName }}', 'delete-filter');">
-                    <i class="fas fa-trash-alt fa-fw"></i>
-                </button>
-            </div>
-        {% elseif currentView.showFilters %}
-            <button type="button" class="btn btn-info ml-1" data-toggle="modal" data-target="#savefilter{{ viewName }}"
-                    title="{{ i18n.trans('save-filter') }}">
-                <i class="fas fa-save fa-fw"></i>
-            </button>
         {% endif %}
     {% endif %}
 {% endmacro %}
@@ -268,7 +283,7 @@
                             <div class="form-group">
                                 <label>{{ i18n.trans('description') }}</label>
                                 <input type="text" name="filter-description" class="form-control noEnterKey"
-                                       autofocus="" />
+                                       autofocus=""/>
                             </div>
                         </div>
                     </div>
