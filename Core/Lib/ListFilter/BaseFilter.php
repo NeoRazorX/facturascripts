@@ -166,6 +166,6 @@ abstract class BaseFilter
      */
     protected function readonly(): string
     {
-        return $this->readonly ? ' readonly=""' : '';
+        return $this->readonly ? ' readonly="" disabled=""' : '';
     }
 }

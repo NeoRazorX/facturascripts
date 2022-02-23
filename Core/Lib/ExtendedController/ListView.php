@@ -343,13 +343,27 @@ class ListView extends BaseView
         // select saved filter
         $this->pageFilterKey = $request->request->get('loadfilter', 0);
         if (!empty($this->pageFilterKey)) {
+            $filterLoad = [];
             // Load saved filter into page parameters
             foreach ($this->pageFilters as $item) {
                 if ($item->id == $this->pageFilterKey) {
                     $request->request->add($item->filters);
+                    $filterLoad = $item->filters;
                     break;
                 }
             }
+            // Carga los filtros de las preferencias seleccionadas
+            foreach ($this->filters as $filter) {
+                $key = 'filter' . $filter->key;
+                $filter->readonly = true;
+                if (array_key_exists($key, $filterLoad)) {
+                    $filter->setValueFromRequest($request);
+                    if ($filter->getDataBaseWhere($this->where)) {
+                        $this->showFilters = true;
+                    }
+                }
+            }
+            return;
         }
 
         // filters
