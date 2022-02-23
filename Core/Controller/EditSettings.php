@@ -316,18 +316,6 @@ class EditSettings extends PanelController
         switch ($action) {
             case 'export':
                 break;
-
-            case 'testmail':
-                if (false === $this->editAction()) {
-                    break;
-                }
-                $email = new NewMail();
-                if ($email->test()) {
-                    $this->toolBox()->i18nLog()->notice('mail-test-ok');
-                    break;
-                }
-                $this->toolBox()->i18nLog()->warning('mail-test-error');
-                break;
         }
     }
 
