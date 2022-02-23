@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Email;
 
-use FacturaScripts\Dinamic\Lib\Email\NewMail;
+use FacturaScripts\Dinamic\Lib\Email\NewMail as DinNewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 
 /**
@@ -40,7 +40,7 @@ class MailNotifier
     {
         $notification = new EmailNotification();
         if ($notification->loadFromCode($notificationName) && $notification->enabled) {
-            $newMail = new NewMail();
+            $newMail = new DinNewMail();
             $newMail->addAddress($email, $name);
 
             /**

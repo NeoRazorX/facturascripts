@@ -32,7 +32,6 @@ class ConfigEmail extends PanelController
 {
 
     /**
-     *
      * @return array
      */
     public function getPageData()
@@ -48,13 +47,10 @@ class ConfigEmail extends PanelController
     {
         $this->setTemplate('EditSettings');
         $this->createViewsEmail();
-        $this->createViewsEmailNotification();
         $this->createViewsEmailSent();
+        $this->createViewsEmailNotification();
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsEmail(string $viewName = 'ConfigEmail')
     {
         $this->addEditView($viewName, 'Settings', 'email', 'fas fa-envelope');
@@ -64,20 +60,24 @@ class ConfigEmail extends PanelController
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsEmailNotification(string $viewName = 'ListEmailNotification')
     {
-        $this->addListView($viewName, 'EmailNotification', 'email-notifications', 'fas fa-bell');
+        $this->addListView($viewName, 'EmailNotification', 'notifications', 'fas fa-bell');
+        $this->views[$viewName]->addOrderBy(['date'], 'date');
+        $this->views[$viewName]->addOrderBy(['name'], 'name', 1);
+        $this->views[$viewName]->addSearchFields(['body', 'name', 'subject']);
+
+        // filters
+        $this->views[$viewName]->addFilterCheckbox('enabled');
+
+        // settings
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsEmailSent(string $viewName = 'ListEmailSent')
     {
-        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-paper-plane');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
 
@@ -119,8 +119,8 @@ class ConfigEmail extends PanelController
 
         switch ($viewName) {
             case 'ConfigEmail':
-                $view->loadData('default');
-                $view->model->name = 'default';
+                $view->loadData('email');
+                $view->model->name = 'email';
                 break;
 
             case 'ListEmailNotification':
