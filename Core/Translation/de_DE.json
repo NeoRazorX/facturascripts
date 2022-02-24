@@ -772,6 +772,7 @@
     "missing-file-help": "This file seems to be missing from your installation. Maybe you don't use it, but <em>you can't remove it<\/em>.",
     "mobile": "mobile",
     "model-not-found": "Modell nicht gefunden: %model%",
+    "month": "Mes",
     "month-name": "Month Name",
     "month-wildcard-info": "Current month (of the current date)",
     "monthly": "monatlich",

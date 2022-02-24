@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -311,6 +312,34 @@ abstract class ListController extends BaseController
     }
 
     /**
+     * Returns the where filter to apply to obtain the data created by the active user.
+     *
+     * @param ModelClass $model
+     *
+     * @return DataBaseWhere[]
+     */
+    protected function getOwnerFilter($model): array
+    {
+        $where = [];
+
+        if (property_exists($model, 'nick')) {
+            // DatabaseWhere applies parentheses grouping the ORs
+            // result: (`nick` = 'username' OR `nick` IS NULL OR `codagente` = 'agent') AND [... user filters]
+            $where[] = new DataBaseWhere('nick', $this->user->nick);
+            $where[] = new DataBaseWhere('nick', null, 'IS', 'OR');
+            if (property_exists($model, 'codagente') && $this->user->codagente) {
+                $where[] = new DataBaseWhere('codagente', $this->user->codagente, '=', 'OR');
+            }
+            return $where;
+        }
+
+        if (property_exists($model, 'codagente')) {
+            $where[] = new DataBaseWhere('codagente', $this->user->codagente);
+        }
+        return $where;
+    }
+
+    /**
      * @param string $viewName
      * @param BaseView $view
      */
@@ -328,7 +357,7 @@ abstract class ListController extends BaseController
         $this->setTemplate(false);
         $json = [];
 
-        /// we search in all listviews
+        // we search in all listviews
         foreach ($this->views as $viewName => $listView) {
             if (false === $this->getSettings($viewName, 'megasearch') || empty($listView->searchFields)) {
                 continue;
@@ -387,7 +416,7 @@ abstract class ListController extends BaseController
         if (!empty($idFilter)) {
             $this->toolBox()->i18nLog()->notice('record-updated-correctly');
 
-            /// load filters in request
+            // load filters in request
             $this->request->request->set('loadfilter', $idFilter);
         }
     }

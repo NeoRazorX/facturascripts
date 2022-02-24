@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -280,11 +280,11 @@ abstract class ModelClass extends ModelCore
             return false;
         }
 
+        // comprobamos que los campos no nulos tengan algún valor asignado
         $fields = $this->getModelFields();
         if (empty($fields)) {
             return false;
         }
-
         $return = true;
         foreach ($fields as $key => $value) {
             if ($key == static::primaryColumn()) {
@@ -295,7 +295,10 @@ abstract class ModelClass extends ModelCore
             }
         }
 
-        $this->pipe('test');
+        if ($this->pipe('test') === false) {
+            return false;
+        }
+
         return $return;
     }
 

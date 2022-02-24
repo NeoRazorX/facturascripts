@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
@@ -29,20 +30,18 @@ class EditEmailNotification extends EditController
 {
 
     /**
-     * 
      * @return array
      */
     public function getPageData()
     {
         $pageData = parent::getPageData();
         $pageData['title'] = 'email-notification';
-        $pageData['menu'] = 'crm';
+        $pageData['menu'] = 'admin';
         $pageData['icon'] = 'fas fa-bell';
         return $pageData;
     }
 
     /**
-     * 
      * @return string
      */
     public function getModelClassName()

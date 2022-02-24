@@ -772,6 +772,7 @@
     "missing-file-help": "Pareix que este fitxer no està en la teua instalació. Potser no l'uses, pero <em>no el pots borrar<\/em>.",
     "mobile": "mobile",
     "model-not-found": "El model %model% no s'ha trobat",
+    "month": "Mes",
     "month-name": "Nom del més",
     "month-wildcard-info": "Més actual (de la data actual)",
     "monthly": "Mensualment",
