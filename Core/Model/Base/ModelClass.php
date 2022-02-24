@@ -276,6 +276,10 @@ abstract class ModelClass extends ModelCore
      */
     public function test()
     {
+        if ($this->pipe('testBefore') === false) {
+            return false;
+        }
+
         $fields = $this->getModelFields();
         if (empty($fields)) {
             return false;
@@ -291,6 +295,7 @@ abstract class ModelClass extends ModelCore
             }
         }
 
+        $this->pipe('test');
         return $return;
     }
 
