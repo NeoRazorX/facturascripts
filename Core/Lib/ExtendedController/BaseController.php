@@ -264,11 +264,16 @@ abstract class BaseController extends Controller
      */
     protected function checkOwnerData($model): bool
     {
-        if ($this->permissions->onlyOwnerData && isset($model->nick) && $model->nick !== $this->user->nick) {
-            return false;
+        if (false === $this->permissions->onlyOwnerData) {
+            return true;
         }
 
-        return true;
+        if (false === isset($model->nick) && false === isset($model->codagente)) {
+            return true;
+        }
+
+        return (isset($model->nick) && $model->nick == $this->user->nick)
+            || (isset($model->codagente) && $model->codagente == $this->user->codagente);
     }
 
     /**
@@ -380,7 +385,21 @@ abstract class BaseController extends Controller
      */
     protected function getOwnerFilter($model): array
     {
-        return property_exists($model, 'nick') ? [new DataBaseWhere('nick', $this->user->nick)] : [];
+        if (false === property_exists($model, 'nick')) {
+            return [];
+        }
+
+        /// DatabaseWhere applies parentheses grouping the ORs
+        /// result: (`nick` = 'username' OR `nick` IS NULL OR `codagente` = 'agent') AND [... user filters]
+        $result = [
+            new DataBaseWhere('nick', $this->user->nick),
+            new DataBaseWhere('nick', null, 'IS', 'OR'),
+        ];
+
+        if (property_exists($model, 'codagente') && $this->user->codagente) {
+            $result[] = new DataBaseWhere('codagente', $this->user->codagente, '=', 'OR');
+        }
+        return $result;
     }
 
     /**
