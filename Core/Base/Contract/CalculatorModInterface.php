@@ -26,7 +26,7 @@ interface CalculatorModInterface
 {
     public function calculate(BusinessDocument &$doc, array &$lines): bool;
 
-    public function calculateLine(BusinessDocumentLine &$line): bool;
+    public function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): bool;
 
     public function clearTotals(BusinessDocument &$doc, array &$lines): bool;
 

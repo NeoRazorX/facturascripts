@@ -20,11 +20,17 @@
 namespace FacturaScripts\Test\Core\Base;
 
 use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\PresupuestoCliente;
+use FacturaScripts\Core\Model\Serie;
+use FacturaScripts\Test\Core\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CalculatorTest extends TestCase
 {
+    use RandomDataTrait;
+
     public function testEmptyDoc()
     {
         $doc = new PresupuestoCliente();
@@ -70,14 +76,12 @@ final class CalculatorTest extends TestCase
         $line1->cantidad = 1;
         $line1->pvpunitario = 100;
         $line1->iva = 21;
-        $line1->recargo = 0.0;
 
         // segunda línea
         $line2 = $doc->getNewLine();
         $line2->cantidad = 2;
         $line2->pvpunitario = 10;
         $line2->iva = 4;
-        $line2->recargo = 0.0;
 
         $lines = [$line1, $line2];
         $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
@@ -111,7 +115,6 @@ final class CalculatorTest extends TestCase
         $line1->cantidad = 1;
         $line1->pvpunitario = 100;
         $line1->iva = 21;
-        $line1->recargo = 0.0;
 
         // segunda línea
         $line2 = $doc->getNewLine();
@@ -120,7 +123,6 @@ final class CalculatorTest extends TestCase
         $line2->dtopor = 10;
         $line2->dtopor2 = 5;
         $line2->iva = 4;
-        $line2->recargo = 0.0;
 
         $lines = [$line1, $line2];
         $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
@@ -153,7 +155,6 @@ final class CalculatorTest extends TestCase
         $line1->pvpunitario = 100;
         $line1->iva = 21;
         $line1->irpf = 15;
-        $line1->recargo = 0.0;
 
         // segunda línea
         $line2 = $doc->getNewLine();
@@ -161,14 +162,12 @@ final class CalculatorTest extends TestCase
         $line2->pvpunitario = 10;
         $line2->iva = 4;
         $line2->irpf = 15;
-        $line2->recargo = 0.0;
 
         // tercera línea
         $line3 = $doc->getNewLine();
         $line3->cantidad = 5;
         $line3->pvpunitario = 11;
         $line3->iva = 21;
-        $line3->recargo = 0.0;
 
         $lines = [$line1, $line2, $line3];
         $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
@@ -185,7 +184,13 @@ final class CalculatorTest extends TestCase
 
     public function testRE()
     {
+        // creamos un cliente con recargo de equivalencia
+        $subject = $this->getRandomCustomer();
+        $subject->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
+        $this->assertTrue($subject->save(), 'can-not-create-re-customer');
+
         $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-re-customer');
 
         // primera línea
         $line1 = $doc->getNewLine();
@@ -230,14 +235,12 @@ final class CalculatorTest extends TestCase
         $line1->cantidad = 3;
         $line1->pvpunitario = 50;
         $line1->iva = 21;
-        $line1->recargo = 0.0;
 
         // segunda línea
         $line2 = $doc->getNewLine();
         $line2->cantidad = 1;
         $line2->pvpunitario = 20;
         $line2->iva = 0.0;
-        $line2->recargo = 0.0;
         $line2->suplido = true;
 
         // tercera línea
@@ -245,7 +248,6 @@ final class CalculatorTest extends TestCase
         $line3->cantidad = 2;
         $line3->pvpunitario = 15;
         $line3->iva = 0.0;
-        $line3->recargo = 0.0;
         $line3->suplido = true;
 
         $lines = [$line1, $line2, $line3];
@@ -259,5 +261,51 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
         $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(50.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+    }
+
+    public function testNoTaxSerie()
+    {
+        // creamos una serie sin impuestos
+        $serie = new Serie();
+        $serie->codserie = 'NT';
+        if (false === $serie->exists()) {
+            $serie->descripcion = 'NO TAX';
+            $serie->siniva = true;
+            $this->assertTrue($serie->save(), 'can-not-save-no-tax-serie');
+
+            // limpiamos la caché
+            Series::clear();
+        }
+
+        // creamos el documento con la serie sin impuestos
+        $doc = new PresupuestoCliente();
+        $doc->codserie = $serie->codserie;
+
+        // primera línea
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 1;
+        $line1->pvpunitario = 100;
+        $line1->iva = 21;
+
+        // segunda línea
+        $line2 = $doc->getNewLine();
+        $line2->cantidad = 2;
+        $line2->pvpunitario = 10;
+        $line2->iva = 4;
+
+        $lines = [$line1, $line2];
+        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+
+        // comprobamos el documento
+        $this->assertEquals(120.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(120.0, $doc->netosindto, 'bad-netosindto');
+        $this->assertEquals(120.0, $doc->total, 'bad-total');
+        $this->assertEquals(0.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
+        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+
+        // eliminamos
+        $serie->delete();
     }
 }

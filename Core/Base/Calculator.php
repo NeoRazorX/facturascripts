@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\Contract\CalculatorModInterface;
+use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Impuesto;
@@ -43,7 +44,7 @@ final class Calculator
 
         // calculamos subtotales en líneas
         foreach ($lines as $line) {
-            self::calculateLine($line);
+            self::calculateLine($doc, $line);
         }
 
         // calculamos los totales
@@ -169,15 +170,32 @@ final class Calculator
         return $subtotals;
     }
 
-    private static function calculateLine(BusinessDocumentLine &$line): void
+    private static function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): void
     {
         $line->pvpsindto = $line->cantidad * $line->pvpunitario;
         $line->pvptotal = $line->pvpsindto * (100 - $line->dtopor) / 100 * (100 - $line->dtopor2) / 100;
 
+        // ¿La serie es sin impuestos?
+        if ($doc->getSerie()->siniva) {
+            $line->iva = $line->recargo = 0.0;
+        }
+
+        // comprobamos el régimen IVA
+        $regimen = $doc->getSubject()->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
+        switch ($regimen) {
+            case RegimenIVA::TAX_SYSTEM_EXEMPT:
+                $line->iva = $line->recargo = 0.0;
+                break;
+
+            case RegimenIVA::TAX_SYSTEM_GENERAL:
+                $line->recargo = 0.0;
+                break;
+        }
+
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
             // si el mod devuelve false, terminamos
-            if (false === $mod->calculateLine($line)) {
+            if (false === $mod->calculateLine($doc, $line)) {
                 break;
             }
         }
