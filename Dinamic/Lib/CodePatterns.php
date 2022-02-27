@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class AccountingEntryTools extends \FacturaScripts\Core\Lib\AccountingEntryTools
+class CodePatterns extends \FacturaScripts\Core\Lib\CodePatterns
 {
 }
