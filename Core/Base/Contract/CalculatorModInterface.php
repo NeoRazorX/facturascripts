@@ -24,11 +24,13 @@ use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 
 interface CalculatorModInterface
 {
+    public function apply(BusinessDocument &$doc, array &$lines): bool;
+
     public function calculate(BusinessDocument &$doc, array &$lines): bool;
 
     public function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): bool;
 
-    public function clearTotals(BusinessDocument &$doc, array &$lines): bool;
+    public function clear(BusinessDocument &$doc, array &$lines): bool;
 
     public function getSubtotals(array &$subtotals, BusinessDocument $doc, array $lines): bool;
 }

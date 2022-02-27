@@ -24,6 +24,7 @@ use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Impuesto;
+use FacturaScripts\Core\Model\ImpuestoZona;
 
 final class Calculator
 {
@@ -40,7 +41,10 @@ final class Calculator
     public static function calculate(BusinessDocument &$doc, array &$lines, bool $save): bool
     {
         // ponemos totales a 0
-        self::clearTotals($doc, $lines);
+        self::clear($doc, $lines);
+
+        // aplicamos configuraciones, excepciones, etc
+        self::apply($doc, $lines);
 
         // calculamos subtotales en líneas
         foreach ($lines as $line) {
@@ -170,27 +174,69 @@ final class Calculator
         return $subtotals;
     }
 
+    /**
+     * @param BusinessDocument $doc
+     * @param BusinessDocumentLine[] $lines
+     *
+     * @return void
+     */
+    private static function apply(BusinessDocument &$doc, array &$lines): void
+    {
+        $sinIva = $doc->getSerie()->siniva;
+        $regimen = $doc->getSubject()->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
+
+        // cargamos las zonas de impuestos
+        $taxZones = [];
+        if (isset($doc->codpais) && $doc->codpais) {
+            $taxZoneModel = new ImpuestoZona();
+            foreach ($taxZoneModel->all([], ['prioridad' => 'DESC']) as $taxZone) {
+                if ($taxZone->codpais == $doc->codpais && $taxZone->provincia() == $doc->provincia) {
+                    $taxZones[] = $taxZone;
+                } elseif ($taxZone->codpais == $doc->codpais && $taxZone->codisopro == null) {
+                    $taxZones[] = $taxZone;
+                } elseif ($taxZone->codpais == null) {
+                    $taxZones[] = $taxZone;
+                }
+            }
+        }
+
+        foreach ($lines as $line) {
+            // aplicamos las excepciones de impuestos
+            foreach ($taxZones as $taxZone) {
+                if ($line->codimpuesto === $taxZone->codimpuesto) {
+                    $line->codimpuesto = $taxZone->codimpuestosel;
+                    $line->iva = $line->getTax()->iva;
+                    $line->recargo = $line->getTax()->recargo;
+                    break;
+                }
+            }
+
+            // ¿La serie es sin impuestos o el régimen exento?
+            if ($sinIva || $regimen === RegimenIVA::TAX_SYSTEM_EXEMPT) {
+                $line->codimpuesto = null;
+                $line->iva = $line->recargo = 0.0;
+                continue;
+            }
+
+            // ¿El régimen IVA es sin recargo de equivalencia?
+            if ($regimen != RegimenIVA::TAX_SYSTEM_SURCHARGE) {
+                $line->recargo = 0.0;
+            }
+        }
+
+        // turno para que los mods apliquen cambios
+        foreach (self::$mods as $mod) {
+            // si el mod devuelve false, terminamos
+            if (false === $mod->apply($doc, $lines)) {
+                break;
+            }
+        }
+    }
+
     private static function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): void
     {
         $line->pvpsindto = $line->cantidad * $line->pvpunitario;
         $line->pvptotal = $line->pvpsindto * (100 - $line->dtopor) / 100 * (100 - $line->dtopor2) / 100;
-
-        // ¿La serie es sin impuestos?
-        if ($doc->getSerie()->siniva) {
-            $line->iva = $line->recargo = 0.0;
-        }
-
-        // comprobamos el régimen IVA
-        $regimen = $doc->getSubject()->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
-        switch ($regimen) {
-            case RegimenIVA::TAX_SYSTEM_EXEMPT:
-                $line->iva = $line->recargo = 0.0;
-                break;
-
-            case RegimenIVA::TAX_SYSTEM_GENERAL:
-                $line->recargo = 0.0;
-                break;
-        }
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
@@ -207,12 +253,10 @@ final class Calculator
      *
      * @return void
      */
-    private static function clearTotals(BusinessDocument &$doc, array &$lines): void
+    private static function clear(BusinessDocument &$doc, array &$lines): void
     {
-        $doc->neto = 0.0;
-        $doc->netosindto = 0.0;
-        $doc->total = 0.0;
-        $doc->totaleuros = 0.0;
+        $doc->neto = $doc->netosindto = 0.0;
+        $doc->total = $doc->totaleuros = 0.0;
         $doc->totalirpf = 0.0;
         $doc->totaliva = 0.0;
         $doc->totalrecargo = 0.0;
@@ -225,7 +269,7 @@ final class Calculator
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
             // si el mod devuelve false, terminamos
-            if (false === $mod->clearTotals($doc, $lines)) {
+            if (false === $mod->clear($doc, $lines)) {
                 break;
             }
         }

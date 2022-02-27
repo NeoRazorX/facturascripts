@@ -22,7 +22,10 @@ namespace FacturaScripts\Test\Core\Base;
 use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Core\Model\Impuesto;
+use FacturaScripts\Core\Model\ImpuestoZona;
 use FacturaScripts\Core\Model\PresupuestoCliente;
+use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Test\Core\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -182,7 +185,7 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
     }
 
-    public function testRE()
+    public function testCustomerRe()
     {
         // creamos un cliente con recargo de equivalencia
         $subject = $this->getRandomCustomer();
@@ -224,6 +227,42 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
         $this->assertEquals(6.24, $doc->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+
+        // eliminamos
+        $subject->delete();
+    }
+
+    public function testSupplierRe()
+    {
+        // creamos un proveedor con recargo de equivalencia
+        $subject = $this->getRandomSupplier();
+        $subject->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
+        $this->assertTrue($subject->save(), 'can-not-create-re-customer');
+
+        $doc = new PresupuestoProveedor();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-re-customer');
+
+        // primera línea
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 2;
+        $line1->pvpunitario = 100;
+        $line1->iva = 21;
+        $line1->recargo = 5.2;
+
+        $lines = [$line1];
+        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+
+        // comprobamos el documento
+        $this->assertEquals(200.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(200.0, $doc->netosindto, 'bad-netosindto');
+        $this->assertEquals(252.4, $doc->total, 'bad-total');
+        $this->assertEquals(42.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
+        $this->assertEquals(10.4, $doc->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+
+        // eliminamos
+        $subject->delete();
     }
 
     public function testSupplied()
@@ -307,5 +346,183 @@ final class CalculatorTest extends TestCase
 
         // eliminamos
         $serie->delete();
+    }
+
+    public function testCustomerExempt()
+    {
+        // creamos un cliente exento
+        $subject = $this->getRandomCustomer();
+        $subject->regimeniva = RegimenIVA::TAX_SYSTEM_EXEMPT;
+        $this->assertTrue($subject->save(), 'can-not-create-customer-exempt');
+
+        // creamos el documento
+        $doc = new PresupuestoCliente();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-customer-exempt');
+
+        // primera línea
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 1;
+        $line1->pvpunitario = 100;
+        $line1->iva = 21;
+
+        $lines = [$line1];
+        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+
+        // comprobamos el documento
+        $this->assertEquals(100.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(100.0, $doc->netosindto, 'bad-netosindto');
+        $this->assertEquals(100.0, $doc->total, 'bad-total');
+        $this->assertEquals(0.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
+        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+
+        // eliminamos
+        $subject->delete();
+    }
+
+    public function testSupplierExempt()
+    {
+        // creamos un proveedor exento
+        $subject = $this->getRandomSupplier();
+        $subject->regimeniva = RegimenIVA::TAX_SYSTEM_EXEMPT;
+        $this->assertTrue($subject->save(), 'can-not-create-supplier-exempt');
+
+        // creamos el documento
+        $doc = new PresupuestoProveedor();
+        $this->assertTrue($doc->setSubject($subject), 'can-not-assign-customer-exempt');
+
+        // primera línea
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 1;
+        $line1->pvpunitario = 100;
+        $line1->iva = 21;
+
+        $lines = [$line1];
+        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+
+        // comprobamos el documento
+        $this->assertEquals(100.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(100.0, $doc->netosindto, 'bad-netosindto');
+        $this->assertEquals(100.0, $doc->total, 'bad-total');
+        $this->assertEquals(0.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
+        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+
+        // eliminamos
+        $subject->delete();
+    }
+
+    public function testTaxZone()
+    {
+        // creamos un impuesto del 20%
+        $tax1 = new Impuesto();
+        $tax1->codimpuesto = 'IVA20';
+        if (false === $tax1->exists()) {
+            $tax1->descripcion = $tax1->codimpuesto;
+            $tax1->iva = 20;
+            $this->assertTrue($tax1->save(), 'can-not-save-iva20');
+        }
+
+        // creamos un impuesto del 19%
+        $tax2 = new Impuesto();
+        $tax2->codimpuesto = 'IVA19';
+        if (false === $tax2->exists()) {
+            $tax2->descripcion = $tax2->codimpuesto;
+            $tax2->iva = 19;
+            $this->assertTrue($tax2->save(), 'can-not-save-iva19');
+        }
+
+        // creamos una zona o excepción para el IVA 21 en Andorra
+        $zone1 = new ImpuestoZona();
+        $zone1->codimpuesto = $tax1->codimpuesto;
+        $zone1->codimpuestosel = null;
+        $zone1->codpais = 'AND';
+        $zone1->prioridad = 2;
+        $this->assertTrue($zone1->save(), 'can-not-save-tax-zone1');
+
+        // creamos una segunda zona con menor prioridad
+        $zone2 = new ImpuestoZona();
+        $zone2->codimpuesto = $tax1->codimpuesto;
+        $zone2->codimpuestosel = $tax2->codimpuesto;
+        $zone2->codpais = 'AND';
+        $zone2->prioridad = 1;
+        $this->assertTrue($zone2->save(), 'can-not-save-tax-zone2');
+
+        // creamos el documento
+        $doc = new PresupuestoCliente();
+        $doc->codpais = 'AND';
+
+        // primera línea
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 1;
+        $line1->pvpunitario = 100;
+        $line1->codimpuesto = $tax1->codimpuesto;
+        $line1->iva = $tax1->iva;
+
+        $lines = [$line1];
+        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+
+        // comprobamos el documento
+        $this->assertEquals(100.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(100.0, $doc->netosindto, 'bad-netosindto');
+        $this->assertEquals(100.0, $doc->total, 'bad-total');
+        $this->assertEquals(0.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
+        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+
+        // eliminamos
+        $zone1->delete();
+        $zone2->delete();
+        $tax1->delete();
+        $tax2->delete();
+    }
+
+    public function testNoTaxZone()
+    {
+        // creamos un impuesto del 20%
+        $tax1 = new Impuesto();
+        $tax1->codimpuesto = 'IVA20';
+        if (false === $tax1->exists()) {
+            $tax1->descripcion = $tax1->codimpuesto;
+            $tax1->iva = 20;
+            $this->assertTrue($tax1->save(), 'can-not-save-iva20');
+        }
+
+        // creamos una zona o excepción para el IVA 21 en Andorra
+        $zone1 = new ImpuestoZona();
+        $zone1->codimpuesto = $tax1->codimpuesto;
+        $zone1->codimpuestosel = null;
+        $zone1->codpais = 'AND';
+        $zone1->prioridad = 2;
+        $this->assertTrue($zone1->save(), 'can-not-save-tax-zone1');
+
+        // creamos el documento
+        $doc = new PresupuestoCliente();
+        $doc->codpais = 'ESP';
+
+        // primera línea
+        $line1 = $doc->getNewLine();
+        $line1->cantidad = 1;
+        $line1->pvpunitario = 100;
+        $line1->iva = 21;
+
+        $lines = [$line1];
+        $this->assertFalse(Calculator::calculate($doc, $lines, false), 'doc-saved');
+
+        // comprobamos el documento
+        $this->assertEquals(100.0, $doc->neto, 'bad-neto');
+        $this->assertEquals(100.0, $doc->netosindto, 'bad-netosindto');
+        $this->assertEquals(121.0, $doc->total, 'bad-total');
+        $this->assertEquals(21.0, $doc->totaliva, 'bad-totaliva');
+        $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
+        $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+
+        // eliminamos
+        $zone1->delete();
+        $tax1->delete();
     }
 }
