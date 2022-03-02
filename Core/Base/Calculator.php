@@ -238,6 +238,9 @@ final class Calculator
         $line->pvpsindto = $line->cantidad * $line->pvpunitario;
         $line->pvptotal = $line->pvpsindto * (100 - $line->dtopor) / 100 * (100 - $line->dtopor2) / 100;
 
+        // desactivamos la función del modelo de recalcular pvpsindto y pvptotal
+        $line->disableUpdateTotals(true);
+
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
             // si el mod devuelve false, terminamos
