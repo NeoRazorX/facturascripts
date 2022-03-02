@@ -196,11 +196,6 @@ class Updater extends Controller
      */
     private function getUpdateItems(): array
     {
-        $cacheData = $this->toolBox()->cache()->get('UPDATE_ITEMS');
-        if (\is_array($cacheData)) {
-            return $cacheData;
-        }
-
         $downloader = new DownloadTools();
         $json = \json_decode($downloader->getContents(self::UPDATE_CORE_URL), true);
         if (empty($json)) {
