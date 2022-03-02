@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\Migrations;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\TelemetryManager;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
@@ -254,7 +255,7 @@ class Updater extends Controller
                 return;
             }
 
-            if (empty($beta) && $build['beta']) {
+            if (empty($beta) && $build['beta'] && ToolBox::appSettings()->get('default', 'enableupdatesbeta', false)) {
                 $beta = $item;
             }
         }
@@ -294,7 +295,7 @@ class Updater extends Controller
                 return;
             }
 
-            if (empty($beta) && $build['beta']) {
+            if (empty($beta) && $build['beta'] && ToolBox::appSettings()->get('default', 'enableupdatesbeta', false)) {
                 $beta = $item;
             }
         }
