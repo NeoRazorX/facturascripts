@@ -128,7 +128,7 @@
                 <widget type="number" fieldname="finofertadays" min="0" required="true"/>
             </column>
         </group>
-        <group name="advanced" title="advanced" icon="fas fa-database" numcolumns="12">
+        <group name="advanced" title="advanced" icon="fas fa-database" valign="center" numcolumns="12">
             <column name="default-role" titleurl="ListUser?activetab=ListRole" numcolumns="3" order="100">
                 <widget type="select" fieldname="codrole" onclick="EditRole" required="true" icon="fas fa-users">
                     <values source="roles" fieldcode="codrole" fieldtitle="descripcion"/>
@@ -151,6 +151,9 @@
             <column name="login-image" titleurl="ListAttachedFile" description="click-link-to-add" numcolumns="3"
                     order="140">
                 <widget type="select" fieldname="idloginimage" onclick="EditAttachedFile"/>
+            </column>
+            <column name="enable-updates-beta" order="150">
+                <widget type="checkbox" fieldname="enableupdatesbeta"/>
             </column>
         </group>
         <group name="api" title="api" icon="fas fa-laptop-code" numcolumns="12">
