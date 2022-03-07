@@ -35,3 +35,4 @@ vendor/bin/phpstan analyse Core
 - [Programa para hacer facturas gratis](https://facturascripts.com/programa-para-hacer-facturas)
 - [Programa para hacer presupuestos gratis](https://facturascripts.com/programa-de-presupuestos)
 - [Programa de contabilidad gratis para autónomos](https://facturascripts.com/software-contabilidad)
+- [Programa para imprimir tickets](https://facturascripts.com/remote-printer)
