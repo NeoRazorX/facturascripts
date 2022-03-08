@@ -69,7 +69,7 @@ class BusinessDocumentView extends BaseView
     public function __construct(string $name, string $title, string $modelName, string $icon = 'fas fa-file')
     {
         parent::__construct($name, $title, $modelName, $icon);
-        $this->documentStatus = $this->model->getAvaliableStatus();
+        $this->documentStatus = $this->model->getAvailableStatus();
     }
 
     /**
