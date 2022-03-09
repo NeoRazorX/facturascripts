@@ -28,12 +28,6 @@ final class FabricanteTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testDataInstalled()
-    {
-        $manufacturer = new Fabricante();
-        $this->assertNotEmpty($manufacturer->all(), 'manufacturer-data-not-installed-from-csv');
-    }
-
     public function testCreate()
     {
         $manufacturer = new Fabricante();
