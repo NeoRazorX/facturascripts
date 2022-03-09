@@ -65,8 +65,10 @@ final class Migrations
     private static function unlockNullProducts()
     {
         $dataBase = new DataBase();
-        $sql = 'UPDATE productos SET bloqueado = false WHERE bloqueado IS NULL;';
-        $dataBase->exec($sql);
+        if ($dataBase->tableExists('productos')) {
+            $sql = 'UPDATE productos SET bloqueado = false WHERE bloqueado IS NULL;';
+            $dataBase->exec($sql);
+        }
     }
 
     private static function updateInvoiceStatus()
