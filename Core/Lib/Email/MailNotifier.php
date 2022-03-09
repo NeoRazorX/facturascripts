@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Email;
 
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Lib\Email\NewMail as DinNewMail;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 
@@ -39,25 +40,34 @@ class MailNotifier
     public static function send(string $notificationName, string $email, string $name = '', array $params = [])
     {
         $notification = new EmailNotification();
-        if ($notification->loadFromCode($notificationName) && $notification->enabled) {
-            $newMail = new DinNewMail();
-            $newMail->addAddress($email, $name);
 
-            /**
-             * Add email and name to params
-             */
-            if (!isset($params['email'])) {
-                $params['email'] = $email;
-            }
-
-            if (!isset($params['name'])) {
-                $params['name'] = $name;
-            }
-
-            $newMail->title = static::getText($notification->subject, $params);
-            $newMail->text = static::getText($notification->body, $params);
-            $newMail->send();
+        if (false === $notification->loadFromCode($notificationName)) {
+            ToolBox::i18nLog()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
+            return;
         }
+
+        if (false === $notification->enabled) {
+            ToolBox::i18nLog()->warning('email-notification-not-active', ['%name%' => $notificationName]);
+            return;
+        }
+
+        $newMail = new DinNewMail();
+        $newMail->addAddress($email, $name);
+
+        /**
+         * Add email and name to params
+         */
+        if (!isset($params['email'])) {
+            $params['email'] = $email;
+        }
+
+        if (!isset($params['name'])) {
+            $params['name'] = $name;
+        }
+
+        $newMail->title = static::getText($notification->subject, $params);
+        $newMail->text = static::getText($notification->body, $params);
+        $newMail->send();
     }
 
     /**
