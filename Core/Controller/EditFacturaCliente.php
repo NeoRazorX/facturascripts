@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
-use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Lib\ExtendedController\SalesDocumentController;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
@@ -320,8 +320,7 @@ class EditFacturaCliente extends SalesDocumentController
             }
         }
 
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($newRefund);
+        Calculator::calculate($newRefund, $lines, false);
         $newRefund->idestado = $invoice->idestado;
         if (false === $newRefund->save()) {
             $this->toolBox()->i18nLog()->error('record-save-error');

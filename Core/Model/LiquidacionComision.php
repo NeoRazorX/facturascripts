@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
+use FacturaScripts\Core\Base\Calculator;
 
 /**
  * List of Commissions Settlement.
@@ -150,8 +150,8 @@ class LiquidacionComision extends Base\ModelClass
             $newLine->pvpunitario = $this->total;
             $newLine->save();
 
-            $docTools = new BusinessDocumentTools();
-            $docTools->recalculate($invoice);
+            $lines = $invoice->getLines();
+            Calculator::calculate($invoice, $lines, false);
             if ($invoice->save()) {
                 $this->idfactura = $invoice->idfactura;
                 return $this->save();
