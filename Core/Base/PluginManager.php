@@ -59,6 +59,13 @@ final class PluginManager
     private static $enabledPlugins;
 
     /**
+     * Name of the last plugin installed or updated.
+     *
+     * @var string
+     */
+    private static $lastPlugin = '';
+
+    /**
      * PluginManager constructor.
      */
     public function __construct()
@@ -178,13 +185,18 @@ final class PluginManager
         return $enabled;
     }
 
+    public function getLastPluginName(): string
+    {
+        return self::$lastPlugin;
+    }
+
     /**
      * @param string $pluginName
      */
     public function initPlugin(string $pluginName)
     {
         $pluginClass = "FacturaScripts\\Plugins\\$pluginName\\Init";
-        if (class_exists($pluginClass)) {
+        if (class_exists($pluginClass) && in_array($pluginName, $this->enabledPlugins())) {
             $initObject = new $pluginClass();
             $initObject->update();
         }
@@ -248,6 +260,7 @@ final class PluginManager
             self::$deploymentRequired = true;
         }
 
+        self::$lastPlugin = $info['name'];
         ToolBox::i18nLog()->notice('plugin-installed', ['%pluginName%' => $info['name']]);
         return true;
     }

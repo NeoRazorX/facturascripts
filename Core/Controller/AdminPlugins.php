@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -131,42 +131,28 @@ class AdminPlugins extends Base\Controller
         $this->execAction($action);
     }
 
-    /**
-     * Disable the plugin name received.
-     *
-     * @param string $pluginName
-     *
-     * @return bool
-     */
-    private function disablePlugin(string $pluginName): bool
+    private function disablePluginAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return false;
+            return;
         }
 
+        $pluginName = $this->request->get('plugin', '');
         $this->pluginManager->disable($pluginName);
         $this->toolBox()->cache()->clear();
-        return true;
     }
 
-    /**
-     * Enable the plugin name received.
-     *
-     * @param string $pluginName
-     *
-     * @return bool
-     */
-    private function enablePlugin(string $pluginName): bool
+    private function enablePluginAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return false;
+            return;
         }
 
+        $pluginName = $this->request->get('plugin', '');
         $this->pluginManager->enable($pluginName);
         $this->toolBox()->cache()->clear();
-        return true;
     }
 
     /**
@@ -178,25 +164,23 @@ class AdminPlugins extends Base\Controller
     {
         switch ($action) {
             case 'disable':
-                $this->disablePlugin($this->request->get('plugin', ''));
+                $this->disablePluginAction();
                 break;
 
             case 'enable':
-                $this->enablePlugin($this->request->get('plugin', ''));
+                $this->enablePluginAction();
                 break;
 
             case 'rebuild':
-                $this->pluginManager->deploy(true, true);
-                $this->toolBox()->cache()->clear();
-                $this->toolBox()->i18nLog()->notice('rebuild-completed');
+                $this->rebuildAction();
                 break;
 
             case 'remove':
-                $this->removePlugin($this->request->get('plugin', ''));
+                $this->removePluginAction();
                 break;
 
             case 'upload':
-                $this->uploadPlugin($this->request->files->get('plugin', []));
+                $this->uploadPluginAction();
                 break;
 
             default:
@@ -209,31 +193,32 @@ class AdminPlugins extends Base\Controller
         }
     }
 
-    /**
-     * Remove and disable the plugin name received.
-     *
-     * @param string $pluginName
-     *
-     * @return bool
-     */
-    private function removePlugin(string $pluginName): bool
+    private function rebuildAction(): void
+    {
+        $this->pluginManager->deploy(true, true);
+
+        $init = $this->request->query->get('init', '');
+        foreach (explode(',', $init) as $name) {
+            $this->pluginManager->initPlugin($name);
+        }
+
+        $this->toolBox()->cache()->clear();
+        $this->toolBox()->i18nLog()->notice('rebuild-completed');
+    }
+
+    private function removePluginAction(): void
     {
         if (false === $this->permissions->allowDelete) {
             $this->toolBox()->i18nLog()->warning('not-allowed-delete');
-            return false;
+            return;
         }
 
+        $pluginName = $this->request->get('plugin', '');
         $this->pluginManager->remove($pluginName);
         $this->toolBox()->cache()->clear();
-        return true;
     }
 
-    /**
-     * Upload and enable a plugin.
-     *
-     * @param UploadedFile[] $uploadFiles
-     */
-    private function uploadPlugin(array $uploadFiles)
+    private function uploadPluginAction(): void
     {
         // check user permissions
         if (false === $this->permissions->allowUpdate) {
@@ -254,6 +239,8 @@ class AdminPlugins extends Base\Controller
             return;
         }
 
+        $pluginNames = [];
+        $uploadFiles = $this->request->files->get('plugin', []);
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
                 $this->toolBox()->log()->error($uploadFile->getErrorMessage());
@@ -266,13 +253,14 @@ class AdminPlugins extends Base\Controller
             }
 
             $this->pluginManager->install($uploadFile->getPathname(), $uploadFile->getClientOriginalName());
+            $pluginNames[] = $this->pluginManager->getLastPluginName();
             unlink($uploadFile->getPathname());
         }
 
         if ($this->pluginManager->deploymentRequired()) {
             $this->toolBox()->cache()->clear();
             $this->toolBox()->i18nLog()->notice('reloading');
-            $this->redirect($this->url() . '?action=rebuild', 3);
+            $this->redirect($this->url() . '?action=rebuild&init=' . implode(',', $pluginNames), 3);
         }
     }
 }
