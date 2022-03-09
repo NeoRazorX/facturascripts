@@ -19,19 +19,39 @@
  */
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Model\Asiento;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Dinamic\Model\LogMessage;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Asiento
  *
  * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  */
-final class AsientoTest extends CustomTest
+final class AsientoTest extends TestCase
 {
+    use LogErrorsTrait;
 
-    protected function setUp()
+    public function testCheckLogAudit()
     {
-        $this->model = new Asiento();
+        $asiento = new Asiento();
+        $asiento->concepto = 'Test';
+        $this->assertTrue($asiento->save(), 'asiento-cant-save');
+        $this->assertNotNull($asiento->primaryColumnValue(), 'asiento-not-stored');
+        $this->assertTrue($asiento->exists(), 'asiento-cant-persist');
+
+        $found = $this->searchAuditLog($asiento->modelClassName(), $asiento->idasiento);
+        $this->assertTrue($found, 'asiento-log-audit-cant-persist');
+
+        // eliminamos
+        $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
     }
 }
