@@ -49,7 +49,7 @@ class Role extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codrole';
     }
@@ -59,7 +59,7 @@ class Role extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'roles';
     }
@@ -70,7 +70,7 @@ class Role extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (!empty($this->codrole) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codrole)) {
             $this->toolBox()->i18nLog()->warning(
@@ -92,7 +92,7 @@ class Role extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListUser?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListUser?activetab=List'): string
     {
         return parent::url($type, $list);
     }
@@ -103,7 +103,7 @@ class Role extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codrole)) {
             $this->codrole = (string) $this->newCode();

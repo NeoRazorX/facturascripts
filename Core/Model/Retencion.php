@@ -80,7 +80,7 @@ class Retencion extends Base\ModelClass
      *
      * @return bool
      */
-    public function loadFromPercentage($percentaje)
+    public function loadFromPercentage(float $percentaje): bool
     {
         $where = [new DataBaseWhere('porcentaje', $percentaje)];
         $order = ['codretencion' => 'ASC'];
@@ -143,7 +143,7 @@ class Retencion extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListImpuesto?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListImpuesto?activetab=List'): string
     {
         return parent::url($type, $list);
     }
@@ -154,7 +154,7 @@ class Retencion extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codretencion)) {
             $this->codretencion = (string) $this->newCode();

@@ -47,7 +47,7 @@ class FacturaCliente extends Base\SalesDocument
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new DinLiquidacionComision();
@@ -69,7 +69,7 @@ class FacturaCliente extends Base\SalesDocument
      *
      * @return DinLineaFactura[]
      */
-    public function getLines()
+    public function getLines(): array
     {
         $lineaModel = new DinLineaFactura();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
@@ -85,7 +85,7 @@ class FacturaCliente extends Base\SalesDocument
      *
      * @return DinLineaFactura
      */
-    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idfactura', 'servido'])
+    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idfactura', 'servido']): DinLineaFactura
     {
         $newLine = new DinLineaFactura();
         $newLine->idfactura = $this->idfactura;
@@ -100,7 +100,7 @@ class FacturaCliente extends Base\SalesDocument
      *
      * @return DinReciboCliente[]
      */
-    public function getReceipts()
+    public function getReceipts(): array
     {
         $receipt = new DinReciboCliente();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
@@ -112,7 +112,7 @@ class FacturaCliente extends Base\SalesDocument
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'facturascli';
     }
@@ -120,7 +120,7 @@ class FacturaCliente extends Base\SalesDocument
     /**
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (false === parent::test()) {
             return false;
@@ -164,7 +164,7 @@ class FacturaCliente extends Base\SalesDocument
     /**
      * @return bool
      */
-    protected function onChangeAgent()
+    protected function onChangeAgent(): bool
     {
         if ($this->idliquidacion) {
             $this->toolBox()->i18nLog()->warning('cant-change-agent-in-settlement');

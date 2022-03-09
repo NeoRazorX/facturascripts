@@ -111,7 +111,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
     /**
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->bloquear) {
             $this->toolBox()->i18nLog()->warning('locked');
@@ -140,7 +140,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idestado';
     }
@@ -150,7 +150,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'estados_documentos';
     }
@@ -160,7 +160,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
         if (empty($this->nombre) || empty($this->tipodoc)) {
@@ -195,7 +195,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         if ($this->bloquear && $this->previousData['bloquear']) {
             $this->toolBox()->i18nLog()->warning('locked');
@@ -268,7 +268,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->idestado)) {
             /**

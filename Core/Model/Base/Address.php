@@ -82,7 +82,7 @@ abstract class Address extends ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->apartado = $utils->noHtml($this->apartado);

@@ -104,7 +104,7 @@ class Comision extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         new DinAgente();
         new DinCliente();
@@ -118,7 +118,7 @@ class Comision extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idcomision';
     }
@@ -128,7 +128,7 @@ class Comision extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'comisiones';
     }
@@ -137,7 +137,7 @@ class Comision extends Base\ModelClass
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->idempresa)) {
             $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
@@ -154,7 +154,7 @@ class Comision extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListAgente?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListAgente?activetab=List'): string
     {
         return parent::url($type, $list);
     }

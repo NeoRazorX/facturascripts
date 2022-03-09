@@ -72,7 +72,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
     {
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $fields = 'cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2';
@@ -86,7 +86,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return DinContacto[]
      */
-    public function getAdresses()
+    public function getAdresses(): array
     {
         $contactModel = new DinContacto();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
@@ -98,7 +98,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return DinCuentaBancoProveedor[]
      */
-    public function getBankAccounts()
+    public function getBankAccounts(): array
     {
         $contactAccounts = new DinCuentaBancoProveedor();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
@@ -110,7 +110,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return DinContacto
      */
-    public function getDefaultAddress()
+    public function getDefaultAddress(): DinContacto
     {
         $contact = new DinContacto();
         $contact->loadFromCode($this->idcontacto);
@@ -122,7 +122,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codproveedor';
     }
@@ -132,7 +132,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
@@ -142,7 +142,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'proveedores';
     }
@@ -152,7 +152,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (!empty($this->codproveedor) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
             $this->toolBox()->i18nLog()->warning(
@@ -170,7 +170,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codproveedor)) {
             $this->codproveedor = (string)$this->newCode();

@@ -55,7 +55,7 @@ class CuentaBancoProveedor extends Base\BankAccount
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new Proveedor();
@@ -67,7 +67,7 @@ class CuentaBancoProveedor extends Base\BankAccount
      * 
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if (parent::save()) {
             $this->updatePrimaryAccount();
@@ -82,7 +82,7 @@ class CuentaBancoProveedor extends Base\BankAccount
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'cuentasbcopro';
     }

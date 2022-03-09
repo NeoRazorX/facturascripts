@@ -80,7 +80,7 @@ abstract class JoinModel
      *
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
@@ -100,7 +100,7 @@ abstract class JoinModel
      *
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         if (!isset($this->values[$name])) {
             $this->values[$name] = null;
@@ -116,7 +116,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name)
     {
         return array_key_exists($name, $this->values);
     }
@@ -127,7 +127,7 @@ abstract class JoinModel
      * @param string $name
      * @param mixed $value
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value)
     {
         $this->values[$name] = $value;
     }
@@ -142,7 +142,7 @@ abstract class JoinModel
      *
      * @return static[]
      */
-    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0)
+    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0): array
     {
         $result = [];
         if ($this->checkTables()) {
@@ -173,7 +173,7 @@ abstract class JoinModel
      *
      * @return int
      */
-    public function count(array $where = [])
+    public function count(array $where = []): int
     {
         $groupFields = $this->getGroupFields();
         if (!empty($groupFields)) {
@@ -195,7 +195,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (isset($this->masterModel)) {
             $primaryColumn = $this->masterModel->primaryColumn();
@@ -211,7 +211,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function exists()
+    public function exists(): bool
     {
         return isset($this->masterModel) ? $this->masterModel->exists() : $this->count() > 0;
     }
@@ -219,7 +219,7 @@ abstract class JoinModel
     /**
      * @return array
      */
-    public function getModelFields()
+    public function getModelFields(): array
     {
         $fields = [];
         foreach ($this->getFields() as $key => $field) {
@@ -246,7 +246,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function loadFromCode($cod, array $where = [], array $orderby = [])
+    public function loadFromCode($cod, array $where = [], array $orderby = []): bool
     {
         if (!$this->loadFilterWhere($cod, $where)) {
             $this->clear();
@@ -292,7 +292,7 @@ abstract class JoinModel
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         if (isset($this->masterModel)) {
             $primaryColumn = $this->masterModel->primaryColumn();
@@ -383,7 +383,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    private function loadFilterWhere($cod, &$where): bool
+    private function loadFilterWhere(string $cod, array &$where): bool
     {
         // If there is no search by code we use the where informed
         if (empty($cod)) {
@@ -413,7 +413,7 @@ abstract class JoinModel
      *
      * @param array $data
      */
-    protected function loadFromData($data)
+    protected function loadFromData(array $data)
     {
         foreach ($data as $field => $value) {
             $this->values[$field] = $value;
@@ -425,7 +425,7 @@ abstract class JoinModel
      *
      * @param ModelClass $model
      */
-    protected function setMasterModel($model)
+    protected function setMasterModel(ModelClass $model)
     {
         $this->masterModel = $model;
     }
@@ -433,7 +433,7 @@ abstract class JoinModel
     /**
      * @return ToolBox
      */
-    protected function toolBox()
+    protected function toolBox(): ToolBox
     {
         return new ToolBox();
     }

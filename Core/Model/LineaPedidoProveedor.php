@@ -40,7 +40,7 @@ class LineaPedidoProveedor extends Base\PurchaseDocumentLine
      * 
      * @return string
      */
-    public function documentColumn()
+    public function documentColumn(): string
     {
         return 'idpedido';
     }
@@ -49,7 +49,7 @@ class LineaPedidoProveedor extends Base\PurchaseDocumentLine
      * 
      * @return PedidoProveedor
      */
-    public function getDocument()
+    public function getDocument(): PedidoProveedor
     {
         $pedido = new PedidoProveedor();
         $pedido->loadFromCode($this->idpedido);
@@ -60,7 +60,7 @@ class LineaPedidoProveedor extends Base\PurchaseDocumentLine
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependency
         new PedidoProveedor();
@@ -73,7 +73,7 @@ class LineaPedidoProveedor extends Base\PurchaseDocumentLine
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'lineaspedidosprov';
     }
@@ -85,7 +85,7 @@ class LineaPedidoProveedor extends Base\PurchaseDocumentLine
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         if (null !== $this->idpedido) {
             return 'EditPedidoProveedor?code=' . $this->idpedido;

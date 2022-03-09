@@ -84,7 +84,7 @@ class CodeModel
      *
      * @return static[]
      */
-    public static function all($tableName, $fieldCode, $fieldDescription, $addEmpty = true, $where = []): array
+    public static function all(string $tableName, string $fieldCode, string $fieldDescription, bool $addEmpty = true, array $where = []): array
     {
         $result = [];
         if ($addEmpty) {
@@ -147,7 +147,7 @@ class CodeModel
      *
      * @return static[]
      */
-    public static function search($tableName, $fieldCode, $fieldDescription, $query, $where = []): array
+    public static function search(string $tableName, string $fieldCode, string $fieldDescription, string $query, array $where = []): array
     {
         // is a table or a model?
         $modelClass = self::MODEL_NAMESPACE . $tableName;
@@ -164,14 +164,14 @@ class CodeModel
     /**
      * Returns a codemodel with the selected data.
      *
-     * @param string $tableName
-     * @param string $fieldCode
-     * @param string $code
-     * @param string $fieldDescription
+     * @param string|null $tableName
+     * @param string|null $fieldCode
+     * @param string|null $code
+     * @param string|null $fieldDescription
      *
      * @return static
      */
-    public function get($tableName, $fieldCode, $code, $fieldDescription)
+    public function get(?string $tableName, ?string $fieldCode, ?string $code, ?string $fieldDescription): CodeModel
     {
         // is a table or a model?
         $modelClass = self::MODEL_NAMESPACE . $tableName;
@@ -199,14 +199,14 @@ class CodeModel
     /**
      * Returns a description with the selected data.
      *
-     * @param string $tableName
-     * @param string $fieldCode
-     * @param string $code
-     * @param string $fieldDescription
+     * @param string|null $tableName
+     * @param string|null $fieldCode
+     * @param string|null $code
+     * @param string|null $fieldDescription
      *
      * @return string
      */
-    public function getDescription($tableName, $fieldCode, $code, $fieldDescription): string
+    public function getDescription(?string $tableName, ?string $fieldCode, ?string $code, ?string $fieldDescription): string
     {
         $model = $this->get($tableName, $fieldCode, $code, $fieldDescription);
         return empty($model->description) ? (string)$code : $model->description;

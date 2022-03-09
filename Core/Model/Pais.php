@@ -56,7 +56,7 @@ class Pais extends Base\ModelClass
      * 
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-country');
@@ -71,7 +71,7 @@ class Pais extends Base\ModelClass
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->codpais === $this->toolBox()->appSettings()->get('default', 'codpais');
     }
@@ -81,7 +81,7 @@ class Pais extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codpais';
     }
@@ -91,7 +91,7 @@ class Pais extends Base\ModelClass
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
@@ -101,7 +101,7 @@ class Pais extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'paises';
     }
@@ -111,7 +111,7 @@ class Pais extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->codpais = \trim($this->codpais);
         if (1 !== \preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {

@@ -85,7 +85,7 @@ class ApiKey extends Base\ModelClass
     {
         parent::clear();
         $this->apikey = $this->toolBox()->utils()->randomString(20);
-        $this->creationdate = \date(self::DATE_STYLE);
+        $this->creationdate = date(self::DATE_STYLE);
         $this->enabled = true;
         $this->fullaccess = false;
     }
@@ -95,7 +95,7 @@ class ApiKey extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -104,7 +104,7 @@ class ApiKey extends Base\ModelClass
      * 
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'description';
     }
@@ -114,7 +114,7 @@ class ApiKey extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'api_keys';
     }

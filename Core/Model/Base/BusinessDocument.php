@@ -271,7 +271,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Serie();
@@ -295,7 +295,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'codigo';
     }
@@ -305,7 +305,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         // check accounting exercise
         if (empty($this->codejercicio)) {
@@ -351,7 +351,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     /**
      * @return string
      */
-    public function subjectColumnValue()
+    public function subjectColumnValue(): string
     {
         return $this->{$this->subjectColumn()};
     }
@@ -361,7 +361,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->observaciones = $utils->noHtml($this->observaciones);
@@ -396,7 +396,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'codalmacen':
@@ -435,7 +435,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         if (false === parent::saveUpdate($values)) {
             return false;

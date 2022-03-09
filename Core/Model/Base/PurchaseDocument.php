@@ -73,7 +73,7 @@ abstract class PurchaseDocument extends TransformerDocument
      *
      * @return PurchaseDocumentLine
      */
-    public function getNewProductLine($reference)
+    public function getNewProductLine($reference): PurchaseDocumentLine
     {
         $newLine = $this->getNewLine();
         if (empty($reference)) {
@@ -106,7 +106,7 @@ abstract class PurchaseDocument extends TransformerDocument
     /**
      * @return Proveedor
      */
-    public function getSubject()
+    public function getSubject(): Proveedor
     {
         $proveedor = new Proveedor();
         $proveedor->loadFromCode($this->codproveedor);
@@ -116,7 +116,7 @@ abstract class PurchaseDocument extends TransformerDocument
     /**
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // we need to call parent first
         $result = parent::install();
@@ -182,7 +182,7 @@ abstract class PurchaseDocument extends TransformerDocument
     /**
      * @return string
      */
-    public function subjectColumn()
+    public function subjectColumn(): string
     {
         return 'codproveedor';
     }
@@ -192,7 +192,7 @@ abstract class PurchaseDocument extends TransformerDocument
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->nombre = $utils->noHtml($this->nombre);
@@ -217,7 +217,7 @@ abstract class PurchaseDocument extends TransformerDocument
      *
      * @param BusinessDocumentLine $newLine
      */
-    protected function setLastSupplierPrice(&$newLine)
+    protected function setLastSupplierPrice(BusinessDocumentLine &$newLine)
     {
         $supplierProd = new ProductoProveedor();
         $where = [

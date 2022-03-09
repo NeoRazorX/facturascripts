@@ -76,7 +76,7 @@ class Agente extends Base\Contact
      *
      * @return DinContacto
      */
-    public function getContact()
+    public function getContact(): DinContacto
     {
         $contact = new DinContacto();
         $contact->loadFromCode($this->idcontacto);
@@ -90,7 +90,7 @@ class Agente extends Base\Contact
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new DinProducto();
@@ -103,7 +103,7 @@ class Agente extends Base\Contact
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codagente';
     }
@@ -113,7 +113,7 @@ class Agente extends Base\Contact
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
@@ -123,7 +123,7 @@ class Agente extends Base\Contact
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'agentes';
     }
@@ -133,7 +133,7 @@ class Agente extends Base\Contact
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->cargo = $this->toolBox()->utils()->noHtml($this->cargo);
 
@@ -155,7 +155,7 @@ class Agente extends Base\Contact
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codagente)) {
             $this->codagente = (string)$this->newCode();

@@ -60,7 +60,7 @@ class BalanceCuenta extends Base\ModelClass
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependency
         new Balance();
@@ -73,7 +73,7 @@ class BalanceCuenta extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -83,7 +83,7 @@ class BalanceCuenta extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'balancescuentas';
     }
@@ -92,7 +92,7 @@ class BalanceCuenta extends Base\ModelClass
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->desccuenta = $this->toolBox()->utils()->noHtml($this->desccuenta);
         return parent::test();

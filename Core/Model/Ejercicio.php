@@ -121,11 +121,11 @@ class Ejercicio extends Base\ModelClass
      * Returns the date closest to $date that is within the range of this exercise.
      *
      * @param string $fecha
-     * @param bool   $showError
+     * @param bool $showError
      *
      * @return string
      */
-    public function getBestFecha($fecha, $showError = false)
+    public function getBestFecha(string $fecha, bool $showError = false): string
     {
         $fecha2 = \strtotime($fecha);
         if ($fecha2 >= \strtotime($this->fechainicio) && $fecha2 <= \strtotime($this->fechafin)) {
@@ -154,7 +154,7 @@ class Ejercicio extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependecies
         new DinEmpresa();
@@ -175,7 +175,7 @@ class Ejercicio extends Base\ModelClass
      *
      * @return bool
      */
-    public function inRange($dateToCheck): bool
+    public function inRange(string $dateToCheck): bool
     {
         $start = \strtotime($this->fechainicio);
         $end = \strtotime($this->fechafin);
@@ -188,7 +188,7 @@ class Ejercicio extends Base\ModelClass
      *
      * @return bool
      */
-    public function isOpened()
+    public function isOpened(): bool
     {
         return $this->estado === self::EXERCISE_STATUS_OPEN;
     }
@@ -198,12 +198,12 @@ class Ejercicio extends Base\ModelClass
      * <bold>Need the company id to be correctly informed</bold>
      *
      * @param string $date
-     * @param bool   $onlyOpened
-     * @param bool   $create
+     * @param bool $onlyOpened
+     * @param bool $create
      *
      * @return bool
      */
-    public function loadFromDate($date, $onlyOpened = true, $create = true): bool
+    public function loadFromDate(string $date, bool $onlyOpened = true, bool $create = true): bool
     {
         /// we need this data because loadfromcode() makes a clear()
         $idempresa = $this->idempresa;
@@ -239,12 +239,12 @@ class Ejercicio extends Base\ModelClass
      * @param string $field
      * @param array  $where
      *
-     * @return string
+     * @return int
      */
-    public function newCode(string $field = '', array $where = [])
+    public function newCode(string $field = '', array $where = []): int
     {
         $newCode = parent::newCode($field, $where);
-        return \sprintf('%04s', (int) $newCode);
+        return \sprintf('%04s', $newCode);
     }
 
     /**
@@ -252,7 +252,7 @@ class Ejercicio extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codejercicio';
     }
@@ -262,7 +262,7 @@ class Ejercicio extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'ejercicios';
     }
@@ -272,7 +272,7 @@ class Ejercicio extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         /// TODO: Change dates verify to $this->inRange() call
         $this->codejercicio = \trim($this->codejercicio);
@@ -309,7 +309,7 @@ class Ejercicio extends Base\ModelClass
      *
      * @return string en formato año
      */
-    public function year()
+    public function year(): string
     {
         return \date('Y', \strtotime($this->fechainicio));
     }
@@ -320,7 +320,7 @@ class Ejercicio extends Base\ModelClass
      *
      * @return bool
      */
-    protected function createNew($date)
+    protected function createNew(string $date): bool
     {
         $date2 = \strtotime($date);
 
@@ -355,7 +355,7 @@ class Ejercicio extends Base\ModelClass
      * 
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         $where = [new DataBaseWhere('idempresa', $this->idempresa)];
         foreach ($this->all($where, [], 0, 0) as $ejercicio) {

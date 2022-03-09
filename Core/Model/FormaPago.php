@@ -102,7 +102,7 @@ class FormaPago extends Base\ModelClass
      * 
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-payment-method');
@@ -117,7 +117,7 @@ class FormaPago extends Base\ModelClass
      *
      * @return DinCuentaBanco
      */
-    public function getBankAccount()
+    public function getBankAccount(): DinCuentaBanco
     {
         $bank = new DinCuentaBanco();
         $bank->loadFromCode($this->codcuentabanco);
@@ -131,7 +131,7 @@ class FormaPago extends Base\ModelClass
      *
      * @return string
      */
-    public function getExpiration($date)
+    public function getExpiration(string $date): string
     {
         return \date(self::DATE_STYLE, \strtotime($date . ' +' . $this->plazovencimiento . ' ' . $this->tipovencimiento));
     }
@@ -140,7 +140,7 @@ class FormaPago extends Base\ModelClass
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new CuentaBanco();
@@ -153,7 +153,7 @@ class FormaPago extends Base\ModelClass
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->codpago === $this->toolBox()->appSettings()->get('default', 'codpago');
     }
@@ -163,7 +163,7 @@ class FormaPago extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codpago';
     }
@@ -173,7 +173,7 @@ class FormaPago extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'formaspago';
     }
@@ -183,7 +183,7 @@ class FormaPago extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->codpago = $this->toolBox()->utils()->noHtml($this->codpago);
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
@@ -212,7 +212,7 @@ class FormaPago extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codpago)) {
             $this->codpago = (string) $this->newCode();

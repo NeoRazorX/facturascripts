@@ -37,7 +37,7 @@ class StockProducto extends JoinModel
      *
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->setMasterModel(new Producto());

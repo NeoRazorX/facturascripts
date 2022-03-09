@@ -94,7 +94,7 @@ class ImpuestoZona extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -103,7 +103,7 @@ class ImpuestoZona extends Base\ModelClass
      * 
      * @return string
      */
-    public function provincia()
+    public function provincia(): string
     {
         if (!isset($this->provincia)) {
             $provincia = new Provincia();
@@ -119,7 +119,7 @@ class ImpuestoZona extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'impuestoszonas';
     }

@@ -65,7 +65,7 @@ class Fabricante extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codfabricante';
     }
@@ -75,7 +75,7 @@ class Fabricante extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'fabricantes';
     }
@@ -85,7 +85,7 @@ class Fabricante extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->codfabricante = $utils->noHtml($this->codfabricante);
@@ -115,7 +115,7 @@ class Fabricante extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codfabricante)) {
             $this->codfabricante = $this->newCode();

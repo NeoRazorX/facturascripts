@@ -39,7 +39,7 @@ class LiquidacionComisionFactura extends JoinModel
      *
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->setMasterModel(new FacturaCliente());
@@ -49,10 +49,10 @@ class LiquidacionComisionFactura extends JoinModel
      * Add to the indicated settlement the list of customer invoices
      * according to the where filter.
      *
-     * @param int             $settled
+     * @param int $settled
      * @param DataBaseWhere[] $where
      */
-    public function addInvoiceToSettle($settled, $where)
+    public function addInvoiceToSettle(int $settled, array $where)
     {
         $where[] = new DataBaseWhere('facturascli.idliquidacion', null, 'IS');
         $invoices = $this->all($where);
@@ -83,7 +83,7 @@ class LiquidacionComisionFactura extends JoinModel
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         $sql = 'UPDATE ' . FacturaCliente::tableName() . ' SET idliquidacion = NULL'
             . ' WHERE ' . FacturaCliente::primaryColumn() . ' = ' . self::$dataBase->var2str($this->idfactura);
@@ -95,7 +95,7 @@ class LiquidacionComisionFactura extends JoinModel
      * 
      * @return int
      */
-    public function primaryColumnValue()
+    public function primaryColumnValue(): int
     {
         return $this->idfactura;
     }

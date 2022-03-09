@@ -41,7 +41,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return static[]
      */
-    public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50)
+    public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array
     {
         $modelList = [];
         $sql = 'SELECT * FROM ' . static::tableName() . DataBaseWhere::getSQLWhere($where) . $this->getOrderBy($order);
@@ -59,7 +59,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return CodeModel[]
      */
-    public function codeModelAll(string $fieldCode = '')
+    public function codeModelAll(string $fieldCode = ''): array
     {
         $results = [];
         $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
@@ -82,7 +82,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
     {
         $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
         $fields = $field . '|' . $this->primaryDescriptionColumn();
@@ -120,7 +120,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->pipe('deleteBefore') === false) {
             return false;
@@ -143,7 +143,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function exists()
+    public function exists(): bool
     {
         $sql = 'SELECT 1 FROM ' . static::tableName() . ' WHERE ' . static::primaryColumn()
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
@@ -158,7 +158,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return static|false
      */
-    public function get($code)
+    public function get(string $code)
     {
         $data = $this->getRecord($code);
         return empty($data) ? false : new static($data[0]);
@@ -172,7 +172,7 @@ abstract class ModelClass extends ModelCore
      * meet the above conditions.
      * Returns True if the record exists and False otherwise.
      *
-     * @param string $code
+     * @param string|int $code
      * @param array $where
      * @param array $orderby
      *
@@ -198,7 +198,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return int
      */
-    public function newCode(string $field = '', array $where = [])
+    public function newCode(string $field = '', array $where = []): int
     {
         // if not field value take PK Field
         if (empty($field)) {
@@ -227,7 +227,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         $fields = $this->getModelFields();
         return isset($fields['descripcion']) ? 'descripcion' : static::primaryColumn();
@@ -238,7 +238,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    public function primaryDescription()
+    public function primaryDescription(): string
     {
         $field = $this->primaryDescriptionColumn();
         return $this->{$field} ?? (string)$this->primaryColumnValue();
@@ -249,7 +249,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if ($this->pipe('saveBefore') === false) {
             return false;
@@ -274,7 +274,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if ($this->pipe('testBefore') === false) {
             return false;
@@ -310,7 +310,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
@@ -336,7 +336,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if ($this->pipe('saveInsertBefore') === false) {
             return false;
@@ -376,7 +376,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         if ($this->pipe('saveUpdateBefore') === false) {
             return false;
@@ -410,7 +410,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    private function getOrderBy(array $order)
+    private function getOrderBy(array $order): string
     {
         $result = '';
         $coma = ' ORDER BY ';
@@ -426,13 +426,13 @@ abstract class ModelClass extends ModelCore
      * Read the record whose primary column corresponds to the value $cod
      * or the first that meets the indicated condition.
      *
-     * @param string $code
+     * @param string|int $code
      * @param array $where
      * @param array $orderby
      *
      * @return array
      */
-    private function getRecord($code, array $where = [], array $orderby = [])
+    private function getRecord($code, array $where = [], array $orderby = []): array
     {
         $sqlWhere = empty($where) ? ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($code) : DataBaseWhere::getSQLWhere($where);
         $sql = 'SELECT * FROM ' . static::tableName() . $sqlWhere . $this->getOrderBy($orderby);

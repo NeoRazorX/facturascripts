@@ -240,7 +240,7 @@ class Contacto extends Base\Contact
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
     {
         $results = [];
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
@@ -281,7 +281,7 @@ class Contacto extends Base\Contact
      *
      * @return DinCliente
      */
-    public function getCustomer(bool $create = true)
+    public function getCustomer(bool $create = true): DinCliente
     {
         $cliente = new DinCliente();
         if ($this->codcliente && $cliente->loadFromCode($this->codcliente)) {
@@ -316,7 +316,7 @@ class Contacto extends Base\Contact
      *
      * @return DinProveedor
      */
-    public function getSupplier(bool $create = true)
+    public function getSupplier(bool $create = true): DinProveedor
     {
         $proveedor = new DinProveedor();
         if ($this->codproveedor && $proveedor->loadFromCode($this->codproveedor)) {
@@ -352,7 +352,7 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // we need this models to be checked before
         new DinAgente();
@@ -369,7 +369,7 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function newLogkey($ipAddress)
+    public function newLogkey(string $ipAddress): string
     {
         $this->lastactivity = date(self::DATETIME_STYLE);
         $this->lastip = $ipAddress;
@@ -382,7 +382,7 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idcontacto';
     }
@@ -392,7 +392,7 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'descripcion';
     }
@@ -402,7 +402,7 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'contactos';
     }
@@ -412,7 +412,7 @@ class Contacto extends Base\Contact
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->descripcion)) {
             $this->descripcion = empty($this->codcliente) ? $this->fullName() : $this->direccion;
@@ -442,7 +442,7 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         return parent::url($type, $list);
     }
@@ -454,7 +454,7 @@ class Contacto extends Base\Contact
      *
      * @return bool
      */
-    public function verifyLogkey($value)
+    public function verifyLogkey(string $value): bool
     {
         return $this->logkey === $value;
     }

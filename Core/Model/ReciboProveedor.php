@@ -39,7 +39,7 @@ class ReciboProveedor extends Base\Receipt
     /**
      * @return FacturaProveedor
      */
-    public function getInvoice()
+    public function getInvoice(): FacturaProveedor
     {
         $invoice = new FacturaProveedor();
         $invoice->loadFromCode($this->idfactura);
@@ -51,7 +51,7 @@ class ReciboProveedor extends Base\Receipt
      *
      * @return PagoProveedor[]
      */
-    public function getPayments()
+    public function getPayments(): array
     {
         $payModel = new PagoProveedor();
         $where = [new DataBaseWhere('idrecibo', $this->idrecibo)];
@@ -61,7 +61,7 @@ class ReciboProveedor extends Base\Receipt
     /**
      * @return Proveedor
      */
-    public function getSubject()
+    public function getSubject(): Proveedor
     {
         $proveedor = new Proveedor();
         $proveedor->loadFromCode($this->codproveedor);
@@ -71,7 +71,7 @@ class ReciboProveedor extends Base\Receipt
     /**
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Proveedor();
@@ -82,7 +82,7 @@ class ReciboProveedor extends Base\Receipt
     /**
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'recibospagosprov';
     }
@@ -93,7 +93,7 @@ class ReciboProveedor extends Base\Receipt
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListFacturaProveedor?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListFacturaProveedor?activetab=List'): string
     {
         if ('list' === $type && !empty($this->idfactura)) {
             return $this->getInvoice()->url() . '&activetab=List' . $this->modelClassName();
@@ -107,7 +107,7 @@ class ReciboProveedor extends Base\Receipt
      *
      * @return bool
      */
-    protected function newPayment()
+    protected function newPayment(): bool
     {
         if ($this->disablePaymentGeneration) {
             return false;

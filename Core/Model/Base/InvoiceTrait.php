@@ -87,7 +87,7 @@ trait InvoiceTrait
     /**
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (false === $this->editable) {
             ToolBox::i18nLog()->warning('non-editable-document');
@@ -117,7 +117,7 @@ trait InvoiceTrait
     /**
      * @return static[]
      */
-    public function getRefunds()
+    public function getRefunds(): array
     {
         if (empty($this->idfactura)) {
             return [];
@@ -138,7 +138,7 @@ trait InvoiceTrait
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         $sql = parent::install();
         new Asiento();
@@ -159,7 +159,7 @@ trait InvoiceTrait
      *
      * @return TransformerDocument[]
      */
-    public function parentDocuments()
+    public function parentDocuments(): array
     {
         $parents = parent::parentDocuments();
         $where = [new DataBaseWhere('idfactura', $this->idfacturarect)];
@@ -182,7 +182,7 @@ trait InvoiceTrait
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idfactura';
     }
@@ -192,7 +192,7 @@ trait InvoiceTrait
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         if (false === parent::onChange($field)) {
             return false;
@@ -229,7 +229,7 @@ trait InvoiceTrait
     /**
      * @return bool
      */
-    protected function onChangeTotal()
+    protected function onChangeTotal(): bool
     {
         // remove accounting entry
         $asiento = $this->getAccountingEntry();

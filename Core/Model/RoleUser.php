@@ -62,7 +62,7 @@ class RoleUser extends Base\ModelClass
      *
      * @return RoleAccess[]
      */
-    public function getRoleAccess($pageName = '')
+    public function getRoleAccess(string $pageName = ''): array
     {
         $accesses = [];
         $roleAccessModel = new RoleAccess();
@@ -90,7 +90,7 @@ class RoleUser extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new Role();
@@ -103,7 +103,7 @@ class RoleUser extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -113,7 +113,7 @@ class RoleUser extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'roles_users';
     }
@@ -123,7 +123,7 @@ class RoleUser extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->nick)) {
             $this->toolBox()->i18nLog()->warning('nick-is-empty');

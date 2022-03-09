@@ -97,8 +97,9 @@ class LiquidacionComision extends Base\ModelClass
      * Calculate the total commission amount of a settlement
      *
      * @param int $code
+     * @return bool
      */
-    public function calculateTotalCommission($code)
+    public function calculateTotalCommission(int $code): bool
     {
         $sql = 'UPDATE ' . self::tableName()
             . ' SET total = COALESCE('
@@ -116,7 +117,7 @@ class LiquidacionComision extends Base\ModelClass
      * 
      * @return bool
      */
-    public function generateInvoice()
+    public function generateInvoice(): bool
     {
         if (null !== $this->idfactura) {
             return true;
@@ -167,7 +168,7 @@ class LiquidacionComision extends Base\ModelClass
      * 
      * @return Agente
      */
-    public function getAgent()
+    public function getAgent(): Agente
     {
         $agent = new Agente();
         $agent->loadFromCode($this->codagente);
@@ -181,7 +182,7 @@ class LiquidacionComision extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new Agente();
@@ -195,7 +196,7 @@ class LiquidacionComision extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idliquidacion';
     }
@@ -205,7 +206,7 @@ class LiquidacionComision extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'liquidacionescomisiones';
     }
@@ -214,7 +215,7 @@ class LiquidacionComision extends Base\ModelClass
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->idempresa)) {
             $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
@@ -232,7 +233,7 @@ class LiquidacionComision extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListAgente?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListAgente?activetab=List'): string
     {
         return parent::url($type, $list);
     }

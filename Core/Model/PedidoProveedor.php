@@ -44,7 +44,7 @@ class PedidoProveedor extends Base\PurchaseDocument
      *
      * @return LineaPedido[]
      */
-    public function getLines()
+    public function getLines(): array
     {
         $lineaModel = new LineaPedido();
         $where = [new DataBaseWhere('idpedido', $this->idpedido)];
@@ -61,7 +61,7 @@ class PedidoProveedor extends Base\PurchaseDocument
      *
      * @return LineaPedido
      */
-    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpedido', 'servido'])
+    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpedido', 'servido']): LineaPedido
     {
         $newLine = new LineaPedido();
         $newLine->idpedido = $this->idpedido;
@@ -77,7 +77,7 @@ class PedidoProveedor extends Base\PurchaseDocument
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idpedido';
     }
@@ -87,7 +87,7 @@ class PedidoProveedor extends Base\PurchaseDocument
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'pedidosprov';
     }

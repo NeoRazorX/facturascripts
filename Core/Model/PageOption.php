@@ -91,7 +91,7 @@ class PageOption extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         new Page();
         new User();
@@ -120,7 +120,7 @@ class PageOption extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -130,7 +130,7 @@ class PageOption extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'pages_options';
     }
@@ -140,7 +140,7 @@ class PageOption extends Base\ModelClass
      *
      * @return array
      */
-    private function getEncodeValues()
+    private function getEncodeValues(): array
     {
         return [
             'columns' => json_encode($this->columns),
@@ -156,7 +156,7 @@ class PageOption extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         return parent::saveInsert($this->getEncodeValues());
     }
@@ -168,7 +168,7 @@ class PageOption extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         return parent::saveUpdate($this->getEncodeValues());
     }

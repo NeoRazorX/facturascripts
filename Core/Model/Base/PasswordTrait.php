@@ -56,7 +56,7 @@ trait PasswordTrait
      *
      * @param string $value
      */
-    public function setPassword($value)
+    public function setPassword(string $value)
     {
         $this->password = password_hash($value, PASSWORD_DEFAULT);
     }
@@ -68,7 +68,7 @@ trait PasswordTrait
      *
      * @return bool
      */
-    public function verifyPassword($value)
+    public function verifyPassword(string $value): bool
     {
         if (password_verify($value, $this->password)) {
             if (password_needs_rehash($this->password, PASSWORD_DEFAULT)) {

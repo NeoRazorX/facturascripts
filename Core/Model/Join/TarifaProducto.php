@@ -51,7 +51,7 @@ class TarifaProducto extends JoinModel
      * 
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->setMasterModel(new Producto());
@@ -66,7 +66,7 @@ class TarifaProducto extends JoinModel
      *
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         return $name === 'preciotarifa' ? $this->priceInRate() : parent::__get($name);
     }
@@ -75,7 +75,7 @@ class TarifaProducto extends JoinModel
      * 
      * @return Tarifa
      */
-    public function getRate()
+    public function getRate(): Tarifa
     {
         if (isset(self::$rates[$this->codtarifa])) {
             return self::$rates[$this->codtarifa];
@@ -93,7 +93,7 @@ class TarifaProducto extends JoinModel
      * 
      * @return float
      */
-    public function priceInRate()
+    public function priceInRate(): float
     {
         return $this->getRate()->apply((float) $this->coste, (float) $this->precio);
     }

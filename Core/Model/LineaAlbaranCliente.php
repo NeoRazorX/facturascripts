@@ -39,7 +39,7 @@ class LineaAlbaranCliente extends Base\SalesDocumentLine
      * 
      * @return string
      */
-    public function documentColumn()
+    public function documentColumn(): string
     {
         return 'idalbaran';
     }
@@ -48,7 +48,7 @@ class LineaAlbaranCliente extends Base\SalesDocumentLine
      * 
      * @return AlbaranCliente
      */
-    public function getDocument()
+    public function getDocument(): AlbaranCliente
     {
         $albaran = new AlbaranCliente();
         $albaran->loadFromCode($this->idalbaran);
@@ -62,7 +62,7 @@ class LineaAlbaranCliente extends Base\SalesDocumentLine
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependency
         new AlbaranCliente();
@@ -75,7 +75,7 @@ class LineaAlbaranCliente extends Base\SalesDocumentLine
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'lineasalbaranescli';
     }
@@ -87,7 +87,7 @@ class LineaAlbaranCliente extends Base\SalesDocumentLine
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         if (null !== $this->idalbaran) {
             return 'EditAlbaranCliente?code=' . $this->idalbaran;

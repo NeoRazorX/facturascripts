@@ -139,7 +139,7 @@ class User extends Base\ModelClass
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->count() === 1) {
             /// prevent delete all users
@@ -157,7 +157,7 @@ class User extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// we need this models to be checked before
         new DinPage();
@@ -192,7 +192,7 @@ class User extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'nick';
     }
@@ -202,7 +202,7 @@ class User extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'users';
     }
@@ -213,7 +213,7 @@ class User extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->nick = trim($this->nick);
         if (1 !== preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
@@ -277,7 +277,7 @@ class User extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         $result = parent::saveInsert($values);
         if ($result && false === $this->admin) {

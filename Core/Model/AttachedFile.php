@@ -101,7 +101,7 @@ class AttachedFile extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         $fullPath = $this->getFullPath();
         if (file_exists($fullPath) && false === unlink($fullPath)) {
@@ -115,7 +115,7 @@ class AttachedFile extends Base\ModelOnChangeClass
     /**
      * @return string
      */
-    public function getExtension()
+    public function getExtension(): string
     {
         $parts = explode('.', strtolower($this->filename));
         return count($parts) > 1 ? end($parts) : '';
@@ -124,7 +124,7 @@ class AttachedFile extends Base\ModelOnChangeClass
     /**
      * @return string
      */
-    public function getFullPath()
+    public function getFullPath(): string
     {
         return FS_FOLDER . '/' . $this->path;
     }
@@ -160,7 +160,7 @@ class AttachedFile extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idfile';
     }
@@ -168,7 +168,7 @@ class AttachedFile extends Base\ModelOnChangeClass
     /**
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'filename';
     }
@@ -178,7 +178,7 @@ class AttachedFile extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'attached_files';
     }
@@ -188,7 +188,7 @@ class AttachedFile extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->idfile)) {
             $this->idfile = $this->newCode();
@@ -240,7 +240,7 @@ class AttachedFile extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'path':
@@ -260,7 +260,7 @@ class AttachedFile extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    protected function setFile()
+    protected function setFile(): bool
     {
         $this->filename = $this->fixFileName($this->path);
         $newFolder = 'MyFiles/' . date('Y/m', strtotime($this->date));

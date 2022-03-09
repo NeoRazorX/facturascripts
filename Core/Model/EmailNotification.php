@@ -89,7 +89,7 @@ class EmailNotification extends Base\ModelClass
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->name = $this->toolBox()->utils()->noHtml($this->name);
         $this->subject = $this->toolBox()->utils()->noHtml($this->subject);
@@ -104,7 +104,7 @@ class EmailNotification extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ConfigEmail?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ConfigEmail?activetab=List'): string
     {
         return parent::url($type, $list);
     }

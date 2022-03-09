@@ -64,7 +64,7 @@ abstract class ModelCore
      *
      * @return array
      */
-    abstract public function getModelFields();
+    abstract public function getModelFields(): array;
 
     /**
      * Loads table fields if is necessary.
@@ -79,14 +79,14 @@ abstract class ModelCore
      *
      * @return string
      */
-    abstract public function modelClassName();
+    abstract public function modelClassName(): string;
 
     /**
      * Returns the name of the model.
      *
      * @return string
      */
-    abstract protected function modelName();
+    abstract protected function modelName(): string;
 
     /**
      * Executes all $name methods added from the extensions.
@@ -96,21 +96,21 @@ abstract class ModelCore
      *
      * @return mixed
      */
-    abstract public function pipe($name, ...$arguments);
+    abstract public function pipe(string $name, ...$arguments);
 
     /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
-    abstract public static function primaryColumn();
+    abstract public static function primaryColumn(): string;
 
     /**
      * Returns the name of the table that uses this model.
      *
      * @return string
      */
-    abstract public static function tableName();
+    abstract public static function tableName(): string;
 
     /**
      * ModelClass constructor.
@@ -149,7 +149,7 @@ abstract class ModelCore
      *
      * @return bool
      */
-    public function changePrimaryColumnValue($newValue)
+    public function changePrimaryColumnValue($newValue): bool
     {
         if (empty($newValue) || $newValue == $this->primaryColumnValue()) {
             return true;
@@ -184,7 +184,7 @@ abstract class ModelCore
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         return CSVImport::importTableSQL(static::tableName());
     }
@@ -299,11 +299,11 @@ abstract class ModelCore
      * Returns the boolean value for the field.
      *
      * @param array $field
-     * @param string $value
+     * @param string|null $value
      *
      * @return bool|null
      */
-    private function getBoolValueForField($field, $value): ?bool
+    private function getBoolValueForField(array $field, ?string $value): ?bool
     {
         if (in_array(strtolower($value), ['true', 't', '1'], false)) {
             return true;
@@ -318,11 +318,11 @@ abstract class ModelCore
      * Returns the float value for the field.
      *
      * @param array $field
-     * @param string $value
+     * @param string|null $value
      *
      * @return float|null
      */
-    private function getFloatValueForField($field, $value): ?float
+    private function getFloatValueForField(array $field, ?string $value): ?float
     {
         if (is_numeric($value)) {
             return (float)$value;
@@ -335,11 +335,11 @@ abstract class ModelCore
      * Returns the integer value by controlling special cases for the PK and FK.
      *
      * @param array $field
-     * @param string $value
+     * @param string|null $value
      *
      * @return int|null
      */
-    private function getIntergerValueForField($field, $value): ?int
+    private function getIntergerValueForField(array $field, ?string $value): ?int
     {
         if (is_numeric($value)) {
             return (int)$value;
@@ -355,7 +355,7 @@ abstract class ModelCore
     /**
      * @return ToolBox
      */
-    protected static function toolBox()
+    protected static function toolBox(): ToolBox
     {
         return new ToolBox();
     }

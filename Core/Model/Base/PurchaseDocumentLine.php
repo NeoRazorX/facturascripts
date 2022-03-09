@@ -32,7 +32,7 @@ abstract class PurchaseDocumentLine extends BusinessDocumentLine
     /**
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if (parent::save()) {
             $this->updateSupplierProduct();

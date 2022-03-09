@@ -59,7 +59,7 @@ class Almacen extends Base\Address
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-warehouse');
@@ -73,7 +73,7 @@ class Almacen extends Base\Address
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new DinEmpresa();
@@ -86,7 +86,7 @@ class Almacen extends Base\Address
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->codalmacen === $this->toolBox()->appSettings()->get('default', 'codalmacen');
     }
@@ -96,7 +96,7 @@ class Almacen extends Base\Address
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codalmacen';
     }
@@ -106,7 +106,7 @@ class Almacen extends Base\Address
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
@@ -116,7 +116,7 @@ class Almacen extends Base\Address
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'almacenes';
     }
@@ -126,7 +126,7 @@ class Almacen extends Base\Address
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (!empty($this->codalmacen) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codalmacen)) {
             $this->toolBox()->i18nLog()->error(
@@ -151,7 +151,7 @@ class Almacen extends Base\Address
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codalmacen)) {
             $this->codalmacen = (string)$this->newCode();

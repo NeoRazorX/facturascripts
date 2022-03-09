@@ -111,7 +111,7 @@ class SubcuentaSaldo extends JoinModel
      *
      * @param array $data
      */
-    protected function loadFromData($data)
+    protected function loadFromData(array $data)
     {
         parent::loadFromData($data);
         $this->saldo = $this->debe - $this->haber;
@@ -121,13 +121,13 @@ class SubcuentaSaldo extends JoinModel
      * Load in an array "detail" the monthly and channel balances of a sub-account
      * and return the sum of them.
      *
-     * @param int   $idSubAccount
-     * @param int   $channel
+     * @param int $idSubAccount
+     * @param int $channel
      * @param array $detail
      *
      * @return float
      */
-    public function setSubAccountBalance($idSubAccount, $channel, &$detail): float
+    public function setSubAccountBalance(int $idSubAccount, int $channel, array &$detail): float
     {
         $result = 0;
         $where = [

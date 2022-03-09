@@ -84,13 +84,13 @@ class ApiAccess extends Base\ModelClass
     /**
      * Add the indicated resource list to the Role group
      *
-     * @param int   $idApiKey
+     * @param int $idApiKey
      * @param array $resources
-     * @param bool  $state
+     * @param bool $state
      *
      * @return bool
      */
-    public static function addResourcesToApiKey($idApiKey, $resources, $state = false)
+    public static function addResourcesToApiKey(int $idApiKey, array $resources, bool $state = false): bool
     {
         $apiAccess = new static();
 
@@ -124,7 +124,7 @@ class ApiAccess extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new DinApiKey();
@@ -137,7 +137,7 @@ class ApiAccess extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -147,7 +147,7 @@ class ApiAccess extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'api_access';
     }

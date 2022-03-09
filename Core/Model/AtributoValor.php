@@ -80,7 +80,7 @@ class AtributoValor extends Base\ModelClass
      *
      * @return CodeModel[]
      */
-    public function codeModelAll(string $fieldCode = '')
+    public function codeModelAll(string $fieldCode = ''): array
     {
         $results = [];
         $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
@@ -101,7 +101,7 @@ class AtributoValor extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependency
         new DinAtributo();
@@ -114,7 +114,7 @@ class AtributoValor extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -124,7 +124,7 @@ class AtributoValor extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'atributos_valores';
     }
@@ -134,7 +134,7 @@ class AtributoValor extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->valor = $this->toolBox()->utils()->noHtml($this->valor);
 
@@ -154,7 +154,7 @@ class AtributoValor extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListAtributo')
+    public function url(string $type = 'auto', string $list = 'ListAtributo'): string
     {
         $value = $this->codatributo;
         switch ($type) {

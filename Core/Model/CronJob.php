@@ -90,7 +90,7 @@ class CronJob extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -100,7 +100,7 @@ class CronJob extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'cronjobs';
     }
@@ -110,7 +110,7 @@ class CronJob extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->jobname = $utils->noHtml($this->jobname);
@@ -126,7 +126,7 @@ class CronJob extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListLogMessage?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListLogMessage?activetab=List'): string
     {
         return parent::url($type, $list);
     }

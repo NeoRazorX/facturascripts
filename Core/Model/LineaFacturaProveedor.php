@@ -49,7 +49,7 @@ class LineaFacturaProveedor extends PurchaseDocumentLine
     /**
      * @return string
      */
-    public function documentColumn()
+    public function documentColumn(): string
     {
         return 'idfactura';
     }
@@ -57,7 +57,7 @@ class LineaFacturaProveedor extends PurchaseDocumentLine
     /**
      * @return FacturaProveedor
      */
-    public function getDocument()
+    public function getDocument(): FacturaProveedor
     {
         $factura = new FacturaProveedor();
         $factura->loadFromCode($this->idfactura);
@@ -67,7 +67,7 @@ class LineaFacturaProveedor extends PurchaseDocumentLine
     /**
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependency
         new FacturaProveedor();
@@ -79,7 +79,7 @@ class LineaFacturaProveedor extends PurchaseDocumentLine
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'lineasfacturasprov';
     }
@@ -87,7 +87,7 @@ class LineaFacturaProveedor extends PurchaseDocumentLine
     /**
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         // servido will always be 0 to prevent stock problems when removing rectified invoices
         $this->servido = 0.0;
@@ -100,7 +100,7 @@ class LineaFacturaProveedor extends PurchaseDocumentLine
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->idfactura ? 'EditFacturaProveedor?code=' . $this->idfactura : parent::url($type, $list);
     }

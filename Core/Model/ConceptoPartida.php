@@ -48,7 +48,7 @@ class ConceptoPartida extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codconcepto';
     }
@@ -58,7 +58,7 @@ class ConceptoPartida extends Base\ModelClass
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'codconcepto';
     }
@@ -68,7 +68,7 @@ class ConceptoPartida extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'conceptos_partidas';
     }
@@ -78,7 +78,7 @@ class ConceptoPartida extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         return parent::test();
@@ -92,7 +92,7 @@ class ConceptoPartida extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListAsiento?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListAsiento?activetab=List'): string
     {
         return parent::url($type, $list);
     }
@@ -102,7 +102,7 @@ class ConceptoPartida extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codconcepto)) {
             $this->codconcepto = $this->newCode();

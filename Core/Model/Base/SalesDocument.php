@@ -175,7 +175,7 @@ abstract class SalesDocument extends TransformerDocument
     /**
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (empty($this->total)) {
             return parent::delete();
@@ -201,7 +201,7 @@ abstract class SalesDocument extends TransformerDocument
      *
      * @return SalesDocumentLine
      */
-    public function getNewProductLine($reference)
+    public function getNewProductLine($reference): SalesDocumentLine
     {
         $newLine = $this->getNewLine();
         if (empty($reference)) {
@@ -232,7 +232,7 @@ abstract class SalesDocument extends TransformerDocument
     /**
      * @return Tarifa
      */
-    public function getRate()
+    public function getRate(): Tarifa
     {
         $rate = new Tarifa();
         $subject = $this->getSubject();
@@ -251,7 +251,7 @@ abstract class SalesDocument extends TransformerDocument
     /**
      * @return Cliente
      */
-    public function getSubject()
+    public function getSubject(): Cliente
     {
         $cliente = new Cliente();
         $cliente->loadFromCode($this->codcliente);
@@ -261,7 +261,7 @@ abstract class SalesDocument extends TransformerDocument
     /**
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // we need to call parent first
         $result = parent::install();
@@ -275,7 +275,7 @@ abstract class SalesDocument extends TransformerDocument
     /**
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if (empty($this->total)) {
             return parent::save();
@@ -354,7 +354,7 @@ abstract class SalesDocument extends TransformerDocument
     /**
      * @return string
      */
-    public function subjectColumn()
+    public function subjectColumn(): string
     {
         return 'codcliente';
     }
@@ -364,7 +364,7 @@ abstract class SalesDocument extends TransformerDocument
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->apartado = $utils->noHtml($this->apartado);
@@ -399,7 +399,7 @@ abstract class SalesDocument extends TransformerDocument
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         // before parent checks
         if ('codagente' === $field) {
@@ -447,7 +447,7 @@ abstract class SalesDocument extends TransformerDocument
     /**
      * @return bool
      */
-    protected function onChangeAgent()
+    protected function onChangeAgent(): bool
     {
         if (null !== $this->codagente && $this->total > 0) {
             $lines = $this->getLines();
@@ -478,7 +478,7 @@ abstract class SalesDocument extends TransformerDocument
      *
      * @return bool
      */
-    protected function setContact($subject): bool
+    protected function setContact(CoreContacto $subject): bool
     {
         $this->apartado = $subject->apartado;
         $this->cifnif = $subject->cifnif ?? '';
@@ -499,7 +499,7 @@ abstract class SalesDocument extends TransformerDocument
      *
      * @return bool
      */
-    protected function setCustomer($subject): bool
+    protected function setCustomer(CoreCliente $subject): bool
     {
         $this->cifnif = $subject->cifnif ?? '';
         $this->codcliente = $subject->codcliente;

@@ -100,7 +100,7 @@ class EmailSent extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -110,7 +110,7 @@ class EmailSent extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'emails_sent';
     }
@@ -119,7 +119,7 @@ class EmailSent extends Base\ModelClass
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->body = $utils->noHtml($this->body);
@@ -135,7 +135,7 @@ class EmailSent extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ConfigEmail?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ConfigEmail?activetab=List'): string
     {
         return parent::url($type, $list);
     }

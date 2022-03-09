@@ -62,7 +62,7 @@ class PresupuestoCliente extends Base\SalesDocument
      *
      * @return LineaPresupuesto[]
      */
-    public function getLines()
+    public function getLines(): array
     {
         $lineaModel = new LineaPresupuesto();
         $where = [new DataBaseWhere('idpresupuesto', $this->idpresupuesto)];
@@ -78,7 +78,7 @@ class PresupuestoCliente extends Base\SalesDocument
      * 
      * @return LineaPresupuesto
      */
-    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpresupuesto', 'servido'])
+    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idpresupuesto', 'servido']): LineaPresupuesto
     {
         $newLine = new LineaPresupuesto();
         $newLine->idpresupuesto = $this->idpresupuesto;
@@ -94,7 +94,7 @@ class PresupuestoCliente extends Base\SalesDocument
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idpresupuesto';
     }
@@ -104,7 +104,7 @@ class PresupuestoCliente extends Base\SalesDocument
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'presupuestoscli';
     }
@@ -113,7 +113,7 @@ class PresupuestoCliente extends Base\SalesDocument
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         /// finoferta can't be previous to fecha
         if (!empty($this->finoferta) && \strtotime($this->finoferta) < \strtotime($this->fecha)) {

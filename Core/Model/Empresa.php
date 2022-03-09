@@ -130,7 +130,7 @@ class Empresa extends Base\Contact
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-company');
@@ -145,7 +145,7 @@ class Empresa extends Base\Contact
      * 
      * @return DinCuentaBanco[]
      */
-    public function getBankAccounts()
+    public function getBankAccounts(): array
     {
         $companyAccounts = new DinCuentaBanco();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
@@ -159,7 +159,7 @@ class Empresa extends Base\Contact
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new AttachedFile();
@@ -178,7 +178,7 @@ class Empresa extends Base\Contact
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->idempresa === (int) $this->toolBox()->appSettings()->get('default', 'idempresa');
     }
@@ -188,7 +188,7 @@ class Empresa extends Base\Contact
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idempresa';
     }
@@ -198,7 +198,7 @@ class Empresa extends Base\Contact
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombrecorto';
     }
@@ -208,7 +208,7 @@ class Empresa extends Base\Contact
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'empresas';
     }
@@ -218,7 +218,7 @@ class Empresa extends Base\Contact
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->administrador = $utils->noHtml($this->administrador);
@@ -264,7 +264,7 @@ class Empresa extends Base\Contact
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->idempresa)) {
             $this->idempresa = $this->newCode();

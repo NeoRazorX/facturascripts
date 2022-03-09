@@ -76,7 +76,7 @@ class Serie extends Base\ModelClass
      * 
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-serie');
@@ -90,7 +90,7 @@ class Serie extends Base\ModelClass
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// neede dependencies
         new Diario();
@@ -103,7 +103,7 @@ class Serie extends Base\ModelClass
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->codserie === $this->toolBox()->appSettings()->get('default', 'codserie');
     }
@@ -113,7 +113,7 @@ class Serie extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codserie';
     }
@@ -123,7 +123,7 @@ class Serie extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'series';
     }
@@ -133,7 +133,7 @@ class Serie extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->codserie = \trim($this->codserie);
         if ($this->codserie && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codserie)) {
@@ -154,7 +154,7 @@ class Serie extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codserie)) {
             $this->codserie = (string) $this->newCode();

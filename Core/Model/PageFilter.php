@@ -80,7 +80,7 @@ class PageFilter extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         new Page();
         new User();
@@ -107,7 +107,7 @@ class PageFilter extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -117,12 +117,12 @@ class PageFilter extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'pages_filters';
     }
 
-    public function test()
+    public function test(): bool
     {
         $this->description = $this->toolBox()->utils()->noHtml($this->description);
         if (empty($this->description)) {
@@ -138,7 +138,7 @@ class PageFilter extends Base\ModelClass
      *
      * @return array
      */
-    private function getEncodeValues()
+    private function getEncodeValues(): array
     {
         return [
             'filters' => json_encode($this->filters)
@@ -152,7 +152,7 @@ class PageFilter extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         return parent::saveInsert($this->getEncodeValues());
     }
@@ -164,7 +164,7 @@ class PageFilter extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         return parent::saveUpdate($this->getEncodeValues());
     }

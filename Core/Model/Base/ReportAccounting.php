@@ -99,7 +99,7 @@ abstract class ReportAccounting extends ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->name = $this->toolBox()->utils()->noHtml($this->name);
 

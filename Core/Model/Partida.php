@@ -214,7 +214,7 @@ class Partida extends Base\ModelOnChangeClass
      *
      * @return DinSubcuenta
      */
-    public function getSubcuenta($codsubcuenta = '')
+    public function getSubcuenta(string $codsubcuenta = ''): DinSubcuenta
     {
         $accEntry = $this->getAccountingEntry();
         $subcta = new DinSubcuenta();
@@ -253,7 +253,7 @@ class Partida extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         new DinDivisa();
         new DinAsiento();
@@ -267,7 +267,7 @@ class Partida extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idpartida';
     }
@@ -275,7 +275,7 @@ class Partida extends Base\ModelOnChangeClass
     /**
      * @param Subcuenta $subaccount
      */
-    public function setAccount($subaccount)
+    public function setAccount(Subcuenta $subaccount)
     {
         $this->codsubcuenta = $subaccount->codsubcuenta;
         $this->idsubcuenta = $subaccount->idsubcuenta;
@@ -284,7 +284,7 @@ class Partida extends Base\ModelOnChangeClass
     /**
      * @param Subcuenta $subaccount
      */
-    public function setCounterpart($subaccount)
+    public function setCounterpart(Subcuenta $subaccount)
     {
         $this->codcontrapartida = $subaccount->codsubcuenta;
         $this->idcontrapartida = $subaccount->idsubcuenta;
@@ -310,7 +310,7 @@ class Partida extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'partidas';
     }
@@ -353,7 +353,7 @@ class Partida extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getAccountingEntry()->url($type, $list);
     }
@@ -366,7 +366,7 @@ class Partida extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'codcontrapartida':
@@ -435,7 +435,7 @@ class Partida extends Base\ModelOnChangeClass
      *
      * @param int $idsubaccount
      */
-    private function updateBalance($idsubaccount)
+    private function updateBalance(int $idsubaccount)
     {
         $subaccount = new DinSubcuenta();
         if ($subaccount->loadFromCode($idsubaccount)) {

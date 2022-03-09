@@ -39,7 +39,7 @@ trait ProductRelationTrait
      *
      * @return Producto
      */
-    public function getProducto()
+    public function getProducto(): Producto
     {
         $producto = new Producto();
         $producto->loadFromCode($this->idproducto);

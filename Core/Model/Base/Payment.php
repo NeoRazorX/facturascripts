@@ -88,7 +88,7 @@ abstract class Payment extends ModelClass
      * 
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         /// remove accounting
         $acEntry = $this->getAccountingEntry();
@@ -114,7 +114,7 @@ abstract class Payment extends ModelClass
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new Asiento();
@@ -126,7 +126,7 @@ abstract class Payment extends ModelClass
      * 
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idpago';
     }
@@ -138,7 +138,7 @@ abstract class Payment extends ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return empty($this->idasiento) ? $this->getReceipt()->url() : $this->getAccountingEntry()->url();
     }
@@ -149,7 +149,7 @@ abstract class Payment extends ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->idasiento) && !$this->disableAccountingGeneration) {
             $tool = new PaymentToAccounting();

@@ -53,7 +53,7 @@ class Ciudad extends Base\ModelClass
     /**
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependency
         new Provincia();
@@ -64,7 +64,7 @@ class Ciudad extends Base\ModelClass
     /**
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idciudad';
     }
@@ -72,7 +72,7 @@ class Ciudad extends Base\ModelClass
     /**
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'ciudades';
     }
@@ -80,7 +80,7 @@ class Ciudad extends Base\ModelClass
     /**
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->ciudad = self::toolBox()::utils()::noHtml($this->ciudad);
         return parent::test();
@@ -94,7 +94,7 @@ class Ciudad extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListPais?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
         return parent::url($type, $list);
     }

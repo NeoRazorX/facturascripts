@@ -81,7 +81,7 @@ class TotalModel
      *
      * @return static[]
      */
-    public static function all($tableName, $where, $fieldList, $fieldCode = '')
+    public static function all(string $tableName, array $where, array $fieldList, string $fieldCode = ''): array
     {
         $result = [];
         if (static::dataBase()->tableExists($tableName)) {

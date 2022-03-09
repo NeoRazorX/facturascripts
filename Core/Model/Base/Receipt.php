@@ -131,7 +131,7 @@ abstract class Receipt extends ModelOnChangeClass
     /**
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         foreach ($this->getPayments() as $pay) {
             if (false === $pay->delete()) {
@@ -170,7 +170,7 @@ abstract class Receipt extends ModelOnChangeClass
     /**
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idrecibo';
     }
@@ -178,7 +178,7 @@ abstract class Receipt extends ModelOnChangeClass
     /**
      * @param string $date
      */
-    public function setExpiration($date)
+    public function setExpiration(string $date)
     {
         $this->vencimiento = $date;
     }
@@ -186,7 +186,7 @@ abstract class Receipt extends ModelOnChangeClass
     /**
      * @param string $codpago
      */
-    public function setPaymentMethod($codpago)
+    public function setPaymentMethod(string $codpago)
     {
         $formaPago = new FormaPago();
         if ($formaPago->loadFromCode($codpago)) {
@@ -199,7 +199,7 @@ abstract class Receipt extends ModelOnChangeClass
     /**
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->observaciones = $this->toolBox()->utils()->noHtml($this->observaciones);
 
@@ -228,7 +228,7 @@ abstract class Receipt extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'importe':
@@ -254,7 +254,7 @@ abstract class Receipt extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (false === parent::saveInsert($values)) {
             return false;
@@ -273,7 +273,7 @@ abstract class Receipt extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         if (parent::saveUpdate($values)) {
             $this->updateInvoice();

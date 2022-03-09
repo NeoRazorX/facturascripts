@@ -40,7 +40,7 @@ class LineaPedidoCliente extends Base\SalesDocumentLine
      * 
      * @return string
      */
-    public function documentColumn()
+    public function documentColumn(): string
     {
         return 'idpedido';
     }
@@ -49,7 +49,7 @@ class LineaPedidoCliente extends Base\SalesDocumentLine
      * 
      * @return PedidoCliente
      */
-    public function getDocument()
+    public function getDocument(): PedidoCliente
     {
         $pedido = new PedidoCliente();
         $pedido->loadFromCode($this->idpedido);
@@ -60,7 +60,7 @@ class LineaPedidoCliente extends Base\SalesDocumentLine
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependency
         new PedidoCliente();
@@ -73,7 +73,7 @@ class LineaPedidoCliente extends Base\SalesDocumentLine
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'lineaspedidoscli';
     }
@@ -85,7 +85,7 @@ class LineaPedidoCliente extends Base\SalesDocumentLine
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         if (null !== $this->idpedido) {
             return 'EditPedidoCliente?code=' . $this->idpedido;

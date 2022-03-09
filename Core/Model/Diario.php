@@ -48,7 +48,7 @@ class Diario extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'iddiario';
     }
@@ -58,7 +58,7 @@ class Diario extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'diarios';
     }
@@ -69,7 +69,7 @@ class Diario extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         if (\strlen($this->descripcion) < 1 || \strlen($this->descripcion) > 100) {
@@ -88,7 +88,7 @@ class Diario extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListAsiento?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListAsiento?activetab=List'): string
     {
         return parent::url($type, $list);
     }
@@ -99,7 +99,7 @@ class Diario extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->iddiario)) {
             $this->iddiario = $this->newCode();

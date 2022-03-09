@@ -115,7 +115,7 @@ class Report extends Base\ModelClass
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->name = $utils->noHtml($this->name);

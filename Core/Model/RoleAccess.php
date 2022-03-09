@@ -80,12 +80,12 @@ class RoleAccess extends Base\ModelClass
     /**
      * Add the indicated page list to the Role group
      *
-     * @param string    $codrole
+     * @param string $codrole
      * @param DinPage[] $pages
      *
      * @return bool
      */
-    public static function addPagesToRole($codrole, $pages)
+    public static function addPagesToRole(string $codrole, array $pages)
     {
         $roleAccess = new static();
         foreach ($pages as $page) {
@@ -117,7 +117,7 @@ class RoleAccess extends Base\ModelClass
      *
      * @return static[]
      */
-    public static function allFromUser($nick, $pageName)
+    public static function allFromUser(string $nick, string $pageName): array
     {
         $sqlIn = 'SELECT codrole FROM ' . RoleUser::tableName() . ' WHERE nick = ' . self::$dataBase->var2str($nick);
         $where = [
@@ -143,7 +143,7 @@ class RoleAccess extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new DinRole();
@@ -157,7 +157,7 @@ class RoleAccess extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -167,7 +167,7 @@ class RoleAccess extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'roles_access';
     }

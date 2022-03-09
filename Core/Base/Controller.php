@@ -179,7 +179,7 @@ class Controller
      *
      * @return mixed
      */
-    public function pipe($name, ...$arguments)
+    public function pipe(string $name, ...$arguments)
     {
         $this->toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
         return null;

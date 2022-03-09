@@ -262,7 +262,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     /**
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Impuesto();
@@ -276,7 +276,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idlinea';
     }
@@ -286,7 +286,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->codimpuesto)) {
             $this->codimpuesto = null;
@@ -310,7 +310,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     /**
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         $done = parent::save();
         $this->disableUpdateStock(false);
@@ -325,7 +325,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      *
      * @return bool
      */
-    public function transfer($fromCodalmacen, $toCodalmacen): bool
+    public function transfer(string $fromCodalmacen, string $toCodalmacen): bool
     {
         // find the stock
         $fromStock = new Stock();
@@ -370,7 +370,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         $name = str_replace('Linea', '', $this->modelClassName());
         return $type === 'new' ? 'Edit' . $name : parent::url($type, 'List' . $name . '?activetab=List');
@@ -384,7 +384,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      * @param float $quantity
      * @param float $served
      */
-    private function applyStockChanges(&$stock, int $mode, float $quantity, float $served)
+    private function applyStockChanges(Stock &$stock, int $mode, float $quantity, float $served)
     {
         if ($quantity < 0 && $served < $quantity) {
             $served = $quantity;
@@ -414,7 +414,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'actualizastock':
@@ -441,7 +441,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         return $this->updateStock() && parent::saveInsert($values);
     }

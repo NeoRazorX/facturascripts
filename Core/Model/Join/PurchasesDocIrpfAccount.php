@@ -46,7 +46,7 @@ class PurchasesDocIrpfAccount extends JoinModel
      *
      * @return array
      */
-    public function getTotalsForDocument($document, string $defaultSubacode, float $percentage): array
+    public function getTotalsForDocument(FacturaProveedor $document, string $defaultSubacode, float $percentage): array
     {
         $totals = [];
         $where = [
@@ -77,7 +77,7 @@ class PurchasesDocIrpfAccount extends JoinModel
      *
      * @return array
      */
-    protected function checkTotals(array &$totals, $document, string $defaultSubacode): array
+    protected function checkTotals(array &$totals, FacturaProveedor $document, string $defaultSubacode): array
     {
         /// round and add the totals
         $sum = 0.0;

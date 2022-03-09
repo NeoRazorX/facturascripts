@@ -63,7 +63,7 @@ class GrupoClientes extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// As there is a key outside of tariffs, we have to check that table before
         new Tarifa();
@@ -76,7 +76,7 @@ class GrupoClientes extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codgrupo';
     }
@@ -86,7 +86,7 @@ class GrupoClientes extends Base\ModelClass
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
@@ -96,7 +96,7 @@ class GrupoClientes extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'gruposclientes';
     }
@@ -106,7 +106,7 @@ class GrupoClientes extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (!empty($this->codgrupo) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codgrupo)) {
             $this->toolBox()->i18nLog()->warning(
@@ -128,7 +128,7 @@ class GrupoClientes extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         return parent::url($type, $list);
     }
@@ -139,7 +139,7 @@ class GrupoClientes extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codgrupo)) {
             $this->codgrupo = (string) $this->newCode();

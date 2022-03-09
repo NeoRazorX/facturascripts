@@ -40,7 +40,7 @@ class PartidaAsiento extends JoinModel
     /**
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         parent::__construct($data);
         $this->setMasterModel(new Partida());
@@ -65,7 +65,7 @@ class PartidaAsiento extends JoinModel
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         $this->asiento->idasiento = $this->idasiento;
         return $this->asiento->url($type, $list);

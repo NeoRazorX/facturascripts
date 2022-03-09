@@ -96,7 +96,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-tax');
@@ -114,7 +114,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return self
      */
-    public function inputVatFromSubAccount($subAccount)
+    public function inputVatFromSubAccount(string $subAccount): Impuesto
     {
         return $this->getVatFromSubAccount('codsubcuentarep', $subAccount);
     }
@@ -134,7 +134,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codimpuesto';
     }
@@ -147,7 +147,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return self
      */
-    public function outputVatFromSubAccount($subAccount)
+    public function outputVatFromSubAccount(string $subAccount): Impuesto
     {
         return $this->getVatFromSubAccount('codsubcuentasop', $subAccount);
     }
@@ -157,7 +157,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'impuestos';
     }
@@ -167,7 +167,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->codimpuesto = trim($this->codimpuesto);
         if ($this->codimpuesto && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
@@ -190,7 +190,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return static
      */
-    private function getVatFromSubAccount($field, $subAccount)
+    private function getVatFromSubAccount(string $field, string $subAccount): Impuesto
     {
         $result = new Impuesto();
         $where = [new DataBaseWhere($field, $subAccount)];
@@ -207,7 +207,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codimpuesto)) {
             $this->codimpuesto = (string)$this->newCode();

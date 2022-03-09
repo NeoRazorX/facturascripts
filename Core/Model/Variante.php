@@ -125,15 +125,15 @@ class Variante extends Base\ModelClass
     /**
      * 
      * @param string          $query
-     * @param string          $fieldcode
+     * @param string          $fieldCode
      * @param DataBaseWhere[] $where
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldcode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
     {
         $results = [];
-        $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
+        $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $find = $this->toolBox()->utils()->noHtml(\mb_strtolower($query, 'UTF8'));
 
         $sql = "SELECT v." . $field . " AS code, p.descripcion AS description, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4"
@@ -162,7 +162,7 @@ class Variante extends Base\ModelClass
      * 
      * @return string
      */
-    public function description(bool $onlyAttributes = false)
+    public function description(bool $onlyAttributes = false): string
     {
         $description = $onlyAttributes ? '' : $this->getProducto()->descripcion;
         return $this->getAttributeDescription(
@@ -178,7 +178,7 @@ class Variante extends Base\ModelClass
      * 
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->referencia == $this->getProducto()->referencia) {
             $this->toolBox()->i18nLog()->warning('you-cant-delete-primary-variant');
@@ -190,17 +190,17 @@ class Variante extends Base\ModelClass
 
     /**
      * 
-     * @param int    $idAttVal1
-     * @param int    $idAttVal2
-     * @param int    $idAttVal3
-     * @param int    $idAttVal4
+     * @param int $idAttVal1
+     * @param int $idAttVal2
+     * @param int $idAttVal3
+     * @param int $idAttVal4
      * @param string $description
      * @param string $separator1
      * @param string $separator2
      *
      * @return string
      */
-    protected function getAttributeDescription($idAttVal1, $idAttVal2, $idAttVal3, $idAttVal4, $description = '', $separator1 = "\n", $separator2 = ', ')
+    protected function getAttributeDescription(?int $idAttVal1, ?int $idAttVal2, ?int $idAttVal3, ?int $idAttVal4, string $description = '', string $separator1 = "\n", string $separator2 = ', '): string
     {
         $atributeValue = new DinAtributoValor();
         $extra = [];
@@ -225,7 +225,7 @@ class Variante extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         new DinProducto();
         new DinAtributoValor();
@@ -247,7 +247,7 @@ class Variante extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idvariante';
     }
@@ -256,7 +256,7 @@ class Variante extends Base\ModelClass
      * 
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'referencia';
     }
@@ -265,7 +265,7 @@ class Variante extends Base\ModelClass
      * 
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if ($this->margen > 0) {
             $newPrice = $this->coste * (100 + $this->margen) / 100;
@@ -284,7 +284,7 @@ class Variante extends Base\ModelClass
      * 
      * @param float $price
      */
-    public function setPriceWithTax($price)
+    public function setPriceWithTax(float $price)
     {
         $newPrice = (100 * $price) / (100 + $this->getProducto()->getTax()->iva);
         $this->precio = \round($newPrice, DinProducto::ROUND_DECIMALS);
@@ -295,7 +295,7 @@ class Variante extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'variantes';
     }
@@ -304,7 +304,7 @@ class Variante extends Base\ModelClass
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->referencia = $utils->noHtml($this->referencia);
@@ -327,7 +327,7 @@ class Variante extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getProducto()->url($type);
     }
@@ -338,7 +338,7 @@ class Variante extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (parent::saveInsert($values)) {
             /// set new stock?

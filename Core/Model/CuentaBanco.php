@@ -66,7 +66,7 @@ class CuentaBanco extends Base\BankAccount
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new Empresa();
@@ -79,7 +79,7 @@ class CuentaBanco extends Base\BankAccount
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'cuentasbanco';
     }
@@ -88,7 +88,7 @@ class CuentaBanco extends Base\BankAccount
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->idempresa)) {
             $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
@@ -106,7 +106,7 @@ class CuentaBanco extends Base\BankAccount
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListFormaPago?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListFormaPago?activetab=List'): string
     {
         return parent::url($type, $list);
     }

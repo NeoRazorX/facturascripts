@@ -77,7 +77,7 @@ class Provincia extends Base\ModelClass
     /**
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Pais();
@@ -90,7 +90,7 @@ class Provincia extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idprovincia';
     }
@@ -100,7 +100,7 @@ class Provincia extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'provincias';
     }
@@ -110,7 +110,7 @@ class Provincia extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->provincia = $this->toolBox()->utils()->noHtml($this->provincia);
         return parent::test();
@@ -124,7 +124,7 @@ class Provincia extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListPais?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
         return parent::url($type, $list);
     }
@@ -134,7 +134,7 @@ class Provincia extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->idprovincia)) {
             // asignamos el nuevo ID así para evitar problemas con postgresql por haber importado el listado con ids incluidos

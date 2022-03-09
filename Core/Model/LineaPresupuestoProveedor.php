@@ -40,7 +40,7 @@ class LineaPresupuestoProveedor extends Base\PurchaseDocumentLine
      * 
      * @return string
      */
-    public function documentColumn()
+    public function documentColumn(): string
     {
         return 'idpresupuesto';
     }
@@ -49,7 +49,7 @@ class LineaPresupuestoProveedor extends Base\PurchaseDocumentLine
      * 
      * @return PresupuestoProveedor
      */
-    public function getDocument()
+    public function getDocument(): PresupuestoProveedor
     {
         $presupuesto = new PresupuestoProveedor();
         $presupuesto->loadFromCode($this->idpresupuesto);
@@ -60,7 +60,7 @@ class LineaPresupuestoProveedor extends Base\PurchaseDocumentLine
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependency
         new PresupuestoProveedor();
@@ -73,7 +73,7 @@ class LineaPresupuestoProveedor extends Base\PurchaseDocumentLine
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'lineaspresupuestosprov';
     }
@@ -85,7 +85,7 @@ class LineaPresupuestoProveedor extends Base\PurchaseDocumentLine
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         if (null !== $this->idpresupuesto) {
             return 'EditPresupuestoProveedor?code=' . $this->idpresupuesto;

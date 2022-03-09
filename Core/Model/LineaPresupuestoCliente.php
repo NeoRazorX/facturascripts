@@ -40,7 +40,7 @@ class LineaPresupuestoCliente extends Base\SalesDocumentLine
      * 
      * @return string
      */
-    public function documentColumn()
+    public function documentColumn(): string
     {
         return 'idpresupuesto';
     }
@@ -49,7 +49,7 @@ class LineaPresupuestoCliente extends Base\SalesDocumentLine
      * 
      * @return PresupuestoCliente
      */
-    public function getDocument()
+    public function getDocument(): PresupuestoCliente
     {
         $presupuesto = new PresupuestoCliente();
         $presupuesto->loadFromCode($this->idpresupuesto);
@@ -60,7 +60,7 @@ class LineaPresupuestoCliente extends Base\SalesDocumentLine
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependency
         new PresupuestoCliente();
@@ -73,7 +73,7 @@ class LineaPresupuestoCliente extends Base\SalesDocumentLine
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'lineaspresupuestoscli';
     }
@@ -85,7 +85,7 @@ class LineaPresupuestoCliente extends Base\SalesDocumentLine
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         if (null !== $this->idpresupuesto) {
             return 'EditPresupuestoCliente?code=' . $this->idpresupuesto;

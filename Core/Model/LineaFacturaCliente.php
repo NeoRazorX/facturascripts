@@ -49,7 +49,7 @@ class LineaFacturaCliente extends SalesDocumentLine
     /**
      * @return string
      */
-    public function documentColumn()
+    public function documentColumn(): string
     {
         return 'idfactura';
     }
@@ -57,7 +57,7 @@ class LineaFacturaCliente extends SalesDocumentLine
     /**
      * @return FacturaCliente
      */
-    public function getDocument()
+    public function getDocument(): FacturaCliente
     {
         $factura = new FacturaCliente();
         $factura->loadFromCode($this->idfactura);
@@ -67,7 +67,7 @@ class LineaFacturaCliente extends SalesDocumentLine
     /**
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependency
         new FacturaCliente();
@@ -79,7 +79,7 @@ class LineaFacturaCliente extends SalesDocumentLine
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'lineasfacturascli';
     }
@@ -87,7 +87,7 @@ class LineaFacturaCliente extends SalesDocumentLine
     /**
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         // servido will always be 0 to prevent stock problems when removing rectified invoices
         $this->servido = 0.0;
@@ -100,7 +100,7 @@ class LineaFacturaCliente extends SalesDocumentLine
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->idfactura ? 'EditFacturaCliente?code=' . $this->idfactura : parent::url($type, $list);
     }

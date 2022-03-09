@@ -118,7 +118,7 @@ abstract class Contact extends ModelClass
      *
      * @return string
      */
-    public function gravatar($size = 80)
+    public function gravatar(int $size = 80): string
     {
         return 'https://www.gravatar.com/avatar/' . \md5(\strtolower(trim($this->email))) . '?s=' . $size;
     }
@@ -128,7 +128,7 @@ abstract class Contact extends ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->cifnif = $utils->noHtml($this->cifnif);

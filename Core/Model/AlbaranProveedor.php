@@ -45,7 +45,7 @@ class AlbaranProveedor extends Base\PurchaseDocument
      *
      * @return LineaAlbaran[]
      */
-    public function getLines()
+    public function getLines(): array
     {
         $lineaModel = new LineaAlbaran();
         $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
@@ -62,7 +62,7 @@ class AlbaranProveedor extends Base\PurchaseDocument
      *
      * @return LineaAlbaran
      */
-    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idalbaran', 'servido'])
+    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idalbaran', 'servido']): LineaAlbaran
     {
         $newLine = new LineaAlbaran();
         $newLine->idalbaran = $this->idalbaran;
@@ -78,7 +78,7 @@ class AlbaranProveedor extends Base\PurchaseDocument
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idalbaran';
     }
@@ -88,7 +88,7 @@ class AlbaranProveedor extends Base\PurchaseDocument
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'albaranesprov';
     }

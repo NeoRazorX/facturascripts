@@ -141,7 +141,7 @@ class DocTransformation extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -151,7 +151,7 @@ class DocTransformation extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'doctransformations';
     }

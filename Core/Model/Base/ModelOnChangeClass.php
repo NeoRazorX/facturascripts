@@ -48,7 +48,7 @@ abstract class ModelOnChangeClass extends ModelClass
     /**
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (parent::delete()) {
             $this->onDelete();
@@ -62,7 +62,7 @@ abstract class ModelOnChangeClass extends ModelClass
     /**
      * Loads a record from database.
      *
-     * @param string $code
+     * @param string|int $code
      * @param array $where
      * @param array $orderby
      *
@@ -85,7 +85,7 @@ abstract class ModelOnChangeClass extends ModelClass
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         if ($this->pipe('onChange', $field) === false) {
             return false;
@@ -125,7 +125,7 @@ abstract class ModelOnChangeClass extends ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (parent::saveInsert($values)) {
             $this->onInsert();
@@ -143,7 +143,7 @@ abstract class ModelOnChangeClass extends ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         foreach (array_keys($this->previousData) as $field) {
             if ($this->{$field} != $this->previousData[$field] && !$this->onChange($field)) {

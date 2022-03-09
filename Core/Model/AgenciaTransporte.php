@@ -76,7 +76,7 @@ class AgenciaTransporte extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codtrans';
     }
@@ -86,7 +86,7 @@ class AgenciaTransporte extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'agenciastrans';
     }
@@ -95,7 +95,7 @@ class AgenciaTransporte extends Base\ModelClass
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (!empty($this->codtrans) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codtrans)) {
             $this->toolBox()->i18nLog()->error(
@@ -118,7 +118,7 @@ class AgenciaTransporte extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codtrans)) {
             $this->codtrans = (string) $this->newCode();

@@ -104,7 +104,7 @@ class SecuenciaDocumento extends Base\ModelClass
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new Ejercicio();
@@ -118,7 +118,7 @@ class SecuenciaDocumento extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idsecuencia';
     }
@@ -128,7 +128,7 @@ class SecuenciaDocumento extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'secuencias_documentos';
     }
@@ -137,7 +137,7 @@ class SecuenciaDocumento extends Base\ModelClass
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->idempresa)) {
             $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');

@@ -125,7 +125,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (parent::delete()) {
             $accEntry = $this->getAccountingEntry();
@@ -144,7 +144,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @return DinPartida[]
      */
-    public function getPartidas()
+    public function getPartidas(): array
     {
         return $this->getAccountingEntry()->getLines();
     }
@@ -156,7 +156,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new DinEjercicio();
@@ -172,7 +172,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @return bool
      */
-    public function loadFechaInside($fecha): bool
+    public function loadFechaInside(string $fecha): bool
     {
         $where = [
             new DataBaseWhere('fechainicio', $fecha, '<='),
@@ -186,7 +186,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idregiva';
     }
@@ -196,7 +196,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @return string
      */
-    public function primaryDescription()
+    public function primaryDescription(): string
     {
         return $this->codejercicio . ' - ' . $this->periodo;
     }
@@ -206,7 +206,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'regularizacionimpuestos';
     }
@@ -217,7 +217,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         /// calculate dates to selected period
         $period = $this->getPeriod($this->periodo);
@@ -242,7 +242,7 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @return array
      */
-    private function getPeriod($period): array
+    private function getPeriod(string $period): array
     {
         /// Calculate year
         $year = \date('Y', \strtotime($this->getExercise()->fechainicio));

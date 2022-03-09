@@ -45,7 +45,7 @@ class SalesDocLineAccount extends JoinModel
      *
      * @return array
      */
-    public function getTotalsForDocument($document, string $defaultSubacode): array
+    public function getTotalsForDocument(FacturaCliente $document, string $defaultSubacode): array
     {
         $totals = [];
         $where = [
@@ -76,7 +76,7 @@ class SalesDocLineAccount extends JoinModel
      *
      * @return array
      */
-    protected function checkTotals(array &$totals, $document, string $defaultSubacode): array
+    protected function checkTotals(array &$totals, FacturaCliente $document, string $defaultSubacode): array
     {
         /// round and add the totals
         $sum = 0.0;

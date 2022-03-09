@@ -117,7 +117,7 @@ class Balance extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codbalance';
     }
@@ -127,7 +127,7 @@ class Balance extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'balances';
     }
@@ -137,7 +137,7 @@ class Balance extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,15}$/i', $this->codbalance)) {
             $this->toolBox()->i18nLog()->error(

@@ -94,7 +94,7 @@ class FormatoDocumento extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Serie();
@@ -108,7 +108,7 @@ class FormatoDocumento extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -118,7 +118,7 @@ class FormatoDocumento extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'formatos_documentos';
     }
@@ -126,7 +126,7 @@ class FormatoDocumento extends Base\ModelClass
     /**
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->nombre = empty($this->nombre) ? $utils->noHtml($this->titulo) : $utils->noHtml($this->nombre);

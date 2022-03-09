@@ -46,7 +46,7 @@ trait ModelTrait
      *
      * @return array
      */
-    public function getModelFields()
+    public function getModelFields(): array
     {
         return static::$fields;
     }
@@ -56,7 +56,7 @@ trait ModelTrait
      *
      * @return string
      */
-    public function modelClassName()
+    public function modelClassName(): string
     {
         $result = explode('\\', $this->modelName());
         return end($result);
@@ -67,7 +67,7 @@ trait ModelTrait
      *
      * @return string
      */
-    protected function modelName()
+    protected function modelName(): string
     {
         return get_class($this);
     }

@@ -47,7 +47,7 @@ trait CurrencyRelationTrait
      * @param string $coddivisa
      * @param bool $purchase
      */
-    public function setCurrency($coddivisa, $purchase = false)
+    public function setCurrency(string $coddivisa, bool $purchase = false)
     {
         foreach (Divisas::all() as $divisa) {
             if ($divisa->coddivisa === $coddivisa) {

@@ -53,7 +53,7 @@ trait ExerciseRelationTrait
      * 
      * @return Ejercicio
      */
-    public function getExercise()
+    public function getExercise(): Ejercicio
     {
         /// loads all exercise to improve performance
         if (empty(self::$ejercicios)) {

@@ -33,7 +33,7 @@ trait AccEntryRelationTrait
      * 
      * @return Asiento
      */
-    public function getAccountingEntry()
+    public function getAccountingEntry(): Asiento
     {
         $accEntry = new Asiento();
         $accEntry->loadFromCode($this->idasiento);

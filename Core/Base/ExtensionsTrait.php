@@ -73,7 +73,7 @@ trait ExtensionsTrait
      *
      * @return mixed
      */
-    public function pipe($name, ...$arguments)
+    public function pipe(string $name, ...$arguments)
     {
         $return = null;
         foreach (static::$extensions as $ext) {

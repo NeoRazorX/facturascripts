@@ -89,7 +89,7 @@ class AttachedFileRelation extends Base\ModelClass
      * 
      * @return DinFile
      */
-    public function getFile()
+    public function getFile(): DinFile
     {
         $file = new DinFile();
         $file->loadFromCode($this->idfile);
@@ -110,7 +110,7 @@ class AttachedFileRelation extends Base\ModelClass
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new DinFile();
@@ -140,7 +140,7 @@ class AttachedFileRelation extends Base\ModelClass
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->observations = $this->toolBox()->utils()->noHtml($this->observations);
         return parent::test();

@@ -190,7 +190,7 @@ class Producto extends Base\ModelClass
     /**
      * @return Variante[]
      */
-    public function getVariants()
+    public function getVariants(): array
     {
         $variantModel = new Variante();
         $where = [new DataBaseWhere('idproducto', $this->idproducto)];
@@ -204,7 +204,7 @@ class Producto extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /**
          * The articles table has several foreign keys, so we must force the checking of those tables.
@@ -229,7 +229,7 @@ class Producto extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idproducto';
     }
@@ -237,7 +237,7 @@ class Producto extends Base\ModelClass
     /**
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'referencia';
     }
@@ -245,7 +245,7 @@ class Producto extends Base\ModelClass
     /**
      * @param float $price
      */
-    public function setPriceWithTax($price)
+    public function setPriceWithTax(float $price)
     {
         $newPrice = (100 * $price) / (100 + $this->getTax()->iva);
         foreach ($this->getVariants() as $variant) {
@@ -263,7 +263,7 @@ class Producto extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'productos';
     }
@@ -273,7 +273,7 @@ class Producto extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
@@ -338,7 +338,7 @@ class Producto extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (parent::saveInsert($values)) {
             $variant = new Variante();

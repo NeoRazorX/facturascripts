@@ -85,7 +85,7 @@ class Tarifa extends Base\ModelClass
      *
      * @return float
      */
-    public function apply($cost, $price)
+    public function apply(float $cost, float $price): float
     {
         $finalPrice = 0.0;
 
@@ -115,7 +115,7 @@ class Tarifa extends Base\ModelClass
      *
      * @return float
      */
-    public function applyTo($variant, $product)
+    public function applyTo(Variante $variant, Producto $product): float
     {
         return $this->apply($variant->coste, $variant->precio);
     }
@@ -138,7 +138,7 @@ class Tarifa extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codtarifa';
     }
@@ -147,7 +147,7 @@ class Tarifa extends Base\ModelClass
      * 
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
@@ -157,7 +157,7 @@ class Tarifa extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'tarifas';
     }
@@ -167,7 +167,7 @@ class Tarifa extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->codtarifa = \trim($this->codtarifa);
         if ($this->codtarifa && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codtarifa)) {
@@ -188,7 +188,7 @@ class Tarifa extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codtarifa)) {
             $this->codtarifa = $this->newCode();

@@ -132,7 +132,7 @@ abstract class ComercialContact extends Contact
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new Retencion();
@@ -147,7 +147,7 @@ abstract class ComercialContact extends Contact
      *
      * @return float
      */
-    public function irpf()
+    public function irpf(): float
     {
         if (empty($this->codretencion)) {
             return 0.0;
@@ -166,7 +166,7 @@ abstract class ComercialContact extends Contact
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->debaja = !empty($this->fechabaja);
 

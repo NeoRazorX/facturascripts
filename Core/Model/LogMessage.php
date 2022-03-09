@@ -128,7 +128,7 @@ class LogMessage extends Base\ModelClass
     /**
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->channel === self::AUDIT_CHANNEL) {
             self::toolBox()::i18nLog()->warning('cant-delete-audit-log');
@@ -143,7 +143,7 @@ class LogMessage extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -153,7 +153,7 @@ class LogMessage extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'logs';
     }
@@ -163,7 +163,7 @@ class LogMessage extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->channel = $utils->noHtml($this->channel);
@@ -184,7 +184,7 @@ class LogMessage extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         if ($this->channel === self::AUDIT_CHANNEL) {
             self::toolBox()::i18nLog()->warning('cant-update-audit-log');

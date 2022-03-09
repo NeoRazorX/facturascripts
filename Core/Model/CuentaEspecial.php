@@ -48,7 +48,7 @@ class CuentaEspecial extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codcuentaesp';
     }
@@ -58,7 +58,7 @@ class CuentaEspecial extends Base\ModelClass
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'codcuentaesp';
     }
@@ -68,7 +68,7 @@ class CuentaEspecial extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'cuentasesp';
     }
@@ -77,7 +77,7 @@ class CuentaEspecial extends Base\ModelClass
      * 
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->codcuentaesp = \trim($this->codcuentaesp);
         if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codcuentaesp)) {
@@ -100,7 +100,7 @@ class CuentaEspecial extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListCuenta?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListCuenta?activetab=List'): string
     {
         return parent::url($type, $list);
     }

@@ -49,7 +49,7 @@ class Settings extends Base\ModelClass
      *
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         return isset($this->properties[$name]) ? $this->properties[$name] : null;
     }
@@ -59,7 +59,7 @@ class Settings extends Base\ModelClass
      * @param string $name
      * @param mixed  $value
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value)
     {
         $this->properties[$name] = $value;
     }
@@ -90,7 +90,7 @@ class Settings extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'name';
     }
@@ -100,7 +100,7 @@ class Settings extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'settings';
     }
@@ -124,7 +124,7 @@ class Settings extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         return parent::saveInsert(['properties' => json_encode($this->properties)]);
     }
@@ -136,7 +136,7 @@ class Settings extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         return parent::saveUpdate(['properties' => json_encode($this->properties)]);
     }

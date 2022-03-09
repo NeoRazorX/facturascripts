@@ -47,7 +47,7 @@ class FacturaProveedor extends Base\PurchaseDocument
      *
      * @return DinLineaFactura[]
      */
-    public function getLines()
+    public function getLines(): array
     {
         $lineaModel = new DinLineaFactura();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
@@ -63,7 +63,7 @@ class FacturaProveedor extends Base\PurchaseDocument
      *
      * @return DinLineaFactura
      */
-    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idfactura', 'servido'])
+    public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idfactura', 'servido']): DinLineaFactura
     {
         $newLine = new DinLineaFactura();
         $newLine->idfactura = $this->idfactura;
@@ -78,7 +78,7 @@ class FacturaProveedor extends Base\PurchaseDocument
      * 
      * @return DinReciboProveedor[]
      */
-    public function getReceipts()
+    public function getReceipts(): array
     {
         $receipt = new DinReciboProveedor();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];
@@ -90,7 +90,7 @@ class FacturaProveedor extends Base\PurchaseDocument
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'facturasprov';
     }

@@ -63,7 +63,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return TransformerDocument[]
      */
-    public function childrenDocuments()
+    public function childrenDocuments(): array
     {
         $children = [];
         $keys = [];
@@ -117,7 +117,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (count($this->childrenDocuments()) > 0) {
             $this->toolBox()->i18nLog()->warning('non-editable-document');
@@ -183,7 +183,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return EstadoDocumento[]
      */
-    public function getAvaliableStatus()
+    public function getAvaliableStatus(): array
     {
         if (null === self::$estados) {
             $statusModel = new EstadoDocumento();
@@ -205,7 +205,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return EstadoDocumento
      */
-    public function getStatus()
+    public function getStatus(): EstadoDocumento
     {
         $status = new EstadoDocumento();
         $status->loadFromCode($this->idestado);
@@ -219,7 +219,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new EstadoDocumento();
@@ -232,7 +232,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return TransformerDocument[]
      */
-    public function parentDocuments()
+    public function parentDocuments(): array
     {
         $parents = [];
         $keys = [];
@@ -268,7 +268,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         // match editable with status
         $this->editable = $this->getStatus()->editable;
@@ -290,7 +290,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         if (false === $this->editable && false === $this->previousData['editable'] && $field != 'idestado') {
             $this->toolBox()->i18nLog()->warning('non-editable-document');

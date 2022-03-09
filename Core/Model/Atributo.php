@@ -48,7 +48,7 @@ class Atributo extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codatributo';
     }
@@ -58,7 +58,7 @@ class Atributo extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'atributos';
     }
@@ -68,7 +68,7 @@ class Atributo extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->codatributo = $this->toolBox()->utils()->noHtml($this->codatributo);
         $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
@@ -89,7 +89,7 @@ class Atributo extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codatributo)) {
             $this->codatributo = (string)$this->newCode();

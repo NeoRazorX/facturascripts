@@ -96,7 +96,7 @@ abstract class BankAccount extends ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codcuenta';
     }
@@ -115,7 +115,7 @@ abstract class BankAccount extends ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         if (!empty($this->codcuenta) && false === is_numeric($this->codcuenta)) {
             $this->toolBox()->i18nLog()->error('invalid-number', ['%number%' => $this->codcuenta]);
@@ -153,7 +153,7 @@ abstract class BankAccount extends ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codcuenta)) {
             $this->codcuenta = $this->newCode();

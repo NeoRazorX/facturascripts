@@ -65,7 +65,7 @@ class CuentaBancoCliente extends Base\BankAccount
      * 
      * @return DinCliente
      */
-    public function getSubject()
+    public function getSubject(): DinCliente
     {
         $customer = new DinCliente();
         $customer->loadFromCode($this->codcliente);
@@ -76,7 +76,7 @@ class CuentaBancoCliente extends Base\BankAccount
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needed dependencies
         new DinCliente();
@@ -88,7 +88,7 @@ class CuentaBancoCliente extends Base\BankAccount
      * 
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if (parent::save()) {
             $this->updatePrimaryAccount();
@@ -103,7 +103,7 @@ class CuentaBancoCliente extends Base\BankAccount
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'cuentasbcocli';
     }

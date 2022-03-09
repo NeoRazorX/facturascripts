@@ -50,7 +50,7 @@ class ReciboCliente extends Base\Receipt
     /**
      * @return FacturaCliente
      */
-    public function getInvoice()
+    public function getInvoice(): FacturaCliente
     {
         $invoice = new FacturaCliente();
         $invoice->loadFromCode($this->idfactura);
@@ -62,7 +62,7 @@ class ReciboCliente extends Base\Receipt
      *
      * @return PagoCliente[]
      */
-    public function getPayments()
+    public function getPayments(): array
     {
         $payModel = new PagoCliente();
         $where = [new DataBaseWhere('idrecibo', $this->idrecibo)];
@@ -72,7 +72,7 @@ class ReciboCliente extends Base\Receipt
     /**
      * @return Cliente
      */
-    public function getSubject()
+    public function getSubject(): Cliente
     {
         $cliente = new Cliente();
         $cliente->loadFromCode($this->codcliente);
@@ -82,7 +82,7 @@ class ReciboCliente extends Base\Receipt
     /**
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Cliente();
@@ -93,7 +93,7 @@ class ReciboCliente extends Base\Receipt
     /**
      * @param string $date
      */
-    public function setExpiration($date)
+    public function setExpiration(string $date)
     {
         parent::setExpiration($date);
 
@@ -124,7 +124,7 @@ class ReciboCliente extends Base\Receipt
     /**
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'recibospagoscli';
     }
@@ -135,7 +135,7 @@ class ReciboCliente extends Base\Receipt
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListFacturaCliente?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListFacturaCliente?activetab=List'): string
     {
         if ('list' === $type && !empty($this->idfactura)) {
             return $this->getInvoice()->url() . '&activetab=List' . $this->modelClassName();
@@ -151,7 +151,7 @@ class ReciboCliente extends Base\Receipt
      *
      * @return bool
      */
-    protected function newPayment()
+    protected function newPayment(): bool
     {
         if ($this->disablePaymentGeneration) {
             return false;

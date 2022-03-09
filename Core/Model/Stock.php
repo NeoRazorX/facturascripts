@@ -123,7 +123,7 @@ class Stock extends Base\ModelClass
     /**
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (parent::delete()) {
             $this->cantidad = 0.0;
@@ -141,7 +141,7 @@ class Stock extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new DinAlmacen();
@@ -156,7 +156,7 @@ class Stock extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idstock';
     }
@@ -164,7 +164,7 @@ class Stock extends Base\ModelClass
     /**
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if (parent::save()) {
             $this->updateProductStock();
@@ -179,7 +179,7 @@ class Stock extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'stocks';
     }
@@ -217,7 +217,7 @@ class Stock extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->ubicacion = self::toolBox()::utils()::noHtml($this->ubicacion);
 
@@ -268,7 +268,7 @@ class Stock extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getProducto()->url($type);
     }

@@ -120,7 +120,7 @@ class Subcuenta extends Base\ModelClass
      * 
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->getExercise()->isOpened() || $this->disableAditionalTest) {
             return parent::delete();
@@ -144,7 +144,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return DinCuenta
      */
-    public function getAccount()
+    public function getAccount(): DinCuenta
     {
         $account = new DinCuenta();
 
@@ -167,7 +167,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return string
      */
-    public function getSpecialAccountCode()
+    public function getSpecialAccountCode(): string
     {
         if (empty($this->codcuentaesp)) {
             $account = $this->getAccount();
@@ -186,7 +186,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// force the parents tables
         new DinCuentaEspecial();
@@ -200,7 +200,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idsubcuenta';
     }
@@ -209,7 +209,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'codsubcuenta';
     }
@@ -218,7 +218,7 @@ class Subcuenta extends Base\ModelClass
      * 
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if ($this->getExercise()->isOpened() || $this->disableAditionalTest) {
             return parent::save();
@@ -233,7 +233,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'subcuentas';
     }
@@ -243,7 +243,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
+    public function test(): bool
     {
         $this->saldo = $this->debe - $this->haber;
 
@@ -300,7 +300,7 @@ class Subcuenta extends Base\ModelClass
      * @param float $debit
      * @param float $credit
      */
-    public function updateBalance($debit = 0.0, $credit = 0.0)
+    public function updateBalance(float $debit = 0.0, float $credit = 0.0)
     {
         /// supplied debit and credit?
         if ($debit + $credit != 0.0) {
@@ -330,7 +330,7 @@ class Subcuenta extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListCuenta?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListCuenta?activetab=List'): string
     {
         return parent::url($type, $list);
     }

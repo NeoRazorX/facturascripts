@@ -32,7 +32,7 @@ class PagoProveedor extends Base\Payment
      * 
      * @return ReciboProveedor
      */
-    public function getReceipt()
+    public function getReceipt(): ReciboProveedor
     {
         $receipt = new ReciboProveedor();
         $receipt->loadFromCode($this->idrecibo);
@@ -43,7 +43,7 @@ class PagoProveedor extends Base\Payment
      * 
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         /// needes dependecies
         new ReciboProveedor();
@@ -55,7 +55,7 @@ class PagoProveedor extends Base\Payment
      * 
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'pagosprov';
     }

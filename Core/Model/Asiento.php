@@ -153,7 +153,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return bool
      */
-    public function delete()
+    public function delete(): bool
     {
         if (false === $this->getExercise()->isOpened()) {
             $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
@@ -205,7 +205,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     /**
      * @return DinPartida
      */
-    public function getNewLine()
+    public function getNewLine(): DinPartida
     {
         $partida = new DinPartida();
         $partida->concepto = $this->concepto;
@@ -229,7 +229,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         new DinDiario();
         new DinEjercicio();
@@ -262,7 +262,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return int
      */
-    public function newCode(string $field = '', array $where = [])
+    public function newCode(string $field = '', array $where = []): int
     {
         if ($field !== $this->primaryColumn()) {
             $where[] = new DataBaseWhere('codejercicio', $this->codejercicio);
@@ -275,7 +275,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idasiento';
     }
@@ -285,7 +285,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'numero';
     }
@@ -297,7 +297,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return bool
      */
-    public function renumber($codejercicio = '')
+    public function renumber(string $codejercicio = ''): bool
     {
         $exerciseModel = new DinEjercicio();
         $where = empty($codejercicio) ? [] : [new DataBaseWhere('codejercicio', $codejercicio)];
@@ -330,7 +330,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     /**
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if (empty($this->codejercicio)) {
             $this->setDate($this->fecha);
@@ -360,7 +360,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return bool
      */
-    public function setDate($date)
+    public function setDate(string $date): bool
     {
         $exercise = new DinEjercicio();
         $exercise->idempresa = $this->idempresa;
@@ -378,7 +378,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'asientos';
     }
@@ -421,7 +421,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return bool
      */
-    protected function onChange($field)
+    protected function onChange(string $field): bool
     {
         switch ($field) {
             case 'codejercicio':
@@ -448,7 +448,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return bool
      */
-    protected function renumberAccEntries(&$entries, &$number)
+    protected function renumberAccEntries(array &$entries, int &$number): bool
     {
         $sql = '';
         foreach ($entries as $row) {
