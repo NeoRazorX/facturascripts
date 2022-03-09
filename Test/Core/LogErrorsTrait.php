@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,15 +34,14 @@ trait LogErrorsTrait
         MiniLog::clear();
     }
 
-    protected function searchAuditLog(string $modelclass, string $modelcode): bool
+    protected function searchAuditLog(string $modelClass, string $modelCode): bool
     {
-        $found = false;
         foreach (MiniLog::read('audit') as $log) {
-            if ($log['context']['model-class'] === $modelclass && $log['context']['model-code'] === $modelcode) {
-                $found = true;
-                break;
+            if ($log['context']['model-class'] === $modelClass && $log['context']['model-code'] === $modelCode) {
+                return true;
             }
         }
-        return $found;
+
+        return false;
     }
 }
