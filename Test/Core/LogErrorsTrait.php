@@ -33,4 +33,16 @@ trait LogErrorsTrait
 
         MiniLog::clear();
     }
+
+    protected function searchAuditLog(string $modelclass, string $modelcode): bool
+    {
+        $found = false;
+        foreach (MiniLog::read('audit') as $log) {
+            if ($log['context']['model-class'] === $modelclass && $log['context']['model-code'] === $modelcode) {
+                $found = true;
+                break;
+            }
+        }
+        return $found;
+    }
 }
