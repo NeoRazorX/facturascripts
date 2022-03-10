@@ -111,9 +111,6 @@
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre" />
                 </widget>
             </column>
-            <column name="commission" numcolumns="6" order="110">
-                <widget type="money" fieldname="totalcomision" icon="fas fa-coins" readonly="true" />
-            </column>
         </group>
         <group name="attributes" title="attributes" icon="fas fa-database" numcolumns="8">
             <column name="company" order="100">

@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\LineaFacturaCliente as DinLineaFactura;
-use FacturaScripts\Dinamic\Model\LiquidacionComision as DinLiquidacionComision;
 use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
 
 /**
@@ -39,21 +38,6 @@ class FacturaCliente extends Base\SalesDocument
      * @var int
      */
     public $idliquidacion;
-
-    /**
-     * This function is called when creating the model's table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert
-     * default values.
-     *
-     * @return string
-     */
-    public function install()
-    {
-        // needed dependencies
-        new DinLiquidacionComision();
-
-        return parent::install();
-    }
 
     /**
      * Reset the values of all model properties.
