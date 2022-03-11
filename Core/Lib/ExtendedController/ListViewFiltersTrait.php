@@ -199,12 +199,11 @@ trait ListViewFiltersTrait
     public function savePageFilter(Request $request, User $user): int
     {
         $pageFilter = new PageFilter();
-
         // Set values data filter
         foreach ($this->filters as $filter) {
             $name = $filter->name();
             $value = $request->request->get($name, null);
-            if (!empty($value)) {
+            if (!is_null($value)) {
                 $pageFilter->filters[$name] = $value;
             }
         }
