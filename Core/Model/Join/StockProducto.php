@@ -65,18 +65,8 @@ class StockProducto extends JoinModel
             'referencia' => 'stocks.referencia',
             'reservada' => 'stocks.reservada',
             'stockmax' => 'stocks.stockmax',
-            'stockmin' => 'stocks.stockmin',
-            'total' => 'sum(stocks.cantidad*variantes.coste)'
+            'stockmin' => 'stocks.stockmin'
         ];
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    protected function getGroupFields(): string
-    {
-        return 'stocks.referencia, stocks.codalmacen';
     }
 
     /**
