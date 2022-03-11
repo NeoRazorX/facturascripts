@@ -1,0 +1,515 @@
+<?php
+/**
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
+
+namespace FacturaScripts\Core\Base\AjaxForms;
+
+use FacturaScripts\Core\Base\Contract\SalesModInterface;
+use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\DataSrc\Agentes;
+use FacturaScripts\Core\Model\AgenciaTransporte;
+use FacturaScripts\Core\Model\Base\SalesDocument;
+use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\Contacto;
+use FacturaScripts\Core\Model\User;
+
+/**
+ * Description of SalesHeaderHTML
+ *
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ */
+class SalesHeaderHTML
+{
+    use CommonSalesPurchases;
+
+    /** @var Cliente */
+    private static $cliente;
+
+    /** @var SalesModInterface[] */
+    private static $mods = [];
+
+    public static function addMod(SalesModInterface $mod)
+    {
+        self::$mods[] = $mod;
+    }
+
+    public static function apply(SalesDocument &$model, array $formData, User $user)
+    {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->applyBefore($model, $formData, $user);
+        }
+
+        $cliente = new Cliente();
+        if (empty($model->primaryColumnValue())) {
+            // new record. Sets user and customer
+            $model->setAuthor($user);
+            if (isset($formData['codcliente']) && $formData['codcliente'] && $cliente->loadFromCode($formData['codcliente'])) {
+                $model->setSubject($cliente);
+                if (isset($formData['action']) && $formData['action'] === 'set-customer') {
+                    return;
+                }
+            }
+        } elseif (isset($formData['action'], $formData['codcliente']) &&
+            $formData['action'] === 'set-customer' &&
+            $cliente->loadFromCode($formData['codcliente'])) {
+            // existing record and change customer
+            $model->setSubject($cliente);
+            return;
+        }
+
+        $model->cifnif = $formData['cifnif'] ?? $model->cifnif;
+        $model->codagente = !empty($formData['codagente']) ? $formData['codagente'] : null;
+        $model->codalmacen = $formData['codalmacen'] ?? $model->codalmacen;
+        $model->codigoenv = $formData['codigoenv'] ?? $model->codigoenv;
+        $model->coddivisa = $formData['coddivisa'] ?? $model->coddivisa;
+        $model->codpago = $formData['codpago'] ?? $model->codpago;
+        $model->codserie = $formData['codserie'] ?? $model->codserie;
+        $model->fecha = $formData['fecha'] ?? $model->fecha;
+        $model->femail = isset($formData['femail']) && !empty($formData['femail']) ? $formData['femail'] : $model->femail;
+        $model->hora = $formData['hora'] ?? $model->hora;
+        $model->nombrecliente = $formData['nombrecliente'] ?? $model->nombrecliente;
+        $model->numero2 = $formData['numero2'] ?? $model->numero2;
+        $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
+
+        foreach (['codtrans', 'finoferta'] as $key) {
+            if (isset($formData[$key])) {
+                $model->{$key} = empty($formData[$key]) ? null : $formData[$key];
+            }
+        }
+
+        if (false === isset($formData['idcontactofact'], $formData['idcontactoenv'])) {
+            return;
+        }
+
+        // set billing address
+        $dir = new Contacto();
+        if (empty($formData['idcontactofact'])) {
+            $model->idcontactofact = null;
+        } elseif ($dir->loadFromCode($formData['idcontactofact'])) {
+            $model->idcontactofact = $dir->idcontacto;
+            $model->direccion = $dir->direccion;
+            $model->apartado = $dir->apartado;
+            $model->codpostal = $dir->codpostal;
+            $model->ciudad = $dir->ciudad;
+            $model->provincia = $dir->provincia;
+            $model->codpais = $dir->codpais;
+        }
+
+        // set shipping address
+        $model->idcontactoenv = empty($formData['idcontactoenv']) ? null : $formData['idcontactoenv'];
+
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->apply($model, $formData, $user);
+        }
+    }
+
+    public static function render(SalesDocument $model): string
+    {
+        $i18n = new Translator();
+        return '<div class="container-fluid">'
+            . '<div class="form-row align-items-end">'
+            . self::renderField($i18n, $model, 'codcliente')
+            . self::renderField($i18n, $model, 'codalmacen')
+            . self::renderField($i18n, $model, 'codserie')
+            . self::renderField($i18n, $model, 'fecha')
+            . self::renderField($i18n, $model, 'numero2')
+            . self::renderField($i18n, $model, 'codpago')
+            . self::renderField($i18n, $model, 'finoferta')
+            . self::renderField($i18n, $model, 'total')
+            . '</div>'
+            . '<div class="form-row align-items-end">'
+            . self::renderField($i18n, $model, '_detail')
+            . self::renderField($i18n, $model, '_parents')
+            . self::renderField($i18n, $model, '_children')
+            . self::renderField($i18n, $model, 'paid')
+            . self::renderField($i18n, $model, 'idestado')
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function codagente(Translator $i18n, SalesDocument $model): string
+    {
+        $agentes = Agentes::all();
+        if (count($agentes) === 0) {
+            return '';
+        }
+
+        $options = ['<option value="">------</option>'];
+        foreach ($agentes as $row) {
+            $options[] = ($row->codagente === $model->codagente) ?
+                '<option value="' . $row->codagente . '" selected="">' . $row->nombre . '</option>' :
+                '<option value="' . $row->codagente . '">' . $row->nombre . '</option>';
+        }
+
+        $attributes = $model->editable ? 'name="codagente"' : 'disabled=""';
+        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
+            . '<div class="form-group">'
+            . '<a href="' . Agentes::get($model->codagente)->url() . '">' . $i18n->trans('agent') . '</a>'
+            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function codcliente(Translator $i18n, SalesDocument $model): string
+    {
+        self::$cliente = new Cliente();
+        if (empty($model->codcliente) || false === self::$cliente->loadFromCode($model->codcliente)) {
+            return '<div class="col-sm-3">'
+                . '<div class="form-group">' . $i18n->trans('customer')
+                . '<input type="hidden" name="codcliente"/>'
+                . '<a href="#" class="btn btn-block btn-primary" onclick="$(\'#findCustomerModal\').modal();'
+                . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
+                . $i18n->trans('select') . '</a>'
+                . '</div>'
+                . '</div>';
+        }
+
+        $btnCliente = $model->editable ?
+            '<button class="btn btn-outline-secondary" type="button" onclick="$(\'#findCustomerModal\').modal();'
+            . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-pen"></i></button>' :
+            '<button class="btn btn-outline-secondary" type="button"><i class="fas fa-lock"></i></button>';
+
+        $html = '<div class="col-sm-3 col-lg">'
+            . '<div class="form-group">'
+            . '<a href="' . self::$cliente->url() . '">' . $i18n->trans('customer') . '</a>'
+            . '<input type="hidden" name="codcliente" value="' . $model->codcliente . '"/>'
+            . '<div class="input-group">'
+            . '<input type="text" value="' . self::$cliente->nombre . '" class="form-control" readonly/>'
+            . '<div class="input-group-append">' . $btnCliente . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>';
+
+        if (empty($model->primaryColumnValue())) {
+            $html .= self::detail($i18n, $model, true);
+        }
+
+        return $html;
+    }
+
+    private static function codigoenv(Translator $i18n, SalesDocument $model): string
+    {
+        $attributes = $model->editable ? 'name="codigoenv" maxlength="200" autocomplete="off"' : 'disabled=""';
+        return '<div class="col-sm">'
+            . '<div class="form-group">' . $i18n->trans('tracking-code')
+            . '<input type="text" ' . $attributes . ' value="' . $model->codigoenv . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function codtrans(Translator $i18n, SalesDocument $model): string
+    {
+        $options = ['<option value="">------</option>'];
+        $agenciaTransporte = new AgenciaTransporte();
+        foreach ($agenciaTransporte->all() as $agencia) {
+            $options[] = ($agencia->codtrans === $model->codtrans) ?
+                '<option value="' . $agencia->codtrans . '" selected="">' . $agencia->nombre . '</option>' :
+                '<option value="' . $agencia->codtrans . '">' . $agencia->nombre . '</option>';
+        }
+
+        $attributes = $model->editable ? 'name="codtrans"' : 'disabled=""';
+        return empty($model->idcontactoenv) || count($options) === 1 ? '' : '<div class="col-sm">'
+            . '<div class="form-group">'
+            . '<a href="' . $agenciaTransporte->url() . '">' . $i18n->trans('carrier') . '</a>'
+            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function detail(Translator $i18n, SalesDocument $model, bool $force = false): string
+    {
+        if (empty($model->primaryColumnValue()) && $force === false) {
+            return '';
+        }
+
+        $css = $force ? 'col-sm-auto' : 'col-sm';
+        return '<div class="' . $css . '">'
+            . '<div class="form-group">'
+            . '<button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#headerModal">'
+            . '<i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . ' </button>'
+            . '</div>'
+            . '</div>'
+            . self::detailModal($i18n, $model);
+    }
+
+    private static function detailModal(Translator $i18n, SalesDocument $model): string
+    {
+        return '<div class="modal fade" id="headerModal" tabindex="-1" aria-labelledby="headerModalLabel" aria-hidden="true">'
+            . '<div class="modal-dialog modal-dialog-centered">'
+            . '<div class="modal-content">'
+            . '<div class="modal-header">'
+            . '<h5 class="modal-title">'
+            . $i18n->trans($model->modelClassName() . '-min')
+            . ' ' . $model->codigo
+            . '</h5>'
+            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+            . '<span aria-hidden="true">&times;</span>'
+            . '</button>'
+            . '</div>'
+            . '<div class="modal-body">'
+            . '<div class="form-row">'
+            . self::renderField($i18n, $model, '_fecha')
+            . self::renderField($i18n, $model, 'hora')
+            . '</div>'
+            . '<div class="form-row">'
+            . self::renderField($i18n, $model, 'idcontactofact')
+            . '</div>'
+            . '<div class="form-row">'
+            . self::renderField($i18n, $model, 'nombrecliente')
+            . '</div>'
+            . '<div class="form-row">'
+            . self::renderField($i18n, $model, 'cifnif')
+            . '</div>'
+            . '<div class="form-row">'
+            . self::renderField($i18n, $model, 'idcontactoenv')
+            . '</div>'
+            . '<div class="form-row">'
+            . self::renderField($i18n, $model, 'codtrans')
+            . self::renderField($i18n, $model, 'codigoenv')
+            . '</div>'
+            . '<div class="form-row">'
+            . self::renderField($i18n, $model, 'codagente')
+            . '</div>'
+            . '<div class="form-row">'
+            . self::renderField($i18n, $model, 'coddivisa')
+            . self::renderField($i18n, $model, 'tasaconv')
+            . '</div>'
+            . '<div class="form-row">'
+            . self::renderField($i18n, $model, 'femail')
+            . self::renderField($i18n, $model, 'user')
+            . '</div>'
+            . '<div class="form-row">'
+            . self::renderNewFields($i18n, $model)
+            . '</div>'
+            . '</div>'
+            . '<div class="modal-footer">'
+            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
+            . $i18n->trans('close')
+            . '</button>'
+            . '<button type="button" class="btn btn-primary" data-dismiss="modal">'
+            . $i18n->trans('accept')
+            . '</button>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function finoferta(Translator $i18n, SalesDocument $model): string
+    {
+        if (false === property_exists($model, 'finoferta') || empty($model->primaryColumnValue())) {
+            return '';
+        }
+
+        $label = empty($model->finoferta) || strtotime($model->finoferta) > time() ?
+            $i18n->trans('expiration') :
+            '<span class="text-danger">' . $i18n->trans('expiration') . '</span>';
+
+        $attributes = $model->editable ? 'name="finoferta"' : 'disabled=""';
+        $value = empty($model->finoferta) ? '' : 'value="' . date('Y-m-d', strtotime($model->finoferta)) . '"';
+        return '<div class="col-sm">'
+            . '<div class="form-group">' . $label
+            . '<input type="date" ' . $attributes . ' ' . $value . ' class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
+    /**
+     * @param Translator $i18n
+     * @param mixed $selected
+     * @param bool $empty
+     *
+     * @return array
+     */
+    private static function getAddressOptions(Translator $i18n, $selected, bool $empty): array
+    {
+        $options = $empty ? ['<option value="">------</option>'] : [];
+        foreach (self::$cliente->getAdresses() as $contact) {
+            $descripcion = empty($contact->descripcion) ? '(' . $i18n->trans('empty') . ') ' : '(' . $contact->descripcion . ') ';
+            $descripcion .= empty($contact->direccion) ? '' : $contact->direccion;
+            $options[] = $contact->idcontacto == $selected ?
+                '<option value="' . $contact->idcontacto . '" selected>' . $descripcion . '</option>' :
+                '<option value="' . $contact->idcontacto . '">' . $descripcion . '</option>';
+        }
+        return $options;
+    }
+
+    private static function idcontactoenv(Translator $i18n, SalesDocument $model): string
+    {
+        if (empty($model->codcliente)) {
+            return '';
+        }
+
+        $attributes = $model->editable ? 'name="idcontactoenv"' : 'disabled=""';
+        $options = self::getAddressOptions($i18n, $model->idcontactoenv, true);
+        return '<div class="col-sm">'
+            . '<div class="form-group">'
+            . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">'
+            . $i18n->trans('shipping-address') . '</a>'
+            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function idcontactofact(Translator $i18n, SalesDocument $model): string
+    {
+        if (empty($model->codcliente)) {
+            return '';
+        }
+
+        $attributes = $model->editable ? 'name="idcontactofact" onchange="return salesFormActionWait(\'recalculate-line\', \'0\');"' : 'disabled=""';
+        $options = self::getAddressOptions($i18n, $model->idcontactofact, false);
+        return '<div class="col-sm">'
+            . '<div class="form-group">'
+            . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">' . $i18n->trans('billing-address') . '</a>'
+            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function nombrecliente(Translator $i18n, SalesDocument $model): string
+    {
+        $attributes = $model->editable ? 'name="nombrecliente" required="" maxlength="100" autocomplete="off"' : 'disabled=""';
+        return '<div class="col-sm">'
+            . '<div class="form-group">'
+            . $i18n->trans('business-name')
+            . '<input type="text" ' . $attributes . ' value="' . $model->nombrecliente . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function numero2(Translator $i18n, SalesDocument $model): string
+    {
+        $attributes = $model->editable ? 'name="numero2" maxlength="50" placeholder="' . $i18n->trans('optional') . '"' : 'disabled=""';
+        return empty($model->codcliente) ? '' : '<div class="col-sm">'
+            . '<div class="form-group">'
+            . $i18n->trans('number2')
+            . '<input type="text" ' . $attributes . ' value="' . $model->numero2 . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function renderField(Translator $i18n, SalesDocument $model, string $field): ?string
+    {
+        foreach (self::$mods as $mod) {
+            $html = $mod->renderField($i18n, $model, $field);
+            if ($html !== null) {
+                return $html;
+            }
+        }
+
+        switch ($field) {
+            case '_children':
+                return self::children($i18n, $model);
+
+            case '_detail':
+                return self::detail($i18n, $model);
+
+            case '_fecha':
+                return self::fecha($i18n, $model, false);
+
+            case '_parents':
+                return self::parents($i18n, $model);
+
+            case 'cifnif':
+                return self::cifnif($i18n, $model);
+
+            case 'codagente':
+                return self::codagente($i18n, $model);
+
+            case 'codalmacen':
+                return self::codalmacen($i18n, $model);
+
+            case 'codcliente':
+                return self::codcliente($i18n, $model);
+
+            case 'coddivisa':
+                return self::coddivisa($i18n, $model);
+
+            case 'codigoenv':
+                return self::codigoenv($i18n, $model);
+
+            case 'codpago':
+                return self::codpago($i18n, $model);
+
+            case 'codserie':
+                return self::codserie($i18n, $model, 'salesFormAction');
+
+            case 'codtrans':
+                return self::codtrans($i18n, $model);
+
+            case 'fecha':
+                return self::fecha($i18n, $model);
+
+            case 'femail':
+                return self::femail($i18n, $model);
+
+            case 'finoferta':
+                return self::finoferta($i18n, $model);
+
+            case 'hora':
+                return self::hora($i18n, $model);
+
+            case 'idcontactofact':
+                return self::idcontactofact($i18n, $model);
+
+            case 'idcontactoenv':
+                return self::idcontactoenv($i18n, $model);
+
+            case 'idestado':
+                return self::idestado($i18n, $model, 'salesFormSave');
+
+            case 'nombrecliente':
+                return self::nombrecliente($i18n, $model);
+
+            case 'numero2':
+                return self::numero2($i18n, $model);
+
+            case 'paid':
+                return self::paid($i18n, $model, 'salesFormSave');
+
+            case 'saveBtn':
+                return self::saveBtn($i18n, $model, 'salesFormSave');
+
+            case 'tasaconv':
+                return self::tasaconv($i18n, $model);
+
+            case 'total':
+                return self::column($i18n, $model, 'total', 'total', true);
+
+            case 'user':
+                return self::user($i18n, $model);
+        }
+
+        return null;
+    }
+
+    private static function renderNewFields(Translator $i18n, SalesDocument $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
+    }
+}

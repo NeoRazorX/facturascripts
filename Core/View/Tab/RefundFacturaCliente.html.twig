@@ -85,13 +85,13 @@
                                 <div class="form-group">
                                     {{ i18n.trans('serie') }}
                                     <select name="codserie" class="form-control">
-                                        {% for codserie, descripcion in firstView.getSelectValues('Serie') %}
-                                            {% if codserie == appSettings.get('default','codserierec','R') %}
-                                                <option value="{{ codserie }}" selected>
-                                                    {{ descripcion }}
+                                        {% for serie in fsc.series() %}
+                                            {% if serie.codserie == appSettings.get('default','codserierec','R') %}
+                                                <option value="{{ serie.codserie }}" selected>
+                                                    {{ serie.descripcion }}
                                                 </option>
                                             {% else %}
-                                                <option value="{{ codserie }}">{{ descripcion }}</option>
+                                                <option value="{{ serie.codserie }}">{{ serie.descripcion }}</option>
                                             {% endif %}
                                         {% endfor %}
                                     </select>

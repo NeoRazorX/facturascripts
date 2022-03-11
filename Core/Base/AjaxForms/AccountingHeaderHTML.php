@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Lib\AjaxForms;
+namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Lib\CodePatterns;
