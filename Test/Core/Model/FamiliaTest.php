@@ -28,12 +28,6 @@ final class FamiliaTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testDataInstalled()
-    {
-        $family = new Familia();
-        $this->assertNotEmpty($family->all(), 'family-data-not-installed-from-csv');
-    }
-
     public function testCreate()
     {
         $family = new Familia();
