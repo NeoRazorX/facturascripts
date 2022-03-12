@@ -45,11 +45,13 @@
                                 <button type="button" class="btn btn-success" data-toggle="modal"
                                         data-target="#modal{{ currentView.settings.modalInsert }}">
                                     <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                                    <span class="d-none d-xl-inline-block">{{ i18n.trans('new') }}</span>
                                 </button>
                             {% else %}
                                 <a href="{{ asset(currentView.btnNewUrl()) }}" class="btn btn-success"
                                    title="{{ i18n.trans('new') }}">
                                     <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                                    <span class="d-none d-xl-inline-block">{{ i18n.trans('new') }}</span>
                                 </a>
                             {% endif %}
                         {% endif %}
