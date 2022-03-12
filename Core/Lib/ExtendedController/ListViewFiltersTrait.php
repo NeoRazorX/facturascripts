@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -90,7 +91,7 @@ trait ListViewFiltersTrait
      * @param string $label
      * @param string $field
      * @param string $operation
-     * @param mixed  $matchValue
+     * @param mixed $matchValue
      * @param array $default
      */
     public function addFilterCheckbox(string $key, string $label = '', string $field = '', string $operation = '=', $matchValue = true, array $default = [])
@@ -179,7 +180,7 @@ trait ListViewFiltersTrait
     {
         $pageFilter = new PageFilter();
         if ($pageFilter->loadFromCode($idfilter) && $pageFilter->delete()) {
-            /// remove form the list
+            // remove form the list
             unset($this->pageFilters[$idfilter]);
 
             return true;
@@ -202,8 +203,8 @@ trait ListViewFiltersTrait
         // Set values data filter
         foreach ($this->filters as $filter) {
             $name = $filter->name();
-            $value = $request->request->get($name, null);
-            if (!is_null($value)) {
+            $value = $request->request->get($name);
+            if ($value !== null) {
                 $pageFilter->filters[$name] = $value;
             }
         }
@@ -214,7 +215,7 @@ trait ListViewFiltersTrait
         }
 
         // Set basic data and save filter
-        $pageFilter->id = $request->request->get('filter-id', null);
+        $pageFilter->id = $request->request->get('filter-id');
         $pageFilter->description = $request->request->get('filter-description', '');
         $pageFilter->name = explode('-', $this->getViewName())[0];
         $pageFilter->nick = $user->nick;
@@ -229,14 +230,13 @@ trait ListViewFiltersTrait
     }
 
     /**
-     * 
      * @param DataBaseWhere[] $where
      */
     private function loadSavedFilters(array $where)
     {
         $pageFilter = new PageFilter();
-        $orderby = ['nick' => 'ASC', 'description' => 'ASC'];
-        foreach ($pageFilter->all($where, $orderby) as $filter) {
+        $orderBy = ['nick' => 'ASC', 'description' => 'ASC'];
+        foreach ($pageFilter->all($where, $orderBy) as $filter) {
             $this->pageFilters[$filter->id] = $filter;
         }
     }
