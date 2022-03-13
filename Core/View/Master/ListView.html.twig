@@ -41,15 +41,15 @@
                 <div class="col-md-auto mb-2">
                     {% if currentView.settings.btnNew %}
                         {% if currentView.settings.modalInsert %}
-                            <button type="button" class="btn btn-success" data-toggle="modal"
-                                    data-target="#modal{{ currentView.settings.modalInsert }}">
+                            <button type="button" class="btn btn-success" title="{{ i18n.trans('new') }}"
+                                    data-toggle="modal" data-target="#modal{{ currentView.settings.modalInsert }}">
                                 <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
-                                <span class="d-none d-xl-inline-block">{{ i18n.trans('add') }}</span>
+                                <span class="d-none d-xl-inline-block">{{ i18n.trans('new') }}</span>
                             </button>
                         {% else %}
                             <a href="{{ asset(currentView.btnNewUrl()) }}" class="btn btn-success"
-                               title="{{ i18n.trans('add') }}"><i class="fas fa-plus fa-fw" aria-hidden="true"></i>
-                                <span class="d-none d-xl-inline-block">{{ i18n.trans('add') }}</span>
+                               title="{{ i18n.trans('new') }}"><i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                                <span class="d-none d-xl-inline-block">{{ i18n.trans('new') }}</span>
                             </a>
                         {% endif %}
                     {% endif %}
