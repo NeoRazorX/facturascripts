@@ -25,7 +25,7 @@
     }
 
     function accEntryFormAction(action, selectedLine, btn = '') {
-        if (btn !== '') {
+        if (btn !== '' && !existSpinner(btn)) {
             animateSpinner(btn, 'add');
         }
 

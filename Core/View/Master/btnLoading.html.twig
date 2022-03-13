@@ -58,4 +58,8 @@
                 parseFloat(spinner.css('animation-duration')) * 1000)
         );
     }
+	
+    function existSpinner (btn) {
+        return btn.find('div.spinner').length !== 0;
+    }
 </script>
