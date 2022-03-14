@@ -217,16 +217,23 @@ class AccountingCreation
      */
     public function getFreeSubjectSubaccount($subject, $account)
     {
-        if (!$this->checkExercise($account->codejercicio)) {
+        if (false === $this->checkExercise($account->codejercicio)) {
             return '';
         }
 
+        // nos quedamos solamente con los números del código
         $code = preg_replace('/[^0-9]/', '', $subject->primaryColumnValue());
+        if (strlen($code) === $this->exercise->longsubcuenta) {
+            // si el código ya tiene la longitud de una subcuenta, lo usamos como subcuenta
+            return $code;
+        }
+
+        // probamos combinaciones para elegir una subcuenta
         $numbers = array_merge([$code], range(1, 999));
         foreach ($numbers as $num) {
             $newCode = $this->fillToLength($this->exercise->longsubcuenta, $num, $account->codcuenta);
 
-            /// is this code used in other customer or supplier?
+            // comprobamos que esta subcuenta no esté en uso
             $where = [new DataBaseWhere('codsubcuenta', $newCode)];
             $count = $subject->count($where);
 
