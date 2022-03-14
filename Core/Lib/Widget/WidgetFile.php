@@ -65,7 +65,7 @@ class WidgetFile extends BaseWidget
         if ($this->readonly()) {
             $class = $this->combineClasses($this->css('form-control'), $this->class);
             return '<div class="form-group">'
-                . '<label>' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>'
+                . '<label class="mb-1">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>'
                 . '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
                 . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>'
                 . '</div>';
