@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,9 @@
  */
 
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
  * A family of products.
@@ -151,10 +154,8 @@ class Familia extends Base\ModelClass
      */
     public function test()
     {
-        $utils = $this->toolBox()->utils();
-        $this->codfamilia = $utils->noHtml($this->codfamilia);
-        $this->descripcion = $utils->noHtml($this->descripcion);
-
+        // comprobamos codfamilia
+        $this->codfamilia = self::toolBox()::utils()::noHtml($this->codfamilia);
         if ($this->codfamilia && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
@@ -163,6 +164,8 @@ class Familia extends Base\ModelClass
             return false;
         }
 
+        // comprobamos descripción
+        $this->descripcion = self::toolBox()::utils()::noHtml($this->descripcion);
         if (empty($this->descripcion) || strlen($this->descripcion) > 100) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
@@ -171,11 +174,7 @@ class Familia extends Base\ModelClass
             return false;
         }
 
-        if (empty($this->madre) || $this->madre === $this->codfamilia) {
-            $this->madre = null;
-        }
-
-        return parent::test();
+        return parent::test() && $this->testLoops() && $this->testAccounting();
     }
 
     /**
@@ -216,5 +215,60 @@ class Familia extends Base\ModelClass
         }
 
         return parent::saveInsert($values);
+    }
+
+    protected function testAccounting(): bool
+    {
+        // comprobamos las subcuentas vinculadas
+        $subaccount = new DinSubcuenta();
+        if ($this->codsubcuentacom) {
+            $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentacom)];
+            if (false === $subaccount->loadFromCode('', $where)) {
+                $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
+                return false;
+            }
+        }
+        if (false === empty($this->codsubcuentairpfcom)) {
+            $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentairpfcom)];
+            if (false === $subaccount->loadFromCode('', $where)) {
+                $this->toolBox()->i18nLog()->warning('irpf-subaccount-not-found');
+                return false;
+            }
+        }
+        if (false === empty($this->codsubcuentaven)) {
+            $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentaven)];
+            if (false === $subaccount->loadFromCode('', $where)) {
+                $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected function testLoops(): bool
+    {
+        if (empty($this->madre)) {
+            return true;
+        }
+
+        // comprobamos que la familia no sea su propia madre
+        if ($this->madre === $this->codfamilia) {
+            $this->madre = null;
+            return true;
+        }
+
+        // recorremos los ancestros de esta familia, si repetimos ancestro es que hay un bucle, y eso es un problema
+        $ancestros = [$this->codfamilia];
+        $fam = new static();
+        $fam->madre = $this->madre;
+        while ($fam->madre && $fam->loadFromCode($fam->madre)) {
+            if (in_array($fam->codfamilia, $ancestros)) {
+                return false;
+            }
+            $ancestros[] = $fam->codfamilia;
+        }
+
+        return true;
     }
 }

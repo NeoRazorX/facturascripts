@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -57,10 +58,9 @@ class Cuenta extends Base\ModelClass
     public $descripcion;
 
     /**
-     *
      * @var bool
      */
-    private $disableAditionalTest = false;
+    private $disableAdditionalTest = false;
 
     /**
      * Primary key.
@@ -85,12 +85,12 @@ class Cuenta extends Base\ModelClass
 
     /**
      * Removes this account from the database.
-     * 
+     *
      * @return bool
      */
     public function delete()
     {
-        if ($this->getExercise()->isOpened() || $this->disableAditionalTest) {
+        if ($this->getExercise()->isOpened() || $this->disableAdditionalTest) {
             return parent::delete();
         }
 
@@ -99,12 +99,11 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * 
      * @param bool $value
      */
     public function disableAditionalTest(bool $value)
     {
-        $this->disableAditionalTest = $value;
+        $this->disableAdditionalTest = $value;
     }
 
     /**
@@ -119,7 +118,7 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * Retuns parent account.
+     * Returns parent account.
      *
      * @return static
      */
@@ -127,12 +126,12 @@ class Cuenta extends Base\ModelClass
     {
         $parent = new static();
 
-        /// no parent data?
+        // no parent data?
         if (empty($this->parent_idcuenta) && empty($this->parent_codcuenta)) {
             return $parent;
         }
 
-        /// parent id?
+        // parent id?
         if (!empty($this->parent_idcuenta) && $parent->loadFromCode($this->parent_idcuenta) && $parent->codejercicio === $this->codejercicio) {
             return $parent;
         }
@@ -166,7 +165,7 @@ class Cuenta extends Base\ModelClass
      */
     public function install()
     {
-        /// force the parents tables
+        // force the parents tables
         new DinCuentaEspecial();
         new DinEjercicio();
 
@@ -184,7 +183,6 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     *
      * @return string
      */
     public function primaryDescriptionColumn()
@@ -193,12 +191,11 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     * 
      * @return bool
      */
     public function save()
     {
-        if ($this->getExercise()->isOpened() || $this->disableAditionalTest) {
+        if ($this->getExercise()->isOpened() || $this->disableAdditionalTest) {
             return parent::save();
         }
 
@@ -223,14 +220,19 @@ class Cuenta extends Base\ModelClass
      */
     public function test()
     {
-        $this->codcuenta = \trim($this->codcuenta);
+        $this->codcuenta = trim($this->codcuenta);
+        if (empty($this->codcuenta) || false === is_numeric($this->codcuenta)) {
+            $this->toolBox()->i18nLog()->warning('invalid-number', ['%number%' => $this->codcuenta]);
+            return false;
+        }
+
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
-        if (\strlen($this->descripcion) < 1 || \strlen($this->descripcion) > 255) {
+        if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
             $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']);
             return false;
         }
 
-        /// prevent loops
+        // prevent loops
         if (!empty($this->parent_idcuenta) && $this->parent_idcuenta === $this->idcuenta) {
             $this->parent_idcuenta = null;
         }
@@ -238,21 +240,21 @@ class Cuenta extends Base\ModelClass
             $this->parent_codcuenta = null;
         }
 
-        /// uncomplete parent account data?
+        // uncompleted parent account data?
         if (!empty($this->parent_idcuenta) || !empty($this->parent_codcuenta)) {
             $parent = $this->getParent();
             $this->parent_codcuenta = $parent->codcuenta;
             $this->parent_idcuenta = $parent->idcuenta;
 
-            /// code length must be bigger than the parent
-            if (\strlen($this->codcuenta) <= \strlen($parent->codcuenta)) {
+            // code length must be bigger than the parent
+            if (strlen($this->codcuenta) <= strlen($parent->codcuenta)) {
                 $this->toolBox()->i18nLog()->warning('account-code-lower-than-parent', ['%code%' => $this->codcuenta]);
                 return false;
             }
         }
 
-        /// code lenght must be lower than subaccounts
-        if (\strlen($this->codcuenta) >= $this->getExercise()->longsubcuenta) {
+        // code length must be lower than subaccounts
+        if (strlen($this->codcuenta) >= $this->getExercise()->longsubcuenta) {
             $this->toolBox()->i18nLog()->warning('account-code-bigger-than-subaccounts', ['%code%' => $this->codcuenta]);
             return false;
         }
@@ -261,7 +263,6 @@ class Cuenta extends Base\ModelClass
     }
 
     /**
-     *
      * @param string $type
      * @param string $list
      *

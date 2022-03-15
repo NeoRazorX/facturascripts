@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -31,13 +32,11 @@ class WidgetFile extends BaseWidget
 {
 
     /**
-     *
      * @var string
      */
     public $accept;
 
     /**
-     * 
      * @param array $data
      */
     public function __construct($data)
@@ -47,7 +46,6 @@ class WidgetFile extends BaseWidget
     }
 
     /**
-     * 
      * @param object $model
      * @param string $title
      * @param string $description
@@ -65,7 +63,7 @@ class WidgetFile extends BaseWidget
         if ($this->readonly()) {
             $class = $this->combineClasses($this->css('form-control'), $this->class);
             return '<div class="form-group">'
-                . '<label>' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>'
+                . '<label class="mb-1">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>'
                 . '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
                 . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>'
                 . '</div>';
@@ -75,26 +73,25 @@ class WidgetFile extends BaseWidget
     }
 
     /**
-     * 
-     * @param object  $model
+     * @param object $model
      * @param Request $request
      */
     public function processFormData(&$model, $request)
     {
-        $minilog = new MiniLog();
+        $logger = new MiniLog();
 
         // get file uploads
         foreach ($request->files->all() as $key => $uploadFile) {
             if ($key != $this->fieldname || is_null($uploadFile)) {
                 continue;
             } elseif (false === $uploadFile->isValid()) {
-                $minilog->error($uploadFile->getErrorMessage());
+                $logger->error($uploadFile->getErrorMessage());
                 continue;
             }
 
-            /// exclude php files
-            if (\in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-                $minilog->error($this->i18n->trans('php-files-blocked'));
+            // exclude php files
+            if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
+                $logger->error($this->i18n->trans('php-files-blocked'));
                 continue;
             }
 
@@ -103,7 +100,7 @@ class WidgetFile extends BaseWidget
                 break;
             }
 
-            $minilog->error('file-not-found');
+            $logger->error('file-not-found');
         }
     }
 
@@ -118,7 +115,6 @@ class WidgetFile extends BaseWidget
     }
 
     /**
-     * 
      * @param string $type
      * @param string $extraClass
      *
@@ -132,7 +128,6 @@ class WidgetFile extends BaseWidget
     }
 
     /**
-     * 
      * @return string
      */
     protected function inputHtmlExtraParams()

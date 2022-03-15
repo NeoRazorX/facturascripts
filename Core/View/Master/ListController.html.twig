@@ -17,12 +17,12 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 #}
-{% extends "Master/MenuTemplate.html.twig" %}
+{% extends "Master/MenuBghTemplate.html.twig" %}
 
 {% block bodyHeaderOptions %}
     {{ parent() }}
     {% set pageData = fsc.getPageData() %}
-    <div class="container-fluid mb-1 d-print-none">
+    <div class="container-fluid mb-3 d-print-none">
         <div class="row">
             <div class="col-md-7">
                 {# -- Page data for small devices -- #}
@@ -39,20 +39,20 @@
                         <li class="breadcrumb-item active" aria-current="page">{{ fsc.title }}</li>
                     </ol>
                 </nav>
-                <div class="btn-group bg-white">
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}"
+                <div class="btn-group">
+                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}"
                        title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                     {% if pageData.name == fsc.user.homepage %}
-                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE"
+                        <a class="btn btn-sm btn-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE"
                            title="{{ i18n.trans('marked-as-homepage') }}">
                             <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
-                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
+                        <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
                            title="{{ i18n.trans('mark-as-homepage') }}">
-                            <i class="fas fa-bookmark" aria-hidden="true"></i>
+                            <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                 </div>
@@ -75,10 +75,9 @@
                 </div>
             </div>
             <div class="col-md-5 text-right">
-                <h1 class="h3 d-none d-md-inline-block">
-                    {{ fsc.title }} <i class="{{ pageData.icon }}" aria-hidden="true"></i>
+                <h1 class="h4 mb-0 d-none d-md-inline-block">
+                    {{ fsc.title }}<i class="{{ pageData.icon }} ml-3" aria-hidden="true"></i>
                 </h1>
-                <br class="d-md-none"/>
             </div>
         </div>
     </div>
@@ -89,7 +88,7 @@
                 {% set active = (viewName == fsc.active) ? ' active' : '' %}
                 <a href="#{{ viewName }}" class="nav-link{{ active }}" data-toggle="tab" role="tab"
                    aria-controls="{{ viewName }}">
-                    <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i>
+                    <i class="{{ view.icon }}" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">{{ view.title }}</span>
                     {% if view.count > 0 %}
                         <span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>
@@ -114,15 +113,6 @@
     </div>
 {% endblock %}
 
-{% block css %}
-    {{ parent() }}
-    <style>
-        .bg-header {
-            background-color: #FAFBFC;
-        }
-    </style>
-{% endblock %}
-
 {% block javascripts %}
     {{ parent() }}
     <script>
@@ -130,7 +120,7 @@
             if (document.location.hash) {
                 $(".nav-tabs a[href=\\" + document.location.hash + "]").tab('show');
             }
-            if (window.innerWidth > 1023) {
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
                 $("input[name='query']:visible").focus();
             }
             $('.nav-tabs a').click(function (e) {
@@ -140,7 +130,7 @@
                 $('html,body').scrollTop(scrollmem);
             });
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                if (window.innerWidth > 1023) {
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
                     $("input[name='query']:visible").focus();
                 }
             });

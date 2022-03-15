@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -74,12 +75,11 @@ class Provincia extends Base\ModelClass
     }
 
     /**
-     *
      * @return string
      */
     public function install()
     {
-        /// needed dependencies
+        // needed dependencies
         new Pais();
 
         return parent::install();
@@ -127,5 +127,20 @@ class Provincia extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List')
     {
         return parent::url($type, $list);
+    }
+
+    /**
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function saveInsert(array $values = [])
+    {
+        if (empty($this->idprovincia)) {
+            // asignamos el nuevo ID así para evitar problemas con postgresql por haber importado el listado con ids incluidos
+            $this->idprovincia = $this->newCode();
+        }
+
+        return parent::saveInsert($values);
     }
 }

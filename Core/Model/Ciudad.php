@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,11 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * Ciudad
- * 
+ *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Frank Aguirre        <faguirre@soenac.com>
  */
@@ -30,48 +31,37 @@ class Ciudad extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * Ciudad
-     *
      * @var string
      */
     public $ciudad;
 
     /**
-     * Code id
-     *
      * @var string
      */
     public $codeid;
 
     /**
-     * Id ciudad
-     *
      * @var int
      */
     public $idciudad;
 
     /**
-     * Id provincia
-     *
      * @var int
      */
     public $idprovincia;
 
     /**
-     * 
      * @return string
      */
     public function install()
     {
-        /// needed dependency
+        // needed dependency
         new Provincia();
 
         return parent::install();
     }
 
     /**
-     * Primary column
-     *
      * @return string
      */
     public static function primaryColumn()
@@ -80,13 +70,20 @@ class Ciudad extends Base\ModelClass
     }
 
     /**
-     * Table name
-     *
      * @return string
      */
     public static function tableName()
     {
         return 'ciudades';
+    }
+
+    /**
+     * @return bool
+     */
+    public function test()
+    {
+        $this->ciudad = self::toolBox()::utils()::noHtml($this->ciudad);
+        return parent::test();
     }
 
     /**

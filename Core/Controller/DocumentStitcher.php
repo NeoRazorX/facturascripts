@@ -160,6 +160,8 @@ class DocumentStitcher extends Controller
             if ($doc->codalmacen != $newDoc->codalmacen ||
                 $doc->coddivisa != $newDoc->coddivisa ||
                 $doc->idempresa != $newDoc->idempresa ||
+                $doc->dtopor1 != $newDoc->dtopor1 ||
+                $doc->dtopor2 != $newDoc->dtopor2 ||
                 $doc->subjectColumnValue() != $newDoc->subjectColumnValue()) {
                 $this->toolBox()->i18nLog()->warning('incompatible-document', ['%code%' => $newDoc->codigo]);
                 return false;

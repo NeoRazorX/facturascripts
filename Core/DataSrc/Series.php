@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,7 +31,7 @@ class Series implements DataSrcInterface
      */
     public static function all(): array
     {
-        if (!isset(self::$list)) {
+        if (null === self::$list) {
             $model = new Serie();
             self::$list = $model->all([], [], 0, 0);
         }
@@ -39,11 +39,11 @@ class Series implements DataSrcInterface
         return self::$list;
     }
 
-    /**
-     * @param bool $addEmpty
-     *
-     * @return array
-     */
+    public static function clear(): void
+    {
+        self::$list = null;
+    }
+
     public static function codeModel(bool $addEmpty = true): array
     {
         $codes = [];

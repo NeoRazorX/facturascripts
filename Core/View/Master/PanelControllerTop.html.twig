@@ -1,45 +1,118 @@
 {#
-    /**
-     * This file is part of FacturaScripts
-     * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Lesser General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU Lesser General Public License for more details.
-     *
-     * You should have received a copy of the GNU Lesser General Public License
-     * along with this program. If not, see http://www.gnu.org/licenses/.
-     */
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ */
 #}
-{% extends "Master/PanelController.html.twig" %}
+{% extends "Master/MenuBghTemplate.html.twig" %}
 
 {% block bodyHeaderOptions %}
     {{ parent() }}
+    {% set pageData = fsc.getPageData() %}
+    {% set firstView = fsc.views | first %}
     <div class="container-fluid d-print-none">
         <div class="row">
-            <div class="col">
-                <ul class="nav nav-tabs" id="mainTabs" role="tablist">
-                    {% for viewName, view in fsc.views %}
-                        <li class="nav-item">
-                            {% set active = (viewName == fsc.active) ? ' active' : '' %}
-                            {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
-                                <i class="{{ view.icon }}" aria-hidden="true"></i>
-                                <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
-                                {% if view.count > 0 %}<span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>{% endif %}
-                            </a>
+            <div class="col-md-12">
+                {# -- Hidden alternative page info -- #}
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb d-md-none">
+                        <li class="breadcrumb-item">
+                            <a href="#">{{ i18n.trans(pageData.menu) }}</a>
                         </li>
-                    {% endfor %}
-                </ul>
+                        {% if pageData.submenu %}
+                            <li class="breadcrumb-item">
+                                <a href="#">{{ i18n.trans(pageData.submenu) }}</a>
+                            </li>
+                        {% endif %}
+                        <li class="breadcrumb-item">
+                            <a href="{{ firstView.model.url('list') }}">{{ i18n.trans(pageData.title) }}</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            {% if fsc.hasData %}
+                                {{ firstView.model.primaryDescription() | raw }}
+                            {% else %}
+                                {{ i18n.trans('new') }}
+                            {% endif %}
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="row">
+            {# -- Top left buttons -- #}
+            <div class="col-md-8 mb-2">
+                <div class="btn-group">
+                    <a href="{{ firstView.model.url('list') }}" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-list fa-fw" aria-hidden="true"></i>
+                        <span class="d-none d-lg-inline-block">{{ i18n.trans('all') }}</span>
+                    </a>
+                    <a href="{{ firstView.model.url('edit') }}" class="btn btn-sm btn-secondary"
+                       title="{{ i18n.trans('refresh') }}">
+                        <i class="fas fa-redo" aria-hidden="true"></i>
+                    </a>
+                </div>
+                {# -- Options button -- #}
+                {{ _self.optionsButton(fsc, firstView, i18n) }}
+                {# -- New button -- #}
+                {% if fsc.hasData and firstView.settings.btnNew %}
+                    <a href="{{ firstView.model.url('new') }}" class="btn btn-sm btn-success">
+                        <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
+                        <span class="d-none d-lg-inline-block">{{ i18n.trans('new') }}</span>
+                    </a>
+                {% endif %}
+                {# -- Action buttons -- #}
+                {{ firstView.getRow('actions').renderTop() | raw }}
+                {# -- Print button -- #}
+                {% if fsc.hasData and firstView.settings.btnPrint %}
+                    {{ _self.printButton(fsc, firstView, i18n) }}
+                {% endif %}
+            </div>
+            {# -- Top right text -- #}
+            <div class="col-md d-none d-md-inline-block text-right">
+                {% set image = fsc.getImageUrl() %}
+                {% if image is empty %}
+                    <i class="{{ pageData.icon }} fa-3x pl-3 float-right" aria-hidden="true"></i>
+                {% else %}
+                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail ml-3 mb-2 float-right"/>
+                {% endif %}
+                <h1 class="h5 mb-0">{{ i18n.trans(pageData.title) }}</h1>
+                {% if fsc.hasData %}
+                    <p class="text-info mb-3">{{ firstView.model.primaryDescription() | raw }}</p>
+                {% else %}
+                    <p class="text-info mb-3">{{ i18n.trans('new') }}</p>
+                {% endif %}
             </div>
         </div>
     </div>
+    <ul class="nav nav-tabs d-print-none" id="mainTabs" role="tablist">
+        {% for viewName, view in fsc.views %}
+            <li class="nav-item">
+                {% set active = (viewName == fsc.active) ? ' active' : '' %}
+                {% set disable = view.settings.active ? '' : ' disabled' %}
+                <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-toggle="tab" role="tab"
+                   aria-controls="{{ viewName }}">
+                    <i class="{{ view.icon }}" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">{{ view.title }}</span>
+                    {% if view.count > 0 %}
+                        <span class="badge badge-secondary">{{ fsc.toolBox().numbers().format(view.count, 0) }}</span>
+                    {% endif %}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
 
 {% block body %}
@@ -54,14 +127,134 @@
     </div>
 {% endblock %}
 
-{% block css %}
+{% block javascripts %}
     {{ parent() }}
-    <style>
-        body {
-            background-color: transparent;
-        }
-        .bg-header {
-            background-color: #FAFBFC;
-        }
-    </style>
+    <script>
+        $(document).ready(function () {
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
+                $("input:visible,textarea:visible").filter(":not([readonly='readonly']):not([disabled='disabled']):not([type='hidden'])").first().focus();
+            }
+        });
+    </script>
 {% endblock %}
+
+{% macro optionsButton(fsc, firstView, i18n) %}
+    {% set show = false %}
+    {% for viewName, view in fsc.views %}
+        {% if view.settings.active and view.columns is not empty %}
+            {% set show = true %}
+        {% endif %}
+    {% endfor %}
+    {% if show %}
+        <div class="btn-group">
+            <div class="dropdown">
+                <button class="btn btn-sm btn-secondary mr-3 dropdown-toggle" type="button" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-wrench fa-fw" aria-hidden="true"></i>
+                    <span class="d-none d-lg-inline-block">{{ i18n.trans('options') }}</span>
+                </button>
+                <div class="dropdown-menu">
+                    {% for viewName, view in fsc.views %}
+                        {% if view.settings.active and view.columns is not empty %}
+                            <a class="dropdown-item"
+                               href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
+                                <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro printButton(fsc, firstView, i18n) %}
+    <div class="btn-group">
+        <a href="{{ firstView.model.url() }}&action=export&option={{ fsc.exportManager.defaultOption() }}"
+           target="_blank" class="btn btn-sm btn-secondary">
+            <i class="fas fa-print fa-fw" aria-hidden="true"></i>
+            <span class="d-none d-lg-inline-block">{{ i18n.trans('print') }}</span>
+        </a>
+        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="sr-only">{{ i18n.trans('more') }}</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
+            {% for key, option in fsc.exportManager.options() %}
+                {% if key != fsc.exportManager.defaultOption() %}
+                    <a href="{{ firstView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
+                        <i class="{{ option.icon }} fa-fw" aria-hidden="true"></i>
+                        {{ i18n.trans(option.description) }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#advancedExportModal">
+                <i class="fas fa-tools fa-fw" aria-hidden="true"></i>
+                {{ i18n.trans('advanced') }}
+            </a>
+            {% set tools = fsc.exportManager.tools() %}
+            {% if tools is not empty %}
+                <div class="dropdown-divider"></div>
+                {% for key, tool in tools %}
+                    <a href="{{ tool.link }}" target="_blank" class="dropdown-item">
+                        <i class="{{ tool.icon }} fa-fw" aria-hidden="true"></i>
+                        {{ i18n.trans(tool.description) }}
+                    </a>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    <form action="{{ firstView.model.url() }}" method="post" target="_blank">
+        <input type="hidden" name="action" value="export"/>
+        <div class="modal fade" id="advancedExportModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-tools fa-fw" aria-hidden="true"></i>
+                            {{ i18n.trans('advanced') }}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-left">
+                        <div class="form-group">
+                            <select name="option" class="form-control">
+                                {% for key, option in fsc.exportManager.options() %}
+                                    <option value="{{ key }}">{{ i18n.trans(option.description) }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            {{ i18n.trans('format') }}
+                            <select name="idformat" class="form-control">
+                                <option value="">{{ i18n.trans('default') }}</option>
+                                <option value="">------</option>
+                                {% for format in fsc.exportManager.getFormats(firstView.model) %}
+                                    <option value="{{ format.id }}">{{ format.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            {{ i18n.trans('language') }}
+                            <select name="langcode" class="form-control">
+                                <option value="">{{ i18n.trans('default') }}</option>
+                                <option value="">------</option>
+                                {% for code, lang in i18n.getAvailableLanguages() %}
+                                    <option value="{{ code }}">{{ lang }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary">
+                                {{ i18n.trans('accept') }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endmacro %}

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ use FacturaScripts\Core\App\AppCron;
 use FacturaScripts\Core\App\AppInstaller;
 use FacturaScripts\Core\App\AppRouter;
 use FacturaScripts\Core\Base\Debug\ProductionErrorHandler;
+use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
@@ -30,7 +31,7 @@ const FS_FOLDER = __DIR__;
 /**
  * Preliminary checks
  */
-if (false === file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'config.php')) {    
+if (false === file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'config.php')) {
     if (version_compare(PHP_VERSION, '7.1') < 0) {
         die('You need PHP 7.1 or later<br/>You have PHP ' . phpversion());
     } elseif (false === file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'vendor')) {
@@ -62,6 +63,7 @@ if (FS_DEBUG) {
     $whoops = new Run;
     $whoops->prependHandler(new PlainTextHandler());
     $whoops->prependHandler(new PrettyPageHandler());
+    $whoops->prependHandler(new JsonResponseHandler());
     $whoops->register();
 } else {
     $errorHandler = new ProductionErrorHandler();

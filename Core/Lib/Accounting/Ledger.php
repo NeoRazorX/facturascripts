@@ -66,13 +66,11 @@ class Ledger extends AccountingBase
                     $debe += (float)$line['debe'];
                     $haber += (float)$line['haber'];
                 }
-                $ledger['totals'] = [
-                    [
-                        'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
-                        'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>',
-                        'saldo' => '<b>' . $this->toolBox()->coins()->format($debe - $haber, FS_NF0, '') . '</b>'
-                    ]
-                ];
+                $ledger['totals'] = [[
+                    'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
+                    'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>',
+                    'saldo' => '<b>' . $this->toolBox()->coins()->format($debe - $haber, FS_NF0, '') . '</b>'
+                ]];
                 break;
 
             case 'S':
@@ -83,13 +81,11 @@ class Ledger extends AccountingBase
                     $debe += (float)$line['debe'];
                     $haber += (float)$line['haber'];
                 }
-                $ledger['totals'] = [
-                    [
-                        'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
-                        'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>',
-                        'saldo' => '<b>' . $this->toolBox()->coins()->format($debe - $haber, FS_NF0, '') . '</b>'
-                    ]
-                ];
+                $ledger['totals'] = [[
+                    'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
+                    'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>',
+                    'saldo' => '<b>' . $this->toolBox()->coins()->format($debe - $haber, FS_NF0, '') . '</b>'
+                ]];
                 break;
 
             default:

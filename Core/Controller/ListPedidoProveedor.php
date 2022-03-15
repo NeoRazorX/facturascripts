@@ -55,6 +55,8 @@ class ListPedidoProveedor extends ListBusinessDocument
         $this->addButtonGroupDocument('ListPedidoProveedor');
         $this->addButtonApproveDocument('ListPedidoProveedor');
 
-        $this->createViewLines('ListLineaPedidoProveedor', 'LineaPedidoProveedor');
+        if ($this->permissions->onlyOwnerData === false) {
+            $this->createViewLines('ListLineaPedidoProveedor', 'LineaPedidoProveedor');
+        }
     }
 }

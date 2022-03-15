@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use BadMethodCallException;
@@ -35,9 +36,9 @@ trait ExtensionsTrait
 
     /**
      * Executes the first matched extension.
-     * 
+     *
      * @param string $name
-     * @param array  $arguments
+     * @param array $arguments
      *
      * @return mixed
      *
@@ -47,7 +48,7 @@ trait ExtensionsTrait
     {
         foreach (static::$extensions as $ext) {
             if ($ext['name'] === $name && $ext['function'] instanceof Closure) {
-                return \call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
+                return call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
             }
         }
 
@@ -55,7 +56,6 @@ trait ExtensionsTrait
     }
 
     /**
-     * 
      * @param mixed $extension
      */
     public static function addExtension($extension)
@@ -63,14 +63,13 @@ trait ExtensionsTrait
         $methods = (new ReflectionClass($extension))->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED);
         foreach ($methods as $method) {
             $method->setAccessible(true);
-            \array_unshift(self::$extensions, ['name' => $method->name, 'function' => $method->invoke($extension)]);
+            array_unshift(self::$extensions, ['name' => $method->name, 'function' => $method->invoke($extension)]);
         }
     }
 
     /**
-     * 
      * @param string $name
-     * @param array  $arguments
+     * @param array $arguments
      *
      * @return mixed
      */
@@ -81,7 +80,7 @@ trait ExtensionsTrait
             if ($ext['name'] !== $name) {
                 continue;
             } elseif ($ext['function'] instanceof Closure) {
-                $return = \call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
+                $return = call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
             }
 
             if ($return !== null) {

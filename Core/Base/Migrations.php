@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,8 +20,10 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
+use FacturaScripts\Dinamic\Model\LogMessage;
 
 /**
  * Description of Migrations
@@ -33,30 +35,40 @@ final class Migrations
 
     public static function run()
     {
-        self::fixCodagente();
         self::initModels();
         self::updateSettings();
         self::updateInvoiceStatus();
+        self::unlockNullProducts();
+        self::clearLogs();
     }
 
-    private static function fixCodagente()
+    private static function clearLogs()
     {
-        $dataBase = new DataBase();
-        $tables = ['albaranescli', 'facturascli', 'pedidoscli', 'presupuestoscli'];
-        foreach ($tables as $table) {
-            if (false === $dataBase->tableExists($table)) {
-                continue;
-            }
-
-            $sql = 'UPDATE ' . $table . ' SET codagente = NULL WHERE codagente IS NOT NULL'
-                . ' AND codagente NOT IN (SELECT codagente FROM agentes);';
-            $dataBase->exec($sql);
+        $logModel = new LogMessage();
+        $where = [new DataBaseWhere('channel', 'master')];
+        if ($logModel->count($where) < 20000) {
+            return;
         }
+
+        // cuando hay miles de registros en el canal master, eliminamos los antiguos para evitar problemas de rendimiento
+        $dataBase = new DataBase();
+        $date = date("Y-m-d H:i:s", strtotime("-1 month"));
+        $sql = "DELETE FROM logs WHERE channel = 'master' AND time < '" . $date . "';";
+        $dataBase->exec($sql);
     }
 
     private static function initModels()
     {
         new FormatoDocumento();
+    }
+
+    private static function unlockNullProducts()
+    {
+        $dataBase = new DataBase();
+        if ($dataBase->tableExists('productos')) {
+            $sql = 'UPDATE productos SET bloqueado = false WHERE bloqueado IS NULL;';
+            $dataBase->exec($sql);
+        }
     }
 
     private static function updateInvoiceStatus()

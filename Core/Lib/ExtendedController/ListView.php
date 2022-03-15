@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -340,16 +340,30 @@ class ListView extends BaseView
             $this->where[] = new DataBaseWhere($fields, ToolBox::utils()::noHtml($this->query), 'XLIKE');
         }
 
-        // select saved filter
+        // filtro guardado seleccionado?
         $this->pageFilterKey = $request->request->get('loadfilter', 0);
-        if (!empty($this->pageFilterKey)) {
-            // Load saved filter into page parameters
+        if ($this->pageFilterKey) {
+            $filterLoad = [];
+            // cargamos los valores en la request
             foreach ($this->pageFilters as $item) {
                 if ($item->id == $this->pageFilterKey) {
                     $request->request->add($item->filters);
+                    $filterLoad = $item->filters;
                     break;
                 }
             }
+            // aplicamos los valores de la request a los filtros
+            foreach ($this->filters as $filter) {
+                $key = 'filter' . $filter->key;
+                $filter->readonly = true;
+                if (array_key_exists($key, $filterLoad)) {
+                    $filter->setValueFromRequest($request);
+                    if ($filter->getDataBaseWhere($this->where)) {
+                        $this->showFilters = true;
+                    }
+                }
+            }
+            return;
         }
 
         // filters

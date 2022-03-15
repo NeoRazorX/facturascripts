@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -68,7 +69,6 @@ class EditAtributo extends EditController
     }
 
     /**
-     * 
      * @param string $viewName
      */
     protected function createViewsAttValues(string $viewName = 'EditAtributoValor')
@@ -76,22 +76,22 @@ class EditAtributo extends EditController
         $this->addEditListView($viewName, 'AtributoValor', 'attribute-values');
         $this->views[$viewName]->setInLine(true);
 
-        /// disable column
+        // disable column
         $this->views[$viewName]->disableColumn('attribute');
     }
 
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
         switch ($viewName) {
             case 'EditAtributoValor':
-                $codatributo = $this->getViewModelValue($this->getMainViewName(), 'codatributo');
-                $where = [new DataBaseWhere('codatributo', $codatributo)];
+                $code = $this->getViewModelValue($this->getMainViewName(), 'codatributo');
+                $where = [new DataBaseWhere('codatributo', $code)];
                 $view->loadData('', $where, ['orden' => 'ASC', 'id' => 'DESC']);
                 break;
 

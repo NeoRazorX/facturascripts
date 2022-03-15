@@ -194,9 +194,9 @@ class AccountingClosingOpening extends AccountingClosingBase
      *
      * @param int $idSubAccount
      *
-     * @return int
+     * @return ?int
      */
-    private function copySubAccount($idSubAccount): int
+    private function copySubAccount($idSubAccount): ?int
     {
         $subAccount = new Subcuenta();
         $subAccount->loadFromCode($idSubAccount);
@@ -215,11 +215,11 @@ class AccountingClosingOpening extends AccountingClosingBase
     {
         $accounting = new AccountingCreation();
 
-        /// update exercise configuration
+        // update exercise configuration
         $this->newExercise->longsubcuenta = $this->exercise->longsubcuenta;
         $this->newExercise->save();
 
-        /// copy accounts
+        // copy accounts
         $accountModel = new Cuenta();
         $where = [new DataBaseWhere('codejercicio', $this->exercise->codejercicio)];
         foreach ($accountModel->all($where, ['codcuenta' => 'ASC'], 0, 0) as $account) {
@@ -229,7 +229,7 @@ class AccountingClosingOpening extends AccountingClosingBase
             }
         }
 
-        /// copy subaccounts
+        // copy subaccounts
         $subaccountModel = new Subcuenta();
         $subaccountModel->clearExerciseCache();
         foreach ($subaccountModel->all($where, ['codsubcuenta' => 'ASC'], 0, 0) as $subaccount) {
@@ -267,7 +267,7 @@ class AccountingClosingOpening extends AccountingClosingBase
     }
 
     /**
-     * Set the sub-account data based on the result of the previous exercise
+     * Set the subaccount data based on the result of the previous exercise
      *
      * @param array $data
      */

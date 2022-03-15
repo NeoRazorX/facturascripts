@@ -202,8 +202,6 @@ class EditFacturaCliente extends SalesDocumentController
         $number = (int)$this->request->request->get('number', '0');
         if ($generator->generate($invoice, $number)) {
             $generator->update($invoice);
-            $invoice->save();
-
             $this->toolBox()->i18nLog()->notice('record-updated-correctly');
             return true;
         }
@@ -293,12 +291,16 @@ class EditFacturaCliente extends SalesDocumentController
             }
         }
 
+        $excludeFields = ['codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora', 'idasiento', 'idestado',
+            'idfacturarect', 'neto', 'netosindto', 'numero', 'pagada', 'total', 'totalirpf', 'totaliva', 'totalrecargo',
+            'totalsuplidos', $invoice->primaryColumn()];
+
         $newRefund = new FacturaCliente();
-        $newRefund->setAuthor($this->user);
-        $newRefund->setSubject($invoice->getSubject());
+        $newRefund->loadFromData($invoice->toArray(), $excludeFields);
         $newRefund->codigorect = $invoice->codigo;
         $newRefund->codserie = $this->request->request->get('codserie');
         $newRefund->idfacturarect = $invoice->idfactura;
+        $newRefund->nick = $this->user->nick;
         $newRefund->observaciones = $this->request->request->get('observaciones');
         $newRefund->setDate($this->request->request->get('fecha'), date(FacturaCliente::HOUR_STYLE));
         if (false === $newRefund->save()) {

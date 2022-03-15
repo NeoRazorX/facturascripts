@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,15 +19,29 @@
 
 namespace FacturaScripts\Test\Core;
 
+use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\Cuenta;
+use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\User;
 
 trait RandomDataTrait
 {
+    protected function getRandomAccount(string $codejercicio): Cuenta
+    {
+        $account = new Cuenta();
+        $account->codcuenta = '9999';
+        $account->codejercicio = $codejercicio;
+        $account->descripcion = 'Test';
+        return $account;
+    }
+
     protected function getRandomAgent(): Agente
     {
         $agente = new Agente();
@@ -42,6 +56,38 @@ trait RandomDataTrait
         $cliente->nombre = 'Customer ' . mt_rand(1, 99999);
         $cliente->razonsocial = 'Empresa ' . mt_rand(1, 99999);
         return $cliente;
+    }
+
+    protected function getRandomCustomerInvoice(): FacturaCliente
+    {
+        // creamos el cliente
+        $subject = $this->getRandomCustomer();
+        $subject->save();
+
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($subject);
+        if ($invoice->save()) {
+            $line = $invoice->getNewLine();
+            $line->cantidad = 1;
+            $line->pvpunitario = mt_rand(100, 9999);
+            $line->save();
+
+            $tool = new BusinessDocumentTools();
+            $tool->recalculate($invoice);
+            $invoice->save();
+        }
+
+        return $invoice;
+    }
+
+    protected function getRandomExercise(): Ejercicio
+    {
+        $model = new Ejercicio();
+        foreach ($model->all() as $ejercicio) {
+            return $ejercicio;
+        }
+
+        return $model;
     }
 
     protected function getRandomProduct(): Producto
@@ -60,6 +106,28 @@ trait RandomDataTrait
         $proveedor->nombre = 'Proveedor ' . mt_rand(1, 999);
         $proveedor->razonsocial = 'Empresa ' . mt_rand(1, 999);
         return $proveedor;
+    }
+
+    protected function getRandomSupplierInvoice(): FacturaProveedor
+    {
+        // creamos el proveedor
+        $subject = $this->getRandomSupplier();
+        $subject->save();
+
+        $invoice = new FacturaProveedor();
+        $invoice->setSubject($subject);
+        if ($invoice->save()) {
+            $line = $invoice->getNewLine();
+            $line->cantidad = 1;
+            $line->pvpunitario = mt_rand(100, 9999);
+            $line->save();
+
+            $tool = new BusinessDocumentTools();
+            $tool->recalculate($invoice);
+            $invoice->save();
+        }
+
+        return $invoice;
     }
 
     protected function getRandomUser(): User

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DownloadTools;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
@@ -118,8 +119,9 @@ class Dashboard extends Controller
      */
     private function getStatsMonth(int $previous): string
     {
-        $mask = '-' . $previous . ' month';
-        return strtolower(date('F', strtotime($mask)));
+        $firstDate = date('01-m-Y');
+        $date = $previous > 0 ? date('01-m-Y', strtotime($firstDate . ' -' . $previous . ' month')) : $firstDate;
+        return strtolower(date('F', strtotime($date)));
     }
 
     /**
@@ -132,13 +134,14 @@ class Dashboard extends Controller
      */
     private function getStatsWhere(string $field, int $previous): array
     {
-        $mask = '-' . $previous . ' month';
-        $where = [new DataBaseWhere($field, date('1-m-Y', strtotime($mask)), '>=')];
-        if ($previous > 0) {
-            $mask = '-' . ($previous - 1) . ' month';
-            $where[] = new DataBaseWhere($field, date('1-m-Y', strtotime($mask)), '<');
-        }
-        return $where;
+        $firstDate = date('01-m-Y');
+        $fromDate = $previous > 0 ? date('01-m-Y', strtotime($firstDate . ' -' . $previous . ' month')) : $firstDate;
+        $untilDate = date('01-m-Y', strtotime($fromDate . ' +1 month'));
+
+        return [
+            new DataBaseWhere($field, $fromDate, '>='),
+            new DataBaseWhere($field, $untilDate, '<')
+        ];
     }
 
     /**
@@ -280,32 +283,31 @@ class Dashboard extends Controller
     private function loadStats()
     {
         $totalModel = new TotalModel();
+
+        // compras
         $this->stats['purchases'] = [
-            $this->getStatsMonth(0) => $totalModel->sum('facturasprov', 'total', $this->getStatsWhere('fecha', 0)),
-            $this->getStatsMonth(1) => $totalModel->sum('facturasprov', 'total', $this->getStatsWhere('fecha', 1)),
-            $this->getStatsMonth(2) => $totalModel->sum('facturasprov', 'total', $this->getStatsWhere('fecha', 2)),
+            $this->getStatsMonth(0) => $totalModel->sum('facturasprov', 'neto', $this->getStatsWhere('fecha', 0)),
+            $this->getStatsMonth(1) => $totalModel->sum('facturasprov', 'neto', $this->getStatsWhere('fecha', 1)),
+            $this->getStatsMonth(2) => $totalModel->sum('facturasprov', 'neto', $this->getStatsWhere('fecha', 2)),
         ];
 
+        // ventas
         $this->stats['sales'] = [
-            $this->getStatsMonth(0) => $totalModel->sum('facturascli', 'total', $this->getStatsWhere('fecha', 0)),
-            $this->getStatsMonth(1) => $totalModel->sum('facturascli', 'total', $this->getStatsWhere('fecha', 1)),
-            $this->getStatsMonth(2) => $totalModel->sum('facturascli', 'total', $this->getStatsWhere('fecha', 2)),
+            $this->getStatsMonth(0) => $totalModel->sum('facturascli', 'neto', $this->getStatsWhere('fecha', 0)),
+            $this->getStatsMonth(1) => $totalModel->sum('facturascli', 'neto', $this->getStatsWhere('fecha', 1)),
+            $this->getStatsMonth(2) => $totalModel->sum('facturascli', 'neto', $this->getStatsWhere('fecha', 2)),
         ];
 
-        $this->stats['taxes'] = [
-            $this->getStatsMonth(0) =>
-                +$totalModel->all('facturascli', $this->getStatsWhere('fecha', 0), ['total' => 'totaliva + totalrecargo'])[0]->totals['total']
-                - $totalModel->all('facturasprov', $this->getStatsWhere('fecha', 0), ['total' => 'totaliva + totalrecargo'])[0]->totals['total'],
+        // impuestos
+        foreach ([0, 1, 2] as $num) {
+            $where = $this->getStatsWhere('fecha', $num);
+            $this->stats['taxes'][$this->getStatsMonth($num)] = $totalModel->sum('facturascli', 'totaliva', $where)
+                + $totalModel->sum('facturascli', 'totalrecargo', $where)
+                - $totalModel->sum('facturasprov', 'totaliva', $where)
+                - $totalModel->sum('facturasprov', 'totalrecargo', $where);
+        }
 
-            $this->getStatsMonth(1) =>
-                +$totalModel->all('facturascli', $this->getStatsWhere('fecha', 1), ['total' => 'totaliva + totalrecargo'])[0]->totals['total']
-                - $totalModel->all('facturasprov', $this->getStatsWhere('fecha', 1), ['total' => 'totaliva + totalrecargo'])[0]->totals['total'],
-
-            $this->getStatsMonth(2) =>
-                +$totalModel->all('facturascli', $this->getStatsWhere('fecha', 2), ['total' => 'totaliva + totalrecargo'])[0]->totals['total']
-                - $totalModel->all('facturasprov', $this->getStatsWhere('fecha', 2), ['total' => 'totaliva + totalrecargo'])[0]->totals['total'],
-        ];
-
+        // clientes
         $customerModel = new Cliente();
         $this->stats['new-customers'] = [
             $this->getStatsMonth(0) => $customerModel->count($this->getStatsWhere('fechaalta', 0)),
@@ -320,7 +322,7 @@ class Dashboard extends Controller
      */
     private function setOpenLinksForDocument($model, $label)
     {
-        $minDate = date(BusinessDocument::DATE_STYLE, strtotime('-2 days'));
+        $minDate = date(ModelCore::DATE_STYLE, strtotime('-2 days'));
         $where = [
             new DataBaseWhere('fecha', $minDate, '>='),
             new DataBaseWhere('nick', $this->user->nick)

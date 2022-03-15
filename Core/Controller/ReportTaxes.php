@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Dinamic\Lib\ExportManager;
+use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -34,6 +35,11 @@ class ReportTaxes extends Controller
 {
 
     const MAX_TOTAL_DIFF = 0.05;
+
+    /**
+     * @var string
+     */
+    public $codserie;
 
     /**
      * @var string
@@ -54,6 +60,11 @@ class ReportTaxes extends Controller
      * @var int
      */
     public $idempresa;
+
+    /**
+     * @var Serie
+     */
+    public $serie;
 
     /**
      * @var string
@@ -80,6 +91,7 @@ class ReportTaxes extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        $this->serie = new Serie();
         $this->initFilters();
         if ('export' === $this->request->request->get('action')) {
             $this->exportAction();
@@ -183,8 +195,7 @@ class ReportTaxes extends Controller
                     . ' LEFT JOIN facturasprov AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
                     . ' AND f.fecha >= ' . $this->dataBase->var2str($this->datefrom)
-                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto)
-                    . ' ORDER BY f.fecha, ' . $numCol . ' ASC;';
+                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto);
                 break;
 
             case 'sales':
@@ -194,13 +205,16 @@ class ReportTaxes extends Controller
                     . ' LEFT JOIN facturascli AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
                     . ' AND f.fecha >= ' . $this->dataBase->var2str($this->datefrom)
-                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto)
-                    . ' ORDER BY f.fecha, ' . $numCol . ' ASC;';
+                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto);
                 break;
 
             default:
                 return [];
         }
+        if ($this->codserie) {
+            $sql .= ' AND codserie = ' . $this->dataBase->var2str($this->codserie);
+        }
+        $sql .= ' ORDER BY f.fecha, ' . $numCol . ' ASC;';
 
         $data = [];
         foreach ($this->dataBase->select($sql) as $row) {
@@ -282,6 +296,7 @@ class ReportTaxes extends Controller
 
     protected function initFilters()
     {
+        $this->codserie = $this->request->request->get('codserie', '');
         $this->datefrom = $this->request->request->get('datefrom', date('Y-m-01'));
         $this->dateto = $this->request->request->get('dateto', date('Y-m-t'));
         $this->idempresa = (int)$this->request->request->get('idempresa', $this->empresa->idempresa);
@@ -403,6 +418,9 @@ class ReportTaxes extends Controller
             . ' WHERE idempresa = ' . $this->dataBase->var2str($this->idempresa)
             . ' AND fecha >= ' . $this->dataBase->var2str($this->datefrom)
             . ' AND fecha <= ' . $this->dataBase->var2str($this->dateto);
+        if ($this->codserie) {
+            $sql .= ' AND codserie = ' . $this->dataBase->var2str($this->codserie);
+        }
         foreach ($this->dataBase->selectLimit($sql) as $row) {
             $neto2 += (float)$row['neto'];
             $totaliva2 += (float)$row['t1'];

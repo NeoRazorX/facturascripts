@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -281,22 +281,14 @@ final class AppInstaller
 
         // Omit the DB name because it will be checked on a later stage
         $connection = @new mysqli($dbData['host'], $dbData['user'], $dbData['pass'], '', (int)$dbData['port']);
-        if (!$connection->connect_error) {
-            // Check that the DB exists, if it doesn't, we create a new one
-            $dbSelected = mysqli_select_db($connection, $dbData['name']);
-            if ($dbSelected) {
-                return true;
-            }
-
-            $sqlCrearBD = 'CREATE DATABASE `' . $dbData['name'] . '`;';
-            if ($connection->query($sqlCrearBD)) {
-                return true;
-            }
+        if ($connection->connect_error) {
+            ToolBox::i18nLog()->critical('cant-connect-database');
+            ToolBox::log()->critical($connection->connect_errno . ': ' . $connection->connect_error);
+            return false;
         }
 
-        ToolBox::i18nLog()->critical('cant-connect-database');
-        ToolBox::log()->critical($connection->connect_errno . ': ' . $connection->connect_error);
-        return false;
+        $sqlCrearBD = 'CREATE DATABASE IF NOT EXISTS `' . $dbData['name'] . '`;';
+        return (bool)$connection->query($sqlCrearBD);
     }
 
     /**

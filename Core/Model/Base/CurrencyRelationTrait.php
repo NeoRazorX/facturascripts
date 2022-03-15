@@ -52,7 +52,7 @@ trait CurrencyRelationTrait
         foreach (Divisas::all() as $divisa) {
             if ($divisa->coddivisa === $coddivisa) {
                 $this->coddivisa = $divisa->coddivisa;
-                $this->tasaconv = $purchase ? $divisa->tasaconvcompra : $divisa->tasaconv;
+                $this->tasaconv = $purchase && $divisa->tasaconvcompra !== null ? $divisa->tasaconvcompra : $divisa->tasaconv;
                 return;
             }
         }

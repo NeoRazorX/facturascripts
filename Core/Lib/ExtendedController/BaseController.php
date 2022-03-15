@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItem;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\User;
@@ -200,9 +201,6 @@ abstract class BaseController extends Controller
         $this->pipe('createViews');
     }
 
-    /**
-     * @param string $viewName
-     */
     public function setCurrentView(string $viewName)
     {
         $this->current = $viewName;
@@ -255,19 +253,36 @@ abstract class BaseController extends Controller
     }
 
     /**
-     * Check if the active user has permission to view the information
+     * Returns true if the active user has permission to view the information
      * of the active record in the informed model.
      *
-     * @param object $model
+     * @param ModelClass $model
      *
      * @return bool
      */
     protected function checkOwnerData($model): bool
     {
-        if ($this->permissions->onlyOwnerData && isset($model->nick) && $model->nick !== $this->user->nick) {
+        if (false === $this->permissions->onlyOwnerData) {
+            return true;
+        }
+
+        // si el modelo tiene nick, comprobamos nick
+        if (property_exists($model, 'nick')) {
+            if (null === $model->nick || $model->nick === $this->user->nick) {
+                return true;
+            }
+            if (property_exists($model, 'codagente') && $this->user->codagente) {
+                return $model->codagente === $this->user->codagente;
+            }
             return false;
         }
 
+        // si el modelo tiene agente, comprobamos agente
+        if (property_exists($model, 'codagente')) {
+            return $model->codagente === $this->user->codagente;
+        }
+
+        // si no hay nada en que apoyarse, permitimos
         return true;
     }
 
@@ -371,19 +386,6 @@ abstract class BaseController extends Controller
     }
 
     /**
-     * Returns the where filter to apply to obtain the data
-     * created by the active user.
-     *
-     * @param object $model
-     *
-     * @return DataBaseWhere[]
-     */
-    protected function getOwnerFilter($model): array
-    {
-        return property_exists($model, 'nick') ? [new DataBaseWhere('nick', $this->user->nick)] : [];
-    }
-
-    /**
      * Return array with parameters values
      *
      * @param array $keys
@@ -399,9 +401,6 @@ abstract class BaseController extends Controller
         return $result;
     }
 
-    /**
-     * @return bool
-     */
     protected function validateFormToken(): bool
     {
         // valid request?

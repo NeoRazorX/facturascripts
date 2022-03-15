@@ -17,7 +17,7 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 #}
-{% extends "Master/MenuTemplate.html.twig" %}
+{% extends "Master/MenuBghTemplate.html.twig" %}
 
 {% set title = i18n.trans(fsc.getPageData()['title']) | capitalize %}
 {% set allPlugins = fsc.getAllPlugins() %}
@@ -28,20 +28,20 @@
     <div class="container-fluid mb-2">
         <div class="row">
             <div class="col-sm-6">
-                <div class="btn-group bg-white">
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}"
+                <div class="btn-group">
+                    <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}"
                        title="{{ i18n.trans('refresh') }}">
                         <i class="fas fa-redo" aria-hidden="true"></i>
                     </a>
                     {% if fsc.getPageData()['name'] == fsc.user.homepage %}
-                        <a class="btn btn-sm btn-outline-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE"
+                        <a class="btn btn-sm btn-secondary active" href="{{ fsc.url() }}?defaultPage=FALSE"
                            title="{{ i18n.trans('marked-as-homepage') }}">
                             <i class="fas fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% else %}
-                        <a class="btn btn-sm btn-outline-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
+                        <a class="btn btn-sm btn-secondary" href="{{ fsc.url() }}?defaultPage=TRUE"
                            title="{{ i18n.trans('mark-as-homepage') }}">
-                            <i class="fas fa-bookmark" aria-hidden="true"></i>
+                            <i class="far fa-bookmark" aria-hidden="true"></i>
                         </a>
                     {% endif %}
                 </div>
@@ -52,8 +52,8 @@
                         <span class="d-none d-sm-inline-block">{{ i18n.trans('add') }}</span>
                     </button>
                 {% endif %}
-                <div class="btn-group bg-white">
-                    <a href="{{ fsc.url() }}?action=rebuild" class="btn btn-sm btn-outline-warning">
+                <div class="btn-group">
+                    <a href="{{ fsc.url() }}?action=rebuild" class="btn btn-sm btn-warning">
                         <i class="fas fa-hammer fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ i18n.trans('rebuild') }}</span>
                     </a>
@@ -143,15 +143,6 @@
             </div>
         </form>
     {% endif %}
-{% endblock %}
-
-{% block css %}
-    {{ parent() }}
-    <style>
-        .bg-header {
-            background-color: #FAFBFC;
-        }
-    </style>
 {% endblock %}
 
 {% block javascripts %}

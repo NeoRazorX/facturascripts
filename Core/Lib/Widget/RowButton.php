@@ -118,8 +118,10 @@ class RowButton extends VisualItem
                     . ' title="' . $this->label . '">' . $icon . $label . '</a>';
 
             case 'modal':
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#modal'
-                    . $this->action . '" title="' . $this->label . '">' . $icon . $label . '</button>';
+                $modal = 'modal' . $this->action;
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#'
+                    . $modal . '" title="' . $this->label . '" onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
+                    . $icon . $label . '</button>';
 
             default:
                 $onclick = $this->getOnClickValue($viewName, $jsFunction);
@@ -138,7 +140,7 @@ class RowButton extends VisualItem
         }
 
         $cssClass = 'btn btn-sm ';
-        $cssClass .= empty($this->color) ? 'btn-outline-secondary' : $this->colorToClass($this->color, 'btn-outline-');
+        $cssClass .= empty($this->color) ? 'btn-secondary' : $this->colorToClass($this->color, 'btn-');
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
 

@@ -60,8 +60,10 @@ class ListPresupuestoCliente extends ListBusinessDocument
         $this->addButtonGroupDocument($mainViewName);
         $this->addButtonApproveDocument($mainViewName);
 
-        // lines view/tab
-        $this->createViewLines('ListLineaPresupuestoCliente', 'LineaPresupuestoCliente');
+        if ($this->permissions->onlyOwnerData === false) {
+            // lines view/tab
+            $this->createViewLines('ListLineaPresupuestoCliente', 'LineaPresupuestoCliente');
+        }
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
- * Model to personalize the impresion of sales and buy documents.
+ * Model to personalize the print format of sales and buy documents.
  *
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
@@ -30,7 +31,6 @@ class FormatoDocumento extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     * 
      * @var bool
      */
     public $autoaplicar;
@@ -57,34 +57,26 @@ class FormatoDocumento extends Base\ModelClass
     public $idempresa;
 
     /**
-     *
      * @var int
      */
     public $idlogo;
 
     /**
-     *
      * @var string
      */
     public $nombre;
 
     /**
-     * 
-     *
      * @var string
      */
     public $texto;
 
     /**
-     * 
-     *
      * @var string
      */
     public $tipodoc;
 
     /**
-     * 
-     *
      * @var string
      */
     public $titulo;
@@ -92,7 +84,7 @@ class FormatoDocumento extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->autoaplicar = false;
+        $this->autoaplicar = true;
     }
 
     /**
@@ -104,7 +96,7 @@ class FormatoDocumento extends Base\ModelClass
      */
     public function install()
     {
-        /// needed dependencies
+        // needed dependencies
         new Serie();
         new Empresa();
 
@@ -132,7 +124,6 @@ class FormatoDocumento extends Base\ModelClass
     }
 
     /**
-     * 
      * @return bool
      */
     public function test()
@@ -150,7 +141,6 @@ class FormatoDocumento extends Base\ModelClass
     }
 
     /**
-     * 
      * @param string $type
      * @param string $list
      *

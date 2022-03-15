@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -125,11 +125,11 @@ class ListProducto extends ListController
         $this->addFilterNumber($viewName, 'max-stock', 'stock', 'variantes.stockfis', '>=');
 
         // disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
-     *
      * @param string $viewName
      */
     protected function createViewStock(string $viewName = 'ListStock')
@@ -166,6 +166,7 @@ class ListProducto extends ListController
         $this->addFilterNumber($viewName, 'min-stock', 'quantity', 'cantidad', '<=');
 
         // disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
     }
 }

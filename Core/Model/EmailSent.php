@@ -135,7 +135,7 @@ class EmailSent extends Base\ModelClass
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListLogMessage?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ConfigEmail?activetab=List')
     {
         return parent::url($type, $list);
     }

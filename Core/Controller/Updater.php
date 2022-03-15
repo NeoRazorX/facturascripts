@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\Migrations;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\TelemetryManager;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
@@ -195,11 +196,6 @@ class Updater extends Controller
      */
     private function getUpdateItems(): array
     {
-        $cacheData = $this->toolBox()->cache()->get('UPDATE_ITEMS');
-        if (\is_array($cacheData)) {
-            return $cacheData;
-        }
-
         $downloader = new DownloadTools();
         $json = \json_decode($downloader->getContents(self::UPDATE_CORE_URL), true);
         if (empty($json)) {
@@ -254,7 +250,7 @@ class Updater extends Controller
                 return;
             }
 
-            if (empty($beta) && $build['beta']) {
+            if (empty($beta) && $build['beta'] && ToolBox::appSettings()->get('default', 'enableupdatesbeta', false)) {
                 $beta = $item;
             }
         }
@@ -294,7 +290,7 @@ class Updater extends Controller
                 return;
             }
 
-            if (empty($beta) && $build['beta']) {
+            if (empty($beta) && $build['beta'] && ToolBox::appSettings()->get('default', 'enableupdatesbeta', false)) {
                 $beta = $item;
             }
         }

@@ -54,6 +54,8 @@ class ListAlbaranCliente extends ListBusinessDocument
         $this->addButtonGroupDocument('ListAlbaranCliente');
         $this->addButtonApproveDocument('ListAlbaranCliente');
 
-        $this->createViewLines('ListLineaAlbaranCliente', 'LineaAlbaranCliente');
+        if ($this->permissions->onlyOwnerData === false) {
+            $this->createViewLines('ListLineaAlbaranCliente', 'LineaAlbaranCliente');
+        }
     }
 }

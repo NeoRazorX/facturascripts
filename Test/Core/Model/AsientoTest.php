@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,21 +16,69 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Model\Asiento;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Core\RandomDataTrait;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Asiento
+ * @covers Asiento
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-final class AsientoTest extends CustomTest
+final class AsientoTest extends TestCase
 {
+    use LogErrorsTrait;
+    use RandomDataTrait;
 
-    protected function setUp()
+    public function testClosedExercise()
     {
-        $this->model = new Asiento();
+        // creamos un ejercicio cerrado
+        $exercise = $this->getRandomExercise();
+        $exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
+        $this->assertTrue($exercise->save(), 'can-not-close-exercise');
+
+        // creamos el asiento
+        $asiento = new Asiento();
+        $asiento->clearExerciseCache();
+        $asiento->concepto = 'Closed';
+        $asiento->fecha = $exercise->fechafin;
+        $asiento->idempresa = $exercise->idempresa;
+        $this->assertFalse($asiento->save(), 'can-save-on-closed-exercise');
+
+        // reabrimos el ejercicio
+        $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
+        $this->assertTrue($exercise->save(), 'can-not-open-exercise');
+        $asiento->clearExerciseCache();
+
+        // ahora se puede crear
+        $this->assertTrue($asiento->save(), 'can-not-save-on-open-exercise');
+
+        // eliminamos
+        $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
+    }
+
+    public function testCheckLogAudit()
+    {
+        $asiento = new Asiento();
+        $asiento->concepto = 'Test';
+        $this->assertTrue($asiento->save(), 'asiento-cant-save');
+        $this->assertNotNull($asiento->primaryColumnValue(), 'asiento-not-stored');
+        $this->assertTrue($asiento->exists(), 'asiento-cant-persist');
+
+        $found = $this->searchAuditLog($asiento->modelClassName(), $asiento->idasiento);
+        $this->assertTrue($found, 'asiento-log-audit-cant-persist');
+
+        // eliminamos
+        $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
+    }
+
+    protected function tearDown()
+    {
+        $this->logErrors();
     }
 }

@@ -62,6 +62,11 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     private $disableUpdateStock = false;
 
     /**
+     * @var bool
+     */
+    private $disableUpdateTotals = false;
+
+    /**
      * Percentage of discount.
      *
      * @var float|int
@@ -190,12 +195,14 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $this->recargo = $this->getTax()->recargo;
     }
 
-    /**
-     * @param bool $value
-     */
     public function disableUpdateStock(bool $value)
     {
         $this->disableUpdateStock = $value;
+    }
+
+    public function disableUpdateTotals(bool $value)
+    {
+        $this->disableUpdateTotals = $value;
     }
 
     /**
@@ -289,10 +296,13 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             $this->servido = 0.0;
         }
 
+        if (false === $this->disableUpdateTotals) {
+            $this->pvpsindto = $this->pvpunitario * $this->cantidad;
+            $this->pvptotal = $this->pvpsindto * $this->getEUDiscount();
+        }
+
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->pvpsindto = $this->pvpunitario * $this->cantidad;
-        $this->pvptotal = $this->pvpsindto * $this->getEUDiscount();
         $this->referencia = $utils->noHtml($this->referencia);
         return parent::test();
     }

@@ -26,7 +26,7 @@ use FacturaScripts\Core\Base\ToolBox;
 /**
  * Auxiliary model to load a list of codes and their descriptions
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class CodeModel

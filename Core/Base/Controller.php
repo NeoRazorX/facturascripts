@@ -134,7 +134,7 @@ class Controller
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
 
-        $this->checkPHPversion(7.1);
+        $this->checkPHPversion(7.2);
     }
 
     /**
