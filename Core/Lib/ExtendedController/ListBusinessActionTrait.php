@@ -98,8 +98,8 @@ trait ListBusinessActionTrait
         $this->addButton($viewName, [
             'action' => 'pay-receipt',
             'confirm' => 'true',
-            'icon' => 'fas fa-check',
-            'label' => 'pay',
+            'icon' => 'fas fa-dollar-sign',
+            'label' => 'paid',
             'type' => 'action'
         ]);
     }
