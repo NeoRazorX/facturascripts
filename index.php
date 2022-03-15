@@ -32,8 +32,8 @@ const FS_FOLDER = __DIR__;
  * Preliminary checks
  */
 if (false === file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'config.php')) {
-    if (version_compare(PHP_VERSION, '7.1') < 0) {
-        die('You need PHP 7.1 or later<br/>You have PHP ' . phpversion());
+    if (version_compare(PHP_VERSION, '7.2') < 0) {
+        die('You need PHP 7.2 or later<br/>You have PHP ' . phpversion());
     } elseif (false === file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'vendor')) {
         die('<h1>COMPOSER ERROR</h1><p>You need to run: composer install</p><p>You should also run: npm install</p>');
     }

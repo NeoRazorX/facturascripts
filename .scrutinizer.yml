@@ -7,7 +7,7 @@ build:
     my-tests:
       environment:
         php:
-          version: 7.1
+          version: 7.2
       services:
         postgres: 10
 checks:
