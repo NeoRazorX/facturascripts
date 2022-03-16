@@ -247,7 +247,7 @@ final class StockTest extends TestCase
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

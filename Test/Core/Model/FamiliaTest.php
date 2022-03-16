@@ -120,7 +120,7 @@ final class FamiliaTest extends TestCase
         $this->assertFalse($family->save(), 'family-can-save');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

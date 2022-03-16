@@ -70,7 +70,7 @@ final class ProvinciaTest extends TestCase
         $this->assertTrue($state->delete(), 'state-cant-delete');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

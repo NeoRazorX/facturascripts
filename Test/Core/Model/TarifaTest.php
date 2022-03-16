@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Tarifa;
@@ -30,7 +31,7 @@ use FacturaScripts\Test\Core\CustomTest;
 final class TarifaTest extends CustomTest
 {
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->model = new Tarifa();
     }
@@ -39,5 +40,5 @@ final class TarifaTest extends CustomTest
     {
         $this->model->{$this->model->primaryColumn()} = 'n"l123';
         $this->assertFalse($this->model->test());
-    }    
+    }
 }

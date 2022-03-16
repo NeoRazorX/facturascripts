@@ -33,7 +33,7 @@ final class AlbaranClienteTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::setDefaultSettings();
     }
@@ -202,7 +202,7 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

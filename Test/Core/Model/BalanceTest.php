@@ -30,7 +30,7 @@ use FacturaScripts\Test\Core\CustomTest;
 final class BalanceTest extends CustomTest
 {
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->model = new Balance();
     }

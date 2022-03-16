@@ -33,7 +33,7 @@ use FacturaScripts\Test\Core\CustomTest;
 class CuentaBancoProveedorTest extends CustomTest
 {
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->model = new CuentaBancoProveedor();
     }

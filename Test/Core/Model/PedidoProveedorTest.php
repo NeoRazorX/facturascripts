@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\PedidoProveedor;
@@ -30,7 +31,7 @@ use FacturaScripts\Test\Core\PurchasesTest;
 class PedidoProveedorTest extends PurchasesTest
 {
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->model = new PedidoProveedor();
     }

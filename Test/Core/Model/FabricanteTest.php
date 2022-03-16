@@ -71,7 +71,7 @@ final class FabricanteTest extends TestCase
         $this->assertTrue($manufacturer->delete(), 'manufacturer-cant-delete');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

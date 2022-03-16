@@ -29,7 +29,7 @@ final class CuentaTest extends TestCase
 {
     use RandomDataTrait;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $account = new Cuenta();
         $where = [new DataBaseWhere('codcuenta', '9999')];

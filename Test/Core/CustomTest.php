@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -31,7 +32,6 @@ abstract class CustomTest extends TestCase
 {
 
     /**
-     *
      * @var ModelClass
      */
     public $model;
@@ -43,17 +43,17 @@ abstract class CustomTest extends TestCase
 
     public function testTableName()
     {
-        $this->assertInternalType('string', $this->model->tableName());
+        $this->assertIsString($this->model->tableName());
     }
 
     public function testPrimaryColumn()
     {
-        $this->assertInternalType('string', $this->model->primaryColumn());
+        $this->assertIsString($this->model->primaryColumn());
     }
 
     public function testPrimaryDescription()
     {
-        $this->assertInternalType('string', $this->model->primaryDescription());
+        $this->assertIsString($this->model->primaryDescription());
     }
 
     public function testFields()
@@ -64,16 +64,16 @@ abstract class CustomTest extends TestCase
     public function testInstall()
     {
         $install = $this->model->install();
-        $this->assertInternalType('string', $install);
+        $this->assertIsString($install);
 
-        if (\strlen($install) > 0) {
+        if (strlen($install) > 0) {
             $this->assertNotEmpty($this->model->all());
         }
     }
 
     public function testUrl()
     {
-        $this->assertInternalType('string', $this->model->url());
+        $this->assertIsString($this->model->url());
     }
 
     public function testExists()
@@ -90,19 +90,19 @@ abstract class CustomTest extends TestCase
         }
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
-        $minilog = new MiniLog();
-        $messages = $minilog->read();
+        $logger = new MiniLog();
+        $messages = $logger->read();
         if (!empty($messages) && $this->getStatus() > 1) {
-            \array_unshift($messages, ['test' => \get_called_class()]);
-            $filename = \FS_FOLDER . \DIRECTORY_SEPARATOR . 'MINILOG.json';
-            $content = \file_exists($filename) ? \file_get_contents($filename) . "\n-----------\n" : '';
-            $content .= \json_encode($messages);
+            array_unshift($messages, ['test' => get_called_class()]);
+            $filename = FS_FOLDER . DIRECTORY_SEPARATOR . 'MINILOG.json';
+            $content = file_exists($filename) ? file_get_contents($filename) . "\n-----------\n" : '';
+            $content .= json_encode($messages);
 
-            \file_put_contents($filename, $content);
+            file_put_contents($filename, $content);
         }
 
-        $minilog->clear();
+        $logger->clear();
     }
 }

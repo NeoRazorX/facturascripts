@@ -37,7 +37,7 @@ final class FacturaProveedorTest extends TestCase
     const PRODUCT1_COST = 99.9;
     const PRODUCT1_QUANTITY = 10;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::setDefaultSettings();
         self::installAccountingPlan();
@@ -235,7 +235,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

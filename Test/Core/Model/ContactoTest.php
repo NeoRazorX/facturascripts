@@ -38,7 +38,7 @@ final class ContactoTest extends TestCase
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

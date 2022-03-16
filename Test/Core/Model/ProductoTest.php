@@ -359,7 +359,7 @@ final class ProductoTest extends TestCase
         return $supplier;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

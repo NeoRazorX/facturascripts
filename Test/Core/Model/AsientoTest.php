@@ -77,7 +77,7 @@ final class AsientoTest extends TestCase
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

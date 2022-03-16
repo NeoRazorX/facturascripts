@@ -39,7 +39,7 @@ final class AccountImportTest extends TestCase
     private const TOTAL_ACCOUNT = 802;
     private const TOTAL_SUBACCOUNT = 721;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $db = new DataBase();
         $db->exec("DELETE FROM subcuentas WHERE codejercicio = '" . self::CODEJERCICIO . "';");
@@ -113,7 +113,7 @@ final class AccountImportTest extends TestCase
         return $ejercicio;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

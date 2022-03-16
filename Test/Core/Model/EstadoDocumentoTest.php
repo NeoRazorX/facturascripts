@@ -128,7 +128,7 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertFalse($status->save(), 'invalid-estado-documento-for-purchase-invoice-can-save');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }
