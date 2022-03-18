@@ -32,7 +32,7 @@ class ReciboProveedorTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::setDefaultSettings();
         self::installAccountingPlan();
@@ -148,7 +148,7 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

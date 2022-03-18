@@ -41,13 +41,13 @@ abstract class PurchasesTest extends CustomTest
 
     public function testPurchaseSave()
     {
-        /// create supplier
+        // create supplier
         $supplier = new Proveedor();
         $supplier->cifnif = '1234';
         $supplier->nombre = 'Paco Purchases';
         $this->assertTrue($supplier->save(), 'proveedor-save-error');
 
-        /// create document
+        // create document
         $model = clone $this->model;
         $model->clear();
         $model->setSubject($supplier);
@@ -68,7 +68,7 @@ abstract class PurchasesTest extends CustomTest
         $model->dtopor2 = 10;
         $this->assertTrue($model->save(), $model->modelClassName() . '-save-error');
 
-        /// create line
+        // create line
         $newLine = $model->getNewLine();
         $newLine->descripcion = 'test';
         $newLine->cantidad = 1;
@@ -79,7 +79,7 @@ abstract class PurchasesTest extends CustomTest
         $newLine->recargo = 0.0;
         $this->assertTrue($newLine->save(), $newLine->modelClassName() . '-save-error');
 
-        /// recalculate totals
+        // recalculate totals
         $tool = new BusinessDocumentTools();
         $tool->recalculate($model);
         $this->assertEquals(90, $model->netosindto, $model->modelClassName() . '-netosindto-error');
@@ -90,13 +90,13 @@ abstract class PurchasesTest extends CustomTest
         $this->assertEquals(78.73, $model->total, $model->modelClassName() . '-total-error');
         $this->assertTrue($model->save(), $model->modelClassName() . '-save2-error');
 
-        /// remove document
+        // remove document
         $this->assertTrue($model->delete(), $model->modelClassName() . '-delete-error');
 
-        /// test line deletion
+        // test line deletion
         $this->assertFalse($newLine->exists(), $newLine->modelClassName() . '-still-exists');
 
-        /// get the contacto to remove
+        // get the contacto to remove
         $contact = $supplier->getDefaultAddress();
 
         /// remove supplier

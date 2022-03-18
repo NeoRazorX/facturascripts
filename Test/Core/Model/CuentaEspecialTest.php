@@ -70,7 +70,7 @@ final class CuentaEspecialTest extends TestCase
         $this->assertFalse($account->save(), 'account-special-cant-save-without-code');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

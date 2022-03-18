@@ -38,7 +38,7 @@ final class FacturaClienteTest extends TestCase
     const PRODUCT1_PRICE = 66.1;
     const PRODUCT1_QUANTITY = 3;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::setDefaultSettings();
         self::installAccountingPlan();
@@ -243,7 +243,7 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

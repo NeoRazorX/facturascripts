@@ -46,7 +46,7 @@ final class AgenteTest extends TestCase
         $this->assertTrue($agent->delete(), 'agent-cant-delete');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }
