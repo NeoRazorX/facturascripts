@@ -392,7 +392,7 @@ final class ProductoTest extends TestCase
         $newLine->loadFromCode($newLine->primaryColumnValue());
         $this->assertTrue(($newLine->pvpunitario == -10), 'doc-line-negative-price-error');
 
-        /// remove customer
+        /// remove budget
         $this->assertTrue($budget->delete(), $budget->modelClassName() . '-delete-error');
 
         /// get contact to remove
