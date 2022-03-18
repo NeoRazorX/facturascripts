@@ -355,7 +355,7 @@ final class ProductoTest extends TestCase
 
         /// check negative price for product
         $product->loadFromCode($product->primaryColumnValue());
-        $this->assertTrue(($product->precio != -10), 'product-negative-price-error');
+        $this->assertTrue(($product->precio == -10), 'product-negative-price-error');
 
         /// create customer
         $customer = new Cliente();
@@ -390,7 +390,7 @@ final class ProductoTest extends TestCase
 
         /// check negative price for budget line
         $newLine->loadFromCode($newLine->primaryColumnValue());
-        $this->assertTrue(($newLine->pvpunitario != -10), 'doc-line-negative-price-error');
+        $this->assertTrue(($newLine->pvpunitario == -10), 'doc-line-negative-price-error');
 
         /// get contact to remove
         $contact = $customer->getDefaultAddress();
