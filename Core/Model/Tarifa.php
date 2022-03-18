@@ -79,7 +79,7 @@ class Tarifa extends Base\ModelClass
     public $valory;
 
     /**
-     * 
+     *
      * @param float $cost
      * @param float $price
      *
@@ -105,11 +105,11 @@ class Tarifa extends Base\ModelClass
             return (float) $cost;
         }
 
-        return $finalPrice > 0 ? $finalPrice : 0.0;
+        return $finalPrice;
     }
 
     /**
-     * 
+     *
      * @param Variante $variant
      * @param Producto $product
      *
@@ -144,7 +144,7 @@ class Tarifa extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @return string
      */
     public function primaryDescriptionColumn()
@@ -183,7 +183,7 @@ class Tarifa extends Base\ModelClass
     }
 
     /**
-     * 
+     *
      * @param array $values
      *
      * @return bool
