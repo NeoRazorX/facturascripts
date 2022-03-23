@@ -400,22 +400,4 @@ abstract class BaseController extends Controller
         }
         return $result;
     }
-
-    protected function validateFormToken(): bool
-    {
-        // valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
-            $this->toolBox()->i18nLog()->warning('invalid-request');
-            return false;
-        }
-
-        // duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            $this->toolBox()->i18nLog()->warning('duplicated-request');
-            return false;
-        }
-
-        return true;
-    }
 }
