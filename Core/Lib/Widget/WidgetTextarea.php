@@ -57,9 +57,9 @@ class WidgetTextarea extends WidgetText
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
         $inputHtml = $this->inputHtml();
-        $labelHtml = '<label class="mb-1">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
+        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
-        return '<div class="form-group">'
+        return '<div class="form-group mb-2">'
             . $labelHtml
             . $inputHtml
             . $descriptionHtml

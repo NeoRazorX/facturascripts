@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,7 +62,7 @@ class BusinessDocumentCode
     {
         $previous = static::getPrevious($sequence, $document);
 
-        /// find maximum number for this sequence data
+        // find maximum number for this sequence data
         foreach ($previous as $lastDoc) {
             $lastNumber = (int)$lastDoc->numero;
             if ($lastNumber >= $sequence->numero || $sequence->usarhuecos) {
@@ -71,15 +71,15 @@ class BusinessDocumentCode
             break;
         }
 
-        /// use gaps?
+        // use gaps?
         if ($sequence->usarhuecos) {
-            /// we look for holes back
+            // we look for holes back
             $expectedNumber = $sequence->numero - 1;
             $preDate = $document->fecha;
             $preHour = $document->hora;
             foreach ($previous as $preDoc) {
                 if ($expectedNumber != $preDoc->numero && $expectedNumber >= $sequence->inicio) {
-                    /// hole found
+                    // hole found
                     $document->fecha = $preDate;
                     $document->hora = $preHour;
                     return (string)$expectedNumber;
@@ -91,10 +91,10 @@ class BusinessDocumentCode
             }
 
             if (empty($previous)) {
-                /// no previous document, then use initial number
+                // no previous document, then use initial number
                 $sequence->numero = $sequence->inicio;
             } elseif ($expectedNumber >= $sequence->inicio && $expectedNumber >= $sequence->numero - self::GAP_LIMIT) {
-                /// the gap is in the first positions of the range
+                // the gap is in the first positions of the range
                 $document->fecha = $preDate;
                 $document->hora = $preHour;
                 return (string)$expectedNumber;
@@ -103,7 +103,7 @@ class BusinessDocumentCode
 
         $newNumber = $sequence->numero;
 
-        /// update sequence
+        // update sequence
         $sequence->numero++;
         $sequence->save();
 
@@ -142,7 +142,7 @@ class BusinessDocumentCode
         $patron = substr(strtoupper($document->modelClassName()), 0, 3) . '{EJE}{SERIE}{NUM}';
         $long = $selectedSequence->longnumero;
 
-        /// find sequence for this document and serie
+        // find sequence for this document and serie
         $sequence = new SecuenciaDocumento();
         $where = [
             new DataBaseWhere('codserie', $document->codserie),
@@ -151,19 +151,19 @@ class BusinessDocumentCode
         ];
         foreach ($sequence->all($where) as $seq) {
             if (empty($seq->codejercicio)) {
-                /// sequence for all exercises
+                // sequence for all exercises
                 $selectedSequence = $seq;
             } elseif ($seq->codejercicio == $document->codejercicio) {
-                /// sequence for this exercise
+                // sequence for this exercise
                 return $seq;
             }
 
-            /// use old pattern for the new sequence
+            // use old pattern for the new sequence
             $patron = $seq->patron;
             $long = $seq->longnumero;
         }
 
-        /// sequence not found? Then create
+        // sequence not found? Then create
         if (false === $selectedSequence->exists()) {
             $selectedSequence->codejercicio = $document->codejercicio;
             $selectedSequence->codserie = $document->codserie;

@@ -65,11 +65,11 @@ class WidgetAutocomplete extends WidgetSelect
         $this->setValue($model);
         $descriptionHtml = empty($description) ? '' : '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
         $inputHtml = $this->inputHtml();
-        $labelHtml = '<label class="mb-1">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
+        $labelHtml = '<label class="mb-0">' . $this->onclickHtml(static::$i18n->trans($title), $titleurl) . '</label>';
 
         if ('' === $this->value || null === $this->value) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-                . '<div class="form-group">'
+                . '<div class="form-group mb-2">'
                 . $labelHtml
                 . '<div class="input-group">'
                 . '<div class="' . $this->css('input-group-prepend') . '">'
@@ -82,7 +82,7 @@ class WidgetAutocomplete extends WidgetSelect
         }
 
         return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-            . '<div class="form-group">'
+            . '<div class="form-group mb-2">'
             . $labelHtml
             . '<div class="input-group">'
             . $this->inputGroupClearBtn()
