@@ -37,6 +37,7 @@ final class AsientoTest extends TestCase
 
     public function testCreate()
     {
+        // creamos el asiento
         $asiento = new Asiento();
         $asiento->concepto = 'Test';
         $this->assertTrue($asiento->save(), 'asiento-cant-save');
@@ -105,6 +106,7 @@ final class AsientoTest extends TestCase
 
     public function testCheckLogAudit()
     {
+        // creamos el asiento
         $asiento = new Asiento();
         $asiento->concepto = 'Test';
         $this->assertTrue($asiento->save(), 'asiento-cant-save');
