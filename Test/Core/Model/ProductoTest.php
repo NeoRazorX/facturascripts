@@ -21,12 +21,17 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\Base\ModelCore;
+use FacturaScripts\Core\Model\Almacen;
+use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Fabricante;
 use FacturaScripts\Core\Model\Familia;
+use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\Impuesto;
+use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -339,6 +344,68 @@ final class ProductoTest extends TestCase
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
         $this->assertFalse($variants[0]->exists(), 'variant-still-exists');
+    }
+
+    public function testNegativePrice()
+    {
+        /// create a product with negative price
+        $product = $this->getTestProduct();
+        $product->precio = -10;
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        /// check negative price for product
+        $product->loadFromCode($product->primaryColumnValue());
+        $this->assertTrue(($product->precio == -10), 'product-negative-price-error');
+
+        /// create customer
+        $customer = new Cliente();
+        $customer->cifnif = '1234';
+        $customer->nombre = 'Pepe Sales';
+        $this->assertTrue($customer->save(), 'cliente-save-error');
+
+        /// create a budget for customer
+        $budget = new PresupuestoCliente();
+        $budget->setSubject($customer);
+        $warehouseModel = new Almacen();
+        foreach ($warehouseModel->all() as $warehouse) {
+            $budget->codalmacen = $warehouse->codalmacen;
+            break;
+        }
+        $paymentModel = new FormaPago();
+        foreach ($paymentModel->all() as $payment) {
+            $budget->codpago = $payment->codpago;
+            break;
+        }
+        $serieModel = new Serie();
+        foreach ($serieModel->all() as $serie) {
+            $budget->codserie = $serie->codserie;
+            break;
+        }
+
+        $this->assertTrue($budget->save(), $budget->modelClassName() . '-save-error');
+
+        /// creating line
+        $newLine = $budget->getNewProductLine($product->referencia);
+        $this->assertTrue($newLine->save(), $newLine->modelClassName() . '-save-error');
+
+        /// check negative price for budget line
+        $newLine->loadFromCode($newLine->primaryColumnValue());
+        $this->assertTrue(($newLine->pvpunitario == -10), 'doc-line-negative-price-error');
+
+        /// remove budget
+        $this->assertTrue($budget->delete(), $budget->modelClassName() . '-delete-error');
+
+        /// get contact to remove
+        $contact = $customer->getDefaultAddress();
+
+        /// remove customer
+        $this->assertTrue($customer->delete(), 'cliente-delete-error');
+
+        /// remove the pending contact
+        $this->assertTrue($contact->delete(), 'contacto-delete-error');
+
+        // remove product
+        $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
     private function getTestProduct(): Producto
