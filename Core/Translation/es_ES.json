@@ -1284,5 +1284,7 @@
     "you-should-change-passwd": "Debería cambiar su contraseña",
     "your": "Suyo",
     "zip-code": "Código Postal",
-    "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin."
+    "zip-error-wrong-structure": "La estructura del zip es incorrecta. Debe contener la carpeta del plugin y solamente un plugin.",
+    "impacted-re-tax-subaccount": "Subcuenta RE repercutido",
+    "supported-re-tax-subaccount": "Subcuenta RE soportado"
 }

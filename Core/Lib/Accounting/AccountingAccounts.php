@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -42,9 +43,9 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Raúl Jiménez Jiménez          <raljopa@gmail.com>
  */
-class AccountingAccounts
-{
+class AccountingAccounts {
 
     const SPECIAL_CUSTOMER_ACCOUNT = 'CLIENT';
     const SPECIAL_CREDITOR_ACCOUNT = 'ACREED';
@@ -72,8 +73,7 @@ class AccountingAccounts
     /**
      * Class constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->creation = new AccountingCreation();
         $this->exercise = new Ejercicio();
     }
@@ -91,8 +91,7 @@ class AccountingAccounts
      *
      * @return Subcuenta
      */
-    public function getCustomerAccount(&$customer, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT)
-    {
+    public function getCustomerAccount(&$customer, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT) {
         /// defined sub-account code?
         if (!empty($customer->codsubcuenta)) {
             $subaccount = $this->getSubAccount($customer->codsubcuenta);
@@ -129,8 +128,7 @@ class AccountingAccounts
      *
      * @return Subcuenta
      */
-    public function getCustomerGroupAccount($group, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT)
-    {
+    public function getCustomerGroupAccount($group, string $specialAccount = self::SPECIAL_CUSTOMER_ACCOUNT) {
         if (empty($group->codsubcuenta)) {
             return new Subcuenta();
         }
@@ -155,14 +153,13 @@ class AccountingAccounts
      *
      * @return Subcuenta
      */
-    public function getExpenseAccount(string $codpago, string $specialAccount = self::SPECIAL_EXPENSE_ACCOUNT)
-    {
+    public function getExpenseAccount(string $codpago, string $specialAccount = self::SPECIAL_EXPENSE_ACCOUNT) {
         $bankAccount = new CuentaBanco();
         $paymentMethod = new FormaPago();
         if ($paymentMethod->loadFromCode($codpago) &&
-            $paymentMethod->codcuentabanco &&
-            $bankAccount->loadFromCode($paymentMethod->codcuentabanco) &&
-            !empty($bankAccount->codsubcuentagasto)) {
+                $paymentMethod->codcuentabanco &&
+                $bankAccount->loadFromCode($paymentMethod->codcuentabanco) &&
+                !empty($bankAccount->codsubcuentagasto)) {
             $subaccount = $this->getSubAccount($bankAccount->codsubcuentagasto);
             return $subaccount->exists() ? $subaccount : $this->getSpecialSubAccount($specialAccount);
         }
@@ -178,8 +175,7 @@ class AccountingAccounts
      *
      * @return Subcuenta
      */
-    public function getIRPFPurchaseAccount($retention, string $specialAccount = self::SPECIAL_IRPF_PURCHASE_ACCOUNT)
-    {
+    public function getIRPFPurchaseAccount($retention, string $specialAccount = self::SPECIAL_IRPF_PURCHASE_ACCOUNT) {
         return $this->getAccountFromCode($retention->codsubcuentaacr, $specialAccount);
     }
 
@@ -191,8 +187,7 @@ class AccountingAccounts
      *
      * @return Subcuenta
      */
-    public function getIRPFSalesAccount($retention, string $specialAccount = self::SPECIAL_IRPF_SALES_ACCOUNT)
-    {
+    public function getIRPFSalesAccount($retention, string $specialAccount = self::SPECIAL_IRPF_SALES_ACCOUNT) {
         return $this->getAccountFromCode($retention->codsubcuentaret, $specialAccount);
     }
 
@@ -204,14 +199,13 @@ class AccountingAccounts
      *
      * @return Subcuenta
      */
-    public function getPaymentAccount(string $codpago, string $specialAccount = self::SPECIAL_PAYMENT_ACCOUNT)
-    {
+    public function getPaymentAccount(string $codpago, string $specialAccount = self::SPECIAL_PAYMENT_ACCOUNT) {
         $bankAccount = new CuentaBanco();
         $paymentMethod = new FormaPago();
         if ($paymentMethod->loadFromCode($codpago) &&
-            $paymentMethod->codcuentabanco &&
-            $bankAccount->loadFromCode($paymentMethod->codcuentabanco) &&
-            !empty($bankAccount->codsubcuenta)) {
+                $paymentMethod->codcuentabanco &&
+                $bankAccount->loadFromCode($paymentMethod->codcuentabanco) &&
+                !empty($bankAccount->codsubcuenta)) {
             $subaccount = $this->getSubAccount($bankAccount->codsubcuenta);
             return $subaccount->exists() ? $subaccount : $this->getSpecialSubAccount($specialAccount);
         }
@@ -226,8 +220,7 @@ class AccountingAccounts
      *
      * @return Cuenta
      */
-    public function getSpecialAccount(string $specialAccount)
-    {
+    public function getSpecialAccount(string $specialAccount) {
         $where = [
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codcuentaesp', $specialAccount)
@@ -247,8 +240,7 @@ class AccountingAccounts
      *
      * @return Subcuenta
      */
-    public function getSpecialSubAccount(string $specialAccount)
-    {
+    public function getSpecialSubAccount(string $specialAccount) {
         $where = [
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codcuentaesp', $specialAccount)
@@ -275,8 +267,7 @@ class AccountingAccounts
      *
      * @return Subcuenta
      */
-    public function getSubAccount(string $code)
-    {
+    public function getSubAccount(string $code) {
         $where = [
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codsubcuenta', $code)
@@ -297,8 +288,7 @@ class AccountingAccounts
      *
      * @return Subcuenta
      */
-    public function getSupplierAccount($supplier, string $specialAccount = self::SPECIAL_SUPPLIER_ACCOUNT)
-    {
+    public function getSupplierAccount($supplier, string $specialAccount = self::SPECIAL_SUPPLIER_ACCOUNT) {
         if ($supplier->acreedor) {
             $specialAccount = self::SPECIAL_CREDITOR_ACCOUNT;
         }
@@ -330,9 +320,20 @@ class AccountingAccounts
      *
      * @return Subcuenta
      */
-    public function getTaxImpactedAccount($tax, string $specialAccount = self::SPECIAL_TAX_IMPACTED_ACCOUNT)
-    {
+    public function getTaxImpactedAccount($tax, string $specialAccount = self::SPECIAL_TAX_IMPACTED_ACCOUNT) {
         return $this->getAccountFromCode($tax->codsubcuentarep, $specialAccount);
+    }
+
+    /**
+     * Get the accounting of surcharge sub-account  for Impacted Tax.
+     *
+     * @param Impuesto $tax
+     * @param string $specialAccount
+     *
+     * @return Subcuenta
+     */
+    public function getTaxREImpactedAccount($tax, string $specialAccount = self::SPECIAL_TAX_IMPACTED_ACCOUNT) {
+        return $this->getAccountFromCode($tax->codsubcuentarerep, $specialAccount);
     }
 
     /**
@@ -343,9 +344,20 @@ class AccountingAccounts
      *
      * @return Subcuenta
      */
-    public function getTaxSupportedAccount($tax, string $specialAccount = self::SPECIAL_TAX_SUPPORTED_ACCOUNT)
-    {
+    public function getTaxSupportedAccount($tax, string $specialAccount = self::SPECIAL_TAX_SUPPORTED_ACCOUNT) {
         return $this->getAccountFromCode($tax->codsubcuentasop, $specialAccount);
+    }
+
+    /**
+     * Get the accounting of surcharge sub-account for Supported Tax.
+     *
+     * @param Impuesto $tax
+     * @param string $specialAccount
+     *
+     * @return Subcuenta
+     */
+    public function getTaxRESupportedAccount($tax, string $specialAccount = self::SPECIAL_TAX_SUPPORTED_ACCOUNT) {
+        return $this->getAccountFromCode($tax->codsubcuentaresop, $specialAccount);
     }
 
     /**
@@ -358,8 +370,7 @@ class AccountingAccounts
      *
      * @return Subcuenta
      */
-    private function getAccountFromCode($code, string $specialAccount)
-    {
+    private function getAccountFromCode($code, string $specialAccount) {
         /// defined sub-account code?
         if (!empty($code)) {
             $subaccount = $this->getSubAccount($code);
@@ -386,4 +397,5 @@ class AccountingAccounts
         $firstSubaccount->loadFromCode('', [new DataBaseWhere('idcuenta', $account->idcuenta)], ['idsubcuenta' => 'ASC']);
         return $firstSubaccount;
     }
+
 }

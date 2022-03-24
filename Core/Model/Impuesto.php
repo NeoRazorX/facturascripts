@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -26,9 +27,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  * invoices, etc.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Raúl Jiménez Jiménez <raljopa@gmail.com>
  */
-class Impuesto extends Base\ModelClass
-{
+class Impuesto extends Base\ModelClass {
 
     use Base\ModelTrait;
 
@@ -51,6 +52,20 @@ class Impuesto extends Base\ModelClass
      * @var string
      */
     public $codsubcuentasop;
+
+    /**
+     * subaccount code for surcharge
+     * 
+     * @var string
+     */
+    public $codsubcuentaresop;
+
+    /**
+     * subaccount code for surcharge
+     * 
+     * @var string
+     */
+    public $codsubcuentarerep;
 
     /**
      * Description of the tax.
@@ -83,8 +98,7 @@ class Impuesto extends Base\ModelClass
     /**
      * Reset the values of all model properties.
      */
-    public function clear()
-    {
+    public function clear() {
         parent::clear();
         $this->tipo = self::TYPE_PENCENTAGE;
         $this->iva = 0.0;
@@ -96,8 +110,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return bool
      */
-    public function delete()
-    {
+    public function delete() {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-tax');
             return false;
@@ -114,9 +127,21 @@ class Impuesto extends Base\ModelClass
      *
      * @return self
      */
-    public function inputVatFromSubAccount($subAccount)
-    {
+    public function inputVatFromSubAccount($subAccount) {
         return $this->getVatFromSubAccount('codsubcuentarep', $subAccount);
+    }
+
+    /**
+     * Gets the input tax accounting subaccount indicated for
+     * equivalence surcharge.
+     * If it does not exist, the default tax is returned.
+     *
+     * @param string $subAccount
+     *
+     * @return self
+     */
+    public function inputReVatFromSubAccount($subAccount) {
+        return $this->getVatFromSubAccount('codsubcuentarerep', $subAccount);
     }
 
     /**
@@ -124,8 +149,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return bool
      */
-    public function isDefault(): bool
-    {
+    public function isDefault(): bool {
         return $this->codimpuesto === $this->toolBox()->appSettings()->get('default', 'codimpuesto');
     }
 
@@ -134,8 +158,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
-    {
+    public static function primaryColumn() {
         return 'codimpuesto';
     }
 
@@ -147,9 +170,21 @@ class Impuesto extends Base\ModelClass
      *
      * @return self
      */
-    public function outputVatFromSubAccount($subAccount)
-    {
+    public function outputVatFromSubAccount($subAccount) {
         return $this->getVatFromSubAccount('codsubcuentasop', $subAccount);
+    }
+
+    /**
+     * Gets the output tax accounting subaccount for.
+     * equivalence surchage 
+     * If it does not exist, the default tax is returned.
+     *
+     * @param string $subAccount
+     *
+     * @return self
+     */
+    public function outputReVatFromSubAccount($subAccount) {
+        return $this->getVatFromSubAccount('codsubcuentaresop', $subAccount);
     }
 
     /**
@@ -157,8 +192,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'impuestos';
     }
 
@@ -167,13 +201,12 @@ class Impuesto extends Base\ModelClass
      *
      * @return bool
      */
-    public function test()
-    {
+    public function test() {
         $this->codimpuesto = trim($this->codimpuesto);
         if ($this->codimpuesto && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
             $this->toolBox()->i18nLog()->error(
-                'invalid-alphanumeric-code',
-                ['%value%' => $this->codimpuesto, '%column%' => 'codimpuesto', '%min%' => '1', '%max%' => '10']
+                    'invalid-alphanumeric-code',
+                    ['%value%' => $this->codimpuesto, '%column%' => 'codimpuesto', '%min%' => '1', '%max%' => '10']
             );
             return false;
         }
@@ -190,8 +223,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return static
      */
-    private function getVatFromSubAccount($field, $subAccount)
-    {
+    private function getVatFromSubAccount($field, $subAccount) {
         $result = new Impuesto();
         $where = [new DataBaseWhere($field, $subAccount)];
         if ($result->loadFromCode('', $where)) {
@@ -207,12 +239,12 @@ class Impuesto extends Base\ModelClass
      *
      * @return bool
      */
-    protected function saveInsert(array $values = [])
-    {
+    protected function saveInsert(array $values = []) {
         if (empty($this->codimpuesto)) {
-            $this->codimpuesto = (string)$this->newCode();
+            $this->codimpuesto = (string) $this->newCode();
         }
 
         return parent::saveInsert($values);
     }
+
 }

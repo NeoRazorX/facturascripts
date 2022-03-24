@@ -20,6 +20,7 @@
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Frank Aguirre                <faguirre@soenac.com>
+ * @author Raúl Jiménez Jiménez         <raljopa@gmail.com>
 -->
 <view>
     <columns>
@@ -30,25 +31,35 @@
             <column name="description" numcolumns="10" order="110">
                 <widget type="text" fieldname="descripcion" maxlength="50" required="true" />
             </column>
-            <column name="type" order="120">
+            <column name="type" order="120" numcolumns="3">
                 <widget type="select" fieldname="tipo" translate="true" required="true">
                     <values title="percentage">1</values>
                     <values title="fixed-value">2</values>
                 </widget>
             </column>
-            <column name="vat" order="130">
+            <column name="vat" order="130" numcolumns="2">
                 <widget type="number" decimal="2" fieldname="iva" required="true" />
             </column>
-            <column name="surcharge" order="140">
-                <widget type="number" decimal="2" fieldname="recargo" required="true" />
-            </column>
-            <column name="impacted-tax-subaccount" description="optional" titleurl="ListCuenta" order="150">
+            <column name="impacted-tax-subaccount" description="optional" titleurl="ListCuenta"  numcolumns="3" order="140">
                 <widget type="autocomplete" fieldname="codsubcuentarep">
                     <values source="subcuentas" fieldcode="codsubcuenta" />
                 </widget>
             </column>
-            <column name="supported-tax-subaccount" description="optional" titleurl="ListCuenta" order="160">
+            <column name="supported-tax-subaccount" description="optional" titleurl="ListCuenta" numcolumns="3" order="150">
                 <widget type="autocomplete" fieldname="codsubcuentasop">
+                    <values source="subcuentas" fieldcode="codsubcuenta" />
+                </widget>
+            </column>
+            <column name="surcharge" order="160"  numcolumns="2" >
+                <widget type="number" decimal="2" fieldname="recargo" required="true" />
+            </column>
+            <column name="impacted-re-tax-subaccount" description="optional" titleurl="ListCuenta"  numcolumns="3"  order="170">
+                <widget type="autocomplete" fieldname="codsubcuentarerep">
+                    <values source="subcuentas" fieldcode="codsubcuenta" />
+                </widget>
+            </column>
+            <column name="supported-re-tax-subaccount" description="optional" titleurl="ListCuenta"  numcolumns="3"  order="180">
+                <widget type="autocomplete" fieldname="codsubcuentaresop">
                     <values source="subcuentas" fieldcode="codsubcuenta" />
                 </widget>
             </column>
