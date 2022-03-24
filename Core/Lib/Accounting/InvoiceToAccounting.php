@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
@@ -390,7 +390,8 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function loadSubtotals(): bool
     {
-        $this->subtotals = Calculator::getSubtotals($this->document, $this->document->getLines());
+        $tools = new BusinessDocumentTools();
+        $this->subtotals = $tools->getSubtotals($this->document->getLines(), [$this->document->dtopor1, $this->document->dtopor2]);
         return !empty($this->document->total);
     }
 

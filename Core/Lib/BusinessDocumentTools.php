@@ -31,6 +31,7 @@ use FacturaScripts\Dinamic\Model\Serie;
 
 /**
  * A set of tools to recalculate business documents.
+ * @deprecated since 2022
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -52,18 +53,14 @@ class BusinessDocumentTools
      */
     protected $siniva = false;
 
-    public function __construct()
-    {
-
-    }
-
     /**
      * Returns subtotals by tax.
-     *
      * @param BusinessDocumentLine[] $lines
      * @param array $discounts
      *
      * @return array
+     * @deprecated since 2022
+     *
      */
     public function getSubtotals(array $lines, array $discounts): array
     {
@@ -143,8 +140,9 @@ class BusinessDocumentTools
 
     /**
      * Recalculates document totals.
-     *
      * @param BusinessDocument $doc
+     * @deprecated since 2022
+     *
      */
     public function recalculate(BusinessDocument &$doc)
     {
