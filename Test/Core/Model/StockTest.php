@@ -218,7 +218,7 @@ final class StockTest extends TestCase
         $this->assertTrue($stock->save(), 'stock-cant-save');
 
         // comprobamos
-        $this->assertEquals(0, $stock->cantidad, 'stock-cantidad-no-puede-ser-negativo');
+        $this->assertEquals(-10, $stock->cantidad, 'stock-quantity-changed');
 
         // eliminamos
         $this->assertTrue($stock->delete(), 'stock-cant-delete');
