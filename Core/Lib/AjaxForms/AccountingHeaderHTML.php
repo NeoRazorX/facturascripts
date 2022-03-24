@@ -19,11 +19,14 @@
 
 namespace FacturaScripts\Core\Lib\AjaxForms;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Lib\CodePatterns;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\ConceptoPartida;
 use FacturaScripts\Dinamic\Model\Empresa;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
 /**
  * Description of AccountingHeaderHTML
@@ -92,8 +95,29 @@ class AccountingHeaderHTML
      */
     protected static function documento(Translator $i18n, Asiento $model): string
     {
+        $title = $i18n->trans('document');
+        $found = false;
+        $where = [
+            new DataBaseWhere('codigo', $model->documento),
+            new DataBaseWhere('idasiento', $model->idasiento),
+        ];
+
+        $facturaModel = new FacturaCliente();
+        if ($facturaModel->loadFromCode('', $where)) {
+            $found = true;
+        } else {
+            $facturaModel = new FacturaProveedor();
+            if ($facturaModel->loadFromCode('', $where)) {
+                $found = true;
+            }
+        }
+
+        if ($found) {
+            $title = '<a href="Edit' . $facturaModel->modelClassName() . '?code=' . $facturaModel->idfactura . '">' . $title . '</a>';
+        }
+
         return empty($model->documento) ? '' : '<div class="col-sm-3 col-md-2">'
-            . '<div class="form-group">' . $i18n->trans('document')
+            . '<div class="form-group">' . $title
             . '<input type="text" value="' . $model->documento . '" class="form-control" readonly/>'
             . '</div>'
             . '</div>';
