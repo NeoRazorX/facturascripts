@@ -20,6 +20,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Test\Core\CustomTest;
 
@@ -34,5 +36,23 @@ final class EmpresaTest extends CustomTest
     protected function setUp(): void
     {
         $this->model = new Empresa();
+    }
+
+    public function testCreate()
+    {
+        $company = new Empresa();
+        $company->nombre = 'Empresa 1';
+        $this->assertTrue($company->save(), 'company-cant-save');
+        $this->assertNotNull($company->primaryColumnValue(), 'company-not-stored');
+        $this->assertTrue($company->exists(), 'company-cant-persist');
+
+        $warehouse = new Almacen();
+        $where = [new DataBaseWhere('idempresa', $company->idempresa)];
+        $warehouse->loadFromCode('', $where);
+        $this->assertTrue($warehouse->exists(), 'warehouse-cant-persist');
+        $this->assertEquals($warehouse->idempresa, $company->idempresa, 'company-warehouse-bad-idempresa');
+
+        // eliminamos
+        $this->assertTrue($company->delete(), 'can-not-delete-company');
     }
 }
