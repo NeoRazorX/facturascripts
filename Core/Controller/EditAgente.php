@@ -78,20 +78,6 @@ class EditAgente extends ComercialContactController
      *
      * @param string $viewName
      */
-    protected function createCommissionsView(string $viewName = 'ListComision')
-    {
-        $this->addListView($viewName, 'Comision', 'commissions', 'fas fa-percentage');
-        $this->views[$viewName]->addOrderBy(['prioridad'], 'priority', 2);
-        $this->views[$viewName]->addOrderBy(['porcentaje'], 'percentage');
-
-        /// disable columns
-        $this->views[$viewName]->disableColumn('agent', true);
-    }
-
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createContactView(string $viewName = 'EditContacto')
     {
         $this->addEditView($viewName, 'Contacto', 'contact', 'fa fa-address-book');
@@ -131,25 +117,12 @@ class EditAgente extends ComercialContactController
     }
 
     /**
-     *
-     * @param string $viewName
-     */
-    protected function createSettlementView(string $viewName = 'ListLiquidacionComision')
-    {
-        $this->addListView($viewName, 'LiquidacionComision', 'settlements', 'fas fa-chalkboard-teacher');
-        $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
-        $this->views[$viewName]->addOrderBy(['total'], 'amount');
-    }
-
-    /**
      * Load Views
      */
     protected function createViews()
     {
         parent::createViews();
         $this->createContactView();
-        $this->createCommissionsView();
-        $this->createSettlementView();
         $this->createInvoiceView('ListFacturaCliente');
         $this->createDocumentView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
         $this->createDocumentView('ListPedidoCliente', 'PedidoCliente', 'orders');
@@ -188,9 +161,8 @@ class EditAgente extends ComercialContactController
         switch ($viewName) {
             case 'EditContacto':
             case 'ListAlbaranCliente':
-            case 'ListComision':
+            case '':
             case 'ListFacturaCliente':
-            case 'ListLiquidacionComision':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
                 $codagente = $this->getViewModelValue('EditAgente', 'codagente');
