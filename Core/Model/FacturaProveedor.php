@@ -78,7 +78,7 @@ class FacturaProveedor extends Base\PurchaseDocument
      * 
      * @return DinReciboProveedor[]
      */
-    public function getReceipts()
+    public function getReceipts(): array
     {
         $receipt = new DinReciboProveedor();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];

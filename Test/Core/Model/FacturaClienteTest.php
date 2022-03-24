@@ -227,7 +227,7 @@ final class FacturaClienteTest extends TestCase
 
         // cambiamos el estado a uno no editable
         $changed = false;
-        foreach ($invoice->getAvaliableStatus() as $status) {
+        foreach ($invoice->getAvailableStatus() as $status) {
             if (false === $status->editable) {
                 $invoice->idestado = $status->idestado;
                 $changed = true;

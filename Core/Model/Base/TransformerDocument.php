@@ -63,7 +63,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return TransformerDocument[]
      */
-    public function childrenDocuments()
+    public function childrenDocuments(): array
     {
         $children = [];
         $keys = [];
@@ -179,11 +179,11 @@ abstract class TransformerDocument extends BusinessDocument
     }
 
     /**
-     * Returns all avaliable status for this type of document.
+     * Returns all available status for this type of document.
      *
      * @return EstadoDocumento[]
      */
-    public function getAvailableStatus()
+    public function getAvailableStatus(): array
     {
         if (null === self::$estados) {
             $statusModel = new EstadoDocumento();
@@ -232,7 +232,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return TransformerDocument[]
      */
-    public function parentDocuments()
+    public function parentDocuments(): array
     {
         $parents = [];
         $keys = [];

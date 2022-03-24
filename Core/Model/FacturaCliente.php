@@ -100,7 +100,7 @@ class FacturaCliente extends Base\SalesDocument
      *
      * @return DinReciboCliente[]
      */
-    public function getReceipts()
+    public function getReceipts(): array
     {
         $receipt = new DinReciboCliente();
         $where = [new DataBaseWhere('idfactura', $this->idfactura)];

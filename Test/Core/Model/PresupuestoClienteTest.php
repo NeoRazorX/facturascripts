@@ -223,7 +223,7 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($line->save(), 'can-not-save-line-2');
 
         // aprobamos
-        foreach ($doc->getAvaliableStatus() as $status) {
+        foreach ($doc->getAvailableStatus() as $status) {
             if (empty($status->generadoc)) {
                 continue;
             }
