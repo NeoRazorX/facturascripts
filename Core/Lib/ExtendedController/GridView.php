@@ -304,8 +304,6 @@ class GridView extends EditView
 
     protected function assets()
     {
-        AssetManager::add('css', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.css');
-        AssetManager::add('js', FS_ROUTE . '/node_modules/handsontable/dist/handsontable.full.min.js');
         AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/GridView.js');
     }
 

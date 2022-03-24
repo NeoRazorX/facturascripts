@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Lib\AjaxForms;
+namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
@@ -441,6 +441,12 @@ class AccountingLineHTML
         return '<div class="col pb-2 small">'
             . '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' . $i18n->trans('subaccount')
             . '<input type="text" name="codsubcuenta_' . $idlinea . '" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'
+<<<<<<< HEAD:Core/Lib/AjaxForms/AccountingLineHTML.php
+=======
+            . '<div class="input-group-append"><button class="btn btn-outline-danger btn-spin-action" type="button"'
+            . ' onclick="return accEntryFormAction(\'rm-line\', \'' . $idlinea . '\');"><i class="fas fa-trash-alt"></i></button></div>'
+            . '</div>'
+>>>>>>> ab876f2c815092156ca8a4d0b60bccc0d8e91aed:Core/Base/AjaxForms/AccountingLineHTML.php
             . '</div>'
             . static::contrapartida($i18n, $line, $model)
             . static::descripcion($i18n, $subcuenta)
