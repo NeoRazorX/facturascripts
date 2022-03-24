@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -73,7 +74,6 @@ class Tarifa extends Base\ModelClass
     public $valorx;
 
     /**
-     *
      * @var float
      */
     public $valory;
@@ -100,16 +100,15 @@ class Tarifa extends Base\ModelClass
         }
 
         if ($this->maxpvp && $finalPrice > $price) {
-            return (float) $price;
+            return (float)$price;
         } elseif ($this->mincoste && $finalPrice < $cost) {
-            return (float) $cost;
+            return (float)$cost;
         }
 
         return $finalPrice;
     }
 
     /**
-     *
      * @param Variante $variant
      * @param Producto $product
      *
@@ -144,7 +143,6 @@ class Tarifa extends Base\ModelClass
     }
 
     /**
-     *
      * @return string
      */
     public function primaryDescriptionColumn()
@@ -169,8 +167,8 @@ class Tarifa extends Base\ModelClass
      */
     public function test()
     {
-        $this->codtarifa = \trim($this->codtarifa);
-        if ($this->codtarifa && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codtarifa)) {
+        $this->codtarifa = trim($this->codtarifa);
+        if ($this->codtarifa && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codtarifa)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codtarifa, '%column%' => 'codtarifa', '%min%' => '1', '%max%' => '6']
@@ -183,7 +181,6 @@ class Tarifa extends Base\ModelClass
     }
 
     /**
-     *
      * @param array $values
      *
      * @return bool
