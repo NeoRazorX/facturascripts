@@ -103,7 +103,7 @@ abstract class TransformerDocument extends BusinessDocument
         $this->editable = true;
 
         // select default status
-        foreach ($this->getAvaliableStatus() as $status) {
+        foreach ($this->getAvailableStatus() as $status) {
             if ($status->predeterminado) {
                 $this->idestado = $status->idestado;
                 $this->editable = $status->editable;
@@ -153,7 +153,7 @@ abstract class TransformerDocument extends BusinessDocument
 
         // change parent doc status
         foreach ($parents as $parent) {
-            foreach ($parent->getAvaliableStatus() as $status) {
+            foreach ($parent->getAvailableStatus() as $status) {
                 if ($status->predeterminado) {
                     $parent->idestado = $status->idestado;
                     $parent->save();
@@ -183,7 +183,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return EstadoDocumento[]
      */
-    public function getAvaliableStatus()
+    public function getAvailableStatus()
     {
         if (null === self::$estados) {
             $statusModel = new EstadoDocumento();
