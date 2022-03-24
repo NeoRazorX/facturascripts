@@ -42,7 +42,11 @@
         <type>double precision</type>
         <null>NO</null>
         <default>0</default>
-    </column>    
+    </column>
+    <column>
+        <name>debeme</name>
+        <type>double precision</type>
+    </column>
     <column>
         <name>documento</name>
         <type>character varying(30)</type>
@@ -56,7 +60,11 @@
         <type>double precision</type>
         <null>NO</null>
         <default>0</default>
-    </column>    
+    </column>
+    <column>
+        <name>haberme</name>
+        <type>double precision</type>
+    </column>
     <column>
         <name>idasiento</name>
         <type>integer</type>
@@ -126,6 +134,7 @@
     </constraint>
     <constraint>
         <name>ca_partidas_subcuentas2</name>
-        <type>FOREIGN KEY (idcontrapartida) REFERENCES subcuentas (idsubcuenta) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idcontrapartida) REFERENCES subcuentas (idsubcuenta) ON DELETE SET NULL ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>
