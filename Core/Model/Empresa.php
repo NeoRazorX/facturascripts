@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -162,7 +162,7 @@ class Empresa extends Base\Contact
      */
     public function install()
     {
-        /// needed dependencies
+        // needed dependencies
         new AttachedFile();
 
         $num = mt_rand(1, 9999);
@@ -260,7 +260,6 @@ class Empresa extends Base\Contact
     }
 
     /**
-     *
      * @param array $values
      *
      * @return bool
@@ -271,10 +270,6 @@ class Empresa extends Base\Contact
             $this->idempresa = $this->newCode();
         }
 
-        if (parent::saveInsert($values) && $this->createPaymentMethods() && $this->createWarehouse()) {
-            return true;
-        }
-
-        return false;
+        return parent::saveInsert($values) && $this->createPaymentMethods() && $this->createWarehouse();
     }
 }
