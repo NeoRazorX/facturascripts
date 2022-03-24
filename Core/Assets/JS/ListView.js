@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -58,6 +58,7 @@ function listViewPrintAction(viewName, option) {
     $("#form" + viewName).append('<input type="hidden" name="option" value="' + option + '"/>');
     $("#form" + viewName).submit();
     $("#form" + viewName + " :input[name=\"action\"]").val('');
+    $("#form" + viewName).attr("target", "");
 }
 
 function listViewSetAction(viewName, value) {
