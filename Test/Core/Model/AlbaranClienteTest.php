@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -53,17 +53,22 @@ final class AlbaranClienteTest extends TestCase
 
     public function testSetAuthor()
     {
-        // create warehouse
+        // creamos un agente
+        $agent = $this->getRandomAgent();
+        $this->assertTrue($agent->save(), 'can-not-create-agent');
+
+        // creamos un almacén
         $warehouse = $this->getRandomWarehouse();
         $this->assertTrue($warehouse->save(), 'can-not-create-warehouse');
 
-        // create user
+        // creamos un usuario
         $user = $this->getRandomUser();
         $user->codalmacen = $warehouse->codalmacen;
 
         // asignamos el usuario
         $doc = new AlbaranCliente();
         $this->assertTrue($doc->setAuthor($user), 'can-not-set-user');
+        $this->assertEquals($user->codagente, $doc->codagente, 'albaran-usuario-bad-agent');
         $this->assertEquals($user->codalmacen, $doc->codalmacen, 'albaran-usuario-bad-warehouse');
         $this->assertEquals($user->nick, $doc->nick, 'albaran-usuario-bad-nick');
 
@@ -230,8 +235,8 @@ final class AlbaranClienteTest extends TestCase
 
         // creamos el albarán
         $doc = new AlbaranCliente();
-        $doc->codalmacen = $warehouse->codalmacen;
         $doc->setSubject($subject);
+        $doc->codalmacen = $warehouse->codalmacen;
         $this->assertTrue($doc->save(), 'albaran-cant-save');
 
         // añadimos una línea
@@ -240,6 +245,7 @@ final class AlbaranClienteTest extends TestCase
         $line->pvpunitario = 100;
         $this->assertTrue($line->save(), 'can-not-save-line-2');
 
+        // aprobar
         foreach ($doc->getAvaliableStatus() as $status) {
             if (empty($status->generadoc)) {
                 continue;
@@ -252,7 +258,7 @@ final class AlbaranClienteTest extends TestCase
             $children = $doc->childrenDocuments();
             $this->assertNotEmpty($children, 'facturas-no-creadas');
             foreach ($children as $child) {
-                $this->assertEquals($doc->idempresa, $child->idempresa, 'factura-bad-idempresa');
+                $this->assertEquals($company2->idempresa, $child->idempresa, 'factura-bad-idempresa');
             }
         }
 

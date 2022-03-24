@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,9 +21,9 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\BusinessDocumentTools;
-use FacturaScripts\Core\Model\PedidoProveedor;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
+use FacturaScripts\Core\Model\PedidoProveedor;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Test\Core\DefaultSettingsTrait;
 use FacturaScripts\Test\Core\LogErrorsTrait;
@@ -53,11 +53,11 @@ final class PedidoProveedorTest extends TestCase
 
     public function testSetAuthor()
     {
-        // create warehouse
+        // creamos el almacén
         $warehouse = $this->getRandomWarehouse();
         $this->assertTrue($warehouse->save(), 'can-not-create-warehouse');
 
-        // create user
+        // creamos el usuario
         $user = $this->getRandomUser();
         $user->codalmacen = $warehouse->codalmacen;
 
@@ -246,8 +246,8 @@ final class PedidoProveedorTest extends TestCase
 
         // creamos el pedido
         $doc = new PedidoProveedor();
-        $doc->codalmacen = $warehouse->codalmacen;
         $doc->setSubject($subject);
+        $doc->codalmacen = $warehouse->codalmacen;
         $this->assertTrue($doc->save(), 'pedido-cant-save');
 
         // añadimos una línea
@@ -256,6 +256,7 @@ final class PedidoProveedorTest extends TestCase
         $line->pvpunitario = 100;
         $this->assertTrue($line->save(), 'can-not-save-line-2');
 
+        // aprobamos
         foreach ($doc->getAvaliableStatus() as $status) {
             if (empty($status->generadoc)) {
                 continue;
@@ -268,7 +269,7 @@ final class PedidoProveedorTest extends TestCase
             $children = $doc->childrenDocuments();
             $this->assertNotEmpty($children, 'albaranes-no-creadas');
             foreach ($children as $child) {
-                $this->assertEquals($doc->idempresa, $child->idempresa, 'albarán-bad-idempresa');
+                $this->assertEquals($company2->idempresa, $child->idempresa, 'albaran-bad-idempresa');
             }
         }
 

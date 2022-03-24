@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,9 +21,9 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\BusinessDocumentTools;
-use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
+use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Test\Core\DefaultSettingsTrait;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use FacturaScripts\Test\Core\RandomDataTrait;
@@ -52,11 +52,11 @@ final class PresupuestoProveedorTest extends TestCase
 
     public function testSetAuthor()
     {
-        // create warehouse
+        // creamos un almacén
         $warehouse = $this->getRandomWarehouse();
         $this->assertTrue($warehouse->save(), 'can-not-create-warehouse');
 
-        // create user
+        // creamos un usuario
         $user = $this->getRandomUser();
         $user->codalmacen = $warehouse->codalmacen;
 
@@ -225,14 +225,14 @@ final class PresupuestoProveedorTest extends TestCase
         $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
         $warehouse->loadFromCode('', $where);
 
-        // creamos el cliente
+        // creamos el proveedor
         $subject = $this->getRandomSupplier();
         $this->assertTrue($subject->save(), 'can-not-save-customer-2');
 
         // creamos el presupuesto
         $doc = new PresupuestoProveedor();
-        $doc->codalmacen = $warehouse->codalmacen;
         $doc->setSubject($subject);
+        $doc->codalmacen = $warehouse->codalmacen;
         $this->assertTrue($doc->save(), 'presupuesto-cant-save');
 
         // añadimos una línea
@@ -241,6 +241,7 @@ final class PresupuestoProveedorTest extends TestCase
         $line->pvpunitario = 100;
         $this->assertTrue($line->save(), 'can-not-save-line-2');
 
+        // aprobamos
         foreach ($doc->getAvaliableStatus() as $status) {
             if (empty($status->generadoc)) {
                 continue;
@@ -253,7 +254,7 @@ final class PresupuestoProveedorTest extends TestCase
             $children = $doc->childrenDocuments();
             $this->assertNotEmpty($children, 'pedidos-no-creadas');
             foreach ($children as $child) {
-                $this->assertEquals($doc->idempresa, $child->idempresa, 'pedido-bad-idempresa');
+                $this->assertEquals($company2->idempresa, $child->idempresa, 'pedido-bad-idempresa');
             }
         }
 
@@ -264,7 +265,7 @@ final class PresupuestoProveedorTest extends TestCase
             $this->assertTrue($child->delete(), 'pedido-cant-delete');
         }
         $this->assertTrue($doc->delete(), 'presupuesto-cant-delete');
-        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
+        $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
         $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,10 +21,9 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\BusinessDocumentTools;
-use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
-use FacturaScripts\Core\Model\Stock;
+use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Test\Core\DefaultSettingsTrait;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use FacturaScripts\Test\Core\RandomDataTrait;
@@ -53,21 +52,28 @@ final class PresupuestoClienteTest extends TestCase
 
     public function testSetAuthor()
     {
-        // create warehouse
+        // creamos un agente
+        $agent = $this->getRandomAgent();
+        $this->assertTrue($agent->save(), 'can-not-create-agent');
+
+        // creamos un almacén
         $warehouse = $this->getRandomWarehouse();
         $this->assertTrue($warehouse->save(), 'can-not-create-warehouse');
 
-        // create user
+        // creamos un usuario
         $user = $this->getRandomUser();
+        $user->codagente = $agent->codagente;
         $user->codalmacen = $warehouse->codalmacen;
 
         // asignamos el usuario
         $doc = new PresupuestoCliente();
         $this->assertTrue($doc->setAuthor($user), 'can-not-set-user');
-        $this->assertEquals($user->codalmacen, $doc->codalmacen, 'presupuesto-usaurio-bad-warehouse');
+        $this->assertEquals($user->codagente, $doc->codagente, 'presupuesto-usuario-bad-agent');
+        $this->assertEquals($user->codalmacen, $doc->codalmacen, 'presupuesto-usuario-bad-warehouse');
         $this->assertEquals($user->nick, $doc->nick, 'presupuesto-usuario-bad-nick');
 
         // eliminamos
+        $this->assertTrue($agent->delete(), 'can-not-delete-agent');
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
     }
 
@@ -206,8 +212,8 @@ final class PresupuestoClienteTest extends TestCase
 
         // creamos el presupuesto
         $doc = new PresupuestoCliente();
-        $doc->codalmacen = $warehouse->codalmacen;
         $doc->setSubject($subject);
+        $doc->codalmacen = $warehouse->codalmacen;
         $this->assertTrue($doc->save(), 'presupuesto-cant-save');
 
         // añadimos una línea
@@ -216,6 +222,7 @@ final class PresupuestoClienteTest extends TestCase
         $line->pvpunitario = 100;
         $this->assertTrue($line->save(), 'can-not-save-line-2');
 
+        // aprobamos
         foreach ($doc->getAvaliableStatus() as $status) {
             if (empty($status->generadoc)) {
                 continue;
@@ -228,7 +235,7 @@ final class PresupuestoClienteTest extends TestCase
             $children = $doc->childrenDocuments();
             $this->assertNotEmpty($children, 'pedidos-no-creados');
             foreach ($children as $child) {
-                $this->assertEquals($doc->idempresa, $child->idempresa, 'pedido-bad-idempresa');
+                $this->assertEquals($company2->idempresa, $child->idempresa, 'pedido-bad-idempresa');
             }
         }
 
