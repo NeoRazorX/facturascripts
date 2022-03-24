@@ -38,11 +38,6 @@ class BusinessDocumentTools
 {
 
     /**
-     * @var CommissionTools
-     */
-    protected $commissionTools;
-
-    /**
      * @var ImpuestoZona[]
      */
     protected $taxZones = [];
@@ -59,7 +54,7 @@ class BusinessDocumentTools
 
     public function __construct()
     {
-        $this->commissionTools = new CommissionTools();
+
     }
 
     /**
@@ -177,9 +172,6 @@ class BusinessDocumentTools
         $doc->totalrecargo = round($doc->totalrecargo, (int)FS_NF0);
         $doc->totalsuplidos = round($doc->totalsuplidos, (int)FS_NF0);
         $doc->total = round($doc->neto + $doc->totalsuplidos + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int)FS_NF0);
-
-        // recalculate commissions
-        $this->commissionTools->recalculate($doc, $lines);
     }
 
     protected function clearTotals(BusinessDocument &$doc)
