@@ -202,6 +202,9 @@ class AccountingFooterHTML
         return '<div class="col-sm-6 col-md">'
             . '<a href="#" class="btn btn-info mb-3" onclick="$(\'#findSubaccountModal\').modal(); $(\'#findSubaccountInput\').focus(); return false;">'
             . '<i class="fas fa-book fa-fw"></i> ' . $i18n->trans('subaccounts') . '</a>'
+            . '<button type="button" class="btn btn-light mb-3 ml-2" id="sortableBtn">'
+            . '<i class="fas fa-arrows-alt-v fa-fw"></i> ' . $i18n->trans('move-lines')
+            . '</button>'
             . '</div>';
     }
 }

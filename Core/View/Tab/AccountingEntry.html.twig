@@ -150,8 +150,7 @@
         return false;
     };
 
-    $(document).ready(function () {
-        {% if model.editable %}
+    function sortableEnable() {
         $("#accEntryFormLines").sortable({
             update: function (event, ui) {
                 let orderInputs = $("input[name^='orden_']");
@@ -161,7 +160,29 @@
                 });
             }
         });
+        $("#accEntryFormLines").sortable("option", "disabled", false);
         $("#accEntryFormLines").disableSelection();
+    }
+
+    function sortableDisable() {
+        $("#accEntryFormLines").sortable("disable");
+    }
+
+    $(document).ready(function () {
+        {% if model.editable %}
+        let sortable = false;
+
+        $(document).on('click', '#sortableBtn', function () {
+            if (sortable) {
+                sortableDisable();
+                sortable = false;
+                $(this).removeClass('btn-secondary').addClass('btn-light');
+            } else {
+                sortableEnable();
+                sortable = true;
+                $(this).removeClass('btn-light').addClass('btn-secondary');
+            }
+        });
         {% endif %}
     });
 </script>
