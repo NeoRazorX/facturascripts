@@ -17,64 +17,38 @@
  */
 
 function animateSpinner(animation, result = '') {
+    const spinnerIcon = '<span class="spinner-icon spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
     $(".btn-spin-action").each(function () {
-        let btn = $(this);
-        if (animation === 'add') {
+        const btn = $(this);
+        if ('add' === animation) {
             btn.prop('disabled', true);
-            let oldHtml = btn.children('.old-html');
-            if (!oldHtml.length) {
+
+            const initialHtml = btn.children('.old-html');
+
+            if (initialHtml.length < 1) {
                 btn.html('<span class="old-html">' + btn.html() + '</span>');
             }
-            if (!btn.children('.spinner').length) {
-                btn.append('<span class="spinner mx-auto" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i></span>');
-                btn.find('.old-html').fadeOut(100, function () {
-                    btn.find('.spinner').fadeIn();
-                });
+
+            if (btn.children('.spinner-icon').length < 1) {
+                btn.append(spinnerIcon);
             }
+
+            btn.find('.old-html').addClass('d-none');
+            return;
         }
 
-        let spinner = btn.children('.spinner');
+        if ('remove' === animation) {
+            btn.find('.spinner-icon').remove();
+            btn.find('.old-html').removeClass('d-none');
 
-        if (spinner.data('animating')) {
-            spinner.removeClass(spinner.data('animating')).data('animating', null);
-            spinner.data('animationTimeout') && clearTimeout(spinner.data('animationTimeout'));
+            let attr = Boolean(btn.attr('load-after'));
+            if (result !== '' && typeof attr !== 'undefined' && attr === true) {
+                let icon = result ? 'fas fa-times' : 'fas fa-check';
+
+                btn.append('<div class="result mx-auto" style="display: none;"><i class="' + icon + '"></i></div>');
+            }
+            btn.prop('disabled', false);
         }
-
-        spinner.addClass('spinner-' + animation).data('animating', 'spinner-' + animation);
-        spinner.data('animationTimeout',
-            setTimeout(function () {
-                if (animation === 'remove') {
-                    btn.find('.spinner').fadeOut(100, function () {
-                        let attr = Boolean(btn.attr('load-after'));
-                        if (result !== '' && typeof attr !== 'undefined' && attr === true) {
-                            let icon = 'fas fa-times';
-                            if (result) {
-                                icon = 'fas fa-check';
-                            }
-                            btn.append('<div class="result mx-auto" style="display: none;"><i class="' + icon + '"></i></div>');
-                        }
-
-                        let checkResult = btn.children('.result');
-                        if (checkResult.length) {
-                            btn.find('.result').fadeIn();
-                            setTimeout(function () {
-                                btn.find('.result').fadeOut(200, function () {
-                                    btn.find('.old-html').fadeIn();
-                                    spinner.remove();
-                                    btn.find('.result').remove();
-                                    btn.prop('disabled', false);
-                                });
-                            }, 500);
-                        } else {
-                            btn.find('.old-html').fadeIn();
-                            spinner.remove();
-                            btn.prop('disabled', false);
-                        }
-                    });
-                }
-            },
-            parseFloat(spinner.css('animation-duration')) * 1000)
-        );
     });
 }
 
