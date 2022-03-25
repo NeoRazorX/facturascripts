@@ -20,17 +20,17 @@ function animateSpinner(animation, result = '') {
     $(".btn-spin-action").each(function () {
         let btn = $(this);
         if (animation === 'add') {
-            btn.css('min-width', btn.width());
-            btn.css('min-height', btn.height());
             btn.prop('disabled', true);
             let oldHtml = btn.children('.old-html');
             if (!oldHtml.length) {
                 btn.html('<span class="old-html">' + btn.html() + '</span>');
             }
-            btn.append('<div class="spinner mx-auto" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i></div>');
-            btn.find('.old-html').fadeOut(100, function () {
-                btn.find('.spinner').fadeIn();
-            });
+            if (!btn.children('.spinner').length) {
+                btn.append('<span class="spinner mx-auto" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i></span>');
+                btn.find('.old-html').fadeOut(100, function () {
+                    btn.find('.spinner').fadeIn();
+                });
+            }
         }
 
         let spinner = btn.children('.spinner');
@@ -43,37 +43,37 @@ function animateSpinner(animation, result = '') {
         spinner.addClass('spinner-' + animation).data('animating', 'spinner-' + animation);
         spinner.data('animationTimeout',
             setTimeout(function () {
-                    if (animation === 'remove') {
-                        btn.find('.spinner').fadeOut(100, function () {
-                            let attr = Boolean(btn.attr('load-after'));
-                            if (result !== '' && typeof attr !== 'undefined' && attr === true) {
-                                let icon = 'fas fa-times';
-                                if (result) {
-                                    icon = 'fas fa-check';
-                                }
-                                btn.append('<div class="result mx-auto" style="display: none;"><i class="' + icon + '"></i></div>');
+                if (animation === 'remove') {
+                    btn.find('.spinner').fadeOut(100, function () {
+                        let attr = Boolean(btn.attr('load-after'));
+                        if (result !== '' && typeof attr !== 'undefined' && attr === true) {
+                            let icon = 'fas fa-times';
+                            if (result) {
+                                icon = 'fas fa-check';
                             }
+                            btn.append('<div class="result mx-auto" style="display: none;"><i class="' + icon + '"></i></div>');
+                        }
 
-                            let checkResult = btn.children('.result');
-                            if (checkResult.length) {
-                                btn.find('.result').fadeIn();
-                                setTimeout(function () {
-                                    btn.find('.result').fadeOut(200, function () {
-                                        btn.find('.old-html').fadeIn();
-                                        spinner.remove();
-                                        btn.find('.result').remove();
-                                        btn.prop('disabled', false);
-                                    });
-                                }, 500);
-                            } else {
-                                btn.find('.old-html').fadeIn();
-                                spinner.remove();
-                                btn.prop('disabled', false);
-                            }
-                        });
-                    }
-                },
-                parseFloat(spinner.css('animation-duration')) * 1000)
+                        let checkResult = btn.children('.result');
+                        if (checkResult.length) {
+                            btn.find('.result').fadeIn();
+                            setTimeout(function () {
+                                btn.find('.result').fadeOut(200, function () {
+                                    btn.find('.old-html').fadeIn();
+                                    spinner.remove();
+                                    btn.find('.result').remove();
+                                    btn.prop('disabled', false);
+                                });
+                            }, 500);
+                        } else {
+                            btn.find('.old-html').fadeIn();
+                            spinner.remove();
+                            btn.prop('disabled', false);
+                        }
+                    });
+                }
+            },
+            parseFloat(spinner.css('animation-duration')) * 1000)
         );
     });
 }
