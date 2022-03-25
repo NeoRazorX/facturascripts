@@ -297,4 +297,30 @@ class Controller
     {
         return $this->className;
     }
+
+    /**
+     * Check request token. Returns an error if:
+     *   - the token does not exist
+     *   - the token is invalid
+     *   - the token is duplicated
+     * 
+     * @return bool
+     */
+    protected function validateFormToken(): bool
+    {
+        // valid request?
+        $token = $this->request->request->get('multireqtoken', '');
+        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+            $this->toolBox()->i18nLog()->warning('invalid-request');
+            return false;
+        }
+
+        // duplicated request?
+        if ($this->multiRequestProtection->tokenExist($token)) {
+            $this->toolBox()->i18nLog()->warning('duplicated-request');
+            return false;
+        }
+
+        return true;
+    }
 }
