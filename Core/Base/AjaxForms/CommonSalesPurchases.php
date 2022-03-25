@@ -271,7 +271,7 @@ trait CommonSalesPurchases
         }
 
         $options = [];
-        foreach ($model->getAvaliableStatus() as $sta) {
+        foreach ($model->getAvailableStatus() as $sta) {
             if ($sta->idestado === $model->idestado) {
                 continue;
             }
