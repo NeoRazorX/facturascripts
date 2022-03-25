@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Lib\AjaxForms\AccountingFooterHTML;
-use FacturaScripts\Core\Lib\AjaxForms\AccountingHeaderHTML;
-use FacturaScripts\Core\Lib\AjaxForms\AccountingLineHTML;
-use FacturaScripts\Core\Lib\AjaxForms\AccountingModalHTML;
+use FacturaScripts\Core\Base\AjaxForms\AccountingFooterHTML;
+use FacturaScripts\Core\Base\AjaxForms\AccountingHeaderHTML;
+use FacturaScripts\Core\Base\AjaxForms\AccountingLineHTML;
+use FacturaScripts\Core\Base\AjaxForms\AccountingModalHTML;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;

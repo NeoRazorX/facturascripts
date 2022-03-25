@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\DocTransformation;
@@ -98,8 +99,7 @@ class BusinessDocumentGenerator
         $protoLines = empty($lines) ? $prototype->getLines() : $lines;
         if ($newDoc->save() && $this->cloneLines($prototype, $newDoc, $protoLines, $quantity)) {
             // recalculate totals on new document
-            $tool = new BusinessDocumentTools();
-            $tool->recalculate($newDoc);
+            Calculator::calculate($newDoc, $protoLines, false);
             if ($newDoc->save()) {
                 // add to last doc list
                 $this->lastDocs[] = $newDoc;

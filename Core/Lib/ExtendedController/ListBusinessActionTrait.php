@@ -131,7 +131,7 @@ trait ListBusinessActionTrait
                 continue;
             }
 
-            foreach ($model->getAvaliableStatus() as $status) {
+            foreach ($model->getAvailableStatus() as $status) {
                 if (empty($status->generadoc)) {
                     continue;
                 }
@@ -201,7 +201,7 @@ trait ListBusinessActionTrait
                 continue;
             }
 
-            foreach ($model->getAvaliableStatus() as $status) {
+            foreach ($model->getAvailableStatus() as $status) {
                 if ($status->editable) {
                     continue;
                 }

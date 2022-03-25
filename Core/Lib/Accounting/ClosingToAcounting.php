@@ -200,7 +200,7 @@ class ClosingToAcounting
     {
         /// apply to customer invoices
         $customerInvoice = new FacturaCliente();
-        $status1 = $customerInvoice->getAvaliableStatus();
+        $status1 = $customerInvoice->getAvailableStatus();
         $where = [
             new DataBaseWhere('editable', true),
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio)
@@ -221,7 +221,7 @@ class ClosingToAcounting
 
         /// apply to supplier invoices
         $supplierInvoice = new FacturaProveedor();
-        $status2 = $supplierInvoice->getAvaliableStatus();
+        $status2 = $supplierInvoice->getAvailableStatus();
         foreach ($status2 as $stat) {
             if ($stat->editable || $stat->generadoc) {
                 continue;

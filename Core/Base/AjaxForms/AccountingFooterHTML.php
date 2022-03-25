@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Lib\AjaxForms;
+namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Dinamic\Model\Asiento;
@@ -77,13 +77,13 @@ class AccountingFooterHTML
         $lockBtn = '';
         if ($model->editable) {
             $lockBtn .= '<div class="col-sm-3 col-md-2">'
-                . '<button type="button" class="btn btn-block btn-warning mb-3" onclick="return accEntryFormSave(\'lock-doc\', \'0\');">'
+                . '<button type="button" class="btn btn-block btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'lock-doc\', \'0\');">'
                 . '<i class="fas fa-lock fa-fw"></i> ' . $i18n->trans('lock-entry') . '</button>'
                 . '</div>';
         }
 
         return '<div class="col-sm-3 col-md-2">'
-            . '<button type="button" class="btn btn-block btn-danger mb-3" data-toggle="modal" data-target="#deleteDocModal">'
+            . '<button type="button" class="btn btn-block btn-danger btn-spin-action mb-3" data-toggle="modal" data-target="#deleteDocModal">'
             . '<i class="fas fa-trash-alt fa-fw"></i> ' . $i18n->trans('delete') . '</button>'
             . '</div>'
             . $lockBtn
@@ -103,7 +103,7 @@ class AccountingFooterHTML
             . '</div>'
             . '<div class="modal-footer">'
             . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('cancel') . '</button>'
-            . '<button type="button" class="btn btn-danger" onclick="return accEntryFormSave(\'delete-doc\', \'0\');">' . $i18n->trans('delete') . '</button>'
+            . '<button type="button" class="btn btn-danger btn-spin-action" onclick="return accEntryFormSave(\'delete-doc\', \'0\');">' . $i18n->trans('delete') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -176,13 +176,13 @@ class AccountingFooterHTML
     {
         if (false === $model->editable) {
             return '<div class="col-sm-3 col-md-2">'
-                . '<button type="button" class="btn btn-block btn-warning mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\', this);">'
+                . '<button type="button" class="btn btn-block btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\');">'
                 . '<i class="fas fa-lock-open fa-fw"></i> ' . $i18n->trans('unlock-entry') . '</button>'
                 . '</div>';
         }
 
         return '<div class="col-sm-3 col-md-2">'
-            . '<button type="button" class="btn btn-block btn-primary mb-3" onclick="return accEntryFormSave(\'save-doc\', \'0\', this);">'
+            . '<button type="button" class="btn btn-block btn-primary btn-spin-action mb-3" load-after="true" onclick="return accEntryFormSave(\'save-doc\', \'0\');">'
             . '<i class="fas fa-save fa-fw"></i> ' . $i18n->trans('save') . '</button>'
             . '</div>';
     }
@@ -202,6 +202,9 @@ class AccountingFooterHTML
         return '<div class="col-sm-6 col-md">'
             . '<a href="#" class="btn btn-info mb-3" onclick="$(\'#findSubaccountModal\').modal(); $(\'#findSubaccountInput\').focus(); return false;">'
             . '<i class="fas fa-book fa-fw"></i> ' . $i18n->trans('subaccounts') . '</a>'
+            . '<button type="button" class="btn btn-light mb-3 ml-2" id="sortableBtn">'
+            . '<i class="fas fa-arrows-alt-v fa-fw"></i> ' . $i18n->trans('move-lines')
+            . '</button>'
             . '</div>';
     }
 }

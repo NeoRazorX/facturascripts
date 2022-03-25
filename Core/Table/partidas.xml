@@ -46,7 +46,6 @@
     <column>
         <name>debeme</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>documento</name>
@@ -65,7 +64,6 @@
     <column>
         <name>haberme</name>
         <type>double precision</type>
-        <null>NO</null>
     </column>
     <column>
         <name>idasiento</name>
@@ -136,6 +134,7 @@
     </constraint>
     <constraint>
         <name>ca_partidas_subcuentas2</name>
-        <type>FOREIGN KEY (idcontrapartida) REFERENCES subcuentas (idsubcuenta) ON DELETE SET NULL ON UPDATE CASCADE</type>
+        <type>FOREIGN KEY (idcontrapartida) REFERENCES subcuentas (idsubcuenta) ON DELETE SET NULL ON UPDATE CASCADE
+        </type>
     </constraint>
 </table>

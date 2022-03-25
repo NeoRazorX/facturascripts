@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,19 +19,31 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
-use FacturaScripts\Test\Core\CustomTest;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Empresa
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- */
-final class EmpresaTest extends CustomTest
+class EmpresaTest extends TestCase
 {
-
-    protected function setUp(): void
+    public function testCreate()
     {
-        $this->model = new Empresa();
+        // creamos una empresa
+        $company = new Empresa();
+        $company->nombre = 'Empresa 1';
+        $this->assertTrue($company->save(), 'company-cant-save');
+        $this->assertNotNull($company->primaryColumnValue(), 'company-not-stored');
+        $this->assertTrue($company->exists(), 'company-cant-persist');
+
+        // comprobamos que se ha creado un almacén asociado
+        $warehouse = new Almacen();
+        $where = [new DataBaseWhere('idempresa', $company->idempresa)];
+        $this->assertTrue($warehouse->loadFromCode('', $where), 'warehouse-not-found');
+
+        // eliminamos
+        $this->assertTrue($company->delete(), 'can-not-delete-company');
+
+        // el almacén también se ha eliminado
+        $this->assertFalse($warehouse->exists(), 'warehouse-still-exists');
     }
 }

@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentFormTools;
+use FacturaScripts\Dinamic\Lib\ExtendedController\BusinessDocumentView;
 
 /**
  * Description of BusinessDocumentController

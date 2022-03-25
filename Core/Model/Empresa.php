@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -142,7 +143,7 @@ class Empresa extends Base\Contact
 
     /**
      * Returns the bank accounts associated with the company.
-     * 
+     *
      * @return DinCuentaBanco[]
      */
     public function getBankAccounts()
@@ -161,7 +162,7 @@ class Empresa extends Base\Contact
      */
     public function install()
     {
-        /// needed dependencies
+        // needed dependencies
         new AttachedFile();
 
         $num = mt_rand(1, 9999);
@@ -180,7 +181,7 @@ class Empresa extends Base\Contact
      */
     public function isDefault()
     {
-        return $this->idempresa === (int) $this->toolBox()->appSettings()->get('default', 'idempresa');
+        return $this->idempresa === (int)$this->toolBox()->appSettings()->get('default', 'idempresa');
     }
 
     /**
@@ -233,16 +234,16 @@ class Empresa extends Base\Contact
         return parent::test();
     }
 
-    protected function createPaymentMethods()
+    protected function createPaymentMethods(): bool
     {
         $formaPago = new FormaPago();
         $formaPago->codpago = $formaPago->newCode();
         $formaPago->descripcion = $this->toolBox()->i18n()->trans('default');
         $formaPago->idempresa = $this->idempresa;
-        $formaPago->save();
+        return $formaPago->save();
     }
 
-    protected function createWarehouse()
+    protected function createWarehouse(): bool
     {
         $almacen = new Almacen();
         $almacen->apartado = $this->apartado;
@@ -252,14 +253,13 @@ class Empresa extends Base\Contact
         $almacen->codpostal = $this->codpostal;
         $almacen->direccion = $this->direccion;
         $almacen->idempresa = $this->idempresa;
-        $almacen->nombre = $this->nombrecorto;
+        $almacen->nombre = $this->nombrecorto ?? $this->nombre;
         $almacen->provincia = $this->provincia;
         $almacen->telefono = $this->telefono1;
-        $almacen->save();
+        return $almacen->save();
     }
 
     /**
-     *
      * @param array $values
      *
      * @return bool
@@ -270,12 +270,6 @@ class Empresa extends Base\Contact
             $this->idempresa = $this->newCode();
         }
 
-        if (parent::saveInsert($values)) {
-            $this->createPaymentMethods();
-            $this->createWarehouse();
-            return true;
-        }
-
-        return false;
+        return parent::saveInsert($values) && $this->createPaymentMethods() && $this->createWarehouse();
     }
 }

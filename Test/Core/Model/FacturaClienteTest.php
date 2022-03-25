@@ -85,6 +85,10 @@ final class FacturaClienteTest extends TestCase
         $this->assertEquals(self::INVOICE_NOTES, $dbInvoice->observaciones, 'bad-invoice-notes');
         $this->assertEquals($invoice->total, $dbInvoice->total, 'bad-invoice-total');
 
+        // comprobamos que se añade la línea al log de auditoría
+        $found = $this->searchAuditLog($invoice->modelClassName(), $invoice->idfactura);
+        $this->assertTrue($found, 'invoice-log-audit-cant-persist');
+
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
         $this->assertFalse($dbInvoice->exists(), 'invoice-still-found');
@@ -223,7 +227,7 @@ final class FacturaClienteTest extends TestCase
 
         // cambiamos el estado a uno no editable
         $changed = false;
-        foreach ($invoice->getAvaliableStatus() as $status) {
+        foreach ($invoice->getAvailableStatus() as $status) {
             if (false === $status->editable) {
                 $invoice->idestado = $status->idestado;
                 $changed = true;

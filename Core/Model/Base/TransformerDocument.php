@@ -63,7 +63,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return TransformerDocument[]
      */
-    public function childrenDocuments()
+    public function childrenDocuments(): array
     {
         $children = [];
         $keys = [];
@@ -103,7 +103,7 @@ abstract class TransformerDocument extends BusinessDocument
         $this->editable = true;
 
         // select default status
-        foreach ($this->getAvaliableStatus() as $status) {
+        foreach ($this->getAvailableStatus() as $status) {
             if ($status->predeterminado) {
                 $this->idestado = $status->idestado;
                 $this->editable = $status->editable;
@@ -153,7 +153,7 @@ abstract class TransformerDocument extends BusinessDocument
 
         // change parent doc status
         foreach ($parents as $parent) {
-            foreach ($parent->getAvaliableStatus() as $status) {
+            foreach ($parent->getAvailableStatus() as $status) {
                 if ($status->predeterminado) {
                     $parent->idestado = $status->idestado;
                     $parent->save();
@@ -179,11 +179,11 @@ abstract class TransformerDocument extends BusinessDocument
     }
 
     /**
-     * Returns all avaliable status for this type of document.
+     * Returns all available status for this type of document.
      *
      * @return EstadoDocumento[]
      */
-    public function getAvaliableStatus()
+    public function getAvailableStatus(): array
     {
         if (null === self::$estados) {
             $statusModel = new EstadoDocumento();
@@ -232,7 +232,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return TransformerDocument[]
      */
-    public function parentDocuments()
+    public function parentDocuments(): array
     {
         $parents = [];
         $keys = [];

@@ -48,4 +48,15 @@ class EditEmailNotification extends EditController
     {
         return 'EmailNotification';
     }
+
+    /**
+     * Create the view to display.
+     */
+    protected function createViews()
+    {
+        parent::createViews();
+        $viewName = $this->getMainViewName();
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
+    }
 }

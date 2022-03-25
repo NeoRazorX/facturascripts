@@ -35,7 +35,20 @@ final class AsientoTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
-    public function testClosedExercise()
+    public function testCreate()
+    {
+        // creamos el asiento
+        $asiento = new Asiento();
+        $asiento->concepto = 'Test';
+        $this->assertTrue($asiento->save(), 'asiento-cant-save');
+        $this->assertNotNull($asiento->primaryColumnValue(), 'asiento-not-stored');
+        $this->assertTrue($asiento->exists(), 'asiento-cant-persist');
+
+        // eliminamos
+        $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
+    }
+
+    public function testClosedExerciseCreate()
     {
         // creamos un ejercicio cerrado
         $exercise = $this->getRandomExercise();
@@ -62,8 +75,38 @@ final class AsientoTest extends TestCase
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
     }
 
+    public function testClosedExerciseModify()
+    {
+        // creamos el asiento
+        $asiento = new Asiento();
+        $asiento->concepto = 'Test';
+        $this->assertTrue($asiento->save(), 'asiento-cant-save');
+        $this->assertNotNull($asiento->primaryColumnValue(), 'asiento-not-stored');
+        $this->assertTrue($asiento->exists(), 'asiento-cant-persist');
+
+        // cerramos el ejercicio
+        $exercise = new Ejercicio();
+        $exercise->loadFromCode($asiento->codejercicio);
+        $exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
+        $this->assertTrue($exercise->save(), 'can-not-close-exercise');
+        $asiento->clearExerciseCache();
+
+        // ahora no se puede modificar
+        $asiento->concepto = 'Modify';
+        $this->assertFalse($asiento->save(), 'can-save-on-closed-exercise');
+
+        // abrimos el ejercicio
+        $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
+        $this->assertTrue($exercise->save(), 'can-not-open-exercise');
+        $asiento->clearExerciseCache();
+
+        // eliminamos
+        $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
+    }
+
     public function testCheckLogAudit()
     {
+        // creamos el asiento
         $asiento = new Asiento();
         $asiento->concepto = 'Test';
         $this->assertTrue($asiento->save(), 'asiento-cant-save');

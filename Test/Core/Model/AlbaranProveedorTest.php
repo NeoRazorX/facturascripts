@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,11 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\AlbaranProveedor;
+use FacturaScripts\Core\Model\Almacen;
+use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Test\Core\DefaultSettingsTrait;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use FacturaScripts\Test\Core\RandomDataTrait;
@@ -49,11 +52,11 @@ final class AlbaranProveedorTest extends TestCase
 
     public function testSetAuthor()
     {
-        // create warehouse
+        // creamos un almacén
         $warehouse = $this->getRandomWarehouse();
         $this->assertTrue($warehouse->save(), 'can-not-create-warehouse');
 
-        // create user
+        // creamos un usuario
         $user = $this->getRandomUser();
         $user->codalmacen = $warehouse->codalmacen;
 
@@ -219,6 +222,63 @@ final class AlbaranProveedorTest extends TestCase
 
         // eliminamos el producto
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
+    }
+
+    public function testSecondCompany()
+    {
+        // creamos la empresa 2
+        $company2 = new Empresa();
+        $company2->nombre = 'Company 2';
+        $company2->nombrecorto = 'Company-2';
+        $this->assertTrue($company2->save(), 'company-cant-save');
+
+        // obtenemos el almacén de la empresa 2
+        $warehouse = new Almacen();
+        $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
+        $warehouse->loadFromCode('', $where);
+
+        // creamos el cliente
+        $subject = $this->getRandomSupplier();
+        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+
+        // creamos el albarán
+        $doc = new AlbaranProveedor();
+        $doc->setSubject($subject);
+        $doc->codalmacen = $warehouse->codalmacen;
+        $this->assertTrue($doc->save(), 'albaran-cant-save');
+
+        // añadimos una línea
+        $line = $doc->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $this->assertTrue($line->save(), 'can-not-save-line-2');
+
+        // aprobamos
+        foreach ($doc->getAvailableStatus() as $status) {
+            if (empty($status->generadoc)) {
+                continue;
+            }
+
+            // al cambiar el estado genera una nueva factura
+            $doc->idestado = $status->idestado;
+            $this->assertTrue($doc->save(), 'albaran-cant-save');
+
+            $children = $doc->childrenDocuments();
+            $this->assertNotEmpty($children, 'facturas-no-creadas');
+            foreach ($children as $child) {
+                $this->assertEquals($company2->idempresa, $child->idempresa, 'factura-bad-idempresa');
+            }
+        }
+
+        // eliminamos
+        $children = $doc->childrenDocuments();
+        $this->assertNotEmpty($children, 'facturas-no-creadas');
+        foreach ($children as $child) {
+            $this->assertTrue($child->delete(), 'factura-cant-delete');
+        }
+        $this->assertTrue($doc->delete(), 'albaran-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
+        $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }
 
     protected function tearDown(): void

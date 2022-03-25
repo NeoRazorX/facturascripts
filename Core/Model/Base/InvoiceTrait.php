@@ -82,7 +82,7 @@ trait InvoiceTrait
 
     abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50);
 
-    abstract public function getReceipts();
+    abstract public function getReceipts(): array;
 
     /**
      * @return bool
@@ -117,7 +117,7 @@ trait InvoiceTrait
     /**
      * @return static[]
      */
-    public function getRefunds()
+    public function getRefunds(): array
     {
         if (empty($this->idfactura)) {
             return [];
@@ -159,7 +159,7 @@ trait InvoiceTrait
      *
      * @return TransformerDocument[]
      */
-    public function parentDocuments()
+    public function parentDocuments(): array
     {
         $parents = parent::parentDocuments();
         $where = [new DataBaseWhere('idfactura', $this->idfacturarect)];
@@ -226,10 +226,7 @@ trait InvoiceTrait
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    protected function onChangeTotal()
+    protected function onChangeTotal(): bool
     {
         // remove accounting entry
         $asiento = $this->getAccountingEntry();

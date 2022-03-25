@@ -31,7 +31,7 @@ use FacturaScripts\Dinamic\Model\RegularizacionImpuesto as DinRegularizacionImpu
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
+class Asiento extends Base\ModelOnChangeClass
 {
 
     use Base\ModelTrait;
@@ -131,7 +131,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     public function accumulateAmounts(array &$detail)
     {
         $haber = isset($detail['haber']) ? (float)$detail['haber'] : 0.0;
-        $this->importe += round($haber, (int)FS_NF0);
+        $this->importe += round($haber, FS_NF0);
     }
 
     /**

@@ -51,7 +51,7 @@ class WidgetCheckbox extends BaseWidget
         $descriptionHtml = empty($description) ? '' :
             '<small class="form-text text-muted">' . static::$i18n->trans($description) . '</small>';
 
-        return '<div class="form-group form-check pr-3">'
+        return '<div class="form-group form-check pr-3 mb-2">'
             . $inputHtml
             . $labelHtml
             . $descriptionHtml

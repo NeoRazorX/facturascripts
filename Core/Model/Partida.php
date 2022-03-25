@@ -92,14 +92,7 @@ class Partida extends Base\ModelOnChangeClass
      * @var float|int
      */
     public $debe;
-
-    /**
-     * Debit of the accounting entry in secondary currency.
-     *
-     * @var float|int
-     */
-    public $debeme;
-
+    
     /**
      * Document of departure.
      *
@@ -120,13 +113,6 @@ class Partida extends Base\ModelOnChangeClass
      * @var float|int
      */
     public $haber;
-
-    /**
-     * Credit of the accounting entry in secondary currency.
-     *
-     * @var float|int
-     */
-    public $haberme;
 
     /**
      * Identifier of the counterpart.
@@ -198,9 +184,7 @@ class Partida extends Base\ModelOnChangeClass
         $this->baseimponible = 0.0;
         $this->coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
         $this->debe = 0.0;
-        $this->debeme = 0.0;
         $this->haber = 0.0;
-        $this->haberme = 0.0;
         $this->iva = 0.0;
         $this->orden = 0;
         $this->punteada = false;

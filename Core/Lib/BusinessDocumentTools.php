@@ -31,16 +31,12 @@ use FacturaScripts\Dinamic\Model\Serie;
 
 /**
  * A set of tools to recalculate business documents.
+ * @deprecated since 2022
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class BusinessDocumentTools
 {
-
-    /**
-     * @var CommissionTools
-     */
-    protected $commissionTools;
 
     /**
      * @var ImpuestoZona[]
@@ -57,18 +53,14 @@ class BusinessDocumentTools
      */
     protected $siniva = false;
 
-    public function __construct()
-    {
-        $this->commissionTools = new CommissionTools();
-    }
-
     /**
      * Returns subtotals by tax.
-     *
      * @param BusinessDocumentLine[] $lines
      * @param array $discounts
      *
      * @return array
+     * @deprecated since 2022
+     *
      */
     public function getSubtotals(array $lines, array $discounts): array
     {
@@ -148,8 +140,9 @@ class BusinessDocumentTools
 
     /**
      * Recalculates document totals.
-     *
      * @param BusinessDocument $doc
+     * @deprecated since 2022
+     *
      */
     public function recalculate(BusinessDocument &$doc)
     {
@@ -177,9 +170,6 @@ class BusinessDocumentTools
         $doc->totalrecargo = round($doc->totalrecargo, (int)FS_NF0);
         $doc->totalsuplidos = round($doc->totalsuplidos, (int)FS_NF0);
         $doc->total = round($doc->neto + $doc->totalsuplidos + $doc->totaliva + $doc->totalrecargo - $doc->totalirpf, (int)FS_NF0);
-
-        // recalculate commissions
-        $this->commissionTools->recalculate($doc, $lines);
     }
 
     protected function clearTotals(BusinessDocument &$doc)
