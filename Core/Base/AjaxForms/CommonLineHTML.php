@@ -27,9 +27,9 @@ trait CommonLineHTML
         $attributes = $model->editable && false === $line->suplido ?
             'name="iva_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
             'disabled=""';
-        return '<div class="col-sm-2 col-lg-1 order-6">'
+        return '<div class="col-sm-2 col-lg-1 px-0 order-6">'
             . '<div class="mb-1 small">' . $i18n->trans('tax')
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-control form-control-sm rounded-0">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -50,18 +50,18 @@ trait CommonLineHTML
         $variante = new Variante();
         $where = [new DataBaseWhere('referencia', $line->referencia)];
         if (empty($line->referencia) || false === $variante->loadFromCode('', $where)) {
-            return '<div class="col-sm-4 col-lg order-1">'
+            return '<div class="col-sm-4 col-lg px-0 order-1">'
                 . '<div class="mb-1 small">' . $sortable . $i18n->trans('description')
-                . '<textarea ' . $attributes . ' class="form-control doc-line-desc" rows="' . $rows . '">' . $line->descripcion . '</textarea>'
+                . '<textarea ' . $attributes . ' class="form-control form-control-sm rounded-0 doc-line-desc" rows="' . $rows . '">' . $line->descripcion . '</textarea>'
                 . '</div>'
                 . '</div>';
         }
 
-        return '<div class="col-sm-4 col-lg order-1">'
+        return '<div class="col-sm-4 col-lg px-0 order-1">'
             . '<div class="mb-1 small">'
             . $sortable . '<a href="' . $variante->url() . '">' . $line->referencia . '</a>'
             . '<input type="hidden" name="referencia_' . $idlinea . '" value="' . $line->referencia . '"/>'
-            . '<textarea ' . $attributes . ' class="form-control doc-line-desc" rows="' . $rows . '">' . $line->descripcion . '</textarea>'
+            . '<textarea ' . $attributes . ' class="form-control form-control-sm rounded-0 doc-line-desc" rows="' . $rows . '">' . $line->descripcion . '</textarea>'
             . '</div>'
             . '</div>';
     }
@@ -71,9 +71,9 @@ trait CommonLineHTML
         $attributes = $model->editable ?
             'name="dtopor_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
             'disabled=""';
-        return '<div class="col-sm-2 col-xl-1 order-5">'
+        return '<div class="col-sm-2 col-xl-1 px-0 order-5">'
             . '<div class="mb-1 small">' . $i18n->trans('percentage-discount')
-            . '<input type="number" ' . $attributes . ' value="' . $line->dtopor . '" class="form-control"/>'
+            . '<input type="number" ' . $attributes . ' value="' . $line->dtopor . '" class="form-control form-control-sm rounded-0"/>'
             . '</div>'
             . '</div>';
     }
@@ -116,9 +116,9 @@ trait CommonLineHTML
     protected static function lineTotal(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
     {
         $total = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
-        return '<div class="col-sm-2 col-xl-1 order-7">'
+        return '<div class="col-sm-2 col-xl-1 px-0 order-7">'
             . '<div class="mb-1 small">' . $i18n->trans('subtotal')
-            . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . $total . '" class="form-control" readonly/>'
+            . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . $total . '" class="form-control form-control-sm rounded-0" readonly/>'
             . '</div>'
             . '</div>';
     }
@@ -145,8 +145,8 @@ trait CommonLineHTML
             return '';
         }
 
-        return '<div class="col-sm-auto order-8">'
-            . '<button class="btn btn-outline-secondary mb-1" type="button"'
+        return '<div class="col-sm-auto px-0 order-8">'
+            . '<button class="btn btn-outline-secondary btn-sm rounded-0 mb-1" type="button"'
             . ' onclick="' . $jsName . '(\'' . $idlinea . '\')"><i class="fas fa-calculator"></i></button>'
             . '</div>';
     }
@@ -154,16 +154,16 @@ trait CommonLineHTML
     protected static function renderExpandButton(Translator $i18n, string $idlinea, TransformerDocument $model, string $jsName): string
     {
         if ($model->editable) {
-            return '<div class="col-sm-auto order-9">'
-                . '<button type="button" data-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
+            return '<div class="col-sm-auto px-0 order-9">'
+                . '<button type="button" data-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-sm btn-outline-secondary rounded-0 mb-1" title="'
                 . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button>'
-                . '<button class="btn btn-outline-danger btn-spin-action ml-2 mb-1" type="button" title="' . $i18n->trans('delete') . '"'
+                . '<button class="btn btn-sm btn-outline-danger btn-spin-action rounded-0 mb-1" type="button" title="' . $i18n->trans('delete') . '"'
                 . ' onclick="return ' . $jsName . '(\'rm-line\', \'' . $idlinea . '\');">'
                 . '<i class="fas fa-trash-alt"></i></button>'
                 . '</div>';
         }
 
-        return '<div class="col-sm-auto order-9"><button type="button" data-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
+        return '<div class="col-sm-auto px-0 order-9"><button type="button" data-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-sm btn-outline-secondary rounded-0 mb-1" title="'
             . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
     }
 

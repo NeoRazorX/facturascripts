@@ -215,14 +215,14 @@ class SalesLineHTML
     private static function cantidad(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
     {
         if (false === $model->editable) {
-            return '<div class="col-sm-2 col-xl-1 small order-2">' . self::cantidadLabel($i18n, $line, $model)
-                . '<input type="number" class="form-control mb-1" value="' . $line->cantidad . '" disabled=""/>'
+            return '<div class="col-sm-2 col-xl-1 small px-0 order-2">' . self::cantidadLabel($i18n, $line, $model)
+                . '<input type="number" class="form-control form-control-sm rounded-0 mb-1" value="' . $line->cantidad . '" disabled=""/>'
                 . '</div>';
         }
 
-        return '<div class="col-sm-3 col-xl-1 small order-2">' . self::cantidadLabel($i18n, $line, $model)
+        return '<div class="col-sm-3 col-xl-1 small px-0 order-2">' . self::cantidadLabel($i18n, $line, $model)
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
-            . '" class="form-control mb-1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"/>'
+            . '" class="form-control form-control-sm rounded-0 mb-1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"/>'
             . '</div>';
     }
 
@@ -290,17 +290,17 @@ class SalesLineHTML
     private static function precio(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
     {
         if (false === $model->editable) {
-            return '<div class="col-sm-2 col-xl-1 order-3">'
+            return '<div class="col-sm-2 col-xl-1 px-0 order-3">'
                 . '<div class="mb-1 small">' . $i18n->trans('price')
-                . '<input type="number" value="' . $line->pvpunitario . '" class="form-control" disabled/>'
+                . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm rounded-0" disabled/>'
                 . '</div>'
                 . '</div>';
         }
 
         $attributes = 'name="pvpunitario_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"';
-        return '<div class="col-sm-2 col-xl-1 order-3">'
+        return '<div class="col-sm-2 col-xl-1 px-0 order-3">'
             . '<div class="mb-1 small">' . $i18n->trans('price')
-            . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control"/>'
+            . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm rounded-0"/>'
             . '</div>'
             . '</div>';
     }
