@@ -60,7 +60,7 @@ class SalesHeaderHTML
         }
 
         $model->cifnif = $formData['cifnif'] ?? $model->cifnif;
-        $model->codagente = !empty($formData['codagente']) ? $formData['codagente'] : null;
+        $model->codagente = !empty($formData['codagente']) ? $formData['codagente'] : $model->codagente;
         $model->codalmacen = $formData['codalmacen'] ?? $model->codalmacen;
         $model->codigoenv = $formData['codigoenv'] ?? $model->codigoenv;
         $model->coddivisa = $formData['coddivisa'] ?? $model->coddivisa;
