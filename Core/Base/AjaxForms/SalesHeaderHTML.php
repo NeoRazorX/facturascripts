@@ -47,7 +47,7 @@ class SalesHeaderHTML
             $model->setAuthor($user);
             if (isset($formData['codcliente']) && $formData['codcliente'] && $cliente->loadFromCode($formData['codcliente'])) {
                 $model->setSubject($cliente);
-                if (isset($formData['action']) && $formData['action'] === 'set-customer') {
+                if (empty($formData['action']) || $formData['action'] === 'set-customer') {
                     return;
                 }
             }
