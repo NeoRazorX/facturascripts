@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -58,10 +58,7 @@ abstract class PanelController extends BaseController
         $this->setTabsPosition('left');
     }
 
-    /**
-     * @return string
-     */
-    public function getImageUrl()
+    public function getImageUrl(): string
     {
         return '';
     }
@@ -116,7 +113,7 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Sets the tabs position, by default is setted to 'left', also supported 'bottom' and 'top'.
+     * Sets the tabs position, by default is set to 'left', also supported 'bottom' and 'top'.
      *
      * @param string $position
      */
@@ -158,7 +155,7 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Adds a Edit type view to the controller.
+     * Adds an Edit type view to the controller.
      *
      * @param string $viewName
      * @param string $modelName
@@ -173,33 +170,7 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Adds a Grid type view to the controller.
-     * Master/Detail params:
-     *   ['name' = 'viewName', 'model' => 'modelName']
-     *
-     * @param array $master
-     * @param array $detail
-     * @param string $viewTitle
-     * @param string $viewIcon
-     * @deprecated will be removed in the next year
-     *
-     */
-    protected function addGridView(array $master, array $detail, string $viewTitle, string $viewIcon = 'fas fa-list-alt')
-    {
-        // Create master and detail views
-        $master['model'] = self::MODEL_NAMESPACE . $master['model'];
-        $detail['model'] = self::MODEL_NAMESPACE . $detail['model'];
-        $view = new GridView($master, $detail, $viewTitle, $viewIcon);
-
-        // load columns definition for detail view
-        $view->detailView->loadPageOptions($this->user);
-
-        // Add view to the views list
-        $this->addCustomView($master['name'], $view);
-    }
-
-    /**
-     * Adds a HTML type view to the controller.
+     * Adds an HTML type view to the controller.
      *
      * @param string $viewName
      * @param string $fileName
@@ -325,17 +296,6 @@ abstract class PanelController extends BaseController
                     $this->views[$this->active]->model->clear();
                 }
                 break;
-
-            case 'save-document':
-                $viewName = $this->searchGridView();
-                if (!empty($viewName)) {
-                    $this->setTemplate(false);
-                    $data = $this->request->request->all();
-                    $result = $this->views[$viewName]->saveData($data);
-                    $this->response->setContent(json_encode($result, JSON_FORCE_OBJECT));
-                    return false;
-                }
-                break;
         }
 
         return true;
@@ -376,21 +336,5 @@ abstract class PanelController extends BaseController
         $this->views[$this->active]->newCode = $this->views[$this->active]->model->primaryColumnValue();
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         return true;
-    }
-
-    /**
-     * Returns the key of the first GridView.
-     *
-     * @return string
-     */
-    private function searchGridView(): string
-    {
-        foreach ($this->views as $viewName => $view) {
-            if ($view instanceof GridView) {
-                return $viewName;
-            }
-        }
-
-        return '';
     }
 }
