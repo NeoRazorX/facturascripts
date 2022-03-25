@@ -24,8 +24,7 @@ function animateSpinner(animation, result = '') {
         if ('add' === animation) {
             btn.prop('disabled', true);
 
-            const initialHtml = btn.children('.old-html');
-            if (initialHtml.length < 1) {
+            if (btn.children('.old-html').length < 1) {
                 btn.html('<span class="old-html">' + btn.html() + '</span>');
             }
 
@@ -45,7 +44,7 @@ function animateSpinner(animation, result = '') {
             if (result !== '' && typeof attr !== 'undefined' && attr === true) {
                 const icon = result ? 'fas fa-times' : 'fas fa-check';
 
-                btn.append('<div class="result mx-auto" style="display: none;"><i class="' + icon + '"></i></div>');
+                btn.append('<div class="result mx-auto d-none"><i class="' + icon + '"></i></div>');
             }
 
             btn.prop('disabled', false);
