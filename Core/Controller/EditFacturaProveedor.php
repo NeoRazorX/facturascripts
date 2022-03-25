@@ -5,19 +5,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
-<<<<<<< HEAD
 use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
-use FacturaScripts\Dinamic\Lib\ExtendedController\PurchaseDocumentController;
-=======
 use FacturaScripts\Core\Base\AjaxForms\PurchasesController;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ExtendedController\BaseView;
-use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
-use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
->>>>>>> ab876f2c815092156ca8a4d0b60bccc0d8e91aed
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
