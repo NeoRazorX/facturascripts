@@ -18,7 +18,7 @@
 
 function animateSpinner(animation, result = '') {
     const spinnerIcon = '<span class="spinner-icon spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-    
+
     $(".btn-spin-action").each(function () {
         const btn = $(this);
         if ('add' === animation) {
