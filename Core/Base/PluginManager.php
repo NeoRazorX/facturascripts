@@ -161,8 +161,6 @@ final class PluginManager
                 self::$enabledPlugins[] = $plugin;
                 $this->save();
                 $this->deploy(false, true);
-                $this->initPlugin($pluginName);
-                ToolBox::i18nLog()->notice('plugin-enabled', ['%pluginName%' => $pluginName]);
                 return true;
             }
         }
@@ -199,6 +197,7 @@ final class PluginManager
         if (class_exists($pluginClass) && in_array($pluginName, $this->enabledPlugins())) {
             $initObject = new $pluginClass();
             $initObject->update();
+            ToolBox::i18nLog()->notice('plugin-enabled', ['%pluginName%' => $pluginName]);
         }
     }
 

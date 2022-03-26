@@ -152,6 +152,7 @@ class AdminPlugins extends Base\Controller
 
         $pluginName = $this->request->get('plugin', '');
         $this->pluginManager->enable($pluginName);
+        $this->redirect($this->url() . '?action=init&plugin=' . $pluginName);
         $this->toolBox()->cache()->clear();
     }
 
@@ -169,6 +170,10 @@ class AdminPlugins extends Base\Controller
 
             case 'enable':
                 $this->enablePluginAction();
+                break;
+
+            case 'init':
+                $this->initPluginAction();
                 break;
 
             case 'rebuild':
@@ -191,6 +196,11 @@ class AdminPlugins extends Base\Controller
                 }
                 break;
         }
+    }
+
+    private function initPluginAction()
+    {
+        $this->pluginManager->initPlugin($this->request->get('plugin', ''));
     }
 
     private function rebuildAction(): void
