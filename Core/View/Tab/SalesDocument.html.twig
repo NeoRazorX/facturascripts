@@ -23,9 +23,8 @@
         }
     }
 
-    function salesFormAction(action, selectedLine) {
+    function baseRequest(action, selectedLine) {
         animateSpinner('add');
-        $('#headerModal').modal('hide');
 
         document.forms['salesForm']['action'].value = action;
         document.forms['salesForm']['selectedLine'].value = selectedLine;
@@ -42,45 +41,57 @@
         data.append('data', formDataJsonString);
         console.log(data);
 
-        fetch('{{ fsc.url() }}', {
+        const URL = '{{ fsc.url() }}';
+        const options = {
             method: 'POST',
             body: data
-        }).then(function (response) {
-            animateSpinner('remove', true);
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        }).then(function (data) {
-            if (data.header !== '') {
-                document.getElementById("salesFormHeader").innerHTML = data.header;
-            }
-            if (data.lines !== '') {
-                document.getElementById("salesFormLines").innerHTML = data.lines;
-            } else {
-                $.each(data.linesMap, function (index, value) {
-                    document.forms['salesForm'][index].value = value;
-                });
-            }
-            if (data.footer !== '') {
-                document.getElementById("salesFormFooter").innerHTML = data.footer;
-            }
-            if (data.products !== '') {
-                document.getElementById("findProductList").innerHTML = data.products;
-            }
-            if (Array.isArray(data.messages)) {
-                data.messages.forEach(item => alert(item.message));
-            }
-            if (document.forms['salesForm']['action'].value === 'new-line') {
-                $(".doc-line-desc:last").focus();
-            } else if (document.forms['salesForm']['action'].value === 'fast-line') {
-                document.forms['salesForm']['fastli'].focus();
-            }
-        }).catch(function (error) {
-            alert('error');
-            console.warn(error);
-            animateSpinner('remove', false);
-        });
+        };
+
+        return fetch(URL, options)
+            .then(function (response) {
+                animateSpinner('remove', true);
+                if (response.ok) {
+                    return response.json();
+                }
+                return Promise.reject(response);
+            }).catch(err => console.log(err));
+    }
+
+    function salesFormAction(action, selectedLine) {
+        $('#headerModal').modal('hide');
+
+        baseRequest(action, selectedLine)
+            .then(function (data) {
+                if (data.header !== '') {
+                    document.getElementById("salesFormHeader").innerHTML = data.header;
+                }
+                if (data.lines !== '') {
+                    document.getElementById("salesFormLines").innerHTML = data.lines;
+                } else {
+                    $.each(data.linesMap, function (index, value) {
+                        document.forms['salesForm'][index].value = value;
+                    });
+                }
+                if (data.footer !== '') {
+                    document.getElementById("salesFormFooter").innerHTML = data.footer;
+                }
+                if (data.products !== '') {
+                    document.getElementById("findProductList").innerHTML = data.products;
+                }
+                if (Array.isArray(data.messages)) {
+                    data.messages.forEach(item => alert(item.message));
+                }
+                if (document.forms['salesForm']['action'].value === 'new-line') {
+                    $(".doc-line-desc:last").focus();
+                } else if (document.forms['salesForm']['action'].value === 'fast-line') {
+                    document.forms['salesForm']['fastli'].focus();
+                }
+            })
+            .catch(function (error) {
+                alert('error');
+                console.warn(error);
+                animateSpinner('remove', false);
+            });
 
         return false;
     }
@@ -101,45 +112,21 @@
     }
 
     function salesFormSave(action, selectedLine) {
-        animateSpinner('add');
-
-        document.forms['salesForm']['action'].value = action;
-        document.forms['salesForm']['selectedLine'].value = selectedLine;
-
-        const formData = new FormData(document.forms['salesForm']);
-        const plainFormData = Object.fromEntries(formData.entries());
-        const formDataJsonString = JSON.stringify(plainFormData);
-
-        let data = new FormData();
-        data.append('action', action);
-        data.append('code', document.forms['salesForm']['code'].value);
-        data.append('multireqtoken', document.forms['salesForm']['multireqtoken'].value);
-        data.append('selectedLine', document.forms['salesForm']['selectedLine'].value);
-        data.append('data', formDataJsonString);
-        console.log(data);
-
-        fetch('{{ fsc.url() }}', {
-            method: 'POST',
-            body: data
-        }).then(function (response) {
-            animateSpinner('remove', true);
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        }).then(function (data) {
-            console.log(data);
-            if (Array.isArray(data.messages)) {
-                data.messages.forEach(item => alert(item.message));
-            }
-            if (data.ok) {
-                window.location.replace(data.newurl);
-            }
-        }).catch(function (error) {
-            alert('error');
-            console.warn(error);
-            animateSpinner('remove', false);
-        });
+        baseRequest(action, selectedLine)
+            .then(function (data) {
+                console.log(data);
+                if (Array.isArray(data.messages)) {
+                    data.messages.forEach(item => alert(item.message));
+                }
+                if (data.ok) {
+                    window.location.replace(data.newurl);
+                }
+            })
+            .catch(function (error) {
+                alert('error');
+                console.warn(error);
+                animateSpinner('remove', false);
+            });
 
         return false;
     }
@@ -162,7 +149,8 @@
     }
 
     function sortableEnable() {
-        $("#salesFormLines").sortable({
+        const formLines = $("#purchasesFormLines");
+        formLines.sortable({
             update: function (event, ui) {
                 let orderInputs = $("input[name^='orden_']");
                 let count = orderInputs.length * 10;
@@ -171,8 +159,8 @@
                 });
             }
         });
-        $("#salesFormLines").sortable("option", "disabled", false);
-        $("#salesFormLines").disableSelection();
+        formLines.sortable("option", "disabled", false);
+        formLines.disableSelection();
     }
 
     function sortableDisable() {

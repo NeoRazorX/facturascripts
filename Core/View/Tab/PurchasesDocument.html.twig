@@ -23,9 +23,8 @@
         }
     }
 
-    function purchasesFormAction(action, selectedLine) {
+    function baseRequest(action, selectedLine) {
         animateSpinner('add');
-        $('#headerModal').modal('hide');
 
         document.forms['purchasesForm']['action'].value = action;
         document.forms['purchasesForm']['selectedLine'].value = selectedLine;
@@ -42,45 +41,57 @@
         data.append('data', formDataJsonString);
         console.log(data);
 
-        fetch('{{ fsc.url() }}', {
+        const URL = '{{ fsc.url() }}';
+        const options = {
             method: 'POST',
             body: data
-        }).then(function (response) {
-            animateSpinner('remove', true);
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        }).then(function (data) {
-            if (data.header !== '') {
-                document.getElementById("purchasesFormHeader").innerHTML = data.header;
-            }
-            if (data.lines !== '') {
-                document.getElementById("purchasesFormLines").innerHTML = data.lines;
-            } else {
-                $.each(data.linesMap, function (index, value) {
-                    document.forms['purchasesForm'][index].value = value;
-                });
-            }
-            if (data.footer !== '') {
-                document.getElementById("purchasesFormFooter").innerHTML = data.footer;
-            }
-            if (data.products !== '') {
-                document.getElementById("findProductList").innerHTML = data.products;
-            }
-            if (Array.isArray(data.messages)) {
-                data.messages.forEach(item => alert(item.message));
-            }
-            if (document.forms['purchasesForm']['action'].value === 'new-line') {
-                $(".doc-line-desc:last").focus();
-            } else if (document.forms['purchasesForm']['action'].value === 'fast-line') {
-                document.forms['purchasesForm']['fastli'].focus();
-            }
-        }).catch(function (error) {
-            alert('error');
-            console.warn(error);
-            animateSpinner('remove', false);
-        });
+        };
+
+        return fetch(URL, options)
+            .then(function (response) {
+                animateSpinner('remove', true);
+                if (response.ok) {
+                    return response.json();
+                }
+                return Promise.reject(response);
+            }).catch(err => console.log(err));
+    }
+
+    function purchasesFormAction(action, selectedLine) {
+        $('#headerModal').modal('hide');
+
+        baseRequest(action, selectedLine)
+            .then(function (data) {
+                if (data.header !== '') {
+                    document.getElementById("purchasesFormHeader").innerHTML = data.header;
+                }
+                if (data.lines !== '') {
+                    document.getElementById("purchasesFormLines").innerHTML = data.lines;
+                } else {
+                    $.each(data.linesMap, function (index, value) {
+                        document.forms['purchasesForm'][index].value = value;
+                    });
+                }
+                if (data.footer !== '') {
+                    document.getElementById("purchasesFormFooter").innerHTML = data.footer;
+                }
+                if (data.products !== '') {
+                    document.getElementById("findProductList").innerHTML = data.products;
+                }
+                if (Array.isArray(data.messages)) {
+                    data.messages.forEach(item => alert(item.message));
+                }
+                if (document.forms['purchasesForm']['action'].value === 'new-line') {
+                    $(".doc-line-desc:last").focus();
+                } else if (document.forms['purchasesForm']['action'].value === 'fast-line') {
+                    document.forms['purchasesForm']['fastli'].focus();
+                }
+            })
+            .catch(function (error) {
+                alert('error');
+                console.warn(error);
+                animateSpinner('remove', false);
+            });
 
         return false;
     }
@@ -101,45 +112,21 @@
     }
 
     function purchasesFormSave(action, selectedLine) {
-        animateSpinner('add');
-
-        document.forms['purchasesForm']['action'].value = action;
-        document.forms['purchasesForm']['selectedLine'].value = selectedLine;
-
-        const formData = new FormData(document.forms['purchasesForm']);
-        const plainFormData = Object.fromEntries(formData.entries());
-        const formDataJsonString = JSON.stringify(plainFormData);
-
-        let data = new FormData();
-        data.append('action', action);
-        data.append('code', document.forms['purchasesForm']['code'].value);
-        data.append('multireqtoken', document.forms['purchasesForm']['multireqtoken'].value);
-        data.append('selectedLine', document.forms['purchasesForm']['selectedLine'].value);
-        data.append('data', formDataJsonString);
-        console.log(data);
-
-        fetch('{{ fsc.url() }}', {
-            method: 'POST',
-            body: data
-        }).then(function (response) {
-            animateSpinner('remove', true);
-            if (response.ok) {
-                return response.json();
-            }
-            return Promise.reject(response);
-        }).then(function (data) {
-            console.log(data);
-            if (Array.isArray(data.messages)) {
-                data.messages.forEach(item => alert(item.message));
-            }
-            if (data.ok) {
-                window.location.replace(data.newurl);
-            }
-        }).catch(function (error) {
-            alert('error');
-            console.warn(error);
-            animateSpinner('remove', false);
-        });
+        baseRequest(action, selectedLine)
+            .then(function (data) {
+                console.log(data);
+                if (Array.isArray(data.messages)) {
+                    data.messages.forEach(item => alert(item.message));
+                }
+                if (data.ok) {
+                    window.location.replace(data.newurl);
+                }
+            })
+            .catch(function (error) {
+                alert('error');
+                console.warn(error);
+                animateSpinner('remove', false);
+            });
 
         return false;
     }
@@ -150,6 +137,7 @@
         const recargo = parseFloat(document.forms['purchasesForm']['recargo_' + id].value) || 0;
         const irpf = parseFloat(document.forms['purchasesForm']['irpf_' + id].value) || 0;
         const cantidad = parseFloat(document.forms['purchasesForm']['cantidad_' + id].value) || 0;
+
         if (total <= 0) {
             alert('total > 0');
         } else if (cantidad <= 0) {
@@ -162,7 +150,8 @@
     }
 
     function sortableEnable() {
-        $("#purchasesFormLines").sortable({
+        const formLines = $("#purchasesFormLines");
+        formLines.sortable({
             update: function (event, ui) {
                 let orderInputs = $("input[name^='orden_']");
                 let count = orderInputs.length * 10;
@@ -171,8 +160,8 @@
                 });
             }
         });
-        $("#purchasesFormLines").sortable("option", "disabled", false);
-        $("#purchasesFormLines").disableSelection();
+        formLines.sortable("option", "disabled", false);
+        formLines.disableSelection();
     }
 
     function sortableDisable() {
