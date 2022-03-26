@@ -14,89 +14,30 @@
     }
 </style>
 
-<script>
+<script type="module">
+    import {
+        baseFormRequest,
+        baseFormAction,
+        baseLineTotalWithTaxes,
+        sortableEnable,
+        sortableDisable
+    } from "{{ asset('Core/Assets/JS/FormDocumentAction.js') }}";
+
+    const URL = '{{ fsc.url() }}';
+    const formName = 'salesForm';
     let waitCounter = 0;
 
-    function salesFastLine(e) {
+    window.salesFastLine = function (e) {
         if (e.which == 13) {
-            salesFormAction('fast-line', '0');
+            baseFormAction('fast-line', '0', formName, URL);
         }
     }
 
-    function baseRequest(action, selectedLine) {
-        animateSpinner('add');
-
-        document.forms['salesForm']['action'].value = action;
-        document.forms['salesForm']['selectedLine'].value = selectedLine;
-
-        const formData = new FormData(document.forms['salesForm']);
-        const plainFormData = Object.fromEntries(formData.entries());
-        const formDataJsonString = JSON.stringify(plainFormData);
-
-        let data = new FormData();
-        data.append('action', action);
-        data.append('code', document.forms['salesForm']['code'].value);
-        data.append('multireqtoken', document.forms['salesForm']['multireqtoken'].value);
-        data.append('selectedLine', document.forms['salesForm']['selectedLine'].value);
-        data.append('data', formDataJsonString);
-        console.log(data);
-
-        const URL = '{{ fsc.url() }}';
-        const options = {
-            method: 'POST',
-            body: data
-        };
-
-        return fetch(URL, options)
-            .then(function (response) {
-                animateSpinner('remove', true);
-                if (response.ok) {
-                    return response.json();
-                }
-                return Promise.reject(response);
-            }).catch(err => console.log(err));
+    window.salesFormAction = function (action, selectedLine) {
+        baseFormAction(action, selectedLine, formName, URL);
     }
 
-    function salesFormAction(action, selectedLine) {
-        $('#headerModal').modal('hide');
-
-        baseRequest(action, selectedLine)
-            .then(function (data) {
-                if (data.header !== '') {
-                    document.getElementById("salesFormHeader").innerHTML = data.header;
-                }
-                if (data.lines !== '') {
-                    document.getElementById("salesFormLines").innerHTML = data.lines;
-                } else {
-                    $.each(data.linesMap, function (index, value) {
-                        document.forms['salesForm'][index].value = value;
-                    });
-                }
-                if (data.footer !== '') {
-                    document.getElementById("salesFormFooter").innerHTML = data.footer;
-                }
-                if (data.products !== '') {
-                    document.getElementById("findProductList").innerHTML = data.products;
-                }
-                if (Array.isArray(data.messages)) {
-                    data.messages.forEach(item => alert(item.message));
-                }
-                if (document.forms['salesForm']['action'].value === 'new-line') {
-                    $(".doc-line-desc:last").focus();
-                } else if (document.forms['salesForm']['action'].value === 'fast-line') {
-                    document.forms['salesForm']['fastli'].focus();
-                }
-            })
-            .catch(function (error) {
-                alert('error');
-                console.warn(error);
-                animateSpinner('remove', false);
-            });
-
-        return false;
-    }
-
-    async function salesFormActionWait(action, selectedLine) {
+    window.salesFormActionWait = async function (action, selectedLine) {
         animateSpinner('add');
 
         // usamos un contador y un temporizador para solamente procesar la última llamada
@@ -108,11 +49,11 @@
         }
 
         console.log('waitNum: ' + waitNum);
-        return salesFormAction(action, selectedLine)
+        return baseFormAction(action, selectedLine, formName, URL);
     }
 
-    function salesFormSave(action, selectedLine) {
-        baseRequest(action, selectedLine)
+    window.salesFormSave = function (action, selectedLine) {
+        baseFormRequest(action, selectedLine, formName, URL)
             .then(function (data) {
                 console.log(data);
                 if (Array.isArray(data.messages)) {
@@ -131,40 +72,10 @@
         return false;
     }
 
-    function salesLineTotalWithTaxes(id) {
+    window.salesLineTotalWithTaxes = function (id) {
         const total = parseFloat(prompt('{{ i18n.trans('total-with-taxes') }}').replace(',', '.')) || 0;
-        const iva = parseFloat(document.forms['salesForm']['iva_' + id].value) || 0;
-        const recargo = parseFloat(document.forms['salesForm']['recargo_' + id].value) || 0;
-        const irpf = parseFloat(document.forms['salesForm']['irpf_' + id].value) || 0;
-        const cantidad = parseFloat(document.forms['salesForm']['cantidad_' + id].value) || 0;
-        if (total <= 0) {
-            alert('total > 0');
-        } else if (cantidad <= 0) {
-            alert('cantidad > 0');
-        } else {
-            const pvp = (100 * total / cantidad) / (100 + iva + recargo - irpf);
-            document.forms['salesForm']['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
-            salesFormAction('recalculate', '0');
-        }
-    }
 
-    function sortableEnable() {
-        const formLines = $("#purchasesFormLines");
-        formLines.sortable({
-            update: function (event, ui) {
-                let orderInputs = $("input[name^='orden_']");
-                let count = orderInputs.length * 10;
-                orderInputs.each(function (index) {
-                    $(this).val(count - (index * 10));
-                });
-            }
-        });
-        formLines.sortable("option", "disabled", false);
-        formLines.disableSelection();
-    }
-
-    function sortableDisable() {
-        $("#salesFormLines").sortable("disable");
+        baseLineTotalWithTaxes(id, total, formName, URL);
     }
 
     {% if model.editable %}
@@ -172,11 +83,11 @@
 
     $(document).on('click', '#sortableBtn', function () {
         if (sortable) {
-            sortableDisable();
+            sortableDisable('#salesFormLines');
             sortable = false;
             $(this).removeClass('btn-secondary').addClass('btn-light');
         } else {
-            sortableEnable();
+            sortableEnable('#salesFormLines');
             sortable = true;
             $(this).removeClass('btn-light').addClass('btn-secondary');
         }
@@ -189,7 +100,7 @@
             source: function (request, response) {
                 $.ajax({
                     method: "POST",
-                    url: '{{ fsc.url() }}',
+                    url: URL,
                     data: {action: 'find-customer', term: request.term},
                     dataType: "json",
                     success: function (results) {
