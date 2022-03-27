@@ -29,14 +29,14 @@ export function baseFormRequest(action, selectedLine, formName, controllerUrl) {
     document.forms[formName]['selectedLine'].value = selectedLine;
 
     const formData = new FormData(document.forms[formName]);
-    const plainFormData = Object.fromEntries(formData.entries());
-    const formDataJsonString = JSON.stringify(plainFormData);
+    const formDataObject = Object.fromEntries(formData.entries());
+    const formDataJsonString = JSON.stringify(formDataObject);
 
     let data = new FormData();
     data.append('action', action);
     data.append('code', document.forms[formName]['code'].value);
     data.append('multireqtoken', document.forms[formName]['multireqtoken'].value);
-    data.append('selectedLine', document.forms[formName]['selectedLine'].value);
+    data.append('selectedLine', selectedLine);
     data.append('data', formDataJsonString);
     console.log(data);
 

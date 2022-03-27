@@ -16,25 +16,25 @@
 
 <script type="module">
     import {
-        baseFormRequest,
-        baseFormAction,
-        baseLineTotalWithTaxes,
         sortableEnable,
         sortableDisable
     } from "{{ asset('Core/Assets/JS/FormDocumentAction.js') }}";
+    import DocumentForm from "{{ asset('Core/Assets/JS/EditDocumentForm.js') }}";
 
     const URL = '{{ fsc.url() }}';
     const formName = 'salesForm';
     let waitCounter = 0;
 
+    const documentForm = new DocumentForm(formName, URL);
+
     window.salesFastLine = function (e) {
         if (e.which == 13) {
-            baseFormAction('fast-line', '0', formName, URL);
+            documentForm.baseFormAction('fast-line', '0', formName, URL);
         }
     }
 
     window.salesFormAction = function (action, selectedLine) {
-        baseFormAction(action, selectedLine, formName, URL);
+        documentForm.baseFormAction(action, selectedLine);
     }
 
     window.salesFormActionWait = async function (action, selectedLine) {
@@ -49,11 +49,11 @@
         }
 
         console.log('waitNum: ' + waitNum);
-        return baseFormAction(action, selectedLine, formName, URL);
+        return documentForm.baseFormAction(action, selectedLine);
     }
 
     window.salesFormSave = function (action, selectedLine) {
-        baseFormRequest(action, selectedLine, formName, URL)
+        documentForm.baseFormRequest(action, selectedLine)
             .then(function (data) {
                 console.log(data);
                 if (Array.isArray(data.messages)) {
@@ -75,7 +75,7 @@
     window.salesLineTotalWithTaxes = function (id) {
         const total = parseFloat(prompt('{{ i18n.trans('total-with-taxes') }}').replace(',', '.')) || 0;
 
-        baseLineTotalWithTaxes(id, total, formName, URL);
+        documentForm.baseLineTotalWithTaxes(id, total, formName, URL);
     }
 
     {% if model.editable %}
