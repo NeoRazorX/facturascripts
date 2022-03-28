@@ -345,7 +345,7 @@ abstract class SalesController extends PanelController
     protected function saveStatusAction(): bool
     {
         $this->setTemplate(false);
-
+        $this->saveDocAction();
         $model = $this->getModel();
         $model->idestado = (int)$this->request->request->get('selectedLine');
         if (false === $model->save()) {
