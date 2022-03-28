@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -80,7 +80,7 @@ class AtributoValor extends Base\ModelClass
      *
      * @return CodeModel[]
      */
-    public function codeModelAll(string $fieldCode = '')
+    public function codeModelAll(string $fieldCode = ''): array
     {
         $results = [];
         $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
@@ -103,7 +103,7 @@ class AtributoValor extends Base\ModelClass
      */
     public function install()
     {
-        /// needed dependency
+        // needed dependency
         new DinAtributo();
 
         return parent::install();
@@ -114,7 +114,7 @@ class AtributoValor extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
@@ -124,7 +124,7 @@ class AtributoValor extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'atributos_valores';
     }
@@ -138,7 +138,7 @@ class AtributoValor extends Base\ModelClass
     {
         $this->valor = $this->toolBox()->utils()->noHtml($this->valor);
 
-        /// combine attribute name + value
+        // combine attribute name + value
         $attribute = new DinAtributo();
         if ($attribute->loadFromCode($this->codatributo)) {
             $this->descripcion = $attribute->nombre . ' ' . $this->valor;
@@ -148,13 +148,12 @@ class AtributoValor extends Base\ModelClass
     }
 
     /**
-     *
      * @param string $type
      * @param string $list
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'ListAtributo')
+    public function url(string $type = 'auto', string $list = 'ListAtributo'): string
     {
         $value = $this->codatributo;
         switch ($type) {
@@ -168,7 +167,7 @@ class AtributoValor extends Base\ModelClass
                 return 'EditAtributo';
         }
 
-        /// default
+        // default
         return empty($value) ? $list : 'EditAtributo?code=' . $value;
     }
 }

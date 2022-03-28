@@ -1,5 +1,7 @@
 {
+    "Agente": "Agent",
     "Date-of-the-document": "Dokumentdatum",
+    "Empleado": "Mitarbeiter",
     "MegaSearch": "Suchen",
     "Traceability": "Rückverfolgbarkeit",
     "VAT-register": "Steuerbuch",
@@ -60,7 +62,6 @@
     "admin": "Administrator",
     "administrator": "Verwalter",
     "advanced": "Avanzado",
-    "agent": "Agent",
     "agent-commission-info": "gilt nur für den ausgewählten Agenten",
     "agent-dont-have-associated-supplier": "der Agent hat keinen assoziierten Lieferanten",
     "agents": "Agenten",
@@ -414,7 +415,6 @@
     "email-signature": "Unterschrift E-Mail",
     "email-to": "Email für",
     "emails-sent": "E-Mails gesendet",
-    "employee": "Mitarbeiter",
     "employees": "Angestellte",
     "empty": "Leer",
     "enable": "aktivieren",

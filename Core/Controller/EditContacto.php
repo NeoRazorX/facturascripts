@@ -50,7 +50,7 @@ class EditContacto extends EditController
      *
      * @return array
      */
-    public function getPageData(): array
+    public function getPageData()
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';

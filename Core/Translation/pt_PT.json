@@ -1,5 +1,7 @@
 {
+    "Agente": "Agente",
     "Date-of-the-document": "Data do documento a criar",
+    "Empleado": "Empregado",
     "MegaSearch": "Mega Pesquisa",
     "Traceability": "Rastreabilidade",
     "VAT-register": "VAT registration",
@@ -60,7 +62,6 @@
     "admin": "Administrador",
     "administrator": "Administrador",
     "advanced": "Avançado",
-    "agent": "Agente",
     "agent-commission-info": "Apenas será de aplicação ao agente selecionado",
     "agent-dont-have-associated-supplier": "O agente não tem um fornecedor associado",
     "agents": "Agentes",
@@ -414,7 +415,6 @@
     "email-signature": "email-signature",
     "email-to": "Email To",
     "emails-sent": "emails-sent",
-    "employee": "Empregado",
     "employees": "employees",
     "empty": "Vazio",
     "enable": "Habilitar",

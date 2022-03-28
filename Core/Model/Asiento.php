@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -275,7 +275,7 @@ class Asiento extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idasiento';
     }
@@ -285,7 +285,7 @@ class Asiento extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'numero';
     }
@@ -297,7 +297,7 @@ class Asiento extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    public function renumber($codejercicio = '')
+    public function renumber(string $codejercicio = ''): bool
     {
         $exerciseModel = new DinEjercicio();
         $where = empty($codejercicio) ? [] : [new DataBaseWhere('codejercicio', $codejercicio)];
@@ -373,7 +373,7 @@ class Asiento extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    public function setDate($date)
+    public function setDate($date): bool
     {
         $exercise = new DinEjercicio();
         $exercise->idempresa = $this->idempresa;
@@ -391,7 +391,7 @@ class Asiento extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'asientos';
     }
@@ -461,7 +461,7 @@ class Asiento extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    protected function renumberAccEntries(&$entries, &$number)
+    protected function renumberAccEntries(array &$entries, int &$number): bool
     {
         $sql = '';
         foreach ($entries as $row) {
@@ -489,9 +489,6 @@ class Asiento extends Base\ModelOnChangeClass
         return parent::saveInsert($values);
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codejercicio', 'editable', 'fecha'];

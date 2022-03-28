@@ -1,5 +1,7 @@
 {
+    "Agente": "Agent",
     "Date-of-the-document": "Data del document a generar",
+    "Empleado": "Empleat",
     "MegaSearch": "Buscador",
     "Traceability": "Traçabilitat",
     "VAT-register": "Llibre d'imposts",
@@ -60,7 +62,6 @@
     "admin": "Administrador",
     "administrator": "Administrador",
     "advanced": "Avançat",
-    "agent": "Agent",
     "agent-commission-info": "Només s'aplicarà a l'agent seleccionat",
     "agent-dont-have-associated-supplier": "L'agent no té un proveïdor associat",
     "agents": "Agents",
@@ -414,7 +415,6 @@
     "email-signature": "Firma del correu",
     "email-to": "Email per a",
     "emails-sent": "Correus enviats",
-    "employee": "Empleat",
     "employees": "employees",
     "empty": "Buit",
     "enable": "Activar",

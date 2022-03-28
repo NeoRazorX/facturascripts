@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -97,7 +97,7 @@ class Cliente extends Base\ComercialContact
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
     {
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $fields = 'cifnif|codcliente|email|nombre|observaciones|razonsocial|telefono1|telefono2';
@@ -111,7 +111,7 @@ class Cliente extends Base\ComercialContact
      *
      * @return DinContacto[]
      */
-    public function getAdresses()
+    public function getAdresses(): array
     {
         $contactModel = new DinContacto();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
@@ -123,7 +123,7 @@ class Cliente extends Base\ComercialContact
      *
      * @return DinCuentaBancoCliente[]
      */
-    public function getBankAccounts()
+    public function getBankAccounts(): array
     {
         $contactAccounts = new DinCuentaBancoCliente();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
@@ -148,7 +148,7 @@ class Cliente extends Base\ComercialContact
      *
      * @return array
      */
-    public function getPaymentDays()
+    public function getPaymentDays(): array
     {
         $days = [];
         foreach (explode(',', $this->diaspago . ',') as $str) {
@@ -167,7 +167,7 @@ class Cliente extends Base\ComercialContact
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // we need exits Contacto before, but we can't check it because it would create a cyclic check
         // we need to check Agente and GrupoClientes models before
@@ -182,7 +182,7 @@ class Cliente extends Base\ComercialContact
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codcliente';
     }
@@ -192,7 +192,7 @@ class Cliente extends Base\ComercialContact
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
@@ -202,7 +202,7 @@ class Cliente extends Base\ComercialContact
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'clientes';
     }

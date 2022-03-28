@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -72,7 +72,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
     {
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $fields = 'cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2';
@@ -86,7 +86,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return DinContacto[]
      */
-    public function getAdresses()
+    public function getAdresses(): array
     {
         $contactModel = new DinContacto();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
@@ -98,7 +98,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return DinCuentaBancoProveedor[]
      */
-    public function getBankAccounts()
+    public function getBankAccounts(): array
     {
         $contactAccounts = new DinCuentaBancoProveedor();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
@@ -122,7 +122,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codproveedor';
     }
@@ -132,7 +132,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
@@ -142,7 +142,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'proveedores';
     }

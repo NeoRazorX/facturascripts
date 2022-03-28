@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -140,7 +140,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idestado';
     }
@@ -150,7 +150,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'estados_documentos';
     }
@@ -209,9 +209,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::onChange($field);
     }
 
-    /**
-     * @return bool
-     */
     protected function onChangePredeterminado(): bool
     {
         if ($this->predeterminado) {
@@ -281,9 +278,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::saveInsert($values);
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['actualizastock', 'bloquear', 'editable', 'generadoc', 'predeterminado', 'tipodoc'];

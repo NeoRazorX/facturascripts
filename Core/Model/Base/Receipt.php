@@ -143,34 +143,22 @@ abstract class Receipt extends ModelOnChangeClass
         return parent::delete();
     }
 
-    /**
-     * @param bool $disable
-     */
     public function disableInvoiceUpdate(bool $disable = true)
     {
         $this->disableInvoiceUpdate = $disable;
     }
 
-    /**
-     * @param bool $disable
-     */
     public function disablePaymentGeneration(bool $disable = true)
     {
         $this->disablePaymentGeneration = $disable;
     }
 
-    /**
-     * @return string
-     */
     public function getCode(): string
     {
         return $this->getInvoice()->codigo . '-' . $this->numero;
     }
 
-    /**
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idrecibo';
     }
@@ -283,9 +271,6 @@ abstract class Receipt extends ModelOnChangeClass
         return false;
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         parent::setPreviousData(array_merge(['importe', 'pagado'], $fields));

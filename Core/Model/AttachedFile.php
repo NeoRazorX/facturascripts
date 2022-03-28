@@ -160,7 +160,7 @@ class AttachedFile extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idfile';
     }
@@ -168,7 +168,7 @@ class AttachedFile extends Base\ModelOnChangeClass
     /**
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'filename';
     }
@@ -178,7 +178,7 @@ class AttachedFile extends Base\ModelOnChangeClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'attached_files';
     }
@@ -260,7 +260,7 @@ class AttachedFile extends Base\ModelOnChangeClass
      *
      * @return bool
      */
-    protected function setFile()
+    protected function setFile(): bool
     {
         $this->filename = $this->fixFileName($this->path);
         $newFolder = 'MyFiles/' . date('Y/m', strtotime($this->date));
@@ -294,9 +294,6 @@ class AttachedFile extends Base\ModelOnChangeClass
         return true;
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['path'];

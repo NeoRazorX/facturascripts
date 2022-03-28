@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -230,11 +230,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $eud;
     }
 
-    /**
-     * Returns related product.
-     *
-     * @return Producto
-     */
     public function getProducto(): Producto
     {
         $producto = new Producto();
@@ -248,9 +243,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $producto;
     }
 
-    /**
-     * @return Variante
-     */
     public function getVariante(): Variante
     {
         $variante = new Variante();
@@ -276,7 +268,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idlinea';
     }
@@ -446,9 +438,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $this->updateStock() && parent::saveInsert($values);
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['actualizastock', 'cantidad', 'servido'];

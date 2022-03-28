@@ -52,7 +52,7 @@ final class AppSettings
      *
      * @return mixed
      */
-    public static function get($group, $property, $default = null)
+    public static function get(string $group, string $property, $default = null)
     {
         if (!isset(self::$data[$group][$property])) {
             self::$data[$group][$property] = $default;
@@ -69,7 +69,7 @@ final class AppSettings
      * @param string $property
      * @param string $value
      */
-    public function set($group, $property, $value)
+    public function set(string $group, string $property, $value)
     {
         if (!isset(self::$data[$group])) {
             self::$data[$group] = [];
@@ -138,7 +138,7 @@ final class AppSettings
      *
      * @param array $data
      */
-    private function setConstants($data)
+    private function setConstants(array $data)
     {
         foreach ($data as $key => $value) {
             if (!defined($key)) {

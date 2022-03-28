@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,11 +34,6 @@ abstract class ModelOnChangeClass extends ModelClass
      */
     protected $previousData = [];
 
-    /**
-     * Class constructor.
-     *
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         parent::__construct($data);
@@ -64,13 +59,13 @@ abstract class ModelOnChangeClass extends ModelClass
      *
      * @param string $code
      * @param array $where
-     * @param array $orderby
+     * @param array $order
      *
      * @return bool
      */
-    public function loadFromCode($code, array $where = [], array $orderby = []): bool
+    public function loadFromCode($code, array $where = [], array $order = []): bool
     {
-        if (parent::loadFromCode($code, $where, $orderby)) {
+        if (parent::loadFromCode($code, $where, $order)) {
             $this->setPreviousData();
             return true;
         }

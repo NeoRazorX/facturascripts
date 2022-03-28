@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -64,7 +64,7 @@ abstract class ModelCore
      *
      * @return array
      */
-    abstract public function getModelFields();
+    abstract public function getModelFields(): array;
 
     /**
      * Loads table fields if is necessary.
@@ -79,14 +79,14 @@ abstract class ModelCore
      *
      * @return string
      */
-    abstract public function modelClassName();
+    abstract public function modelClassName(): string;
 
     /**
      * Returns the name of the model.
      *
      * @return string
      */
-    abstract protected function modelName();
+    abstract protected function modelName(): string;
 
     /**
      * Executes all $name methods added from the extensions.
@@ -149,7 +149,7 @@ abstract class ModelCore
      *
      * @return bool
      */
-    public function changePrimaryColumnValue($newValue)
+    public function changePrimaryColumnValue($newValue): bool
     {
         if (empty($newValue) || $newValue == $this->primaryColumnValue()) {
             return true;
@@ -218,7 +218,7 @@ abstract class ModelCore
 
                 case 'integer':
                 case 'int':
-                    $this->{$key} = $this->getIntergerValueForField($field, $value);
+                    $this->{$key} = $this->getIntegerValueForField($field, $value);
                     break;
 
                 case 'decimal':
@@ -339,7 +339,7 @@ abstract class ModelCore
      *
      * @return int|null
      */
-    private function getIntergerValueForField($field, $value): ?int
+    private function getIntegerValueForField($field, $value): ?int
     {
         if (is_numeric($value)) {
             return (int)$value;
@@ -352,10 +352,7 @@ abstract class ModelCore
         return $field['is_nullable'] === 'NO' ? 0 : null;
     }
 
-    /**
-     * @return ToolBox
-     */
-    protected static function toolBox()
+    protected static function toolBox(): ToolBox
     {
         return new ToolBox();
     }

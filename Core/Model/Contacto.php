@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -240,7 +240,7 @@ class Contacto extends Base\Contact
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
     {
         $results = [];
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
@@ -252,9 +252,6 @@ class Contacto extends Base\Contact
         return $results;
     }
 
-    /**
-     * @return string
-     */
     public function country(): string
     {
         $country = new DinPais();
@@ -382,7 +379,7 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idcontacto';
     }
@@ -392,7 +389,7 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'descripcion';
     }
@@ -402,7 +399,7 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'contactos';
     }
@@ -454,7 +451,7 @@ class Contacto extends Base\Contact
      *
      * @return bool
      */
-    public function verifyLogkey($value)
+    public function verifyLogkey($value): bool
     {
         return $this->logkey === $value;
     }

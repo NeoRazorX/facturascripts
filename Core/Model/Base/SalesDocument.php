@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -150,9 +150,6 @@ abstract class SalesDocument extends TransformerDocument
         $this->setCurrency($coddivisa, false);
     }
 
-    /**
-     * @return string
-     */
     public function country(): string
     {
         $country = new Pais();
@@ -163,9 +160,6 @@ abstract class SalesDocument extends TransformerDocument
         return $this->codpais;
     }
 
-    /**
-     * @return bool
-     */
     public function delete()
     {
         if (empty($this->total)) {
@@ -220,10 +214,7 @@ abstract class SalesDocument extends TransformerDocument
         return $newLine;
     }
 
-    /**
-     * @return Tarifa
-     */
-    public function getRate()
+    public function getRate(): Tarifa
     {
         $rate = new Tarifa();
         $subject = $this->getSubject();
@@ -263,9 +254,6 @@ abstract class SalesDocument extends TransformerDocument
         return $result;
     }
 
-    /**
-     * @return bool
-     */
     public function save()
     {
         if (empty($this->total)) {
@@ -342,10 +330,7 @@ abstract class SalesDocument extends TransformerDocument
         return $return;
     }
 
-    /**
-     * @return string
-     */
-    public function subjectColumn()
+    public function subjectColumn(): string
     {
         return 'codcliente';
     }
@@ -496,9 +481,6 @@ abstract class SalesDocument extends TransformerDocument
         return true;
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codagente', 'codcliente', 'direccion', 'idcontactofact'];

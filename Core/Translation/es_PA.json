@@ -1,5 +1,7 @@
 {
+    "Agente": "Encargado",
     "Date-of-the-document": "Fecha del documento a generar",
+    "Empleado": "Colaborador",
     "MegaSearch": "Búsqueda",
     "Traceability": "Trazabilidad",
     "VAT-register": "Impuestos",
@@ -60,7 +62,6 @@
     "admin": "Administrador",
     "administrator": "Administrador",
     "advanced": "Avanzado",
-    "agent": "Encargado",
     "agent-commission-info": "Sólo se aplicará al encargado seleccionado",
     "agent-dont-have-associated-supplier": "El encargado no tiene un proveedor asociado",
     "agents": "Encargados",
@@ -414,7 +415,6 @@
     "email-signature": "Firma del email",
     "email-to": "Email para",
     "emails-sent": "Emails enviados",
-    "employee": "Colaborador",
     "employees": "Empleados",
     "empty": "Vacío",
     "enable": "Activar",

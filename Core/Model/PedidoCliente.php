@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014       Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -24,7 +25,7 @@ use FacturaScripts\Dinamic\Model\LineaPedidoCliente as LineaPedido;
 
 /**
  * Customer order.
- * 
+ *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class PedidoCliente extends Base\SalesDocument
@@ -51,7 +52,7 @@ class PedidoCliente extends Base\SalesDocument
      *
      * @return LineaPedido[]
      */
-    public function getLines()
+    public function getLines(): array
     {
         $lineaModel = new LineaPedido();
         $where = [new DataBaseWhere('idpedido', $this->idpedido)];
@@ -62,7 +63,7 @@ class PedidoCliente extends Base\SalesDocument
 
     /**
      * Returns a new line for the document.
-     * 
+     *
      * @param array $data
      * @param array $exclude
      *
@@ -84,7 +85,7 @@ class PedidoCliente extends Base\SalesDocument
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idpedido';
     }
@@ -94,7 +95,7 @@ class PedidoCliente extends Base\SalesDocument
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'pedidoscli';
     }

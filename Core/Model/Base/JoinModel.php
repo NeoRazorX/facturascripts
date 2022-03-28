@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -80,7 +80,7 @@ abstract class JoinModel
      *
      * @param array $data
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
@@ -173,7 +173,7 @@ abstract class JoinModel
      *
      * @return int
      */
-    public function count(array $where = [])
+    public function count(array $where = []): int
     {
         $groupFields = $this->getGroupFields();
         if (!empty($groupFields)) {
@@ -211,17 +211,13 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function exists()
+    public function exists(): bool
     {
         return isset($this->masterModel) ? $this->masterModel->exists() : $this->count() > 0;
     }
 
-    /**
-     * @return array
-     */
-    public function getModelFields()
+    public function getModelFields(): array
     {
-        $database = new DataBase();
         $fields = [];
         foreach ($this->getFields() as $key => $field) {
             $fields[$key] = [
@@ -229,12 +225,14 @@ abstract class JoinModel
                 'type' => ''
             ];
 
+            // extraemos el nombre de la tabla
             $arrayField = explode('.', $field);
             if (false === is_array($arrayField) && false === isset($arrayField[0])) {
                 continue;
             }
 
-            $columns = $database->getColumns($arrayField[0]);
+            // consultamos la información de la tabla para obtener el tipo
+            $columns = self::$dataBase->getColumns($arrayField[0]);
             if (isset($columns[$arrayField[1]])) {
                 $fields[$key]['type'] = $columns[$arrayField[1]]['type'];
             }
@@ -257,7 +255,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    public function loadFromCode($cod, array $where = [], array $orderby = [])
+    public function loadFromCode($cod, array $where = [], array $orderby = []): bool
     {
         if (!$this->loadFilterWhere($cod, $where)) {
             $this->clear();
@@ -303,7 +301,7 @@ abstract class JoinModel
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         if (isset($this->masterModel)) {
             $primaryColumn = $this->masterModel->primaryColumn();
@@ -394,7 +392,7 @@ abstract class JoinModel
      *
      * @return bool
      */
-    private function loadFilterWhere($cod, &$where): bool
+    private function loadFilterWhere($cod, array &$where): bool
     {
         // If there is no search by code we use the where informed
         if (empty($cod)) {
@@ -424,7 +422,7 @@ abstract class JoinModel
      *
      * @param array $data
      */
-    protected function loadFromData($data)
+    protected function loadFromData(array $data)
     {
         foreach ($data as $field => $value) {
             $this->values[$field] = $value;
@@ -441,10 +439,7 @@ abstract class JoinModel
         $this->masterModel = $model;
     }
 
-    /**
-     * @return ToolBox
-     */
-    protected function toolBox()
+    protected function toolBox(): ToolBox
     {
         return new ToolBox();
     }
