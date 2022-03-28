@@ -362,7 +362,7 @@ class AccountingLineHTML
             : 'disabled';
 
         return '<div class="col pb-2 small">' . $i18n->trans('credit')
-            . '<input type="number" class="form-control" ' . $attributes . ' value="' . $line->haber . '"/>'
+            . '<input type="number" class="form-control" ' . $attributes . ' value="' . round($line->haber, FS_NF0) . '"/>'
             . '</div>';
     }
 
