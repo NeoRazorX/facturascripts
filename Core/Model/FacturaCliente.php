@@ -35,11 +35,6 @@ class FacturaCliente extends Base\SalesDocument
     use Base\InvoiceTrait;
 
     /**
-     * @var int
-     */
-    public $idliquidacion;
-
-    /**
      * Reset the values of all model properties.
      */
     public function clear()
