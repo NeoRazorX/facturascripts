@@ -16,14 +16,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-export default class DocumentForm {
+export default class EditDocumentForm {
     /**
      * @param {string} formName purchasesForm, salesForm
      * @param {string} url URL del controlador al que se solcitara la accion
      */
     constructor(formName, url) {
         this.formName = formName;
-        this.documentForm = document.forms[formName];
+        this.form = document.forms[formName];
         this.url = url;
     }
 
@@ -34,34 +34,35 @@ export default class DocumentForm {
     baseFormRequest(action, selectedLine) {
         animateSpinner('add');
 
-        this.documentForm['action'].value = action;
-        this.documentForm['selectedLine'].value = selectedLine;
+        this.form['action'].value = action;
+        this.form['selectedLine'].value = selectedLine;
 
-        const formData = new FormData(this.documentForm);
+        const formData = new FormData(this.form);
         const formDataObject = Object.fromEntries(formData.entries());
         const formDataJsonString = JSON.stringify(formDataObject);
 
         let data = new FormData();
         data.append('action', action);
-        data.append('code', this.documentForm['code'].value);
-        data.append('multireqtoken', this.documentForm['multireqtoken'].value);
         data.append('selectedLine', selectedLine);
+        data.append('code', this.form['code'].value);
+        data.append('multireqtoken', this.form['multireqtoken'].value);
         data.append('data', formDataJsonString);
-        console.log(data);
+        console.log('Data to send', data);
 
-        const options = {
+        return fetch(this.url, {
             method: 'POST',
             body: data
-        };
-
-        return fetch(this.url, options)
-            .then(function (response) {
-                animateSpinner('remove', true);
-                if (response.ok) {
-                    return response.json();
-                }
-                return Promise.reject(response);
-            }).catch(err => console.log(err));
+        }).then(function (response) {
+            animateSpinner('remove', true);
+            if (response.ok) {
+                return response.json();
+            }
+            return Promise.reject(response);
+        }).catch(function (error) {
+            animateSpinner('remove', false);
+            alert('error');
+            console.warn(error);
+        });
     }
 
     /**
@@ -79,11 +80,6 @@ export default class DocumentForm {
                 this.findProductList(data.products);
                 this.showMessages(data.messages);
                 this.setFocus();
-            })
-            .catch(function (error) {
-                alert('error');
-                console.warn(error);
-                animateSpinner('remove', false);
             });
 
         return false;
@@ -94,10 +90,10 @@ export default class DocumentForm {
      * @param {float} total
      */
     baseLineTotalWithTaxes(id, total) {
-        const iva = parseFloat(this.documentForm['iva_' + id].value) || 0;
-        const recargo = parseFloat(this.documentForm['recargo_' + id].value) || 0;
-        const irpf = parseFloat(this.documentForm['irpf_' + id].value) || 0;
-        const cantidad = parseFloat(this.documentForm['cantidad_' + id].value) || 0;
+        const iva = parseFloat(this.form['iva_' + id].value) || 0;
+        const recargo = parseFloat(this.form['recargo_' + id].value) || 0;
+        const irpf = parseFloat(this.form['irpf_' + id].value) || 0;
+        const cantidad = parseFloat(this.form['cantidad_' + id].value) || 0;
 
         if (total <= 0) {
             alert('total > 0');
@@ -105,7 +101,7 @@ export default class DocumentForm {
             alert('cantidad > 0');
         } else {
             const pvp = (100 * total / cantidad) / (100 + iva + recargo - irpf);
-            this.documentForm['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
+            this.form['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
             this.baseFormAction('recalculate', '0');
         }
     }
@@ -123,7 +119,7 @@ export default class DocumentForm {
         }
 
         for (const index in data.linesMap) {
-            this.documentForm[index].value = data.linesMap[index];
+            this.form[index].value = data.linesMap[index];
         }
     }
 
@@ -147,10 +143,35 @@ export default class DocumentForm {
     }
 
     setFocus() {
-        if (this.documentForm['action'].value === 'new-line') {
+        if (this.form['action'].value === 'new-line') {
             $(".doc-line-desc:last").focus();
-        } else if (this.documentForm['action'].value === 'fast-line') {
-            this.documentForm['fastli'].focus();
+        } else if (this.form['action'].value === 'fast-line') {
+            this.form['fastli'].focus();
         }
+    }
+
+    /**
+     * @param {string} name purchasesFormLines, salesFormLines
+     */
+    sortableEnable(name) {
+        const formLines = $(name);
+        formLines.sortable({
+            update: function (event, ui) {
+                let orderInputs = $("input[name^='orden_']");
+                let count = orderInputs.length * 10;
+                orderInputs.each(function (index) {
+                    $(this).val(count - (index * 10));
+                });
+            }
+        });
+        formLines.sortable("option", "disabled", false);
+        formLines.disableSelection();
+    }
+
+    /**
+     * @param {string} name purchasesFormLines, salesFormLines
+     */
+    sortableDisable(name) {
+        $(name).sortable("disable");
     }
 }

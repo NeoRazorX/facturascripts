@@ -15,58 +15,49 @@
 </style>
 
 <script type="module">
-    import {
-        sortableEnable,
-        sortableDisable
-    } from "{{ asset('Core/Assets/JS/FormDocumentAction.js') }}";
-    import DocumentForm from "{{ asset('Core/Assets/JS/EditDocumentForm.js') }}";
+    import EditDocumentForm from "{{ asset('Core/Assets/JS/EditDocumentForm.js') }}";
 
     const URL = '{{ fsc.url() }}';
-    const formName = 'salesForm';
-    let waitCounter = 0;
+    const ajaxForm = new EditDocumentForm('salesForm', URL);
 
-    const documentForm = new DocumentForm(formName, URL);
+    let requestQueueCounter = 0;
 
     window.salesFastLine = function (e) {
         if (e.which == 13) {
-            documentForm.baseFormAction('fast-line', '0', formName, URL);
+            ajaxForm.baseFormAction('fast-line', '0');
         }
     }
 
     window.salesFormAction = function (action, selectedLine) {
-        documentForm.baseFormAction(action, selectedLine);
+        ajaxForm.baseFormAction(action, selectedLine);
     }
 
     window.salesFormActionWait = async function (action, selectedLine) {
         animateSpinner('add');
 
         // usamos un contador y un temporizador para solamente procesar la última llamada
-        waitCounter++;
-        let waitNum = waitCounter;
+        requestQueueCounter++;
+        let currentRequestNumber = requestQueueCounter;
+
         await new Promise(r => setTimeout(r, 300));
-        if (waitNum < waitCounter) {
+        if (currentRequestNumber < requestQueueCounter) {
             return false;
         }
 
-        console.log('waitNum: ' + waitNum);
-        return documentForm.baseFormAction(action, selectedLine);
+        console.log('Current request queue:', currentRequestNumber)
+        return ajaxForm.baseFormAction(action, selectedLine);
     }
 
     window.salesFormSave = function (action, selectedLine) {
-        documentForm.baseFormRequest(action, selectedLine)
+        ajaxForm.baseFormRequest(action, selectedLine)
             .then(function (data) {
-                console.log(data);
+                console.log('Response data:', data);
                 if (Array.isArray(data.messages)) {
                     data.messages.forEach(item => alert(item.message));
                 }
                 if (data.ok) {
                     window.location.replace(data.newurl);
                 }
-            })
-            .catch(function (error) {
-                alert('error');
-                console.warn(error);
-                animateSpinner('remove', false);
             });
 
         return false;
@@ -75,7 +66,7 @@
     window.salesLineTotalWithTaxes = function (id) {
         const total = parseFloat(prompt('{{ i18n.trans('total-with-taxes') }}').replace(',', '.')) || 0;
 
-        documentForm.baseLineTotalWithTaxes(id, total, formName, URL);
+        ajaxForm.baseLineTotalWithTaxes(id, total);
     }
 
     {% if model.editable %}
@@ -83,11 +74,11 @@
 
     $(document).on('click', '#sortableBtn', function () {
         if (sortable) {
-            sortableDisable('#salesFormLines');
+            ajaxForm.sortableDisable('#salesFormLines');
             sortable = false;
             $(this).removeClass('btn-secondary').addClass('btn-light');
         } else {
-            sortableEnable('#salesFormLines');
+            ajaxForm.sortableEnable('#salesFormLines');
             sortable = true;
             $(this).removeClass('btn-light').addClass('btn-secondary');
         }
