@@ -221,12 +221,23 @@ abstract class JoinModel
      */
     public function getModelFields()
     {
+        $database = new DataBase();
         $fields = [];
         foreach ($this->getFields() as $key => $field) {
             $fields[$key] = [
                 'name' => $field,
                 'type' => ''
             ];
+
+            $arrayField = explode('.', $field);
+            if (false === is_array($arrayField) && false === isset($arrayField[0])) {
+                continue;
+            }
+
+            $columns = $database->getColumns($arrayField[0]);
+            if (isset($columns[$arrayField[1]])) {
+                $fields[$key]['type'] = $columns[$arrayField[1]]['type'];
+            }
         }
 
         return $fields;
