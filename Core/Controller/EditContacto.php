@@ -35,18 +35,12 @@ class EditContacto extends EditController
 
     use DocFilesTrait;
 
-    /**
-     * @return string
-     */
-    public function getImageUrl()
+    public function getImageUrl(): string
     {
         return $this->views['EditContacto']->model->gravatar();
     }
 
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Contacto';
     }
@@ -56,7 +50,7 @@ class EditContacto extends EditController
      *
      * @return array
      */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -65,9 +59,6 @@ class EditContacto extends EditController
         return $data;
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function addConversionButtons(string $viewName)
     {
         if (empty($this->views[$viewName]->model->codcliente)) {
@@ -89,19 +80,16 @@ class EditContacto extends EditController
         }
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createEmailsView(string $viewName = 'ListEmailSent')
     {
         $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
 
-        /// disable column
+        // disable column
         $this->views[$viewName]->disableColumn('to');
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }
 

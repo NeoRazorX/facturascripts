@@ -201,6 +201,15 @@ abstract class TransformerDocument extends BusinessDocument
     }
 
     /**
+     * @return EstadoDocumento[]
+     * @deprecated since 2022
+     */
+    public function getAvaliableStatus(): array
+    {
+        return $this->getAvailableStatus();
+    }
+
+    /**
      * Returns the EstadoDocumento model for this document.
      *
      * @return EstadoDocumento
