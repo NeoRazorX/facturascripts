@@ -295,7 +295,7 @@ class Variante extends Base\ModelClass
     {
         $utils = $this->toolBox()->utils();
         $this->referencia = $utils->noHtml($this->referencia);
-        if (\strlen($this->referencia) < 1 || \strlen($this->referencia) > 30) {
+        if (\strlen($this->referencia) > 30) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
@@ -325,6 +325,10 @@ class Variante extends Base\ModelClass
      */
     protected function saveInsert(array $values = [])
     {
+        if (empty($this->referencia)) {
+            $this->referencia = (string)$this->newCode('referencia');
+        }
+
         if (false === parent::saveInsert($values)) {
             return false;
         }

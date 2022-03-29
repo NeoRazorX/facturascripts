@@ -26,7 +26,7 @@
                 <widget type="text" fieldname="idproducto" required="true" />
             </column>
             <column name="reference" numcolumns="2" order="110">
-                <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag" required="true" />
+                <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag" />
             </column>
             <column name="attribute-value-1" titleurl="ListAtributo" numcolumns="2" order="120">
                 <widget type="select" fieldname="idatributovalor1" onclick="EditAtributo" />
