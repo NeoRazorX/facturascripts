@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Variante as DinVariante;
 
 /**
  * Stores the data of an article.
@@ -188,11 +189,11 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * @return Variante[]
+     * @return DinVariante[]
      */
     public function getVariants(): array
     {
-        $variantModel = new Variante();
+        $variantModel = new DinVariante();
         $where = [new DataBaseWhere('idproducto', $this->idproducto)];
         return $variantModel->all($where, [], 0, 0);
     }
@@ -281,7 +282,9 @@ class Producto extends Base\ModelClass
         $this->referencia = $utils->noHtml($this->referencia);
 
         if (empty($this->referencia)) {
-            $this->referencia = (string)$this->newCode('referencia');
+            // obtenemos una nueva referencia de variantes, en lugar del producto
+            $variant = new DinVariante();
+            $this->referencia = (string)$variant->newCode('referencia');
         }
         if (strlen($this->referencia) > 30) {
             $this->toolBox()->i18nLog()->warning(
@@ -346,7 +349,7 @@ class Producto extends Base\ModelClass
             return false;
         }
 
-        $variant = new Variante();
+        $variant = new DinVariante();
         $variant->idproducto = $this->idproducto;
         $variant->precio = $this->precio;
         $variant->referencia = $this->referencia;
