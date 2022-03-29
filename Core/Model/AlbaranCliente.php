@@ -68,8 +68,11 @@ class AlbaranCliente extends Base\SalesDocument
         $newLine->idalbaran = $this->idalbaran;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
-
         $newLine->loadFromData($data, $exclude);
+
+        // allow extensions
+        $this->pipe('getNewLine', $newLine);
+
         return $newLine;
     }
 
