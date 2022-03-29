@@ -280,7 +280,7 @@ class Producto extends Base\ModelClass
         $this->observaciones = $utils->noHtml($this->observaciones);
         $this->referencia = $utils->noHtml($this->referencia);
 
-        if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
+        if (strlen($this->referencia) > 30) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
@@ -340,6 +340,10 @@ class Producto extends Base\ModelClass
      */
     protected function saveInsert(array $values = [])
     {
+        if (empty($this->referencia)) {
+            $this->referencia = (string)$this->newCode('referencia');
+        }
+
         if (parent::saveInsert($values)) {
             $variant = new Variante();
             $variant->idproducto = $this->idproducto;
