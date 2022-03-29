@@ -461,8 +461,7 @@ class AccountingLineHTML
                 . '</div>'
                 . '</div>'
                 . static::contrapartida($i18n, $line, $model)
-                . static::concepto($i18n, $line, $model)
-                . static::saldo($i18n, $subcuenta);
+                . static::concepto($i18n, $line, $model);
         }
 
         return '<div class="col pb-2 small">'
@@ -474,7 +473,6 @@ class AccountingLineHTML
             . '</div>'
             . '</div>'
             . static::contrapartida($i18n, $line, $model)
-            . static::concepto($i18n, $line, $model)
-            . static::saldo($i18n, $subcuenta);
+            . static::concepto($i18n, $line, $model);
     }
 }
