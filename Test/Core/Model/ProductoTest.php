@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Cliente;
@@ -33,12 +34,24 @@ use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Model\Stock;
+use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class ProductoTest extends TestCase
 {
     use LogErrorsTrait;
+
+    const TEST_REFERENCE = 'Test';
+
+    public static function setUpBeforeClass(): void
+    {
+        $productModel = new Producto();
+        $where = [new DataBaseWhere('referencia', self::TEST_REFERENCE)];
+        foreach ($productModel->all($where, [], 0, 0) as $product) {
+            $product->delete();
+        }
+    }
 
     public function testCreate()
     {
@@ -53,7 +66,7 @@ final class ProductoTest extends TestCase
     {
         $product = new Producto();
         $product->descripcion = 'Test Product';
-        $this->assertFalse($product->save(), 'product-cant-save');
+        $this->assertTrue($product->save(), 'product-cant-save-without-ref');
     }
 
     public function testBlocked()
@@ -346,6 +359,22 @@ final class ProductoTest extends TestCase
         $this->assertFalse($variants[0]->exists(), 'variant-still-exists');
     }
 
+    public function testVarianteWithoutRef()
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // añadimos una variante sin referencia
+        $variant = new Variante();
+        $variant->idproducto = $product->idproducto;
+        $this->assertTrue($variant->save(), 'variant-cant-save-without-ref');
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertFalse($variant->exists(), 'variant-still-exists');
+    }
+
     public function testNegativePrice()
     {
         // creamos un producto con precio negativo
@@ -401,7 +430,7 @@ final class ProductoTest extends TestCase
     private function getTestProduct(): Producto
     {
         $product = new Producto();
-        $product->referencia = 'Test';
+        $product->referencia = self::TEST_REFERENCE;
         $product->descripcion = 'Test Product';
         return $product;
     }

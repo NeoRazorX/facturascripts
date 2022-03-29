@@ -190,7 +190,7 @@ class Producto extends Base\ModelClass
     /**
      * @return Variante[]
      */
-    public function getVariants()
+    public function getVariants(): array
     {
         $variantModel = new Variante();
         $where = [new DataBaseWhere('idproducto', $this->idproducto)];
@@ -207,7 +207,7 @@ class Producto extends Base\ModelClass
     public function install()
     {
         /**
-         * The articles table has several foreign keys, so we must force the checking of those tables.
+         * products table has several foreign keys, so we must force the checking of those tables.
          */
         new Fabricante();
         new Familia();
@@ -229,7 +229,7 @@ class Producto extends Base\ModelClass
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idproducto';
     }
@@ -237,7 +237,7 @@ class Producto extends Base\ModelClass
     /**
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'referencia';
     }
@@ -263,7 +263,7 @@ class Producto extends Base\ModelClass
      *
      * @return string
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'productos';
     }
@@ -280,6 +280,9 @@ class Producto extends Base\ModelClass
         $this->observaciones = $utils->noHtml($this->observaciones);
         $this->referencia = $utils->noHtml($this->referencia);
 
+        if (empty($this->referencia)) {
+            $this->referencia = (string)$this->newCode('referencia');
+        }
         if (strlen($this->referencia) > 30) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
@@ -317,7 +320,6 @@ class Producto extends Base\ModelClass
     {
         $newPrecio = 0.0;
         $newReferencia = null;
-
         foreach ($this->getVariants() as $variant) {
             if ($variant->referencia == $this->referencia || is_null($newReferencia)) {
                 $newPrecio = $variant->precio;
@@ -340,24 +342,20 @@ class Producto extends Base\ModelClass
      */
     protected function saveInsert(array $values = [])
     {
-        if (empty($this->referencia)) {
-            $this->referencia = (string)$this->newCode('referencia');
-        }
-
-        if (parent::saveInsert($values)) {
-            $variant = new Variante();
-            $variant->idproducto = $this->idproducto;
-            $variant->precio = $this->precio;
-            $variant->referencia = $this->referencia;
-            $variant->stockfis = $this->stockfis;
-            if ($variant->save()) {
-                return true;
-            }
-
-            $this->delete();
+        if (false === parent::saveInsert($values)) {
             return false;
         }
 
+        $variant = new Variante();
+        $variant->idproducto = $this->idproducto;
+        $variant->precio = $this->precio;
+        $variant->referencia = $this->referencia;
+        $variant->stockfis = $this->stockfis;
+        if ($variant->save()) {
+            return true;
+        }
+
+        $this->delete();
         return false;
     }
 }

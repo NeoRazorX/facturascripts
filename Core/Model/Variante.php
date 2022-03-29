@@ -36,7 +36,7 @@ class Variante extends Base\ModelClass
     use Base\ProductRelationTrait;
 
     /**
-     * Barcode. Maximun 20 characteres.
+     * Barcode. Maximum 20 characters.
      *
      * @var string
      */
@@ -124,7 +124,6 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     *
      * @param string $query
      * @param string $fieldCode
      * @param DataBaseWhere[] $where
@@ -275,7 +274,7 @@ class Variante extends Base\ModelClass
     public function setPriceWithTax($price)
     {
         $newPrice = (100 * $price) / (100 + $this->getProducto()->getTax()->iva);
-        $this->precio = \round($newPrice, DinProducto::ROUND_DECIMALS);
+        $this->precio = round($newPrice, DinProducto::ROUND_DECIMALS);
     }
 
     /**
@@ -295,7 +294,11 @@ class Variante extends Base\ModelClass
     {
         $utils = $this->toolBox()->utils();
         $this->referencia = $utils->noHtml($this->referencia);
-        if (\strlen($this->referencia) > 30) {
+
+        if (empty($this->referencia)) {
+            $this->referencia = (string)$this->newCode('referencia');
+        }
+        if (strlen($this->referencia) > 30) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
@@ -307,12 +310,6 @@ class Variante extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getProducto()->url($type);
@@ -325,10 +322,6 @@ class Variante extends Base\ModelClass
      */
     protected function saveInsert(array $values = [])
     {
-        if (empty($this->referencia)) {
-            $this->referencia = (string)$this->newCode('referencia');
-        }
-
         if (false === parent::saveInsert($values)) {
             return false;
         }
