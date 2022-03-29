@@ -42,7 +42,7 @@ class PurchasesHeaderHTML
             $model->setAuthor($user);
             if (isset($formData['codproveedor']) && $formData['codproveedor'] && $proveedor->loadFromCode($formData['codproveedor'])) {
                 $model->setSubject($proveedor);
-                if (isset($formData['action']) && $formData['action'] === 'set-supplier') {
+                if (empty($formData['action']) || $formData['action'] === 'set-supplier') {
                     return;
                 }
             }
