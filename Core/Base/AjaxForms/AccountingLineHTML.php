@@ -168,6 +168,9 @@ class AccountingLineHTML
             . static::baseimponible($i18n, $line, $model)
             . static::cifnif($i18n, $line, $model)
             . '</div>'
+            . '<div class="form-row">'
+            . static::documento($i18n, $line, $model)
+            . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
             . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
@@ -191,9 +194,11 @@ class AccountingLineHTML
     {
         $line->baseimponible = (float)($formData['baseimponible_' . $id] ?? '0');
         $line->cifnif = $formData['cifnif_' . $id] ?? '';
+        $line->concepto = $formData['concepto_' . $id] ?? '';
         $line->codcontrapartida = $formData['codcontrapartida_' . $id] ?? '';
         $line->codsubcuenta = $formData['codsubcuenta_' . $id] ?? '';
         $line->debe = (float)($formData['debe_' . $id] ?? '0');
+        $line->documento = $formData['documento_' . $id] ?? '';
         $line->haber = (float)($formData['haber_' . $id] ?? '0');
         $line->iva = (float)($formData['iva_' . $id] ?? '0');
         $line->orden = (int)($formData['orden_' . $id] ?? '0');
@@ -255,6 +260,24 @@ class AccountingLineHTML
      * @param Translator $i18n
      * @param Partida $line
      * @param Asiento $model
+     * @return string
+     */
+    protected static function concepto(Translator $i18n, Partida $line, Asiento $model): string
+    {
+        $idlinea = $line->idpartida ?? 'n' . static::$num;
+        $attributes = $model->editable
+            ? 'name="concepto_' . $idlinea . '" onchange="return recalculateLine(\'recalculate\', \'' . $idlinea . '\');"'
+            : 'disabled';
+
+        return '<div class="col pb-2 small">' . $i18n->trans('concept')
+            . '<input type="text" ' . $attributes . ' class="form-control" value="' . $line->concepto . '">'
+            . '</div>';
+    }
+
+    /**
+     * @param Translator $i18n
+     * @param Partida $line
+     * @param Asiento $model
      *
      * @return string
      */
@@ -292,18 +315,18 @@ class AccountingLineHTML
 
     /**
      * @param Translator $i18n
-     * @param Subcuenta $subcuenta
+     * @param Partida $line
+     * @param Asiento $model
      *
      * @return string
      */
-    protected static function descripcion(Translator $i18n, Subcuenta $subcuenta): string
+    protected static function documento(Translator $i18n, Partida $line, Asiento $model): string
     {
-        return '<div class="col pb-2 small">' . $i18n->trans('description')
-            . '<div class="input-group">'
-            . '<input type="text" class="form-control" value="' . $subcuenta->descripcion . '" tabindex="-1" readonly>'
-            . '<div class="input-group-append"><a href="' . $subcuenta->url() . '" target="_blank" class="btn btn-outline-primary">'
-            . '<i class="far fa-eye"></i></a></div>'
-            . '</div>'
+        $idlinea = $line->idpartida ?? 'n' . static::$num;
+        $attributes = $model->editable ? 'name="documento_' . $idlinea . '"' : 'disabled';
+        return '<div class="col pb-2 small">' . $i18n->trans('document')
+            . '<input type="text" ' . $attributes . ' value="' . $line->documento
+            . '" class="form-control" maxlength="30" autocomplete="off"/>'
             . '</div>';
     }
 
@@ -339,7 +362,7 @@ class AccountingLineHTML
             : 'disabled';
 
         return '<div class="col pb-2 small">' . $i18n->trans('credit')
-            . '<input type="number" class="form-control" ' . $attributes . ' value="' . $line->haber . '"/>'
+            . '<input type="number" class="form-control" ' . $attributes . ' value="' . round($line->haber, FS_NF0) . '"/>'
             . '</div>';
     }
 
@@ -430,20 +453,28 @@ class AccountingLineHTML
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $subcuenta = static::getSubcuenta($line->codsubcuenta, $model);
         if (false === $model->editable) {
-            return '<div class="col pb-2 small">' . $i18n->trans('subaccount')
+            return '<div class="col pb-2 small">' . $subcuenta->descripcion
+                . '<div class="input-group">'
                 . '<input type="text" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'
+                . '<div class="input-group-append"><a href="' . $subcuenta->url() . '" target="_blank" class="btn btn-outline-primary">'
+                . '<i class="far fa-eye"></i></a></div>'
+                . '</div>'
                 . '</div>'
                 . static::contrapartida($i18n, $line, $model)
-                . static::descripcion($i18n, $subcuenta)
+                . static::concepto($i18n, $line, $model)
                 . static::saldo($i18n, $subcuenta);
         }
 
         return '<div class="col pb-2 small">'
-            . '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' . $i18n->trans('subaccount')
+            . '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' . $subcuenta->descripcion
+            . '<div class="input-group">'
             . '<input type="text" name="codsubcuenta_' . $idlinea . '" value="' . $line->codsubcuenta . '" class="form-control" tabindex="-1" readonly>'
+            . '<div class="input-group-append"><a href="' . $subcuenta->url() . '" target="_blank" class="btn btn-outline-primary">'
+            . '<i class="far fa-eye"></i></a></div>'
+            . '</div>'
             . '</div>'
             . static::contrapartida($i18n, $line, $model)
-            . static::descripcion($i18n, $subcuenta)
+            . static::concepto($i18n, $line, $model)
             . static::saldo($i18n, $subcuenta);
     }
 }
