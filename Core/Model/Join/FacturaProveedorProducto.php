@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Join;
 
 use FacturaScripts\Core\Model\Base\JoinModel;
@@ -31,10 +32,6 @@ class FacturaProveedorProducto extends JoinModel
     const DOC_TABLE = 'facturasprov';
     const MAIN_TABLE = 'lineasfacturasprov';
 
-    /**
-     * 
-     * @return array
-     */
     protected function getFields(): array
     {
         return [
@@ -52,19 +49,11 @@ class FacturaProveedorProducto extends JoinModel
         ];
     }
 
-    /**
-     * 
-     * @return string
-     */
     protected function getGroupFields(): string
     {
         return static::DOC_TABLE . '.codalmacen, ' . static::MAIN_TABLE . '.idproducto, ' . static::MAIN_TABLE . '.referencia';
     }
 
-    /**
-     * 
-     * @return string
-     */
     protected function getSQLFrom(): string
     {
         return static::MAIN_TABLE . ''
@@ -73,10 +62,6 @@ class FacturaProveedorProducto extends JoinModel
             . ' LEFT JOIN facturasprov ON facturasprov.idfactura = lineasfacturasprov.idfactura';
     }
 
-    /**
-     * 
-     * @return array
-     */
     protected function getTables(): array
     {
         return [static::MAIN_TABLE, 'productos', 'variantes'];

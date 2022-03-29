@@ -44,6 +44,14 @@ class StockProducto extends JoinModel
         $this->setMasterModel(new Producto());
     }
 
+    public function getModelFields(): array
+    {
+        $fields = parent::getModelFields();
+        // forzamos el tipo de la columna total, ya que no existe en las tablas
+        $fields['total']['type'] = 'double';
+        return $fields;
+    }
+
     /**
      * List of fields or columns to select clausule.
      *

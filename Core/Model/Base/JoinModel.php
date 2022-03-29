@@ -142,7 +142,7 @@ abstract class JoinModel
      *
      * @return static[]
      */
-    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0)
+    public function all(array $where, array $order = [], int $offset = 0, int $limit = 0): array
     {
         $result = [];
         if ($this->checkTables()) {
