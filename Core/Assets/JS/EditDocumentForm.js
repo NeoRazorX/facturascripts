@@ -96,14 +96,16 @@ export default class EditDocumentForm {
         const cantidad = parseFloat(this.form['cantidad_' + id].value) || 0;
 
         if (total <= 0) {
-            alert('total > 0');
-        } else if (cantidad <= 0) {
-            alert('cantidad > 0');
-        } else {
-            const pvp = (100 * total / cantidad) / (100 + iva + recargo - irpf);
-            this.form['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
-            this.baseFormAction('recalculate', '0');
+            return alert('total > 0');
         }
+
+        if (cantidad <= 0) {
+            return alert('cantidad > 0');
+        }
+
+        const pvp = (100 * total / cantidad) / (100 + iva + recargo - irpf);
+        this.form['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
+        this.baseFormAction('recalculate', '0');
     }
 
     setHeaderHtml(header) {

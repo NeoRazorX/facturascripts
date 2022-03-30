@@ -23,7 +23,7 @@
     let requestQueueCounter = 0;
 
     window.salesFastLine = function (e) {
-        if (e.which == 13) {
+        if (e.keyCode === 13) {
             ajaxForm.baseFormAction('fast-line', '0');
         }
     }
@@ -59,8 +59,6 @@
                     window.location.replace(data.newurl);
                 }
             });
-
-        return false;
     }
 
     window.salesLineTotalWithTaxes = function (id) {
