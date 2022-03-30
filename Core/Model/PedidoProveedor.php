@@ -76,21 +76,11 @@ class PedidoProveedor extends Base\PurchaseDocument
         return $newLine;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'idpedido';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'pedidosprov';

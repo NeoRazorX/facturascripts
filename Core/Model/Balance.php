@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -112,34 +113,19 @@ class Balance extends Base\ModelClass
      */
     public $naturaleza;
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codbalance';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'balances';
     }
 
-    /**
-     * Test model's data.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,15}$/i', $this->codbalance)) {
+        if (1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,15}$/i', $this->codbalance)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codbalance, '%column%' => 'codbalance', '%min%' => '1', '%max%' => '15']
@@ -156,14 +142,6 @@ class Balance extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'ListReportAccounting?activetab=List'): string
     {
         return parent::url($type, $list);

@@ -218,9 +218,6 @@ class Contacto extends Base\Contact
         }
     }
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -342,14 +339,7 @@ class Contacto extends Base\Contact
         return $proveedor;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // we need this models to be checked before
         new DinAgente();
@@ -366,7 +356,7 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function newLogkey($ipAddress)
+    public function newLogkey($ipAddress): string
     {
         $this->lastactivity = date(self::DATETIME_STYLE);
         $this->lastip = $ipAddress;
@@ -374,42 +364,22 @@ class Contacto extends Base\Contact
         return $this->logkey;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'idcontacto';
     }
 
-    /**
-     * Returns the name of the column used to describe this item.
-     *
-     * @return string
-     */
     public function primaryDescriptionColumn(): string
     {
         return 'descripcion';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'contactos';
     }
 
-    /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->descripcion)) {
             $this->descripcion = empty($this->codcliente) ? $this->fullName() : $this->direccion;
@@ -431,15 +401,7 @@ class Contacto extends Base\Contact
         return $this->testPassword() && parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         return parent::url($type, $list);
     }
@@ -451,7 +413,7 @@ class Contacto extends Base\Contact
      *
      * @return bool
      */
-    public function verifyLogkey($value): bool
+    public function verifyLogkey(string $value): bool
     {
         return $this->logkey === $value;
     }

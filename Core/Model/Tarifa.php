@@ -79,13 +79,12 @@ class Tarifa extends Base\ModelClass
     public $valory;
 
     /**
-     *
      * @param float $cost
      * @param float $price
      *
      * @return float
      */
-    public function apply($cost, $price)
+    public function apply(float $cost, float $price)
     {
         $finalPrice = 0.0;
 
@@ -119,9 +118,6 @@ class Tarifa extends Base\ModelClass
         return $this->apply($variant->coste, $variant->precio);
     }
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -132,40 +128,22 @@ class Tarifa extends Base\ModelClass
         $this->valory = 0.0;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codtarifa';
     }
 
-    /**
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'tarifas';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $this->codtarifa = trim($this->codtarifa);
         if ($this->codtarifa && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codtarifa)) {
@@ -180,12 +158,7 @@ class Tarifa extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codtarifa)) {
             $this->codtarifa = $this->newCode();

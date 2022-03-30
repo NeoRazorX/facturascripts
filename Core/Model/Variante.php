@@ -85,7 +85,6 @@ class Variante extends Base\ModelClass
     public $idvariante;
 
     /**
-     *
      * @var float
      */
     public $margen;
@@ -111,9 +110,6 @@ class Variante extends Base\ModelClass
      */
     public $stockfis;
 
-    /**
-     * Sets default values.
-     */
     public function clear()
     {
         parent::clear();
@@ -170,10 +166,7 @@ class Variante extends Base\ModelClass
         );
     }
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->referencia == $this->getProducto()->referencia) {
             $this->toolBox()->i18nLog()->warning('you-cant-delete-primary-variant');
@@ -212,14 +205,7 @@ class Variante extends Base\ModelClass
         return empty($extra) ? $description : implode($separator1, [$description, implode($separator2, $extra)]);
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         new DinProducto();
         new DinAtributoValor();
@@ -235,11 +221,6 @@ class Variante extends Base\ModelClass
         return $this->precio * (100 + $this->getProducto()->getTax()->iva) / 100;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'idvariante';
@@ -250,10 +231,7 @@ class Variante extends Base\ModelClass
         return 'referencia';
     }
 
-    /**
-     * @return bool
-     */
-    public function save()
+    public function save(): bool
     {
         if ($this->margen > 0) {
             $newPrice = $this->coste * (100 + $this->margen) / 100;
@@ -268,29 +246,18 @@ class Variante extends Base\ModelClass
         return false;
     }
 
-    /**
-     * @param float $price
-     */
-    public function setPriceWithTax($price)
+    public function setPriceWithTax(float $price)
     {
         $newPrice = (100 * $price) / (100 + $this->getProducto()->getTax()->iva);
         $this->precio = round($newPrice, DinProducto::ROUND_DECIMALS);
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'variantes';
     }
 
-    /**
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->referencia = $utils->noHtml($this->referencia);
@@ -315,12 +282,7 @@ class Variante extends Base\ModelClass
         return $this->getProducto()->url($type);
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (false === parent::saveInsert($values)) {
             return false;

@@ -134,9 +134,6 @@ class Asiento extends Base\ModelOnChangeClass
         $this->importe += round($haber, FS_NF0);
     }
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -148,12 +145,7 @@ class Asiento extends Base\ModelOnChangeClass
         $this->operacion = self::OPERATION_GENERAL;
     }
 
-    /**
-     * Remove the accounting entry.
-     *
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if (false === $this->getExercise()->isOpened()) {
             $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
@@ -222,14 +214,7 @@ class Asiento extends Base\ModelOnChangeClass
         $this->importe = 0.0;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         new DinDiario();
         new DinEjercicio();
@@ -270,21 +255,11 @@ class Asiento extends Base\ModelOnChangeClass
         return parent::newCode($field, $where);
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'idasiento';
     }
 
-    /**
-     * Returns the name of the column that describes the model, such as name, description...
-     *
-     * @return string
-     */
     public function primaryDescriptionColumn(): string
     {
         return 'numero';
@@ -327,10 +302,7 @@ class Asiento extends Base\ModelOnChangeClass
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    public function save()
+    public function save(): bool
     {
         if (empty($this->codejercicio)) {
             $this->setDate($this->fecha);
@@ -368,12 +340,7 @@ class Asiento extends Base\ModelOnChangeClass
         return true;
     }
 
-    /**
-     * @param string $date
-     *
-     * @return bool
-     */
-    public function setDate($date): bool
+    public function setDate(string $date): bool
     {
         $exercise = new DinEjercicio();
         $exercise->idempresa = $this->idempresa;
@@ -386,21 +353,11 @@ class Asiento extends Base\ModelOnChangeClass
         return false;
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'asientos';
     }
 
-    /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
     public function test(): bool
     {
         $utils = $this->toolBox()->utils();
@@ -476,13 +433,6 @@ class Asiento extends Base\ModelOnChangeClass
         return empty($sql) || self::$dataBase->exec($sql);
     }
 
-    /**
-     * Insert the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
     protected function saveInsert(array $values = []): bool
     {
         $this->numero = $this->newCode('numero');

@@ -90,7 +90,7 @@ abstract class Payment extends ModelClass
      */
     public function delete()
     {
-        /// remove accounting
+        // remove accounting
         $acEntry = $this->getAccountingEntry();
         $acEntry->editable = true;
         if ($acEntry->exists() && false === $acEntry->delete()) {
@@ -116,7 +116,7 @@ abstract class Payment extends ModelClass
      */
     public function install()
     {
-        /// needed dependencies
+        // needed dependencies
         new Asiento();
 
         return parent::install();

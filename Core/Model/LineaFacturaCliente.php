@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Model\Base\InvoiceLineTrait;
 use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
+use FacturaScripts\Dinamic\Model\FacturaCliente as DinFacturaCliente;
 
 /**
  * Line of a customer invoice.
@@ -46,61 +47,38 @@ class LineaFacturaCliente extends SalesDocumentLine
      */
     public $idlinearect;
 
-    /**
-     * @return string
-     */
-    public function documentColumn()
+    public function documentColumn(): string
     {
         return 'idfactura';
     }
 
-    /**
-     * @return FacturaCliente
-     */
-    public function getDocument()
+    public function getDocument(): DinFacturaCliente
     {
-        $factura = new FacturaCliente();
+        $factura = new DinFacturaCliente();
         $factura->loadFromCode($this->idfactura);
         return $factura;
     }
 
-    /**
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependency
         new FacturaCliente();
         return parent::install();
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'lineasfacturascli';
     }
 
-    /**
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         // servido will always be 0 to prevent stock problems when removing rectified invoices
         $this->servido = 0.0;
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->idfactura ? 'EditFacturaCliente?code=' . $this->idfactura : parent::url($type, $list);
     }

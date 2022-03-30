@@ -1,8 +1,8 @@
 <?php
 /**
  * This file is part of FacturaScripts
+ * Copyright (C) 2017-2022  Carlos García Gómez <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson          <joenilson at gmail.com>
- * Copyright (C) 2017-2019  Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,9 +17,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
 
 /**
  * Defines the relationship between a user and a role.
@@ -60,13 +62,10 @@ class RoleUser extends Base\ModelClass
      *
      * @param string $pageName
      *
-     * @return RoleAccess[]
+     * @return DinRoleAccess[]
      */
-    public function getRoleAccess($pageName = '')
+    public function getRoleAccess(string $pageName = ''): array
     {
-        $accesses = [];
-        $roleAccessModel = new RoleAccess();
-
         if (empty($this->nick)) {
             return [];
         }
@@ -76,6 +75,8 @@ class RoleUser extends Base\ModelClass
             $filter[] = new DataBaseWhere('pagename', $pageName);
         }
 
+        $accesses = [];
+        $roleAccessModel = new DinRoleAccess();
         foreach ($roleAccessModel->all($filter, ['pagename' => 'ASC'], 0, 0) as $roleAccess) {
             $accesses[] = $roleAccess;
         }
@@ -83,47 +84,25 @@ class RoleUser extends Base\ModelClass
         return $accesses;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new Role();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'roles_users';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->nick)) {
             $this->toolBox()->i18nLog()->warning('nick-is-empty');

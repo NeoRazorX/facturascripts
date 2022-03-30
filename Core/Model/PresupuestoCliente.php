@@ -54,7 +54,7 @@ class PresupuestoCliente extends Base\SalesDocument
         // set default expiration
         $expirationDays = $this->toolBox()->appSettings()->get('default', 'finofertadays');
         if ($expirationDays) {
-            $this->finoferta = \date(self::DATE_STYLE, \strtotime('+' . $expirationDays . ' days'));
+            $this->finoferta = date(self::DATE_STYLE, strtotime('+' . $expirationDays . ' days'));
         }
     }
 
@@ -93,33 +93,20 @@ class PresupuestoCliente extends Base\SalesDocument
         return $newLine;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'idpresupuesto';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'presupuestoscli';
     }
 
-    /**
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         // finoferta can't be previous to fecha
-        if (!empty($this->finoferta) && \strtotime($this->finoferta) < \strtotime($this->fecha)) {
+        if (!empty($this->finoferta) && strtotime($this->finoferta) < strtotime($this->fecha)) {
             $this->finoferta = null;
         }
 

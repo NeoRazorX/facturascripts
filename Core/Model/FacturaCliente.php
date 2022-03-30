@@ -34,9 +34,6 @@ class FacturaCliente extends Base\SalesDocument
     use Base\ModelTrait;
     use Base\InvoiceTrait;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -90,20 +87,12 @@ class FacturaCliente extends Base\SalesDocument
         return $receipt->all($where, ['numero' => 'ASC', 'idrecibo' => 'ASC'], 0, 0);
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'facturascli';
     }
 
-    /**
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         if (false === parent::test()) {
             return false;

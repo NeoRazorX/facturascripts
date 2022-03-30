@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -80,9 +80,6 @@ class Impuesto extends Base\ModelClass
      */
     public $recargo;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -91,12 +88,7 @@ class Impuesto extends Base\ModelClass
         $this->recargo = 0.0;
     }
 
-    /**
-     * Removes tax from database.
-     *
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-tax');
@@ -114,7 +106,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return self
      */
-    public function inputVatFromSubAccount($subAccount)
+    public function inputVatFromSubAccount(string $subAccount)
     {
         return $this->getVatFromSubAccount('codsubcuentarep', $subAccount);
     }
@@ -129,12 +121,7 @@ class Impuesto extends Base\ModelClass
         return $this->codimpuesto === $this->toolBox()->appSettings()->get('default', 'codimpuesto');
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codimpuesto';
     }
@@ -147,27 +134,17 @@ class Impuesto extends Base\ModelClass
      *
      * @return self
      */
-    public function outputVatFromSubAccount($subAccount)
+    public function outputVatFromSubAccount(string $subAccount)
     {
         return $this->getVatFromSubAccount('codsubcuentasop', $subAccount);
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'impuestos';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $this->codimpuesto = trim($this->codimpuesto);
         if ($this->codimpuesto && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
@@ -190,7 +167,7 @@ class Impuesto extends Base\ModelClass
      *
      * @return static
      */
-    private function getVatFromSubAccount($field, $subAccount)
+    private function getVatFromSubAccount(string $field, string $subAccount)
     {
         $result = new Impuesto();
         $where = [new DataBaseWhere($field, $subAccount)];
@@ -202,12 +179,7 @@ class Impuesto extends Base\ModelClass
         return $result;
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codimpuesto)) {
             $this->codimpuesto = (string)$this->newCode();

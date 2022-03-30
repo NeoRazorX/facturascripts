@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2019 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2014-2022 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -56,59 +57,32 @@ class GrupoClientes extends Base\ModelClass
      */
     public $nombre;
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// As there is a key outside of tariffs, we have to check that table before
+        // As there is a key outside of tariffs, we have to check that table before
         new Tarifa();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codgrupo';
     }
 
-    /**
-     * Returns the description of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'gruposclientes';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        if (!empty($this->codgrupo) && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codgrupo)) {
+        if (!empty($this->codgrupo) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codgrupo)) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codgrupo, '%column%' => 'codgrupo', '%min%' => '1', '%max%' => '6']
@@ -120,29 +94,15 @@ class GrupoClientes extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         return parent::url($type, $list);
     }
 
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codgrupo)) {
-            $this->codgrupo = (string) $this->newCode();
+            $this->codgrupo = (string)$this->newCode();
         }
 
         return parent::saveInsert($values);

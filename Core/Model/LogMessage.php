@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -106,9 +106,6 @@ class LogMessage extends Base\ModelClass
      */
     public $uri;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -125,10 +122,7 @@ class LogMessage extends Base\ModelClass
         return json_decode(ToolBox::utils()::fixHtml($this->context), true);
     }
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->channel === self::AUDIT_CHANNEL) {
             self::toolBox()::i18nLog()->warning('cant-delete-audit-log');
@@ -138,32 +132,17 @@ class LogMessage extends Base\ModelClass
         return parent::delete();
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'logs';
     }
 
-    /**
-     * Returns True if there are no errors on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->channel = $utils->noHtml($this->channel);
@@ -179,12 +158,7 @@ class LogMessage extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveUpdate(array $values = [])
+    protected function saveUpdate(array $values = []): bool
     {
         if ($this->channel === self::AUDIT_CHANNEL) {
             self::toolBox()::i18nLog()->warning('cant-update-audit-log');

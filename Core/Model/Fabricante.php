@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,41 +51,23 @@ class Fabricante extends Base\ModelClass
      */
     public $numproductos;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->numproductos = 0;
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codfabricante';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'fabricantes';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->codfabricante = $utils->noHtml($this->codfabricante);
@@ -110,12 +92,7 @@ class Fabricante extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codfabricante)) {
             $this->codfabricante = $this->newCode();

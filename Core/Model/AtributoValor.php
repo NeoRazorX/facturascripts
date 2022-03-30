@@ -65,21 +65,12 @@ class AtributoValor extends Base\ModelClass
      */
     public $valor;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->orden = 100;
     }
 
-    /**
-     * 
-     * @param string $fieldCode
-     *
-     * @return CodeModel[]
-     */
     public function codeModelAll(string $fieldCode = ''): array
     {
         $results = [];
@@ -94,14 +85,7 @@ class AtributoValor extends Base\ModelClass
         return $results;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependency
         new DinAtributo();
@@ -109,32 +93,17 @@ class AtributoValor extends Base\ModelClass
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'atributos_valores';
     }
 
-    /**
-     * Check the delivery note data, return True if it is correct.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $this->valor = $this->toolBox()->utils()->noHtml($this->valor);
 
@@ -147,12 +116,6 @@ class AtributoValor extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'ListAtributo'): string
     {
         $value = $this->codatributo;

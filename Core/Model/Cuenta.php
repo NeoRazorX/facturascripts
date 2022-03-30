@@ -83,12 +83,7 @@ class Cuenta extends Base\ModelClass
      */
     public $parent_idcuenta;
 
-    /**
-     * Removes this account from the database.
-     *
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->getExercise()->isOpened() || $this->disableAdditionalTest) {
             return parent::delete();
@@ -98,10 +93,7 @@ class Cuenta extends Base\ModelClass
         return false;
     }
 
-    /**
-     * @param bool $value
-     */
-    public function disableAditionalTest(bool $value)
+    public function disableAdditionalTest(bool $value)
     {
         $this->disableAdditionalTest = $value;
     }
@@ -111,7 +103,7 @@ class Cuenta extends Base\ModelClass
      *
      * @return static[]
      */
-    public function getChildren()
+    public function getChildren(): array
     {
         $where = [new DataBaseWhere('parent_idcuenta', $this->idcuenta)];
         return $this->all($where, ['codcuenta' => 'ASC'], 0, 0);
@@ -149,21 +141,14 @@ class Cuenta extends Base\ModelClass
      *
      * @return DinSubcuenta[]
      */
-    public function getSubcuentas()
+    public function getSubcuentas(): array
     {
         $subcuenta = new DinSubcuenta();
         $where = [new DataBaseWhere('idcuenta', $this->idcuenta)];
         return $subcuenta->all($where, ['codsubcuenta' => 'ASC'], 0, 0);
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // force the parents tables
         new DinCuentaEspecial();
@@ -172,28 +157,17 @@ class Cuenta extends Base\ModelClass
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idcuenta';
     }
 
-    /**
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'codcuenta';
     }
 
-    /**
-     * @return bool
-     */
-    public function save()
+    public function save(): bool
     {
         if ($this->getExercise()->isOpened() || $this->disableAdditionalTest) {
             return parent::save();
@@ -203,22 +177,12 @@ class Cuenta extends Base\ModelClass
         return false;
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'cuentas';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $this->codcuenta = trim($this->codcuenta);
         if (empty($this->codcuenta) || false === is_numeric($this->codcuenta)) {
@@ -262,13 +226,7 @@ class Cuenta extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListCuenta?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListCuenta?activetab=List'): string
     {
         return parent::url($type, $list);
     }

@@ -55,26 +55,26 @@ trait ExerciseRelationTrait
      */
     public function getExercise()
     {
-        /// loads all exercise to improve performance
+        // loads all exercise to improve performance
         if (empty(self::$ejercicios)) {
             $exerciseModel = new Ejercicio();
             self::$ejercicios = $exerciseModel->all();
         }
 
-        /// find exercise
+        // find exercise
         foreach (self::$ejercicios as $exe) {
             if ($exe->codejercicio == $this->codejercicio) {
                 return $exe;
             } elseif (empty($this->codejercicio) && $exe->isOpened()) {
-                /// return default exercise
+                // return default exercise
                 return $exe;
             }
         }
 
-        /// exercise not found? try to get from database
+        // exercise not found? try to get from database
         $exercise = new Ejercicio();
         if ($exercise->loadFromCode($this->codejercicio)) {
-            /// add new exercise to cache
+            // add new exercise to cache
             self::$ejercicios[] = $exercise;
         }
         return $exercise;

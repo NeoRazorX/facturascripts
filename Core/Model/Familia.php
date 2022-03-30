@@ -82,21 +82,13 @@ class Familia extends Base\ModelClass
      */
     public $numproductos;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->numproductos = 0;
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codfamilia';
     }
@@ -108,7 +100,7 @@ class Familia extends Base\ModelClass
      *
      * @return string
      */
-    public static function purchaseIrpfSubAccount($code)
+    public static function purchaseIrpfSubAccount(string $code): string
     {
         return self::getSubaccountFromFamily($code, 'codsubcuentairpfcom');
     }
@@ -120,7 +112,7 @@ class Familia extends Base\ModelClass
      *
      * @return string
      */
-    public static function purchaseSubAccount($code)
+    public static function purchaseSubAccount(string $code): string
     {
         return static::getSubaccountFromFamily($code, 'codsubcuentacom');
     }
@@ -132,27 +124,17 @@ class Familia extends Base\ModelClass
      *
      * @return string
      */
-    public static function saleSubAccount($code)
+    public static function saleSubAccount(string $code): string
     {
         return self::getSubaccountFromFamily($code, 'codsubcuentaven');
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'familias';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         // comprobamos codfamilia
         $this->codfamilia = self::toolBox()::utils()::noHtml($this->codfamilia);
@@ -184,7 +166,7 @@ class Familia extends Base\ModelClass
      *
      * @return string
      */
-    private static function getSubaccountFromFamily($code, $field, $model = null)
+    private static function getSubaccountFromFamily(string $code, string $field, $model = null): string
     {
         if (empty($code)) {
             return '';
@@ -203,12 +185,7 @@ class Familia extends Base\ModelClass
             $model->{$field};
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codfamilia)) {
             $this->codfamilia = $this->newCode();

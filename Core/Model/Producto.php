@@ -169,9 +169,6 @@ class Producto extends Base\ModelClass
      */
     public $ventasinstock;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -198,14 +195,7 @@ class Producto extends Base\ModelClass
         return $variantModel->all($where, [], 0, 0);
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         /**
          * products table has several foreign keys, so we must force the checking of those tables.
@@ -217,36 +207,22 @@ class Producto extends Base\ModelClass
         return parent::install();
     }
 
-    /**
-     * @return float
-     */
-    public function priceWithTax()
+    public function priceWithTax(): float
     {
         return $this->precio * (100 + $this->getTax()->iva) / 100;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'idproducto';
     }
 
-    /**
-     * @return string
-     */
     public function primaryDescriptionColumn(): string
     {
         return 'referencia';
     }
 
-    /**
-     * @param float $price
-     */
-    public function setPriceWithTax($price)
+    public function setPriceWithTax(float $price)
     {
         $newPrice = (100 * $price) / (100 + $this->getTax()->iva);
         foreach ($this->getVariants() as $variant) {
@@ -259,22 +235,12 @@ class Producto extends Base\ModelClass
         $this->precio = round($newPrice, self::ROUND_DECIMALS);
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'productos';
     }
 
-    /**
-     * Returns True if the article's data is correct.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
@@ -338,12 +304,7 @@ class Producto extends Base\ModelClass
         }
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (false === parent::saveInsert($values)) {
             return false;

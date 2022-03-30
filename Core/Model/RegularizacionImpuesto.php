@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -39,20 +40,19 @@ class RegularizacionImpuesto extends Base\ModelClass
     use Base\ExerciseRelationTrait;
 
     /**
-     *
      * @var bool
      */
     public $bloquear;
 
     /**
-     * Code, not ID, of the related sub-account.
+     * Code, not ID, of the related subaccount.
      *
      * @var string
      */
     public $codsubcuentaacr;
 
     /**
-     * Code, not ID, of the related sub-account.
+     * Code, not ID, of the related subaccount.
      *
      * @var string
      */
@@ -94,14 +94,14 @@ class RegularizacionImpuesto extends Base\ModelClass
     public $idregiva;
 
     /**
-     * Related sub-account ID.
+     * Related subaccount ID.
      *
      * @var int
      */
     public $idsubcuentaacr;
 
     /**
-     * Related sub-account ID.
+     * Related subaccount ID.
      *
      * @var int
      */
@@ -120,23 +120,18 @@ class RegularizacionImpuesto extends Base\ModelClass
         $this->bloquear = false;
     }
 
-    /**
-     * Deletes the regularization of VAT from the database.
-     *
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
-        if (parent::delete()) {
-            $accEntry = $this->getAccountingEntry();
-            if ($accEntry->exists()) {
-                $accEntry->delete();
-            }
-
-            return true;
+        if (false === parent::delete()) {
+            return false;
         }
 
-        return false;
+        $accEntry = $this->getAccountingEntry();
+        if ($accEntry->exists()) {
+            $accEntry->delete();
+        }
+
+        return true;
     }
 
     /**
@@ -144,21 +139,14 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @return DinPartida[]
      */
-    public function getPartidas()
+    public function getPartidas(): array
     {
         return $this->getAccountingEntry()->getLines();
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new DinEjercicio();
         new DinSubcuenta();
         new DinAsiento();
@@ -166,13 +154,7 @@ class RegularizacionImpuesto extends Base\ModelClass
         return parent::install();
     }
 
-    /**
-     * 
-     * @param string $fecha
-     *
-     * @return bool
-     */
-    public function loadFechaInside($fecha): bool
+    public function loadFechaInside(string $fecha): bool
     {
         $where = [
             new DataBaseWhere('fechainicio', $fecha, '<='),
@@ -181,45 +163,24 @@ class RegularizacionImpuesto extends Base\ModelClass
         return $this->loadFromCode('', $where);
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idregiva';
     }
 
-    /**
-     * Returns the description for model data.
-     *
-     * @return string
-     */
-    public function primaryDescription()
+    public function primaryDescription(): string
     {
         return $this->codejercicio . ' - ' . $this->periodo;
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'regularizacionimpuestos';
     }
 
-    /**
-     * Returns true if there are no errors in the values of the model properties.
-     * It runs inside the save method.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        /// calculate dates to selected period
+        // calculate dates to selected period
         $period = $this->getPeriod($this->periodo);
         $this->fechainicio = $period['start'];
         $this->fechafin = $period['end'];
@@ -242,24 +203,24 @@ class RegularizacionImpuesto extends Base\ModelClass
      *
      * @return array
      */
-    private function getPeriod($period): array
+    private function getPeriod(string $period): array
     {
-        /// Calculate year
-        $year = \date('Y', \strtotime($this->getExercise()->fechainicio));
+        // Calculate year
+        $year = date('Y', strtotime($this->getExercise()->fechainicio));
 
         // return periods values
         switch ($period) {
             case 'T2':
-                return ['start' => \date('01-04-' . $year), 'end' => \date('30-06-' . $year)];
+                return ['start' => date('01-04-' . $year), 'end' => date('30-06-' . $year)];
 
             case 'T3':
-                return ['start' => \date('01-07-' . $year), 'end' => \date('30-09-' . $year)];
+                return ['start' => date('01-07-' . $year), 'end' => date('30-09-' . $year)];
 
             case 'T4':
-                return ['start' => \date('01-10-' . $year), 'end' => \date('31-12-' . $year)];
+                return ['start' => date('01-10-' . $year), 'end' => date('31-12-' . $year)];
 
             default:
-                return ['start' => \date('01-01-' . $year), 'end' => \date('31-03-' . $year)];
+                return ['start' => date('01-01-' . $year), 'end' => date('31-03-' . $year)];
         }
     }
 

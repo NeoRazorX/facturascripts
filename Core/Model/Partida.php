@@ -92,7 +92,7 @@ class Partida extends Base\ModelOnChangeClass
      * @var float|int
      */
     public $debe;
-    
+
     /**
      * Document of departure.
      *
@@ -175,9 +175,6 @@ class Partida extends Base\ModelOnChangeClass
      */
     public $tasaconv;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -198,7 +195,7 @@ class Partida extends Base\ModelOnChangeClass
      *
      * @return DinSubcuenta
      */
-    public function getSubcuenta($codsubcuenta = '')
+    public function getSubcuenta(string $codsubcuenta = '')
     {
         $accEntry = $this->getAccountingEntry();
         $subcta = new DinSubcuenta();
@@ -230,14 +227,7 @@ class Partida extends Base\ModelOnChangeClass
         return $subcta;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         new DinDivisa();
         new DinAsiento();
@@ -246,11 +236,6 @@ class Partida extends Base\ModelOnChangeClass
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'idpartida';
@@ -289,21 +274,11 @@ class Partida extends Base\ModelOnChangeClass
         }
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'partidas';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
     public function test(): bool
     {
         $utils = $this->toolBox()->utils();
@@ -331,12 +306,6 @@ class Partida extends Base\ModelOnChangeClass
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getAccountingEntry()->url($type, $list);
@@ -414,12 +383,12 @@ class Partida extends Base\ModelOnChangeClass
     /**
      * Update the subaccount balance.
      *
-     * @param int $idsubaccount
+     * @param int $idsubcuenta
      */
-    private function updateBalance($idsubaccount)
+    private function updateBalance(int $idsubcuenta)
     {
         $subaccount = new DinSubcuenta();
-        if ($subaccount->loadFromCode($idsubaccount)) {
+        if ($subaccount->loadFromCode($idsubcuenta)) {
             $subaccount->updateBalance();
         }
     }

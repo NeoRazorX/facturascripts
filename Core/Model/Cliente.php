@@ -160,13 +160,6 @@ class Cliente extends Base\ComercialContact
         return $days;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
     public function install(): string
     {
         // we need exits Contacto before, but we can't check it because it would create a cyclic check
@@ -177,42 +170,22 @@ class Cliente extends Base\ComercialContact
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'codcliente';
     }
 
-    /**
-     * Returns the description of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'clientes';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         if (!empty($this->codcliente) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcliente)) {
             $this->toolBox()->i18nLog()->error(
@@ -233,12 +206,7 @@ class Cliente extends Base\ComercialContact
         return parent::test();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codcliente)) {
             $this->codcliente = (string)$this->newCode();

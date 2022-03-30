@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -56,7 +57,7 @@ class AlbaranProveedor extends Base\PurchaseDocument
 
     /**
      * Returns a new line for the document.
-     * 
+     *
      * @param array $data
      * @param array $exclude
      *
@@ -76,21 +77,11 @@ class AlbaranProveedor extends Base\PurchaseDocument
         return $newLine;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'idalbaran';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'albaranesprov';

@@ -90,7 +90,7 @@ final class CuentaTest extends TestCase
             $this->assertFalse($account->save(), 'account-can-create-in-closed-exercise');
 
             // desactivamos las comprobaciones y guardamos
-            $account->disableAditionalTest(true);
+            $account->disableAdditionalTest(true);
             $this->assertTrue($account->save(), 'account-cant-save');
 
             // eliminamos la cuenta
@@ -125,7 +125,7 @@ final class CuentaTest extends TestCase
             $this->assertFalse($account->delete(), 'account-can-delete-in-closed-exercise');
 
             // desactivamos las comprobaciones y eliminamos
-            $account->disableAditionalTest(true);
+            $account->disableAdditionalTest(true);
             $this->assertTrue($account->delete(), 'account-cant-delete');
         } finally {
             // reabrimos el ejercicio

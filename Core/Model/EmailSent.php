@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -67,7 +67,6 @@ class EmailSent extends Base\ModelClass
     public $nick;
 
     /**
-     *
      * @var bool
      */
     public $opened;
@@ -80,46 +79,28 @@ class EmailSent extends Base\ModelClass
     public $subject;
 
     /**
-     *
      * @var string
      */
     public $verificode;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
-        $this->date = \date(self::DATETIME_STYLE);
+        $this->date = date(self::DATETIME_STYLE);
         $this->opened = false;
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'emails_sent';
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->body = $utils->noHtml($this->body);
@@ -127,26 +108,11 @@ class EmailSent extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ConfigEmail?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ConfigEmail?activetab=List'): string
     {
         return parent::url($type, $list);
     }
 
-    /**
-     * 
-     * @param string $verificode
-     * @param string $addressee
-     *
-     * @return bool
-     */
     public static function verify(string $verificode, string $addressee = ''): bool
     {
         $found = false;

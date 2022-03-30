@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Dinamic\Model\AlbaranCliente as DinAlbaranCliente;
 
 /**
  * Line of a customer's delivery note.
@@ -35,59 +38,32 @@ class LineaAlbaranCliente extends Base\SalesDocumentLine
      */
     public $idalbaran;
 
-    /**
-     * 
-     * @return string
-     */
-    public function documentColumn()
+    public function documentColumn(): string
     {
         return 'idalbaran';
     }
 
-    /**
-     * 
-     * @return AlbaranCliente
-     */
-    public function getDocument()
+    public function getDocument(): DinAlbaranCliente
     {
-        $albaran = new AlbaranCliente();
+        $albaran = new DinAlbaranCliente();
         $albaran->loadFromCode($this->idalbaran);
         return $albaran;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependency
+        // needed dependency
         new AlbaranCliente();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'lineasalbaranescli';
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         if (null !== $this->idalbaran) {
             return 'EditAlbaranCliente?code=' . $this->idalbaran;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -30,19 +31,16 @@ class SecuenciaDocumento extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     *
      * @var string
      */
     public $codejercicio;
 
     /**
-     *
      * @var string
      */
     public $codserie;
 
     /**
-     *
      * @var int
      */
     public $idempresa;
@@ -55,37 +53,31 @@ class SecuenciaDocumento extends Base\ModelClass
     public $idsecuencia;
 
     /**
-     *
      * @var int
      */
     public $inicio;
 
     /**
-     *
      * @var int
      */
     public $longnumero;
 
     /**
-     *
      * @var int
      */
     public $numero;
 
     /**
-     *
      * @var string
      */
     public $patron;
 
     /**
-     *
      * @var string
      */
     public $tipodoc;
 
     /**
-     *
      * @var bool
      */
     public $usarhuecos;
@@ -100,44 +92,26 @@ class SecuenciaDocumento extends Base\ModelClass
         $this->usarhuecos = false;
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new Ejercicio();
         new Serie();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idsecuencia';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'secuencias_documentos';
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->idempresa)) {
             $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
@@ -155,13 +129,6 @@ class SecuenciaDocumento extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
     {
         return parent::url($type, $list);

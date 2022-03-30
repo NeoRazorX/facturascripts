@@ -78,13 +78,13 @@ abstract class BankAccount extends ModelClass
     {
         $iban = str_replace(' ', '', $this->iban);
 
-        /// split in groups
+        // split in groups
         $groups = [];
         for ($num = 0; $num < strlen($iban); $num += self::GROUP_LENGTH) {
             $groups[] = substr($iban, $num, self::GROUP_LENGTH);
         }
 
-        /// censor
+        // censor
         if ($censure) {
             $groups[1] = $groups[2] = $groups[3] = $groups[4] = 'XXXX';
         }

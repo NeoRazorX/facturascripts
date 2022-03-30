@@ -116,9 +116,6 @@ class Empresa extends Base\Contact
      */
     public $web;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -126,12 +123,7 @@ class Empresa extends Base\Contact
         $this->regimeniva = RegimenIVA::defaultValue();
     }
 
-    /**
-     * Removes company from database.
-     *
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-company');
@@ -146,28 +138,21 @@ class Empresa extends Base\Contact
      *
      * @return DinCuentaBanco[]
      */
-    public function getBankAccounts()
+    public function getBankAccounts(): array
     {
         $companyAccounts = new DinCuentaBanco();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
         return $companyAccounts->all($where, [], 0, 0);
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new AttachedFile();
 
         $num = mt_rand(1, 9999);
-        $name = \defined('FS_INITIAL_EMPRESA') ? \FS_INITIAL_EMPRESA : 'E-' . $num;
-        $codpais = \defined('FS_INITIAL_CODPAIS') ? \FS_INITIAL_CODPAIS : 'ESP';
+        $name = defined('FS_INITIAL_EMPRESA') ? FS_INITIAL_EMPRESA : 'E-' . $num;
+        $codpais = defined('FS_INITIAL_CODPAIS') ? FS_INITIAL_CODPAIS : 'ESP';
         return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,'
             . 'direccion,administrador,cifnif,nombre,nombrecorto,personafisica,regimeniva)'
             . "VALUES (1,'','" . $codpais . "','','','00000014Z','" . $name . "','" . $name . "','0',"
@@ -179,47 +164,27 @@ class Empresa extends Base\Contact
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->idempresa === (int)$this->toolBox()->appSettings()->get('default', 'idempresa');
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idempresa';
     }
 
-    /**
-     * Returns the description of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombrecorto';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'empresas';
     }
 
-    /**
-     * Check the company's data, return TRUE if correct
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->administrador = $utils->noHtml($this->administrador);
@@ -259,12 +224,7 @@ class Empresa extends Base\Contact
         return $almacen->save();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->idempresa)) {
             $this->idempresa = $this->newCode();

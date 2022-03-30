@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,49 +31,41 @@ class Report extends Base\ModelClass
     const DEFAULT_TYPE = 'area';
 
     /**
-     *
      * @var int
      */
     public $compared;
 
     /**
-     *
      * @var int
      */
     public $id;
 
     /**
-     *
      * @var string
      */
     public $name;
 
     /**
-     *
      * @var string
      */
     public $table;
 
     /**
-     *
      * @var string
      */
     public $type;
 
     /**
-     *
      * @var string
      */
     public $xcolumn;
 
     /**
-     *
      * @var string
      */
     public $xoperation;
 
     /**
-     *
      * @var string
      */
     public $ycolumn;
@@ -84,38 +76,22 @@ class Report extends Base\ModelClass
         $this->type = self::DEFAULT_TYPE;
     }
 
-    /**
-     * 
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * 
-     * @return string
-     */
     public function primaryDescriptionColumn(): string
     {
         return 'name';
     }
 
-    /**
-     * 
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'reports';
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->name = $utils->noHtml($this->name);

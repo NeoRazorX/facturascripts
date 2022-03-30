@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -104,9 +105,6 @@ class Ejercicio extends Base\ModelClass
      */
     public $nombre;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -121,18 +119,18 @@ class Ejercicio extends Base\ModelClass
      * Returns the date closest to $date that is within the range of this exercise.
      *
      * @param string $fecha
-     * @param bool   $showError
+     * @param bool $showError
      *
      * @return string
      */
-    public function getBestFecha($fecha, $showError = false)
+    public function getBestFecha(string $fecha, bool $showError = false): string
     {
-        $fecha2 = \strtotime($fecha);
-        if ($fecha2 >= \strtotime($this->fechainicio) && $fecha2 <= \strtotime($this->fechafin)) {
+        $fecha2 = strtotime($fecha);
+        if ($fecha2 >= strtotime($this->fechainicio) && $fecha2 <= strtotime($this->fechafin)) {
             return $fecha;
         }
 
-        if ($fecha2 > \strtotime($this->fechainicio)) {
+        if ($fecha2 > strtotime($this->fechainicio)) {
             if ($showError) {
                 $this->toolBox()->i18nLog()->warning('date-out-of-rage-selected-better');
             }
@@ -147,16 +145,9 @@ class Ejercicio extends Base\ModelClass
         return $this->fechainicio;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependecies
+        // needed dependencies
         new DinEmpresa();
 
         $code = $year = "'" . \date('Y') . "'";
@@ -171,15 +162,15 @@ class Ejercicio extends Base\ModelClass
     /**
      * Check if the indicated date is within the period of the exercise dates
      *
-     * @param string $dateToCheck        (string with date format)
+     * @param string $dateToCheck (string with date format)
      *
      * @return bool
      */
-    public function inRange($dateToCheck): bool
+    public function inRange(string $dateToCheck): bool
     {
-        $start = \strtotime($this->fechainicio);
-        $end = \strtotime($this->fechafin);
-        $date = \strtotime($dateToCheck);
+        $start = strtotime($this->fechainicio);
+        $end = strtotime($this->fechafin);
+        $date = strtotime($dateToCheck);
         return $date >= $start && $date <= $end;
     }
 
@@ -188,7 +179,7 @@ class Ejercicio extends Base\ModelClass
      *
      * @return bool
      */
-    public function isOpened()
+    public function isOpened(): bool
     {
         return $this->estado === self::EXERCISE_STATUS_OPEN;
     }
@@ -198,18 +189,18 @@ class Ejercicio extends Base\ModelClass
      * <bold>Need the company id to be correctly informed</bold>
      *
      * @param string $date
-     * @param bool   $onlyOpened
-     * @param bool   $create
+     * @param bool $onlyOpened
+     * @param bool $create
      *
      * @return bool
      */
-    public function loadFromDate($date, $onlyOpened = true, $create = true): bool
+    public function loadFromDate(string $date, bool $onlyOpened = true, bool $create = true): bool
     {
-        /// we need this data because loadfromcode() makes a clear()
+        // we need this data because loadfromcode() makes a clear()
         $idempresa = $this->idempresa;
         $long = $this->longsubcuenta;
 
-        /// Search for fiscal year for date
+        // Search for fiscal year for date
         $where = [
             new DataBaseWhere('idempresa', $this->idempresa),
             new DataBaseWhere('fechainicio', $date, '<='),
@@ -224,8 +215,8 @@ class Ejercicio extends Base\ModelClass
         $this->idempresa = $idempresa;
         $this->longsubcuenta = $long;
 
-        /// If must be register
-        if ($create && \strtotime($date) >= 1) {
+        // If must be register
+        if ($create && strtotime($date) >= 1) {
             return $this->createNew($date);
         }
 
@@ -237,65 +228,50 @@ class Ejercicio extends Base\ModelClass
      * (Formated to 4 digits)
      *
      * @param string $field
-     * @param array  $where
+     * @param array $where
      *
      * @return string
      */
     public function newCode(string $field = '', array $where = [])
     {
         $newCode = parent::newCode($field, $where);
-        return \sprintf('%04s', (int) $newCode);
+        return sprintf('%04s', (int)$newCode);
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codejercicio';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'ejercicios';
     }
 
-    /**
-     * Check the exercise data, return True if they are correct
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        /// TODO: Change dates verify to $this->inRange() call
-        $this->codejercicio = \trim($this->codejercicio);
+        // TODO: Change dates verify to $this->inRange() call
+        $this->codejercicio = trim($this->codejercicio);
         $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
 
         if (empty($this->idempresa)) {
             $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         }
 
-        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codejercicio)) {
+        if (1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,4}$/i', $this->codejercicio)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codejercicio, '%column%' => 'codejercicio', '%min%' => '1', '%max%' => '4']
             );
-        } elseif (\strlen($this->nombre) < 1 || \strlen($this->nombre) > 100) {
+        } elseif (strlen($this->nombre) < 1 || strlen($this->nombre) > 100) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%column%' => 'nombre', '%min%' => '1', '%max%' => '100']
             );
-        } elseif (\strtotime($this->fechainicio) > \strtotime($this->fechafin)) {
+        } elseif (strtotime($this->fechainicio) > strtotime($this->fechafin)) {
             $params = ['%endDate%' => $this->fechainicio, '%startDate%' => $this->fechafin];
             $this->toolBox()->i18nLog()->warning('start-date-later-end-date', $params);
-        } elseif (\strtotime($this->fechainicio) < 1) {
+        } elseif (strtotime($this->fechainicio) < 1) {
             $this->toolBox()->i18nLog()->warning('date-invalid');
         } else {
             return parent::test();
@@ -309,31 +285,25 @@ class Ejercicio extends Base\ModelClass
      *
      * @return string en formato año
      */
-    public function year()
+    public function year(): string
     {
-        return \date('Y', \strtotime($this->fechainicio));
+        return date('Y', strtotime($this->fechainicio));
     }
 
-    /**
-     * 
-     * @param string $date
-     *
-     * @return bool
-     */
-    protected function createNew($date)
+    protected function createNew(string $date): bool
     {
-        $date2 = \strtotime($date);
+        $date2 = strtotime($date);
 
-        $this->codejercicio = \date('Y', $date2);
-        $this->fechainicio = \date('1-1-Y', $date2);
-        $this->fechafin = \date('31-12-Y', $date2);
-        $this->nombre = \date('Y', $date2);
+        $this->codejercicio = date('Y', $date2);
+        $this->fechainicio = date('1-1-Y', $date2);
+        $this->fechafin = date('31-12-Y', $date2);
+        $this->nombre = date('Y', $date2);
 
-        /// for non-default companies we try to use range from 0001 to 9999
+        // for non-default companies we try to use range from 0001 to 9999
         if ($this->idempresa != $this->toolBox()->appSettings()->get('default', 'idempresa')) {
             $new = new static();
             for ($num = 1; $num < 1000; $num++) {
-                $code = \sprintf('%04s', (int) $num);
+                $code = sprintf('%04s', (int)$num);
                 if (false === $new->loadFromCode($code)) {
                     $this->codejercicio = $code;
                     break;
@@ -348,14 +318,7 @@ class Ejercicio extends Base\ModelClass
         return $this->save();
     }
 
-    /**
-     * Insert the model data in the database.
-     *
-     * @param array $values
-     * 
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         $where = [new DataBaseWhere('idempresa', $this->idempresa)];
         foreach ($this->all($where, [], 0, 0) as $ejercicio) {

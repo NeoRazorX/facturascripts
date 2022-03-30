@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -121,9 +121,6 @@ class User extends Base\ModelClass
      */
     public $nick;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -135,14 +132,10 @@ class User extends Base\ModelClass
         $this->level = self::DEFAULT_LEVEL;
     }
 
-    /**
-     *
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->count() === 1) {
-            /// prevent delete all users
+            // prevent delete all users
             $this->toolBox()->i18nLog()->error('cant-delete-last-user');
             return false;
         }
@@ -150,16 +143,9 @@ class User extends Base\ModelClass
         return parent::delete();
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// we need this models to be checked before
+        // we need this models to be checked before
         new DinPage();
         new DinEmpresa();
 
@@ -187,33 +173,17 @@ class User extends Base\ModelClass
         return $this->logkey;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'nick';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'users';
     }
 
-    /**
-     * Returns True if there is no errors on properties values.
-     * It runs inside the save method.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $this->nick = trim($this->nick);
         if (1 !== preg_match("/^[A-Z0-9_@\+\.\-]{3,50}$/i", $this->nick)) {
@@ -271,13 +241,7 @@ class User extends Base\ModelClass
         return $this->logkey === $value;
     }
 
-    /**
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         $result = parent::saveInsert($values);
         if ($result && false === $this->admin) {
@@ -303,7 +267,7 @@ class User extends Base\ModelClass
         $roleUser->nick = $this->nick;
         $roleUser->save();
 
-        /// set user homepage
+        // set user homepage
         foreach ($roleUser->getRoleAccess() as $roleAccess) {
             $this->homepage = $roleAccess->pagename;
             if ('List' == substr($this->homepage, 0, 4)) {
@@ -313,9 +277,6 @@ class User extends Base\ModelClass
         $this->save();
     }
 
-    /**
-     * @return bool
-     */
     protected function testAgent(): bool
     {
         if (empty($this->codagente)) {
@@ -331,9 +292,6 @@ class User extends Base\ModelClass
         return true;
     }
 
-    /**
-     * @return bool
-     */
     protected function testWarehouse(): bool
     {
         $appSettings = $this->toolBox()->appSettings();

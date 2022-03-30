@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -81,7 +81,7 @@ class TotalModel
      *
      * @return static[]
      */
-    public static function all($tableName, $where, $fieldList, $fieldCode = '')
+    public static function all($tableName, $where, $fieldList, $fieldCode = ''): array
     {
         $result = [];
         if (static::dataBase()->tableExists($tableName)) {
@@ -118,13 +118,6 @@ class TotalModel
         }
     }
 
-    /**
-     * @param string $tableName
-     * @param string $fieldName
-     * @param DataBaseWhere[] $where
-     *
-     * @return float
-     */
     public static function sum(string $tableName, string $fieldName, array $where): float
     {
         if (false === static::dataBase()->tableExists($tableName)) {
@@ -139,9 +132,6 @@ class TotalModel
         return 0.0;
     }
 
-    /**
-     * @return DataBase
-     */
     private static function dataBase(): DataBase
     {
         if (self::$dataBase === null) {

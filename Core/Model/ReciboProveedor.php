@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\FacturaProveedor as DinFacturaProveedor;
+use FacturaScripts\Dinamic\Model\PagoProveedor as DinPagoProveedor;
+use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
 
 /**
  * Description of ReciboProveedor
@@ -36,12 +39,9 @@ class ReciboProveedor extends Base\Receipt
      */
     public $codproveedor;
 
-    /**
-     * @return FacturaProveedor
-     */
-    public function getInvoice()
+    public function getInvoice(): DinFacturaProveedor
     {
-        $invoice = new FacturaProveedor();
+        $invoice = new DinFacturaProveedor();
         $invoice->loadFromCode($this->idfactura);
         return $invoice;
     }
@@ -49,29 +49,23 @@ class ReciboProveedor extends Base\Receipt
     /**
      * Returns all payment history for this receipt
      *
-     * @return PagoProveedor[]
+     * @return DinPagoProveedor[]
      */
-    public function getPayments()
+    public function getPayments(): array
     {
-        $payModel = new PagoProveedor();
+        $payModel = new DinPagoProveedor();
         $where = [new DataBaseWhere('idrecibo', $this->idrecibo)];
         return $payModel->all($where, [], 0, 0);
     }
 
-    /**
-     * @return Proveedor
-     */
-    public function getSubject()
+    public function getSubject(): DinProveedor
     {
-        $proveedor = new Proveedor();
+        $proveedor = new DinProveedor();
         $proveedor->loadFromCode($this->codproveedor);
         return $proveedor;
     }
 
-    /**
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Proveedor();
@@ -79,21 +73,12 @@ class ReciboProveedor extends Base\Receipt
         return parent::install();
     }
 
-    /**
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'recibospagosprov';
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListFacturaProveedor?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListFacturaProveedor?activetab=List'): string
     {
         if ('list' === $type && !empty($this->idfactura)) {
             return $this->getInvoice()->url() . '&activetab=List' . $this->modelClassName();
@@ -107,13 +92,13 @@ class ReciboProveedor extends Base\Receipt
      *
      * @return bool
      */
-    protected function newPayment()
+    protected function newPayment(): bool
     {
         if ($this->disablePaymentGeneration) {
             return false;
         }
 
-        $pago = new PagoProveedor();
+        $pago = new DinPagoProveedor();
         $pago->codpago = $this->codpago;
         $pago->fecha = $this->fechapago ?? $pago->fecha;
         $pago->idrecibo = $this->idrecibo;

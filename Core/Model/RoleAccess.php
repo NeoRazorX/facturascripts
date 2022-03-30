@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022  Carlos García Gómez <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson          <joenilson@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -80,12 +81,12 @@ class RoleAccess extends Base\ModelClass
     /**
      * Add the indicated page list to the Role group
      *
-     * @param string    $codrole
+     * @param string $codrole
      * @param DinPage[] $pages
      *
      * @return bool
      */
-    public static function addPagesToRole($codrole, $pages)
+    public static function addPagesToRole(string $codrole, array $pages): bool
     {
         $roleAccess = new static();
         foreach ($pages as $page) {
@@ -110,14 +111,7 @@ class RoleAccess extends Base\ModelClass
         return true;
     }
 
-    /**
-     *
-     * @param string $nick
-     * @param string $pageName
-     *
-     * @return static[]
-     */
-    public static function allFromUser($nick, $pageName)
+    public static function allFromUser(string $nick, string $pageName): array
     {
         $sqlIn = 'SELECT codrole FROM ' . RoleUser::tableName() . ' WHERE nick = ' . self::$dataBase->var2str($nick);
         $where = [
@@ -128,46 +122,28 @@ class RoleAccess extends Base\ModelClass
         return $roleAccess->all($where, [], 0, 0);
     }
 
-    /**
-     *
-     * @return Page
-     */
-    public function getPage()
+    public function getPage(): DinPage
     {
         $page = new DinPage();
         $page->loadFromCode($this->pagename);
         return $page;
     }
 
-    /**
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new DinRole();
         new DinUser();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'roles_access';
     }

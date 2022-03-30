@@ -96,9 +96,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
      */
     public $tipodoc;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -108,10 +105,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         $this->predeterminado = false;
     }
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->bloquear) {
             $this->toolBox()->i18nLog()->warning('locked');
@@ -121,9 +115,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::delete();
     }
 
-    /**
-     * @return string
-     */
     public function icon(): string
     {
         if (!empty($this->icon)) {
@@ -135,32 +126,17 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return $this->editable ? 'fas fa-pen' : 'fas fa-lock';
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'idestado';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'estados_documentos';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
         if (empty($this->nombre) || empty($this->tipodoc)) {
@@ -179,12 +155,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
     {
         return parent::url($type, $list);
@@ -260,12 +230,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         }
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->idestado)) {
             /**

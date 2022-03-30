@@ -134,7 +134,7 @@ abstract class ComercialContact extends Contact
      */
     public function install()
     {
-        /// needed dependencies
+        // needed dependencies
         new Retencion();
         new Serie();
         new FormaPago();
