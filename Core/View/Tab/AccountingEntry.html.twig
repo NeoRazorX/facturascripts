@@ -53,14 +53,12 @@
         data.append('idasiento', document.forms['accEntryForm']['idasiento'].value);
         data.append('data', formDataJsonString);
 
-        console.log(formData);
-
         fetch('{{ fsc.url() }}', {
             method: 'POST',
             body: data
         }).then(function (response) {
             if (response.ok) {
-                animateSpinner( 'remove', true);
+                animateSpinner('remove', true);
                 return response.json();
             }
             animateSpinner('remove', false);
@@ -78,10 +76,10 @@
             if (data.list !== '') {
                 document.getElementById("findSubaccountList").innerHTML = data.list;
             }
-            if (Array.isArray(data.messages)) {
+            if (Array.isArray(data.messages) && data.messages.length > 0) {
                 data.messages.forEach(item => alert(item.message));
-            }
-            if (document.forms['accEntryForm']['action'].value === 'new-line') {
+                $("#new_subaccount").focus();
+            } else if (document.forms['accEntryForm']['action'].value === 'new-line') {
                 $(".line-debit:last").focus().select();
             }
         }).catch(function (error) {
@@ -108,8 +106,6 @@
         data.append('selectedLine', document.forms['accEntryForm']['selectedLine'].value);
         data.append('idasiento', document.forms['accEntryForm']['idasiento'].value);
         data.append('data', formDataJsonString);
-
-        console.log(formData);
 
         fetch('{{ fsc.url() }}', {
             method: 'POST',

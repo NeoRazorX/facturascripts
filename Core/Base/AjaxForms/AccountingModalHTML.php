@@ -44,33 +44,19 @@ class AccountingModalHTML
      */
     protected static $query;
 
-    /**
-     * @param Asiento $model
-     * @param array $formData
-     */
-    public static function apply(&$model, $formData)
+    public static function apply(Asiento &$model, array $formData)
     {
         self::$orden = $formData['fp_orden'] ?? 'ref_asc';
-        self::$query = isset($formData['fp_query']) ? ToolBox::utils()->noHtml(\mb_strtolower($formData['fp_query'], 'UTF8')) : '';
+        self::$query = isset($formData['fp_query']) ? ToolBox::utils()->noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
     }
 
-    /**
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    public static function render($model): string
+    public static function render(Asiento $model): string
     {
         $i18n = new Translator();
         return static::modalSubaccount($i18n, $model);
     }
 
-    /**
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    public static function renderSubaccountList($model): string
+    public static function renderSubaccountList(Asiento $model): string
     {
         $tbody = '';
         $i18n = new Translator();
@@ -105,7 +91,7 @@ class AccountingModalHTML
      *
      * @return Subcuenta[]
      */
-    protected static function getSubaccounts($model): array
+    protected static function getSubaccounts(Asiento $model): array
     {
         $subaccount = new Subcuenta();
         if (empty($model->codejercicio)) {
@@ -133,13 +119,7 @@ class AccountingModalHTML
         return $subaccount->all($where, $order);
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function modalSubaccount($i18n, $model): string
+    protected static function modalSubaccount(Translator $i18n, Asiento $model): string
     {
         return '<div class="modal" id="findSubaccountModal" tabindex="-1" aria-hidden="true">'
             . '<div class="modal-dialog modal-xl">'
@@ -157,7 +137,8 @@ class AccountingModalHTML
             . '<input type="text" name="fp_query" class="form-control" id="findSubaccountInput" placeholder="' . $i18n->trans('search')
             . '" onkeyup="return findSubaccountSearch(\'find-subaccount\', \'0\', this);"/>'
             . '<div class="input-group-apend">'
-            . '<button class="btn btn-primary" type="button" onclick="return accEntryFormAction(\'find-subaccount\', \'0\');" data-loading-text="<span class=\'spinner-border spinner-border-sm\' role=\'status\' aria-hidden=\'true\'></span>"><i class="fas fa-search"></i></button>'
+            . '<button class="btn btn-primary" type="button" onclick="return accEntryFormAction(\'find-subaccount\', \'0\');"'
+            . ' data-loading-text="<span class=\'spinner-border spinner-border-sm\' role=\'status\' aria-hidden=\'true\'></span>"><i class="fas fa-search"></i></button>'
             . '</div>'
             . '</div>'
             . '</div>'
@@ -170,12 +151,7 @@ class AccountingModalHTML
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     *
-     * @return string
-     */
-    protected static function orden($i18n): string
+    protected static function orden(Translator $i18n): string
     {
         return '<div class="col-sm">'
             . '<div class="input-group">'

@@ -31,26 +31,17 @@ use FacturaScripts\Dinamic\Model\Asiento;
 class AccountingFooterHTML
 {
 
-    /**
-     * @param Asiento $model
-     * @param array $formData
-     */
     public static function apply(Asiento &$model, array $formData)
     {
     }
 
-    /**
-     * @param Asiento $model
-     *
-     * @return string
-     */
     public static function render(Asiento $model): string
     {
         $i18n = new Translator();
         return '<div class="container-fluid">'
-            . '<div class="form-row mt-3">'
+            . '<div class="form-row align-items-center mt-3">'
             . static::newSubaccount($i18n, $model)
-            . static::subaccountBtn($i18n, $model)
+            . static::moveBtn($i18n, $model)
             . static::importe($i18n, $model)
             . static::descuadre($i18n, $model)
             . '</div>'
@@ -62,12 +53,6 @@ class AccountingFooterHTML
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
     protected static function deleteBtn(Translator $i18n, Asiento $model): string
     {
         if (false === $model->exists() || false === $model->editable) {
@@ -126,7 +111,8 @@ class AccountingFooterHTML
         }
 
         return '<div class="col-sm-3 col-md-2 mb-3">'
-            . '<div class="form-group text-danger">' . $i18n->trans('unbalance')
+            . '<div class="input-group">'
+            . '<div class="input-group-prepend"><span class="input-group-text text-danger">' . $i18n->trans('unbalance') . '</span></div>'
             . '<input type="number" value="' . $unbalance . '" class="form-control" step="any" readonly>'
             . '</div></div>';
     }
@@ -142,17 +128,12 @@ class AccountingFooterHTML
     protected static function importe(Translator $i18n, Asiento $model): string
     {
         return '<div class="col-sm-3 col-md-2 mb-3">'
-            . '<div class="form-group">' . $i18n->trans('amount')
+            . '<div class="input-group">'
+            . '<div class="input-group-prepend"><span class="input-group-text">' . $i18n->trans('amount') . '</span></div>'
             . '<input type="number" value="' . $model->importe . '" class="form-control" step="any" tabindex="-1" readonly>'
             . '</div></div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
     protected static function newSubaccount(Translator $i18n, Asiento $model): string
     {
         if (false === $model->editable) {
@@ -160,18 +141,18 @@ class AccountingFooterHTML
         }
 
         return '<div class="col-sm-6 col-md-2 mb-3">'
+            . '<div class="input-group">'
             . '<input type="text" class="form-control" maxlength="15" autocomplete="off" placeholder="' . $i18n->trans('subaccount')
             . '" id="new_subaccount" name="new_subaccount" onchange="return newLineAction(this.value);"/>'
+            . '<div class="input-group-append"><button class="btn btn-info" type="button" title="' . $i18n->trans('subaccounts') . '"'
+            . ' onclick="$(\'#findSubaccountModal\').modal(); $(\'#findSubaccountInput\').focus();"><i class="fas fa-book"></i></button></div>'
+            . '</div>'
+            . '</div>'
+            . '<div class="col-sm">'
             . '<p class="text-muted">' . $i18n->trans('account-dot-code') . '</p>'
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
     protected static function saveBtn(Translator $i18n, Asiento $model): string
     {
         if (false === $model->editable) {
@@ -187,22 +168,14 @@ class AccountingFooterHTML
             . '</div>';
     }
 
-    /**
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
-    protected static function subaccountBtn(Translator $i18n, Asiento $model): string
+    protected static function moveBtn(Translator $i18n, Asiento $model): string
     {
         if (false === $model->editable) {
             return '';
         }
 
-        return '<div class="col-sm-6 col-md">'
-            . '<a href="#" class="btn btn-info mb-3" onclick="$(\'#findSubaccountModal\').modal(); $(\'#findSubaccountInput\').focus(); return false;">'
-            . '<i class="fas fa-book fa-fw"></i> ' . $i18n->trans('subaccounts') . '</a>'
-            . '<button type="button" class="btn btn-light mb-3 ml-2" id="sortableBtn">'
+        return '<div class="col-sm-auto">'
+            . '<button type="button" class="btn btn-light mb-3" id="sortableBtn">'
             . '<i class="fas fa-arrows-alt-v fa-fw"></i> ' . $i18n->trans('move-lines')
             . '</button>'
             . '</div>';
