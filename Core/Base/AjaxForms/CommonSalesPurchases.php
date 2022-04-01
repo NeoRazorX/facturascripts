@@ -206,7 +206,7 @@ trait CommonSalesPurchases
             . '<div class="input-group mb-3">'
             . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-barcode"></i></span></div>'
             . '<input type="text" name="fastli" class="form-control" placeholder="' . $i18n->trans('barcode')
-            . ' / ' . $i18n->trans('reference') . '" onkeyup="' . $jsName . '(event)"/>'
+            . '" onkeyup="' . $jsName . '(event)"/>'
             . '</div></div>' : '<div class="col-sm"></div>';
     }
 
@@ -452,11 +452,14 @@ trait CommonSalesPurchases
 
     protected static function productBtn(Translator $i18n, BusinessDocument $model): string
     {
-        return $model->editable ? '<div class="col-sm-6 col-md-auto">'
-            . '<a href="#" class="btn btn-info mb-3" onclick="$(\'#findProductModal\').modal(); $(\'#findProductInput\').focus(); return false;">'
-            . '<i class="fas fa-search fa-fw"></i> ' . $i18n->trans('products')
-            . '</a>'
-            . '</div>' : '';
+        return $model->editable ? '<div class="col-sm-6 col-md-3">'
+            . '<div class="input-group mb-3">'
+            . '<div class="input-group-prepend">'
+            . '<button class="btn btn-info" type="button" onclick="$(\'#findProductModal\').modal(); $(\'#findProductInput\').focus(); return false;"><i class="fas fa-search fa-fw"></i></button>'
+            . '</div>'
+            . '<input type="text" id="findProductInput" class="form-control" placeholder="' . $i18n->trans('reference') . '" />'
+            . '</div>'
+            . '</div>': '';
     }
 
     protected static function saveBtn(Translator $i18n, BusinessDocument $model, string $jsName): string

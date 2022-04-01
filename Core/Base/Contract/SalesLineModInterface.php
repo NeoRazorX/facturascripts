@@ -19,5 +19,9 @@ interface SalesLineModInterface
 
     public function newFields(): array;
 
+    public function newTitles(): array;
+
     public function renderField(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): ?string;
+
+    public function renderTitle(Translator $i18n, SalesDocument $model, string $field): ?string;
 }

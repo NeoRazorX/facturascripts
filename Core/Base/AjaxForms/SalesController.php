@@ -15,6 +15,7 @@ use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\Variante;
 
 /**
  * Description of SalesController
@@ -78,6 +79,28 @@ abstract class SalesController extends PanelController
         return Series::all();
     }
 
+    protected function autocompleteProductAction(): bool
+    {
+        $this->setTemplate(false);
+
+        $list = [];
+        $variante = new Variante();
+        $query = $this->request->get('term');
+        foreach ($variante->codeModelSearch($query, 'referencia') as $value) {
+            $list[] = [
+                'key' => $this->toolBox()->utils()->fixHtml($value->code),
+                'value' => $this->toolBox()->utils()->fixHtml($value->description)
+            ];
+        }
+
+        if (empty($list)) {
+            $list[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-data')];
+        }
+
+        $this->response->setContent(\json_encode($list));
+        return false;
+    }
+
     protected function createViews()
     {
         $this->setTabsPosition('top');
@@ -122,8 +145,12 @@ abstract class SalesController extends PanelController
             case 'add-file':
                 return $this->addFileAction();
 
+            case 'autocomplete-product':
+                return $this->autocompleteProductAction();
+
             case 'add-product':
             case 'fast-line':
+            case 'fast-product':
             case 'new-line':
             case 'recalculate':
             case 'rm-line':
