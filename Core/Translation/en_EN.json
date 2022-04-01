@@ -1,7 +1,4 @@
 {
-    "Agente": "Agent",
-    "Date-of-the-document": "Date of the document to be generated",
-    "Empleado": "Employee",
     "MegaSearch": "Search",
     "Traceability": "Traceability",
     "VAT-register": "VAT registration",
@@ -62,6 +59,7 @@
     "admin": "Admin",
     "administrator": "Administrator",
     "advanced": "Advanced",
+    "agent": "Agent",
     "agent-commission-info": "It will only apply to the selected agent",
     "agent-dont-have-associated-supplier": "The agent don't have an associated supplier",
     "agents": "Agents",
@@ -306,6 +304,7 @@
     "date": "Date",
     "date-in": "Date in",
     "date-of-suspension": "Date of suspension",
+    "date-of-the-document": "Date of the document to be generated",
     "date-out": "Date out",
     "date-out-of-exercise-range": "Date out of excervise range %exerciseName%",
     "date-wildcard-info": "Current date (computer date)",

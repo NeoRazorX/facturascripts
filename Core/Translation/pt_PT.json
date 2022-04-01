@@ -1,7 +1,4 @@
 {
-    "Agente": "Agente",
-    "Date-of-the-document": "Data do documento a criar",
-    "Empleado": "Empregado",
     "MegaSearch": "Mega Pesquisa",
     "Traceability": "Rastreabilidade",
     "VAT-register": "VAT registration",
@@ -62,6 +59,7 @@
     "admin": "Administrador",
     "administrator": "Administrador",
     "advanced": "Avançado",
+    "agent": "Agente",
     "agent-commission-info": "Apenas será de aplicação ao agente selecionado",
     "agent-dont-have-associated-supplier": "O agente não tem um fornecedor associado",
     "agents": "Agentes",
@@ -306,6 +304,7 @@
     "date": "Data",
     "date-in": "Data em",
     "date-of-suspension": "Date of suspension",
+    "date-of-the-document": "Data do documento a criar",
     "date-out": "Date out",
     "date-out-of-exercise-range": "Data da faixa de excervise 0",
     "date-wildcard-info": "Data atual (data do computador)",

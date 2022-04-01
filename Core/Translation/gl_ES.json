@@ -1,7 +1,4 @@
 {
-    "Agente": "Axente",
-    "Date-of-the-document": "Data do documento a xerar",
-    "Empleado": "Empregado",
     "MegaSearch": "Buscador",
     "Traceability": "Trazabilidade",
     "VAT-register": "Libro de impostos",
@@ -62,6 +59,7 @@
     "admin": "Administrador",
     "administrator": "Administrador",
     "advanced": "Avanzado",
+    "agent": "Axente",
     "agent-commission-info": "Só se aplicará ao axente seleccionado",
     "agent-dont-have-associated-supplier": "O axente non ten un provedor asociado",
     "agents": "Axentes",
@@ -306,6 +304,7 @@
     "date": "Data",
     "date-in": "Data en",
     "date-of-suspension": "Data de baixa",
+    "date-of-the-document": "Data do documento a xerar",
     "date-out": "Data de saída",
     "date-out-of-exercise-range": "A data está fóra do rango do exercicio %exerciseName%",
     "date-wildcard-info": "Data actual (data do ordenador)",

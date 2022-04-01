@@ -1,7 +1,4 @@
 {
-    "Agente": "Agent",
-    "Date-of-the-document": "Date du document",
-    "Empleado": "Employé",
     "MegaSearch": "Recherche",
     "Traceability": "Traçabilité",
     "VAT-register": "Livre d'impôt",
@@ -62,6 +59,7 @@
     "admin": "Admin",
     "administrator": "administrateur",
     "advanced": "Avancé",
+    "agent": "Agent",
     "agent-commission-info": "Cela s'appliquera uniquement à l'agent sélectionné",
     "agent-dont-have-associated-supplier": "L'agent ne possède pas de fournisseur attitré",
     "agents": "Agents",
@@ -306,6 +304,7 @@
     "date": "Date",
     "date-in": "Date dans",
     "date-of-suspension": "Date de suspension",
+    "date-of-the-document": "Date du document",
     "date-out": "Date de sortie",
     "date-out-of-exercise-range": "Date hors champ d'excision %exerciseName%",
     "date-wildcard-info": "Date actuelle (de l'ordinateur)",

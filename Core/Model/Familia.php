@@ -94,7 +94,7 @@ class Familia extends Base\ModelClass
     }
 
     /**
-     * Get the accounting sub-account for irpf purchases.
+     * Get the accounting account for irpf purchases.
      *
      * @param string $code
      *
@@ -106,7 +106,7 @@ class Familia extends Base\ModelClass
     }
 
     /**
-     * Get the accounting sub-account for purchases.
+     * Get the accounting account for purchases.
      *
      * @param string $code
      *
@@ -118,7 +118,7 @@ class Familia extends Base\ModelClass
     }
 
     /**
-     * Get the accounting sub-account for sales.
+     * Get the accounting account for sales.
      *
      * @param string $code
      *
@@ -159,14 +159,7 @@ class Familia extends Base\ModelClass
         return parent::test() && $this->testLoops() && $this->testAccounting();
     }
 
-    /**
-     * @param string $code
-     * @param string $field
-     * @param Familia $model
-     *
-     * @return string
-     */
-    private static function getSubaccountFromFamily(string $code, string $field, $model = null): string
+    private static function getSubaccountFromFamily(?string $code, string $field, Familia $model = null): string
     {
         if (empty($code)) {
             return '';
@@ -182,7 +175,7 @@ class Familia extends Base\ModelClass
 
         return empty($model->{$field}) && $model->madre != $code ?
             self::getSubaccountFromFamily($model->madre, $field, $model) :
-            $model->{$field};
+            (string)$model->{$field};
     }
 
     protected function saveInsert(array $values = []): bool

@@ -61,11 +61,6 @@ class EditAgente extends ComercialContactController
         return 'Agente';
     }
 
-    /**
-     * Returns basic page attributes.
-     *
-     * @return array
-     */
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -90,6 +85,18 @@ class EditAgente extends ComercialContactController
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
+    protected function createCustomerView(string $viewName = 'ListCliente')
+    {
+        $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
+        $this->views[$viewName]->addOrderBy(['codcliente'], 'code');
+        $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
+        $this->views[$viewName]->addSearchFields(['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
+
+        // disable buttons
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
     protected function createDocumentView(string $viewName, string $model, string $label)
     {
         $this->createCustomerListView($viewName, $model, $label);
@@ -110,6 +117,7 @@ class EditAgente extends ComercialContactController
     {
         parent::createViews();
         $this->createContactView();
+        $this->createCustomerView();
         $this->createInvoiceView('ListFacturaCliente');
         $this->createDocumentView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
         $this->createDocumentView('ListPedidoCliente', 'PedidoCliente', 'orders');
@@ -144,19 +152,21 @@ class EditAgente extends ComercialContactController
      */
     protected function loadData($viewName, $view)
     {
+        $mvn = $this->getMainViewName();
+
         switch ($viewName) {
             case 'EditContacto':
             case 'ListAlbaranCliente':
-            case '':
+            case 'ListCliente':
             case 'ListFacturaCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
-                $codagente = $this->getViewModelValue('EditAgente', 'codagente');
+                $codagente = $this->getViewModelValue($mvn, 'codagente');
                 $where = [new DataBaseWhere('codagente', $codagente)];
                 $view->loadData('', $where);
                 break;
 
-            default:
+            case $mvn:
                 parent::loadData($viewName, $view);
                 if (false === $view->model->exists()) {
                     $view->disableColumn('contact');

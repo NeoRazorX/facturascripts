@@ -1,7 +1,4 @@
 {
-    "Agente": "Agente",
-    "Date-of-the-document": "Fecha del documento a generar",
-    "Empleado": "Empleado",
     "MegaSearch": "Buscador",
     "Traceability": "Trazabilidad",
     "VAT-register": "Registro de Iva",
@@ -62,6 +59,7 @@
     "admin": "Administrador",
     "administrator": "Administrador",
     "advanced": "Avanzado",
+    "agent": "Agente",
     "agent-commission-info": "Sólo se aplicará al agente seleccionado",
     "agent-dont-have-associated-supplier": "El agente no tiene un proveedor asociado",
     "agents": "Vendedores",
@@ -306,6 +304,7 @@
     "date": "Fecha",
     "date-in": "Fecha entrada",
     "date-of-suspension": "Fecha de baja",
+    "date-of-the-document": "Fecha del documento a generar",
     "date-out": "Fecha salida",
     "date-out-of-exercise-range": "La fecha está fuera del rango del ejercicio %exerciseName%",
     "date-wildcard-info": "Fecha actual (fecha del ordenador)",

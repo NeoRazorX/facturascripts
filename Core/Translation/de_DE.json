@@ -1,7 +1,4 @@
 {
-    "Agente": "Agent",
-    "Date-of-the-document": "Dokumentdatum",
-    "Empleado": "Mitarbeiter",
     "MegaSearch": "Suchen",
     "Traceability": "Rückverfolgbarkeit",
     "VAT-register": "Steuerbuch",
@@ -62,6 +59,7 @@
     "admin": "Administrator",
     "administrator": "Verwalter",
     "advanced": "Avanzado",
+    "agent": "Agent",
     "agent-commission-info": "gilt nur für den ausgewählten Agenten",
     "agent-dont-have-associated-supplier": "der Agent hat keinen assoziierten Lieferanten",
     "agents": "Agenten",
@@ -306,6 +304,7 @@
     "date": "Datum",
     "date-in": "Datum in",
     "date-of-suspension": "Datum Suspension",
+    "date-of-the-document": "Dokumentdatum",
     "date-out": "Datum aus",
     "date-out-of-exercise-range": "Datum außerhalb der Reichweite 0",
     "date-wildcard-info": "ktulles Datum (Datum des Rechners)",
