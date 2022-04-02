@@ -235,6 +235,10 @@
     $(document).ready(function () {
         findProduct();
 
+        if (document.forms['purchasesForm']['codproveedor'].value === '') {
+            $('#btnFindSupplierModal').click();
+        }
+
         $("#findSupplierInput").autocomplete({
             autoFocus: true,
             source: function (request, response) {

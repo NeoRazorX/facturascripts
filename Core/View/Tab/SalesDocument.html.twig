@@ -235,6 +235,10 @@
     $(document).ready(function () {
         findProduct();
 
+        if (document.forms['salesForm']['codcliente'].value === '') {
+            $('#btnFindCustomerModal').click();
+        }
+
         $("#findCustomerInput").autocomplete({
             autoFocus: true,
             source: function (request, response) {

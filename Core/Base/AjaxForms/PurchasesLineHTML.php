@@ -433,6 +433,10 @@ class PurchasesLineHTML
 
     private static function renderTitles(PurchaseDocument $model): string
     {
+        if (empty($model->codigo)) {
+            return '';
+        }
+
         $i18n = new Translator();
         return '<div class="titles d-none d-lg-block">'
             . '<div class="form-row pl-2 pr-2">'
