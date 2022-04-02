@@ -175,13 +175,13 @@ class PurchasesLineHTML
     protected static function cantidad(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model, string $jsFunc): string
     {
         if (false === $model->editable) {
-            return '<div class="col-sm-2 col-md col-lg-1 small px-0 order-3">'
+            return '<div class="col-sm-2 col-md-2 col-lg-1 small px-0 order-3">'
                 . '<span class="d-lg-none">' . $i18n->trans('quantity') . '</span>'
                 . '<input type="number" class="form-control form-control-sm rounded-0 mb-1" value="' . $line->cantidad . '" disabled=""/>'
                 . '</div>';
         }
 
-        return '<div class="col-sm-2 col-md col-lg-1 small px-0 order-3">'
+        return '<div class="col-sm-2 col-md-2 col-lg-1 small px-0 order-3">'
             . '<span class="d-lg-none">' . $i18n->trans('quantity') . '</span>'
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
             . '" class="form-control form-control-sm rounded-0 mb-1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"/>'

@@ -177,7 +177,7 @@ class SalesLineHTML
     private static function cantidad(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
     {
         if (false === $model->editable) {
-            return '<div class="col-sm-2 col-md col-lg-1 small px-0 order-3">'
+            return '<div class="col-sm-2 col-md-2 col-lg-1 small px-0 order-3">'
                 . '<span class="d-lg-none">' . self::cantidadLabel($i18n, $line, $model) . '</span>'
                 . '<div class="input-group input-group-sm mb-1">'
                 . self::cantidadServido($i18n, $line, $model)
@@ -187,7 +187,7 @@ class SalesLineHTML
                 . '</div>';
         }
 
-        return '<div class="col-sm-2 col-md col-lg-1 small px-0 order-3">'
+        return '<div class="col-sm-2 col-md-2 col-lg-1 small px-0 order-3">'
             . '<span class="d-lg-none">'. self::cantidadLabel($i18n, $line, $model) . '</span>'
             . '<div class="input-group input-group-sm mb-1">'
             . self::cantidadServido($i18n, $line, $model)
