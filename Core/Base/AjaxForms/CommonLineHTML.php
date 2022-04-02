@@ -44,7 +44,8 @@ trait CommonLineHTML
         }
 
         $columnMd = empty($line->referencia) ? 12 : 10;
-        return '<div class="col-sm-8 col-md-' . $columnMd . ' col-lg px-0 order-2">'
+        $columnSm = empty($line->referencia) ? 10 : 8;
+        return '<div class="col-sm-' . $columnSm . ' col-md-' . $columnMd . ' col-lg px-0 order-2">'
             . '<div class="mb-1 small"><span class="d-lg-none">' . $i18n->trans('description') . '</span>'
             . '<textarea ' . $attributes . ' class="form-control form-control-sm rounded-0 doc-line-desc" rows="' . $rows . '">' . $line->descripcion . '</textarea>'
             . '</div>'
@@ -60,9 +61,7 @@ trait CommonLineHTML
         $variante = new Variante();
         $where = [new DataBaseWhere('referencia', $line->referencia)];
         if (empty($line->referencia) || false === $variante->loadFromCode('', $where)) {
-            return '<div class="col-sm-2 col-md-2 col-lg-1 px-0 order-1">'
-                . $sortable
-                . '</div>';
+            return '<div>' . $sortable . '</div>';
         }
 
         return '<div class="col-sm-2 col-md-2 col-lg-1 pl-0 text-break align-self-start order-1">'

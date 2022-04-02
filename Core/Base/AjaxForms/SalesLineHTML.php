@@ -227,7 +227,7 @@ class SalesLineHTML
         switch ($line->actualizastock) {
             case -1:
             case -2:
-                $available = $stock->disponible > 0 ? '(' . $stock->disponible . '+)' : '';
+                $available = $stock->disponible > 0 ? '(' . $stock->disponible . ')' : '';
                 return '<span class="text-success">' . $i18n->trans('quantity') . '</span> ' . $available;
 
             default:
@@ -279,7 +279,7 @@ class SalesLineHTML
             case -1:
             case -2:
             $html = $stock->disponible > 0 ?
-                    '<span class="input-group-text text-success rounded-0">' . $stock->disponible . '+</span>' :
+                    '<span class="input-group-text text-success rounded-0">' . $stock->disponible . '</span>' :
                     '<span class="input-group-text text-danger rounded-0">' . $stock->disponible . '</span>';
                 break;
 
