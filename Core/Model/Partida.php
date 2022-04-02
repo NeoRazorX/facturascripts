@@ -283,8 +283,8 @@ class Partida extends Base\ModelOnChangeClass
     {
         $utils = $this->toolBox()->utils();
         $this->cifnif = $utils->noHtml($this->cifnif);
-        $this->codsubcuenta = trim($this->codsubcuenta);
-        $this->codcontrapartida = trim($this->codcontrapartida);
+        $this->codsubcuenta = $utils->noHtml($this->codsubcuenta);
+        $this->codcontrapartida = $utils->noHtml($this->codcontrapartida);
         $this->concepto = $utils->noHtml($this->concepto);
         $this->documento = $utils->noHtml($this->documento);
 

@@ -61,8 +61,8 @@ class CuentaEspecial extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->codcuentaesp = trim($this->codcuentaesp);
-        if (1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codcuentaesp)) {
+        $this->codcuentaesp = self::toolBox()::utils()::noHtml($this->codcuentaesp);
+        if ($this->codcuentaesp && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codcuentaesp)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codcuentaesp, '%column%' => 'codcuentaesp', '%min%' => '1', '%max%' => '6']
@@ -70,7 +70,7 @@ class CuentaEspecial extends Base\ModelClass
             return false;
         }
 
-        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
+        $this->descripcion = self::toolBox()::utils()::noHtml($this->descripcion);
         return parent::test();
     }
 

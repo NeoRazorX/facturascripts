@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Impuesto as DinImpuesto;
 
 /**
  * A tax (VAT) that can be associated to articles, delivery notes lines,
@@ -104,7 +105,7 @@ class Impuesto extends Base\ModelClass
      *
      * @param string $subAccount
      *
-     * @return self
+     * @return static
      */
     public function inputVatFromSubAccount(string $subAccount)
     {
@@ -132,7 +133,7 @@ class Impuesto extends Base\ModelClass
      *
      * @param string $subAccount
      *
-     * @return self
+     * @return static
      */
     public function outputVatFromSubAccount(string $subAccount)
     {
@@ -146,7 +147,7 @@ class Impuesto extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->codimpuesto = trim($this->codimpuesto);
+        $this->codimpuesto = self::toolBox()::utils()::noHtml($this->codimpuesto);
         if ($this->codimpuesto && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codimpuesto)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
@@ -157,7 +158,7 @@ class Impuesto extends Base\ModelClass
 
         $this->codsubcuentarep = empty($this->codsubcuentarep) ? null : $this->codsubcuentarep;
         $this->codsubcuentasop = empty($this->codsubcuentasop) ? null : $this->codsubcuentasop;
-        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
+        $this->descripcion = self::toolBox()::utils()::noHtml($this->descripcion);
         return parent::test();
     }
 
@@ -169,7 +170,7 @@ class Impuesto extends Base\ModelClass
      */
     private function getVatFromSubAccount(string $field, string $subAccount)
     {
-        $result = new Impuesto();
+        $result = new DinImpuesto();
         $where = [new DataBaseWhere($field, $subAccount)];
         if ($result->loadFromCode('', $where)) {
             return $result;

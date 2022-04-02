@@ -89,8 +89,8 @@ class Pais extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->codpais = trim($this->codpais);
-        if (1 !== preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
+        $this->codpais = self::toolBox()::utils()::noHtml($this->codpais);
+        if ($this->codpais && 1 !== preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codpais, '%column%' => 'codpais', '%min%' => '1', '%max%' => '20']
@@ -98,7 +98,7 @@ class Pais extends Base\ModelClass
             return false;
         }
 
-        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
+        $this->nombre = self::toolBox()::utils()::noHtml($this->nombre);
         return parent::test();
     }
 }

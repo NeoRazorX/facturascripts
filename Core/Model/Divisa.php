@@ -116,7 +116,7 @@ class Divisa extends Base\ModelClass
         $this->descripcion = $utils->noHtml($this->descripcion);
         $this->simbolo = $utils->noHtml($this->simbolo);
 
-        if (1 !== preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
+        if ($this->coddivisa && 1 !== preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->coddivisa, '%column%' => 'coddivisa', '%min%' => '1', '%max%' => '3']
