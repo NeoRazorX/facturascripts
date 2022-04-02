@@ -177,7 +177,7 @@ class SalesLineHTML
     private static function cantidad(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
     {
         if (false === $model->editable) {
-            return '<div class="col-sm-2 col-md col-lg-1 small px-0 order-2">'
+            return '<div class="col-sm-2 col-md col-lg-1 small px-0 order-3">'
                 . '<span class="d-lg-none">' . self::cantidadLabel($i18n, $line, $model) . '</span>'
                 . '<div class="input-group input-group-sm mb-1">'
                 . self::cantidadServido($i18n, $line, $model)
@@ -187,7 +187,7 @@ class SalesLineHTML
                 . '</div>';
         }
 
-        return '<div class="col-sm-2 col-md col-lg-1 small px-0 order-2">'
+        return '<div class="col-sm-2 col-md col-lg-1 small px-0 order-3">'
             . '<span class="d-lg-none">'. self::cantidadLabel($i18n, $line, $model) . '</span>'
             . '<div class="input-group input-group-sm mb-1">'
             . self::cantidadServido($i18n, $line, $model)
@@ -318,7 +318,7 @@ class SalesLineHTML
     private static function precio(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $jsFunc): string
     {
         if (false === $model->editable) {
-            return '<div class="col-sm col-md col-lg-1 px-0 order-3">'
+            return '<div class="col-sm col-md col-lg-1 px-0 order-4">'
                 . '<div class="mb-1 small"><span class=" d-lg-none">' . $i18n->trans('price') . '</span>'
                 . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm rounded-0" disabled/>'
                 . '</div>'
@@ -326,7 +326,7 @@ class SalesLineHTML
         }
 
         $attributes = 'name="pvpunitario_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"';
-        return '<div class="col-sm col-md col-lg-1 px-0 order-3">'
+        return '<div class="col-sm col-md col-lg-1 px-0 order-4">'
             . '<div class="mb-1 small"><span class=" d-lg-none">' . $i18n->trans('price') . '</span>'
             . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm rounded-0"/>'
             . '</div>'
@@ -564,7 +564,7 @@ class SalesLineHTML
 
     private static function titleCantidad(Translator $i18n): string
     {
-        return '<div class="col-lg-1 px-0 small order-2">'
+        return '<div class="col-lg-1 px-0 small order-3">'
             . $i18n->trans('quantity')
             . '</div>';
     }
@@ -578,7 +578,7 @@ class SalesLineHTML
 
     private static function titleDescripcion(Translator $i18n): string
     {
-        return '<div class="col-lg px-0 small order-1">'
+        return '<div class="col-lg px-0 small order-2">'
             . $i18n->trans('description')
             . '</div>';
     }
@@ -592,7 +592,7 @@ class SalesLineHTML
 
     private static function titlePrecio(Translator $i18n): string
     {
-        return '<div class="col-lg-1 px-0 small order-3">'
+        return '<div class="col-lg-1 px-0 small order-4">'
             . $i18n->trans('price')
             . '</div>';
     }

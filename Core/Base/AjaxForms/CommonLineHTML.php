@@ -44,7 +44,7 @@ trait CommonLineHTML
         }
 
         $columnMd = empty($line->referencia) ? 12 : 10;
-        return '<div class="col-sm-8 col-md-' . $columnMd . ' col-lg px-0 order-1">'
+        return '<div class="col-sm-8 col-md-' . $columnMd . ' col-lg px-0 order-2">'
             . '<div class="mb-1 small"><span class="d-lg-none">' . $i18n->trans('description') . '</span>'
             . '<textarea ' . $attributes . ' class="form-control form-control-sm rounded-0 doc-line-desc" rows="' . $rows . '">' . $line->descripcion . '</textarea>'
             . '</div>'
