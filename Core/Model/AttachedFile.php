@@ -228,11 +228,11 @@ class AttachedFile extends Base\ModelOnChangeClass
         }
 
         if (empty($this->path) ||
-            false === rename($currentPath, $newFolderPath . '/' . $this->idfile . '.' . $this->getExtension())) {
+            false === rename($currentPath, $newFolderPath . '/' . $this->filename)) {
             return false;
         }
 
-        $this->path = $newFolder . '/' . $this->idfile . '.' . $this->getExtension();
+        $this->path = $newFolder . '/' . $this->filename;
         $this->size = filesize($this->getFullPath());
         $info = new finfo();
         $this->mimetype = $info->file($this->getFullPath(), FILEINFO_MIME_TYPE);
