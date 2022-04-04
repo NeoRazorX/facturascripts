@@ -116,7 +116,7 @@ class PurchasesHeaderHTML
             return '<div class="col-sm-3">'
                 . '<div class="form-group">' . $i18n->trans('supplier')
                 . '<input type="hidden" name="codproveedor" />'
-                . '<a href="#" class="btn btn-block btn-primary" onclick="$(\'#findSupplierModal\').modal();'
+                . '<a href="#" id="btnFindSupplierModal" class="btn btn-block btn-primary" onclick="$(\'#findSupplierModal\').modal();'
                 . ' $(\'#findSupplierInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
                 . $i18n->trans('select') . '</a>'
                 . '</div>'

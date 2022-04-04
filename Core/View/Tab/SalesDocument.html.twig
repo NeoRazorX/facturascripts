@@ -17,6 +17,39 @@
 <script>
     let waitCounter = 0;
 
+    function findProduct() {
+        $("#findProductInput").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    method: "POST",
+                    url: '{{ fsc.url() }}',
+                    data: {action: 'autocomplete-product', term: request.term},
+                    dataType: "json",
+                    success: function (results) {
+                        let values = [];
+                        results.forEach(function (element) {
+                            if (element.key === null || element.key === element.value) {
+                                values.push(element);
+                            } else {
+                                values.push({key: element.key, value: element.key + " | " + element.value});
+                            }
+                        });
+                        response(values);
+                    },
+                    error: function (msg) {
+                        alert(msg.status + " " + msg.responseText);
+                    }
+                });
+            },
+            select: function (event, ui) {
+                if (ui.item.key !== null) {
+                    const value = ui.item.value.split(" | ");
+                    salesFormAction("fast-product", value[0]);
+                }
+            }
+        });
+    }
+
     function salesFastLine(e) {
         if (e.which == 13) {
             salesFormAction('fast-line', '0');
@@ -75,7 +108,11 @@
                 $(".doc-line-desc:last").focus();
             } else if (document.forms['salesForm']['action'].value === 'fast-line') {
                 document.forms['salesForm']['fastli'].focus();
+            } else if (document.forms['salesForm']['action'].value === 'fast-product') {
+                $("#findProductInput").focus();
             }
+
+            findProduct();
         }).catch(function (error) {
             alert('error');
             console.warn(error);
@@ -196,6 +233,12 @@
     {% endif %}
 
     $(document).ready(function () {
+        findProduct();
+
+        if (document.forms['salesForm']['codcliente'].value === '') {
+            $('#btnFindCustomerModal').click();
+        }
+
         $("#findCustomerInput").autocomplete({
             autoFocus: true,
             source: function (request, response) {

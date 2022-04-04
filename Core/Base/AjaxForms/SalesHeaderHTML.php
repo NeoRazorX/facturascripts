@@ -174,7 +174,7 @@ class SalesHeaderHTML
             return '<div class="col-sm-3">'
                 . '<div class="form-group">' . $i18n->trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
-                . '<a href="#" class="btn btn-block btn-primary" onclick="$(\'#findCustomerModal\').modal();'
+                . '<a href="#" id="btnFindCustomerModal" class="btn btn-block btn-primary" onclick="$(\'#findCustomerModal\').modal();'
                 . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
                 . $i18n->trans('select') . '</a>'
                 . '</div>'

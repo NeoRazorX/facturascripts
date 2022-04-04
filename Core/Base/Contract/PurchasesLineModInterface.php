@@ -33,5 +33,9 @@ interface PurchasesLineModInterface
 
     public function newFields(): array;
 
+    public function newTitles(): array;
+
     public function renderField(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model, string $field): ?string;
+
+    public function renderTitle(Translator $i18n, PurchaseDocument $model, string $field): ?string;
 }
