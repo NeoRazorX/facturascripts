@@ -460,7 +460,7 @@ trait CommonSalesPurchases
             . '<div class="input-group mb-3">'
             . '<input type="text" id="findProductInput" class="form-control" placeholder="' . $i18n->trans('reference') . '"/>'
             . '<div class="input-group-append"><button class="btn btn-info" type="button" onclick="$(\'#findProductModal\').modal();'
-            . ' $(\'#findProductInput\').focus(); return false;"><i class="fas fa-book fa-fw"></i></button></div>'
+            . ' $(\'#productModalInput\').focus(); return false;"><i class="fas fa-book fa-fw"></i></button></div>'
             . '</div>'
             . '</div>' : '';
     }
