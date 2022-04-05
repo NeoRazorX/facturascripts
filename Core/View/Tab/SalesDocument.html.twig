@@ -104,12 +104,14 @@
             if (Array.isArray(data.messages)) {
                 data.messages.forEach(item => alert(item.message));
             }
-            if (document.forms['salesForm']['action'].value === 'new-line') {
+            if (document.forms['salesForm']['action'].value === 'set-customer') {
+                $("#findProductInput").focus();
+            } else if (document.forms['salesForm']['action'].value === 'new-line') {
                 $(".doc-line-desc:last").focus();
             } else if (document.forms['salesForm']['action'].value === 'fast-line') {
                 document.forms['salesForm']['fastli'].focus();
             } else if (document.forms['salesForm']['action'].value === 'fast-product') {
-                $(".doc-line-qty:last").focus();
+                $(".doc-line-qty:last").select();
             }
 
             findProduct();
