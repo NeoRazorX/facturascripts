@@ -137,11 +137,15 @@ class SalesLineHTML
     public static function render(array $lines, SalesDocument $model): string
     {
         $i18n = new Translator();
-        $html = empty($lines) ? '' : self::renderTitles($i18n, $model);
+        $html = '';
         foreach ($lines as $line) {
             $html .= self::renderLine($i18n, $line, $model);
         }
-        return $html;
+        if (empty($html)) {
+            $html .= '<div class="container-fluid"><div class="form-row table-warning"><div class="col p-3 text-center">'
+                . $i18n->trans('new-invoice-line-p') . '</div></div></div>';
+        }
+        return empty($model->codcliente) ? '' : self::renderTitles($i18n, $model) . $html;
     }
 
     public static function renderLine(Translator $i18n, SalesDocumentLine $line, SalesDocument $model): string
