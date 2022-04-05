@@ -109,7 +109,7 @@
             } else if (document.forms['purchasesForm']['action'].value === 'fast-line') {
                 document.forms['purchasesForm']['fastli'].focus();
             } else if (document.forms['purchasesForm']['action'].value === 'fast-product') {
-                $("#findProductInput").focus();
+                $(".doc-line-qty:last").focus();
             }
 
             findProduct();

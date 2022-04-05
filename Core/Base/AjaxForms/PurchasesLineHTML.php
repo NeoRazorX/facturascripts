@@ -195,7 +195,7 @@ class PurchasesLineHTML
         return '<div class="col-sm-2 col-lg-1 order-3">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('quantity') . '</div>'
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
-            . '" class="form-control form-control-sm border-0" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"/>'
+            . '" class="form-control form-control-sm border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"/>'
             . '</div>';
     }
 

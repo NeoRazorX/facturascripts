@@ -201,7 +201,7 @@ class SalesLineHTML
             . '<div class="input-group input-group-sm">'
             . self::cantidadServido($i18n, $line, $model)
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
-            . '" class="form-control border-0" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"/>'
+            . '" class="form-control border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"/>'
             . self::cantidadStock($i18n, $line, $model)
             . '</div>'
             . '</div>';
