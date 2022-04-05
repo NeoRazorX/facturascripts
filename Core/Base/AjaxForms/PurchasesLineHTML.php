@@ -38,13 +38,13 @@ class PurchasesLineHTML
     use CommonLineHTML;
 
     /** @var array */
-    protected static $deletedLines = [];
+    private static $deletedLines = [];
 
     /** @var PurchasesLineModInterface[] */
     private static $mods = [];
 
     /** @var int */
-    protected static $num = 0;
+    private static $num = 0;
 
     public static function addMod(PurchasesLineModInterface $mod)
     {
@@ -73,7 +73,8 @@ class PurchasesLineHTML
         // new lines
         for ($num = 1; $num < 1000; $num++) {
             if (isset($formData['cantidad_n' . $num]) && $rmLineId !== 'n' . $num) {
-                $newLine = isset($formData['referencia_n' . $num]) ? $model->getNewProductLine($formData['referencia_n' . $num]) : $model->getNewLine();
+                $newLine = isset($formData['referencia_n' . $num]) ?
+                    $model->getNewProductLine($formData['referencia_n' . $num]) : $model->getNewLine();
                 $idNewLine = 'n' . $num;
                 self::applyToLine($formData, $newLine, $idNewLine);
                 $lines[] = $newLine;
@@ -134,24 +135,19 @@ class PurchasesLineHTML
      */
     public static function render(array $lines, PurchaseDocument $model): string
     {
-        $html = self::renderTitles($model);
+        $i18n = new Translator();
+        $html = empty($lines) ? '' : self::renderTitles($i18n, $model);
         foreach ($lines as $line) {
-            $html .= self::renderLine($line, $model);
+            $html .= self::renderLine($i18n, $line, $model);
         }
-
-        return empty($html) && $model->codproveedor ?
-            '<div class="alert alert-warning border-top mb-0">' . ToolBox::i18n()->trans('new-invoice-line-p') . '</div>' :
-            $html;
+        return $html;
     }
 
-    public static function renderLine(PurchaseDocumentLine $line, PurchaseDocument $model): string
+    public static function renderLine(Translator $i18n, PurchaseDocumentLine $line, PurchaseDocument $model): string
     {
         self::$num++;
-        $i18n = new Translator();
         $idlinea = $line->idlinea ?? 'n' . self::$num;
-        $cssClass = static::$num % 2 == 0 ? 'bg-white border-top' : 'bg-light border-top';
-        return '<div class="' . $cssClass . ' line pl-2 pr-2">'
-            . '<div class="form-row align-items-end">'
+        return '<div class="container-fluid"><div class="form-row align-items-center border-bottom pb-3 pb-lg-0">'
             . self::renderField($i18n, $idlinea, $line, $model, 'referencia')
             . self::renderField($i18n, $idlinea, $line, $model, 'descripcion')
             . self::renderField($i18n, $idlinea, $line, $model, 'cantidad')
@@ -160,11 +156,8 @@ class PurchasesLineHTML
             . self::renderField($i18n, $idlinea, $line, $model, 'dtopor')
             . self::renderField($i18n, $idlinea, $line, $model, 'codimpuesto')
             . self::renderField($i18n, $idlinea, $line, $model, '_total')
-            . self::renderCalculatorBtn($i18n, $idlinea, $model, 'purchasesLineTotalWithTaxes')
             . self::renderExpandButton($i18n, $idlinea, $model, 'purchasesFormAction')
-            . '</div>'
-            . self::renderLineModal($i18n, $line, $idlinea, $model)
-            . '</div>';
+            . '</div>' . self::renderLineModal($i18n, $line, $idlinea, $model) . '</div>';
     }
 
     private static function applyToLine(array $formData, PurchaseDocumentLine &$line, string $id)
@@ -186,23 +179,23 @@ class PurchasesLineHTML
         }
     }
 
-    protected static function cantidad(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model, string $jsFunc): string
+    private static function cantidad(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model, string $jsFunc): string
     {
         if (false === $model->editable) {
-            return '<div class="col-sm-2 col-md-2 col-lg-1 small px-0 order-3">'
-                . '<span class="d-lg-none">' . $i18n->trans('quantity') . '</span>'
-                . '<input type="number" class="form-control form-control-sm rounded-0 mb-1" value="' . $line->cantidad . '" disabled=""/>'
+            return '<div class="col-sm-2 col-lg-1 order-3">'
+                . '<div class="d-lg-none mt-2 small">' . $i18n->trans('quantity') . '</div>'
+                . '<input type="number" class="form-control form-control-sm border-0" value="' . $line->cantidad . '" disabled=""/>'
                 . '</div>';
         }
 
-        return '<div class="col-sm-2 col-md-2 col-lg-1 small px-0 order-3">'
-            . '<span class="d-lg-none">' . $i18n->trans('quantity') . '</span>'
+        return '<div class="col-sm-2 col-lg-1 order-3">'
+            . '<div class="d-lg-none mt-2 small">' . $i18n->trans('quantity') . '</div>'
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
-            . '" class="form-control form-control-sm rounded-0 mb-1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"/>'
+            . '" class="form-control form-control-sm border-0" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"/>'
             . '</div>';
     }
 
-    protected static function getFastLine(PurchaseDocument $model, array $formData): ?PurchaseDocumentLine
+    private static function getFastLine(PurchaseDocument $model, array $formData): ?PurchaseDocumentLine
     {
         if (empty($formData['fastli'])) {
             return $model->getNewLine();
@@ -214,32 +207,23 @@ class PurchasesLineHTML
             return $model->getNewProductLine($variante->referencia);
         }
 
-        $whereRef = [new DataBaseWhere('referencia', $formData['fastli'])];
-        foreach ($variantModel->all($whereRef) as $variante) {
-            return $model->getNewProductLine($variante->referencia);
-        }
-
         ToolBox::i18nLog()->warning('product-not-found', ['%ref%' => $formData['fastli']]);
         return null;
     }
 
-    protected static function precio(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model, string $jsFunc): string
+    private static function precio(Translator $i18n, string $idlinea, PurchaseDocumentLine $line, PurchaseDocument $model, string $jsFunc): string
     {
         if (false === $model->editable) {
-            return '<div class="col-sm col-md col-lg-1 px-0 order-4">'
-                . '<div class="mb-1 small">'
-                . '<span class="d-lg-none">' . $i18n->trans('price') . '</span>'
+            return '<div class="col-sm col-lg-1 order-4">'
+                . '<div class="d-lg-none mt-2 small">' . $i18n->trans('price') . '</div>'
                 . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm rounded-0" disabled=""/>'
-                . '</div>'
                 . '</div>';
         }
 
         $attributes = 'name="pvpunitario_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"';
-        return '<div class="col-sm col-md col-lg-1 px-0 order-4">'
-            . '<div class="mb-1 small">'
-            . '<span class="d-lg-none">' . $i18n->trans('price') . '</span>'
-            . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm rounded-0"/>'
-            . '</div>'
+        return '<div class="col-sm col-lg-1 order-4">'
+            . '<div class="d-lg-none mt-2 small">' . $i18n->trans('price') . '</div>'
+            . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm border-0"/>'
             . '</div>';
     }
 
@@ -254,7 +238,7 @@ class PurchasesLineHTML
 
         switch ($field) {
             case '_total':
-                return self::lineTotal($i18n, $idlinea, $line, $model);
+                return self::lineTotal($i18n, $idlinea, $line, $model, 'purchasesLineTotalWithTaxes');
 
             case 'cantidad':
                 return self::cantidad($i18n, $idlinea, $line, $model, 'purchasesFormActionWait');
@@ -418,7 +402,7 @@ class PurchasesLineHTML
 
         switch ($field) {
             case '_actionsButton':
-                return self::titleActionsButton($i18n, $model);
+                return self::titleActionsButton();
 
             case '_total':
                 return self::titleTotal($i18n);
@@ -445,15 +429,9 @@ class PurchasesLineHTML
         return null;
     }
 
-    private static function renderTitles(PurchaseDocument $model): string
+    private static function renderTitles(Translator $i18n, PurchaseDocument $model): string
     {
-        if (empty($model->codigo)) {
-            return '';
-        }
-
-        $i18n = new Translator();
-        return '<div class="titles d-none d-lg-block">'
-            . '<div class="form-row pl-2 pr-2">'
+        return '<div class="container-fluid d-none d-lg-block"><div class="form-row border-bottom">'
             . self::renderTitle($i18n, $model, 'referencia')
             . self::renderTitle($i18n, $model, 'descripcion')
             . self::renderTitle($i18n, $model, 'cantidad')
@@ -463,65 +441,6 @@ class PurchasesLineHTML
             . self::renderTitle($i18n, $model, 'codimpuesto')
             . self::renderTitle($i18n, $model, '_total')
             . self::renderTitle($i18n, $model, '_actionsButton')
-            . '</div>'
-            . '</div>';
-    }
-
-    private static function titleActionsButton(Translator $i18n, PurchaseDocument $model): string
-    {
-        $text = $model->editable ? $i18n->trans('actions') : '';
-        $width = $model->editable ? 90 : 30;
-        return '<div class="col-lg-auto px-0 text-center small order-8" style="width: ' . $width . 'px;">'
-            . $text
-            . '</div>';
-    }
-
-    private static function titleCantidad(Translator $i18n): string
-    {
-        return '<div class="col-lg-1 px-0 small order-3">'
-            . $i18n->trans('quantity')
-            . '</div>';
-    }
-
-    private static function titleCodimpuesto(Translator $i18n): string
-    {
-        return '<div class="col-lg-1 px-0 small order-6">'
-            . $i18n->trans('tax')
-            . '</div>';
-    }
-
-    private static function titleDescripcion(Translator $i18n): string
-    {
-        return '<div class="col-lg px-0 small order-2">'
-            . $i18n->trans('description')
-            . '</div>';
-    }
-
-    private static function titleDtopor(Translator $i18n): string
-    {
-        return '<div class="col-lg-1 px-0 small order-5">'
-            . $i18n->trans('percentage-discount')
-            . '</div>';
-    }
-
-    private static function titlePrecio(Translator $i18n): string
-    {
-        return '<div class="col-lg-1 px-0 small order-4">'
-            . $i18n->trans('price')
-            . '</div>';
-    }
-
-    private static function titleReferencia(Translator $i18n): string
-    {
-        return '<div class="col-lg-1 px-0 small order-1">'
-            . $i18n->trans('reference')
-            . '</div>';
-    }
-
-    private static function titleTotal(Translator $i18n): string
-    {
-        return '<div class="col-lg-1 px-0 small order-7">'
-            . $i18n->trans('subtotal')
-            . '</div>';
+            . '</div></div>';
     }
 }

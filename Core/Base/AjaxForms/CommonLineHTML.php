@@ -41,14 +41,13 @@ trait CommonLineHTML
         $attributes = $model->editable && false === $line->suplido ?
             'name="iva_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
             'disabled=""';
-        return '<div class="col-sm col-md col-lg-1 px-0 order-6">'
-            . '<div class="mb-1 small"><span class="d-lg-none">' . $i18n->trans('tax') . '</span>'
-            . '<select ' . $attributes . ' class="form-control form-control-sm rounded-0">' . implode('', $options) . '</select>'
-            . '</div>'
+        return '<div class="col-sm col-lg-1 order-6">'
+            . '<div class="d-lg-none mt-3 small">' . $i18n->trans('tax') . '</div>'
+            . '<select ' . $attributes . ' class="form-control form-control-sm border-0">' . implode('', $options) . '</select>'
             . '</div>';
     }
 
-    protected static function descripcion(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
+    private static function descripcion(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
     {
         $attributes = $model->editable ? 'name="descripcion_' . $idlinea . '"' : 'disabled=""';
 
@@ -59,48 +58,24 @@ trait CommonLineHTML
 
         $columnMd = empty($line->referencia) ? 12 : 8;
         $columnSm = empty($line->referencia) ? 10 : 8;
-        return '<div class="col-sm-' . $columnSm . ' col-md-' . $columnMd . ' col-lg px-0 order-2">'
-            . '<div class="mb-1 small"><span class="d-lg-none">' . $i18n->trans('description') . '</span>'
-            . '<textarea ' . $attributes . ' class="form-control form-control-sm rounded-0 doc-line-desc" rows="' . $rows . '">' . $line->descripcion . '</textarea>'
-            . '</div>'
-            . '</div>';
+        return '<div class="col-sm-' . $columnSm . ' col-md-' . $columnMd . ' col-lg order-2">'
+            . '<div class="d-lg-none mt-3 small">' . $i18n->trans('description') . '</div>'
+            . '<textarea ' . $attributes . ' class="form-control form-control-sm border-0 doc-line-desc" rows="' . $rows . '">'
+            . $line->descripcion . '</textarea></div>';
     }
 
-    protected static function referencia(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
-    {
-        $sortable = $model->editable ?
-            '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' :
-            '';
-
-        $variante = new Variante();
-        $where = [new DataBaseWhere('referencia', $line->referencia)];
-        if (empty($line->referencia) || false === $variante->loadFromCode('', $where)) {
-            return '<div class="d-none d-lg-block col-sm-2 col-md-2 col-lg-1 px-0 order-1">'
-                . $sortable
-                . '</div>';
-        }
-
-        return '<div class="col-sm-2 col-md-2 col-lg-1 pl-0 text-break align-self-start order-1">'
-            . '<div class="mb-1 small"><div class="d-lg-none text-truncate">' . $i18n->trans('reference') . '</div>'
-            . $sortable . '<a href="' . $variante->url() . '">' . $line->referencia . '</a>'
-            . '<input type="hidden" name="referencia_' . $idlinea . '" value="' . $line->referencia . '"/>'
-            . '</div>'
-            . '</div>';
-    }
-
-    protected static function dtopor(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    private static function dtopor(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $attributes = $model->editable ?
             'name="dtopor_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
             'disabled=""';
-        return '<div class="col-sm col-md col-lg-1 px-0 order-5">'
-            . '<div class="mb-1 small"><span class="d-lg-none">' . $i18n->trans('percentage-discount') . '</span>'
-            . '<input type="number" ' . $attributes . ' value="' . $line->dtopor . '" class="form-control form-control-sm rounded-0"/>'
-            . '</div>'
+        return '<div class="col-sm col-lg-1 order-5">'
+            . '<div class="d-lg-none mt-3 small">' . $i18n->trans('percentage-discount') . '</div>'
+            . '<input type="number" ' . $attributes . ' value="' . $line->dtopor . '" class="form-control form-control-sm border-0"/>'
             . '</div>';
     }
 
-    protected static function dtopor2(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
+    private static function dtopor2(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
     {
         $attributes = $model->editable ?
             'name="' . $field . '_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
@@ -112,7 +87,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    protected static function irpf(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    private static function irpf(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         if ($line->suplido) {
             return '';
@@ -135,17 +110,16 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    protected static function lineTotal(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
+    private static function lineTotal(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $total = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
-        return '<div class="col-sm col-md col-lg-1 px-0 order-7">'
-            . '<div class="mb-1 small"><span class="d-lg-none">' . $i18n->trans('subtotal') . '</span>'
-            . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . $total . '" class="form-control form-control-sm rounded-0" readonly/>'
-            . '</div>'
-            . '</div>';
+        return '<div class="col col-lg-1 order-7">'
+            . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
+            . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . $total . '" class="form-control form-control-sm border-0"'
+            . ' onclick="' . $jsFunc . '(\'' . $idlinea . '\')" readonly/></div>';
     }
 
-    protected static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    private static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         if ($line->suplido) {
             return '';
@@ -161,35 +135,44 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    protected static function renderCalculatorBtn(Translator $i18n, string $idlinea, TransformerDocument $model, string $jsName): string
+    private static function referencia(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
     {
-        if ($model->editable === false) {
-            return '';
+        $sortable = $model->editable ?
+            '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' :
+            '';
+
+        $variante = new Variante();
+        $where = [new DataBaseWhere('referencia', $line->referencia)];
+        if (empty($line->referencia) || false === $variante->loadFromCode('', $where)) {
+            return '<div class="col-sm-2 col-lg-1 order-1">' . $sortable . '</div>';
         }
 
-        return '<div class="col-auto col-sm-auto px-0 order-8">'
-            . '<button class="btn btn-outline-secondary btn-sm rounded-0 mb-1" type="button"'
-            . ' onclick="' . $jsName . '(\'' . $idlinea . '\')"><i class="fas fa-calculator"></i></button>'
+        return '<div class="col-sm-2 col-lg-1 order-1">'
+            . '<div class="small text-break"><div class="d-lg-none mt-2 text-truncate">' . $i18n->trans('reference') . '</div>'
+            . $sortable . '<a href="' . $variante->url() . '">' . $line->referencia . '</a>'
+            . '<input type="hidden" name="referencia_' . $idlinea . '" value="' . $line->referencia . '"/>'
+            . '</div>'
             . '</div>';
     }
 
-    protected static function renderExpandButton(Translator $i18n, string $idlinea, TransformerDocument $model, string $jsName): string
+    private static function renderExpandButton(Translator $i18n, string $idlinea, TransformerDocument $model, string $jsName): string
     {
         if ($model->editable) {
-            return '<div class="col-auto col-sm-auto px-0 order-9">'
-                . '<button type="button" data-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-sm btn-outline-secondary rounded-0 mb-1" title="'
+            return '<div class="col-auto order-9">'
+                . '<button type="button" data-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-sm btn-light mr-2" title="'
                 . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button>'
-                . '<button class="btn btn-sm btn-outline-danger btn-spin-action rounded-0 mb-1" type="button" title="' . $i18n->trans('delete') . '"'
+                . '<button class="btn btn-sm btn-danger btn-spin-action" type="button" title="' . $i18n->trans('delete') . '"'
                 . ' onclick="return ' . $jsName . '(\'rm-line\', \'' . $idlinea . '\');">'
                 . '<i class="fas fa-trash-alt"></i></button>'
                 . '</div>';
         }
 
-        return '<div class="col-auto col-sm-auto px-0 order-9"><button type="button" data-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-sm btn-outline-secondary rounded-0 mb-1" title="'
+        return '<div class="col-auto order-9"><button type="button" data-toggle="modal" data-target="#lineModal-'
+            . $idlinea . '" class="btn btn-sm btn-outline-secondary" title="'
             . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
     }
 
-    protected static function suplido(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    private static function suplido(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $attributes = $model->editable ?
             'name="suplido_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
@@ -202,5 +185,45 @@ trait CommonLineHTML
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
+    }
+
+    private static function titleActionsButton(): string
+    {
+        return '<div class="col-lg-auto order-8"><div style="min-width: 68px;"></div></div>';
+    }
+
+    private static function titleCantidad(Translator $i18n): string
+    {
+        return '<div class="col-lg-1 order-3">' . $i18n->trans('quantity') . '</div>';
+    }
+
+    private static function titleCodimpuesto(Translator $i18n): string
+    {
+        return '<div class="col-lg-1 order-6">' . $i18n->trans('tax') . '</div>';
+    }
+
+    private static function titleDescripcion(Translator $i18n): string
+    {
+        return '<div class="col-lg order-2">' . $i18n->trans('description') . '</div>';
+    }
+
+    private static function titleDtopor(Translator $i18n): string
+    {
+        return '<div class="col-lg-1 order-5">' . $i18n->trans('percentage-discount') . '</div>';
+    }
+
+    private static function titlePrecio(Translator $i18n): string
+    {
+        return '<div class="col-lg-1 order-4">' . $i18n->trans('price') . '</div>';
+    }
+
+    private static function titleReferencia(Translator $i18n): string
+    {
+        return '<div class="col-lg-1 order-1">' . $i18n->trans('reference') . '</div>';
+    }
+
+    private static function titleTotal(Translator $i18n): string
+    {
+        return '<div class="col-lg-1 order-7">' . $i18n->trans('subtotal') . '</div>';
     }
 }

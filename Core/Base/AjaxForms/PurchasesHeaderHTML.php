@@ -215,8 +215,7 @@ class PurchasesHeaderHTML
     {
         $attributes = $model->editable ? 'name="nombre" required=""' : 'disabled=""';
         return '<div class="col-sm">'
-            . '<div class="form-group">'
-            . $i18n->trans('business-name')
+            . '<div class="form-group">' . $i18n->trans('business-name')
             . '<input type="text" ' . $attributes . ' value="' . $model->nombre . '" class="form-control" maxlength="100" autocomplete="off" />'
             . '</div>'
             . '</div>';
@@ -225,9 +224,8 @@ class PurchasesHeaderHTML
     private static function numproveedor(Translator $i18n, PurchaseDocument $model): string
     {
         $attributes = $model->editable ? 'name="numproveedor"' : 'disabled=""';
-        return empty($model->codproveedor) ? '' : '<div class="col-sm">'
-            . '<div class="form-group">'
-            . $i18n->trans('numsupplier')
+        return empty($model->codproveedor) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
+            . '<div class="form-group">' . $i18n->trans('numsupplier')
             . '<input type="text" ' . $attributes . ' value="' . $model->numproveedor . '" class="form-control" maxlength="50"'
             . ' placeholder="' . $i18n->trans('optional') . '" />'
             . '</div>'

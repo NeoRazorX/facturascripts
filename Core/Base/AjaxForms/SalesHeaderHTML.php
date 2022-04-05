@@ -256,8 +256,7 @@ class SalesHeaderHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title">'
-            . $i18n->trans($model->modelClassName() . '-min')
-            . ' ' . $model->codigo
+            . $i18n->trans($model->modelClassName() . '-min') . ' ' . $model->codigo
             . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'

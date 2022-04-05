@@ -67,10 +67,10 @@ class SalesFooterHTML
         $i18n = new Translator();
         return '<div class="container-fluid mt-3">'
             . '<div class="form-row">'
-            . self::renderField($i18n, $model, 'newLineBtn')
-            . self::renderField($i18n, $model, 'productBtn')
-            . self::renderField($i18n, $model, 'fastLineInput')
-            . self::renderField($i18n, $model, 'sortableBtn')
+            . self::renderField($i18n, $model, '_productBtn')
+            . self::renderField($i18n, $model, '_newLineBtn')
+            . self::renderField($i18n, $model, '_sortableBtn')
+            . self::renderField($i18n, $model, '_fastLineInput')
             . '</div>'
             . '<div class="form-row">'
             . self::renderField($i18n, $model, 'observaciones')
@@ -86,11 +86,11 @@ class SalesFooterHTML
             . self::renderField($i18n, $model, 'total')
             . '</div>'
             . '<div class="form-row">'
-            . '<div class="col-sm">'
-            . self::renderField($i18n, $model, 'deleteBtn')
+            . '<div class="col-auto">'
+            . self::renderField($i18n, $model, '_deleteBtn')
             . '</div>'
-            . '<div class="col-sm text-right">'
-            . self::renderField($i18n, $model, 'saveBtn')
+            . '<div class="col text-right">'
+            . self::renderField($i18n, $model, '_saveBtn')
             . '</div>'
             . '</div>'
             . '</div>';
@@ -106,8 +106,23 @@ class SalesFooterHTML
         }
 
         switch ($field) {
-            case 'deleteBtn':
+            case '_deleteBtn':
                 return self::deleteBtn($i18n, $model, 'salesFormSave');
+
+            case '_fastLineInput':
+                return self::fastLineInput($i18n, $model, 'salesFastLine');
+
+            case '_newLineBtn':
+                return self::newLineBtn($i18n, $model, 'salesFormAction');
+
+            case '_productBtn':
+                return self::productBtn($i18n, $model);
+
+            case '_saveBtn':
+                return self::saveBtn($i18n, $model, 'salesFormSave');
+
+            case '_sortableBtn':
+                return self::sortableBtn($i18n, $model);
 
             case 'dtopor1':
                 return self::dtopor1($i18n, $model, 'salesFormActionWait');
@@ -115,29 +130,14 @@ class SalesFooterHTML
             case 'dtopor2':
                 return self::dtopor2($i18n, $model, 'salesFormActionWait');
 
-            case 'fastLineInput':
-                return self::fastLineInput($i18n, $model, 'salesFastLine');
-
             case 'neto':
                 return self::column($i18n, $model, 'neto', 'net', true);
 
             case 'netosindto':
                 return self::netosindto($i18n, $model);
 
-            case 'newLineBtn':
-                return self::newLineBtn($i18n, $model, 'salesFormAction');
-
             case 'observaciones':
                 return self::observaciones($i18n, $model);
-
-            case 'productBtn':
-                return self::productBtn($i18n, $model);
-
-            case 'saveBtn':
-                return self::saveBtn($i18n, $model, 'salesFormSave');
-
-            case 'sortableBtn':
-                return self::sortableBtn($i18n, $model);
 
             case 'total':
                 return self::column($i18n, $model, 'total', 'total', true);

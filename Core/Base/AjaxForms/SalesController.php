@@ -99,7 +99,7 @@ abstract class SalesController extends PanelController
 
         $list = [];
         $variante = new Variante();
-        $query = $this->request->get('term');
+        $query = (string)$this->request->get('term');
         foreach ($variante->codeModelSearch($query, 'referencia') as $value) {
             $list[] = [
                 'key' => $this->toolBox()->utils()->fixHtml($value->code),
