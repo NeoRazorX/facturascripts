@@ -53,7 +53,7 @@ trait CommonLineHTML
 
         $rows = 0;
         foreach (explode("\n", $line->descripcion) as $desLine) {
-            $rows += mb_strlen($desLine) < 140 ? 1 : ceil(mb_strlen($desLine) / 140);
+            $rows += mb_strlen($desLine) < 90 ? 1 : ceil(mb_strlen($desLine) / 90);
         }
 
         $columnMd = empty($line->referencia) ? 12 : 8;
@@ -187,9 +187,10 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function titleActionsButton(): string
+    private static function titleActionsButton(TransformerDocument $model): string
     {
-        return '<div class="col-lg-auto order-8"><div style="min-width: 68px;"></div></div>';
+        $width = $model->editable ? 68 : 32;
+        return '<div class="col-lg-auto order-8"><div style="min-width: ' . $width . 'px;"></div></div>';
     }
 
     private static function titleCantidad(Translator $i18n): string

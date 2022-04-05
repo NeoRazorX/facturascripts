@@ -473,7 +473,7 @@ class SalesLineHTML
 
         switch ($field) {
             case '_actionsButton':
-                return self::titleActionsButton();
+                return self::titleActionsButton($model);
 
             case '_total':
                 return self::titleTotal($i18n);

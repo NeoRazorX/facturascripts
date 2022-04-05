@@ -220,7 +220,7 @@ class PurchasesLineHTML
         if (false === $model->editable) {
             return '<div class="col-sm col-lg-1 order-4">'
                 . '<div class="d-lg-none mt-2 small">' . $i18n->trans('price') . '</div>'
-                . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm rounded-0" disabled=""/>'
+                . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm border-0" disabled=""/>'
                 . '</div>';
         }
 
@@ -406,7 +406,7 @@ class PurchasesLineHTML
 
         switch ($field) {
             case '_actionsButton':
-                return self::titleActionsButton();
+                return self::titleActionsButton($model);
 
             case '_total':
                 return self::titleTotal($i18n);
