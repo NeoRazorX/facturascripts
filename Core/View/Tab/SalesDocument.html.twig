@@ -64,7 +64,12 @@
         document.forms['salesForm']['selectedLine'].value = selectedLine;
 
         const formData = new FormData(document.forms['salesForm']);
-        const plainFormData = Object.fromEntries(formData.entries());
+        let plainFormData = Object.fromEntries(formData.entries());
+        //Obtenemos los codigos de iva para guardarlos tambien
+        document.querySelectorAll("select[name*='iva_']").forEach(function (item, index) {
+            let name = item.name.replace('iva', 'codimpuesto');
+            plainFormData[name] = item.options[item.selectedIndex].dataset.codimpuesto;
+        });
         const formDataJsonString = JSON.stringify(plainFormData);
 
         let data = new FormData();
@@ -73,7 +78,7 @@
         data.append('multireqtoken', document.forms['salesForm']['multireqtoken'].value);
         data.append('selectedLine', document.forms['salesForm']['selectedLine'].value);
         data.append('data', formDataJsonString);
-        console.log(data);
+        console.log(plainFormData);
 
         fetch('{{ fsc.url() }}', {
             method: 'POST',
@@ -92,7 +97,10 @@
                 document.getElementById("salesFormLines").innerHTML = data.lines;
             } else {
                 $.each(data.linesMap, function (index, value) {
-                    document.forms['salesForm'][index].value = value;
+                    if (typeof value.codimpuesto === 'undefined' )
+                        document.forms['salesForm'][index].value = value;
+                    else
+                        document.forms['salesForm'][index].querySelector('[data-codimpuesto="'+ value.codimpuesto +'"]').selected = true;
                 });
             }
             if (data.footer !== '') {
@@ -146,7 +154,12 @@
         document.forms['salesForm']['selectedLine'].value = selectedLine;
 
         const formData = new FormData(document.forms['salesForm']);
-        const plainFormData = Object.fromEntries(formData.entries());
+        let plainFormData = Object.fromEntries(formData.entries());
+        //Obtenemos los codigos de iva para guardarlos tambien
+        document.querySelectorAll("select[name*='iva_']").forEach(function (item, index) {
+            let name = item.name.replace('iva', 'codimpuesto');
+            plainFormData[name] = item.options[item.selectedIndex].dataset.codimpuesto;
+        });
         const formDataJsonString = JSON.stringify(plainFormData);
 
         let data = new FormData();
@@ -155,7 +168,7 @@
         data.append('multireqtoken', document.forms['salesForm']['multireqtoken'].value);
         data.append('selectedLine', document.forms['salesForm']['selectedLine'].value);
         data.append('data', formDataJsonString);
-        console.log(data);
+        console.log(plainFormData);
 
         fetch('{{ fsc.url() }}', {
             method: 'POST',

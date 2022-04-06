@@ -33,9 +33,9 @@ trait CommonLineHTML
     {
         $options = [];
         foreach (Impuestos::all() as $imp) {
-            $options[] = $line->iva == $imp->iva ?
-                '<option value="' . $imp->iva . '" selected="">' . $imp->descripcion . '</option>' :
-                '<option value="' . $imp->iva . '">' . $imp->descripcion . '</option>';
+            $options[] = $line->codimpuesto == $imp->codimpuesto ?
+                '<option data-codimpuesto="'.$imp->codimpuesto.'" value="' . $imp->iva . '" selected="">' . $imp->descripcion . '</option>' :
+                '<option data-codimpuesto="'.$imp->codimpuesto.'" value="' . $imp->iva . '">' . $imp->descripcion . '</option>';
         }
 
         $attributes = $model->editable && false === $line->suplido ?
@@ -44,7 +44,7 @@ trait CommonLineHTML
         return '<div class="col-sm col-lg-1 order-6">'
             . '<div class="d-lg-none mt-3 small">' . $i18n->trans('tax') . '</div>'
             . '<select ' . $attributes . ' class="form-control form-control-sm border-0">' . implode('', $options) . '</select>'
-            . '</div>';
+            . '</div><input type="hidden" value="'.htmlentities($jsFunc).'">';
     }
 
     private static function descripcion(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string

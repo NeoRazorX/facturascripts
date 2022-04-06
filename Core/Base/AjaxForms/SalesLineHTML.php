@@ -119,7 +119,7 @@ class SalesLineHTML
             $idlinea = $line->idlinea ?? 'n' . self::$num;
 
             // codimpuesto
-            $map['iva_' . $idlinea] = $line->iva;
+            $map['iva_' . $idlinea] = ['codimpuesto' => $line->codimpuesto]; //(Lo hacemos por codimpuesto mejor)
 
             // total
             $map['linetotal_' . $idlinea] = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
@@ -174,6 +174,7 @@ class SalesLineHTML
         $line->descripcion = $formData['descripcion_' . $id];
         $line->irpf = (float)($formData['irpf_' . $id] ?? '0');
         $line->iva = (float)($formData['iva_' . $id] ?? '0');
+        $line->codimpuesto = $formData['codimpuesto_' . $id];
         $line->recargo = (float)($formData['recargo_' . $id] ?? '0');
         $line->suplido = (bool)($formData['suplido_' . $id] ?? '0');
         $line->pvpunitario = (float)$formData['pvpunitario_' . $id];
