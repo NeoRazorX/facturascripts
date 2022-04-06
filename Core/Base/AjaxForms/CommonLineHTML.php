@@ -44,7 +44,7 @@ trait CommonLineHTML
         return '<div class="col-sm col-lg-1 order-6">'
             . '<div class="d-lg-none mt-3 small">' . $i18n->trans('tax') . '</div>'
             . '<select ' . $attributes . ' class="form-control form-control-sm border-0">' . implode('', $options) . '</select>'
-            . '</div><input type="hidden" value="'.htmlentities($jsFunc).'">';
+            . '</div>';
     }
 
     private static function descripcion(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
