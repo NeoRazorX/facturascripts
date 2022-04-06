@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\FormatoDocumento;
@@ -36,9 +35,9 @@ final class Migrations
     public static function run()
     {
         self::initModels();
-        self::updateSettings();
-        self::updateInvoiceStatus();
         self::unlockNullProducts();
+        self::updateInvoiceStatus();
+        self::fixInvoiceLines();
         self::clearLogs();
     }
 
@@ -55,6 +54,18 @@ final class Migrations
         $date = date("Y-m-d H:i:s", strtotime("-1 month"));
         $sql = "DELETE FROM logs WHERE channel = 'master' AND time < '" . $date . "';";
         $dataBase->exec($sql);
+    }
+
+    private static function fixInvoiceLines()
+    {
+        $dataBase = new DataBase();
+        $tables = ['lineasfacturascli', 'lineasfacturasprov'];
+        foreach ($tables as $table) {
+            if ($dataBase->tableExists($table)) {
+                $sql = "UPDATE " . $table . " SET irpf = '0' WHERE irpf IS NULL;";
+                $dataBase->exec($sql);
+            }
+        }
     }
 
     private static function initModels()
@@ -119,13 +130,5 @@ final class Migrations
             $status->nombre = 'Recibida';
             $status->save();
         }
-    }
-
-    private static function updateSettings()
-    {
-        $settings = new AppSettings();
-        // sets IBAN validation to TRUE, if not defined
-        $settings->get('default', 'validate_iban', true);
-        $settings->save();
     }
 }
