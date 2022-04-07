@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Dinamic\Model\Proveedor;
-use FacturaScripts\Plugins\BetaForms\Contract\PurchasesModInterface;
+use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
 
 /**
  * Description of PurchasesHeaderHTML
@@ -187,15 +187,15 @@ class PurchasesHeaderHTML
             . self::renderField($i18n, $model, 'cifnif')
             . '</div>'
             . '<div class="form-row">'
-            . self::renderNewFields($i18n, $model)
-            . '</div>'
-            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'coddivisa')
             . self::renderField($i18n, $model, 'tasaconv')
             . '</div>'
             . '<div class="form-row">'
             . self::renderField($i18n, $model, 'femail')
             . self::renderField($i18n, $model, 'user')
+            . '</div>'
+            . '<div class="form-row">'
+            . self::renderNewFields($i18n, $model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
