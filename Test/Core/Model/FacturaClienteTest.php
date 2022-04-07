@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Lib\BusinessDocumentTools;
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Test\Core\DefaultSettingsTrait;
@@ -67,11 +67,10 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($firstLine->exists(), 'first-invoice-line-does-not-exists');
 
         // recalculamos
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($invoice);
-        $neto = round(self::PRODUCT1_PRICE * self::PRODUCT1_QUANTITY, 2);
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+        $neto = round(self::PRODUCT1_PRICE * self::PRODUCT1_QUANTITY, FS_NF0);
         $this->assertEquals($neto, $invoice->neto, 'bad-invoice-neto');
-        $this->assertTrue($invoice->save(), 'cant-update-invoice');
 
         // buscamos la factura
         $dbInvoice = $invoice->get($invoice->idfactura);
@@ -134,9 +133,8 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculamos
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($invoice);
-        $this->assertTrue($invoice->save(), 'cant-update-invoice');
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
         // comprobamos el stock del producto
         $product->loadFromCode($product->idproducto);
@@ -171,12 +169,11 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculamos
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($invoice);
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
         $netosindto = $invoice->netosindto;
         $neto = $invoice->neto;
         $total = $invoice->total;
-        $this->assertTrue($invoice->save(), 'cant-update-invoice');
 
         // comprobamos el asiento
         $entry = $invoice->getAccountingEntry();
@@ -185,7 +182,7 @@ final class FacturaClienteTest extends TestCase
 
         // aplicamos un descuento para modificar el total de la factura
         $invoice->dtopor1 = 50;
-        $tool->recalculate($invoice);
+        Calculator::calculate($invoice, $lines, false);
         $this->assertEquals($netosindto, $invoice->netosindto, 'bad-netosindto');
         $this->assertLessThan($neto, $invoice->neto, 'bad-neto');
         $this->assertLessThan($total, $invoice->total, 'bad-total');
@@ -221,9 +218,8 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculamos
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($invoice);
-        $this->assertTrue($invoice->save(), 'cant-update-invoice');
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
         // cambiamos el estado a uno no editable
         $changed = false;
@@ -238,8 +234,7 @@ final class FacturaClienteTest extends TestCase
 
         // cambiamos el descuento, recalculamos y guardamos
         $invoice->dtopor1 = 50;
-        $tool->recalculate($invoice);
-        $this->assertFalse($invoice->save(), 'can-update-non-editable-invoice');
+        $this->assertFalse(Calculator::calculate($invoice, $lines, true), 'can-update-non-editable-invoice');
         $this->assertFalse($invoice->delete(), 'can-delete-non-editable-invoice');
 
         // eliminamos
