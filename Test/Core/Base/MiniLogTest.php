@@ -254,7 +254,7 @@ final class MiniLogTest extends TestCase
 
     public function testSave()
     {
-        // crear data
+        // clear data
         MiniLog::clear();
         $logModel = new LogMessage();
         $where = [new DataBaseWhere('channel', self::CHANNEL)];

@@ -172,6 +172,9 @@ abstract class Receipt extends ModelOnChangeClass
             $this->codpago = $codpago;
             $this->pagado = $formaPago->pagado;
             $this->setExpiration($formaPago->getExpiration($this->fecha));
+            if ($formaPago->pagado && empty($this->fechapago)) {
+                $this->fechapago = $this->fecha;
+            }
         }
     }
 
@@ -192,7 +195,7 @@ abstract class Receipt extends ModelOnChangeClass
         }
 
         // check expiration date
-        if (strtotime($this->vencimiento) < \strtotime($this->fecha)) {
+        if (strtotime($this->vencimiento) < strtotime($this->fecha)) {
             $this->vencimiento = $this->fecha;
         }
 

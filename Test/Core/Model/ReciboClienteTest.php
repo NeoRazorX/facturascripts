@@ -19,7 +19,11 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Lib\ReceiptGenerator;
+use FacturaScripts\Core\Model\Base\ModelCore;
+use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\ReciboCliente;
 use FacturaScripts\Test\Core\DefaultSettingsTrait;
 use FacturaScripts\Test\Core\LogErrorsTrait;
@@ -55,6 +59,72 @@ final class ReciboClienteTest extends TestCase
         foreach ($receipts as $receipt) {
             $this->assertFalse($receipt->exists());
         }
+    }
+
+    public function testCreateInvoiceOnPastDate()
+    {
+        // creamos una factura de ayer
+        $yesterday = date(ModelCore::DATE_STYLE, strtotime('-1 day'));
+        $invoice = $this->getRandomCustomerInvoice($yesterday);
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // comprobamos que existe un recibo de ayer para esta factura
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $this->assertEquals($yesterday, $receipts[0]->fecha);
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+    }
+
+    public function testCreatePaidInvoiceOnPastDate()
+    {
+        // creamos una forma de pago pagada
+        $payMethod = new FormaPago();
+        $payMethod->descripcion = 'test';
+        $payMethod->plazovencimiento = 0;
+        $payMethod->tipovencimiento = 'days';
+        $payMethod->pagado = true;
+        $this->assertTrue($payMethod->save(), 'cant-save-forma-pago');
+
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos una factura de ayer
+        $yesterday = date(ModelCore::DATE_STYLE, strtotime('-1 day'));
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $invoice->setDate($yesterday, $invoice->hora);
+        $invoice->codpago = $payMethod->codpago;
+        $this->assertTrue($invoice->save(), 'can-not-create-invoice');
+
+        // añadimos una línea a la factura
+        $newLine = $invoice->getNewLine();
+        $newLine->cantidad = 1;
+        $newLine->descripcion = 'test';
+        $newLine->pvpunitario = 100;
+        $this->assertTrue($newLine->save(), 'cant-add-invoice-line');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        // comprobamos que la factura está pagada
+        $this->assertTrue($invoice->pagada, 'invoice-unpaid');
+
+        // comprobamos que existe un recibo pagado de ayer para esta factura
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $this->assertTrue($receipts[0]->pagado, 'unpaid-receipt');
+        $this->assertEquals($yesterday, $receipts[0]->fecha, 'bad-receipt-date');
+        $this->assertEquals($yesterday, $receipts[0]->vencimiento, 'bad-receipt-expiration');
+        $this->assertEquals($yesterday, $receipts[0]->fechapago, 'bad-receipt-payment-date');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($customer->delete(), 'can-not-delete-customer');
+        $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
     public function testUpdateAndCreateReceipts()
