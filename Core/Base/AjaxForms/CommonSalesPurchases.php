@@ -24,7 +24,6 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\FormasPago;
-use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
@@ -123,7 +122,7 @@ trait CommonSalesPurchases
         $attributes = $model->editable ? 'name="codpago" required=""' : 'disabled=""';
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-3 col-md-2 col-lg">'
             . '<div class="form-group">'
-            . '<a href="' . Paises::get($model->codpago)->url() . '">' . $i18n->trans('payment-method') . '</a>'
+            . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . $i18n->trans('payment-method') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
