@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
-use FacturaScripts\Plugins\BetaForms\Contract\PurchasesModInterface;
+use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
 
 /**
  * Description of PurchasesFooterHTML
