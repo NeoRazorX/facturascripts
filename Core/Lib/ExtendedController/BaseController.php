@@ -262,7 +262,7 @@ abstract class BaseController extends Controller
      */
     protected function checkOwnerData($model): bool
     {
-        if (false === $this->permissions->onlyOwnerData) {
+        if (false === $this->permissions->onlyOwnerData || empty($model->primaryColumnValue())) {
             return true;
         }
 
