@@ -382,7 +382,8 @@ abstract class PurchasesController extends PanelController
 
     protected function saveStatusAction(): bool
     {
-        if (false === $this->saveDocAction()) {
+        $this->setTemplate(false);
+        if ($this->getModel()->editable && false === $this->saveDocAction()) {
             return false;
         }
 
