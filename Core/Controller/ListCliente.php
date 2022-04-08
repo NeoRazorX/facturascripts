@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -37,12 +37,7 @@ use FacturaScripts\Dinamic\Model\CodeModel;
 class ListCliente extends ListController
 {
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -60,13 +55,10 @@ class ListCliente extends ListController
         if ($this->permissions->onlyOwnerData === false) {
             $this->createViewContacts();
             $this->createViewBankAccounts();
+            $this->createViewGroups();
         }
-        $this->createViewGroups();
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewBankAccounts(string $viewName = 'ListCuentaBancoCliente')
     {
         $this->addView($viewName, 'CuentaBancoCliente', 'bank-accounts', 'fas fa-piggy-bank');
@@ -82,9 +74,6 @@ class ListCliente extends ListController
         $this->setSettings($viewName, 'checkBoxes', false);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewContacts(string $viewName = 'ListContacto')
     {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
@@ -117,9 +106,6 @@ class ListCliente extends ListController
         $this->addFilterCheckbox($viewName, 'verificado', 'verified', 'verificado');
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewCustomers(string $viewName = 'ListCliente')
     {
         $this->addView($viewName, 'Cliente', 'customers', 'fas fa-users');
@@ -154,9 +140,6 @@ class ListCliente extends ListController
         $this->addFilterSelect($viewName, 'regimeniva', 'vat-regime', 'regimeniva', $vatRegimes);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewGroups(string $viewName = 'ListGrupoClientes')
     {
         $this->addView($viewName, 'GrupoClientes', 'groups', 'fas fa-users-cog');
