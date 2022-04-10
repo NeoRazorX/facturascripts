@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,11 +24,11 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" description="optional" numcolumns="2" order="100">
-                <widget type="text" fieldname="codimpuesto" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" />
+            <column name="description" numcolumns="10" order="100">
+                <widget type="text" fieldname="descripcion" maxlength="50" required="true"/>
             </column>
-            <column name="description" numcolumns="10" order="110">
-                <widget type="text" fieldname="descripcion" maxlength="50" required="true" />
+            <column name="code" description="optional" numcolumns="2" order="110">
+                <widget type="text" fieldname="codimpuesto" icon="fas fa-hashtag" maxlength="10" readonly="dinamic"/>
             </column>
             <column name="type" order="120">
                 <widget type="select" fieldname="tipo" translate="true" required="true">
@@ -37,19 +37,19 @@
                 </widget>
             </column>
             <column name="vat" order="130">
-                <widget type="number" decimal="2" fieldname="iva" required="true" />
+                <widget type="number" decimal="2" fieldname="iva" required="true"/>
             </column>
             <column name="surcharge" order="140">
-                <widget type="number" decimal="2" fieldname="recargo" required="true" />
+                <widget type="number" decimal="2" fieldname="recargo" required="true"/>
             </column>
             <column name="impacted-tax-subaccount" description="optional" titleurl="ListCuenta" order="150">
                 <widget type="autocomplete" fieldname="codsubcuentarep">
-                    <values source="subcuentas" fieldcode="codsubcuenta" />
+                    <values source="subcuentas" fieldcode="codsubcuenta"/>
                 </widget>
             </column>
             <column name="supported-tax-subaccount" description="optional" titleurl="ListCuenta" order="160">
                 <widget type="autocomplete" fieldname="codsubcuentasop">
-                    <values source="subcuentas" fieldcode="codsubcuenta" />
+                    <values source="subcuentas" fieldcode="codsubcuenta"/>
                 </widget>
             </column>
         </group>

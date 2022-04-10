@@ -22,12 +22,12 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="code" numcolumns="3" order="100">
+            <column name="name" numcolumns="6" order="100">
+                <widget type="text" fieldname="nombre" maxlength="100" required="true"/>
+            </column>
+            <column name="code" numcolumns="3" order="110">
                 <widget type="text" fieldname="codejercicio" icon="fas fa-hashtag" maxlength="4" readonly="dinamic"
                         required="true"/>
-            </column>
-            <column name="name" numcolumns="6" order="110">
-                <widget type="text" fieldname="nombre" maxlength="100" required="true"/>
             </column>
             <column name="status" numcolumns="3" order="120">
                 <widget type="select" fieldname="estado" translate="true" readonly="true" required="true">
