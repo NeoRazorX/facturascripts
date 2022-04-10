@@ -29,6 +29,10 @@ interface PurchasesLineModInterface
 
     public function applyToLine(array $formData, PurchaseDocumentLine &$line, string $id);
 
+    public function assets(): void;
+
+    public function map(array $lines, PurchaseDocument $model): array;
+
     public function newModalFields(): array;
 
     public function newFields(): array;

@@ -109,7 +109,7 @@ abstract class PurchasesController extends PanelController
             $list[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-data')];
         }
 
-        $this->response->setContent(\json_encode($list));
+        $this->response->setContent(json_encode($list));
         return false;
     }
 
@@ -127,7 +127,9 @@ abstract class PurchasesController extends PanelController
         $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $pageData['title'], 'fas fa-file');
         AssetManager::add('css', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
         AssetManager::add('js', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
+        PurchasesHeaderHTML::assets();
+        PurchasesLineHTML::assets();
+        PurchasesFooterHTML::assets();
     }
 
     protected function deleteDocAction(): bool

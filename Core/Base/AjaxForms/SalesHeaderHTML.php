@@ -120,6 +120,14 @@ class SalesHeaderHTML
         }
     }
 
+    public static function assets()
+    {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->assets();
+        }
+    }
+
     public static function render(SalesDocument $model): string
     {
         $i18n = new Translator();

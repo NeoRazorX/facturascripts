@@ -59,6 +59,14 @@ class PurchasesFooterHTML
         }
     }
 
+    public static function assets()
+    {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->assets();
+        }
+    }
+
     public static function render(PurchaseDocument $model): string
     {
         if (empty($model->codproveedor)) {

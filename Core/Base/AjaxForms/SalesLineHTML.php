@@ -100,6 +100,14 @@ class SalesLineHTML
         }
     }
 
+    public static function assets()
+    {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->assets();
+        }
+    }
+
     public static function getDeletedLines(): array
     {
         return self::$deletedLines;
@@ -123,6 +131,13 @@ class SalesLineHTML
 
             // total
             $map['linetotal_' . $idlinea] = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+        }
+
+        // mods
+        foreach (self::$mods as $mod) {
+            foreach ($mod->map($lines, $model) as $key => $value) {
+                $map[$key] = $value;
+            }
         }
 
         return $map;

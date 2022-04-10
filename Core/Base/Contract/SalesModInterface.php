@@ -29,6 +29,8 @@ interface SalesModInterface
 
     public function applyBefore(SalesDocument &$model, array $formData, User $user);
 
+    public function assets(): void;
+
     public function newFields(): array;
 
     public function renderField(Translator $i18n, SalesDocument $model, string $field): ?string;

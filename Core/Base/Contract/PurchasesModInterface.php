@@ -29,6 +29,8 @@ interface PurchasesModInterface
 
     public function applyBefore(PurchaseDocument &$model, array $formData, User $user);
 
+    public function assets(): void;
+
     public function newFields(): array;
 
     public function renderField(Translator $i18n, PurchaseDocument $model, string $field): ?string;

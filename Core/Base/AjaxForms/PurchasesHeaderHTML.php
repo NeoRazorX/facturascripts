@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
+use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Dinamic\Model\Proveedor;
-use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
 
 /**
  * Description of PurchasesHeaderHTML
@@ -83,6 +83,14 @@ class PurchasesHeaderHTML
         // mods
         foreach (self::$mods as $mod) {
             $mod->apply($model, $formData, $user);
+        }
+    }
+
+    public static function assets()
+    {
+        // mods
+        foreach (self::$mods as $mod) {
+            $mod->assets();
         }
     }
 

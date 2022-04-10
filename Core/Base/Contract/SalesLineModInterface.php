@@ -29,6 +29,10 @@ interface SalesLineModInterface
 
     public function applyToLine(array $formData, SalesDocumentLine &$line, string $id);
 
+    public function assets(): void;
+
+    public function map(array $lines, SalesDocument $model): array;
+
     public function newModalFields(): array;
 
     public function newFields(): array;
