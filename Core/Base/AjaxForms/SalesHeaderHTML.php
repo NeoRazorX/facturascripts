@@ -244,7 +244,8 @@ class SalesHeaderHTML
     private static function detail(Translator $i18n, SalesDocument $model, bool $force = false): string
     {
         if (empty($model->primaryColumnValue()) && $force === false) {
-            return '';
+            // necesitamos el modal para tener los inputs en el form
+            return self::detailModal($i18n, $model);
         }
 
         $css = $force ? 'col-sm-auto' : 'col-sm';
