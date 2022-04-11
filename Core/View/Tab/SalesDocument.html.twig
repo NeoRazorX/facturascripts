@@ -125,6 +125,11 @@
     }
 
     async function salesFormActionWait(action, selectedLine) {
+        if (event.keyCode === 9) {
+            // si se pulsa tabulador no hacemos nada
+            return false;
+        }
+
         animateSpinner('add');
 
         // usamos un contador y un temporizador para solamente procesar la última llamada

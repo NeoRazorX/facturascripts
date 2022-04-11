@@ -228,7 +228,7 @@ class SalesLineHTML
             . '<div class="input-group input-group-sm">'
             . self::cantidadServido($i18n, $line, $model)
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
-            . '" class="form-control border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"/>'
+            . '" class="form-control border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(event, \'recalculate-line\', \'0\');"/>'
             . self::cantidadStock($i18n, $line, $model)
             . '</div>'
             . '</div>';
@@ -318,7 +318,7 @@ class SalesLineHTML
                 . '</div>';
         }
 
-        $attributes = 'name="pvpunitario_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"';
+        $attributes = 'name="pvpunitario_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(event, \'recalculate-line\', \'0\');"';
         return '<div class="col-sm col-lg-1 order-4">'
             . '<span class="d-lg-none small">' . $i18n->trans('price') . '</span>'
             . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm border-0"/>'
