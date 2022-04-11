@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Contract\SalesLineModInterface;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Dinamic\Model\Stock;
@@ -188,10 +189,21 @@ class SalesLineHTML
         $line->dtopor2 = (float)$formData['dtopor2_' . $id];
         $line->descripcion = $formData['descripcion_' . $id];
         $line->irpf = (float)($formData['irpf_' . $id] ?? '0');
-        $line->iva = (float)($formData['iva_' . $id] ?? '0');
-        $line->recargo = (float)($formData['recargo_' . $id] ?? '0');
         $line->suplido = (bool)($formData['suplido_' . $id] ?? '0');
         $line->pvpunitario = (float)$formData['pvpunitario_' . $id];
+
+        // ¿Cambio de impuesto?
+        if (isset($formData['codimpuesto_' . $id]) && $formData['codimpuesto_' . $id] !== $line->codimpuesto) {
+            $impuesto = Impuestos::get($formData['codimpuesto_' . $id]);
+            $line->codimpuesto = $impuesto->codimpuesto;
+            $line->iva = $impuesto->iva;
+            if ($line->recargo) {
+                // si la línea ya tenía recargo, le asignamos el nuevo
+                $line->recargo = $impuesto->recargo;
+            }
+        } else {
+            $line->recargo = (float)($formData['recargo_' . $id] ?? '0');
+        }
 
         // mods
         foreach (self::$mods as $mod) {
