@@ -187,7 +187,7 @@ trait CommonSalesPurchases
     protected static function dtopor1(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         $attributes = $model->editable ?
-            'max="100" min="0" name="dtopor1" required="" step="any" onchange="return ' . $jsName . '(\'recalculate\', \'0\');"' :
+            'max="100" min="0" name="dtopor1" required="" step="any" onchange="return ' . $jsName . '(\'recalculate\', \'0\', event);"' :
             'disabled=""';
         return empty($model->netosindto) ? '' : '<div class="col-sm"><div class="form-group">' . $i18n->trans('global-dto')
             . '<div class="input-group">'
@@ -199,7 +199,7 @@ trait CommonSalesPurchases
     protected static function dtopor2(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         $attributes = $model->editable ?
-            'max="100" min="0" name="dtopor2" required="" step="any" onchange="return ' . $jsName . '(\'recalculate\', \'0\');"' :
+            'max="100" min="0" name="dtopor2" required="" step="any" onchange="return ' . $jsName . '(\'recalculate\', \'0\', event);"' :
             'disabled=""';
         return empty($model->dtopor1) ? '' : '<div class="col-sm-2 col-md"><div class="form-group">' . $i18n->trans('global-dto-2')
             . '<div class="input-group">'

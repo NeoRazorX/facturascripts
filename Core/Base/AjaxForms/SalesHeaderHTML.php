@@ -382,7 +382,7 @@ class SalesHeaderHTML
             return '';
         }
 
-        $attributes = $model->editable ? 'name="idcontactofact" onchange="return salesFormActionWait(\'recalculate-line\', \'0\');"' : 'disabled=""';
+        $attributes = $model->editable ? 'name="idcontactofact" onchange="return salesFormActionWait(\'recalculate-line\', \'0\', event);"' : 'disabled=""';
         $options = self::getAddressOptions($i18n, $model->idcontactofact, false);
         return '<div class="col-sm">'
             . '<div class="form-group">'

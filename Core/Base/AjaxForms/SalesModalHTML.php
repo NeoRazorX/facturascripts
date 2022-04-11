@@ -273,7 +273,7 @@ class SalesModalHTML
             . '<div class="col-sm">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans('search')
-            . '" onkeyup="return salesFormActionWait(\'find-product\', \'0\');"/>'
+            . '" onkeyup="return salesFormActionWait(\'find-product\', \'0\', event);"/>'
             . '<div class="input-group-append">'
             . '<button class="btn btn-primary btn-spin-action" type="button" onclick="return salesFormAction(\'find-product\', \'0\');">'
             . '<i class="fas fa-search"></i></button>'

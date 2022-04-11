@@ -47,6 +47,8 @@ abstract class PurchasesController extends PanelController
 
     private $logLevels = ['critical', 'error', 'info', 'notice', 'warning'];
 
+    abstract public function getModelClassName();
+
     public function getModel(bool $reload = false): PurchaseDocument
     {
         if ($reload) {
