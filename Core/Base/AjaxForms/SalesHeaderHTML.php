@@ -493,14 +493,11 @@ class SalesHeaderHTML
             case 'paid':
                 return self::paid($i18n, $model, 'salesFormSave');
 
-            case 'saveBtn':
-                return self::saveBtn($i18n, $model, 'salesFormSave');
-
             case 'tasaconv':
                 return self::tasaconv($i18n, $model);
 
             case 'total':
-                return self::column($i18n, $model, 'total', 'total', true);
+                return self::total($i18n, $model, 'salesFormSave');
 
             case 'user':
                 return self::user($i18n, $model);

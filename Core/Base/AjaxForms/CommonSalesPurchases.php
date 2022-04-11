@@ -491,6 +491,18 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
+    protected static function total(Translator $i18n, BusinessDocument $model, string $jsName): string
+    {
+        return empty($model->total) ? '' : '<div class="col-sm"><div class="form-group">' . $i18n->trans('total')
+            . '<div class="input-group">'
+            . '<input type="text" value="' . number_format($model->total, FS_NF0, FS_NF1, '')
+            . '" class="form-control" disabled=""/>'
+            . '<div class="input-group-append"><button class="btn btn-primary btn-spin-action" onclick="return ' . $jsName
+            . '(\'save-doc\', \'0\');" title="' . $i18n->trans('save') . '" type="button">'
+            . '<i class="fas fa-save fa-fw"></i></button></div>'
+            . '</div></div></div>';
+    }
+
     protected static function user(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = 'disabled=""';

@@ -302,14 +302,11 @@ class PurchasesHeaderHTML
             case 'paid':
                 return self::paid($i18n, $model, 'purchasesFormSave');
 
-            case 'saveBtn':
-                return self::saveBtn($i18n, $model, 'purchasesFormSave');
-
             case 'tasaconv':
                 return self::tasaconv($i18n, $model);
 
             case 'total':
-                return self::column($i18n, $model, 'total', 'total', true);
+                return self::total($i18n, $model, 'purchasesFormSave');
 
             case 'user':
                 return self::user($i18n, $model);
