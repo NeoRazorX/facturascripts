@@ -104,14 +104,23 @@
             if (Array.isArray(data.messages)) {
                 data.messages.forEach(item => alert(item.message));
             }
-            if (document.forms['purchasesForm']['action'].value === 'set-supplier') {
-                $("#findProductInput").focus();
-            } else if (document.forms['purchasesForm']['action'].value === 'new-line') {
-                $(".doc-line-desc:last").focus();
-            } else if (document.forms['purchasesForm']['action'].value === 'fast-line') {
-                document.forms['purchasesForm']['fastli'].focus();
-            } else if (document.forms['purchasesForm']['action'].value === 'fast-product') {
-                $(".doc-line-qty:last").select();
+            switch (document.forms['purchasesForm']['action'].value) {
+                case 'add-product':
+                case 'fast-product':
+                    $(".doc-line-qty:last").select();
+                    break;
+
+                case 'fast-line':
+                    document.forms['purchasesForm']['fastli'].focus();
+                    break;
+
+                case 'new-line':
+                    $(".doc-line-desc:last").focus();
+                    break;
+
+                case 'set-supplier':
+                    $("#findProductInput").focus();
+                    break;
             }
 
             findProduct();
