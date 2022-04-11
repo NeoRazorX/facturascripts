@@ -65,11 +65,12 @@ trait CommonSalesPurchases
         // more than one
         return '<div class="col-sm-auto">'
             . '<div class="form-group">'
-            . '<button class="btn btn-block btn-info" type="button" data-toggle="modal" data-target="#documentsModal">'
-            . '<i class="fas fa-forward fa-fw" aria-hidden="true"></i> ' . count($children) . ' </button>'
+            . '<button class="btn btn-block btn-info" type="button" title="' . $i18n->trans('documents-generated')
+            . '" data-toggle="modal" data-target="#childrenModal"><i class="fas fa-forward fa-fw" aria-hidden="true"></i> '
+            . count($children) . ' </button>'
             . '</div>'
             . '</div>'
-            . self::modalDocList($i18n, $children);
+            . self::modalDocList($i18n, $children, 'documents-generated', 'childrenModal');
     }
 
     protected static function codalmacen(Translator $i18n, BusinessDocument $model): string
@@ -336,28 +337,27 @@ trait CommonSalesPurchases
         return false === $status->editable && empty($status->actualizastock) ? ' text-danger' : '';
     }
 
-    public static function modalDocList(Translator $i18n, array $documents): string
+    public static function modalDocList(Translator $i18n, array $documents, string $title, string $id): string
     {
         $list = '';
         foreach ($documents as $doc) {
-            $list .= '<tr>';
-            $list .= '<td><a href="' . $doc->url() . '">' . $i18n->trans($doc->modelClassName()) . ' ' . $doc->codigo . '</a></td>';
-            $list .= '<td>' . $doc->observaciones . '</td>';
-            $list .= '<td class="text-right">' . ToolBox::coins()::format($doc->total) . '</td>';
-            $list .= '<td class="text-right">' . $doc->fecha . ' ' . $doc->hora . '</td>';
-            $list .= '</tr>';
+            $list .= '<tr>'
+                . '<td><a href="' . $doc->url() . '">' . $i18n->trans($doc->modelClassName()) . ' ' . $doc->codigo . '</a></td>'
+                . '<td>' . $doc->observaciones . '</td>'
+                . '<td class="text-right text-nowrap">' . ToolBox::coins()::format($doc->total) . '</td>'
+                . '<td class="text-right text-nowrap">' . $doc->fecha . ' ' . $doc->hora . '</td>'
+                . '</tr>';
         }
 
-        return '<div class="modal fade" tabindex="-1" id="documentsModal">'
+        return '<div class="modal fade" tabindex="-1" id="' . $id . '">'
             . '<div class="modal-dialog modal-xl">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">' . $i18n->trans('documents-generated') . '</h5>'
+            . '<h5 class="modal-title">' . $i18n->trans($title) . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="' . $i18n->trans('close') . '">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
             . '</div>'
-            . '<div class="modal-body"></div>'
             . '<div class="table-responsive">'
             . '<table class="table table-hover mb-0">'
             . '<thead>'
@@ -455,11 +455,12 @@ trait CommonSalesPurchases
         // more than one
         return '<div class="col-sm-auto">'
             . '<div class="form-group">'
-            . '<button class="btn btn-block btn-warning" type="button" data-toggle="modal" data-target="#documentsModal">'
-            . '<i class="fas fa-backward fa-fw" aria-hidden="true"></i> ' . count($parents) . ' </button>'
+            . '<button class="btn btn-block btn-warning" type="button" title="' . $i18n->trans('previous-documents')
+            . '" data-toggle="modal" data-target="#parentsModal"><i class="fas fa-backward fa-fw" aria-hidden="true"></i> '
+            . count($parents) . ' </button>'
             . '</div>'
             . '</div>'
-            . self::modalDocList($i18n, $parents);
+            . self::modalDocList($i18n, $parents, 'previous-documents', 'parentsModal');
     }
 
     protected static function productBtn(Translator $i18n, BusinessDocument $model): string
