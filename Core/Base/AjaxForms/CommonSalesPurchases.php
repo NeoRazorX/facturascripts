@@ -210,6 +210,15 @@ trait CommonSalesPurchases
             . '</div></div></div>';
     }
 
+    private static function email(Translator $i18n, BusinessDocument $model): string
+    {
+        return empty($model->femail) ? '' : '<div class="col-sm-auto">'
+            . '<div class="form-group">'
+            . '<button class="btn btn-outline-info" type="button" title="' . $i18n->trans('email-sent')
+            . '" data-toggle="modal" data-target="#headerModal"><i class="fas fa-envelope fa-fw" aria-hidden="true"></i> '
+            . $model->femail . ' </button></div></div>';
+    }
+
     protected static function fastLineInput(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         return $model->editable ? '<div class="col-8 col-md">'

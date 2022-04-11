@@ -146,7 +146,8 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, '_detail')
             . self::renderField($i18n, $model, '_parents')
             . self::renderField($i18n, $model, '_children')
-            . self::renderField($i18n, $model, 'paid')
+            . self::renderField($i18n, $model, '_email')
+            . self::renderField($i18n, $model, '_paid')
             . self::renderField($i18n, $model, 'idestado')
             . '</div>'
             . '</div>';
@@ -430,8 +431,14 @@ class SalesHeaderHTML
             case '_detail':
                 return self::detail($i18n, $model);
 
+            case '_email':
+                return self::email($i18n, $model);
+
             case '_fecha':
                 return self::fecha($i18n, $model, false);
+
+            case '_paid':
+                return self::paid($i18n, $model, 'salesFormSave');
 
             case '_parents':
                 return self::parents($i18n, $model);
@@ -489,9 +496,6 @@ class SalesHeaderHTML
 
             case 'numero2':
                 return self::numero2($i18n, $model);
-
-            case 'paid':
-                return self::paid($i18n, $model, 'salesFormSave');
 
             case 'tasaconv':
                 return self::tasaconv($i18n, $model);

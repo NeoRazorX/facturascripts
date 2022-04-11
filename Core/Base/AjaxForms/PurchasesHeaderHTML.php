@@ -111,7 +111,8 @@ class PurchasesHeaderHTML
             . self::renderField($i18n, $model, '_detail')
             . self::renderField($i18n, $model, '_parents')
             . self::renderField($i18n, $model, '_children')
-            . self::renderField($i18n, $model, 'paid')
+            . self::renderField($i18n, $model, '_email')
+            . self::renderField($i18n, $model, '_paid')
             . self::renderField($i18n, $model, 'idestado')
             . '</div>'
             . '</div>';
@@ -257,8 +258,14 @@ class PurchasesHeaderHTML
             case '_detail':
                 return self::detail($i18n, $model);
 
+            case '_email':
+                return self::email($i18n, $model);
+
             case '_fecha':
                 return self::fecha($i18n, $model, false);
+
+            case '_paid':
+                return self::paid($i18n, $model, 'purchasesFormSave');
 
             case '_parents':
                 return self::parents($i18n, $model);
@@ -298,9 +305,6 @@ class PurchasesHeaderHTML
 
             case 'numproveedor':
                 return self::numproveedor($i18n, $model);
-
-            case 'paid':
-                return self::paid($i18n, $model, 'purchasesFormSave');
 
             case 'tasaconv':
                 return self::tasaconv($i18n, $model);
