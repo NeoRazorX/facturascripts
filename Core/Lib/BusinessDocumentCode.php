@@ -47,9 +47,7 @@ class BusinessDocumentCode
             $document->numero = static::getNewNumber($sequence, $document);
         }
 
-        $document->codigo = CodePatterns::trans(
-            $sequence->patron, $document, ['long' => $sequence->longnumero]
-        );
+        $document->codigo = CodePatterns::trans($sequence->patron, $document, ['long' => $sequence->longnumero]);
     }
 
     /**

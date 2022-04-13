@@ -105,7 +105,7 @@ class AccountingFooterHTML
      */
     protected static function descuadre(Translator $i18n, Asiento $model): string
     {
-        $unbalance = isset($model->debe, $model->haber) ? $model->debe - $model->haber : 0.00;
+        $unbalance = isset($model->debe, $model->haber) ? round($model->debe - $model->haber, FS_NF0) : 0.0;
         if (empty($unbalance)) {
             return '';
         }

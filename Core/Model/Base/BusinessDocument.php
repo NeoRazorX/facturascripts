@@ -457,10 +457,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     protected function setPreviousData(array $fields = [])
     {
-        $more = [
-            'codalmacen', 'coddivisa', 'codpago', 'codserie',
-            'fecha', 'hora', 'idempresa', 'numero', 'total'
-        ];
+        $more = ['codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'numero', 'total'];
         parent::setPreviousData(array_merge($more, $fields));
     }
 
