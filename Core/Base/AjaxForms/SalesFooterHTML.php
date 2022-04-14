@@ -139,7 +139,7 @@ class SalesFooterHTML
                 return self::dtopor2($i18n, $model, 'salesFormActionWait');
 
             case 'neto':
-                return self::column($i18n, $model, 'neto', 'net', true);
+                return self::column($i18n, $model, 'neto', 'net', true, 'text-right');
 
             case 'netosindto':
                 return self::netosindto($i18n, $model);
@@ -148,19 +148,19 @@ class SalesFooterHTML
                 return self::observaciones($i18n, $model);
 
             case 'total':
-                return self::column($i18n, $model, 'total', 'total', true);
+                return self::column($i18n, $model, 'total', 'total', true, 'text-right');
 
             case 'totalirpf':
-                return self::column($i18n, $model, 'totalirpf', 'irpf', true);
+                return self::column($i18n, $model, 'totalirpf', 'irpf', true, 'text-right');
 
             case 'totaliva':
-                return self::column($i18n, $model, 'totaliva', 'taxes', true);
+                return self::column($i18n, $model, 'totaliva', 'taxes', true, 'text-right');
 
             case 'totalrecargo':
-                return self::column($i18n, $model, 'totalrecargo', 're', true);
+                return self::column($i18n, $model, 'totalrecargo', 're', true, 'text-right');
 
             case 'totalsuplidos':
-                return self::column($i18n, $model, 'totalsuplidos', 'supplied-amount', true);
+                return self::column($i18n, $model, 'totalsuplidos', 'supplied-amount', true, 'text-right');
         }
 
         return null;

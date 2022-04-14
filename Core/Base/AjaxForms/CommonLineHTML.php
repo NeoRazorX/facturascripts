@@ -72,8 +72,8 @@ trait CommonLineHTML
             'disabled=""';
         return '<div class="col-sm col-lg-1 order-5">'
             . '<div class="d-lg-none mt-3 small">' . $i18n->trans('percentage-discount') . '</div>'
-            . '<input type="number" ' . $attributes . ' value="' . $line->dtopor . '" class="form-control form-control-sm border-0"/>'
-            . '</div>';
+            . '<input type="number" ' . $attributes . ' value="' . $line->dtopor . '" class="form-control form-control-sm border-0 text-right"/>'
+                . '</div>';
     }
 
     private static function dtopor2(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
@@ -83,8 +83,8 @@ trait CommonLineHTML
             'disabled=""';
         return '<div class="col">'
             . '<div class="mb-2">' . $i18n->trans('percentage-discount') . ' 2'
-            . '<input type="number" ' . $attributes . ' value="' . $line->{$field} . '" class="form-control"/>'
-            . '</div>'
+            . '<input type="number" ' . $attributes . ' value="' . $line->{$field} . '" class="form-control text-right"/>'
+                . '</div>'
             . '</div>';
     }
 
@@ -117,7 +117,7 @@ trait CommonLineHTML
         return '<div class="col col-lg-1 order-7">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
             . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($total, FS_NF0, '.', '')
-            . '" class="form-control form-control-sm border-0"' . ' onclick="' . $jsFunc . '(\'' . $idlinea . '\')" readonly/></div>';
+            . '" class="form-control form-control-sm border-0 text-right"' . ' onclick="' . $jsFunc . '(\'' . $idlinea . '\')" readonly/></div>';
     }
 
     private static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
@@ -131,8 +131,8 @@ trait CommonLineHTML
             'disabled=""';
         return '<div class="col">'
             . '<div class="mb-2">' . $i18n->trans('percentage-surcharge')
-            . '<input type="number" ' . $attributes . ' value="' . $line->recargo . '" class="form-control"/>'
-            . '</div>'
+            . '<input type="number" ' . $attributes . ' value="' . $line->recargo . '" class="form-control text-right"/>'
+                . '</div>'
             . '</div>';
     }
 

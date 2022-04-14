@@ -218,8 +218,8 @@ class SalesLineHTML
                 . '<div class="d-lg-none mt-2 small">' . $i18n->trans('quantity') . '</div>'
                 . '<div class="input-group input-group-sm">'
                 . self::cantidadServido($i18n, $line, $model)
-                . '<input type="number" class="form-control border-0" value="' . $line->cantidad . '" disabled=""/>'
-                . '</div>'
+                . '<input type="number" class="form-control border-0 text-right" value="' . $line->cantidad . '" disabled=""/>'
+                    . '</div>'
                 . '</div>';
         }
 
@@ -228,8 +228,8 @@ class SalesLineHTML
             . '<div class="input-group input-group-sm">'
             . self::cantidadServido($i18n, $line, $model)
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
-            . '" class="form-control border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"/>'
-            . self::cantidadStock($i18n, $line, $model)
+            . '" class="form-control border-0 doc-line-qty text-right" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"/>'
+                . self::cantidadStock($i18n, $line, $model)
             . '</div>'
             . '</div>';
     }
@@ -275,14 +275,14 @@ class SalesLineHTML
             case -1:
             case -2:
                 $html = $stock->disponible > 0 ?
-                    '<span class="input-group-text text-success rounded-0">' . $stock->disponible . '</span>' :
-                    '<span class="input-group-text text-danger rounded-0">' . $stock->disponible . '</span>';
+                    '<span class="input-group-text text-success rounded-0 text-right">' . $stock->disponible . '</span>' :
+                        '<span class="input-group-text text-danger rounded-0 text-right">' . $stock->disponible . '</span>';
                 break;
 
             default:
                 $html = $line->cantidad <= $stock->cantidad ?
-                    '<span class="input-group-text text-success rounded-0">' . $stock->cantidad . '</span>' :
-                    '<span class="input-group-text text-danger rounded-0">' . $stock->cantidad . '</span>';
+                    '<span class="input-group-text text-success rounded-0 text-right">' . $stock->cantidad . '</span>' :
+                        '<span class="input-group-text text-danger rounded-0 text-right">' . $stock->cantidad . '</span>';
                 break;
         }
 
@@ -314,15 +314,15 @@ class SalesLineHTML
         if (false === $model->editable) {
             return '<div class="col-sm col-lg-1 order-4">'
                 . '<span class="d-lg-none small">' . $i18n->trans('price') . '</span>'
-                . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm border-0" disabled/>'
-                . '</div>';
+                . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm border-0 text-right" disabled/>'
+                    . '</div>';
         }
 
         $attributes = 'name="pvpunitario_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"';
         return '<div class="col-sm col-lg-1 order-4">'
             . '<span class="d-lg-none small">' . $i18n->trans('price') . '</span>'
-            . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm border-0"/>'
-            . '</div>';
+            . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm border-0 text-right"/>'
+                . '</div>';
     }
 
     private static function renderField(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model, string $field): ?string
