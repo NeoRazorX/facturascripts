@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Model\Serie;
+use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -72,6 +73,16 @@ class ReportTaxes extends Controller
     public $source;
 
     /**
+     * @var string
+     */
+    public $codpais;
+
+    /**
+     * @var pais
+     */
+    public $paises;
+
+    /**
      * @return array
      */
     public function getPageData(): array
@@ -92,6 +103,8 @@ class ReportTaxes extends Controller
     {
         parent::privateCore($response, $user, $permissions);
         $this->serie = new Serie();
+        $this->paises = new Pais();
+        $this->paises = $this->paises->all([], ['nombre' => 'ASC'], 0, 0);
         $this->initFilters();
         if ('export' === $this->request->request->get('action')) {
             $this->exportAction();
@@ -189,6 +202,7 @@ class ReportTaxes extends Controller
         $numCol = strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(f.numero as integer)' : 'CAST(f.numero as unsigned)';
         switch ($this->source) {
             case 'purchases':
+                
                 $sql .= 'SELECT f.codserie, f.codigo, f.numproveedor AS numero2, f.fecha, f.nombre, f.cifnif, l.pvptotal,'
                     . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total'
                     . ' FROM lineasfacturasprov AS l'
@@ -199,6 +213,7 @@ class ReportTaxes extends Controller
                 break;
 
             case 'sales':
+
                 $sql .= 'SELECT f.codserie, f.codigo, f.numero2, f.fecha, f.nombrecliente AS nombre, f.cifnif, l.pvptotal,'
                     . ' l.iva, l.recargo, l.irpf, l.suplido, f.dtopor1, f.dtopor2, f.total'
                     . ' FROM lineasfacturascli AS l'
@@ -214,6 +229,10 @@ class ReportTaxes extends Controller
         if ($this->codserie) {
             $sql .= ' AND codserie = ' . $this->dataBase->var2str($this->codserie);
         }
+        if ($this->source === 'sales' && $this->codpais) {
+                    $sql .= ' AND codpais = ' . $this->dataBase->var2str($this->codpais);
+                }
+               
         $sql .= ' ORDER BY f.fecha, ' . $numCol . ' ASC;';
 
         $data = [];
@@ -296,6 +315,7 @@ class ReportTaxes extends Controller
 
     protected function initFilters()
     {
+        $this->codpais = $this->request->request->get('codpais', '');
         $this->codserie = $this->request->request->get('codserie', '');
         $this->datefrom = $this->request->request->get('datefrom', date('Y-m-01'));
         $this->dateto = $this->request->request->get('dateto', date('Y-m-t'));
@@ -420,6 +440,9 @@ class ReportTaxes extends Controller
             . ' AND fecha <= ' . $this->dataBase->var2str($this->dateto);
         if ($this->codserie) {
             $sql .= ' AND codserie = ' . $this->dataBase->var2str($this->codserie);
+        }
+        if ($this->source === 'sales' && $this->codpais) {
+            $sql .= ' AND codpais = ' . $this->dataBase->var2str($this->codpais);
         }
         foreach ($this->dataBase->selectLimit($sql) as $row) {
             $neto2 += (float)$row['neto'];
