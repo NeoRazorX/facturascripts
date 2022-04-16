@@ -188,9 +188,39 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-cliente-3');
         $this->assertFalse($line->exists(), 'linea-presupuesto-cliente-still-exists-3');
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-3');
-
-        // eliminamos el producto
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
+    }
+
+    public function testCreateProductNotFoundLine()
+    {
+        // creamos el cliente
+        $subject = $this->getRandomCustomer();
+        $this->assertTrue($subject->save(), 'can-not-save-customer-2');
+
+        // creamos un producto
+        $product = $this->getRandomProduct();
+        $this->assertTrue($product->save(), 'can-not-save-supplier-3');
+
+        // eliminamos el producto para asegurarnos de que no existe
+        $this->assertTrue($product->delete(), 'can-not-delete-product-3');
+
+        // creamos el presupuesto
+        $doc = new PresupuestoCliente();
+        $doc->setSubject($subject);
+        $this->assertTrue($doc->save(), 'can-not-create-presupuesto-cliente-2');
+
+        // añadimos el producto que ya no existe
+        $line = $doc->getNewProductLine($product->referencia);
+        $line->pvpunitario = 10;
+        $this->assertTrue($line->save(), 'can-not-add-product-without-stock');
+
+        // la línea debe tener la referencia incluso aunque el producto no exista
+        $this->assertEquals($product->referencia, $line->referencia, 'linea-presupuesto-cliente-bad-referencia-3');
+
+        // eliminamos
+        $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-cliente-3');
+        $this->assertFalse($line->exists(), 'linea-presupuesto-cliente-still-exists-3');
+        $this->assertTrue($subject->delete(), 'can-not-delete-cliente-3');
     }
 
     public function testSecondCompany()

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -75,7 +75,8 @@ abstract class PurchaseDocument extends TransformerDocument
      */
     public function getNewProductLine($reference)
     {
-        $newLine = $this->getNewLine();
+        // pasamos como parámetro la referencia para poder distinguir en getNewLine cuando se llama desde aquí
+        $newLine = $this->getNewLine(['referencia' => $reference]);
         if (empty($reference)) {
             return $newLine;
         }

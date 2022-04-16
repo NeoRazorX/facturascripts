@@ -188,7 +188,8 @@ abstract class SalesDocument extends TransformerDocument
      */
     public function getNewProductLine($reference)
     {
-        $newLine = $this->getNewLine();
+        // pasamos la referencia como parámetro para poder distinguir en getNewLine cuando se llama desde aquí
+        $newLine = $this->getNewLine(['referencia' => $reference]);
         if (empty($reference)) {
             return $newLine;
         }
