@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Join;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\JoinModel;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Tarifa;
@@ -85,6 +86,14 @@ class TarifaProducto extends JoinModel
      */
     public function priceInRate()
     {
+        // intentamos obtener la variante para aplicar mejor la tarifa
+        $variant = new Variante();
+        $where = [new DataBaseWhere('referencia', $this->referencia)];
+        if ($variant->loadFromCode('', $where)) {
+            $product = $variant->getProducto();
+            return $this->getRate()->applyTo($variant, $product);
+        }
+
         return $this->getRate()->apply((float)$this->coste, (float)$this->precio);
     }
 
