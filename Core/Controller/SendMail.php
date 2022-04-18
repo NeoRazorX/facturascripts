@@ -57,12 +57,7 @@ class SendMail extends Controller
      */
     public $newMail;
 
-    /**
-     * Return the basic data for this page.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';

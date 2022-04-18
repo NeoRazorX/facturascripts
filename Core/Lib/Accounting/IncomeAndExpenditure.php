@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -67,7 +67,7 @@ class IncomeAndExpenditure extends AccountingBase
     {
         parent::__construct();
 
-        /// needed dependencies
+        // needed dependencies
         new Partida();
         new BalanceCuenta();
         new BalanceCuentaA();
@@ -82,7 +82,7 @@ class IncomeAndExpenditure extends AccountingBase
      *
      * @return array
      */
-    public function generate(string $dateFrom, string $dateTo, array $params = [])
+    public function generate(string $dateFrom, string $dateTo, array $params = []): array
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
@@ -219,13 +219,13 @@ class IncomeAndExpenditure extends AccountingBase
      *
      * @return array
      */
-    protected function getData($nature = 'A', $params = [])
+    protected function getData($nature = 'A', $params = []): array
     {
         $rows = [];
         $code1 = $this->exercise->codejercicio;
         $code2 = $this->exercisePrev->codejercicio ?? '-';
 
-        /// get balance codes
+        // get balance codes
         $balance = new Balance();
         $where = [
             new DataBaseWhere('naturaleza', $nature),
@@ -234,7 +234,7 @@ class IncomeAndExpenditure extends AccountingBase
         $order = ['nivel1' => 'ASC', 'nivel2' => 'ASC', 'nivel3' => 'ASC', 'nivel4' => 'ASC'];
         $balances = $balance->all($where, $order, 0, 0);
 
-        /// get amounts
+        // get amounts
         $amountsE1 = [];
         $amountsE2 = [];
         $amountsNE1 = [];
@@ -244,7 +244,7 @@ class IncomeAndExpenditure extends AccountingBase
             $this->sumAmounts($amountsE2, $amountsNE2, $bal, $code2, $params);
         }
 
-        /// add to table
+        // add to table
         $nivel1 = $nivel2 = $nivel3 = $nivel4 = '';
         foreach ($balances as $bal) {
             if ($bal->nivel1 != $nivel1 && !empty($bal->nivel1)) {
