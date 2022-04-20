@@ -1,262 +1,272 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" >
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>{{ i18n.trans('installer') }}</title>
-        <meta name="description" content="{{ i18n.trans('meta-description') }}" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="generator" content="{{ i18n.trans('facturascripts') }}" />
-        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
-        <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css" />
-        <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png" />
-        <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
-        <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function () {
-                document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>{{ i18n.trans('installer') }}</title>
+    <meta name="description" content="{{ i18n.trans('meta-description') }}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="generator" content="FacturaScripts"/>
+    <meta name="robots" content="noindex"/>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css"/>
+    <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/v4-shims.min.css"/>
+    <link rel="shortcut icon" href="Core/Assets/Images/favicon.ico"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="Core/Assets/Images/apple-icon-180x180.png"/>
+    <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-                $('#db_type').on('change', function () {
-                    $('#db_type option:selected').each(function () {
-                        str = $(this).val();
-                    });
-                    if (str === 'mysql') {
-                        $('#db_port').val(3306);
-                        $('#db_user').val('root');
-                        $("#mysql_socket_div").show();
-                    } else if (str === 'postgresql') {
-                        $('#db_port').val(5432);
-                        $('#db_user').val('postgres');
-                        $("#mysql_socket_div").hide();
-                    }
+            $('#db_type').on('change', function () {
+                $('#db_type option:selected').each(function () {
+                    str = $(this).val();
                 });
-
-                $('#fs_lang').on('change', function () {
-                    var lang = $("#fs_lang option:selected").val();
-                    var url = location.pathname + '?fs_lang=' + lang;
-                    window.location.href = url;
-                });
+                if (str === 'mysql') {
+                    $('#db_port').val(3306);
+                    $('#db_user').val('root');
+                    $("#mysql_socket_div").show();
+                } else if (str === 'postgresql') {
+                    $('#db_port').val(5432);
+                    $('#db_user').val('postgres');
+                    $("#mysql_socket_div").hide();
+                }
             });
-        </script>
-    </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-            <a class="navbar-brand" href="" onclick="location.reload();">
-                <img src="Core/Assets/Images/logo.png" width="30" height="30" class="align-top" alt="FacturaScripts"/>
-                FacturaScripts {{ version }}
+
+            $('#fs_lang').on('change', function () {
+                var lang = $("#fs_lang option:selected").val();
+                var url = location.pathname + '?fs_lang=' + lang;
+                window.location.href = url;
+            });
+        });
+    </script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+    <a class="navbar-brand" href="" onclick="location.reload();">
+        <img src="Core/Assets/Images/logo.png" width="30" height="30" class="align-top" alt="FacturaScripts"/>
+        FacturaScripts {{ version }}
+    </a>
+    <ul class="nav navbar-nav mr-auto"></ul>
+    <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+        <li class="nav-item">
+            <a class="nav-link" href="?phpinfo=TRUE">
+                <i class="fas fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
             </a>
-            <ul class="nav navbar-nav mr-auto"></ul>
-            <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
-                <li class="nav-item">
-                    <a class="nav-link" href="?phpinfo=TRUE">
-                        <i class="fas fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-12">
-                    <br/>
-                    {% from 'Macro/Utils.html.twig' import message as show_message %}
-                    {{ show_message(log, ['error', 'critical'], 'danger') }}
-                    {{ show_message(log, ['warning'], 'warning') }}
-                    {{ show_message(log, ['notice'], 'success') }}
-                </div>
-            </div>
+        </li>
+    </ul>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <br/>
+            {% from 'Macro/Utils.html.twig' import message as show_message %}
+            {{ show_message(log, ['error', 'critical'], 'danger') }}
+            {{ show_message(log, ['warning'], 'warning') }}
+            {{ show_message(log, ['notice'], 'success') }}
         </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12">
-                    <h1 class="h2">{{ i18n.trans('installer') }}</h1>
-                    <p>{{ i18n.trans('installer-p') }}</p>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1 class="h2">{{ i18n.trans('installer') }}</h1>
+            <p>{{ i18n.trans('installer-p') }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card shadow mb-5">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                        <li role="presentation" class="nav-item">
+                            <a class="nav-link active" href="#preferencias" aria-controls="preferencias" role="tab"
+                               data-toggle="tab">
+                                <i class="fas fa-cogs" aria-hidden="true"></i>&nbsp; {{ i18n.trans('preferences') }}
+                            </a>
+                        </li>
+                        <li role="presentation" class="nav-item">
+                            <a class="nav-link" href="#memcache" aria-controls="memcache" role="tab" data-toggle="tab">
+                                <i class="fas fa-flask"></i>&nbsp; {{ i18n.trans('memcache') }}
+                            </a>
+                        </li>
+                        <li role="presentation" class="nav-item">
+                            <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
+                                <i class="far fa-file-alt"></i>&nbsp; {{ i18n.trans('license') }}
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card shadow mb-5">
-                        <div class="card-header">
-                            <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                                <li role="presentation" class="nav-item">
-                                    <a class="nav-link active" href="#preferencias" aria-controls="preferencias" role="tab" data-toggle="tab">
-                                        <i class="fas fa-cogs" aria-hidden="true"></i>&nbsp; {{ i18n.trans('preferences') }}
-                                    </a>
-                                </li>
-                                <li role="presentation" class="nav-item">
-                                    <a class="nav-link" href="#memcache" aria-controls="memcache" role="tab" data-toggle="tab">
-                                        <i class="fas fa-flask"></i>&nbsp; {{ i18n.trans('memcache') }}
-                                    </a>
-                                </li>
-                                <li role="presentation" class="nav-item">
-                                    <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
-                                        <i class="far fa-file-alt"></i>&nbsp; {{ i18n.trans('license') }}
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="card-body">
-                            <form name="fs_install" method="post" class="form">
-                                <div class="tab-content">
-                                    <div role="tabpanel" class="tab-pane active" id="preferencias">
-                                        <div class="row">
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    {{ i18n.trans('language') }}:
-                                                    <div class="input-group">
-                                                        <span class="input-group-prepend">
-                                                            <span class="input-group-text">
-                                                                <i class="fas fa-language"></i>
-                                                            </span>
-                                                        </span>
-                                                        <select id="fs_lang" name="fs_lang" class="form-control">
-                                                            {% for langCode, langName in i18n.getAvailableLanguages() %}
-                                                                {% if langCode == i18n.getLang() %}
-                                                                    <option value="{{ langCode }}" selected="">{{ langName }}</option>
-                                                                {% else %}
-                                                                    <option value="{{ langCode }}">{{ langName }}</option>
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    {{ i18n.trans('timezone') }}:
-                                                    <div class="input-group">
-                                                        <span class="input-group-prepend">
-                                                            <span class="input-group-text">
-                                                                <i class="far fa-clock"></i>
-                                                            </span>
-                                                        </span>
-                                                        <select name="fs_timezone" class="form-control">
-                                                            {% for tz in timezones %}
-                                                                <option value="{{ tz }}">{{ tz }}</option>
-                                                            {% endfor %}
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    {{ i18n.trans('db-type') }}:
-                                                    <select id="db_type" name="fs_db_type" class="form-control">
-                                                        <option value="mysql">MySQL</option>
-                                                        <option value="postgresql">PostgreSQL</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    {{ i18n.trans('db-host') }}:
-                                                    <input type="text" name="fs_db_host" value="localhost" class="form-control" required=""/>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    {{ i18n.trans('db-port') }}:
-                                                    <input type="number" id="db_port" name="fs_db_port" value="3306" class="form-control" required=""/>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    {{ i18n.trans('db-name') }}:
-                                                    <div class="input-group">
-                                                        <span class="input-group-prepend">
-                                                            <span class="input-group-text">
-                                                                <i class="fas fa-database"></i>
-                                                            </span>
-                                                        </span>
-                                                        <input type="text" name="fs_db_name" value="facturascripts" class="form-control" required=""/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    {{ i18n.trans('db-user') }}:
-                                                    <input type="text" id="db_user" name="fs_db_user" value="root" class="form-control" required=""/>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    {{ i18n.trans('db-password') }}:
-                                                    <div class="input-group">
-                                                        <span class="input-group-prepend">
-                                                            <span class="input-group-text">
-                                                                <i class="fas fa-key"></i>
-                                                            </span>
-                                                        </span>
-                                                        <input type="password" name="fs_db_pass" class="form-control"/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div id="mysql_socket_div" class="col-sm-4">
-                                                <div class="form-group">
-                                                    {{ i18n.trans('mysql-socket') }}:
-                                                    <input type="text" name="mysql_socket" class="form-control" placeholder="{{ i18n.trans('optional') }}"/>
-                                                    <small class="form-text text-muted">{{ i18n.trans('mysql-socket-p') }}</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div role="tabpanel" class="tab-pane" id="memcache">
-                                        <div class="row">
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    {{ i18n.trans('memcache-host') }}:
-                                                    <input type="text" name="fs_cache_host" class="form-control" placeholder="{{ i18n.trans('optional') }}"/>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    {{ i18n.trans('memcache-port') }}:
-                                                    <input type="number" name="fs_cache_port" class="form-control"/>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    {{ i18n.trans('memcache-prefix') }}:
-                                                    <input type="text" name="fs_cache_prefix" value="{{ memcache_prefix }}" class="form-control"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div role="tabpanel" class="tab-pane" id="licencia">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <pre>{{ license }}</pre>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                <div class="card-body">
+                    <form name="fs_install" method="post" class="form">
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="preferencias">
                                 <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="form-check mb-2 mb-sm-0">
-                                            <label class="form-check-label">
-                                                <input class="form-check-input" type="checkbox" name="fs_debug" value="true"/>
-                                                {{ i18n.trans('debug-mode') }}
-                                            </label>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ i18n.trans('language') }}:
+                                            <div class="input-group">
+                                                <span class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-language"></i>
+                                                    </span>
+                                                </span>
+                                                <select id="fs_lang" name="fs_lang" class="form-control">
+                                                    {% for langCode, langName in i18n.getAvailableLanguages() %}
+                                                        {% if langCode == i18n.getLang() %}
+                                                            <option value="{{ langCode }}"
+                                                                    selected="">{{ langName }}</option>
+                                                        {% else %}
+                                                            <option value="{{ langCode }}">{{ langName }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6 text-right">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
-                                        </button>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ i18n.trans('timezone') }}:
+                                            <div class="input-group">
+                                                <span class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="far fa-clock"></i>
+                                                    </span>
+                                                </span>
+                                                <select name="fs_timezone" class="form-control">
+                                                    {% for tz in timezones %}
+                                                        <option value="{{ tz }}">{{ tz }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ i18n.trans('db-type') }}:
+                                            <select id="db_type" name="fs_db_type" class="form-control">
+                                                <option value="mysql">MySQL</option>
+                                                <option value="postgresql">PostgreSQL</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ i18n.trans('db-host') }}:
+                                            <input type="text" name="fs_db_host" value="localhost" class="form-control"
+                                                   required=""/>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ i18n.trans('db-port') }}:
+                                            <input type="number" id="db_port" name="fs_db_port" value="3306"
+                                                   class="form-control" required=""/>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ i18n.trans('db-name') }}:
+                                            <div class="input-group">
+                                                <span class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-database"></i>
+                                                    </span>
+                                                </span>
+                                                <input type="text" name="fs_db_name" value="facturascripts"
+                                                       class="form-control" required=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ i18n.trans('db-user') }}:
+                                            <input type="text" id="db_user" name="fs_db_user" value="root"
+                                                   class="form-control" required=""/>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ i18n.trans('db-password') }}:
+                                            <div class="input-group">
+                                                <span class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-key"></i>
+                                                    </span>
+                                                </span>
+                                                <input type="password" name="fs_db_pass" class="form-control"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="mysql_socket_div" class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ i18n.trans('mysql-socket') }}:
+                                            <input type="text" name="mysql_socket" class="form-control"
+                                                   placeholder="{{ i18n.trans('optional') }}"/>
+                                            <small class="form-text text-muted">{{ i18n.trans('mysql-socket-p') }}</small>
+                                        </div>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="memcache">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ i18n.trans('memcache-host') }}:
+                                            <input type="text" name="fs_cache_host" class="form-control"
+                                                   placeholder="{{ i18n.trans('optional') }}"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ i18n.trans('memcache-port') }}:
+                                            <input type="number" name="fs_cache_port" class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            {{ i18n.trans('memcache-prefix') }}:
+                                            <input type="text" name="fs_cache_prefix" value="{{ memcache_prefix }}"
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="licencia">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <pre>{{ license }}</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-footer">
-                            &COPY; 2013-{{ 'now'|date('Y')}}
-                            <a href="https://facturascripts.com" target="_blank">FacturaScripts</a>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-check mb-2 mb-sm-0">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="fs_debug" value="true"/>
+                                        {{ i18n.trans('debug-mode') }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 text-right">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <br/>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    &COPY; 2013-{{ 'now' | date('Y') }}
+                    <a href="https://facturascripts.com" rel="nofollow" target="_blank">FacturaScripts</a>
                 </div>
             </div>
+            <br/>
         </div>
-    </body>
+    </div>
+</div>
+</body>
 </html>
