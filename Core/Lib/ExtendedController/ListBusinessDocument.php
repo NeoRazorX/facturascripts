@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,13 +36,8 @@ use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
  */
 abstract class ListBusinessDocument extends ListController
 {
-
     use ListBusinessActionTrait;
 
-    /**
-     * @param string $viewName
-     * @param string $modelName
-     */
     protected function addCommonViewFilters(string $viewName, string $modelName)
     {
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
@@ -54,7 +49,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterSelect($viewName, 'idestado', 'state', 'idestado', $statusValues);
 
         $users = $this->codeModel->all('users', 'nick', 'nick');
-        if (count($users) > 2) {
+        if (count($users) > 1) {
             $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
         }
 
@@ -73,9 +68,9 @@ abstract class ListBusinessDocument extends ListController
             $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', $series);
         }
 
-        $paymethods = FormasPago::codeModel();
-        if (count($paymethods) > 2) {
-            $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymethods);
+        $payMethods = FormasPago::codeModel();
+        if (count($payMethods) > 2) {
+            $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $payMethods);
         }
 
         $currencies = Divisas::codeModel();
@@ -88,10 +83,6 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterCheckbox($viewName, 'totalsuplidos', 'supplied-amount', 'totalsuplidos', '!=', 0);
     }
 
-    /**
-     * @param string $viewName
-     * @param string $modelName
-     */
     protected function createViewLines(string $viewName, string $modelName)
     {
         $this->addView($viewName, $modelName, 'lines', 'fas fa-list');
@@ -120,11 +111,6 @@ abstract class ListBusinessDocument extends ListController
         $this->setSettings($viewName, 'megasearch', false);
     }
 
-    /**
-     * @param string $viewName
-     * @param string $modelName
-     * @param string $label
-     */
     protected function createViewPurchases(string $viewName, string $modelName, string $label)
     {
         $this->addView($viewName, $modelName, $label, 'fas fa-copy');
@@ -142,11 +128,6 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
     }
 
-    /**
-     * @param string $viewName
-     * @param string $modelName
-     * @param string $label
-     */
     protected function createViewSales(string $viewName, string $modelName, string $label)
     {
         $this->addView($viewName, $modelName, $label, 'fas fa-copy');
@@ -165,7 +146,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterautocomplete($viewName, 'idcontactoenv', 'shipping-address', 'idcontactoenv', 'contactos', 'idcontacto', 'direccion');
 
         $agents = Agentes::codeModel();
-        if (count($agents) > 2) {
+        if (count($agents) > 1) {
             $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
         }
 
@@ -209,11 +190,6 @@ abstract class ListBusinessDocument extends ListController
         return parent::execPreviousAction($action);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
     private function tableColToNumber(string $name): string
     {
         return strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(' . $name . ' as integer)' : 'CAST(' . $name . ' as unsigned)';
