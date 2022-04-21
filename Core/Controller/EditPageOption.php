@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
@@ -45,13 +46,11 @@ class EditPageOption extends Controller
     public $backPage;
 
     /**
-     *
      * @var array
      */
     public $columns = [];
 
     /**
-     *
      * @var array
      */
     public $modals = [];
@@ -64,7 +63,6 @@ class EditPageOption extends Controller
     public $model;
 
     /**
-     *
      * @var array
      */
     public $rows = [];
@@ -83,12 +81,7 @@ class EditPageOption extends Controller
      */
     public $selectedViewName;
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -103,7 +96,7 @@ class EditPageOption extends Controller
      *
      * @return array
      */
-    public function getUserList()
+    public function getUserList(): array
     {
         $result = [];
         $users = CodeModel::all(User::tableName(), 'nick', 'nick', false);
@@ -119,8 +112,8 @@ class EditPageOption extends Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response              $response
-     * @param User                  $user
+     * @param Response $response
+     * @param User $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -184,12 +177,12 @@ class EditPageOption extends Controller
     protected function loadSelectedViewName()
     {
         $code = $this->request->get('code', '');
-        if (false === \strpos($code, '-')) {
+        if (false === strpos($code, '-')) {
             $this->selectedViewName = $code;
             return;
         }
 
-        $parts = \explode('-', $code);
+        $parts = explode('-', $code);
         $this->selectedViewName = empty($parts) ? $code : $parts[0];
     }
 
@@ -266,11 +259,12 @@ class EditPageOption extends Controller
             new DataBaseWhere('nick', $this->selectedUser),
         ];
         if ($this->model->loadFromCode('', $where)) {
-            return true;  // Existen opciones para el usuario.
+            // Existen opciones para el usuario.
+            return true;
         }
 
-        if (false == $this->loadPageOptionsForAll()) {
-            // No existe opciones general. Asignamos las opciones por defecto de la vista xml al usuario.
+        if (false === $this->loadPageOptionsForAll()) {
+            // No existe opciones generales. Asignamos las opciones por defecto de la vista xml al usuario.
             $this->model->nick = $this->selectedUser;
             return false;
         }
@@ -282,16 +276,15 @@ class EditPageOption extends Controller
     }
 
     /**
-     *
-     * @param array  $column
+     * @param array $column
      * @param string $name
      * @param string $key
-     * @param bool   $isWidget
-     * @param bool   $allowEmpty
+     * @param bool $isWidget
+     * @param bool $allowEmpty
      */
     private function setColumnOption(&$column, string $name, string $key, bool $isWidget, bool $allowEmpty)
     {
-        $newValue = $this->request->request->get($name . '-' . $key);
+        $newValue = self::toolBox()::utils()::noHtml($this->request->request->get($name . '-' . $key));
         if ($isWidget) {
             if (!empty($newValue) || $allowEmpty) {
                 $column['children'][0][$key] = $newValue;
