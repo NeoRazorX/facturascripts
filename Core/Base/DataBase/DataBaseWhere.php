@@ -25,7 +25,7 @@ use FacturaScripts\Core\Base\DataBase;
  * Structure that defines a WHERE condition to filter the model data
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class DataBaseWhere
 {
