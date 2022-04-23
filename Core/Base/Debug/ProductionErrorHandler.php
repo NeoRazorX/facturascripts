@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\Debug;
 
 use FacturaScripts\Core\Base\PluginManager;
@@ -44,26 +45,29 @@ class ProductionErrorHandler
     }
 
     /**
-     * 
      * @param array $error
      *
      * @return string
      */
-    private function cleanMessage($error)
+    private function cleanMessage($error): string
     {
         $parts = explode(' in ' . $error['file'], $error['message']);
         return $parts[0];
     }
 
     /**
-     * 
      * @param array $error
      *
      * @return string
      */
-    private function render($error)
+    private function render($error): string
     {
         $title = "FATAL ERROR #" . $error["type"];
+
+        // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
+        $code = $error["type"] . substr($error["file"], strlen(FS_FOLDER)) . $error["line"] . $this->cleanMessage($error);
+        $hash = sha1($code);
+
         return "<html>"
             . "<head>"
             . "<title>" . $title . "</title>"
@@ -84,7 +88,7 @@ class ProductionErrorHandler
             . "<li><b>PHP:</b> " . PHP_VERSION . "</li>"
             . "</ul>"
             . "<div class='text-center'>"
-            . "<a href='https://facturascripts.com/contacto' target='_blank' class='btn'>REPORT / INFORMAR</a>"
+            . "<a href='https://facturascripts.com/contacto?errhash=" . $hash . "' target='_blank' class='btn'>REPORT / INFORMAR</a>"
             . "</div>"
             . "</div>"
             . "</body>"

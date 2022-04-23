@@ -62,8 +62,8 @@ ignore_user_abort(true);
 if (FS_DEBUG) {
     $whoops = new Run;
     $whoops->prependHandler(new PlainTextHandler());
-    $whoops->prependHandler(new PrettyPageHandler());
     $whoops->prependHandler(new JsonResponseHandler());
+    $whoops->prependHandler(new PrettyPageHandler());
     $whoops->register();
 } else {
     $errorHandler = new ProductionErrorHandler();
