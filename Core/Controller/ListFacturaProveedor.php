@@ -33,6 +33,20 @@ use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
  */
 class ListFacturaProveedor extends ListBusinessDocument
 {
+    /**
+    * Add a modal button for renumber entries
+    *
+    * @param string $viewName
+    */
+    protected function addRenumberInvoicesButton(string $viewName)
+    {
+        $this->addButton($viewName, [
+            'action' => 'renumber-invoices',
+            'icon' => 'fas fa-sort-numeric-down',
+            'label' => 'renumber-invoices',
+            'type' => 'modal'
+            ]);
+    }
 
     /**
      * Returns basic page attributes
@@ -71,6 +85,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addFilterCheckbox('ListFacturaProveedor', 'pagada', 'unpaid', 'pagada', '=', false);
         $this->addFilterCheckbox('ListFacturaProveedor', 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
         $this->addButtonLockInvoice('ListFacturaProveedor');
+        $this->addRenumberInvoicesButton($viewName);
     }
 
     /**
@@ -108,5 +123,41 @@ class ListFacturaProveedor extends ListBusinessDocument
 
         // settings
         $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    /**
+    *
+    * @return bool
+    */
+    protected function renumberInvoicesAction()
+    {
+        if (false === $this->permissions->allowUpdate) 
+        {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        }
+        $codejercicio = $this->request->request->get('exercise');
+        if ($this->views['ListFacturaProveedor']->model->renumberInvoices($codejercicio)) 
+        {
+            $this->toolBox()->i18nLog()->notice('renumber-invoices-ok');
+        }
+        return true;
+    }
+
+    /**
+    * Run the actions that alter data before reading it.
+    *
+    * @param string $action
+    *
+    * @return bool
+    */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) 
+        {
+            case 'renumber-invoices':
+                return $this->renumberInvoicesAction();
+        }
+        return parent::execPreviousAction($action);
     }
 }
