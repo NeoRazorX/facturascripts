@@ -58,11 +58,6 @@ class Updater extends Controller
      */
     public $updaterItems = [];
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -287,17 +282,53 @@ class Updater extends Controller
         }
     }
 
+    private function isPluginCompatible(array $plugin): bool
+    {
+        if ($plugin['compatible'] === false) {
+            return false;
+        }
+
+        switch ($plugin['name']) {
+            case 'BetaForms':
+                return false;
+
+            case 'CRM':
+                return $plugin['version'] >= 1.5;
+
+            case 'PlantillasPDF':
+                return $plugin['version'] >= 3;
+
+            case 'PlazosPago':
+                return $plugin['version'] >= 1.6;
+
+            case 'POS':
+                return $plugin['version'] > 1.6;
+
+            case 'PrintTicket':
+                return $plugin['version'] > 1.5;
+        }
+
+        return true;
+    }
+
     private function postUpdateAction()
     {
         $plugName = $this->request->get('init', '');
-        if (empty($plugName)) {
-            Migrations::run();
+        if ($plugName) {
+            // run Init::update() when plugin is updated
+            $this->pluginManager->initPlugin($plugName);
             $this->pluginManager->deploy(true, true);
             return;
         }
 
-        // run Init::update() when plugin is updated
-        $this->pluginManager->initPlugin($plugName);
+        // disable incompatible plugins
+        foreach ($this->pluginManager->installedPlugins() as $plugin) {
+            if ($plugin['enabled'] && false === $this->isPluginCompatible($plugin)) {
+                $this->pluginManager->disable($plugin['name']);
+            }
+        }
+
+        Migrations::run();
         $this->pluginManager->deploy(true, true);
     }
 
