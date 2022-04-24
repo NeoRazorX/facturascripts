@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\LineaFacturaProveedor as DinLineaFactura;
 use FacturaScripts\Dinamic\Model\ReciboProveedor as DinReciboProveedor;
+use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 
 /**
  * Invoice from a supplier.
@@ -33,6 +34,7 @@ class FacturaProveedor extends Base\PurchaseDocument
 
     use Base\ModelTrait;
     use Base\InvoiceTrait;
+    const RENUMBER_LIMIT = 1000;
 
     public function clear()
     {
@@ -90,5 +92,67 @@ class FacturaProveedor extends Base\PurchaseDocument
     public static function tableName(): string
     {
         return 'facturasprov';
+    }
+
+    /** * Re-number the accounting entries of the open exercises. * 
+     * 
+     * @param string $codejercicio 
+     * 
+     * @return bool 
+     */ 
+    public function renumberInvoices($codejercicio = '') 
+    { 
+        $exerciseModel = new DinEjercicio(); 
+        $where = empty($codejercicio) ? [] : [new DataBaseWhere('codejercicio', $codejercicio)]; 
+        foreach ($exerciseModel->all($where) as $exe) 
+        { 
+            if (false === $exe->isOpened()) 
+            { 
+                continue; 
+            }
+
+            $offset = 0; 
+            $number = 1; 
+            
+            $sql = 'SELECT idfactura,numero,fecha FROM ' . static::tableName() 
+                 . ' WHERE codejercicio = ' . self::$dataBase->var2str($exe->codejercicio) 
+                 . ' ORDER BY codejercicio ASC, fecha ASC, idfactura ASC'; 
+                 
+            $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset); 
+            while (!empty($rows)) 
+            { 
+                if (false === $this->renumberInvoiceEntries($rows, $number)) 
+                { 
+                    $this->toolBox()->i18nLog()->warning('renumber-invoices-error', ['%exerciseCode%' => $exe->codejercicio]); 
+                    return false; 
+                } 
+                
+                $offset += self::RENUMBER_LIMIT; 
+                $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset); 
+            } 
+        } 
+        return true; 
+    }
+
+    /**
+    * Update accounting entry numbers.
+    *
+    * @param array $entries
+    * @param int $number
+    *
+    * @return bool
+    */
+    protected function renumberInvoiceEntries(&$entries, &$number)
+    {
+        $sql = '';
+        foreach ($entries as $row) {
+        if (self::$dataBase->var2str($row['numero']) !== self::$dataBase->var2str($number)) 
+        {
+            $sql .= 'UPDATE ' . static::tableName() . ' SET numero = ' . self::$dataBase->var2str($number)
+                 . ' WHERE idfactura = ' . self::$dataBase->var2str($row['idfactura']) . ';';
+        }
+        ++$number;
+        }
+        return empty($sql) || self::$dataBase->exec($sql);
     }
 }
