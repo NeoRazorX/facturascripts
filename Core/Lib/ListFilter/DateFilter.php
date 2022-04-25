@@ -44,6 +44,7 @@ class DateFilter extends BaseFilter
     {
         parent::__construct($key, $field, $label);
         $this->operation = $operation;
+        $this->autosubmit = true;
     }
 
     /**
