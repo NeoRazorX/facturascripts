@@ -150,7 +150,7 @@ trait CommonLineHTML
 
         return '<div class="col-sm-2 col-lg-1 order-1">'
             . '<div class="small text-break"><div class="d-lg-none mt-2 text-truncate">' . $i18n->trans('reference') . '</div>'
-            . $sortable . '<a href="' . $variante->url() . '">' . $line->referencia . '</a>'
+            . $sortable . '<a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>'
             . '<input type="hidden" name="referencia_' . $idlinea . '" value="' . $line->referencia . '"/>'
             . '</div>'
             . '</div>';
