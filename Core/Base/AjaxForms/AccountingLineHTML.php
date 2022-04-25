@@ -83,8 +83,8 @@ class AccountingLineHTML
 
             $newLine = $model->getNewLine();
             $newLine->setAccount($subcuenta);
-            $newLine->debe = ($model->debe < $model->haber) ? $model->haber - $model->debe : 0.00;
-            $newLine->haber = ($model->debe > $model->haber) ? $model->debe - $model->haber : 0.00;
+            $newLine->debe = ($model->debe < $model->haber) ? round($model->haber - $model->debe, FS_NF0) : 0.00;
+            $newLine->haber = ($model->debe > $model->haber) ? round($model->debe - $model->haber, FS_NF0) : 0.00;
             $lines[] = $newLine;
 
             static::calculateUnbalance($model, $lines);
