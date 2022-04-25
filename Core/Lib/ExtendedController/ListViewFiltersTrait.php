@@ -20,14 +20,14 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\ListFilter\AutocompleteFilter;
-use FacturaScripts\Core\Lib\ListFilter\BaseFilter;
-use FacturaScripts\Core\Lib\ListFilter\CheckboxFilter;
-use FacturaScripts\Core\Lib\ListFilter\DateFilter;
-use FacturaScripts\Core\Lib\ListFilter\NumberFilter;
-use FacturaScripts\Core\Lib\ListFilter\PeriodFilter;
-use FacturaScripts\Core\Lib\ListFilter\SelectFilter;
-use FacturaScripts\Core\Lib\ListFilter\SelectWhereFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter\AutocompleteFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter\BaseFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter\CheckboxFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter\NumberFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter\PeriodFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter\SelectFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter\SelectWhereFilter;
+use FacturaScripts\Dinamic\Lib\ListFilter\DateFilter;
 use FacturaScripts\Dinamic\Model\PageFilter;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Request;
