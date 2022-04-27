@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
@@ -147,7 +148,7 @@ class ListView extends BaseView
         }
 
         // selected items?
-        if (is_array($codes) && count($codes) > 0) {
+        if (is_array($codes) && count($codes) > 0 && $this->model instanceof ModelClass) {
             foreach ($this->cursor as $model) {
                 if (false === in_array($model->primaryColumnValue(), $codes)) {
                     continue;

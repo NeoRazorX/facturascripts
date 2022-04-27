@@ -621,7 +621,7 @@
     "invalid-request": "Petición no válida",
     "invoice": "Factura",
     "invoice-email-subject": "Su factura %code%",
-    "invoice-email-text": "Buenos días, le adjunto su factura %code%",
+    "invoice-email-text": "Hola, le adjunto su factura %code%",
     "invoice-have-rectifying-cant-delete": "La factura ya tiene una rectificativa. No se puede eliminar.",
     "invoice-new-assigned-date": "Ya hay facturas posteriores a la fecha seleccionada (%oldDate%). Nueva fecha asignada: %newDate%",
     "invoice-number": "Número de factura",
