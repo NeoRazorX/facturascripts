@@ -287,7 +287,7 @@ class AppController extends App
         }
 
         $this->ipWarning();
-        ToolBox::i18nLog()->warning('login-user-not-found', ['%nick%' => $nick]);
+        ToolBox::i18nLog()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($nick)]);
         return false;
     }
 
