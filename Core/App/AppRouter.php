@@ -127,8 +127,7 @@ final class AppRouter
         $allowedFolders = ['node_modules', 'vendor', 'Dinamic', 'Core', 'Plugins', 'MyFiles/Public'];
         foreach ($allowedFolders as $folder) {
             if ('/' . $folder === substr($uri, 0, 1 + strlen($folder))) {
-                header('Content-Type: ' . $this->getMime($filePath));
-                readfile($filePath);
+                $this->download($filePath);
                 return true;
             }
         }
@@ -137,14 +136,7 @@ final class AppRouter
         $token = filter_input(INPUT_GET, 'myft');
         $fixedFilePath = substr(urldecode($uri), 1);
         if ('/MyFiles/' === substr($uri, 0, 9) && $token && MyFilesToken::validate($fixedFilePath, $token)) {
-            header('Content-Type: ' . $this->getMime($filePath));
-
-            // disable the buffer if enabled
-            if (ob_get_contents()) {
-                ob_end_flush();
-            }
-
-            readfile($filePath);
+            $this->download($filePath);
             return true;
         }
 
@@ -203,6 +195,23 @@ final class AppRouter
             $pluginManager = new PluginManager();
             $pluginManager->deploy();
         }
+    }
+
+    private function download(string $filePath)
+    {
+        header('Content-Type: ' . $this->getMime($filePath));
+
+        // disable the buffer if enabled
+        if (ob_get_contents()) {
+            ob_end_flush();
+        }
+
+        // force to download svg files to prevent XSS attacks
+        if (strpos($filePath, '.svg') !== false) {
+            header('Content-Disposition: attachment; filename="' . basename($filePath) . '"');
+        }
+
+        readfile($filePath);
     }
 
     /**
