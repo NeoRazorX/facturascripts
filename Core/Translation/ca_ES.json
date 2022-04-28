@@ -920,6 +920,7 @@
     "plugin-needed": "Es necessita el plugin %pluginName%.",
     "plugin-needs-fs-version": "El plugin %pluginName% necessita FacturaScripts %minVersion% però té instal·lat FacturaScripts %version%",
     "plugin-not-compatible": "El Plugin %pluginName% no és compatible amb FacturaScripts %version%",
+    "plugin-phpversion-error": "El plugin %pluginName% requiere PHP %php% o superior",
     "plugin-removal-disabled": "L'eliminació de plugins està desactivada en aquest servidor",
     "plugin-unsupported-version": "El plugin %pluginName% és per a FacturaScripts 2017 o anteriors, però estàs fent servir FacturaScripts %version%",
     "plugin-update": "Actualització del plugin %pluginName% a la versió %version%",
