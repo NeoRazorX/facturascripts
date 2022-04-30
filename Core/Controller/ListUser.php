@@ -63,13 +63,17 @@ class ListUser extends ListController
         $this->addSearchFields($viewName, ['nick', 'email']);
         $this->addOrderBy($viewName, ['nick'], 'nick', 1);
         $this->addOrderBy($viewName, ['email'], 'email');
-        $this->addOrderBy($viewName, ['level'], 'level');
+        if ($this->user->admin) {
+            $this->addOrderBy($viewName, ['level'], 'level');
+        }
         $this->addOrderBy($viewName, ['creationdate'], 'creation-date');
         $this->addOrderBy($viewName, ['lastactivity'], 'last-activity');
 
         // filters
-        $levels = $this->codeModel->all('users', 'level', 'level');
-        $this->addFilterSelect($viewName, 'level', 'level', 'level', $levels);
+        if ($this->user->admin) {
+            $levels = $this->codeModel->all('users', 'level', 'level');
+            $this->addFilterSelect($viewName, 'level', 'level', 'level', $levels);
+        }
 
         $languages = $this->codeModel->all('users', 'langcode', 'langcode');
         $this->addFilterSelect($viewName, 'langcode', 'language', 'langcode', $languages);
