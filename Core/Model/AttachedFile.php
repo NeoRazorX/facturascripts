@@ -172,15 +172,16 @@ class AttachedFile extends Base\ModelOnChangeClass
         }
     }
 
-    protected function fixFileName(string $orignal): string
+    protected function fixFileName(string $original): string
     {
-        if (strlen($orignal) <= static::MAX_FILENAME_LEN) {
-            return (string)$orignal;
+        $fixed = self::toolBox()::utils()::noHtml($original);
+        if (strlen($fixed) <= static::MAX_FILENAME_LEN) {
+            return empty($fixed) ? '' : strtolower($fixed);
         }
 
-        $parts = explode('.', strtolower($orignal));
+        $parts = explode('.', strtolower($fixed));
         $extension = count($parts) > 1 ? end($parts) : '';
-        $name = substr($orignal, 0, static::MAX_FILENAME_LEN - strlen('.' . $extension));
+        $name = substr($fixed, 0, static::MAX_FILENAME_LEN - strlen('.' . $extension));
         return $name . '.' . $extension;
     }
 
