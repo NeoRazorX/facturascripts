@@ -1,34 +1,27 @@
-{% extends "Master/MicroTemplate.html.twig" %}
+{% extends "Master/MenuBghTemplate.html.twig" %}
+
+{% block bodyHeaderOptions %}
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+{% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container" style="margin-top: -60px;">
         <div class="row">
             <div class="col-sm-12">
-                <br/><br/>
-                <div class="jumbotron">
-                    <h1>
-                        <i class="fas fa-lock" aria-hidden="true"></i> {{ i18n.trans('access-denied') }}:
-                    </h1>
-                    <b>{{ controllerName }}</b>
-                    <hr class="my-4">
-                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                        <a class="navbar-brand" href="index.php">
-                            <img src="Core/Assets/Images/logo.png" width="30" height="30" class="d-inline-block align-top" alt="FacturaScripts"/>
-                        </a>
-                        <ul class="nav navbar-nav mr-auto">
-                            {% import 'Macro/Menu.html.twig' as macros %}
-                            {% for menuItem in menuManager.getMenu() %}
-                                {{ macros.showMenu(menuItem) }}
-                            {% endfor %}
-                        </ul>
-                        <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
-                            <li class="nav-item active">
-                                <a class="nav-link" href="?logout=TRUE">
-                                    <i class="fas fa-sign-out" aria-hidden="true"></i>&nbsp; {{ i18n.trans('logout') }}
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="h2">
+                            <i class="fas fa-lock" aria-hidden="true"></i>
+                            {{ i18n.trans('access-denied') }}
+                        </h1>
+                        {{ controllerName }}
+                        <hr/>
+                        <p>{{ i18n.trans('access-denied-p') }}</p>
+                    </div>
                 </div>
             </div>
         </div>
