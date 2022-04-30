@@ -72,6 +72,7 @@ class PurchasesHeaderHTML
         $model->codalmacen = $formData['codalmacen'] ?? $model->codalmacen;
         $model->coddivisa = $formData['coddivisa'] ?? $model->coddivisa;
         $model->codpago = $formData['codpago'] ?? $model->codpago;
+        $model->codproveedor = $formData['codproveedor'] ?? $model->codproveedor;
         $model->codserie = $formData['codserie'] ?? $model->codserie;
         $model->fecha = $formData['fecha'] ?? $model->fecha;
         $model->femail = isset($formData['femail']) && !empty($formData['femail']) ? $formData['femail'] : $model->femail;
