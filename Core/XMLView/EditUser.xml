@@ -81,7 +81,7 @@
             <column name="last-activity" order="140">
                 <widget type="datetime" fieldname="lastactivity" readonly="true"/>
             </column>
-            <column name="last-ip" order="150">
+            <column name="last-ip" level="99" order="150">
                 <widget type="text" fieldname="lastip" readonly="true"/>
             </column>
         </group>
