@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,12 +31,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 class ListUser extends ListController
 {
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -54,9 +49,6 @@ class ListUser extends ListController
         $this->createViewsRoles();
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsRoles(string $viewName = 'ListRole')
     {
         $this->addView($viewName, 'Role', 'roles', 'fas fa-address-card');
@@ -65,9 +57,6 @@ class ListUser extends ListController
         $this->addOrderBy($viewName, ['codrole'], 'code');
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsUsers(string $viewName = 'ListUser')
     {
         $this->addView($viewName, 'User', 'users', 'fas fa-users');
@@ -94,5 +83,8 @@ class ListUser extends ListController
         if (count($warehouses) > 2) {
             $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
         }
+
+        // disable print button
+        $this->setSettings($viewName, 'btnPrint', false);
     }
 }

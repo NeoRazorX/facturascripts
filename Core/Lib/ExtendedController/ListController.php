@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -302,8 +302,12 @@ abstract class ListController extends BaseController
 
     protected function exportAction()
     {
-        $this->setTemplate(false);
+        if (false === $this->views[$this->active]->settings['btnPrint']) {
+            $this->toolBox()->i18nLog()->warning('no-print-permission');
+            return;
+        }
 
+        $this->setTemplate(false);
         $codes = $this->request->request->get('code');
         $option = $this->request->get('option', '');
         $this->exportManager->newDoc($option);

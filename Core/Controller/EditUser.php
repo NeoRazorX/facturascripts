@@ -89,6 +89,10 @@ class EditUser extends EditController
             $this->views[$this->getMainViewName()]->disableColumn('warehouse');
         }
 
+        // disable print button
+        $this->setSettings($this->getMainViewName(), 'btnPrint', false);
+
+        // add roles tab
         if ($this->user->admin) {
             $this->createViewsRole();
         }
