@@ -127,6 +127,11 @@ class DebugBar extends DumbBar
             $label = '<i class="fas fa-keyboard"></i> ' . $type;
             $data = [];
             foreach ($rows as $key => $value) {
+                if (is_array($value)) {
+                    $data[] = [htmlspecialchars($key), json_encode($value)];
+                    continue;
+                }
+
                 $data[] = [htmlspecialchars($key), htmlspecialchars($value)];
             }
 
