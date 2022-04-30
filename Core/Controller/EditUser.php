@@ -53,20 +53,21 @@ class EditUser extends EditController
 
     private function allowUpdate(): bool
     {
-        if ($this->request->request->get('code', '') === $this->user->nick) {
-            /**
-             * Prevent the user from deactivating or becoming an administrator.
-             */
-            if ($this->user->admin != (bool)$this->request->request->get('admin')) {
-                return false;
-            } elseif ($this->user->enabled != (bool)$this->request->request->get('enabled')) {
-                return false;
-            }
+        // preload user data
+        $code = $this->request->request->get('code', $this->request->query->get('code'));
+        $user = new User();
+        if (false === $user->loadFromCode($code)) {
+            // user not found, maybe it is a new user, so only admin can create it
+            return $this->user->admin;
+        }
 
+        // admin can update all users
+        if ($this->user->admin) {
             return true;
         }
 
-        return $this->user->admin || $this->user->nick === $this->request->get('code', '');
+        // non-admin users can only update their own data
+        return $user->nick === $this->user->nick;
     }
 
     /**
@@ -112,6 +113,17 @@ class EditUser extends EditController
     protected function editAction(): bool
     {
         $this->permissions->allowUpdate = $this->allowUpdate();
+
+        // prevent some user changes
+        if ($this->request->request->get('code', '') === $this->user->nick) {
+            if ($this->user->admin != (bool)$this->request->request->get('admin')) {
+                // prevent user from becoming admin
+                $this->permissions->allowUpdate = false;
+            } elseif ($this->user->enabled != (bool)$this->request->request->get('enabled')) {
+                // prevent user from disabling himself
+                $this->permissions->allowUpdate = false;
+            }
+        }
         $result = parent::editAction();
 
         // Are we changing user language?
@@ -129,6 +141,7 @@ class EditUser extends EditController
 
     protected function insertAction(): bool
     {
+        // only admin can create users
         $this->permissions->allowUpdate = $this->user->admin;
         return parent::insertAction();
     }
