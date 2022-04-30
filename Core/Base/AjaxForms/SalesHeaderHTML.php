@@ -217,7 +217,7 @@ class SalesHeaderHTML
     private static function codigoenv(Translator $i18n, SalesDocument $model): string
     {
         $attributes = $model->editable ? 'name="codigoenv" maxlength="200" autocomplete="off"' : 'disabled=""';
-        return '<div class="col-sm">'
+        return '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('tracking-code')
             . '<input type="text" ' . $attributes . ' value="' . $model->codigoenv . '" class="form-control"/>'
             . '</div>'
@@ -235,7 +235,7 @@ class SalesHeaderHTML
         }
 
         $attributes = $model->editable ? 'name="codtrans"' : 'disabled=""';
-        return empty($model->idcontactoenv) || count($options) === 1 ? '' : '<div class="col-sm">'
+        return '<div class="col-sm-6">'
             . '<div class="form-group">'
             . '<a href="' . $agenciaTransporte->url() . '">' . $i18n->trans('carrier') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
@@ -266,46 +266,26 @@ class SalesHeaderHTML
             . '<div class="modal-dialog modal-dialog-centered">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">'
-            . $i18n->trans($model->modelClassName() . '-min') . ' ' . $model->codigo
-            . '</h5>'
+            . '<h5 class="modal-title">' . $i18n->trans('detail') . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="form-row">'
-            . self::renderField($i18n, $model, '_fecha')
-            . self::renderField($i18n, $model, 'hora')
-            . '</div>'
-            . '<div class="form-row">'
-            . self::renderField($i18n, $model, 'idcontactofact')
-            . '</div>'
-            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'nombrecliente')
-            . '</div>'
-            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'cifnif')
-            . '</div>'
-            . '<div class="form-row">'
+            . self::renderField($i18n, $model, 'idcontactofact')
             . self::renderField($i18n, $model, 'idcontactoenv')
-            . '</div>'
-            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'codtrans')
             . self::renderField($i18n, $model, 'codigoenv')
-            . '</div>'
-            . '<div class="form-row">'
-            . self::renderField($i18n, $model, 'codagente')
-            . '</div>'
-            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'coddivisa')
             . self::renderField($i18n, $model, 'tasaconv')
-            . '</div>'
-            . '<div class="form-row">'
+            . self::renderField($i18n, $model, '_fecha')
+            . self::renderField($i18n, $model, 'hora')
             . self::renderField($i18n, $model, 'femail')
             . self::renderField($i18n, $model, 'user')
-            . '</div>'
-            . '<div class="form-row">'
+            . self::renderField($i18n, $model, 'codagente')
             . self::renderNewFields($i18n, $model)
             . '</div>'
             . '</div>'
@@ -369,7 +349,7 @@ class SalesHeaderHTML
 
         $attributes = $model->editable ? 'name="idcontactoenv"' : 'disabled=""';
         $options = self::getAddressOptions($i18n, $model->idcontactoenv, true);
-        return '<div class="col-sm">'
+        return '<div class="col-sm-12">'
             . '<div class="form-group">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">'
             . $i18n->trans('shipping-address') . '</a>'
@@ -386,7 +366,7 @@ class SalesHeaderHTML
 
         $attributes = $model->editable ? 'name="idcontactofact" onchange="return salesFormActionWait(\'recalculate-line\', \'0\', event);"' : 'disabled=""';
         $options = self::getAddressOptions($i18n, $model->idcontactofact, false);
-        return '<div class="col-sm">'
+        return '<div class="col-sm-12">'
             . '<div class="form-group">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">' . $i18n->trans('billing-address') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
@@ -397,7 +377,7 @@ class SalesHeaderHTML
     private static function nombrecliente(Translator $i18n, SalesDocument $model): string
     {
         $attributes = $model->editable ? 'name="nombrecliente" required="" maxlength="100" autocomplete="off"' : 'disabled=""';
-        return '<div class="col-sm">'
+        return '<div class="col-sm-12">'
             . '<div class="form-group">'
             . $i18n->trans('business-name')
             . '<input type="text" ' . $attributes . ' value="' . $model->nombrecliente . '" class="form-control"/>'

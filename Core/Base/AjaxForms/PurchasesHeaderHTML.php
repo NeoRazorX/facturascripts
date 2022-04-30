@@ -179,33 +179,21 @@ class PurchasesHeaderHTML
             . '<div class="modal-dialog modal-dialog-centered">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">'
-            . $i18n->trans($model->modelClassName() . '-min') . ' ' . $model->codigo
-            . '</h5>'
+            . '<h5 class="modal-title">' . $i18n->trans('detail') . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="form-row">'
-            . self::renderField($i18n, $model, '_fecha')
-            . self::renderField($i18n, $model, 'hora')
-            . '</div>'
-            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'nombreproveedor')
-            . '</div>'
-            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'cifnif')
-            . '</div>'
-            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'coddivisa')
             . self::renderField($i18n, $model, 'tasaconv')
-            . '</div>'
-            . '<div class="form-row">'
+            . self::renderField($i18n, $model, '_fecha')
+            . self::renderField($i18n, $model, 'hora')
             . self::renderField($i18n, $model, 'femail')
             . self::renderField($i18n, $model, 'user')
-            . '</div>'
-            . '<div class="form-row">'
             . self::renderNewFields($i18n, $model)
             . '</div>'
             . '</div>'
@@ -225,7 +213,7 @@ class PurchasesHeaderHTML
     private static function nombreproveedor(Translator $i18n, PurchaseDocument $model): string
     {
         $attributes = $model->editable ? 'name="nombre" required=""' : 'disabled=""';
-        return '<div class="col-sm">'
+        return '<div class="col-sm-12">'
             . '<div class="form-group">' . $i18n->trans('business-name')
             . '<input type="text" ' . $attributes . ' value="' . $model->nombre . '" class="form-control" maxlength="100" autocomplete="off" />'
             . '</div>'

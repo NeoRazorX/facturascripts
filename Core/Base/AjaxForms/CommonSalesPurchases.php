@@ -34,7 +34,7 @@ trait CommonSalesPurchases
     protected static function cifnif(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="cifnif" maxlength="30" autocomplete="off"' : 'disabled=""';
-        return '<div class="col-sm">'
+        return '<div class="col-sm-12">'
             . '<div class="form-group">' . $i18n->trans('cifnif')
             . '<input type="text" ' . $attributes . ' value="' . $model->cifnif . '" class="form-control"/>'
             . '</div>'
@@ -102,7 +102,7 @@ trait CommonSalesPurchases
         }
 
         $attributes = $model->editable ? 'name="coddivisa" required=""' : 'disabled=""';
-        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
+        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="form-group">'
             . '<a href="' . Divisas::get($model->coddivisa)->url() . '">' . $i18n->trans('currency') . '</a>'
             . '<select ' . $attributes . ' class="form-control">'
@@ -258,7 +258,7 @@ trait CommonSalesPurchases
     protected static function hora(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="hora" required=""' : 'disabled=""';
-        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
+        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('hour')
             . '<input type="time" ' . $attributes . ' value="' . date('H:i:s', strtotime($model->hora)) . '" class="form-control"/>'
             . '</div>'
@@ -494,7 +494,7 @@ trait CommonSalesPurchases
     protected static function tasaconv(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="tasaconv" step="any" autocomplete="off"' : 'disabled=""';
-        return '<div class="col-sm">'
+        return '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('conversion-rate')
             . '<input type="number" ' . $attributes . ' value="' . $model->tasaconv . '" class="form-control"/>'
             . '</div>'
