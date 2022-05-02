@@ -114,10 +114,15 @@ trait CommonLineHTML
     private static function lineTotal(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $total = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
-        return '<div class="col col-lg-1 order-7">'
-            . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
+        $htmlText = '<div class="col col-lg-1 order-7">'
+                . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
             . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($total, FS_NF0, '.', '')
-            . '" class="form-control form-control-sm border-0"' . ' onclick="' . $jsFunc . '(\'' . $idlinea . '\')" readonly/></div>';
+            . '" class="form-control form-control-sm border-0" readonly';
+        
+        $htmlText .= $model->editable ? ' onclick="' . $jsFunc . '(\'' . $idlinea . '\')"' : '';
+        $htmlText .= '/></div>';
+
+        return $htmlText;
     }
 
     private static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
