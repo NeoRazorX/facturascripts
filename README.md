@@ -32,7 +32,7 @@ vendor/bin/phpstan analyse Core
 ```
 
 ## Links
-- [Curso de FacturaScripts 2021](https://www.youtube.com/watch?v=rGopZA3ErzE&list=PLNxcJ5CWZ8V6nfeVu6vieKI_d8a_ObLfY)
+- [Curso de FacturaScripts en YouTube](https://www.youtube.com/watch?v=rGopZA3ErzE&list=PLNxcJ5CWZ8V6nfeVu6vieKI_d8a_ObLfY)
 - [Programa para hacer facturas gratis](https://facturascripts.com/programa-para-hacer-facturas)
 - [Programa para hacer presupuestos gratis](https://facturascripts.com/programa-de-presupuestos)
 - [Programa de contabilidad gratis para autónomos](https://facturascripts.com/software-contabilidad)
