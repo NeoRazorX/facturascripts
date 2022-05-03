@@ -223,12 +223,16 @@ final class AppRouter
      */
     private function getMime(string $filePath): string
     {
-        if ('.css' === substr($filePath, -4)) {
-            return 'text/css';
-        }
+        $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+        switch ($extension) {
+            case 'css':
+                return 'text/css';
 
-        if ('.js' === substr($filePath, -3)) {
-            return 'application/javascript';
+            case 'js':
+                return 'application/javascript';
+
+            case 'xml':
+                return 'text/xml';
         }
 
         return mime_content_type($filePath);
