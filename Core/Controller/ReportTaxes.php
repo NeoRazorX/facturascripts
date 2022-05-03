@@ -195,7 +195,8 @@ class ReportTaxes extends Controller
                     . ' LEFT JOIN facturasprov AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
                     . ' AND f.fecha >= ' . $this->dataBase->var2str($this->datefrom)
-                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto);
+                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto)
+                    . ' AND (l.pvptotal <> 0.00 OR l.iva <> 0.00)';
                 break;
 
             case 'sales':
@@ -205,7 +206,8 @@ class ReportTaxes extends Controller
                     . ' LEFT JOIN facturascli AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
                     . ' AND f.fecha >= ' . $this->dataBase->var2str($this->datefrom)
-                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto);
+                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto)
+                    . ' AND (l.pvptotal <> 0.00 OR l.iva <> 0.00)';
                 break;
 
             default:
