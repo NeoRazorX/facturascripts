@@ -135,6 +135,10 @@ class ListCuenta extends ListController
 
         $specialAccounts = $this->codeModel->all('cuentasesp', 'codcuentaesp', 'codcuentaesp');
         $this->addFilterSelect($viewName, 'codcuentaesp', 'special-account', 'codcuentaesp', $specialAccounts);
+        
+        $this->addFilterCheckbox($viewName, 'debit-credit-balance-not-0','Debe, haber o saldo diferentes a 0','debe','<>','0');
+        $this->addFilterCheckbox($viewName, 'debit-credit-balance-not-0','Debe, haber o saldo diferentes a 0','haber','<>','0');
+        $this->addFilterCheckbox($viewName, 'debit-credit-balance-not-0','Debe, haber o saldo diferentes a 0','saldo','<>','0');
     }
 
     /**
