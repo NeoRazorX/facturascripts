@@ -205,8 +205,12 @@ class Subcuenta extends Base\ModelClass
     {
         $this->saldo = $this->debe - $this->haber;
 
-        $this->codcuenta = trim($this->codcuenta);
-        $this->codsubcuenta = empty($this->idsubcuenta) ? $this->transformCodsubcuenta($this->codsubcuenta) : trim($this->codsubcuenta);
+        // escape html
+        foreach (['codcuenta', 'codsubcuenta', 'descripcion', 'codcuentaesp'] as $field) {
+            $this->{$field} = self::toolBox()::utils()::noHtml($this->{$field});
+        }
+
+        $this->codsubcuenta = empty($this->idsubcuenta) ? $this->transformCodsubcuenta($this->codsubcuenta) : $this->codsubcuenta;
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
             $this->toolBox()->i18nLog()->warning(
@@ -218,7 +222,7 @@ class Subcuenta extends Base\ModelClass
 
         // check exercise
         $exercise = $this->getExercise();
-        if (!$this->disableAdditionalTest && strlen($this->codsubcuenta) !== $exercise->longsubcuenta) {
+        if (false === $this->disableAdditionalTest && strlen($this->codsubcuenta) !== $exercise->longsubcuenta) {
             $this->toolBox()->i18nLog()->warning('account-length-error', ['%code%' => $this->codsubcuenta]);
             return false;
         }
