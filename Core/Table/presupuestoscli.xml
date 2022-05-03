@@ -172,6 +172,10 @@
         <type>double precision</type>
     </column>
     <column>
+        <name>totalcoste</name>
+        <type>double precision</type>
+    </column>
+    <column>
         <name>totaleuros</name>
         <type>double precision</type>
     </column>
