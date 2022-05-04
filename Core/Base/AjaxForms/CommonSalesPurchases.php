@@ -248,7 +248,7 @@ trait CommonSalesPurchases
 
         $attributes = empty($model->femail) && $model->editable ? 'name="femail" ' : 'disabled=""';
         $value = empty($model->femail) ? '' : date('Y-m-d', strtotime($model->femail));
-        return '<div class="col-sm">'
+        return '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('email-sent')
             . '<input type="date" ' . $attributes . ' value="' . $value . '" class="form-control"/>'
             . '</div>'
@@ -516,7 +516,7 @@ trait CommonSalesPurchases
     protected static function user(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = 'disabled=""';
-        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
+        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('user')
             . '<input type="text" ' . $attributes . ' value="' . $model->nick . '" class="form-control"/>'
             . '</div>'
