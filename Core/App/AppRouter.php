@@ -223,7 +223,8 @@ final class AppRouter
      */
     private function getMime(string $filePath): string
     {
-        $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+        $info = pathinfo($filePath);
+        $extension = strtolower($info['extension']);
         switch ($extension) {
             case 'css':
                 return 'text/css';
