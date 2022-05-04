@@ -318,7 +318,7 @@ class AppController extends App
             return false;
         }
 
-        ToolBox::i18nLog()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
+        ToolBox::i18nLog()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($cookieNick)]);
         return false;
     }
 
