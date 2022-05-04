@@ -90,4 +90,28 @@ trait ExtensionsTrait
 
         return $return;
     }
+    
+    /**
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return mixed
+     */
+    public function pipeFalse($name, ...$arguments)
+    {
+        $return = null;
+        foreach (static::$extensions as $ext) {
+            if ($ext['name'] !== $name) {
+                continue;
+            } elseif ($ext['function'] instanceof Closure) {
+                $return = call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
+            }
+
+            if ($return === false) {
+                break;
+            }
+        }
+
+        return $return;
+    }
 }
