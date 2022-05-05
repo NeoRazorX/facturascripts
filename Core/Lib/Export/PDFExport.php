@@ -175,10 +175,11 @@ class PDFExport extends PDFDocument
      *
      * @param array $headers
      * @param array $rows
+     * @param array $options
      *
      * @return bool
      */
-    public function addTablePage($headers, $rows): bool
+    public function addTablePage($headers, $rows, $options = []): bool
     {
         $orientation = count($headers) > 5 ? 'landscape' : 'portrait';
         $this->newPage($orientation);
@@ -189,9 +190,15 @@ class PDFExport extends PDFDocument
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'cols' => []
         ];
+        $columnsOption = array_keys($options);
         foreach (array_keys($headers) as $key) {
             if (in_array($key, ['debe', 'haber', 'saldo', 'saldoprev', 'total'])) {
                 $tableOptions['cols'][$key]['justification'] = 'right';
+                continue;
+            }
+            if (in_array($key, $columnsOption)) {
+                $tableOptions['cols'][$key]['justification'] = $options[$key]['display'] ?? 'left';
+                continue;
             }
         }
 

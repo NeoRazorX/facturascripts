@@ -146,10 +146,11 @@ class CSVExport extends ExportBase
      *
      * @param array $headers
      * @param array $rows
+     * @param array $options
      *
      * @return bool
      */
-    public function addTablePage($headers, $rows): bool
+    public function addTablePage($headers, $rows, $options = []): bool
     {
         $this->writeData($rows, $headers);
 
