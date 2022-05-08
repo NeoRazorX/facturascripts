@@ -233,6 +233,7 @@ final class AppRouter
                 return 'application/javascript';
 
             case 'xml':
+            case 'xsig':
                 return 'text/xml';
         }
 
