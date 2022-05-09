@@ -5,11 +5,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\AjaxForms\SalesController;
 use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
-use FacturaScripts\Core\Base\AjaxForms\SalesController;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 
@@ -24,10 +24,7 @@ class EditFacturaCliente extends SalesController
     private const VIEW_ACCOUNTS = 'ListAsiento';
     private const VIEW_RECEIPTS = 'ListReciboCliente';
 
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'FacturaCliente';
     }
@@ -303,7 +300,8 @@ class EditFacturaCliente extends SalesController
             }
         }
 
-        Calculator::calculate($newRefund, $lines, false);
+        $newLines = $newRefund->getLines();
+        Calculator::calculate($newRefund, $newLines, false);
         $newRefund->idestado = $invoice->idestado;
         if (false === $newRefund->save()) {
             $this->toolBox()->i18nLog()->error('record-save-error');
