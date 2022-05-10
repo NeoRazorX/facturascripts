@@ -31,7 +31,8 @@ trait CommonLineHTML
 {
     private static function codimpuesto(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
-        $options = [];
+        // necesitamos una opción vacía para cuando el sujeto está exento de impuestos
+        $options = ['<option value="">------</option>'];
         foreach (Impuestos::all() as $imp) {
             $options[] = $line->codimpuesto == $imp->codimpuesto ?
                 '<option value="' . $imp->codimpuesto . '" selected="">' . $imp->descripcion . '</option>' :
