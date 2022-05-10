@@ -52,6 +52,25 @@ final class AgenciaTransporteTest extends TestCase
         $this->assertTrue($agency->delete(), 'agency-cant-delete');
     }
 
+    public function testBadWeb()
+    {
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'Test';
+        $agency->nombre = 'Test Agency';
+        $agency->web = 'javascript:alert(origin)';
+        $this->assertFalse($agency->save(), 'agency-can-save-bad-web');
+    }
+
+    public function testGoodWeb()
+    {
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'Test';
+        $agency->nombre = 'Test Agency';
+        $agency->web = 'https://www.facturascripts.com';
+        $this->assertTrue($agency->save(), 'agency-cant-save-good-web');
+        $this->assertTrue($agency->delete(), 'agency-cant-delete');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

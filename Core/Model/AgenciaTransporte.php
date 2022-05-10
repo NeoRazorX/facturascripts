@@ -91,6 +91,13 @@ class AgenciaTransporte extends Base\ModelClass
         $this->nombre = $utils->noHtml($this->nombre);
         $this->telefono = $utils->noHtml($this->telefono);
         $this->web = $utils->noHtml($this->web);
+
+        // check if the web is a valid url
+        if (!empty($this->web) && !filter_var($this->web, FILTER_VALIDATE_URL)) {
+            self::toolBox()::i18nLog()->error('invalid-web');
+            return false;
+        }
+
         return parent::test();
     }
 
