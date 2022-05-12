@@ -116,8 +116,7 @@ abstract class PDFDocument extends PDFCore
             return $payMethod->descripcion;
         }
 
-        $iban = $cuentaBco->getIban(true);
-        return $payMethod->descripcion . ' : ' . $iban;
+        return $payMethod->descripcion . ' : ' . $cuentaBco->getIban(true);
     }
 
     /**
