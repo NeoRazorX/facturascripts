@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
@@ -28,6 +29,7 @@ use FacturaScripts\Dinamic\Model\AtributoValor;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\Familia;
+use FacturaScripts\Dinamic\Model\User;
 
 /**
  * Description of SalesModalHTML
@@ -77,12 +79,12 @@ class SalesModalHTML
             ToolBox::utils()->noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
     }
 
-    public static function render(SalesDocument $model, string $url = ''): string
+    public static function render(SalesDocument $model, string $url = '', User $user, ControllerPermissions $permissions): string
     {
         self::$codalmacen = $model->codalmacen;
 
         $i18n = new Translator();
-        return $model->editable ? static::modalClientes($i18n, $url) . static::modalProductos($i18n) : '';
+        return $model->editable ? static::modalClientes($i18n, $url, $user, $permissions) . static::modalProductos($i18n) : '';
     }
 
     public static function renderProductList(): string
@@ -215,17 +217,26 @@ class SalesModalHTML
         return ', ' . self::$idatributovalores[$id];
     }
 
-    protected static function modalClientes(Translator $i18n, string $url): string
+    protected static function modalClientes(Translator $i18n, string $url, User $user, ControllerPermissions $permissions): string
     {
         $trs = '';
         $cliente = new Cliente();
         $where = [new DataBaseWhere('fechabaja', null, 'IS')];
+        if ($permissions->onlyOwnerData) {
+            $where[] = new DataBaseWhere('codagente', $user->codagente);
+            $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
+        }
         foreach ($cliente->all($where, ['nombre' => 'ASC']) as $cli) {
             $name = ($cli->nombre === $cli->razonsocial) ? $cli->nombre : $cli->nombre . ' <small>(' . $cli->razonsocial . ')</span>';
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'salesForm\'][\'codcliente\'].value = \''
                 . $cli->codcliente . '\'; $(\'#findCustomerModal\').modal(\'hide\'); salesFormAction(\'set-customer\', \'0\'); return false;">'
                 . '<td><i class="fas fa-user fa-fw"></i> ' . $name . '</td>'
                 . '</tr>';
+        }
+
+        $linkAgent = '';
+        if ($user->codagente) {
+            $linkAgent = '&codagente=' . $user->codagente;
         }
 
         return '<div class="modal" id="findCustomerModal" tabindex="-1" aria-hidden="true">'
@@ -248,7 +259,7 @@ class SalesModalHTML
             . '</div>'
             . '<table class="table table-hover mb-0">' . $trs . '</table></div>'
             . '<div class="modal-footer bg-light">'
-            . '<a href="EditCliente?return=' . urlencode($url) . '" class="btn btn-block btn-success">'
+            . '<a href="EditCliente?return=' . urlencode($url) . $linkAgent . '" class="btn btn-block btn-success">'
             . '<i class="fas fa-plus fa-fw"></i> ' . $i18n->trans('new')
             . '</a>'
             . '</div>'
