@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\Calculator;
-use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
@@ -101,11 +100,7 @@ abstract class PurchasesController extends PanelController
         $list = [];
         $variante = new Variante();
         $query = (string)$this->request->get('term');
-        $where = [
-            new DataBaseWhere('p.bloqueado', 0),
-            new DataBaseWhere('p.secompra', 1)
-        ];
-        foreach ($variante->codeModelSearch($query, 'referencia', $where) as $value) {
+        foreach ($variante->codeModelSearch($query, 'referencia') as $value) {
             $list[] = [
                 'key' => $this->toolBox()->utils()->fixHtml($value->code),
                 'value' => $this->toolBox()->utils()->fixHtml($value->description)
