@@ -117,8 +117,7 @@ abstract class PDFDocument extends PDFCore
         }
 
         $iban = $cuentaBco->getIban(true);
-        $blocks = explode(' ', $iban);
-        return $payMethod->descripcion . ' : ' . $iban . ' (' . $this->i18n->trans('last-block') . ' ' . end($blocks) . ')';
+        return $payMethod->descripcion . ' : ' . $iban;
     }
 
     /**
