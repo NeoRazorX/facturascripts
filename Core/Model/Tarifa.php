@@ -115,7 +115,7 @@ class Tarifa extends Base\ModelClass
      */
     public function applyTo($variant, $product)
     {
-        return $this->apply($variant->coste, $variant->precio);
+        return $this->apply((float)$variant->coste, (float)$variant->precio);
     }
 
     public function clear()
