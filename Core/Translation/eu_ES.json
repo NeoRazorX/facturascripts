@@ -859,6 +859,7 @@
     "option": "Aukera",
     "optional": "aukerakoa",
     "options": "Aukerak",
+    "options-button-header": "Maquetación y permisos",
     "order": "Eskaera",
     "order-email-subject": "Zure %code% eskaera",
     "order-email-text": "Kaixo, zure %code% eskaera atxikitzen dizut",

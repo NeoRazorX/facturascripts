@@ -859,6 +859,7 @@
     "option": "Opción",
     "optional": "opcional",
     "options": "Opciones",
+    "options-button-header": "Maquetación y permisos",
     "order": "Pedido",
     "order-email-subject": "Su pedido %code%",
     "order-email-text": "Hola, le adjunto su pedido %code%",
