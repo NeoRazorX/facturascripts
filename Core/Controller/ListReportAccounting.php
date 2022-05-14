@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -29,17 +30,13 @@ use FacturaScripts\Dinamic\Model\ReportLedger;
 /**
  * Description of ListReportAccounting
  *
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Jose Antonio Cuello <yopli2000@gmail.com>
  */
 class ListReportAccounting extends ListController
 {
 
-    /**
-     * Return the basic data for this page.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'reports';
@@ -59,14 +56,10 @@ class ListReportAccounting extends ListController
         $this->addFilterNumber($viewName, 'channel', 'channel', 'channel', '=');
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function addGenerateButton(string $viewName)
     {
         $this->addButton($viewName, [
             'action' => 'generate-balances',
-            'color' => 'warning',
             'confirm' => true,
             'icon' => 'fas fa-magic',
             'label' => 'generate'
@@ -97,6 +90,9 @@ class ListReportAccounting extends ListController
         $this->addSearchFields($viewName, ['name']);
         $this->addCommonFilter($viewName);
         $this->addGenerateButton($viewName);
+
+        // desactivamos el botón de imprimir
+        $this->setSettings($viewName, 'btnPrint', false);
     }
 
     /**
@@ -113,6 +109,9 @@ class ListReportAccounting extends ListController
         $this->addCommonFilter($viewName);
         $this->loadWidgetValues($viewName);
         $this->addGenerateButton($viewName);
+
+        // desactivamos el botón de imprimir
+        $this->setSettings($viewName, 'btnPrint', false);
     }
 
     /**
@@ -128,6 +127,9 @@ class ListReportAccounting extends ListController
         $this->addSearchFields($viewName, ['name']);
         $this->addCommonFilter($viewName);
         $this->addGenerateButton($viewName);
+
+        // desactivamos el botón de imprimir
+        $this->setSettings($viewName, 'btnPrint', false);
     }
 
     /**
@@ -175,9 +177,6 @@ class ListReportAccounting extends ListController
         return parent::execPreviousAction($action);
     }
 
-    /**
-     * @return bool
-     */
     protected function generateBalancesAction(): bool
     {
         $total = 0;
@@ -191,7 +190,7 @@ class ListReportAccounting extends ListController
     }
 
     /**
-     * @param int       $total
+     * @param int $total
      * @param Ejercicio $ejercicio
      */
     protected function generateBalances(&$total, $ejercicio)
