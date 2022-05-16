@@ -206,8 +206,10 @@ final class AppRouter
             ob_end_flush();
         }
 
-        // force to download svg files to prevent XSS attacks
-        if (strpos($filePath, '.svg') !== false) {
+        // force to download svg, xml and xsig files to prevent XSS attacks
+        $info = pathinfo($filePath);
+        $extension = strtolower($info['extension']);
+        if (in_array($extension, ['svg', 'xml', 'xsig'])) {
             header('Content-Disposition: attachment; filename="' . basename($filePath) . '"');
         }
 
