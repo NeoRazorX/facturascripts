@@ -131,15 +131,19 @@ class Variante extends Base\ModelClass
     {
         $results = [];
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
-        $find = $this->toolBox()->utils()->noHtml(\mb_strtolower($query, 'UTF8'));
+        $find = $this->toolBox()->utils()->noHtml(mb_strtolower($query, 'UTF8'));
+
+        // añadimos opciones al inicio del where
+        array_unshift($where,
+            new DataBaseWhere('LOWER(v.referencia)', $find . '%', 'LIKE'),
+            new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
+            new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
+        );
 
         $sql = "SELECT v." . $field . " AS code, p.descripcion AS description, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4"
             . " FROM " . static::tableName() . " v"
             . " LEFT JOIN " . DinProducto::tableName() . " p ON v.idproducto = p.idproducto"
             . DataBaseWhere::getSQLWhere($where)
-            . " AND (LOWER(v.referencia) LIKE '" . $find . "%'"
-            . " OR LOWER(v.codbarras) = '" . $find . "'"
-            . " OR LOWER(p.descripcion) LIKE '%" . $find . "%')"
             . " ORDER BY v." . $field . " ASC";
 
         foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $data) {

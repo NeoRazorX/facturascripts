@@ -1011,6 +1011,7 @@
     "register-symbol": "#",
     "registered-installation": "Instalación registrada #%number%",
     "registered-installation-p": "Esta instalación ya ha sido registrada. Si tienes plugins de pago, pulsa el botón administrar para vincularlos y poder actualizar.",
+    "reject": "Rechazar",
     "rejected": "Rechazado",
     "related": "Relacionado",
     "reloading": "Actualizando...",

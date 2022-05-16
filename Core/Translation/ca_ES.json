@@ -1011,6 +1011,7 @@
     "register-symbol": "#",
     "registered-installation": "Instal·lació registrada #%number%",
     "registered-installation-p": "Aquesta instal·lació ja ha estat registrada. Si tens *plugins de pagament, prem el botó administrar per a vincular-los i poder actualitzar.",
+    "reject": "Rebutjar",
     "rejected": "Rebutjat",
     "related": "Relacionat",
     "reloading": "Recarregant...",

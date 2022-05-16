@@ -1011,6 +1011,7 @@
     "register-symbol": "#",
     "registered-installation": "Instalació registrada en el número #%number%",
     "registered-installation-p": "Esta instal·lació ja ha sigut registrada.",
+    "reject": "Rechazar",
     "rejected": "Rebutjat",
     "related": "related",
     "reloading": "Recarregant...",

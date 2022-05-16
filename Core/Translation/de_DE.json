@@ -1011,6 +1011,7 @@
     "register-symbol": "#",
     "registered-installation": "Instalation registriert #%number%",
     "registered-installation-p": "Diese Installation wurde bereits registriert. Wenn Sie Zahlungspflichtige Plugins haben, klicken Sie auf die Schaltfläche Verwalten, um sie zu verknüpfen und aktualisieren zu können.",
+    "reject": "Rechazar",
     "rejected": "abgelehnt",
     "related": "verbunden",
     "reloading": "Neuladen",

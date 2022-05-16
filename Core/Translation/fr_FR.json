@@ -1011,6 +1011,7 @@
     "register-symbol": "#",
     "registered-installation": "Installation enregistrée avec le numéro #%number%",
     "registered-installation-p": "Cette installation a déjà été enregistrée. Si vous possédez des modules payants, cliquez sur le bouton 'Gérer' pour les lier et débloquer la fonction de mise à jour.",
+    "reject": "Rechazar",
     "rejected": "Rejeté",
     "related": "Associé",
     "reloading": "Rechargement",
