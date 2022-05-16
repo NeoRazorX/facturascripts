@@ -93,7 +93,7 @@ class AgenciaTransporte extends Base\ModelClass
         $this->web = $utils->noHtml($this->web);
 
         // check if the web is a valid url
-        if (!empty($this->web) && !filter_var($this->web, FILTER_VALIDATE_URL)) {
+        if (!empty($this->web) && false === self::toolBox()::utils()::isValidUrl($this->web)) {
             self::toolBox()::i18nLog()->error('invalid-web');
             return false;
         }
