@@ -55,6 +55,22 @@ class ProductionErrorHandler
         return $parts[0];
     }
 
+    private function getPluginName($error): string
+    {
+        // obtenemos la ruta del archivo sin el directorio de la instalación
+        $file = substr($error["file"], strlen(FS_FOLDER) + 1);
+
+        // partimos la ruta del archivo en partes
+        $parts = explode('/', $file);
+
+        // si la primera parte es Plugins, devolvemos el segundo
+        if ($parts[0] == 'Plugins') {
+            return $parts[1];
+        }
+
+        return '';
+    }
+
     /**
      * @param array $error
      *
@@ -68,7 +84,7 @@ class ProductionErrorHandler
         $code = $error["type"] . substr($error["file"], strlen(FS_FOLDER)) . $error["line"] . $this->cleanMessage($error);
         $hash = sha1($code);
 
-        return "<html>"
+        $html = "<html>"
             . "<head>"
             . "<title>" . $title . "</title>"
             . "<style>"
@@ -79,9 +95,16 @@ class ProductionErrorHandler
             . "</style>"
             . "</head>"
             . "<body>"
-            . "<div class='container'>"
-            . "<h1 class='text-center'>" . $title . "</h1>"
-            . "<ul>"
+            . "<div class='container'>";
+
+        $pluginName = $this->getPluginName($error);
+        if ($pluginName !== '') {
+            $html .= "<h1 class='text-center'>Plugin " . $pluginName . ": " . $title . "</h1>";
+        } else {
+            $html .= "<h1 class='text-center'>" . $title . "</h1>";
+        }
+
+        $html .= "<ul>"
             . "<li><b>File:</b> " . $error["file"] . " (<b>Line " . $error["line"] . "</b>)</li>"
             . "<li><b>Message:</b> " . $this->cleanMessage($error) . "</li>"
             . "<li><b>FacturaScripts:</b> " . PluginManager::CORE_VERSION . "</li>"
@@ -93,5 +116,7 @@ class ProductionErrorHandler
             . "</div>"
             . "</body>"
             . "</html>";
+
+        return $html;
     }
 }
