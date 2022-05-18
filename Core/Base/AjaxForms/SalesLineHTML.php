@@ -189,6 +189,9 @@ class SalesLineHTML
         $line->dtopor2 = (float)$formData['dtopor2_' . $id];
         $line->descripcion = $formData['descripcion_' . $id];
         $line->irpf = (float)($formData['irpf_' . $id] ?? '0');
+        $line->mostrar_cantidad = (bool)($formData['mostrar_cantidad_' . $id] ?? '0');
+        $line->mostrar_precio = (bool)($formData['mostrar_precio_' . $id] ?? '0');
+        $line->salto_pagina = (bool)($formData['salto_pagina_' . $id] ?? '0');
         $line->suplido = (bool)($formData['suplido_' . $id] ?? '0');
         $line->pvpunitario = (float)$formData['pvpunitario_' . $id];
 
@@ -356,6 +359,12 @@ class SalesLineHTML
             case 'irpf':
                 return self::irpf($i18n, $idlinea, $line, $model, 'salesFormAction');
 
+            case 'mostrar_cantidad':
+                return self::showCantidad($i18n, $idlinea, $line, $model, 'mostrar_cantidad');
+
+            case 'mostrar_precio':
+                return self::showPrecio($i18n, $idlinea, $line, $model, 'mostrar_precio');
+
             case 'pvpunitario':
                 return self::precio($i18n, $idlinea, $line, $model, 'salesFormActionWait');
 
@@ -364,6 +373,9 @@ class SalesLineHTML
 
             case 'referencia':
                 return self::referencia($i18n, $idlinea, $line, $model);
+
+            case 'salto_pagina':
+                return self::saltoPagina($i18n, $idlinea, $line, $model, 'salto_pagina');
 
             case 'suplido':
                 return self::suplido($i18n, $idlinea, $line, $model, 'salesFormAction');
@@ -393,6 +405,11 @@ class SalesLineHTML
             . '<div class="form-row">'
             . self::renderField($i18n, $idlinea, $line, $model, 'suplido')
             . self::renderField($i18n, $idlinea, $line, $model, 'dtopor2')
+            . '</div>'
+            . '<div class="form-row">'
+            . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_cantidad')
+            . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_precio')
+            . self::renderField($i18n, $idlinea, $line, $model, 'salto_pagina')
             . '</div>'
             . '<div class="form-row">'
             . self::renderNewModalFields($i18n, $idlinea, $line, $model)

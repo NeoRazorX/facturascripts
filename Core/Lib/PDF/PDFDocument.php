@@ -264,6 +264,10 @@ abstract class PDFDocument extends PDFCore
             foreach ($this->getLineHeaders() as $key => $value) {
                 if ($key === 'referencia') {
                     $data[$key] = empty($line->{$key}) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->{$key} . " - " . $line->descripcion);
+                } elseif ($key === 'cantidad' && property_exists($line, 'mostrar_cantidad')) {
+                    $data[$key] = $line->mostrar_cantidad ? $line->{$key} : '';
+                } elseif ($key === 'pvpunitario' && property_exists($line, 'mostrar_precio')) {
+                    $data[$key] = $line->mostrar_precio ? $this->numberTools->format($line->{$key}) : '';
                 } elseif ($value['type'] === 'percentage') {
                     $data[$key] = $this->numberTools->format($line->{$key}) . '%';
                 } elseif ($value['type'] === 'number') {
@@ -274,10 +278,19 @@ abstract class PDFDocument extends PDFCore
             }
 
             $tableData[] = $data;
+
+            if (property_exists($line, 'salto_pagina') && $line->salto_pagina) {
+                $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
+                $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
+                $tableData = [];
+                $this->pdf->ezNewPage();
+            }
         }
 
-        $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
-        $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
+        if (false === empty($tableData)) {
+            $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
+            $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
+        }
     }
 
     /**

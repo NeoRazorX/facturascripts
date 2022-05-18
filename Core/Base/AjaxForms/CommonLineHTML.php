@@ -174,6 +174,54 @@ trait CommonLineHTML
             . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
     }
 
+    private static function showCantidad(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field): string
+    {
+        $attributes = $model->editable ?
+            'name="' . $field . '_' . $idlinea . '" id="ch' . $field . '_' . $idlinea . '"' :
+            'disabled=""';
+        $checked = (bool)$line->{$field} ? 'checked' : '';
+        return '<div class="col-12">'
+            . '<div class="form-check">'
+            . '<input type="checkbox" ' . $attributes . ' value="1" ' . $checked . ' class="form-check-input"/>'
+            . '<label class="form-check-label" for="ch' . $field . '_' . $idlinea . '">'
+            . $i18n->trans('show-quantity')
+            . '</label>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function showPrecio(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field): string
+    {
+        $attributes = $model->editable ?
+            'name="' . $field . '_' . $idlinea . '" id="ch' . $field . '_' . $idlinea . '"' :
+            'disabled=""';
+        $checked = (bool)$line->{$field} ? 'checked' : '';
+        return '<div class="col-12">'
+            . '<div class="form-check">'
+            . '<input type="checkbox" ' . $attributes . ' value="1" ' . $checked . ' class="form-check-input"/>'
+            . '<label class="form-check-label" for="ch' . $field . '_' . $idlinea . '">'
+            . $i18n->trans('show-price')
+            . '</label>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function saltoPagina(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field): string
+    {
+        $attributes = $model->editable ?
+            'name="' . $field . '_' . $idlinea . '" id="ch' . $field . '_' . $idlinea . '"' :
+            'disabled=""';
+        $checked = (bool)$line->{$field} ? 'checked' : '';
+        return '<div class="col-12">'
+            . '<div class="form-check">'
+            . '<input type="checkbox" ' . $attributes . ' value="1" ' . $checked . ' class="form-check-input"/>'
+            . '<label class="form-check-label" for="ch' . $field . '_' . $idlinea . '">'
+            . $i18n->trans('page-break')
+            . '</label>'
+            . '</div>'
+            . '</div>';
+    }
+
     private static function suplido(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $attributes = $model->editable ?

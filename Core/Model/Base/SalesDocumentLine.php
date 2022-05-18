@@ -42,6 +42,13 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
     public $mostrar_precio;
 
     /**
+     * Jump to a new page in the pdf if TRUE.
+     *
+     * @var bool
+     */
+    public $salto_pagina;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
@@ -49,5 +56,6 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
         parent::clear();
         $this->mostrar_cantidad = true;
         $this->mostrar_precio = true;
+        $this->salto_pagina = false;
     }
 }
