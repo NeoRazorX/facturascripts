@@ -155,6 +155,9 @@ class AttachedFile extends Base\ModelOnChangeClass
             return $this->setFile() && parent::test();
         }
 
+        $this->filename = self::toolBox()::utils()::noHtml($this->filename);
+        $this->mimetype = self::toolBox()::utils()::noHtml($this->mimetype);
+        $this->path = self::toolBox()::utils()::noHtml($this->path);
         return parent::test();
     }
 
