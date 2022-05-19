@@ -24,6 +24,8 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\RoleAccess;
+use FacturaScripts\Dinamic\Model\RoleUser;
 
 /**
  * Controller to edit a single item from the Contacto model
@@ -61,7 +63,13 @@ class EditContacto extends EditController
 
     protected function addConversionButtons(string $viewName)
     {
-        if (empty($this->views[$viewName]->model->codcliente)) {
+        if (false === $this->permissions->allowUpdate) {
+            return;
+        }
+
+        $accessClient = $this->getRolePage('EditCliente');
+        if (empty($this->views[$viewName]->model->codcliente) && $accessClient['allowupdate']
+            || empty($this->views[$viewName]->model->codcliente) && $this->user->admin) {
             $this->addButton($viewName, [
                 'action' => 'convert-into-customer',
                 'color' => 'success',
@@ -70,7 +78,9 @@ class EditContacto extends EditController
             ]);
         }
 
-        if (empty($this->views[$viewName]->model->codproveedor)) {
+        $accessSupplier = $this->getRolePage('EditProveedor');
+        if (empty($this->views[$viewName]->model->codproveedor) && $accessSupplier['allowupdate']
+            || empty($this->views[$viewName]->model->codproveedor) && $this->user->admin) {
             $this->addButton($viewName, [
                 'action' => 'convert-into-supplier',
                 'color' => 'success',
@@ -78,6 +88,24 @@ class EditContacto extends EditController
                 'label' => 'convert-into-supplier'
             ]);
         }
+    }
+
+    protected function createCustomer(): bool
+    {
+        $access = $this->getRolePage('EditCliente');
+        if (false === $access['allowupdate'] && false === $this->user->admin) {
+            return true;
+        }
+
+        $customer = $this->views['EditContacto']->model->getCustomer();
+        if ($customer->exists()) {
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            $this->redirect($customer->url() . '&action=save-ok');
+            return true;
+        }
+
+        $this->toolBox()->i18nLog()->error('record-save-error');
+        return false;
     }
 
     protected function createEmailsView(string $viewName = 'ListEmailSent')
@@ -91,6 +119,24 @@ class EditContacto extends EditController
 
         // disable buttons
         $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    protected function createSupplier(): bool
+    {
+        $access = $this->getRolePage('EditProveedor');
+        if (false === $access['allowupdate'] && false === $this->user->admin) {
+            return true;
+        }
+
+        $supplier = $this->views['EditContacto']->model->getSupplier();
+        if ($supplier->exists()) {
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            $this->redirect($supplier->url() . '&action=save-ok');
+            return true;
+        }
+
+        $this->toolBox()->i18nLog()->error('record-save-error');
+        return false;
     }
 
     /**
@@ -125,26 +171,10 @@ class EditContacto extends EditController
     {
         switch ($action) {
             case 'convert-into-customer':
-                $customer = $this->views['EditContacto']->model->getCustomer();
-                if ($customer->exists()) {
-                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-                    $this->redirect($customer->url() . '&action=save-ok');
-                    break;
-                }
-
-                $this->toolBox()->i18nLog()->error('record-save-error');
-                break;
+                return $this->createCustomer();
 
             case 'convert-into-supplier':
-                $supplier = $this->views['EditContacto']->model->getSupplier();
-                if ($supplier->exists()) {
-                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-                    $this->redirect($supplier->url() . '&action=save-ok');
-                    break;
-                }
-
-                $this->toolBox()->i18nLog()->error('record-save-error');
-                break;
+                return $this->createSupplier();
 
             default:
                 parent::execAfterAction($action);
@@ -173,6 +203,27 @@ class EditContacto extends EditController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    protected function getRolePage(string $pageName): array
+    {
+        $access = [
+            'allowdelete' => 0,
+            'allowupdate' => 0,
+            'onlyownerdata' => 0
+        ];
+        foreach (RoleAccess::allFromUser($this->user->nick, $pageName) as $rolesPageUser) {
+            if ($rolesPageUser->allowdelete) {
+                $access['allowdelete'] = 1;
+            }
+            if ($rolesPageUser->allowupdate) {
+                $access['allowupdate'] = 1;
+            }
+            if ($rolesPageUser->onlyownerdata) {
+                $access['onlyownerdata'] = 1;
+            }
+        }
+        return $access;
     }
 
     /**
