@@ -92,6 +92,8 @@
 
     function accEntryFormSave(action, selectedLine) {
         animateSpinner('add');
+        setOrdenLines();
+
         document.forms['accEntryForm']['action'].value = action;
         document.forms['accEntryForm']['selectedLine'].value = selectedLine;
 
@@ -132,14 +134,18 @@
         return false;
     };
 
+    function setOrdenLines() {
+        let orderInputs = $("input[name^='orden_']");
+        let count = orderInputs.length * 10;
+        orderInputs.each(function (index) {
+            $(this).val(count - (index * 10));
+        });
+    }
+
     function sortableEnable() {
         $("#accEntryFormLines").sortable({
             update: function (event, ui) {
-                let orderInputs = $("input[name^='orden_']");
-                let count = orderInputs.length * 10;
-                orderInputs.each(function (index) {
-                    $(this).val(count - (index * 10));
-                });
+                setOrdenLines();
             }
         });
         $("#accEntryFormLines").sortable("option", "disabled", false);
