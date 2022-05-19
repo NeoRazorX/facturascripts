@@ -622,6 +622,7 @@
     "invalid-iban": "invalid-iban",
     "invalid-number": "invalid-number",
     "invalid-request": "Antrag nicht gültig",
+    "invalid-web": "Dirección web no válida",
     "invoice": "Rechnung",
     "invoice-email-subject": "invoice-email-subject",
     "invoice-email-text": "Hallo, als Anlage Ihre Rechnung %code%",

@@ -622,6 +622,7 @@
     "invalid-iban": "IBAN baliogabea: %iban%",
     "invalid-number": "Zenbaki baliogabea: %number%",
     "invalid-request": "Eskaera baliogabea",
+    "invalid-web": "Web helbide baliogabea",
     "invoice": "Faktura",
     "invoice-email-subject": "Zure %code% faktura",
     "invoice-email-text": "Kaixo, zure %code% faktura atxikitzen dizut",

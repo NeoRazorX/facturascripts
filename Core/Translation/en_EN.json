@@ -622,6 +622,7 @@
     "invalid-iban": "Invalid IBAN: %iban%",
     "invalid-number": "Invalid number: %number%",
     "invalid-request": "Invalid request",
+    "invalid-web": "Invalid web address",
     "invoice": "Invoice",
     "invoice-email-subject": "Your invoice %code%",
     "invoice-email-text": "Hello, I am attaching your invoice %code%",
