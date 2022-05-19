@@ -60,9 +60,13 @@ final class AgenciaTransporteTest extends TestCase
         $agency->web = 'javascript:alert(origin)';
         $this->assertFalse($agency->save(), 'agency-can-save-bad-web');
 
-        // otra url peligrosa
+        // javascript con forma de url
         $agency->web = 'javascript://example.com//%0aalert(document.domain);//';
         $this->assertFalse($agency->save(), 'agency-can-save-bad-web-2');
+
+        // javascript con mayúsculas
+        $agency->web = 'jAvAsCriPt://sadas.com/%0aalert(11);//';
+        $this->assertFalse($agency->save(), 'agency-can-save-bad-web-3');
     }
 
     public function testGoodWeb()

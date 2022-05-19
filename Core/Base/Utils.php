@@ -138,7 +138,7 @@ class Utils
     public static function isValidUrl(string $url): bool
     {
         // si la url está vacío o comienza por javascript: entonces no es una url válida
-        if (empty($url) || strpos($url, 'javascript:') === 0) {
+        if (empty($url) || stripos($url, 'javascript:') === 0) {
             return false;
         }
 
