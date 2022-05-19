@@ -363,7 +363,7 @@ class SalesLineHTML
                 return self::recargo($i18n, $idlinea, $line, $model, 'salesFormActionWait');
 
             case 'referencia':
-                return self::referencia($i18n, $idlinea, $line, $model);
+                return self::referencia($i18n, $idlinea, $line, $model, self::$num);
 
             case 'suplido':
                 return self::suplido($i18n, $idlinea, $line, $model, 'salesFormAction');

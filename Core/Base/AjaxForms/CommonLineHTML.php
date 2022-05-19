@@ -137,7 +137,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function referencia(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
+    private static function referencia(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, int $numlinea): string
     {
         $sortable = $model->editable ?
             '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' :
@@ -146,12 +146,12 @@ trait CommonLineHTML
         $variante = new Variante();
         $where = [new DataBaseWhere('referencia', $line->referencia)];
         if (empty($line->referencia) || false === $variante->loadFromCode('', $where)) {
-            return '<div class="col-sm-2 col-lg-1 order-1">' . $sortable . '</div>';
+            return '<div class="col-sm-2 col-lg-1 order-1">' . $sortable . '<div class="small text-break"><small>' . $numlinea . '.</small></div></div>';
         }
 
         return '<div class="col-sm-2 col-lg-1 order-1">'
             . '<div class="small text-break"><div class="d-lg-none mt-2 text-truncate">' . $i18n->trans('reference') . '</div>'
-            . $sortable . '<a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>'
+            . $sortable . '<small>' . $numlinea . '.</small> <a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>'
             . '<input type="hidden" name="referencia_' . $idlinea . '" value="' . $line->referencia . '"/>'
             . '</div>'
             . '</div>';
