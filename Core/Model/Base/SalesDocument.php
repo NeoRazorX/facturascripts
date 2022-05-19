@@ -241,10 +241,7 @@ abstract class SalesDocument extends TransformerDocument
         return $cliente;
     }
 
-    /**
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // we need to call parent first
         $result = parent::install();

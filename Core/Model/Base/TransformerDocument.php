@@ -125,14 +125,14 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         // we check if there is already an open transaction so as not to break it
-        $newTransation = false === static::$dataBase->inTransaction() && self::$dataBase->beginTransaction();
+        $newTransaction = false === static::$dataBase->inTransaction() && self::$dataBase->beginTransaction();
 
         // remove lines to update stock
         foreach ($this->getLines() as $line) {
             if ($line->delete()) {
                 continue;
             }
-            if ($newTransation) {
+            if ($newTransaction) {
                 self::$dataBase->rollback();
             }
             return false;
@@ -140,7 +140,7 @@ abstract class TransformerDocument extends BusinessDocument
 
         // remove this model
         if (false === parent::delete()) {
-            if ($newTransation) {
+            if ($newTransaction) {
                 self::$dataBase->rollback();
             }
             return false;
@@ -172,7 +172,7 @@ abstract class TransformerDocument extends BusinessDocument
             'model-data' => $this->toArray()
         ]);
 
-        if ($newTransation) {
+        if ($newTransaction) {
             self::$dataBase->commit();
         }
         return true;
@@ -221,14 +221,7 @@ abstract class TransformerDocument extends BusinessDocument
         return $status;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new EstadoDocumento();

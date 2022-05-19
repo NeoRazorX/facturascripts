@@ -271,7 +271,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Serie();

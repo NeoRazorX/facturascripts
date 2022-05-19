@@ -122,7 +122,7 @@ abstract class ModelClass extends ModelCore
      */
     public function delete()
     {
-        if ($this->pipe('deleteBefore') === false) {
+        if ($this->pipeFalse('deleteBefore') === false) {
             return false;
         }
 
@@ -131,8 +131,7 @@ abstract class ModelClass extends ModelCore
 
         if (self::$dataBase->exec($sql)) {
             self::toolBox()::cache()->delete('model-' . $this->modelClassName() . '-count');
-            $this->pipe('delete');
-            return true;
+            return $this->pipeFalse('delete');
         }
 
         return false;
@@ -227,7 +226,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         $fields = $this->getModelFields();
         return isset($fields['descripcion']) ? 'descripcion' : static::primaryColumn();
@@ -251,21 +250,21 @@ abstract class ModelClass extends ModelCore
      */
     public function save()
     {
-        if ($this->pipe('saveBefore') === false) {
+        if ($this->pipeFalse('saveBefore') === false) {
             return false;
         }
 
-        $done = false;
-        if ($this->test()) {
-            $done = $this->exists() ? $this->saveUpdate() : $this->saveInsert();
+        if (false === $this->test()) {
+            return false;
         }
 
-        if ($done) {
-            self::toolBox()::cache()->delete('model-' . $this->modelClassName() . '-count');
-            $this->pipe('save');
+        $done = $this->exists() ? $this->saveUpdate() : $this->saveInsert();
+        if (false === $done) {
+            return false;
         }
 
-        return $done;
+        self::toolBox()::cache()->delete('model-' . $this->modelClassName() . '-count');
+        return $this->pipeFalse('save');
     }
 
     /**
@@ -276,7 +275,7 @@ abstract class ModelClass extends ModelCore
      */
     public function test()
     {
-        if ($this->pipe('testBefore') === false) {
+        if ($this->pipeFalse('testBefore') === false) {
             return false;
         }
 
@@ -294,12 +293,11 @@ abstract class ModelClass extends ModelCore
                 $return = false;
             }
         }
-
-        if ($this->pipe('test') === false) {
+        if (false === $return) {
             return false;
         }
 
-        return $return;
+        return $this->pipeFalse('test');
     }
 
     /**
@@ -310,7 +308,7 @@ abstract class ModelClass extends ModelCore
      *
      * @return string
      */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         $value = $this->primaryColumnValue();
         $model = $this->modelClassName();
@@ -338,7 +336,7 @@ abstract class ModelClass extends ModelCore
      */
     protected function saveInsert(array $values = [])
     {
-        if ($this->pipe('saveInsertBefore') === false) {
+        if ($this->pipeFalse('saveInsertBefore') === false) {
             return false;
         }
 
@@ -362,8 +360,7 @@ abstract class ModelClass extends ModelCore
                 self::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
             }
 
-            $this->pipe('saveInsert');
-            return true;
+            return $this->pipeFalse('saveInsert');
         }
 
         return false;
@@ -378,7 +375,7 @@ abstract class ModelClass extends ModelCore
      */
     protected function saveUpdate(array $values = [])
     {
-        if ($this->pipe('saveUpdateBefore') === false) {
+        if ($this->pipeFalse('saveUpdateBefore') === false) {
             return false;
         }
 
@@ -396,8 +393,7 @@ abstract class ModelClass extends ModelCore
 
         $sql .= ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
         if (self::$dataBase->exec($sql)) {
-            $this->pipe('saveUpdate');
-            return true;
+            return $this->pipeFalse('saveUpdate');
         }
 
         return false;

@@ -170,9 +170,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     abstract public function documentColumn();
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -251,10 +248,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $variante;
     }
 
-    /**
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Impuesto();
@@ -263,11 +257,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'idlinea';
@@ -354,15 +343,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return false;
     }
 
-    /**
-     * Custom url method.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         $name = str_replace('Linea', '', $this->modelClassName());
         return $type === 'new' ? 'Edit' . $name : parent::url($type, 'List' . $name . '?activetab=List');

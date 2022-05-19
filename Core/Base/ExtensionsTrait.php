@@ -79,39 +79,40 @@ trait ExtensionsTrait
         foreach (static::$extensions as $ext) {
             if ($ext['name'] !== $name) {
                 continue;
-            } elseif ($ext['function'] instanceof Closure) {
-                $return = call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
             }
 
-            if ($return !== null) {
-                break;
+            if ($ext['function'] instanceof Closure) {
+                $return = call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
+                if ($return !== null) {
+                    break;
+                }
             }
         }
 
         return $return;
     }
-    
+
     /**
      * @param string $name
      * @param array $arguments
      *
-     * @return mixed
+     * @return bool
      */
-    public function pipeFalse($name, ...$arguments)
+    public function pipeFalse($name, ...$arguments): bool
     {
-        $return = null;
         foreach (static::$extensions as $ext) {
             if ($ext['name'] !== $name) {
                 continue;
-            } elseif ($ext['function'] instanceof Closure) {
-                $return = call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
             }
 
-            if ($return === false) {
-                break;
+            if ($ext['function'] instanceof Closure) {
+                $return = call_user_func_array($ext['function']->bindTo($this, static::class), $arguments);
+                if ($return === false) {
+                    return false;
+                }
             }
         }
 
-        return $return;
+        return true;
     }
 }
