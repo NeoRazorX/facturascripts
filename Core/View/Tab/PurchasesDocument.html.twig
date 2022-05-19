@@ -155,6 +155,7 @@
 
     function purchasesFormSave(action, selectedLine) {
         animateSpinner('add');
+        setOrdenLines();
 
         document.forms['purchasesForm']['action'].value = action;
         document.forms['purchasesForm']['selectedLine'].value = selectedLine;
@@ -214,14 +215,18 @@
         }
     }
 
+    function setOrdenLines() {
+        let orderInputs = $("input[name^='orden_']");
+        let count = orderInputs.length * 10;
+        orderInputs.each(function (index) {
+            $(this).val(count - (index * 10));
+        });
+    }
+
     function sortableEnable() {
         $("#purchasesFormLines").sortable({
             update: function (event, ui) {
-                let orderInputs = $("input[name^='orden_']");
-                let count = orderInputs.length * 10;
-                orderInputs.each(function (index) {
-                    $(this).val(count - (index * 10));
-                });
+                setOrdenLines();
             }
         });
         $("#purchasesFormLines").sortable("option", "disabled", false);
