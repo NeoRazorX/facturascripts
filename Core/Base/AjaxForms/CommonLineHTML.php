@@ -82,9 +82,22 @@ trait CommonLineHTML
         $attributes = $model->editable ?
             'name="' . $field . '_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
-        return '<div class="col">'
+        return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans('percentage-discount') . ' 2'
             . '<input type="number" ' . $attributes . ' value="' . $line->{$field} . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function genericBool(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $label): string
+    {
+        $attributes = $model->editable ? 'name="' . $field . '_' . $idlinea . '"' : 'disabled=""';
+        $options = $line->{$field} ?
+            ['<option value="0">' . $i18n->trans('no') . '</option>', '<option value="1" selected="">' . $i18n->trans('yes') . '</option>'] :
+            ['<option value="0" selected="">' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
+        return '<div class="col-6">'
+            . '<div class="mb-2">' . $i18n->trans($label)
+            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -105,7 +118,7 @@ trait CommonLineHTML
         $attributes = $model->editable ?
             'name="irpf_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
-        return '<div class="col">'
+        return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans('retention')
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
@@ -133,7 +146,7 @@ trait CommonLineHTML
         $attributes = $model->editable ?
             'name="recargo_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
-        return '<div class="col">'
+        return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans('percentage-surcharge')
             . '<input type="number" ' . $attributes . ' value="' . $line->recargo . '" class="form-control"/>'
             . '</div>'
@@ -177,54 +190,6 @@ trait CommonLineHTML
             . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
     }
 
-    private static function showCantidad(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field): string
-    {
-        $attributes = $model->editable ?
-            'name="' . $field . '_' . $idlinea . '" id="ch' . $field . '_' . $idlinea . '"' :
-            'disabled=""';
-        $checked = (bool)$line->{$field} ? 'checked' : '';
-        return '<div class="col-12">'
-            . '<div class="form-check">'
-            . '<input type="checkbox" ' . $attributes . ' value="1" ' . $checked . ' class="form-check-input"/>'
-            . '<label class="form-check-label" for="ch' . $field . '_' . $idlinea . '">'
-            . $i18n->trans('show-quantity')
-            . '</label>'
-            . '</div>'
-            . '</div>';
-    }
-
-    private static function showPrecio(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field): string
-    {
-        $attributes = $model->editable ?
-            'name="' . $field . '_' . $idlinea . '" id="ch' . $field . '_' . $idlinea . '"' :
-            'disabled=""';
-        $checked = (bool)$line->{$field} ? 'checked' : '';
-        return '<div class="col-12">'
-            . '<div class="form-check">'
-            . '<input type="checkbox" ' . $attributes . ' value="1" ' . $checked . ' class="form-check-input"/>'
-            . '<label class="form-check-label" for="ch' . $field . '_' . $idlinea . '">'
-            . $i18n->trans('show-price')
-            . '</label>'
-            . '</div>'
-            . '</div>';
-    }
-
-    private static function saltoPagina(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field): string
-    {
-        $attributes = $model->editable ?
-            'name="' . $field . '_' . $idlinea . '" id="ch' . $field . '_' . $idlinea . '"' :
-            'disabled=""';
-        $checked = (bool)$line->{$field} ? 'checked' : '';
-        return '<div class="col-12">'
-            . '<div class="form-check">'
-            . '<input type="checkbox" ' . $attributes . ' value="1" ' . $checked . ' class="form-check-input"/>'
-            . '<label class="form-check-label" for="ch' . $field . '_' . $idlinea . '">'
-            . $i18n->trans('page-break')
-            . '</label>'
-            . '</div>'
-            . '</div>';
-    }
-
     private static function suplido(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $attributes = $model->editable ?
@@ -233,7 +198,7 @@ trait CommonLineHTML
         $options = $line->suplido ?
             ['<option value="0">' . $i18n->trans('no') . '</option>', '<option value="1" selected="">' . $i18n->trans('yes') . '</option>'] :
             ['<option value="0" selected="">' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
-        return '<div class="col">'
+        return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans('supplied')
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'

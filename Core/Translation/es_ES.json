@@ -953,6 +953,8 @@
     "print-data-records": "Imprimir todos los registros",
     "print-export-options": "Opciones de imprimir y exportar",
     "print-list-of-records": "Imprimir lista de registros",
+    "print-price": "Imprimir precios",
+    "print-quantity": "Imprimir cantidad",
     "printing-format": "Formato de impresión",
     "printing-formats": "Formatos de impresión",
     "priority": "Prioridad",

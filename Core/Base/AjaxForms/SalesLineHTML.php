@@ -178,7 +178,8 @@ class SalesLineHTML
             . self::renderField($i18n, $idlinea, $line, $model, 'codimpuesto')
             . self::renderField($i18n, $idlinea, $line, $model, '_total')
             . self::renderExpandButton($i18n, $idlinea, $model, 'salesFormAction')
-            . '</div>' . self::renderLineModal($i18n, $line, $idlinea, $model) . '</div>';
+            . '</div>'
+            . self::renderLineModal($i18n, $line, $idlinea, $model) . '</div>';
     }
 
     private static function applyToLine(array $formData, SalesDocumentLine &$line, string $id)
@@ -360,10 +361,10 @@ class SalesLineHTML
                 return self::irpf($i18n, $idlinea, $line, $model, 'salesFormAction');
 
             case 'mostrar_cantidad':
-                return self::showCantidad($i18n, $idlinea, $line, $model, 'mostrar_cantidad');
+                return self::genericBool($i18n, $idlinea, $line, $model, 'mostrar_cantidad', 'print-quantity');
 
             case 'mostrar_precio':
-                return self::showPrecio($i18n, $idlinea, $line, $model, 'mostrar_precio');
+                return self::genericBool($i18n, $idlinea, $line, $model, 'mostrar_precio', 'print-price');
 
             case 'pvpunitario':
                 return self::precio($i18n, $idlinea, $line, $model, 'salesFormActionWait');
@@ -375,7 +376,7 @@ class SalesLineHTML
                 return self::referencia($i18n, $idlinea, $line, $model);
 
             case 'salto_pagina':
-                return self::saltoPagina($i18n, $idlinea, $line, $model, 'salto_pagina');
+                return self::genericBool($i18n, $idlinea, $line, $model, 'salto_pagina', 'page-break');
 
             case 'suplido':
                 return self::suplido($i18n, $idlinea, $line, $model, 'salesFormAction');
@@ -390,38 +391,26 @@ class SalesLineHTML
             . '<div class="modal-dialog modal-dialog-centered">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">'
-            . $line->referencia
-            . '</h5>'
+            . '<h5 class="modal-title">' . $line->referencia . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="form-row">'
+            . self::renderField($i18n, $idlinea, $line, $model, 'dtopor2')
             . self::renderField($i18n, $idlinea, $line, $model, 'recargo')
             . self::renderField($i18n, $idlinea, $line, $model, 'irpf')
-            . '</div>'
-            . '<div class="form-row">'
             . self::renderField($i18n, $idlinea, $line, $model, 'suplido')
-            . self::renderField($i18n, $idlinea, $line, $model, 'dtopor2')
-            . '</div>'
-            . '<div class="form-row">'
             . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_cantidad')
             . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_precio')
             . self::renderField($i18n, $idlinea, $line, $model, 'salto_pagina')
-            . '</div>'
-            . '<div class="form-row">'
             . self::renderNewModalFields($i18n, $idlinea, $line, $model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
-            . $i18n->trans('close')
-            . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">'
-            . $i18n->trans('accept')
-            . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-dismiss="modal">' . $i18n->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'
