@@ -83,12 +83,7 @@ class DocumentStitcher extends Controller
         return $status;
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -137,8 +132,11 @@ class DocumentStitcher extends Controller
      */
     protected function addBlankLine(array &$newLines, $doc)
     {
-        $blankLine = $doc->getNewLine();
-        $blankLine->cantidad = 0;
+        $blankLine = $doc->getNewLine([
+            'cantidad' => 0,
+            'mostrar_cantidad' => false,
+            'mostrar_precio' => false
+        ]);
         $blankLine->iva = 0.0;
         $blankLine->irpf = 0.0;
         $blankLine->recargo = 0.0;
@@ -174,9 +172,14 @@ class DocumentStitcher extends Controller
      */
     protected function addInfoLine(array &$newLines, $doc)
     {
-        $infoLine = $doc->getNewLine();
-        $infoLine->cantidad = 0;
-        $infoLine->descripcion = $this->getDocInfoLineDescription($doc);
+        $infoLine = $doc->getNewLine([
+            'cantidad' => 0,
+            'descripcion' => $this->getDocInfoLineDescription($doc),
+            'mostrar_cantidad' => false,
+            'mostrar_precio' => false
+        ]);
+        $infoLine->dtopor = 0;
+        $infoLine->dtopor2 = 0;
         $infoLine->iva = 0.0;
         $infoLine->irpf = 0.0;
         $infoLine->recargo = 0.0;

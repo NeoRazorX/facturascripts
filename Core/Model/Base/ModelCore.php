@@ -315,7 +315,9 @@ abstract class ModelCore
      */
     private function getBoolValueForField($field, $value): ?bool
     {
-        if (in_array(strtolower($value), ['true', 't', '1'], false)) {
+        if (is_bool($value)) {
+            return $value;
+        } elseif (in_array(strtolower($value), ['true', 't', '1'], false)) {
             return true;
         } elseif (in_array(strtolower($value), ['false', 'f', '0'], false)) {
             return false;

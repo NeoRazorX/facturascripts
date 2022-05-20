@@ -262,12 +262,16 @@ abstract class PDFDocument extends PDFCore
         foreach ($model->getlines() as $line) {
             $data = [];
             foreach ($this->getLineHeaders() as $key => $value) {
+                if (property_exists($line, 'mostrar_precio') &&
+                    $line->mostrar_precio === false &&
+                    in_array($key, ['pvpunitario', 'dtopor', 'dtopor2', 'pvptotal', 'iva', 'recargo', 'irpf'], true)) {
+                    continue;
+                }
+
                 if ($key === 'referencia') {
                     $data[$key] = empty($line->{$key}) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->{$key} . " - " . $line->descripcion);
                 } elseif ($key === 'cantidad' && property_exists($line, 'mostrar_cantidad')) {
                     $data[$key] = $line->mostrar_cantidad ? $line->{$key} : '';
-                } elseif ($key === 'pvpunitario' && property_exists($line, 'mostrar_precio')) {
-                    $data[$key] = $line->mostrar_precio ? $this->numberTools->format($line->{$key}) : '';
                 } elseif ($value['type'] === 'percentage') {
                     $data[$key] = $this->numberTools->format($line->{$key}) . '%';
                 } elseif ($value['type'] === 'number') {
