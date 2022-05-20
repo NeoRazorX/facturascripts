@@ -92,7 +92,9 @@
                 document.getElementById("purchasesFormLines").innerHTML = data.lines;
             } else {
                 $.each(data.linesMap, function (index, value) {
-                    document.forms['purchasesForm'][index].value = value;
+                    if (document.forms['purchasesForm'][index] != null) {
+                        document.forms['purchasesForm'][index].value = value;
+                    }
                 });
             }
             if (data.footer !== '') {
