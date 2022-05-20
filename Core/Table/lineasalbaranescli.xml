@@ -99,6 +99,11 @@
         <type>character varying(30)</type>
     </column>
     <column>
+        <name>salto_pagina</name>
+        <type>boolean</type>
+        <default>false</default>
+    </column>
+    <column>
         <name>servido</name>
         <type>double precision</type>
         <null>NO</null>
