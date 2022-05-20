@@ -78,45 +78,42 @@ class ProductionErrorHandler
      */
     private function render($error): string
     {
-        $title = "FATAL ERROR #" . $error["type"];
+        $pluginName = $this->getPluginName($error);
+        $title = empty($pluginName) ? "FATAL ERROR #" . $error["type"] : 'Plugin ' . $pluginName . ': FATAL ERROR #' . $error["type"];
 
         // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
         $code = $error["type"] . substr($error["file"], strlen(FS_FOLDER)) . $error["line"] . $this->cleanMessage($error);
         $hash = sha1($code);
 
-        $html = "<html>"
+        $btn2 = empty($pluginName) ? '' :
+            ' <a class="btn2" href="AdminPlugins?action=disable&plugin=' . $pluginName . '">DISABLE / DESACTIVAR PLUGIN</a>';
+
+        return "<html>"
             . "<head>"
             . "<title>" . $title . "</title>"
             . "<style>"
             . "body {background-color: silver;}"
             . ".container {padding: 20px 20px 40px 20px; max-width: 900px; margin-left: auto; margin-right: auto; border-radius: 10px; background-color: snow;}"
             . ".text-center {text-align: center;}"
-            . ".btn {padding: 10px; border-radius: 5px; background-color: orange; color: white; text-decoration: none; font-weight: bold;}"
+            . ".btn1 {padding: 10px; border-radius: 5px; background-color: orange; color: white; text-decoration: none; font-weight: bold;}"
+            . ".btn2 {padding: 10px; border-radius: 5px; background-color: silver; color: white; text-decoration: none; font-weight: bold;}"
             . "</style>"
             . "</head>"
             . "<body>"
-            . "<div class='container'>";
-
-        $pluginName = $this->getPluginName($error);
-        if ($pluginName !== '') {
-            $html .= "<h1 class='text-center'>Plugin " . $pluginName . ": " . $title . "</h1>";
-        } else {
-            $html .= "<h1 class='text-center'>" . $title . "</h1>";
-        }
-
-        $html .= "<ul>"
+            . "<div class='container'>"
+            . "<h1 class='text-center'>" . $title . "</h1>"
+            . "<ul>"
             . "<li><b>File:</b> " . $error["file"] . " (<b>Line " . $error["line"] . "</b>)</li>"
             . "<li><b>Message:</b> " . $this->cleanMessage($error) . "</li>"
             . "<li><b>FacturaScripts:</b> " . PluginManager::CORE_VERSION . "</li>"
             . "<li><b>PHP:</b> " . PHP_VERSION . "</li>"
             . "</ul>"
             . "<div class='text-center'>"
-            . "<a href='https://facturascripts.com/contacto?errhash=" . $hash . "' target='_blank' class='btn'>REPORT / INFORMAR</a>"
+            . "<a class='btn1' href='https://facturascripts.com/contacto?errhash=" . $hash . "' target='_blank'>REPORT / INFORMAR</a>"
+            . $btn2
             . "</div>"
             . "</div>"
             . "</body>"
             . "</html>";
-
-        return $html;
     }
 }
