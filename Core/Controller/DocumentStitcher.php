@@ -137,9 +137,6 @@ class DocumentStitcher extends Controller
             'mostrar_cantidad' => false,
             'mostrar_precio' => false
         ]);
-        $blankLine->iva = 0.0;
-        $blankLine->irpf = 0.0;
-        $blankLine->recargo = 0.0;
         $newLines[] = $blankLine;
     }
 
@@ -178,11 +175,6 @@ class DocumentStitcher extends Controller
             'mostrar_cantidad' => false,
             'mostrar_precio' => false
         ]);
-        $infoLine->dtopor = 0;
-        $infoLine->dtopor2 = 0;
-        $infoLine->iva = 0.0;
-        $infoLine->irpf = 0.0;
-        $infoLine->recargo = 0.0;
         $newLines[] = $infoLine;
     }
 
