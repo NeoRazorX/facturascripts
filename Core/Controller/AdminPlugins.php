@@ -43,6 +43,10 @@ class AdminPlugins extends Base\Controller
 
     public function getAllPlugins(): array
     {
+        if (FS_DISABLE_ADD_PLUGINS) {
+            return [];
+        }
+
         $downloadTools = new Base\DownloadTools();
         $json = json_decode($downloadTools->getContents(self::PLUGIN_LIST_URL, 3), true);
         if (empty($json)) {
