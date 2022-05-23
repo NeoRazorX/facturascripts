@@ -30,6 +30,7 @@ use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\RoleAccess;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
@@ -229,16 +230,23 @@ abstract class SalesController extends PanelController
     protected function findCustomerAction(): bool
     {
         $this->setTemplate(false);
-        $customer = new Cliente();
-        $list = [];
-        $term = $this->request->get('term');
 
+        // ¿El usuario tiene permiso para ver todos los clientes?
+        $showAll = false;
+        foreach (RoleAccess::allFromUser($this->user->nick, 'EditCliente') as $access) {
+            if (false === $access->onlyownerdata) {
+                $showAll = true;
+            }
+        }
         $where = [];
-        if ($this->permissions->onlyOwnerData) {
+        if ($this->permissions->onlyOwnerData && !$showAll) {
             $where[] = new DataBaseWhere('codagente', $this->user->codagente);
             $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
         }
 
+        $list = [];
+        $customer = new Cliente();
+        $term = $this->request->get('term');
         foreach ($customer->codeModelSearch($term, '', $where) as $item) {
             $list[$item->code] = $item->code . ' | ' . $this->toolBox()->utils()->fixHtml($item->description);
         }

@@ -30,6 +30,7 @@ use FacturaScripts\Dinamic\Model\AtributoValor;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Fabricante;
 use FacturaScripts\Dinamic\Model\Familia;
+use FacturaScripts\Dinamic\Model\RoleAccess;
 
 /**
  * Description of SalesModalHTML
@@ -220,12 +221,21 @@ class SalesModalHTML
     protected static function modalClientes(Translator $i18n, string $url, User $user, ControllerPermissions $permissions): string
     {
         $trs = '';
-        $cliente = new Cliente();
+
+        // ¿El usuario tiene permiso para ver todos los clientes?
+        $showAll = false;
+        foreach (RoleAccess::allFromUser($user->nick, 'EditCliente') as $access) {
+            if (false === $access->onlyownerdata) {
+                $showAll = true;
+            }
+        }
         $where = [new DataBaseWhere('fechabaja', null, 'IS')];
-        if ($permissions->onlyOwnerData) {
+        if ($permissions->onlyOwnerData && !$showAll) {
             $where[] = new DataBaseWhere('codagente', $user->codagente);
             $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
         }
+
+        $cliente = new Cliente();
         foreach ($cliente->all($where, ['nombre' => 'ASC']) as $cli) {
             $name = ($cli->nombre === $cli->razonsocial) ? $cli->nombre : $cli->nombre . ' <small>(' . $cli->razonsocial . ')</span>';
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'salesForm\'][\'codcliente\'].value = \''
