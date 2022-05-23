@@ -1185,6 +1185,8 @@
     "template-error": "Erreur du modèle",
     "template-not-found": "Modèle non trouvé",
     "test": "Essai",
+    "test-mail-not-implemented": "El test del controlador de correo Mail no está implementado",
+    "test-sendmail-not-implemented": "El test del controlador de correo sendmail no está implementado",
     "text-color": "Color de texto",
     "third-trimester": "Troisième trimestre",
     "this-last-fortnight": "Les 15 derniers jours",
