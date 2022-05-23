@@ -27,12 +27,13 @@ final class AttachedFileTest extends TestCase
 {
     public function testSaveFile()
     {
-        $name = 'xss"\'><img src=x onerror=alert(123)>.jpeg';
-        $filePath = FS_FOLDER . '/Test/__files/' . $name;
-        $this->assertTrue(file_exists($filePath), 'File not found: ' . $filePath);
+        $original = 'xss_img_src_onerror_alert(123).jpeg';
+        $originalPath = FS_FOLDER . '/Test/__files/' . $original;
+        $this->assertTrue(file_exists($originalPath), 'File not found: ' . $originalPath);
 
-        // copiamos el archivo a MyFiles
-        $this->assertTrue(copy($filePath, FS_FOLDER . '/MyFiles/' . $name), 'File not copied');
+        // copiamos el archivo a MyFiles y renombramos
+        $name = 'xss"\'><img src=x onerror=alert(123)>.jpeg';
+        $this->assertTrue(copy($originalPath, FS_FOLDER . '/MyFiles/' . $name), 'File not copied');
 
         $model = new AttachedFile();
         $model->path = $name;
