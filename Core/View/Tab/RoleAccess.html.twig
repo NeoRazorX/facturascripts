@@ -1,3 +1,18 @@
+<style>
+    .custom-control-lg .custom-control-label::before,
+    .custom-control-lg .custom-control-label::after {
+        top: 0.1rem !important;
+        left: -2rem !important;
+        width: 1.25rem !important;
+        height: 1.25rem !important;
+    }
+
+    .custom-control-lg .custom-control-label {
+        margin-left: 1rem !important;
+        font-size: 1rem !important;
+    }
+</style>
+
 <form action="" method="post">
     <input type="hidden" name="action" value="edit-rules"/>
     <input type="hidden" name="activetab" value="{{ fsc.getCurrentView().getViewName() }}"/>
@@ -12,51 +27,95 @@
             <table class="table table-hover mb-0">
                 <thead>
                 <tr>
-                    <th>{{ i18n.trans('menu') }}</th>
-                    <th class="text-center">{{ i18n.trans('show') }}</th>
-                    <th class="text-center">{{ i18n.trans('only-owner-data') }}</th>
-                    <th class="text-center">{{ i18n.trans('allow-update') }}</th>
-                    <th class="text-center">{{ i18n.trans('allow-delete') }}</th>
+                    <th class="align-middle">
+                        {{ i18n.trans('menu') }}
+                        <div><small>{{ i18n.trans('check-all') }} / {{ i18n.trans('uncheck-all') }}</small></div>
+                    </th>
+                    <th class="text-center">
+                        {{ i18n.trans('show') }}
+                        <div class="custom-control-lg custom-control custom-checkbox">
+                            <input class="all-permission custom-control-input" id="checkbox-all-show" value="show" type="checkbox"/>
+                            <label class="custom-control-label" for="checkbox-all-show">&nbsp</label>
+                        </div>
+                    </th>
+                    <th class="text-center">
+                        {{ i18n.trans('only-owner-data') }}
+                        <div class="custom-control-lg custom-control custom-checkbox">
+                            <input class="all-permission custom-control-input" id="checkbox-all-onlyOwner" value="only-owner" type="checkbox"/>
+                            <label class="custom-control-label" for="checkbox-all-onlyOwner">&nbsp</label>
+                        </div>
+                    </th>
+                    <th class="text-center">
+                        {{ i18n.trans('allow-update') }}
+                        <div class="custom-control-lg custom-control custom-checkbox">
+                            <input class="all-permission custom-control-input" id="checkbox-all-update" value="update" type="checkbox"/>
+                            <label class="custom-control-label" for="checkbox-all-update">&nbsp</label>
+                        </div>
+                    </th>
+                    <th class="text-center">
+                        {{ i18n.trans('allow-delete') }}
+                        <div class="custom-control-lg custom-control custom-checkbox">
+                            <input class="all-permission custom-control-input" id="checkbox-all-delete" value="delete" type="checkbox"/>
+                            <label class="custom-control-label" for="checkbox-all-delete">&nbsp</label>
+                        </div>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for pageName, rule in fsc.getAccessRules() %}
                     <tr>
-                        <td>{{ rule.menu }}</td>
-                        <td class="text-center">
-                            {% if rule.show %}
-                                <input class="show-permission" type="checkbox" name="show[]" value="{{ pageName }}"
-                                       checked=""/>
-                            {% else %}
-                                <input class="show-permission" type="checkbox" name="show[]" value="{{ pageName }}"/>
+                        <td>
+                            {{ rule.menu }}
+                            {% if 'List' in pageName %}
+                            <span class="badge badge-info">{{ i18n.trans('list') }}</span>
                             {% endif %}
                         </td>
                         <td class="text-center">
-                            {% if rule.onlyOwner %}
-                                <input class="only-owner-permission" type="checkbox" name="onlyOwner[]"
-                                       value="{{ pageName }}" checked=""/>
-                            {% else %}
-                                <input class="only-owner-permission" type="checkbox" name="onlyOwner[]"
-                                       value="{{ pageName }}"/>
-                            {% endif %}
+                            <div class="custom-control-lg custom-control custom-checkbox">
+                                {% if rule.show %}
+                                    <input class="show-permission custom-control-input" id="checkbox-large-show-{{ pageName }}" type="checkbox" name="show[]" value="{{ pageName }}"
+                                           checked=""/>
+                                {% else %}
+                                    <input class="show-permission custom-control-input" id="checkbox-large-show-{{ pageName }}" type="checkbox" name="show[]" value="{{ pageName }}"/>
+                                {% endif %}
+                                <label class="custom-control-label" for="checkbox-large-show-{{ pageName }}">&nbsp</label>
+                            </div>
                         </td>
                         <td class="text-center">
-                            {% if rule.update %}
-                                <input class="update-permission" type="checkbox" name="update[]" value="{{ pageName }}"
-                                       checked=""/>
-                            {% else %}
-                                <input class="update-permission" type="checkbox" name="update[]"
-                                       value="{{ pageName }}"/>
-                            {% endif %}
+                            <div class="custom-control-lg custom-control custom-checkbox">
+                                {% if rule.onlyOwner %}
+                                    <input class="only-owner-permission custom-control-input" id="checkbox-large-onlyOwner-{{ pageName }}" type="checkbox" name="onlyOwner[]"
+                                           value="{{ pageName }}" checked=""/>
+                                {% else %}
+                                    <input class="only-owner-permission custom-control-input" id="checkbox-large-onlyOwner-{{ pageName }}" type="checkbox" name="onlyOwner[]"
+                                           value="{{ pageName }}"/>
+                                {% endif %}
+                                <label class="custom-control-label" for="checkbox-large-onlyOwner-{{ pageName }}">&nbsp</label>
+                            </div>
                         </td>
                         <td class="text-center">
-                            {% if rule.delete %}
-                                <input class="delete-permission" type="checkbox" name="delete[]" value="{{ pageName }}"
-                                       checked=""/>
-                            {% else %}
-                                <input class="delete-permission" type="checkbox" name="delete[]"
-                                       value="{{ pageName }}"/>
-                            {% endif %}
+                            <div class="custom-control-lg custom-control custom-checkbox">
+                                {% if rule.update %}
+                                    <input class="update-permission custom-control-input" id="checkbox-large-update-{{ pageName }}" type="checkbox" name="update[]" value="{{ pageName }}"
+                                           checked=""/>
+                                {% else %}
+                                    <input class="update-permission custom-control-input" id="checkbox-large-update-{{ pageName }}" type="checkbox" name="update[]"
+                                           value="{{ pageName }}"/>
+                                {% endif %}
+                                <label class="custom-control-label" for="checkbox-large-update-{{ pageName }}">&nbsp</label>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="custom-control-lg custom-control custom-checkbox">
+                                {% if rule.delete %}
+                                    <input class="delete-permission custom-control-input" id="checkbox-large-delete-{{ pageName }}"type="checkbox" name="delete[]" value="{{ pageName }}"
+                                           checked=""/>
+                                {% else %}
+                                    <input class="delete-permission custom-control-input" id="checkbox-large-delete-{{ pageName }}"type="checkbox" name="delete[]"
+                                           value="{{ pageName }}"/>
+                                {% endif %}
+                                <label class="custom-control-label" for="checkbox-large-delete-{{ pageName }}">&nbsp</label>
+                            </div>
                         </td>
                     </tr>
                 {% else %}
@@ -81,15 +140,22 @@
     $(document).ready(function () {
         $('input.only-owner-permission, input.update-permission, input.delete-permission').change(function () {
             if (this.checked) {
-                $(this).parent().parent().find('input.show-permission').prop('checked', true);
+                $(this).parent().parent().parent().find('input.show-permission').prop('checked', true);
             }
         });
 
         $('input.show-permission').change(function () {
             if (!this.checked) {
-                $(this).parent().parent().find('input.only-owner-permission').prop('checked', false);
-                $(this).parent().parent().find('input.update-permission').prop('checked', false);
-                $(this).parent().parent().find('input.delete-permission').prop('checked', false);
+                $(this).parent().parent().parent().find('input.only-owner-permission').prop('checked', false);
+                $(this).parent().parent().parent().find('input.update-permission').prop('checked', false);
+                $(this).parent().parent().parent().find('input.delete-permission').prop('checked', false);
+            }
+        });
+
+        $('input.all-permission').change(function () {
+            $('input.' + this.value + '-permission').prop('checked', this.checked).change();
+            if (!this.checked && this.value === 'show') {
+                $('input.all-permission').prop('checked', false);
             }
         });
     });
