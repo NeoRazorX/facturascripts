@@ -234,6 +234,13 @@
         $("#purchasesFormLines").sortable("disable");
     }
 
+    $(document).on('keyup', '.doc-line-desc', function(e) {
+        console.log('sdf');
+        while($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+            $(this).height($(this).height()+1);
+        };
+    });
+
     {% if model.editable %}
     let sortable = false;
 
