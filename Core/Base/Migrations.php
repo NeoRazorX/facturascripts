@@ -38,6 +38,7 @@ final class Migrations
         self::unlockNullProducts();
         self::updateInvoiceStatus();
         self::fixInvoiceLines();
+        self::fixAccountingEntries();
         self::clearLogs();
     }
 
@@ -54,6 +55,29 @@ final class Migrations
         $date = date("Y-m-d H:i:s", strtotime("-1 month"));
         $sql = "DELETE FROM logs WHERE channel = 'master' AND time < '" . $date . "';";
         $dataBase->exec($sql);
+    }
+
+    private static function fixAccountingEntries()
+    {
+        // si no existe la tabla 'partidas', terminamos
+        $dataBase = new DataBase();
+        if (!$dataBase->tableExists('partidas')) {
+            return;
+        }
+
+        // si no está la columna debeme, terminamos
+        $columns = $dataBase->getColumns('partidas');
+        if (!isset($columns['debeme'])) {
+            return;
+        }
+
+        // marcamos como null las columnas 'debeme' y 'haberme'
+        foreach (['debeme', 'haberme'] as $column) {
+            $sql = strtolower(FS_DB_TYPE) === 'mysql' ?
+                "ALTER TABLE partidas MODIFY " . $column . " double NULL DEFAULT NULL;" :
+                "ALTER TABLE partidas ALTER COLUMN " . $column . " DROP NOT NULL;";
+            $dataBase->exec($sql);
+        }
     }
 
     private static function fixInvoiceLines()
