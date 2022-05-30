@@ -23,7 +23,6 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Lib\CodePatterns;
 use FacturaScripts\Dinamic\Model\Asiento;
-use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\ConceptoPartida;
 use FacturaScripts\Dinamic\Model\Diario;
 use FacturaScripts\Dinamic\Model\Empresa;
@@ -50,6 +49,7 @@ class AccountingHeaderHTML
         $model->concepto = $formData['concepto'] ?? $model->concepto;
         $model->iddiario = !empty($formData['iddiario']) ? $formData['iddiario'] : null;
         $model->documento = $formData['documento'] ?? $model->documento;
+        $model->operacion = !empty($formData['operacion']) ? $formData['operacion'] : null;
     }
 
     /**
@@ -62,13 +62,17 @@ class AccountingHeaderHTML
     public static function render(Asiento $model): string
     {
         $i18n = new Translator();
-        return '<div class="container-fluid"><div class="form-row">'
+        return '<div class="container-fluid">'
+            . '<div class="form-row">'
             . static::idempresa($i18n, $model)
             . static::fecha($i18n, $model)
             . static::concepto($i18n, $model)
             . static::documento($i18n, $model)
+            . '</div>'
+            . '<div class="form-row">'
             . static::canal($i18n, $model)
             . static::diario($i18n, $model)
+            . static::operacion($i18n, $model)
             . '</div></div><br/>';
     }
 
@@ -83,7 +87,7 @@ class AccountingHeaderHTML
     protected static function canal(Translator $i18n, Asiento $model): string
     {
         $attributes = $model->editable ? 'name="canal"' : 'disabled';
-        return '<div class="col-sm-6 col-md-1">'
+        return '<div class="col-sm-4">'
             . '<div class="form-group">' . $i18n->trans('channel')
             . '<input type="number" ' . $attributes . ' value="' . $model->canal . '" class="form-control"/>'
             . '</div>'
@@ -170,7 +174,7 @@ class AccountingHeaderHTML
 
 
         $attributes = $model->editable ? 'name="iddiario"' : 'disabled';
-        return '<div class="col-sm-6 col-md-2">'
+        return '<div class="col-sm-4">'
             . '<div class="form-group">' . $i18n->trans('daily')
             . '<select ' . $attributes . ' class="form-control">'
             . $options
@@ -258,6 +262,29 @@ class AccountingHeaderHTML
             . static::getItems($companyList, 'idempresa', 'nombre', $model->idempresa)
             . '</select>'
             . '</div>'
+            . '</div>'
+            . '</div>';
+    }
+
+    /**
+     * Render the operacion field
+     *
+     * @param Translator $i18n
+     * @param Asiento $model
+     *
+     * @return string
+     */
+    protected static function operacion(Translator $i18n, Asiento $model): string
+    {
+        $attributes = $model->editable ? 'name="operacion"' : 'disabled';
+        return '<div class="col-sm-4">'
+            . '<div class="form-group">' . $i18n->trans('operation')
+            . '<select ' . $attributes . ' class="form-control">'
+            . '<option value="">------</option>'
+            . '<option value="A" ' . ($model->operacion === 'A' ? 'selected' : '') . '>' . $i18n->trans('opening') . '</option>'
+            . '<option value="C" ' . ($model->operacion === 'C' ? 'selected' : '') . '>' . $i18n->trans('closing') . '</option>'
+            . '<option value="R" ' . ($model->operacion === 'R' ? 'selected' : '') . '>' . $i18n->trans('regularization') . '</option>'
+            . '</select>'
             . '</div>'
             . '</div>';
     }
