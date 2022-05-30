@@ -157,6 +157,13 @@ class SendMail extends Controller
                 break;
 
             case 'send':
+                // valid request?
+                $token = $this->request->request->get('multireqtoken', '');
+                if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
+                    $this->toolBox()->i18nLog()->warning('invalid-request');
+                    break;
+                }
+
                 if ($this->send()) {
                     $this->toolBox()->i18nLog()->notice('send-mail-ok');
                     $this->updateFemail();

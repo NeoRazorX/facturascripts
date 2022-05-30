@@ -30,6 +30,7 @@
         <div class="row">
             <div class="col-12">
                 <form action="{{ fsc.url() }}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
                     <input type="hidden" name="action" value="send"/>
                     <div class="card shadow">
                         <div class="card-body">
