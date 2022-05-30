@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,121 +22,122 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" display="none" order="100">
-                <widget type="text" fieldname="idcontacto" required="true" />
+                <widget type="text" fieldname="idcontacto" required="true"/>
             </column>
             <column name="description" display="none" numcolumns="2" order="110">
-                <widget type="text" fieldname="descripcion" required="true" />
+                <widget type="text" fieldname="descripcion"/>
             </column>
             <column name="name" numcolumns="2" order="120">
-                <widget type="text" fieldname="nombre" maxlength="100" required="true" />
+                <widget type="text" fieldname="nombre" maxlength="100"/>
             </column>
             <column name="surname" numcolumns="3" order="130">
-                <widget type="text" fieldname="apellidos" maxlength="150" />
+                <widget type="text" fieldname="apellidos" maxlength="150"/>
             </column>
-            <column name="fiscal-id" titleurl="EditSettings?activetab=EditIdentificadorFiscal" numcolumns="2" order="140">
+            <column name="fiscal-id" titleurl="EditSettings?activetab=EditIdentificadorFiscal" numcolumns="2"
+                    order="140">
                 <widget type="select" fieldname="tipoidfiscal" required="true">
-                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal" />
+                    <values source="idsfiscales" fieldcode="tipoidfiscal" fieldtitle="tipoidfiscal"/>
                 </widget>
             </column>
             <column name="fiscal-number" numcolumns="3" order="150">
-                <widget type="text" fieldname="cifnif" maxlength="30" icon="fas fa-id-card" />
+                <widget type="text" fieldname="cifnif" maxlength="30" icon="fas fa-id-card"/>
             </column>
             <column name="company" numcolumns="2" order="160">
-                <widget type="text" fieldname="empresa" maxlength="100" />
+                <widget type="text" fieldname="empresa" maxlength="100"/>
             </column>
             <column name="position" order="170">
-                <widget type="text" fieldname="cargo" />
+                <widget type="text" fieldname="cargo"/>
             </column>
             <column name="customer" order="180">
                 <widget type="autocomplete" fieldname="codcliente" onclick="EditCliente">
-                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre" />
+                    <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"/>
                 </widget>
             </column>
             <column name="supplier" order="190">
                 <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor">
-                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre" />
+                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"/>
                 </widget>
             </column>
             <column name="agent" order="200">
                 <widget type="autocomplete" fieldname="codagente" onclick="EditAgente">
-                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre" />
+                    <values source="agentes" fieldcode="codagente" fieldtitle="nombre"/>
                 </widget>
             </column>
         </group>
         <group name="contact" title="contact" numcolumns="12">
             <column name="phone" order="100">
-                <widget type="text" fieldname="telefono1" maxlength="30" icon="fas fa-phone" />
+                <widget type="text" fieldname="telefono1" maxlength="30" icon="fas fa-phone"/>
             </column>
             <column name="phone2" order="110">
-                <widget type="text" fieldname="telefono2" maxlength="30" icon="fas fa-mobile-alt" />
+                <widget type="text" fieldname="telefono2" maxlength="30" icon="fas fa-mobile-alt"/>
             </column>
             <column name="email" order="120">
-                <widget type="text" fieldname="email" maxlength="100" icon="fas fa-envelope" />
+                <widget type="text" fieldname="email" maxlength="100" icon="fas fa-envelope"/>
             </column>
             <column name="new-password" display="none" order="130">
-                <widget type="password" fieldname="newPassword" icon="fas fa-key" />
+                <widget type="password" fieldname="newPassword" icon="fas fa-key"/>
             </column>
             <column name="repeat-new-password" display="none" order="140">
-                <widget type="password" fieldname="newPassword2" icon="fas fa-key" />
+                <widget type="password" fieldname="newPassword2" icon="fas fa-key"/>
             </column>
         </group>
         <group name="address" title="address" numcolumns="12">
             <column name="address" numcolumns="4" order="100">
-                <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked" />
+                <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked"/>
             </column>
             <column name="post-office-box" numcolumns="1" order="110">
-                <widget type="text" fieldname="apartado" maxlength="10" />
+                <widget type="text" fieldname="apartado" maxlength="10"/>
             </column>
             <column name="zip-code" numcolumns="1" order="120">
-                <widget type="text" fieldname="codpostal" maxlength="10" />
+                <widget type="text" fieldname="codpostal" maxlength="10"/>
             </column>
             <column name="city" numcolumns="2" order="130">
-                <widget type="text" fieldname="ciudad" />
+                <widget type="text" fieldname="ciudad"/>
             </column>
             <column name="province" numcolumns="2" order="140">
-                <widget type="text" fieldname="provincia" />
+                <widget type="text" fieldname="provincia"/>
             </column>
             <column name="country" titleurl="ListPais" numcolumns="2" order="150">
                 <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
-                    <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
+                    <values source="paises" fieldcode="codpais" fieldtitle="nombre"/>
                 </widget>
             </column>
         </group>
         <group name="other" title="other-data" valign="bottom" numcolumns="12">
             <column name="creation-date" display="none" numcolumns="2" order="100">
-                <widget type="date" fieldname="fechaalta" readonly="true" />
+                <widget type="date" fieldname="fechaalta" readonly="true"/>
             </column>
             <column name="last-activity" display="none" numcolumns="3" order="110">
-                <widget type="date" fieldname="lastactivity" readonly="true" />
+                <widget type="date" fieldname="lastactivity" readonly="true"/>
             </column>
             <column name="last-ip" display="none" numcolumns="3" order="120">
-                <widget type="text" fieldname="lastip" readonly="true" />
+                <widget type="text" fieldname="lastip" readonly="true"/>
             </column>
             <column name="points" display="none" numcolumns="2" order="130">
-                <widget type="number" fieldname="puntos" />
+                <widget type="number" fieldname="puntos"/>
             </column>
             <column name="level" display="none" numcolumns="2" order="140">
-                <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision" />
+                <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision"/>
             </column>
             <column name="is-person" numcolumns="3" order="150">
-                <widget type="checkbox" fieldname="personafisica" />
+                <widget type="checkbox" fieldname="personafisica"/>
             </column>
             <column name="enabled" display="none" numcolumns="2" order="160">
-                <widget type="checkbox" fieldname="habilitado" />
+                <widget type="checkbox" fieldname="habilitado"/>
             </column>
             <column name="verified" numcolumns="2" order="170">
-                <widget type="checkbox" fieldname="verificado" />
+                <widget type="checkbox" fieldname="verificado"/>
             </column>
             <column name="accept-privacy-policy" display="none" numcolumns="3" order="180">
-                <widget type="checkbox" fieldname="aceptaprivacidad" />
+                <widget type="checkbox" fieldname="aceptaprivacidad"/>
             </column>
             <column name="allow-marketing" numcolumns="2" order="190">
-                <widget type="checkbox" fieldname="admitemarketing" />
+                <widget type="checkbox" fieldname="admitemarketing"/>
             </column>
         </group>
         <group name="notes" numcolumns="12">
             <column name="observations" numcolumns="12" order="100">
-                <widget type="textarea" fieldname="observaciones" />
+                <widget type="textarea" fieldname="observaciones"/>
             </column>
         </group>
     </columns>

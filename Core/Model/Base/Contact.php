@@ -143,11 +143,6 @@ abstract class Contact extends ModelClass
         $this->telefono1 = $utils->noHtml($this->telefono1);
         $this->telefono2 = $utils->noHtml($this->telefono2);
 
-        if (empty($this->nombre)) {
-            $this->toolBox()->i18nLog()->warning('field-can-not-be-null', ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]);
-            return false;
-        }
-
         $validator = new FiscalNumberValitator();
         if (!empty($this->cifnif) && false === $validator->validate($this->tipoidfiscal, $this->cifnif)) {
             $this->toolBox()->i18nLog()->warning('not-valid-fiscal-number', ['%type%' => $this->tipoidfiscal, '%number%' => $this->cifnif]);

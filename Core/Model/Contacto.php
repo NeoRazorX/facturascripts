@@ -382,12 +382,13 @@ class Contacto extends Base\Contact
 
     public function test(): bool
     {
-        if (empty($this->descripcion)) {
-            $this->descripcion = empty($this->codcliente) ? $this->fullName() : $this->direccion;
+        if (empty($this->nombre) && empty($this->email) && empty($this->direccion)) {
+            $this->toolBox()->i18nLog()->warning('empty-contact-data');
+            return false;
         }
 
-        if (empty($this->nombre)) {
-            $this->nombre = $this->descripcion;
+        if (empty($this->descripcion)) {
+            $this->descripcion = empty($this->codcliente) && empty($this->codproveedor) ? $this->fullName() : $this->direccion;
         }
 
         $utils = $this->toolBox()->utils();
