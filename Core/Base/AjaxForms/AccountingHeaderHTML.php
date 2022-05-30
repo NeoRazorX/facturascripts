@@ -23,7 +23,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Lib\CodePatterns;
 use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\ConceptoPartida;
+use FacturaScripts\Dinamic\Model\Diario;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
@@ -44,7 +46,9 @@ class AccountingHeaderHTML
     public static function apply(Asiento &$model, array $formData)
     {
         $model->setDate($formData['fecha'] ?? $model->fecha);
+        $model->canal = $formData['canal'] ?? $model->canal;
         $model->concepto = $formData['concepto'] ?? $model->concepto;
+        $model->iddiario = !empty($formData['iddiario']) ? $formData['iddiario'] : null;
         $model->documento = $formData['documento'] ?? $model->documento;
     }
 
@@ -63,7 +67,27 @@ class AccountingHeaderHTML
             . static::fecha($i18n, $model)
             . static::concepto($i18n, $model)
             . static::documento($i18n, $model)
+            . static::canal($i18n, $model)
+            . static::diario($i18n, $model)
             . '</div></div><br/>';
+    }
+
+    /**
+     * Render the canal field
+     *
+     * @param Translator $i18n
+     * @param Asiento $model
+     *
+     * @return string
+     */
+    protected static function canal(Translator $i18n, Asiento $model): string
+    {
+        $attributes = $model->editable ? 'name="canal"' : 'disabled';
+        return '<div class="col-sm-6 col-md-1">'
+            . '<div class="form-group">' . $i18n->trans('channel')
+            . '<input type="number" ' . $attributes . ' value="' . $model->canal . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
     }
 
     /**
@@ -118,11 +142,39 @@ class AccountingHeaderHTML
                 . '</div>';
         }
 
-        return empty($model->documento) ? '' : '<div class="col-sm-3 col-md-2">'
+        return empty($model->documento) ? '' : '<div class="col-sm-3 col-md-2 mb-3">'
             . $i18n->trans('document')
             . '<div class="input-group">'
             . $link
             . '<input type="text" value="' . $model->documento . '" class="form-control" readonly/>'
+            . '</div>'
+            . '</div>';
+    }
+
+    /**
+     * Render the diario field
+     *
+     * @param Translator $i18n
+     * @param Asiento $model
+     *
+     * @return string
+     */
+    protected static function diario(Translator $i18n, Asiento $model): string
+    {
+        $options = '<option value="">------</option>';
+        $modelDiario = new Diario();
+        foreach ($modelDiario->all([], [], 0, 0) as $diario) {
+            $check = $diario->iddiario === $model->iddiario ? 'selected' : '';
+            $options .= '<option value="' . $diario->iddiario . '" ' . $check . '>' . $diario->descripcion . '</option>';
+        }
+
+
+        $attributes = $model->editable ? 'name="iddiario"' : 'disabled';
+        return '<div class="col-sm-6 col-md-2">'
+            . '<div class="form-group">' . $i18n->trans('daily')
+            . '<select ' . $attributes . ' class="form-control">'
+            . $options
+            . '</select>'
             . '</div>'
             . '</div>';
     }
