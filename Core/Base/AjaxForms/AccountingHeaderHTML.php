@@ -95,7 +95,6 @@ class AccountingHeaderHTML
      */
     protected static function documento(Translator $i18n, Asiento $model): string
     {
-        $title = $i18n->trans('document');
         $found = false;
         $where = [
             new DataBaseWhere('codigo', $model->documento),
@@ -112,12 +111,17 @@ class AccountingHeaderHTML
             }
         }
 
+        $link = '';
         if ($found) {
-            $title = '<a href="Edit' . $facturaModel->modelClassName() . '?code=' . $facturaModel->idfactura . '">' . $title . '</a>';
+            $link .= '<div class="input-group-prepend">'
+                . '<a class="btn btn-outline-primary" href="Edit' . $facturaModel->modelClassName() . '?code=' . $facturaModel->idfactura . '"><i class="far fa-eye"></i></a>'
+                . '</div>';
         }
 
         return empty($model->documento) ? '' : '<div class="col-sm-3 col-md-2">'
-            . '<div class="form-group">' . $title
+            . $i18n->trans('document')
+            . '<div class="input-group">'
+            . $link
             . '<input type="text" value="' . $model->documento . '" class="form-control" readonly/>'
             . '</div>'
             . '</div>';
