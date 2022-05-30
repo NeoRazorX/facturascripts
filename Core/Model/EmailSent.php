@@ -103,7 +103,8 @@ class EmailSent extends Base\ModelClass
     public function test(): bool
     {
         $utils = $this->toolBox()->utils();
-        $this->body = $utils->noHtml($this->body);
+        $body = $utils->noHtml($this->body);
+        $this->body = strlen($body) > 5000 ? substr($body, 0, 5000) : $body;
         $this->subject = $utils->noHtml($this->subject);
         return parent::test();
     }
