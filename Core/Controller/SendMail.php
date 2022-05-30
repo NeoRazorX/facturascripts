@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -158,12 +158,9 @@ class SendMail extends Controller
 
             case 'send':
                 // valid request?
-                $token = $this->request->request->get('multireqtoken', '');
-                if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
-                    $this->toolBox()->i18nLog()->warning('invalid-request');
+                if (false === $this->validateFormToken()) {
                     break;
                 }
-
                 if ($this->send()) {
                     $this->toolBox()->i18nLog()->notice('send-mail-ok');
                     $this->updateFemail();
