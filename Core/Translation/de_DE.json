@@ -421,6 +421,7 @@
     "emails-sent": "E-Mails gesendet",
     "employees": "Angestellte",
     "empty": "Leer",
+    "empty-contact-data": "El contacto debe tener nombre o email o dirección",
     "enable": "aktivieren",
     "enable-api": "API aktivieren",
     "enable-updates-beta": "Activar actualizaciones beta",

@@ -62,6 +62,10 @@ final class ContactoTest extends TestCase
         $contact->direccion = 'Test';
         $this->assertTrue($contact->save(), 'customer-address-cant-save');
 
+        // nombre y apellidos están vacíos
+        $this->assertEquals('', $contact->nombre);
+        $this->assertEquals('', $contact->apellidos);
+
         // eliminamos
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
         $this->assertTrue($customer->delete(), 'customer-cant-delete');
@@ -79,6 +83,10 @@ final class ContactoTest extends TestCase
         $contact->direccion = 'Test';
         $this->assertTrue($contact->save(), 'supplier-address-cant-save');
 
+        // nombre y apellidos están vacíos
+        $this->assertEquals('', $contact->nombre);
+        $this->assertEquals('', $contact->apellidos);
+
         // eliminamos
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
         $this->assertTrue($supplier->delete(), 'supplier-cant-delete');
@@ -93,6 +101,55 @@ final class ContactoTest extends TestCase
         $contact->descripcion = '';
         $contact->direccion = '';
         $this->assertFalse($contact->save(), 'contact-cant-save-empty');
+    }
+
+    public function testBadEmail()
+    {
+        $contact = new Contacto();
+        $contact->email = 'pepe-mail';
+        $this->assertFalse($contact->save(), 'contact-can-save-bad-email');
+
+        // probamos un email correcto
+        $contact->email = 'pepe@facturascripts.com';
+        $this->assertTrue($contact->save(), 'contact-cant-save-good-email');
+
+        // eliminamos
+        $this->assertTrue($contact->delete(), 'contact-cant-delete');
+    }
+
+    public function testHtmlOnFields()
+    {
+        $contact = new Contacto();
+        $contact->nombre = '<script>alert("test");</script>';
+        $contact->apellidos = '<script>alert("test");</script>';
+        $contact->direccion = '<script>alert("test");</script>';
+        $contact->descripcion = '<script>alert("test");</script>';
+        $contact->ciudad = '<script>alert("test");</script>';
+        $contact->provincia = '<script>alert("test");</script>';
+        $contact->empresa = '<script>alert("test");</script>';
+        $contact->cifnif = '<test>';
+        $contact->telefono1 = '<test>';
+        $contact->telefono2 = '<test>';
+        $contact->fax = '<test>';
+        $contact->observaciones = '<script>alert("test");</script>';
+        $this->assertTrue($contact->save(), 'contact-cant-save-html');
+
+        // comprobamos que el html se ha escapado
+        $this->assertEquals('&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;', $contact->nombre);
+        $this->assertEquals('&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;', $contact->apellidos);
+        $this->assertEquals('&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;', $contact->direccion);
+        $this->assertEquals('&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;', $contact->descripcion);
+        $this->assertEquals('&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;', $contact->ciudad);
+        $this->assertEquals('&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;', $contact->provincia);
+        $this->assertEquals('&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;', $contact->empresa);
+        $this->assertEquals('&lt;test&gt;', $contact->cifnif);
+        $this->assertEquals('&lt;test&gt;', $contact->telefono1);
+        $this->assertEquals('&lt;test&gt;', $contact->telefono2);
+        $this->assertEquals('&lt;test&gt;', $contact->fax);
+        $this->assertEquals('&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;', $contact->observaciones);
+
+        // eliminamos
+        $this->assertTrue($contact->delete(), 'contact-cant-delete');
     }
 
     protected function tearDown(): void

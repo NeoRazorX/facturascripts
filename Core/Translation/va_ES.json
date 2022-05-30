@@ -421,6 +421,7 @@
     "emails-sent": "Correus enviats",
     "employees": "employees",
     "empty": "Buit",
+    "empty-contact-data": "El contacto debe tener nombre o email o dirección",
     "enable": "Activar",
     "enable-api": "Activar el API",
     "enable-updates-beta": "Activar actualizaciones beta",

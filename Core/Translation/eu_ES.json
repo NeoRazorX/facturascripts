@@ -421,6 +421,7 @@
     "emails-sent": "Bidalitako e-postak",
     "employees": "Langileak",
     "empty": "Hutsik",
+    "empty-contact-data": "El contacto debe tener nombre o email o dirección",
     "enable": "Aktibatu",
     "enable-api": "APIa gaitu",
     "enable-updates-beta": "Aktibatu beta eguneraketak",

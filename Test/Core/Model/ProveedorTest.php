@@ -54,6 +54,50 @@ final class ProveedorTest extends TestCase
         $this->assertFalse($proveedor->exists(), 'proveedor-persisted');
     }
 
+    public function testHtmlOnFields()
+    {
+        $proveedor = new Proveedor();
+        $proveedor->nombre = '<test>';
+        $proveedor->cifnif = '<test>';
+        $proveedor->razonsocial = '<test>';
+        $proveedor->telefono1 = '<test>';
+        $proveedor->telefono2 = '<test>';
+        $proveedor->fax = '<test>';
+        $proveedor->observaciones = '<test>';
+        $this->assertTrue($proveedor->save(), 'proveedor-cant-save');
+
+        // comprobamos que el html se ha escapado
+        $this->assertEquals('&lt;test&gt;', $proveedor->nombre, 'html-not-escaped-on-nombre');
+        $this->assertEquals('&lt;test&gt;', $proveedor->cifnif, 'html-not-escaped-on-cifnif');
+        $this->assertEquals('&lt;test&gt;', $proveedor->razonsocial, 'html-not-escaped-on-razonsocial');
+        $this->assertEquals('&lt;test&gt;', $proveedor->telefono1, 'html-not-escaped-on-telefono1');
+        $this->assertEquals('&lt;test&gt;', $proveedor->telefono2, 'html-not-escaped-on-telefono2');
+        $this->assertEquals('&lt;test&gt;', $proveedor->fax, 'html-not-escaped-on-fax');
+        $this->assertEquals('&lt;test&gt;', $proveedor->observaciones, 'html-not-escaped-on-observaciones');
+
+        // eliminamos
+        $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
+    }
+
+    public function testBadEmail()
+    {
+        $proveedor = new Proveedor();
+        $proveedor->nombre = 'Test';
+        $proveedor->cifnif = '12345678A';
+        $proveedor->email = 'bad-email';
+        $this->assertFalse($proveedor->save(), 'proveedor-can-save');
+
+        // el proveedor no existe
+        $this->assertFalse($proveedor->exists(), 'proveedor-persisted');
+
+        // probamos un email correcto
+        $proveedor->email = 'pepe@test.com';
+        $this->assertTrue($proveedor->save(), 'proveedor-cant-save');
+
+        // eliminamos
+        $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
+    }
+
     public function testBadWeb()
     {
         $proveedor = new Proveedor();

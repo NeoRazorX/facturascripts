@@ -421,6 +421,7 @@
     "emails-sent": "Emails sent",
     "employees": "Employees",
     "empty": "Empty",
+    "empty-contact-data": "El contacto debe tener nombre o email o dirección",
     "enable": "Enable",
     "enable-api": "Enable API",
     "enable-updates-beta": "Enable beta updates",

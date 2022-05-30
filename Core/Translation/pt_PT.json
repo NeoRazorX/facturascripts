@@ -421,6 +421,7 @@
     "emails-sent": "emails-sent",
     "employees": "employees",
     "empty": "Vazio",
+    "empty-contact-data": "El contacto debe tener nombre o email o dirección",
     "enable": "Habilitar",
     "enable-api": "Enable API",
     "enable-updates-beta": "Activar actualizaciones beta",
