@@ -68,10 +68,8 @@ class AccountingHeaderHTML
             . static::fecha($i18n, $model)
             . static::concepto($i18n, $model)
             . static::documento($i18n, $model)
-            . '</div>'
-            . '<div class="form-row">'
-            . static::canal($i18n, $model)
             . static::diario($i18n, $model)
+            . static::canal($i18n, $model)
             . static::operacion($i18n, $model)
             . '</div></div><br/>';
     }
@@ -87,7 +85,7 @@ class AccountingHeaderHTML
     protected static function canal(Translator $i18n, Asiento $model): string
     {
         $attributes = $model->editable ? 'name="canal"' : 'disabled';
-        return '<div class="col-sm-4">'
+        return '<div class="col-sm-2 col-md">'
             . '<div class="form-group">' . $i18n->trans('channel')
             . '<input type="number" ' . $attributes . ' value="' . $model->canal . '" class="form-control"/>'
             . '</div>'
@@ -123,36 +121,42 @@ class AccountingHeaderHTML
      */
     protected static function documento(Translator $i18n, Asiento $model): string
     {
-        $found = false;
+        if (empty($model->documento)) {
+            return '';
+        }
+
+        $link = '';
+        $facturaCliente = new FacturaCliente();
         $where = [
             new DataBaseWhere('codigo', $model->documento),
             new DataBaseWhere('idasiento', $model->idasiento),
         ];
-
-        $facturaModel = new FacturaCliente();
-        if ($facturaModel->loadFromCode('', $where)) {
-            $found = true;
+        if ($facturaCliente->loadFromCode('', $where)) {
+            $link = $facturaCliente->url();
         } else {
-            $facturaModel = new FacturaProveedor();
-            if ($facturaModel->loadFromCode('', $where)) {
-                $found = true;
+            $facturaProveedor = new FacturaProveedor();
+            if ($facturaProveedor->loadFromCode('', $where)) {
+                $link = $facturaProveedor->url();
             }
         }
 
-        $link = '';
-        if ($found) {
-            $link .= '<div class="input-group-prepend">'
-                . '<a class="btn btn-outline-primary" href="Edit' . $facturaModel->modelClassName() . '?code=' . $facturaModel->idfactura . '"><i class="far fa-eye"></i></a>'
+        if ($link) {
+            return '<div class="col-sm-3 col-md-2">'
+                . '<div class="form-group">' . $i18n->trans('document')
+                . '<div class="input-group">'
+                . '<div class="input-group-prepend">'
+                . '<a class="btn btn-outline-primary" href="' . $link . '"><i class="far fa-eye"></i></a>'
+                . '</div>'
+                . '<input type="text" value="' . $model->documento . '" class="form-control" readonly/>'
+                . '</div>'
+                . '</div>'
                 . '</div>';
         }
 
-        return empty($model->documento) ? '' : '<div class="col-sm-3 col-md-2 mb-3">'
-            . $i18n->trans('document')
-            . '<div class="input-group">'
-            . $link
+        return '<div class="col-sm-3 col-md-2 mb-2">'
+            . '<div class="form-group">' . $i18n->trans('document')
             . '<input type="text" value="' . $model->documento . '" class="form-control" readonly/>'
-            . '</div>'
-            . '</div>';
+            . '</div></div>';
     }
 
     /**
@@ -172,13 +176,10 @@ class AccountingHeaderHTML
             $options .= '<option value="' . $diario->iddiario . '" ' . $check . '>' . $diario->descripcion . '</option>';
         }
 
-
         $attributes = $model->editable ? 'name="iddiario"' : 'disabled';
-        return '<div class="col-sm-4">'
+        return '<div class="col-sm-2 col-md">'
             . '<div class="form-group">' . $i18n->trans('daily')
-            . '<select ' . $attributes . ' class="form-control">'
-            . $options
-            . '</select>'
+            . '<select ' . $attributes . ' class="form-control">' . $options . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -277,7 +278,7 @@ class AccountingHeaderHTML
     protected static function operacion(Translator $i18n, Asiento $model): string
     {
         $attributes = $model->editable ? 'name="operacion"' : 'disabled';
-        return '<div class="col-sm-4">'
+        return '<div class="col-sm-2 col-md">'
             . '<div class="form-group">' . $i18n->trans('operation')
             . '<select ' . $attributes . ' class="form-control">'
             . '<option value="">------</option>'
