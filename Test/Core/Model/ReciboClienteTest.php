@@ -218,6 +218,44 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
     }
 
+    public function testUpdateInvoiceWithPaidReceipt()
+    {
+        // creamos una factura
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // marcamos el recibo como pagado
+        $receipt = $invoice->getReceipts()[0];
+        $receipt->pagado = true;
+        $this->assertTrue($receipt->save(), 'can-not-set-paid-receipt');
+
+        // comprobamos que la factura está pagada
+        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $this->assertTrue($invoice->pagada, 'invoice-unpaid');
+
+        // añadimos una línea con precio 0
+        $newLine = $invoice->getNewLine();
+        $newLine->cantidad = 1;
+        $newLine->descripcion = 'test';
+        $newLine->pvpunitario = 0;
+        $this->assertTrue($newLine->save(), 'can-not-create-new-line');
+
+        // forzamos a que se recalcule la factura
+        $invoice->fecha = date('d-m-Y', strtotime('+1 day'));
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'can-not-calculate-invoice');
+
+        // comprobamos que la factura sigue pagada
+        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $this->assertTrue($invoice->pagada, 'invoice-unpaid');
+
+        // comprobamos que solamente hay un recibo
+        $this->assertCount(1, $invoice->getReceipts(), 'bad-invoice-receipts-count');
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
