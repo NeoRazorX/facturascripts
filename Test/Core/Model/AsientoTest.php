@@ -57,7 +57,6 @@ final class AsientoTest extends TestCase
 
         // creamos el asiento
         $asiento = new Asiento();
-        $asiento->clearExerciseCache();
         $asiento->concepto = 'Closed';
         $asiento->fecha = $exercise->fechafin;
         $asiento->idempresa = $exercise->idempresa;
@@ -66,7 +65,6 @@ final class AsientoTest extends TestCase
         // reabrimos el ejercicio
         $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
         $this->assertTrue($exercise->save(), 'can-not-open-exercise');
-        $asiento->clearExerciseCache();
 
         // ahora se puede crear
         $this->assertTrue($asiento->save(), 'can-not-save-on-open-exercise');
@@ -89,7 +87,6 @@ final class AsientoTest extends TestCase
         $exercise->loadFromCode($asiento->codejercicio);
         $exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
         $this->assertTrue($exercise->save(), 'can-not-close-exercise');
-        $asiento->clearExerciseCache();
 
         // ahora no se puede modificar
         $asiento->concepto = 'Modify';
@@ -98,7 +95,6 @@ final class AsientoTest extends TestCase
         // abrimos el ejercicio
         $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
         $this->assertTrue($exercise->save(), 'can-not-open-exercise');
-        $asiento->clearExerciseCache();
 
         // eliminamos
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete');

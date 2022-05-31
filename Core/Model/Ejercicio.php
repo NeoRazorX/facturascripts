@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 
 /**
@@ -109,10 +110,21 @@ class Ejercicio extends Base\ModelClass
     {
         parent::clear();
         $this->estado = self::EXERCISE_STATUS_OPEN;
-        $this->fechainicio = \date('01-01-Y');
-        $this->fechafin = \date('31-12-Y');
+        $this->fechainicio = date('01-01-Y');
+        $this->fechafin = date('31-12-Y');
         $this->longsubcuenta = 10;
         $this->nombre = '';
+    }
+
+    public function delete(): bool
+    {
+        if (parent::delete()) {
+            // limpiamos la caché de ejercicios
+            Ejercicios::clear();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -225,7 +237,7 @@ class Ejercicio extends Base\ModelClass
 
     /**
      * Returns the following code for the reported field or the primary key of the model.
-     * (Formated to 4 digits)
+     * (Formatted to 4 digits)
      *
      * @param string $field
      * @param array $where
@@ -241,6 +253,17 @@ class Ejercicio extends Base\ModelClass
     public static function primaryColumn(): string
     {
         return 'codejercicio';
+    }
+
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché de ejercicios
+            Ejercicios::clear();
+            return true;
+        }
+
+        return false;
     }
 
     public static function tableName(): string

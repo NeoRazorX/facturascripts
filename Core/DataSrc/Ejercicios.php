@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,19 +20,19 @@
 namespace FacturaScripts\Core\DataSrc;
 
 use FacturaScripts\Dinamic\Model\CodeModel;
-use FacturaScripts\Dinamic\Model\Retencion;
+use FacturaScripts\Dinamic\Model\Ejercicio;
 
-final class Retenciones implements DataSrcInterface
+final class Ejercicios implements DataSrcInterface
 {
     private static $list;
 
     /**
-     * @return Retencion[]
+     * @return Ejercicio[]
      */
     public static function all(): array
     {
-        if (!isset(self::$list)) {
-            $model = new Retencion();
+        if (null === self::$list) {
+            $model = new Ejercicio();
             self::$list = $model->all([], [], 0, 0);
         }
 
@@ -44,16 +44,11 @@ final class Retenciones implements DataSrcInterface
         self::$list = null;
     }
 
-    /**
-     * @param bool $addEmpty
-     *
-     * @return array
-     */
     public static function codeModel(bool $addEmpty = true): array
     {
         $codes = [];
-        foreach (self::all() as $retencion) {
-            $codes[$retencion->codretencion] = $retencion->descripcion;
+        foreach (self::all() as $ejercicio) {
+            $codes[$ejercicio->codejercicio] = $ejercicio->nombre;
         }
 
         return CodeModel::array2codeModel($codes, $addEmpty);
@@ -62,9 +57,9 @@ final class Retenciones implements DataSrcInterface
     /**
      * @param string $code
      *
-     * @return Retencion
+     * @return Ejercicio
      */
-    public static function get($code): Retencion
+    public static function get($code): Ejercicio
     {
         foreach (self::all() as $item) {
             if ($item->primaryColumnValue() === $code) {
@@ -72,6 +67,6 @@ final class Retenciones implements DataSrcInterface
             }
         }
 
-        return new Retencion();
+        return new Ejercicio();
     }
 }

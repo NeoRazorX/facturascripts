@@ -231,7 +231,6 @@ class AccountingClosingOpening extends AccountingClosingBase
 
         // copy subaccounts
         $subaccountModel = new Subcuenta();
-        $subaccountModel->clearExerciseCache();
         foreach ($subaccountModel->all($where, ['codsubcuenta' => 'ASC'], 0, 0) as $subaccount) {
             $newSubaccount = $accounting->copySubAccountToExercise($subaccount, $this->newExercise->codejercicio);
             if (!$newSubaccount->exists()) {
