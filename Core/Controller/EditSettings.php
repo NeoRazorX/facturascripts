@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\EditView;
@@ -37,12 +38,7 @@ class EditSettings extends PanelController
 
     const KEY_SETTINGS = 'Settings';
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -132,7 +128,7 @@ class EditSettings extends PanelController
         // custom translation
         foreach ($types as $key => $value) {
             if (!empty($value->code)) {
-                $types[$key]->description = $this->toolBox()->i18n()->trans($value->code);
+                $value->description = $this->toolBox()->i18n()->trans($value->code);
             }
         }
 
@@ -232,10 +228,7 @@ class EditSettings extends PanelController
         // Filters
         $this->createDocTypeFilter($viewName);
         $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
-
-        $exercises = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
-        $this->views[$viewName]->addFilterSelect('codejercicio', 'exercise', 'codejercicio', $exercises);
-
+        $this->views[$viewName]->addFilterSelect('codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
         $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
     }
 
@@ -260,10 +253,7 @@ class EditSettings extends PanelController
         $this->views[$viewName]->addFilterCheckbox('editable', 'editable', 'editable');
     }
 
-    /**
-     * @return bool
-     */
-    protected function editAction()
+    protected function editAction(): bool
     {
         if (false === parent::editAction()) {
             return false;
@@ -278,17 +268,9 @@ class EditSettings extends PanelController
         return true;
     }
 
-    /**
-     * Run the controller after actions
-     *
-     * @param string $action
-     */
-    protected function execAfterAction($action)
+    protected function exportAction()
     {
-        switch ($action) {
-            case 'export':
-                break;
-        }
+        // do nothing
     }
 
     /**
