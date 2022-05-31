@@ -186,15 +186,39 @@ class PurchasesHeaderHTML
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="form-row">'
+
+
+
+
             . self::renderField($i18n, $model, 'nombreproveedor')
+            . '<div class="col-12">'
+            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'cifnif')
+            . '</div>'
+            . '</div>'
+            . '<div class="col-12">'
+            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'coddivisa')
             . self::renderField($i18n, $model, 'tasaconv')
+            . '</div>'
+            . '</div>'
+            . '<div class="col-12">'
+            . '<div class="form-row">'
             . self::renderField($i18n, $model, '_fecha')
             . self::renderField($i18n, $model, 'hora')
             . self::renderField($i18n, $model, 'femail')
+            . '</div>'
+            . '</div>'
+            . '<div class="col-12">'
+            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'user')
+            . '</div>'
+            . '</div>'
+            . '<div class="col-12">'
+            . '<div class="form-row">'
             . self::renderNewFields($i18n, $model)
+            . '</div>'
+            . '</div>'
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'

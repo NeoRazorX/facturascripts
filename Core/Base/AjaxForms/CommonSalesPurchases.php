@@ -26,17 +26,20 @@ use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
+use FacturaScripts\Dinamic\Model\Pais;
 
 trait CommonSalesPurchases
 {
-    protected static function cifnif(Translator $i18n, BusinessDocument $model): string
+    protected static function apartado(Translator $i18n, BusinessDocument $model): string
     {
-        $attributes = $model->editable ? 'name="cifnif" maxlength="30" autocomplete="off"' : 'disabled=""';
-        return '<div class="col-sm-12">'
-            . '<div class="form-group">' . $i18n->trans('cifnif')
-            . '<input type="text" ' . $attributes . ' value="' . $model->cifnif . '" class="form-control"/>'
+        $disabled = $model->idcontactofact ? ' disabled=""' : '';
+        $attributes = $model->editable ? 'name="apartado" maxlength="10"' . $disabled : 'disabled=""';
+        return '<div class="col-sm-6">'
+            . '<div class="form-group">' . $i18n->trans('post-office-box')
+            . '<input type="text" ' . $attributes . ' value="' . $model->apartado . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
@@ -71,6 +74,28 @@ trait CommonSalesPurchases
             . '</div>'
             . '</div>'
             . self::modalDocList($i18n, $children, 'documents-generated', 'childrenModal');
+    }
+
+    protected static function cifnif(Translator $i18n, BusinessDocument $model): string
+    {
+        $disabled = $model->idcontactofact ? ' disabled=""' : '';
+        $attributes = $model->editable ? 'name="cifnif" maxlength="30" autocomplete="off"' . $disabled : 'disabled=""';
+        return '<div class="col-sm">'
+            . '<div class="form-group">' . $i18n->trans('cifnif')
+            . '<input type="text" ' . $attributes . ' value="' . $model->cifnif . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
+    protected static function ciudad(Translator $i18n, BusinessDocument $model): string
+    {
+        $disabled = $model->idcontactofact ? ' disabled=""' : '';
+        $attributes = $model->editable ? 'name="ciudad" maxlength="100"' . $disabled : 'disabled=""';
+        return '<div class="col-sm-4">'
+            . '<div class="form-group">' . $i18n->trans('city')
+            . '<input type="text" ' . $attributes . ' value="' . $model->ciudad . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
     }
 
     protected static function codalmacen(Translator $i18n, BusinessDocument $model): string
@@ -111,6 +136,26 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
+    private static function codpais(Translator $i18n, SalesDocument $model): string
+    {
+        $options = [];
+        $countryModel = new Pais();
+        foreach ($countryModel->all([], ['nombre' => 'ASC'], 0, 0) as $country) {
+            $options[] = ($country->codpais === $model->codpais) ?
+                '<option value="' . $country->codpais . '" selected="">' . $country->nombre . '</option>' :
+                '<option value="' . $country->codpais . '">' . $country->nombre . '</option>';
+        }
+
+        $disabled = $model->idcontactofact ? ' disabled=""' : '';
+        $attributes = $model->editable ? 'name="codpais"' . $disabled : 'disabled=""';
+        return '<div class="col-sm-4">'
+            . '<div class="form-group">'
+            . '<a href="' . $countryModel->url() . '">' . $i18n->trans('country') . '</a>'
+            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '</div>'
+            . '</div>';
+    }
+
     protected static function codpago(Translator $i18n, BusinessDocument $model): string
     {
         $options = [];
@@ -125,6 +170,17 @@ trait CommonSalesPurchases
             . '<div class="form-group">'
             . '<a href="' . FormasPago::get($model->codpago)->url() . '">' . $i18n->trans('payment-method') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '</div>'
+            . '</div>';
+    }
+
+    protected static function codpostal(Translator $i18n, BusinessDocument $model): string
+    {
+        $disabled = $model->idcontactofact ? ' disabled=""' : '';
+        $attributes = $model->editable ? 'name="codpostal" maxlength="10"' . $disabled : 'disabled=""';
+        return '<div class="col-sm-6">'
+            . '<div class="form-group">' . $i18n->trans('zip-code')
+            . '<input type="text" ' . $attributes . ' value="' . $model->codpostal . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
@@ -230,6 +286,15 @@ trait CommonSalesPurchases
             . '</div></div>' : '<div class="col"></div>';
     }
 
+    protected static function direccion(Translator $i18n, BusinessDocument $model): string
+    {
+        $disabled = $model->idcontactofact ? ' disabled=""' : '';
+        $attributes = $model->editable ? 'name="direccion" maxlength="100"' . $disabled : 'disabled=""';
+        return '<div class="form-group">' . $i18n->trans('address')
+            . '<input type="text" ' . $attributes . ' value="' . $model->direccion . '" class="form-control"/>'
+            . '</div>';
+    }
+
     protected static function fecha(Translator $i18n, BusinessDocument $model, bool $enabled = true): string
     {
         $attributes = $model->editable && $enabled ? 'name="fecha" required=""' : 'disabled=""';
@@ -248,7 +313,7 @@ trait CommonSalesPurchases
 
         $attributes = empty($model->femail) && $model->editable ? 'name="femail" ' : 'disabled=""';
         $value = empty($model->femail) ? '' : date('Y-m-d', strtotime($model->femail));
-        return '<div class="col-sm-6">'
+        return '<div class="col-sm">'
             . '<div class="form-group">' . $i18n->trans('email-sent')
             . '<input type="date" ' . $attributes . ' value="' . $value . '" class="form-control"/>'
             . '</div>'
@@ -258,7 +323,7 @@ trait CommonSalesPurchases
     protected static function hora(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="hora" required=""' : 'disabled=""';
-        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
+        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
             . '<div class="form-group">' . $i18n->trans('hour')
             . '<input type="time" ' . $attributes . ' value="' . date('H:i:s', strtotime($model->hora)) . '" class="form-control"/>'
             . '</div>'
@@ -474,6 +539,17 @@ trait CommonSalesPurchases
             . '</div>' : '';
     }
 
+    protected static function provincia(Translator $i18n, BusinessDocument $model): string
+    {
+        $disabled = $model->idcontactofact ? ' disabled=""' : '';
+        $attributes = $model->editable ? 'name="provincia" maxlength="100"' . $disabled : 'disabled=""';
+        return '<div class="col-sm-4">'
+            . '<div class="form-group">' . $i18n->trans('state')
+            . '<input type="text" ' . $attributes . ' value="' . $model->provincia . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
     protected static function saveBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         return $model->subjectColumnValue() && $model->editable ? '<button type="button" class="btn btn-primary btn-spin-action"'
@@ -516,7 +592,7 @@ trait CommonSalesPurchases
     protected static function user(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = 'disabled=""';
-        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
+        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
             . '<div class="form-group">' . $i18n->trans('user')
             . '<input type="text" ' . $attributes . ' value="' . $model->nick . '" class="form-control"/>'
             . '</div>'

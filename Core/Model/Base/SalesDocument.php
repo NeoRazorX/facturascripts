@@ -401,9 +401,8 @@ abstract class SalesDocument extends TransformerDocument
                     $this->codpostal = $contact->codpostal;
                     $this->direccion = $contact->direccion;
                     $this->provincia = $contact->provincia;
-                    return true;
                 }
-                return false;
+                break;
         }
 
         return true;

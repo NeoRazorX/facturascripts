@@ -102,6 +102,12 @@ class SalesHeaderHTML
         $dir = new Contacto();
         if (empty($formData['idcontactofact'])) {
             $model->idcontactofact = null;
+            $model->direccion = $formData['direccion'] ?? $model->direccion;
+            $model->apartado = $formData['apartado'] ?? $model->apartado;
+            $model->codpostal = $formData['codpostal'] ?? $model->codpostal;
+            $model->ciudad = $formData['ciudad'] ?? $model->ciudad;
+            $model->provincia = $formData['provincia'] ?? $model->provincia;
+            $model->codpais = !empty($formData['codpais']) ? $formData['codpais'] : null;
         } elseif ($dir->loadFromCode($formData['idcontactofact'])) {
             $model->idcontactofact = $dir->idcontacto;
             $model->direccion = $dir->direccion;
@@ -263,7 +269,7 @@ class SalesHeaderHTML
     private static function detailModal(Translator $i18n, SalesDocument $model): string
     {
         return '<div class="modal fade" id="headerModal" tabindex="-1" aria-labelledby="headerModalLabel" aria-hidden="true">'
-            . '<div class="modal-dialog modal-dialog-centered">'
+            . '<div class="modal-dialog modal-dialog-centered modal-xl">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title">' . $i18n->trans('detail') . '</h5>'
@@ -273,20 +279,46 @@ class SalesHeaderHTML
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="form-row">'
+            . '<div class="col-sm-6">'
+            . self::renderField($i18n, $model, 'idcontactofact')
+            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'nombrecliente')
             . self::renderField($i18n, $model, 'cifnif')
-            . self::renderField($i18n, $model, 'idcontactofact')
+            . '</div>'
+            . self::renderField($i18n, $model, 'direccion')
+            . '<div class="form-row">'
+            . self::renderField($i18n, $model, 'apartado')
+            . self::renderField($i18n, $model, 'codpostal')
+            . '</div>'
+            . '<div class="form-row">'
+            . self::renderField($i18n, $model, 'ciudad')
+            . self::renderField($i18n, $model, 'provincia')
+            . self::renderField($i18n, $model, 'codpais')
+            . '</div>'
+            . '</div>'
+            . '<div class="col-sm-6">'
             . self::renderField($i18n, $model, 'idcontactoenv')
+            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'codtrans')
             . self::renderField($i18n, $model, 'codigoenv')
+            . '</div>'
+            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'coddivisa')
             . self::renderField($i18n, $model, 'tasaconv')
+            . '</div>'
+            . '<div class="form-row">'
             . self::renderField($i18n, $model, '_fecha')
             . self::renderField($i18n, $model, 'hora')
             . self::renderField($i18n, $model, 'femail')
+            . '</div>'
+            . '<div class="form-row">'
             . self::renderField($i18n, $model, 'user')
             . self::renderField($i18n, $model, 'codagente')
+            . '</div>'
+            . '</div>'
+            . '<div class="form-row">'
             . self::renderNewFields($i18n, $model)
+            . '</div>'
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
@@ -349,12 +381,10 @@ class SalesHeaderHTML
 
         $attributes = $model->editable ? 'name="idcontactoenv"' : 'disabled=""';
         $options = self::getAddressOptions($i18n, $model->idcontactoenv, true);
-        return '<div class="col-sm-12">'
-            . '<div class="form-group">'
+        return '<div class="form-group">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">'
             . $i18n->trans('shipping-address') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
-            . '</div>'
             . '</div>';
     }
 
@@ -365,19 +395,19 @@ class SalesHeaderHTML
         }
 
         $attributes = $model->editable ? 'name="idcontactofact" onchange="return salesFormActionWait(\'recalculate-line\', \'0\', event);"' : 'disabled=""';
-        $options = self::getAddressOptions($i18n, $model->idcontactofact, false);
-        return '<div class="col-sm-12">'
-            . '<div class="form-group">'
+        $options = ['<option value="">' . $i18n->trans('personalized-address') . '</option>'];
+        $options = array_merge($options, self::getAddressOptions($i18n, $model->idcontactofact, true));
+        return '<div class="form-group">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">' . $i18n->trans('billing-address') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
-            . '</div>'
             . '</div>';
     }
 
     private static function nombrecliente(Translator $i18n, SalesDocument $model): string
     {
-        $attributes = $model->editable ? 'name="nombrecliente" required="" maxlength="100" autocomplete="off"' : 'disabled=""';
-        return '<div class="col-sm-12">'
+        $disabled = $model->idcontactofact ? ' disabled=""' : '';
+        $attributes = $model->editable ? 'name="nombrecliente" required="" maxlength="100" autocomplete="off"' . $disabled : 'disabled=""';
+        return '<div class="col-sm-8">'
             . '<div class="form-group">'
             . $i18n->trans('business-name')
             . '<input type="text" ' . $attributes . ' value="' . $model->nombrecliente . '" class="form-control"/>'
@@ -424,8 +454,14 @@ class SalesHeaderHTML
             case '_parents':
                 return self::parents($i18n, $model);
 
+            case 'apartado':
+                return self::apartado($i18n, $model);
+
             case 'cifnif':
                 return self::cifnif($i18n, $model);
+
+            case 'ciudad':
+                return self::ciudad($i18n, $model);
 
             case 'codagente':
                 return self::codagente($i18n, $model);
@@ -445,11 +481,20 @@ class SalesHeaderHTML
             case 'codpago':
                 return self::codpago($i18n, $model);
 
+            case 'codpais':
+                return self::codpais($i18n, $model);
+
+            case 'codpostal':
+                return self::codpostal($i18n, $model);
+
             case 'codserie':
                 return self::codserie($i18n, $model, 'salesFormAction');
 
             case 'codtrans':
                 return self::codtrans($i18n, $model);
+
+            case 'direccion':
+                return self::direccion($i18n, $model);
 
             case 'fecha':
                 return self::fecha($i18n, $model);
@@ -477,6 +522,9 @@ class SalesHeaderHTML
 
             case 'numero2':
                 return self::numero2($i18n, $model);
+
+            case 'provincia':
+                return self::provincia($i18n, $model);
 
             case 'tasaconv':
                 return self::tasaconv($i18n, $model);
