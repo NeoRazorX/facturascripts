@@ -72,6 +72,21 @@ final class CuentaTest extends TestCase
         }
     }
 
+    public function testHtmlOnDescription()
+    {
+        $account = new Cuenta();
+        $account->codcuenta = '9999';
+        $account->codejercicio = $this->getRandomExercise()->codejercicio;
+        $account->descripcion = '<b>Test</b>';
+        $this->assertTrue($account->save(), 'can-not-create-account');
+
+        // comprobamos que el html se ha escapado
+        $this->assertEquals('&lt;b&gt;Test&lt;/b&gt;', $account->descripcion);
+
+        // eliminamos
+        $this->assertTrue($account->delete(), 'account-cant-delete');
+    }
+
     public function testCreateClosed()
     {
         // cerramos un ejercicio

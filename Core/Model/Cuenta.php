@@ -185,12 +185,13 @@ class Cuenta extends Base\ModelClass
     public function test(): bool
     {
         $this->codcuenta = trim($this->codcuenta);
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
+
         if (empty($this->codcuenta) || false === is_numeric($this->codcuenta)) {
             $this->toolBox()->i18nLog()->warning('invalid-number', ['%number%' => $this->codcuenta]);
             return false;
         }
 
-        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         if (strlen($this->descripcion) < 1 || strlen($this->descripcion) > 255) {
             $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'descripcion', '%min%' => '1', '%max%' => '255']);
             return false;
