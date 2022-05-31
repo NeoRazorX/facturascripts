@@ -201,6 +201,8 @@
 
     function purchasesLineTotalWithTaxes(id) {
         const total = parseFloat(prompt('{{ i18n.trans('total-with-taxes') }}').replace(',', '.')) || 0;
+        const dtopor = parseFloat(document.forms['purchasesForm']['dtopor_' + id].value) || 0;
+        const dtopor2 = parseFloat(document.forms['purchasesForm']['dtopor2_' + id].value) || 0;
         const iva = parseFloat(document.forms['purchasesForm']['iva_' + id].value) || 0;
         const recargo = parseFloat(document.forms['purchasesForm']['recargo_' + id].value) || 0;
         const irpf = parseFloat(document.forms['purchasesForm']['irpf_' + id].value) || 0;
@@ -210,8 +212,19 @@
         } else if (cantidad <= 0) {
             alert('cantidad > 0');
         } else {
-            const pvp = (100 * total / cantidad) / (100 + iva + recargo - irpf);
-            document.forms['purchasesForm']['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
+            let pvp = (100 * total / cantidad) / (100 + iva + recargo - irpf);
+            pvp = Math.round(pvp * 100000) / 100000;
+            if (dtopor === 100) {
+                pvp = 0;
+            } else if (dtopor > 0 && dtopor < 100) {
+                pvp = pvp / (1 - (dtopor >= 100 ? 1 : dtopor / 100));
+            }
+            if (dtopor2 === 100) {
+                pvp = 0;
+            } else if (dtopor2 > 0 && dtopor2 < 100) {
+                pvp = pvp / (1 - (dtopor2 >= 100 ? 1 : dtopor2 / 100));
+            }
+            document.forms['purchasesForm']['pvpunitario_' + id].value = pvp;
             purchasesFormAction('recalculate', '0');
         }
     }
