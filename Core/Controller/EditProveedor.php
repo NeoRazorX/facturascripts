@@ -47,6 +47,12 @@ class EditProveedor extends ComercialContactController
         return $this->toolBox()->coins()->format($total);
     }
 
+    public function getImageUrl(): string
+    {
+        $mvn = $this->getMainViewName();
+        return $this->views[$mvn]->model->gravatar();
+    }
+
     /**
      * Returns the sum of the supplier's total outstanding invoices.
      *

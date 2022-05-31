@@ -29,6 +29,8 @@ use FacturaScripts\Dinamic\Lib\FiscalNumberValitator;
 abstract class Contact extends ModelClass
 {
 
+    use GravatarTrait;
+
     /**
      * Tax identifier of the customer.
      *
@@ -110,19 +112,6 @@ abstract class Contact extends ModelClass
         $this->fechaalta = date(self::DATE_STYLE);
         $this->personafisica = true;
         $this->tipoidfiscal = $this->toolBox()->appSettings()->get('default', 'tipoidfiscal');
-    }
-
-    /**
-     * Returns gravatar image url.
-     *
-     * @param int $size
-     *
-     * @return string
-     */
-    public function gravatar(int $size = 80): string
-    {
-        return $this->email === null ? '' :
-            'https://www.gravatar.com/avatar/' . md5(strtolower(trim($this->email))) . '?s=' . $size;
     }
 
     /**
