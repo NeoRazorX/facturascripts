@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Dinamic\Model\Impuesto as DinImpuesto;
 
 /**
@@ -33,7 +34,7 @@ class Impuesto extends Base\ModelClass
 
     use Base\ModelTrait;
 
-    const TYPE_PENCENTAGE = 1;
+    const TYPE_PERCENTAGE = 1;
     const TYPE_FIXED_VALUE = 2;
 
     /**
@@ -84,7 +85,7 @@ class Impuesto extends Base\ModelClass
     public function clear()
     {
         parent::clear();
-        $this->tipo = self::TYPE_PENCENTAGE;
+        $this->tipo = self::TYPE_PERCENTAGE;
         $this->iva = 0.0;
         $this->recargo = 0.0;
     }
@@ -96,7 +97,13 @@ class Impuesto extends Base\ModelClass
             return false;
         }
 
-        return parent::delete();
+        if (parent::delete()) {
+            // limpiamos la caché
+            Impuestos::clear();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -138,6 +145,17 @@ class Impuesto extends Base\ModelClass
     public function outputVatFromSubAccount(string $subAccount)
     {
         return $this->getVatFromSubAccount('codsubcuentasop', $subAccount);
+    }
+
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            Impuestos::clear();
+            return true;
+        }
+
+        return false;
     }
 
     public static function tableName(): string

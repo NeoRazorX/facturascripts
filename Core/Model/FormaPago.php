@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 
 /**
@@ -102,7 +103,13 @@ class FormaPago extends Base\ModelClass
             return false;
         }
 
-        return parent::delete();
+        if (parent::delete()) {
+            // limpiamos la caché
+            FormasPago::clear();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -150,6 +157,17 @@ class FormaPago extends Base\ModelClass
     public static function primaryColumn(): string
     {
         return 'codpago';
+    }
+
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            FormasPago::clear();
+            return true;
+        }
+
+        return false;
     }
 
     public static function tableName(): string

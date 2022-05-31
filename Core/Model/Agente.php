@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 
@@ -83,6 +84,17 @@ class Agente extends Base\Contact
         return $contact;
     }
 
+    public function delete(): bool
+    {
+        if (parent::delete()) {
+            // limpiamos la caché
+            Agentes::clear();
+            return true;
+        }
+
+        return false;
+    }
+
     public function install(): string
     {
         // needed dependencies
@@ -99,6 +111,17 @@ class Agente extends Base\Contact
     public function primaryDescriptionColumn(): string
     {
         return 'nombre';
+    }
+
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            Agentes::clear();
+            return true;
+        }
+
+        return false;
     }
 
     public static function tableName(): string

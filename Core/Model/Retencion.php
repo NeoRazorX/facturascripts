@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Retenciones;
 
 /**
  * Class to manage the data of retenciones table
@@ -70,6 +71,17 @@ class Retencion extends Base\ModelClass
         $this->porcentaje = 0.0;
     }
 
+    public function delete(): bool
+    {
+        if (parent::delete()) {
+            // limpiamos la caché
+            Retenciones::clear();
+            return true;
+        }
+
+        return false;
+    }
+
     public function loadFromPercentage(float $percentaje): bool
     {
         $where = [new DataBaseWhere('porcentaje', $percentaje)];
@@ -80,6 +92,17 @@ class Retencion extends Base\ModelClass
     public static function primaryColumn(): string
     {
         return 'codretencion';
+    }
+
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            Retenciones::clear();
+            return true;
+        }
+
+        return false;
     }
 
     public static function tableName(): string

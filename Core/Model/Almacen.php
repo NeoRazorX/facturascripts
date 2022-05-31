@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 
 /**
@@ -61,7 +62,13 @@ class Almacen extends Base\Address
             return false;
         }
 
-        return parent::delete();
+        if (parent::delete()) {
+            // limpiamos la caché
+            Almacenes::clear();
+            return true;
+        }
+
+        return false;
     }
 
     public function install(): string
@@ -90,6 +97,17 @@ class Almacen extends Base\Address
     public function primaryDescriptionColumn(): string
     {
         return 'nombre';
+    }
+
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            Almacenes::clear();
+            return true;
+        }
+
+        return false;
     }
 
     public static function tableName(): string
