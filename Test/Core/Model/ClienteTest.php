@@ -125,6 +125,24 @@ final class ClienteTest extends TestCase
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
+    public function testNotNullFields()
+    {
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test';
+        $cliente->cifnif = '12345678A';
+        $this->assertTrue($cliente->save(), 'cliente-cant-save');
+
+        // comprobamos que los teléfonos, fax, email y observaciones no sean nulos
+        $this->assertNotNull($cliente->telefono1, 'telefono1-is-null');
+        $this->assertNotNull($cliente->telefono2, 'telefono2-is-null');
+        $this->assertNotNull($cliente->fax, 'fax-is-null');
+        $this->assertNotNull($cliente->email, 'email-is-null');
+        $this->assertNotNull($cliente->observaciones, 'observaciones-is-null');
+
+        // eliminamos
+        $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

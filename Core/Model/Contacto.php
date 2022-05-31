@@ -393,12 +393,12 @@ class Contacto extends Base\Contact
 
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->apellidos = $utils->noHtml($this->apellidos);
-        $this->cargo = $utils->noHtml($this->cargo);
-        $this->ciudad = $utils->noHtml($this->ciudad);
-        $this->direccion = $utils->noHtml($this->direccion);
-        $this->empresa = $utils->noHtml($this->empresa);
-        $this->provincia = $utils->noHtml($this->provincia);
+        $this->apellidos = $utils->noHtml($this->apellidos) ?? '';
+        $this->cargo = $utils->noHtml($this->cargo) ?? '';
+        $this->ciudad = $utils->noHtml($this->ciudad) ?? '';
+        $this->direccion = $utils->noHtml($this->direccion) ?? '';
+        $this->empresa = $utils->noHtml($this->empresa) ?? '';
+        $this->provincia = $utils->noHtml($this->provincia) ?? '';
 
         return $this->testPassword() && parent::test();
     }

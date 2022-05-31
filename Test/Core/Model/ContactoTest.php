@@ -152,6 +152,30 @@ final class ContactoTest extends TestCase
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
     }
 
+    public function testNotNullFields()
+    {
+        // creamos un contacto
+        $contact = new Contacto();
+        $contact->nombre = 'Test';
+        $this->assertTrue($contact->save(), 'contact-cant-save');
+
+        // comprobamos que apellidos, cargo, direccion, teléfonos, fax, email y observaciones no sean nulos
+        $this->assertNotNull($contact->apellidos, 'contact-apellidos-null');
+        $this->assertNotNull($contact->cargo, 'contact-cargo-null');
+        $this->assertNotNull($contact->empresa, 'contact-empresa-null');
+        $this->assertNotNull($contact->ciudad, 'contact-ciudad-null');
+        $this->assertNotNull($contact->direccion, 'contact-direccion-null');
+        $this->assertNotNull($contact->provincia, 'contact-provincia-null');
+        $this->assertNotNull($contact->telefono1, 'contact-telefono1-null');
+        $this->assertNotNull($contact->telefono2, 'contact-telefono2-null');
+        $this->assertNotNull($contact->fax, 'contact-fax-null');
+        $this->assertNotNull($contact->email, 'contact-email-null');
+        $this->assertNotNull($contact->observaciones, 'contact-observaciones-null');
+
+        // eliminamos
+        $this->assertTrue($contact->delete(), 'contact-cant-delete');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

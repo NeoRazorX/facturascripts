@@ -79,6 +79,25 @@ final class ProveedorTest extends TestCase
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
+    public function testNotNullFields()
+    {
+        // creamos un proveedor
+        $proveedor = new Proveedor();
+        $proveedor->nombre = 'Test';
+        $proveedor->cifnif = '12345678A';
+        $this->assertTrue($proveedor->save(), 'proveedor-cant-save');
+
+        // comprobamos que los teléfonos, fax, email y observaciones no sean nulos
+        $this->assertNotNull($proveedor->telefono1, 'telefono1-is-null');
+        $this->assertNotNull($proveedor->telefono2, 'telefono2-is-null');
+        $this->assertNotNull($proveedor->fax, 'fax-is-null');
+        $this->assertNotNull($proveedor->email, 'email-is-null');
+        $this->assertNotNull($proveedor->observaciones, 'observaciones-is-null');
+
+        // eliminamos
+        $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
+    }
+
     public function testBadEmail()
     {
         $proveedor = new Proveedor();
