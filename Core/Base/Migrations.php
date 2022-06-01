@@ -41,6 +41,7 @@ final class Migrations
         self::fixAccountingEntries();
         self::clearLogs();
         self::fixContacts();
+        self::fixAgents();
     }
 
     private static function clearLogs()
@@ -81,15 +82,16 @@ final class Migrations
         }
     }
 
-    private static function fixInvoiceLines()
+    private static function fixAgents()
     {
         $dataBase = new DataBase();
-        $tables = ['lineasfacturascli', 'lineasfacturasprov'];
-        foreach ($tables as $table) {
-            if ($dataBase->tableExists($table)) {
-                $sql = "UPDATE " . $table . " SET irpf = '0' WHERE irpf IS NULL;";
-                $dataBase->exec($sql);
-            }
+        $table = 'agentes';
+        if ($dataBase->tableExists($table)) {
+            $sqlUpdate1 = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
+            $dataBase->exec($sqlUpdate1);
+
+            $sqlAlter1 = "ALTER TABLE " . $table . " MODIFY debaja boolean NOT NULL DEFAULT false;";
+            $dataBase->exec($sqlAlter1);
         }
     }
 
@@ -119,6 +121,18 @@ final class Migrations
             $dataBase->exec($sqlAlter4);
             $sqlAlter5 = "ALTER TABLE " . $table . " MODIFY verificado boolean NOT NULL DEFAULT false;";
             $dataBase->exec($sqlAlter5);
+        }
+    }
+
+    private static function fixInvoiceLines()
+    {
+        $dataBase = new DataBase();
+        $tables = ['lineasfacturascli', 'lineasfacturasprov'];
+        foreach ($tables as $table) {
+            if ($dataBase->tableExists($table)) {
+                $sql = "UPDATE " . $table . " SET irpf = '0' WHERE irpf IS NULL;";
+                $dataBase->exec($sql);
+            }
         }
     }
 
