@@ -43,6 +43,7 @@ final class Migrations
         self::fixContacts();
         self::fixAgents();
         self::fixClients();
+        self::fixSuppliers();
     }
 
     private static function clearLogs()
@@ -99,7 +100,7 @@ final class Migrations
     private static function fixClients()
     {
         $dataBase = new DataBase();
-        $table = 'contactos';
+        $table = 'clientes';
         if ($dataBase->tableExists($table)) {
             $sqlUpdate1 = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
             $dataBase->exec($sqlUpdate1);
@@ -151,6 +152,27 @@ final class Migrations
                 $sql = "UPDATE " . $table . " SET irpf = '0' WHERE irpf IS NULL;";
                 $dataBase->exec($sql);
             }
+        }
+    }
+
+    private static function fixSuppliers()
+    {
+        $dataBase = new DataBase();
+        $table = 'proveedores';
+        if ($dataBase->tableExists($table)) {
+            $sqlUpdate1 = "UPDATE " . $table . " SET acreedor = false WHERE acreedor IS NULL;";
+            $dataBase->exec($sqlUpdate1);
+            $sqlUpdate2 = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
+            $dataBase->exec($sqlUpdate2);
+            $sqlUpdate3 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
+            $dataBase->exec($sqlUpdate3);
+
+            $sqlAlter1 = "ALTER TABLE " . $table . " MODIFY acreedor boolean NOT NULL DEFAULT false;";
+            $dataBase->exec($sqlAlter1);
+            $sqlAlter2 = "ALTER TABLE " . $table . " MODIFY debaja boolean NOT NULL DEFAULT false;";
+            $dataBase->exec($sqlAlter2);
+            $sqlAlter3 = "ALTER TABLE " . $table . " MODIFY personafisica boolean NOT NULL DEFAULT true;";
+            $dataBase->exec($sqlAlter3);
         }
     }
 
