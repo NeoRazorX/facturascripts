@@ -40,6 +40,7 @@ final class Migrations
         self::fixInvoiceLines();
         self::fixAccountingEntries();
         self::clearLogs();
+        self::fixPhysicalPerson();
     }
 
     private static function clearLogs()
@@ -88,6 +89,20 @@ final class Migrations
             if ($dataBase->tableExists($table)) {
                 $sql = "UPDATE " . $table . " SET irpf = '0' WHERE irpf IS NULL;";
                 $dataBase->exec($sql);
+            }
+        }
+    }
+
+    private static function fixPhysicalPerson()
+    {
+        $dataBase = new DataBase();
+        $tables = ['clientes', 'contactos', 'proveedores'];
+        foreach ($tables as $table) {
+            if ($dataBase->tableExists($table)) {
+                $sql1 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
+                $sql2 = "ALTER TABLE " . $table . " MODIFY personafisica boolean NOT NULL DEFAULT true;";
+                $dataBase->exec($sql1);
+                $dataBase->exec($sql2);
             }
         }
     }
