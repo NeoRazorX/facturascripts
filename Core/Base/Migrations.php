@@ -42,6 +42,7 @@ final class Migrations
         self::clearLogs();
         self::fixContacts();
         self::fixAgents();
+        self::fixClients();
     }
 
     private static function clearLogs()
@@ -92,6 +93,23 @@ final class Migrations
 
             $sqlAlter1 = "ALTER TABLE " . $table . " MODIFY debaja boolean NOT NULL DEFAULT false;";
             $dataBase->exec($sqlAlter1);
+        }
+    }
+
+    private static function fixClients()
+    {
+        $dataBase = new DataBase();
+        $table = 'contactos';
+        if ($dataBase->tableExists($table)) {
+            $sqlUpdate1 = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
+            $dataBase->exec($sqlUpdate1);
+            $sqlUpdate2 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
+            $dataBase->exec($sqlUpdate2);
+
+            $sqlAlter1 = "ALTER TABLE " . $table . " MODIFY debaja boolean NOT NULL DEFAULT false;";
+            $dataBase->exec($sqlAlter1);
+            $sqlAlter2 = "ALTER TABLE " . $table . " MODIFY personafisica boolean NOT NULL DEFAULT true;";
+            $dataBase->exec($sqlAlter2);
         }
     }
 

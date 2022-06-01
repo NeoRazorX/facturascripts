@@ -51,7 +51,6 @@
     <column>
         <name>debaja</name>
         <type>boolean</type>
-        <null>NO</null>
         <default>false</default>
     </column>
     <column>
