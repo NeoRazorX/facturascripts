@@ -40,7 +40,7 @@ final class Migrations
         self::fixInvoiceLines();
         self::fixAccountingEntries();
         self::clearLogs();
-        self::fixPhysicalPerson();
+        self::fixContacts();
     }
 
     private static function clearLogs()
@@ -93,17 +93,32 @@ final class Migrations
         }
     }
 
-    private static function fixPhysicalPerson()
+    private static function fixContacts()
     {
         $dataBase = new DataBase();
-        $tables = ['clientes', 'contactos', 'proveedores'];
-        foreach ($tables as $table) {
-            if ($dataBase->tableExists($table)) {
-                $sql1 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
-                $sql2 = "ALTER TABLE " . $table . " MODIFY personafisica boolean NOT NULL DEFAULT true;";
-                $dataBase->exec($sql1);
-                $dataBase->exec($sql2);
-            }
+        $table = 'contactos';
+        if ($dataBase->tableExists($table)) {
+            $sqlUpdate1 = "UPDATE " . $table . " SET aceptaprivacidad = false WHERE aceptaprivacidad IS NULL;";
+            $dataBase->exec($sqlUpdate1);
+            $sqlUpdate2 = "UPDATE " . $table . " SET admitemarketing = false WHERE admitemarketing IS NULL;";
+            $dataBase->exec($sqlUpdate2);
+            $sqlUpdate3 = "UPDATE " . $table . " SET habilitado = true WHERE habilitado IS NULL;";
+            $dataBase->exec($sqlUpdate3);
+            $sqlUpdate4 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
+            $dataBase->exec($sqlUpdate4);
+            $sqlUpdate5 = "UPDATE " . $table . " SET verificado = false WHERE verificado IS NULL;";
+            $dataBase->exec($sqlUpdate5);
+
+            $sqlAlter1 = "ALTER TABLE " . $table . " MODIFY aceptaprivacidad boolean NOT NULL DEFAULT false;";
+            $dataBase->exec($sqlAlter1);
+            $sqlAlter2 = "ALTER TABLE " . $table . " MODIFY admitemarketing boolean NOT NULL DEFAULT false;";
+            $dataBase->exec($sqlAlter2);
+            $sqlAlter3 = "ALTER TABLE " . $table . " MODIFY habilitado boolean NOT NULL DEFAULT true;";
+            $dataBase->exec($sqlAlter3);
+            $sqlAlter4 = "ALTER TABLE " . $table . " MODIFY personafisica boolean NOT NULL DEFAULT true;";
+            $dataBase->exec($sqlAlter4);
+            $sqlAlter5 = "ALTER TABLE " . $table . " MODIFY verificado boolean NOT NULL DEFAULT false;";
+            $dataBase->exec($sqlAlter5);
         }
     }
 
