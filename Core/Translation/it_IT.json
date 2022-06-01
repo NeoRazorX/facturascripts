@@ -918,6 +918,7 @@
     "php-extension-not-found": "You don't have the %extension% PHP extension installed.",
     "php-support-end": "php-support-end",
     "physical-stock": "Stock fisico",
+    "picking": "Picking",
     "plan": "Piano",
     "please-enter-value": "Per favore inserisci un valore",
     "plugin": "plug-in",

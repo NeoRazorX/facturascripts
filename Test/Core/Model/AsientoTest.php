@@ -58,6 +58,7 @@ final class AsientoTest extends TestCase
         // creamos el asiento
         $asiento = new Asiento();
         $asiento->concepto = 'Closed';
+        $asiento->codejercicio = $exercise->codejercicio;
         $asiento->fecha = $exercise->fechafin;
         $asiento->idempresa = $exercise->idempresa;
         $this->assertFalse($asiento->save(), 'can-save-on-closed-exercise');
@@ -75,22 +76,28 @@ final class AsientoTest extends TestCase
 
     public function testClosedExerciseModify()
     {
+        // cargamos un ejercicio
+        $exercise = $this->getRandomExercise();
+        $this->assertTrue($exercise->save(), 'can-not-save-exercise');
+
         // creamos el asiento
         $asiento = new Asiento();
         $asiento->concepto = 'Test';
+        $asiento->codejercicio = $exercise->codejercicio;
+        $asiento->fecha = $exercise->fechafin;
+        $asiento->idempresa = $exercise->idempresa;
         $this->assertTrue($asiento->save(), 'asiento-cant-save');
-        $this->assertNotNull($asiento->primaryColumnValue(), 'asiento-not-stored');
-        $this->assertTrue($asiento->exists(), 'asiento-cant-persist');
 
         // cerramos el ejercicio
-        $exercise = new Ejercicio();
-        $exercise->loadFromCode($asiento->codejercicio);
         $exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
         $this->assertTrue($exercise->save(), 'can-not-close-exercise');
 
         // ahora no se puede modificar
         $asiento->concepto = 'Modify';
         $this->assertFalse($asiento->save(), 'can-save-on-closed-exercise');
+
+        // tampoco se puede eliminar
+        $this->assertFalse($asiento->delete(), 'can-delete-on-closed-exercise');
 
         // abrimos el ejercicio
         $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;

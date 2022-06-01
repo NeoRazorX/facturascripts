@@ -918,6 +918,7 @@
     "php-extension-not-found": "%extension% PHP gehigarria instalatu gabe duzu.",
     "php-support-end": "PHP %current%-(r)en laguntza laster amaituko da. PHP %min% bertsiora eguneratu mesedez.",
     "physical-stock": "Stock fisikoa",
+    "picking": "Picking-a",
     "plan": "Plana",
     "please-enter-value": "Mesedez, eremuan balio bat sartu",
     "plugin": "Plugin",

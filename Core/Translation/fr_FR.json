@@ -918,6 +918,7 @@
     "php-extension-not-found": "Vous n'avez pas installé l'extension %extension% de PHP.",
     "php-support-end": "Le support pour PHP %current% sera bientôt terminé. Veuillez mettre à jour PHP vers la version %min% ou ultérieure.",
     "physical-stock": "Stock physique",
+    "picking": "Cueillette",
     "plan": "Plan",
     "please-enter-value": "Entrer un nombre, SVP",
     "plugin": "Plugin",
