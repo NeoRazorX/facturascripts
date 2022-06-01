@@ -91,9 +91,6 @@ final class Migrations
         if ($dataBase->tableExists($table)) {
             $sqlUpdate1 = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
             $dataBase->exec($sqlUpdate1);
-
-            $sqlAlter1 = "ALTER TABLE " . $table . " MODIFY debaja boolean NOT NULL DEFAULT false;";
-            $dataBase->exec($sqlAlter1);
         }
     }
 
@@ -106,11 +103,6 @@ final class Migrations
             $dataBase->exec($sqlUpdate1);
             $sqlUpdate2 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
             $dataBase->exec($sqlUpdate2);
-
-            $sqlAlter1 = "ALTER TABLE " . $table . " MODIFY debaja boolean NOT NULL DEFAULT false;";
-            $dataBase->exec($sqlAlter1);
-            $sqlAlter2 = "ALTER TABLE " . $table . " MODIFY personafisica boolean NOT NULL DEFAULT true;";
-            $dataBase->exec($sqlAlter2);
         }
     }
 
@@ -129,17 +121,6 @@ final class Migrations
             $dataBase->exec($sqlUpdate4);
             $sqlUpdate5 = "UPDATE " . $table . " SET verificado = false WHERE verificado IS NULL;";
             $dataBase->exec($sqlUpdate5);
-
-            $sqlAlter1 = "ALTER TABLE " . $table . " MODIFY aceptaprivacidad boolean NOT NULL DEFAULT false;";
-            $dataBase->exec($sqlAlter1);
-            $sqlAlter2 = "ALTER TABLE " . $table . " MODIFY admitemarketing boolean NOT NULL DEFAULT false;";
-            $dataBase->exec($sqlAlter2);
-            $sqlAlter3 = "ALTER TABLE " . $table . " MODIFY habilitado boolean NOT NULL DEFAULT true;";
-            $dataBase->exec($sqlAlter3);
-            $sqlAlter4 = "ALTER TABLE " . $table . " MODIFY personafisica boolean NOT NULL DEFAULT true;";
-            $dataBase->exec($sqlAlter4);
-            $sqlAlter5 = "ALTER TABLE " . $table . " MODIFY verificado boolean NOT NULL DEFAULT false;";
-            $dataBase->exec($sqlAlter5);
         }
     }
 
@@ -166,13 +147,6 @@ final class Migrations
             $dataBase->exec($sqlUpdate2);
             $sqlUpdate3 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
             $dataBase->exec($sqlUpdate3);
-
-            $sqlAlter1 = "ALTER TABLE " . $table . " MODIFY acreedor boolean NOT NULL DEFAULT false;";
-            $dataBase->exec($sqlAlter1);
-            $sqlAlter2 = "ALTER TABLE " . $table . " MODIFY debaja boolean NOT NULL DEFAULT false;";
-            $dataBase->exec($sqlAlter2);
-            $sqlAlter3 = "ALTER TABLE " . $table . " MODIFY personafisica boolean NOT NULL DEFAULT true;";
-            $dataBase->exec($sqlAlter3);
         }
     }
 
