@@ -19,6 +19,12 @@
 #}
 {% set currentView = fsc.getCurrentView() %}
 {% set action = currentView.model.exists() ? 'edit' : 'insert' %}
+{% set totalFields = 0 %}
+{% set htmlFields = '' %}
+{% for group in currentView.getColumns() %}
+    {% set totalFields = totalFields + group.columns | length %}
+    {% set htmlFields = htmlFields ~ group.edit(currentView.model) %}
+{% endfor %}
 
 <script type="text/javascript">
     function editViewDelete(viewName) {
@@ -60,6 +66,9 @@
     <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <div class="{{ currentView.settings.card ? 'card shadow' : '' }}">
         <div class="{{ currentView.settings.card ? 'card-body' : 'container-fluid' }}">
+            {% if totalFields > 30 %}
+                {{ _self.addButtons(fsc, currentView, i18n, 'mb-2') }}
+            {% endif %}
             <div class="row">
                 <div class="col-12 text-right">
                     {# -- Row statistics -- #}
@@ -68,40 +77,9 @@
                 </div>
             </div>
             <div class="form-row">
-                {% for group in currentView.getColumns() %}
-                    {{ group.edit(currentView.model) | raw }}
-                {% endfor %}
+                {{ htmlFields | raw }}
             </div>
-            <div class="row">
-                {% if fsc.hasData and currentView.settings.btnDelete %}
-                    <div class="col">
-                        <button type="button" class="btn btn-sm btn-danger" onclick="editViewDelete('{{ currentView.getViewName() }}');">
-                            <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
-                            <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
-                        </button>
-                    </div>
-                {% endif %}
-                {% set extraClass = fsc.hasData and currentView.settings.btnDelete ? 'text-center' : '' %}
-                <div class="col {{ extraClass }}">
-                    {# -- Row actions -- #}
-                    {% set row = currentView.getRow('actions') %}
-                    {{ row.render(false, currentView.getViewName()) | raw }}
-                </div>
-                <div class="col text-right">
-                    {% if currentView.settings.btnUndo %}
-                        <button class="btn btn-sm btn-secondary" type="reset">
-                            <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
-                            <span class="d-none d-sm-inline-block">{{ i18n.trans('undo') }}</span>
-                        </button>
-                    {% endif %}
-                    {% if currentView.settings.btnSave %}
-                        <button class="btn btn-sm btn-primary" type="submit">
-                            <i class="fas fa-save fa-fw" aria-hidden="true"></i>
-                            <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
-                        </button>
-                    {% endif %}
-                </div>
-            </div>
+            {{ _self.addButtons(fsc, currentView, i18n) }}
         </div>
     </div>
 </form>
@@ -118,3 +96,36 @@
 {% for group in currentView.getModals() %}
     {{ group.modal(currentView.model, currentView.getViewName()) | raw }}
 {% endfor %}
+
+{% macro addButtons(fsc, currentView, i18n, class = '', btnDelete = true, btnUndo = true, btnSave = true) %}
+    <div class="row {{ class }}">
+        {% if btnDelete and fsc.hasData and currentView.settings.btnDelete %}
+            <div class="col">
+                <button type="button" class="btn btn-sm btn-danger" onclick="editViewDelete('{{ currentView.getViewName() }}');">
+                    <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
+                </button>
+            </div>
+        {% endif %}
+        {% set extraClass = fsc.hasData and currentView.settings.btnDelete ? 'text-center' : '' %}
+        <div class="col {{ extraClass }}">
+            {# -- Row actions -- #}
+            {% set row = currentView.getRow('actions') %}
+            {{ row.render(false, currentView.getViewName()) | raw }}
+        </div>
+        <div class="col text-right">
+            {% if btnUndo and currentView.settings.btnUndo %}
+                <button class="btn btn-sm btn-secondary" type="reset">
+                    <i class="fas fa-undo fa-fw" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">{{ i18n.trans('undo') }}</span>
+                </button>
+            {% endif %}
+            {% if btnSave and currentView.settings.btnSave %}
+                <button class="btn btn-sm btn-primary" type="submit">
+                    <i class="fas fa-save fa-fw" aria-hidden="true"></i>
+                    <span class="d-none d-sm-inline-block">{{ i18n.trans('save') }}</span>
+                </button>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
