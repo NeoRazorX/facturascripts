@@ -50,7 +50,6 @@
             </column>
         </group>
         <group name="options" numcolumns="12" valign="bottom">
-
             <column name="nostock" title="no-stock" order="110">
                 <widget type="checkbox" fieldname="nostock"/>
             </column>
