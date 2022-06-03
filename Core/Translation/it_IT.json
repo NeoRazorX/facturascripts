@@ -1024,6 +1024,7 @@
     "remove-filter": "remove-filter",
     "remove-from-list": "remove-from-list",
     "renew": "renew",
+    "renumber": "Renumerar",
     "renumber-accounting": "Renumber Accounting",
     "renumber-accounting-error": "An error occurred while renumber accounting entries in financial year %exerciseCode%",
     "renumber-accounting-ok": "Renumbering of accounting entries completed",

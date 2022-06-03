@@ -44,7 +44,7 @@ class Asiento extends Base\ModelOnChangeClass
     const RENUMBER_LIMIT = 1000;
 
     /**
-     * Accounting channel. For statisctics purpose.
+     * Accounting channel. For statistics purpose.
      *
      * @var int
      */
@@ -139,7 +139,7 @@ class Asiento extends Base\ModelOnChangeClass
         parent::clear();
         $this->editable = true;
         $this->fecha = date(self::DATE_STYLE);
-        $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+        $this->idempresa = self::toolBox()::appSettings()->get('default', 'idempresa');
         $this->importe = 0.0;
         $this->numero = '';
         $this->operacion = self::OPERATION_GENERAL;
@@ -148,18 +148,18 @@ class Asiento extends Base\ModelOnChangeClass
     public function delete(): bool
     {
         if (false === $this->getExercise()->isOpened()) {
-            $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
+            self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
             return false;
         }
 
         $reg = new DinRegularizacionImpuesto();
         if ($reg->loadFechaInside($this->fecha) && $reg->bloquear) {
-            $this->toolBox()->i18nLog()->warning('accounting-within-regularization');
+            self::toolBox()::i18nLog()->warning('accounting-within-regularization');
             return false;
         }
 
         if (false === $this->isEditable()) {
-            $this->toolBox()->i18nLog()->warning('non-editable-accounting-entry');
+            self::toolBox()::i18nLog()->warning('non-editable-accounting-entry');
             return false;
         }
 
@@ -236,7 +236,7 @@ class Asiento extends Base\ModelOnChangeClass
             $haber += $line->haber;
         }
 
-        return $this->toolBox()->utils()->floatcmp($debe, $haber, FS_NF0, true);
+        return self::toolBox()::utils()->floatcmp($debe, $haber, FS_NF0, true);
     }
 
     /**
@@ -266,39 +266,39 @@ class Asiento extends Base\ModelOnChangeClass
     }
 
     /**
-     * Re-number the accounting entries of the open exercises.
+     * Renumber the accounting entries of the given exercise.
      *
      * @param string $codejercicio
      *
      * @return bool
      */
-    public function renumber(string $codejercicio = ''): bool
+    public function renumber(string $codejercicio): bool
     {
-        $exerciseModel = new DinEjercicio();
-        $where = empty($codejercicio) ? [] : [new DataBaseWhere('codejercicio', $codejercicio)];
-        foreach ($exerciseModel->all($where) as $exe) {
-            if (false === $exe->isOpened()) {
-                continue;
-            }
-
-            $offset = 0;
-            $number = 1;
-            $sql = 'SELECT idasiento,numero,fecha FROM ' . static::tableName()
-                . ' WHERE codejercicio = ' . self::$dataBase->var2str($exe->codejercicio)
-                . ' ORDER BY codejercicio ASC, fecha ASC, idasiento ASC';
-
-            $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
-            while (!empty($rows)) {
-                if (false === $this->renumberAccEntries($rows, $number)) {
-                    $this->toolBox()->i18nLog()->warning('renumber-accounting-error', ['%exerciseCode%' => $exe->codejercicio]);
-                    return false;
-                }
-
-                $offset += self::RENUMBER_LIMIT;
-                $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
-            }
+        $exercise = new DinEjercicio();
+        if (false === $exercise->loadFromCode($codejercicio)) {
+            self::toolBox()::i18nLog()->error('exercise-not-found', ['%code%' => $codejercicio]);
+            return false;
+        } elseif (false === $exercise->isOpened()) {
+            self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
+            return false;
         }
 
+        $offset = 0;
+        $number = 1;
+        $sql = 'SELECT idasiento,numero,fecha FROM ' . static::tableName()
+            . ' WHERE codejercicio = ' . self::$dataBase->var2str($exercise->codejercicio)
+            . ' ORDER BY fecha ASC, idasiento ASC';
+
+        $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
+        while (!empty($rows)) {
+            if (false === $this->renumberAccEntries($rows, $number)) {
+                self::toolBox()::i18nLog()->warning('renumber-accounting-error', ['%exerciseCode%' => $codejercicio]);
+                return false;
+            }
+
+            $offset += self::RENUMBER_LIMIT;
+            $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
+        }
         return true;
     }
 
@@ -309,18 +309,18 @@ class Asiento extends Base\ModelOnChangeClass
         }
 
         if (false === $this->getExercise()->isOpened()) {
-            $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
+            self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
             return false;
         }
 
         $reg = new DinRegularizacionImpuesto();
         if ($reg->loadFechaInside($this->fecha) && $reg->bloquear) {
-            $this->toolBox()->i18nLog()->warning('accounting-within-regularization');
+            self::toolBox()::i18nLog()->warning('accounting-within-regularization');
             return false;
         }
 
         if (false === $this->isEditable()) {
-            $this->toolBox()->i18nLog()->warning('non-editable-accounting-entry');
+            self::toolBox()::i18nLog()->warning('non-editable-accounting-entry');
             return false;
         }
 
@@ -360,12 +360,12 @@ class Asiento extends Base\ModelOnChangeClass
 
     public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
+        $utils = self::toolBox()::utils();
         $this->concepto = $utils->noHtml($this->concepto);
         $this->documento = $utils->noHtml($this->documento);
 
         if (strlen($this->concepto) == 0 || strlen($this->concepto) > 255) {
-            $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']);
+            self::toolBox()::i18nLog()->warning('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']);
             return false;
         }
 
@@ -395,13 +395,13 @@ class Asiento extends Base\ModelOnChangeClass
     {
         switch ($field) {
             case 'codejercicio':
-                $this->toolBox()->i18nLog()->warning('cant-change-accounting-entry-exercise');
+                self::toolBox()::i18nLog()->warning('cant-change-accounting-entry-exercise');
                 return false;
 
             case 'fecha':
                 $this->setDate($this->fecha);
                 if ($this->codejercicio != $this->previousData['codejercicio']) {
-                    $this->toolBox()->i18nLog()->warning('cant-change-accounting-entry-exercise');
+                    self::toolBox()::i18nLog()->warning('cant-change-accounting-entry-exercise');
                     return false;
                 }
                 return true;
@@ -423,13 +423,12 @@ class Asiento extends Base\ModelOnChangeClass
         $sql = '';
         foreach ($entries as $row) {
             if (self::$dataBase->var2str($row['numero']) !== self::$dataBase->var2str($number)) {
-                $sql .= 'UPDATE ' . static::tableName() . ' SET numero = ' . self::$dataBase->var2str($number)
+                $sql .= 'UPDATE ' . static::tableName()
+                    . ' SET numero = ' . self::$dataBase->var2str($number)
                     . ' WHERE idasiento = ' . self::$dataBase->var2str($row['idasiento']) . ';';
             }
-
             ++$number;
         }
-
         return empty($sql) || self::$dataBase->exec($sql);
     }
 

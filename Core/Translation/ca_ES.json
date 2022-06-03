@@ -1024,6 +1024,7 @@
     "remove-filter": "Eliminar filtre",
     "remove-from-list": "Treure",
     "renew": "Renovar",
+    "renumber": "Renumerar",
     "renumber-accounting": "Renumerar Assentaments",
     "renumber-accounting-error": "Hi ha hagut un error durant la renumeració d'assentaments en l'exercici fiscal %exerciseCode%",
     "renumber-accounting-ok": "Renumeració d'assentaments completada",

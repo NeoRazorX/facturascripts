@@ -66,7 +66,7 @@ class ListAsiento extends ListController
         $this->addButton($viewName, [
             'action' => 'renumber',
             'icon' => 'fas fa-sort-numeric-down',
-            'label' => 'renumber-accounting',
+            'label' => 'renumber',
             'type' => 'modal'
         ]);
     }
@@ -117,7 +117,9 @@ class ListAsiento extends ListController
 
         // buttons
         $this->addLockButton($viewName);
-        $this->addRenumberButton($viewName);
+        if ($this->user->admin) {
+            $this->addRenumberButton($viewName);
+        }
     }
 
     protected function createViewsConcepts(string $viewName = 'ListConceptoPartida')
@@ -173,27 +175,31 @@ class ListAsiento extends ListController
     {
         switch ($action) {
             case 'lock-entries':
-                return $this->lockEntriesAction();
+                $this->lockEntriesAction();
+                return true;
 
             case 'renumber':
-                return $this->renumberAction();
+                $this->renumberAction();
+                return true;
         }
 
         return parent::execPreviousAction($action);
     }
 
-    protected function lockEntriesAction(): bool
+    protected function lockEntriesAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return true;
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
         }
 
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
         if (false === is_array($codes) || empty($model)) {
             $this->toolBox()->i18nLog()->warning('no-selected-item');
-            return true;
+            return;
         }
 
         $this->dataBase->beginTransaction();
@@ -209,27 +215,33 @@ class ListAsiento extends ListController
             if (false === $model->save()) {
                 $this->toolBox()->i18nLog()->error('record-save-error');
                 $this->dataBase->rollback();
-                return true;
+                return;
             }
         }
 
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         $this->dataBase->commit();
         $model->clear();
-        return true;
     }
 
-    protected function renumberAction(): bool
+    protected function renumberAction(): void
     {
-        if (false === $this->permissions->allowUpdate) {
+        if (false === $this->user->admin) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return true;
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
         }
 
+        $this->dataBase->beginTransaction();
         $codejercicio = $this->request->request->get('exercise');
         if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
             $this->toolBox()->i18nLog()->notice('renumber-accounting-ok');
+            $this->dataBase->commit();
+            return;
         }
-        return true;
+
+        $this->dataBase->rollback();
+        $this->toolBox()->i18nLog()->error('record-save-error');
     }
 }

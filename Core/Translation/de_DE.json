@@ -1024,6 +1024,7 @@
     "remove-filter": "Filter löschen",
     "remove-from-list": "Löschen",
     "renew": "Erneuern",
+    "renumber": "Renumerar",
     "renumber-accounting": "Buchungen neu nummerieren",
     "renumber-accounting-error": "Bei der Neunummerierung der Buchungen im Geschäftsjahr %exerciseCode% ist ein Fehler aufgetreten",
     "renumber-accounting-ok": "Neunummerierung der Buchungen abgeschlossen.",

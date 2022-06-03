@@ -403,7 +403,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 break;
 
             case 'codserie':
-                BusinessDocumentCode::getNewCode($this);
+                BusinessDocumentCode::setNewCode($this);
                 break;
 
             case 'fecha':
@@ -411,7 +411,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 if (false === $this->setDate($this->fecha, $this->hora)) {
                     return false;
                 } elseif ($this->codejercicio != $oldCodejercicio) {
-                    BusinessDocumentCode::getNewCode($this);
+                    BusinessDocumentCode::setNewCode($this);
                 }
                 break;
 
@@ -420,7 +420,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 return false;
 
             case 'numero':
-                BusinessDocumentCode::getNewCode($this, false);
+                BusinessDocumentCode::setNewCode($this, false);
                 break;
         }
 

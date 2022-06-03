@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,26 +34,21 @@ use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 class ListFacturaProveedor extends ListBusinessDocument
 {
     /**
-    * Add a modal button for renumber entries
-    *
-    * @param string $viewName
-    */
+     * Add a modal button for renumber entries
+     *
+     * @param string $viewName
+     */
     protected function addRenumberInvoicesButton(string $viewName)
     {
         $this->addButton($viewName, [
             'action' => 'renumber-invoices',
             'icon' => 'fas fa-sort-numeric-down',
-            'label' => 'renumber-invoices',
+            'label' => 'renumber',
             'type' => 'modal'
-            ]);
+        ]);
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
@@ -74,23 +69,18 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->createViewReceipts();
     }
 
-    /**
-     * @param string $viewName
-     * @param string $modelName
-     * @param string $label
-     */
     protected function createViewPurchases(string $viewName, string $modelName, string $label)
     {
         parent::createViewPurchases($viewName, $modelName, $label);
         $this->addFilterCheckbox('ListFacturaProveedor', 'pagada', 'unpaid', 'pagada', '=', false);
         $this->addFilterCheckbox('ListFacturaProveedor', 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
         $this->addButtonLockInvoice('ListFacturaProveedor');
-        $this->addRenumberInvoicesButton($viewName);
+
+        if ($this->user->admin) {
+            $this->addRenumberInvoicesButton($viewName);
+        }
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewReceipts(string $viewName = 'ListReciboProveedor')
     {
         $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
@@ -124,41 +114,42 @@ class ListFacturaProveedor extends ListBusinessDocument
         // settings
         $this->setSettings($viewName, 'btnNew', false);
     }
-    
-    
-    /**
-    *
-    * @return bool
-    */
-    protected function renumberInvoicesAction()
-    {
-        if (false === $this->permissions->allowUpdate) 
-        {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return true;
-        }
-        $codejercicio = $this->request->request->get('exercise');
-        if ($this->views['ListFacturaProveedor']->model->renumberInvoices($codejercicio)) 
-        {
-            $this->toolBox()->i18nLog()->notice('renumber-invoices-ok');
-        }
-        return true;
-    }
 
     /**
-    * Run the actions that alter data before reading it.
-    *
-    * @param string $action
-    *
-    * @return bool
-    */
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     *
+     * @return bool
+     */
     protected function execPreviousAction($action)
     {
-        switch ($action) 
-        {
-            case 'renumber-invoices':
-                return $this->renumberInvoicesAction();
+        if ($action == 'renumber-invoices') {
+            $this->renumberInvoicesAction();
+            return true;
         }
+
         return parent::execPreviousAction($action);
+    }
+
+    protected function renumberInvoicesAction(): void
+    {
+        if (false === $this->user->admin) {
+            self::toolBox()->i18nLog()->warning('not-allowed-modify');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $this->dataBase->beginTransaction();
+        $codejercicio = $this->request->request->get('exercise');
+        if ($this->views['ListFacturaProveedor']->model->renumber($codejercicio)) {
+            self::toolBox()->i18nLog()->notice('record-updated-correctly');
+            $this->dataBase->commit();
+            return;
+        }
+
+        $this->dataBase->rollback();
+        self::toolBox()->i18nLog()->warning('record-save-error');
     }
 }

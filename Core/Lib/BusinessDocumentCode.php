@@ -35,19 +35,14 @@ class BusinessDocumentCode
     const GAP_LIMIT = 1000;
 
     /**
-     * Generates a new identifier for humans from a document.
-     *
+     * @param SecuenciaDocumento $sequence
      * @param BusinessDocument $document
-     * @param bool $newNumber
+     *
+     * @return string
      */
-    public static function getNewCode(&$document, bool $newNumber = true)
+    public static function getNewCode(SecuenciaDocumento &$sequence, BusinessDocument &$document): string
     {
-        $sequence = static::getSequence($document);
-        if ($newNumber) {
-            $document->numero = static::getNewNumber($sequence, $document);
-        }
-
-        $document->codigo = CodePatterns::trans($sequence->patron, $document, ['long' => $sequence->longnumero]);
+        return CodePatterns::trans($sequence->patron, $document, ['long' => $sequence->longnumero]);
     }
 
     /**
@@ -56,7 +51,7 @@ class BusinessDocumentCode
      *
      * @return string
      */
-    protected static function getNewNumber(&$sequence, &$document): string
+    protected static function getNewNumber(SecuenciaDocumento &$sequence, BusinessDocument &$document): string
     {
         $previous = static::getPrevious($sequence, $document);
 
@@ -109,32 +104,13 @@ class BusinessDocumentCode
     }
 
     /**
-     * @param SecuenciaDocumento $sequence
-     * @param BusinessDocument $document
-     *
-     * @return BusinessDocument[]
-     */
-    protected static function getPrevious(&$sequence, &$document): array
-    {
-        $order = strtolower(FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
-        $where = [
-            new DataBaseWhere('codserie', $sequence->codserie),
-            new DataBaseWhere('idempresa', $sequence->idempresa)
-        ];
-        if ($sequence->codejercicio) {
-            $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
-        }
-        return $document->all($where, $order, 0, self::GAP_LIMIT);
-    }
-
-    /**
      * Finds sequence for this document.
      *
      * @param BusinessDocument $document
      *
      * @return SecuenciaDocumento
      */
-    protected static function getSequence(&$document)
+    public static function getSequence(BusinessDocument &$document): SecuenciaDocumento
     {
         $selectedSequence = new SecuenciaDocumento();
         $patron = substr(strtoupper($document->modelClassName()), 0, 3) . '{EJE}{SERIE}{NUM}';
@@ -174,5 +150,40 @@ class BusinessDocumentCode
         }
 
         return $selectedSequence;
+    }
+
+    /**
+     * Assign a new unique code for the document.
+     *
+     * @param BusinessDocument $document
+     * @param bool $newNumber
+     */
+    public static function setNewCode(BusinessDocument &$document, bool $newNumber = true): void
+    {
+        $sequence = static::getSequence($document);
+        if ($newNumber) {
+            $document->numero = static::getNewNumber($sequence, $document);
+        }
+
+        $document->codigo = static::getNewCode($sequence, $document);
+    }
+
+    /**
+     * @param SecuenciaDocumento $sequence
+     * @param BusinessDocument $document
+     *
+     * @return BusinessDocument[]
+     */
+    protected static function getPrevious(SecuenciaDocumento &$sequence, BusinessDocument &$document): array
+    {
+        $order = strtolower(FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
+        $where = [
+            new DataBaseWhere('codserie', $sequence->codserie),
+            new DataBaseWhere('idempresa', $sequence->idempresa)
+        ];
+        if ($sequence->codejercicio) {
+            $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
+        }
+        return $document->all($where, $order, 0, self::GAP_LIMIT);
     }
 }

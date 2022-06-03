@@ -1024,6 +1024,7 @@
     "remove-filter": "Supprimer le filtre",
     "remove-from-list": "Supprimer",
     "renew": "Renouveler",
+    "renumber": "Renumerar",
     "renumber-accounting": "Renuméroter les sièges",
     "renumber-accounting-error": "Une erreur s'est produite lors de la renumérotation des entrées de l'année fiscale %exerciseCode%",
     "renumber-accounting-ok": "Renumérotation des sièges terminés",

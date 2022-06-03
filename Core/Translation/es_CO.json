@@ -1024,6 +1024,7 @@
     "remove-filter": "Eliminar filtro",
     "remove-from-list": "Quitar",
     "renew": "Renovar",
+    "renumber": "Renumerar",
     "renumber-accounting": "Renumerar Asientos",
     "renumber-accounting-error": "Ha ocurrido un error durante la renumeración de asientos en el ejercicio contable %exerciseCode%",
     "renumber-accounting-ok": "Renumeración de asientos completada",
