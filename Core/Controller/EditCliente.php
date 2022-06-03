@@ -47,6 +47,12 @@ class EditCliente extends ComercialContactController
         return $this->toolBox()->coins()->format($total);
     }
 
+    public function getImageUrl(): string
+    {
+        $mvn = $this->getMainViewName();
+        return $this->views[$mvn]->model->gravatar();
+    }
+
     /**
      * Returns the customer's risk on unpaid invoices.
      *
