@@ -24,6 +24,9 @@
         <column name="id" display="none" order="90">
             <widget type="text" fieldname="idfactura" />
         </column>
+        <column name="number" order="95">
+            <widget type="text" fieldname="numero" />
+        </column>
         <column name="company" display="none" order="100">
             <widget type="select" fieldname="idempresa">
                 <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
@@ -122,6 +125,15 @@
             <widget type="date" fieldname="fecha" />
         </column>
     </columns>
+    <modals>
+        <group name="renumber-invoices" title="renumber-invoices" icon="fas fa-sort-numeric-down">
+            <column name="exercise">
+                <widget type="select" fieldname="exercise" >
+                    <values source="ejercicios" fieldcode="codejercicio" />
+                </widget>
+            </column>
+        </group>
+    </modals>
     <rows>
         <row type="status">
             <option color="danger" title="rectified-invoice" fieldname="idfacturarect">notnull:</option>
