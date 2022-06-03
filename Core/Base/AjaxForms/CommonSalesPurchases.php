@@ -267,6 +267,7 @@ trait CommonSalesPurchases
 
     protected static function idestado(Translator $i18n, TransformerDocument $model, string $jsName): string
     {
+        // si no se ha guardado no se puede cambiar el estado. Mantenemos el predeterminado
         if (empty($model->primaryColumnValue())) {
             return '';
         }
@@ -277,6 +278,7 @@ trait CommonSalesPurchases
             $btnClass = 'btn btn-block btn-danger btn-spin-action';
         }
 
+        // si el estado genera documento, no se puede cambiar, sin eliminar el nuevo documento
         if ($status->generadoc) {
             return '<div class="col-sm-auto">'
                 . '<div class="form-group">'
@@ -287,6 +289,7 @@ trait CommonSalesPurchases
                 . '</div>';
         }
 
+        // añadimos los estados posibles
         $options = [];
         foreach ($model->getAvailableStatus() as $sta) {
             if ($sta->idestado === $model->idestado) {
@@ -298,6 +301,7 @@ trait CommonSalesPurchases
                 . '<i class="' . static::idestadoIcon($sta, true) . ' fa-fw"></i> ' . $sta->nombre . '</a>';
         }
 
+        // añadimos la opción de agrupar o partir (excepto facturas y documentos no editables)
         if ($model->editable && false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
             $options[] = '<div class="dropdown-divider"></div>'
                 . '<a class="dropdown-item" href="DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $model->primaryColumnValue() . '">'

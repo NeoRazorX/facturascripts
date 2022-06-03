@@ -106,8 +106,9 @@ class DocumentStitcher extends Controller
         $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
 
+        // no se pueden agrupar o partir facturas
         if (in_array($this->modelName, ['FacturaCliente', 'FacturaProveedor'])) {
-            $this->redirect('Edit' . $this->modelName . '?code=' . $this->codes[0]);
+            $this->redirect('List' . $this->modelName);
             return;
         }
 
