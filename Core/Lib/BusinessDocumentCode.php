@@ -21,7 +21,8 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
+use FacturaScripts\Core\Model\SecuenciaDocumento;
+use FacturaScripts\Dinamic\Model\SecuenciaDocumento as DinSecuenciaDocumento;
 
 /**
  * Description of BusinessDocumentCode
@@ -112,12 +113,12 @@ class BusinessDocumentCode
      */
     public static function getSequence(BusinessDocument &$document): SecuenciaDocumento
     {
-        $selectedSequence = new SecuenciaDocumento();
+        $selectedSequence = new DinSecuenciaDocumento();
         $patron = substr(strtoupper($document->modelClassName()), 0, 3) . '{EJE}{SERIE}{NUM}';
         $long = $selectedSequence->longnumero;
 
         // find sequence for this document and serie
-        $sequence = new SecuenciaDocumento();
+        $sequence = new DinSecuenciaDocumento();
         $where = [
             new DataBaseWhere('codserie', $document->codserie),
             new DataBaseWhere('idempresa', $document->idempresa),

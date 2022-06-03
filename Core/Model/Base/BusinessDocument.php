@@ -311,7 +311,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
         // empty code?
         if (empty($this->codigo)) {
-            BusinessDocumentCode::getNewCode($this);
+            BusinessDocumentCode::setNewCode($this);
         }
 
         return parent::save();
