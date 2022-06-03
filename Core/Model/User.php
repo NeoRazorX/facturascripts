@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model;
 
-use FacturaScripts\Core\Model\Base\GravatarTrait;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
 
@@ -34,7 +33,7 @@ class User extends Base\ModelClass
     use Base\ModelTrait;
     use Base\CompanyRelationTrait;
     use Base\PasswordTrait;
-    use GravatarTrait;
+    use Base\GravatarTrait;
 
     const DEFAULT_LEVEL = 2;
 

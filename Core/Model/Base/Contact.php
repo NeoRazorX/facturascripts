@@ -28,7 +28,6 @@ use FacturaScripts\Dinamic\Lib\FiscalNumberValitator;
  */
 abstract class Contact extends ModelClass
 {
-
     use GravatarTrait;
 
     /**
@@ -103,9 +102,6 @@ abstract class Contact extends ModelClass
      */
     public $tipoidfiscal;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();

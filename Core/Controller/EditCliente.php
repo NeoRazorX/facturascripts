@@ -65,12 +65,7 @@ class EditCliente extends ComercialContactController
         return $this->toolBox()->coins()->format($total);
     }
 
-    /**
-     * Returns the class name of the model to use.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Cliente';
     }
@@ -87,12 +82,7 @@ class EditCliente extends ComercialContactController
         return $this->toolBox()->coins()->format($total);
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -101,11 +91,6 @@ class EditCliente extends ComercialContactController
         return $data;
     }
 
-    /**
-     * @param string $viewName
-     * @param string $model
-     * @param string $label
-     */
     protected function createDocumentView(string $viewName, string $model, string $label)
     {
         $this->createCustomerListView($viewName, $model, $label);
@@ -113,9 +98,6 @@ class EditCliente extends ComercialContactController
         $this->addButtonApproveDocument($viewName);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createInvoiceView(string $viewName)
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
@@ -217,9 +199,6 @@ class EditCliente extends ComercialContactController
         }
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function setCustomWidgetValues(string $viewName)
     {
         // Load values option to VAT Type select input

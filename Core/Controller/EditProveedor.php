@@ -65,22 +65,12 @@ class EditProveedor extends ComercialContactController
         return $this->toolBox()->coins()->format($total);
     }
 
-    /**
-     * Returns the class name of the model to use.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Proveedor';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
@@ -89,11 +79,6 @@ class EditProveedor extends ComercialContactController
         return $data;
     }
 
-    /**
-     * @param string $viewName
-     * @param string $model
-     * @param string $label
-     */
     protected function createDocumentView(string $viewName, string $model, string $label)
     {
         $this->createSupplierListView($viewName, $model, $label);
@@ -101,18 +86,12 @@ class EditProveedor extends ComercialContactController
         $this->addButtonApproveDocument($viewName);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createInvoiceView(string $viewName)
     {
         $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices');
         $this->addButtonLockInvoice($viewName);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createProductView(string $viewName = 'ListProductoProveedor')
     {
         $this->addListView($viewName, 'ProductoProveedor', 'products', 'fas fa-cubes');
@@ -225,9 +204,6 @@ class EditProveedor extends ComercialContactController
         }
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function setCustomWidgetValues(string $viewName)
     {
         // Load values option to VAT Type select input

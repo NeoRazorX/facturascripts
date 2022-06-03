@@ -212,19 +212,9 @@
         } else if (cantidad <= 0) {
             alert('cantidad > 0');
         } else {
-            let pvp = (100 * total / cantidad) / (100 + iva + recargo - irpf);
-            pvp = Math.round(pvp * 100000) / 100000;
-            if (dtopor === 100) {
-                pvp = 0;
-            } else if (dtopor > 0 && dtopor < 100) {
-                pvp = pvp / (1 - (dtopor >= 100 ? 1 : dtopor / 100));
-            }
-            if (dtopor2 === 100) {
-                pvp = 0;
-            } else if (dtopor2 > 0 && dtopor2 < 100) {
-                pvp = pvp / (1 - (dtopor2 >= 100 ? 1 : dtopor2 / 100));
-            }
-            document.forms['purchasesForm']['pvpunitario_' + id].value = pvp;
+            let pvpSinDto = (100 * total / cantidad) / (100 + iva + recargo - irpf);
+            let pvp = 10000 * pvpSinDto / ((100 - dtopor) * (100 - dtopor2));
+            document.forms['purchasesForm']['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
             purchasesFormAction('recalculate', '0');
         }
     }
