@@ -105,6 +105,12 @@ class DocumentStitcher extends Controller
         parent::privateCore($response, $user, $permissions);
         $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
+
+        if (in_array($this->modelName, ['FacturaCliente', 'FacturaProveedor'])) {
+            $this->redirect('Edit' . $this->modelName . '?code=' . $this->codes[0]);
+            return;
+        }
+
         $this->loadDocuments();
         $this->loadMoreDocuments();
 
