@@ -313,6 +313,43 @@ final class AsientoTest extends TestCase
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete-6');
     }
 
+    public function testChangeExercise()
+    {
+        // obtenemos un ejercicio
+        $exercise = $this->getRandomExercise();
+        $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
+        $this->assertTrue($exercise->save(), 'can-not-save-exercise-7');
+
+        // creamos un asiento
+        $asiento = new Asiento();
+        $asiento->concepto = 'Test';
+        $asiento->codejercicio = $exercise->codejercicio;
+        $asiento->fecha = $exercise->fechafin;
+        $asiento->idempresa = $exercise->idempresa;
+        $this->assertTrue($asiento->save(), 'asiento-cant-save-7');
+
+        // obtenemos una fecha posterior a la de cierre del ejercicio
+        $nextDate = date(ModelCore::DATE_STYLE, strtotime($exercise->fechafin . ' +1 day'));
+
+        // asignamos esa fecha al asiento
+        $asiento->fecha = $nextDate;
+        $this->assertFalse($asiento->save(), 'asiento-can-set-date-after-exercise-end');
+
+        // obtenemos el ejercicio siguiente
+        $nextExercise = new Ejercicio();
+        $nextExercise->idempresa = $exercise->idempresa;
+        $this->assertTrue($nextExercise->loadFromDate($nextDate), 'can-not-load-next-exercise');
+
+        // cambiamos el ejercicio del asiento
+        $asiento->codejercicio = $nextExercise->codejercicio;
+        $asiento->fecha = $nextDate;
+        $this->assertFalse($asiento->save(), 'asiento-cant-change-exercise');
+
+        // eliminamos
+        $this->assertTrue($asiento->delete(), 'asiento-cant-delete-7');
+        $this->assertTrue($nextExercise->delete(), 'next-exercise-cant-delete');
+    }
+
     public function testRenumber()
     {
         // obtenemos un ejercicio

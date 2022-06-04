@@ -147,18 +147,7 @@ class Asiento extends Base\ModelOnChangeClass
 
     public function delete(): bool
     {
-        if (false === $this->getExercise()->isOpened()) {
-            self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
-            return false;
-        }
-
-        $reg = new DinRegularizacionImpuesto();
-        if ($reg->loadFechaInside($this->fecha) && $reg->bloquear) {
-            self::toolBox()::i18nLog()->warning('accounting-within-regularization');
-            return false;
-        }
-
-        if (false === $this->isEditable()) {
+        if (false === $this->editable()) {
             self::toolBox()::i18nLog()->warning('non-editable-accounting-entry');
             return false;
         }
@@ -182,6 +171,23 @@ class Asiento extends Base\ModelOnChangeClass
             'model-data' => $this->toArray()
         ]);
         return true;
+    }
+
+    public function editable(): bool
+    {
+        $exercise = $this->getExercise();
+        if (false === $exercise->isOpened()) {
+            self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
+            return false;
+        }
+
+        $reg = new DinRegularizacionImpuesto();
+        if ($reg->loadFechaInside($this->fecha) && $reg->bloquear) {
+            self::toolBox()::i18nLog()->warning('accounting-within-regularization');
+            return false;
+        }
+
+        return $this->editable || $this->previousData['editable'];
     }
 
     /**
@@ -308,18 +314,7 @@ class Asiento extends Base\ModelOnChangeClass
             $this->setDate($this->fecha);
         }
 
-        if (false === $this->getExercise()->isOpened()) {
-            self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
-            return false;
-        }
-
-        $reg = new DinRegularizacionImpuesto();
-        if ($reg->loadFechaInside($this->fecha) && $reg->bloquear) {
-            self::toolBox()::i18nLog()->warning('accounting-within-regularization');
-            return false;
-        }
-
-        if (false === $this->isEditable()) {
+        if (false === $this->editable()) {
             self::toolBox()::i18nLog()->warning('non-editable-accounting-entry');
             return false;
         }
@@ -365,7 +360,9 @@ class Asiento extends Base\ModelOnChangeClass
         $this->documento = $utils->noHtml($this->documento);
 
         if (strlen($this->concepto) == 0 || strlen($this->concepto) > 255) {
-            self::toolBox()::i18nLog()->warning('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']);
+            self::toolBox()::i18nLog()->warning(
+                'invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']
+            );
             return false;
         }
 
@@ -374,16 +371,6 @@ class Asiento extends Base\ModelOnChangeClass
         }
 
         return parent::test();
-    }
-
-    /**
-     * Check if the accounting entry is editable.
-     *
-     * @return bool
-     */
-    protected function isEditable(): bool
-    {
-        return $this->editable || $this->previousData['editable'];
     }
 
     /**
