@@ -89,7 +89,7 @@
                                         <select name="codpais" class="form-control">
                                             <option value="">{{ i18n.trans('all') }}</option>
                                             <option value="">------</option>
-                                            {% for pais in fsc.paises %}
+                                            {% for pais in fsc.paises.all() %}
                                                 {% if pais.codpais == fsc.codpais %}
                                                     <option value="{{ pais.codpais }}"
                                                             selected="">{{ pais.nombre | raw }}</option>

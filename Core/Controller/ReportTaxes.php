@@ -104,7 +104,7 @@ class ReportTaxes extends Controller
         parent::privateCore($response, $user, $permissions);
         $this->serie = new Serie();
         $this->paises = new Pais();
-        $this->paises = $this->paises->all([], ['nombre' => 'ASC'], 0, 0);
+        
         $this->initFilters();
         if ('export' === $this->request->request->get('action')) {
             $this->exportAction();
@@ -220,7 +220,8 @@ class ReportTaxes extends Controller
                     . ' LEFT JOIN facturascli AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
                     . ' AND f.fecha >= ' . $this->dataBase->var2str($this->datefrom)
-                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto);
+                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto)
+                        . ' AND f.codpais = ' . $this->dataBase->var2str($this->codpais);
                 break;
 
             default:
@@ -229,10 +230,7 @@ class ReportTaxes extends Controller
         if ($this->codserie) {
             $sql .= ' AND codserie = ' . $this->dataBase->var2str($this->codserie);
         }
-        if ($this->source === 'sales' && $this->codpais) {
-                    $sql .= ' AND codpais = ' . $this->dataBase->var2str($this->codpais);
-                }
-               
+    
         $sql .= ' ORDER BY f.fecha, ' . $numCol . ' ASC;';
 
         $data = [];
@@ -315,13 +313,13 @@ class ReportTaxes extends Controller
 
     protected function initFilters()
     {
-        $this->codpais = $this->request->request->get('codpais', '');
         $this->codserie = $this->request->request->get('codserie', '');
         $this->datefrom = $this->request->request->get('datefrom', date('Y-m-01'));
         $this->dateto = $this->request->request->get('dateto', date('Y-m-t'));
         $this->idempresa = (int)$this->request->request->get('idempresa', $this->empresa->idempresa);
         $this->format = $this->request->request->get('format');
         $this->source = $this->request->request->get('source');
+        $this->codpais = $this->request->request->get('codpais', $this->empresa->codpais);
     }
 
     /**
