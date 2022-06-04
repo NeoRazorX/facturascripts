@@ -27,7 +27,7 @@ use FacturaScripts\Dinamic\Model\Partida as DinPartida;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
- * A VAT regularization.
+ * Tax regularization.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
@@ -144,6 +144,34 @@ class RegularizacionImpuesto extends Base\ModelClass
         return $this->getAccountingEntry()->getLines();
     }
 
+    /**
+     * Calculate Period data
+     *
+     * @param string $period
+     *
+     * @return array
+     */
+    public function getPeriod(string $period): array
+    {
+        // Calculate year
+        $year = date('Y', strtotime($this->getExercise()->fechainicio));
+
+        // return periods values
+        switch ($period) {
+            case 'T2':
+                return ['start' => date('01-04-' . $year), 'end' => date('30-06-' . $year)];
+
+            case 'T3':
+                return ['start' => date('01-07-' . $year), 'end' => date('30-09-' . $year)];
+
+            case 'T4':
+                return ['start' => date('01-10-' . $year), 'end' => date('31-12-' . $year)];
+
+            default:
+                return ['start' => date('01-01-' . $year), 'end' => date('31-03-' . $year)];
+        }
+    }
+
     public function install(): string
     {
         // needed dependencies
@@ -180,10 +208,12 @@ class RegularizacionImpuesto extends Base\ModelClass
 
     public function test(): bool
     {
-        // calculate dates to selected period
-        $period = $this->getPeriod($this->periodo);
-        $this->fechainicio = $period['start'];
-        $this->fechafin = $period['end'];
+        if ($this->periodo) {
+            // calculate dates to selected period
+            $period = $this->getPeriod($this->periodo);
+            $this->fechainicio = $period['start'];
+            $this->fechafin = $period['end'];
+        }
 
         if (empty($this->idempresa)) {
             $this->idempresa = $this->getExercise()->idempresa;
@@ -194,34 +224,6 @@ class RegularizacionImpuesto extends Base\ModelClass
         }
 
         return parent::test();
-    }
-
-    /**
-     * Calculate Period data
-     *
-     * @param string $period
-     *
-     * @return array
-     */
-    private function getPeriod(string $period): array
-    {
-        // Calculate year
-        $year = date('Y', strtotime($this->getExercise()->fechainicio));
-
-        // return periods values
-        switch ($period) {
-            case 'T2':
-                return ['start' => date('01-04-' . $year), 'end' => date('30-06-' . $year)];
-
-            case 'T3':
-                return ['start' => date('01-07-' . $year), 'end' => date('30-09-' . $year)];
-
-            case 'T4':
-                return ['start' => date('01-10-' . $year), 'end' => date('31-12-' . $year)];
-
-            default:
-                return ['start' => date('01-01-' . $year), 'end' => date('31-03-' . $year)];
-        }
     }
 
     protected function setDefaultAccounts()
