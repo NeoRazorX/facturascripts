@@ -55,8 +55,29 @@ final class AsientoTest extends TestCase
         $this->assertNotNull($asiento->primaryColumnValue(), 'asiento-not-stored');
         $this->assertTrue($asiento->exists(), 'asiento-cant-persist');
 
+        // añadimos una línea
+        $firstLine = $asiento->getNewLine();
+        $firstLine->codsubcuenta = '1000000000';
+        $firstLine->descripcion = 'Test linea 1';
+        $firstLine->debe = 100;
+        $this->assertTrue($firstLine->save(), 'linea-cant-save-1');
+
+        // añadimos otra línea
+        $secondLine = $asiento->getNewLine();
+        $secondLine->codsubcuenta = '5700000000';
+        $secondLine->descripcion = 'Test linea 2';
+        $secondLine->haber = 100;
+        $this->assertTrue($secondLine->save(), 'linea-cant-save-2');
+
+        // el asiento está cuadrado
+        $this->assertTrue($asiento->isBalanced(), 'asiento-is-descuadrado');
+
         // eliminamos
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete-1');
+
+        // las líneas se han eliminado
+        $this->assertFalse($firstLine->exists(), 'linea-cant-delete-1');
+        $this->assertFalse($secondLine->exists(), 'linea-cant-delete-2');
     }
 
     public function testCheckLogAudit()
@@ -104,6 +125,7 @@ final class AsientoTest extends TestCase
     {
         // cargamos un ejercicio
         $exercise = $this->getRandomExercise();
+        $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
         $this->assertTrue($exercise->save(), 'can-not-save-exercise-4');
 
         // creamos el asiento
@@ -113,6 +135,13 @@ final class AsientoTest extends TestCase
         $asiento->fecha = $exercise->fechafin;
         $asiento->idempresa = $exercise->idempresa;
         $this->assertTrue($asiento->save(), 'asiento-cant-save-4');
+
+        // añadimos una línea
+        $firstLine = $asiento->getNewLine();
+        $firstLine->codsubcuenta = '1000000000';
+        $firstLine->descripcion = 'Test linea 1';
+        $firstLine->debe = 100;
+        $this->assertTrue($firstLine->save(), 'linea-cant-save-4');
 
         // cerramos el ejercicio
         $exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
@@ -124,6 +153,20 @@ final class AsientoTest extends TestCase
 
         // tampoco se puede eliminar
         $this->assertFalse($asiento->delete(), 'can-delete-on-closed-exercise');
+
+        // no se puede añadir una línea
+        $line = $asiento->getNewLine();
+        $line->codsubcuenta = '5720000000';
+        $line->descripcion = 'Test linea 3';
+        $line->debe = 100;
+        $this->assertFalse($line->save(), 'can-add-line-on-closed-exercise');
+
+        // no se puede modificar una línea
+        $firstLine->descripcion = 'Modify linea 1';
+        $this->assertFalse($firstLine->save(), 'can-modify-line-on-closed-exercise');
+
+        // no se puede eliminar una línea
+        $this->assertFalse($firstLine->delete(), 'can-delete-line-on-closed-exercise');
 
         // abrimos el ejercicio
         $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
@@ -137,6 +180,7 @@ final class AsientoTest extends TestCase
     {
         // obtenemos un ejercicio
         $exercise = $this->getRandomExercise();
+        $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
         $this->assertTrue($exercise->save(), 'can-not-save-exercise-5');
 
         // creamos una regularización de impuestos
@@ -162,6 +206,7 @@ final class AsientoTest extends TestCase
     {
         // obtenemos un ejercicio
         $exercise = $this->getRandomExercise();
+        $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
         $this->assertTrue($exercise->save(), 'can-not-save-exercise-6');
 
         // creamos un asiento
@@ -192,6 +237,7 @@ final class AsientoTest extends TestCase
     {
         // obtenemos un ejercicio
         $exercise = $this->getRandomExercise();
+        $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
         $this->assertTrue($exercise->save(), 'can-not-save-exercise-7');
 
         // eliminamos todos sus asientos
@@ -211,7 +257,7 @@ final class AsientoTest extends TestCase
             $this->assertEquals($i, $asiento->numero, 'asiento-number-not-correct');
         }
 
-        // renumeramo
+        // renumeramos
         $this->assertTrue($asientoModel->renumber($exercise->codejercicio), 'can-not-renumber-asientos');
 
         // comprobamos que los números se han renumerado

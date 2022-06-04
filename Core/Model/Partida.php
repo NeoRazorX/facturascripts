@@ -190,6 +190,17 @@ class Partida extends Base\ModelOnChangeClass
         $this->tasaconv = 1.0;
     }
 
+    public function delete(): bool
+    {
+        $exercise = $this->getAccountingEntry()->getExercise();
+        if (false === $exercise->isOpened()) {
+            self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
+            return false;
+        }
+
+        return parent::delete();
+    }
+
     /**
      * @param string $codsubcuenta
      *
@@ -239,6 +250,17 @@ class Partida extends Base\ModelOnChangeClass
     public static function primaryColumn(): string
     {
         return 'idpartida';
+    }
+
+    public function save(): bool
+    {
+        $exercise = $this->getAccountingEntry()->getExercise();
+        if (false === $exercise->isOpened()) {
+            self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
+            return false;
+        }
+
+        return parent::save();
     }
 
     /**
