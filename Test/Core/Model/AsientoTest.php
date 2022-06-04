@@ -58,14 +58,14 @@ final class AsientoTest extends TestCase
         // añadimos una línea
         $firstLine = $asiento->getNewLine();
         $firstLine->codsubcuenta = '1000000000';
-        $firstLine->descripcion = 'Test linea 1';
+        $firstLine->concepto = 'Test linea 1';
         $firstLine->debe = 100;
         $this->assertTrue($firstLine->save(), 'linea-cant-save-1');
 
         // añadimos otra línea
         $secondLine = $asiento->getNewLine();
         $secondLine->codsubcuenta = '5700000000';
-        $secondLine->descripcion = 'Test linea 2';
+        $secondLine->concepto = 'Test linea 2';
         $secondLine->haber = 100;
         $this->assertTrue($secondLine->save(), 'linea-cant-save-2');
 
@@ -93,6 +93,86 @@ final class AsientoTest extends TestCase
 
         // eliminamos
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete-2');
+    }
+
+    public function testUpdate()
+    {
+        // creamos el asiento
+        $asiento = new Asiento();
+        $asiento->concepto = 'Test';
+        $this->assertTrue($asiento->save(), 'asiento-cant-save-3');
+
+        // añadimos una línea
+        $firstLine = $asiento->getNewLine();
+        $firstLine->codsubcuenta = '1000000000';
+        $firstLine->concepto = 'Test linea 1';
+        $firstLine->debe = 100;
+        $this->assertTrue($firstLine->save(), 'linea-cant-save-3');
+
+        // añadimos otra línea
+        $secondLine = $asiento->getNewLine();
+        $secondLine->codsubcuenta = '5700000000';
+        $secondLine->concepto = 'Test linea 2';
+        $secondLine->haber = 100;
+        $this->assertTrue($secondLine->save(), 'linea-cant-save-4');
+
+        // actualizamos el asiento
+        $asiento->concepto = 'Test 2';
+        $asiento->importe = 100;
+        $this->assertTrue($asiento->save(), 'asiento-cant-save-4');
+
+        // eliminamos
+        $this->assertTrue($asiento->delete(), 'asiento-cant-delete-3');
+    }
+
+    public function testUpdateLocked()
+    {
+        // creamos el asiento
+        $asiento = new Asiento();
+        $asiento->concepto = 'Test';
+        $this->assertTrue($asiento->save(), 'asiento-cant-save-5');
+
+        // añadimos una línea
+        $firstLine = $asiento->getNewLine();
+        $firstLine->codsubcuenta = '1000000000';
+        $firstLine->concepto = 'Test linea 1';
+        $firstLine->debe = 100;
+        $this->assertTrue($firstLine->save(), 'linea-cant-save-5');
+
+        // añadimos otra línea
+        $secondLine = $asiento->getNewLine();
+        $secondLine->codsubcuenta = '5700000000';
+        $secondLine->concepto = 'Test linea 2';
+        $secondLine->haber = 100;
+
+        // bloqueamos el asiento
+        $asiento->editable = false;
+        $this->assertTrue($asiento->save(), 'asiento-cant-save-6');
+
+        // intentamos añadir una línea
+        $thirdLine = $asiento->getNewLine();
+        $thirdLine->codsubcuenta = '5720000000';
+        $thirdLine->concepto = 'Test linea 3';
+        $thirdLine->haber = 100;
+        $this->assertFalse($thirdLine->save(), 'linea-cant-save-7');
+
+        // intentamos actualizar el asiento
+        $asiento->concepto = 'Test 2';
+        $asiento->importe = 100;
+        $this->assertFalse($asiento->save(), 'asiento-cant-save-7');
+
+        // intentamos eliminar el asiento
+        $this->assertFalse($asiento->delete(), 'asiento-cant-delete-4');
+
+        // intentamos eliminar una línea
+        $this->assertFalse($firstLine->delete(), 'linea-cant-delete-5');
+
+        // desbloqueamos el asiento
+        $asiento->editable = true;
+        $this->assertTrue($asiento->save(), 'asiento-cant-save-8');
+
+        // eliminamos
+        $this->assertTrue($asiento->delete(), 'asiento-cant-delete-5');
     }
 
     public function testCreateOnClosedExercise()
@@ -139,7 +219,7 @@ final class AsientoTest extends TestCase
         // añadimos una línea
         $firstLine = $asiento->getNewLine();
         $firstLine->codsubcuenta = '1000000000';
-        $firstLine->descripcion = 'Test linea 1';
+        $firstLine->concepto = 'Test linea 1';
         $firstLine->debe = 100;
         $this->assertTrue($firstLine->save(), 'linea-cant-save-4');
 
@@ -157,12 +237,12 @@ final class AsientoTest extends TestCase
         // no se puede añadir una línea
         $line = $asiento->getNewLine();
         $line->codsubcuenta = '5720000000';
-        $line->descripcion = 'Test linea 3';
+        $line->concepto = 'Test linea 3';
         $line->debe = 100;
         $this->assertFalse($line->save(), 'can-add-line-on-closed-exercise');
 
         // no se puede modificar una línea
-        $firstLine->descripcion = 'Modify linea 1';
+        $firstLine->concepto = 'Modify linea 1';
         $this->assertFalse($firstLine->save(), 'can-modify-line-on-closed-exercise');
 
         // no se puede eliminar una línea
@@ -243,6 +323,7 @@ final class AsientoTest extends TestCase
         // eliminamos todos sus asientos
         $asientoModel = new Asiento();
         foreach ($asientoModel->all([], [], 0, 0) as $asiento) {
+            $asiento->editable = true;
             $this->assertTrue($asiento->delete(), 'asiento-cant-delete-7');
         }
 

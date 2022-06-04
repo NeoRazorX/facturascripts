@@ -192,7 +192,12 @@ class Partida extends Base\ModelOnChangeClass
 
     public function delete(): bool
     {
-        $exercise = $this->getAccountingEntry()->getExercise();
+        $entry = $this->getAccountingEntry();
+        if (false === $entry->editable) {
+            return false;
+        }
+
+        $exercise = $entry->getExercise();
         if (false === $exercise->isOpened()) {
             self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
             return false;
@@ -254,7 +259,12 @@ class Partida extends Base\ModelOnChangeClass
 
     public function save(): bool
     {
-        $exercise = $this->getAccountingEntry()->getExercise();
+        $entry = $this->getAccountingEntry();
+        if (false === $entry->editable) {
+            return false;
+        }
+
+        $exercise = $entry->getExercise();
         if (false === $exercise->isOpened()) {
             self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
             return false;
