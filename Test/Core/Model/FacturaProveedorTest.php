@@ -41,6 +41,7 @@ final class FacturaProveedorTest extends TestCase
     {
         self::setDefaultSettings();
         self::installAccountingPlan();
+        self::removeTaxRegularization();
     }
 
     public function testCreateNewInvoice()

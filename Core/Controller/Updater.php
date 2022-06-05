@@ -295,6 +295,9 @@ class Updater extends Controller
             case 'CRM':
                 return $plugin['version'] >= 1.5;
 
+            case 'DocRecurringSale':
+                return $plugin['version'] >= 1.85;
+
             case 'HumanResources':
                 return $plugin['version'] >= 1.34;
 
