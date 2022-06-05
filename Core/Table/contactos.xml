@@ -8,13 +8,11 @@
     <column>
         <name>aceptaprivacidad</name>
         <type>boolean</type>
-        <null>NO</null>
         <default>false</default>
     </column>
     <column>
         <name>admitemarketing</name>
         <type>boolean</type>
-        <null>NO</null>
         <default>false</default>
     </column>
     <column>
@@ -80,7 +78,6 @@
     <column>
         <name>habilitado</name>
         <type>boolean</type>
-        <null>NO</null>
         <default>true</default>
     </column>
     <column>
@@ -119,7 +116,6 @@
     <column>
         <name>personafisica</name>
         <type>boolean</type>
-        <null>NO</null>
         <default>true</default>
     </column>
     <column>
@@ -145,7 +141,6 @@
     <column>
         <name>verificado</name>
         <type>boolean</type>
-        <null>NO</null>
         <default>false</default>
     </column>
     <constraint>

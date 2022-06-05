@@ -9,7 +9,6 @@
     <column>
         <name>acreedor</name>
         <type>boolean</type>
-        <null>NO</null>
         <default>false</default>
     </column>
     <column>
@@ -49,7 +48,6 @@
     <column>
         <name>debaja</name>
         <type>boolean</type>
-        <null>NO</null>
         <default>false</default>
     </column>
     <column>
@@ -84,7 +82,6 @@
     <column>
         <name>personafisica</name>
         <type>boolean</type>
-        <null>NO</null>
         <default>true</default>
     </column>
     <column>

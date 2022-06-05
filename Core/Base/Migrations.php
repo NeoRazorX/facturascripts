@@ -40,6 +40,10 @@ final class Migrations
         self::fixInvoiceLines();
         self::fixAccountingEntries();
         self::clearLogs();
+        self::fixContacts();
+        self::fixAgents();
+        self::fixClients();
+        self::fixSuppliers();
     }
 
     private static function clearLogs()
@@ -80,6 +84,46 @@ final class Migrations
         }
     }
 
+    private static function fixAgents()
+    {
+        $dataBase = new DataBase();
+        $table = 'agentes';
+        if ($dataBase->tableExists($table)) {
+            $sqlUpdate1 = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
+            $dataBase->exec($sqlUpdate1);
+        }
+    }
+
+    private static function fixClients()
+    {
+        $dataBase = new DataBase();
+        $table = 'clientes';
+        if ($dataBase->tableExists($table)) {
+            $sqlUpdate1 = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
+            $dataBase->exec($sqlUpdate1);
+            $sqlUpdate2 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
+            $dataBase->exec($sqlUpdate2);
+        }
+    }
+
+    private static function fixContacts()
+    {
+        $dataBase = new DataBase();
+        $table = 'contactos';
+        if ($dataBase->tableExists($table)) {
+            $sqlUpdate1 = "UPDATE " . $table . " SET aceptaprivacidad = false WHERE aceptaprivacidad IS NULL;";
+            $dataBase->exec($sqlUpdate1);
+            $sqlUpdate2 = "UPDATE " . $table . " SET admitemarketing = false WHERE admitemarketing IS NULL;";
+            $dataBase->exec($sqlUpdate2);
+            $sqlUpdate3 = "UPDATE " . $table . " SET habilitado = true WHERE habilitado IS NULL;";
+            $dataBase->exec($sqlUpdate3);
+            $sqlUpdate4 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
+            $dataBase->exec($sqlUpdate4);
+            $sqlUpdate5 = "UPDATE " . $table . " SET verificado = false WHERE verificado IS NULL;";
+            $dataBase->exec($sqlUpdate5);
+        }
+    }
+
     private static function fixInvoiceLines()
     {
         $dataBase = new DataBase();
@@ -89,6 +133,20 @@ final class Migrations
                 $sql = "UPDATE " . $table . " SET irpf = '0' WHERE irpf IS NULL;";
                 $dataBase->exec($sql);
             }
+        }
+    }
+
+    private static function fixSuppliers()
+    {
+        $dataBase = new DataBase();
+        $table = 'proveedores';
+        if ($dataBase->tableExists($table)) {
+            $sqlUpdate1 = "UPDATE " . $table . " SET acreedor = false WHERE acreedor IS NULL;";
+            $dataBase->exec($sqlUpdate1);
+            $sqlUpdate2 = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
+            $dataBase->exec($sqlUpdate2);
+            $sqlUpdate3 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
+            $dataBase->exec($sqlUpdate3);
         }
     }
 
