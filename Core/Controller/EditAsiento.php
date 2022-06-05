@@ -138,7 +138,13 @@ class EditAsiento extends PanelController
      */
     private function createViewsMain()
     {
-        $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $this->title, 'fas fa-balance-scale');
+        $this->addHtmlView(
+            static::MAIN_VIEW_NAME,
+            static::MAIN_VIEW_TEMPLATE,
+            $this->getModelClassName(),
+            'accounting-entry',
+            'fas fa-balance-scale'
+        );
         AssetManager::add('css', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
         AssetManager::add('js', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
         AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');

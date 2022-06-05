@@ -282,9 +282,9 @@ class AccountingHeaderHTML
             . '<div class="form-group">' . $i18n->trans('operation')
             . '<select ' . $attributes . ' class="form-control">'
             . '<option value="">------</option>'
-            . '<option value="A" ' . ($model->operacion === 'A' ? 'selected' : '') . '>' . $i18n->trans('opening') . '</option>'
-            . '<option value="C" ' . ($model->operacion === 'C' ? 'selected' : '') . '>' . $i18n->trans('closing') . '</option>'
-            . '<option value="R" ' . ($model->operacion === 'R' ? 'selected' : '') . '>' . $i18n->trans('regularization') . '</option>'
+            . '<option value="A" ' . ($model->operacion === 'A' ? 'selected' : '') . '>' . $i18n->trans('opening-operation') . '</option>'
+            . '<option value="C" ' . ($model->operacion === 'C' ? 'selected' : '') . '>' . $i18n->trans('closing-operation') . '</option>'
+            . '<option value="R" ' . ($model->operacion === 'R' ? 'selected' : '') . '>' . $i18n->trans('regularization-operation') . '</option>'
             . '</select>'
             . '</div>'
             . '</div>';

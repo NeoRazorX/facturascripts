@@ -39,11 +39,11 @@ final class Migrations
         self::updateInvoiceStatus();
         self::fixInvoiceLines();
         self::fixAccountingEntries();
-        self::clearLogs();
         self::fixContacts();
         self::fixAgents();
         self::fixClients();
         self::fixSuppliers();
+        self::clearLogs();
     }
 
     private static function clearLogs()
