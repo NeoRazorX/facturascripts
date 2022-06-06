@@ -256,6 +256,41 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
     }
 
+    public function testCreateInvoiceCreateReceiptWithCustomerPaidDays()
+    {
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $customer->diaspago = '15';
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos una factura
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $this->assertTrue($invoice->save(), 'can-not-create-invoice');
+
+        // añadimos una línea a la factura
+        $newLine = $invoice->getNewLine();
+        $newLine->cantidad = 1;
+        $newLine->descripcion = 'test';
+        $newLine->pvpunitario = 100;
+        $this->assertTrue($newLine->save(), 'cant-add-invoice-line');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        // comprobamos que existe un recibo
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+
+        // comprobamos que el día del vencimiento del recibo es el día de pago del cliente
+        $this->assertEquals($customer->diaspago, date('d', strtotime($receipts[0]->vencimiento)), 'bad-receipt-expiration-customer-paid-days');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($customer->delete(), 'can-not-delete-customer');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
