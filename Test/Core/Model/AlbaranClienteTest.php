@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\AlbaranCliente;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
@@ -135,9 +135,8 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($line->exists(), 'line-not-persist-2');
 
         // actualizamos los totales
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-albaran-cliente-2');
+        $lines = $doc->getLines();
+        Calculator::calculate($doc, $lines, true);
 
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'albaran-cliente-bad-neto-2');
@@ -191,9 +190,8 @@ final class AlbaranClienteTest extends TestCase
         $this->assertEquals(1, $product->stockfis, 'albaran-cliente-product-do-not-update-stock');
 
         // actualizamos los totales
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-albaran-cliente-3');
+        $lines = $doc->getLines();
+        Calculator::calculate($doc, $lines, true);
 
         // comprobamos
         $this->assertEquals(10, $doc->neto, 'albaran-cliente-bad-neto-3');

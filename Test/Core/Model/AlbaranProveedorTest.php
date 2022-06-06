@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\AlbaranProveedor;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
@@ -142,9 +142,8 @@ final class AlbaranProveedorTest extends TestCase
         $this->assertTrue($line->exists(), 'line-not-persist-2');
 
         // actualizamos los totales
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-albaran-proveedor-2');
+        $lines = $doc->getLines();
+        Calculator::calculate($doc, $lines, true);
 
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'albaran-proveedor-bad-neto-2');
@@ -185,9 +184,8 @@ final class AlbaranProveedorTest extends TestCase
         $this->assertEquals(1, $product->stockfis, 'albaran-proveedor-product-do-not-update-stock');
 
         // actualizamos los totales
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-albaran-proveedor-3');
+        $lines = $doc->getLines();
+        Calculator::calculate($doc, $lines, true);
 
         // comprobamos
         $this->assertEquals(10, $doc->neto, 'albaran-proveedor-bad-neto-3');
@@ -203,8 +201,8 @@ final class AlbaranProveedorTest extends TestCase
         $this->assertEquals(10, $product->stockfis, 'albaran-proveedor-product-do-not-update-stock');
 
         // actualizamos los totales
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-albaran-proveedor-3');
+        $lines = $doc->getLines();
+        Calculator::calculate($doc, $lines, true);
 
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'albaran-proveedor-bad-neto-3');

@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PedidoProveedor;
@@ -143,9 +143,8 @@ final class PedidoProveedorTest extends TestCase
         $this->assertTrue($line->exists(), 'line-not-persist-2');
 
         // actualizamos los totales
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-pedido-proveedor-2');
+        $lines = $doc->getLines();
+        Calculator::calculate($doc, $lines, true);
 
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'pedido-proveedor-bad-neto-2');
@@ -188,9 +187,8 @@ final class PedidoProveedorTest extends TestCase
         $this->assertEquals(1, $stock->pterecibir, 'pedido-proveedor-do-not-update-stock');
 
         // actualizamos los totales
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-pedido-proveedor-3');
+        $lines = $doc->getLines();
+        Calculator::calculate($doc, $lines, true);
 
         // comprobamos
         $this->assertEquals(10, $doc->neto, 'pedido-proveedor-bad-neto-3');
@@ -206,8 +204,8 @@ final class PedidoProveedorTest extends TestCase
         $this->assertEquals(10, $stock->pterecibir, 'pedido-proveedor-do-not-update-stock');
 
         // actualizamos los totales
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-pedido-proveedor-3');
+        $lines = $doc->getLines();
+        Calculator::calculate($doc, $lines, true);
 
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'pedido-proveedor-bad-neto-3');
