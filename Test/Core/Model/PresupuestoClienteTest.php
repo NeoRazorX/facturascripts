@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PresupuestoCliente;
@@ -136,9 +136,8 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($line->exists(), 'line-not-persist-2');
 
         // actualizamos los totales
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-presupuesto-cliente-2');
+        $lines = $doc->getLines();
+        Calculator::calculate($doc, $lines, true);
 
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'presupuesto-cliente-bad-neto-2');
@@ -175,9 +174,8 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertTrue($line->save(), 'can-not-add-product-without-stock');
 
         // actualizamos los totales
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-presupuesto-cliente-3');
+        $lines = $doc->getLines();
+        Calculator::calculate($doc, $lines, true);
 
         // comprobamos
         $this->assertEquals(10, $doc->neto, 'presupuesto-cliente-bad-neto-3');
