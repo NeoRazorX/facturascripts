@@ -23,7 +23,7 @@ use FacturaScripts\Core\Model\IdentificadorFiscal;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
-class IdentificadorFiscalTest extends TestCase
+final class IdentificadorFiscalTest extends TestCase
 {
     use LogErrorsTrait;
 
