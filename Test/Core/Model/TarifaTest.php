@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Model\PresupuestoCliente;
+use FacturaScripts\Core\Model\Tarifa;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use FacturaScripts\Test\Core\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +34,11 @@ final class TarifaTest extends TestCase
     public function testCreate()
     {
         // creamos la tarifa
-        $rate = $this->getRandomRate();
+        $rate = new Tarifa();
+        $rate->codtarifa = 'Test';
+        $rate->nombre = 'Test Rate';
+        $rate->aplicar = 'pvp';
+        $rate->valorx = 5;
         $this->assertTrue($rate->save(), 'rate-cant-save');
         $this->assertNotNull($rate->primaryColumnValue(), 'rate-not-stored');
         $this->assertTrue($rate->exists(), 'rate-cant-persist');
@@ -43,49 +47,20 @@ final class TarifaTest extends TestCase
         $this->assertTrue($rate->delete(), 'rate-cant-delete');
     }
 
-    public function testAsignedRateToCustomer()
-    {
-        // creamos la tarifa
-        $rate = $this->getRandomRate();
-        $this->assertTrue($rate->save(), 'rate-cant-save');
-
-        // creamos el cliente
-        $customer = $this->getRandomCustomer();
-        $customer->codtarifa = $rate->codtarifa;
-        $this->assertTrue($customer->save(), 'cant-create-customer');
-        $this->assertEquals($rate->codtarifa, $customer->codtarifa, 'bad-customer-rate');
-
-        // eliminamos
-        $this->assertTrue($customer->delete(), 'customer-cant-delete');
-        $this->assertTrue($rate->delete(), 'rate-cant-delete');
-    }
-
-    public function testAsignedRateToCustomerGroup()
-    {
-        // creamos la tarifa
-        $rate = $this->getRandomRate();
-        $this->assertTrue($rate->save(), 'rate-cant-save');
-
-        // creamos el grupo de clientes
-        $group = $this->getRandomCustomerGroup();
-        $group->codtarifa = $rate->codtarifa;
-        $this->assertTrue($group->save(), 'cant-create-customer-group-rate');
-        $this->assertEquals($rate->codtarifa, $group->codtarifa, 'bad-customer-group-rate');
-
-        // eliminamos
-        $this->assertTrue($group->delete(), 'customer-group-cant-delete');
-        $this->assertTrue($rate->delete(), 'rate-cant-delete');
-    }
-
     public function testApplyCustomerFee()
     {
         // creamos la tarifa
-        $rate = $this->getRandomRate();
+        $rate = new Tarifa();
+        $rate->codtarifa = 'Test';
+        $rate->nombre = 'Test Rate';
+        $rate->aplicar = 'pvp';
+        $rate->valorx = 5;
         $this->assertTrue($rate->save(), 'rate-cant-save');
 
         // creamos el cliente
         $subject = $this->getRandomCustomer();
         $subject->codtarifa = $rate->codtarifa;
+        $subject->codgrupo = null;
         $this->assertTrue($subject->save(), 'can-not-save-customer');
 
         // creamos el producto
@@ -115,11 +90,17 @@ final class TarifaTest extends TestCase
     public function testNotApplyCustomerFee()
     {
         // creamos la tarifa
-        $rate = $this->getRandomRate();
+        $rate = new Tarifa();
+        $rate->codtarifa = 'Test';
+        $rate->nombre = 'Test Rate';
+        $rate->aplicar = 'pvp';
+        $rate->valorx = 5;
         $this->assertTrue($rate->save(), 'rate-cant-save');
 
         // creamos el cliente
         $subject = $this->getRandomCustomer();
+        $subject->codgrupo = null;
+        $subject->codtarifa = null;
         $this->assertTrue($subject->save(), 'can-not-save-customer');
 
         // creamos el producto
@@ -149,7 +130,11 @@ final class TarifaTest extends TestCase
     public function testApplyCustomerGroupFee()
     {
         // creamos la tarifa
-        $rate = $this->getRandomRate();
+        $rate = new Tarifa();
+        $rate->codtarifa = 'Test';
+        $rate->nombre = 'Test Rate';
+        $rate->aplicar = 'pvp';
+        $rate->valorx = 5;
         $this->assertTrue($rate->save(), 'rate-cant-save');
 
         // creamos el grupo de clientes
@@ -160,6 +145,7 @@ final class TarifaTest extends TestCase
         // creamos el cliente
         $subject = $this->getRandomCustomer();
         $subject->codgrupo = $group->codgrupo;
+        $subject->codtarifa = null;
         $this->assertTrue($subject->save(), 'can-not-save-customer');
 
         // creamos el producto
@@ -190,16 +176,22 @@ final class TarifaTest extends TestCase
     public function testNotApplyCustomerGroupFee()
     {
         // creamos la tarifa
-        $rate = $this->getRandomRate();
+        $rate = new Tarifa();
+        $rate->codtarifa = 'Test';
+        $rate->nombre = 'Test Rate';
+        $rate->aplicar = 'pvp';
+        $rate->valorx = 5;
         $this->assertTrue($rate->save(), 'rate-cant-save');
 
         // creamos el grupo de clientes
         $group = $this->getRandomCustomerGroup();
+        $group->codtarifa = null;
         $this->assertTrue($group->save(), 'cant-create-customer-group');
 
         // creamos el cliente
         $subject = $this->getRandomCustomer();
         $subject->codgrupo = $group->codgrupo;
+        $subject->codtarifa = null;
         $this->assertTrue($subject->save(), 'can-not-save-customer');
 
         // creamos el producto
@@ -230,11 +222,19 @@ final class TarifaTest extends TestCase
     public function testApplyCustomerAndGroupFee()
     {
         // creamos la tarifa del cliente
-        $rateCustomer = $this->getRandomRate('tCus', 'Test customer rate');
+        $rateCustomer = new Tarifa();
+        $rateCustomer->codtarifa = 'tCus';
+        $rateCustomer->nombre = 'Test customer rate';
+        $rateCustomer->aplicar = 'pvp';
+        $rateCustomer->valorx = 5;
         $this->assertTrue($rateCustomer->save(), 'rate-customer-cant-save');
 
         // creamos la tarifa del grupo
-        $rateGroup = $this->getRandomRate('tGro', 'Test group rate', 'pvp', 10);
+        $rateGroup = new Tarifa();
+        $rateGroup->codtarifa = 'tGro';
+        $rateGroup->nombre = 'Test group rate';
+        $rateGroup->aplicar = 'pvp';
+        $rateGroup->valorx = 10;
         $this->assertTrue($rateGroup->save(), 'rate-customer-group-cant-save');
 
         // creamos el grupo de clientes
