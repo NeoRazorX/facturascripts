@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
-use FacturaScripts\Dinamic\Model\FormatoDocumento;
 use FacturaScripts\Dinamic\Model\LogMessage;
 
 /**
@@ -31,10 +30,10 @@ use FacturaScripts\Dinamic\Model\LogMessage;
  */
 final class Migrations
 {
+    private static $database;
 
     public static function run()
     {
-        self::initModels();
         self::unlockNullProducts();
         self::updateInvoiceStatus();
         self::fixInvoiceLines();
@@ -55,22 +54,30 @@ final class Migrations
         }
 
         // cuando hay miles de registros en el canal master, eliminamos los antiguos para evitar problemas de rendimiento
-        $dataBase = new DataBase();
         $date = date("Y-m-d H:i:s", strtotime("-1 month"));
         $sql = "DELETE FROM logs WHERE channel = 'master' AND time < '" . $date . "';";
-        $dataBase->exec($sql);
+        self::db()->exec($sql);
+    }
+
+    private static function db(): DataBase
+    {
+        if (self::$database === null) {
+            self::$database = new DataBase();
+        }
+
+        return self::$database;
     }
 
     private static function fixAccountingEntries()
     {
+        // version 2022.09, fecha 05-06-2022
         // si no existe la tabla 'partidas', terminamos
-        $dataBase = new DataBase();
-        if (!$dataBase->tableExists('partidas')) {
+        if (false === self::db()->tableExists('partidas')) {
             return;
         }
 
         // si no está la columna debeme, terminamos
-        $columns = $dataBase->getColumns('partidas');
+        $columns = self::db()->getColumns('partidas');
         if (!isset($columns['debeme'])) {
             return;
         }
@@ -80,92 +87,81 @@ final class Migrations
             $sql = strtolower(FS_DB_TYPE) === 'mysql' ?
                 "ALTER TABLE partidas MODIFY " . $column . " double NULL DEFAULT NULL;" :
                 "ALTER TABLE partidas ALTER COLUMN " . $column . " DROP NOT NULL;";
-            $dataBase->exec($sql);
+            self::db()->exec($sql);
         }
     }
 
     private static function fixAgents()
     {
-        $dataBase = new DataBase();
+        // version 2022.09, fecha 05-06-2022
         $table = 'agentes';
-        if ($dataBase->tableExists($table)) {
-            $sqlUpdate1 = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
-            $dataBase->exec($sqlUpdate1);
+        if (self::db()->tableExists($table)) {
+            $sqlUpdate = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
+            self::db()->exec($sqlUpdate);
         }
     }
 
     private static function fixClients()
     {
-        $dataBase = new DataBase();
+        // version 2022.09, fecha 05-06-2022
         $table = 'clientes';
-        if ($dataBase->tableExists($table)) {
-            $sqlUpdate1 = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
-            $dataBase->exec($sqlUpdate1);
-            $sqlUpdate2 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
-            $dataBase->exec($sqlUpdate2);
+        if (self::db()->tableExists($table)) {
+            $sqlUpdate = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;"
+                . " UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
+            self::db()->exec($sqlUpdate);
         }
     }
 
     private static function fixContacts()
     {
-        $dataBase = new DataBase();
+        // version 2022.09, fecha 05-06-2022
         $table = 'contactos';
-        if ($dataBase->tableExists($table)) {
-            $sqlUpdate1 = "UPDATE " . $table . " SET aceptaprivacidad = false WHERE aceptaprivacidad IS NULL;";
-            $dataBase->exec($sqlUpdate1);
-            $sqlUpdate2 = "UPDATE " . $table . " SET admitemarketing = false WHERE admitemarketing IS NULL;";
-            $dataBase->exec($sqlUpdate2);
-            $sqlUpdate3 = "UPDATE " . $table . " SET habilitado = true WHERE habilitado IS NULL;";
-            $dataBase->exec($sqlUpdate3);
-            $sqlUpdate4 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
-            $dataBase->exec($sqlUpdate4);
-            $sqlUpdate5 = "UPDATE " . $table . " SET verificado = false WHERE verificado IS NULL;";
-            $dataBase->exec($sqlUpdate5);
+        if (self::db()->tableExists($table)) {
+            $sqlUpdate = "UPDATE " . $table . " SET aceptaprivacidad = false WHERE aceptaprivacidad IS NULL;"
+                . " UPDATE " . $table . " SET admitemarketing = false WHERE admitemarketing IS NULL;"
+                . " UPDATE " . $table . " SET habilitado = true WHERE habilitado IS NULL;"
+                . " UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;"
+                . " UPDATE " . $table . " SET verificado = false WHERE verificado IS NULL;";
+            self::db()->exec($sqlUpdate);
         }
     }
 
     private static function fixInvoiceLines()
     {
-        $dataBase = new DataBase();
+        // version 2022.09, fecha 05-06-2022
         $tables = ['lineasfacturascli', 'lineasfacturasprov'];
         foreach ($tables as $table) {
-            if ($dataBase->tableExists($table)) {
+            if (self::db()->tableExists($table)) {
                 $sql = "UPDATE " . $table . " SET irpf = '0' WHERE irpf IS NULL;";
-                $dataBase->exec($sql);
+                self::db()->exec($sql);
             }
         }
     }
 
     private static function fixSuppliers()
     {
-        $dataBase = new DataBase();
+        // version 2022.09, fecha 05-06-2022
         $table = 'proveedores';
-        if ($dataBase->tableExists($table)) {
-            $sqlUpdate1 = "UPDATE " . $table . " SET acreedor = false WHERE acreedor IS NULL;";
-            $dataBase->exec($sqlUpdate1);
-            $sqlUpdate2 = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
-            $dataBase->exec($sqlUpdate2);
-            $sqlUpdate3 = "UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
-            $dataBase->exec($sqlUpdate3);
+        if (self::db()->tableExists($table)) {
+            $sqlUpdate = "UPDATE " . $table . " SET acreedor = false WHERE acreedor IS NULL;"
+                . " UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;"
+                . " UPDATE " . $table . " SET personafisica = true WHERE personafisica IS NULL;";
+            self::db()->exec($sqlUpdate);
         }
-    }
-
-    private static function initModels()
-    {
-        new FormatoDocumento();
     }
 
     private static function unlockNullProducts()
     {
-        $dataBase = new DataBase();
-        if ($dataBase->tableExists('productos')) {
+        // version 2022.06, fecha 05-05-2022
+        if (self::db()->tableExists('productos')) {
             $sql = 'UPDATE productos SET bloqueado = false WHERE bloqueado IS NULL;';
-            $dataBase->exec($sql);
+            self::db()->exec($sql);
         }
     }
 
     private static function updateInvoiceStatus()
     {
+        // version 2021.81, fecha 01-02-2022
         $status = new EstadoDocumento();
         if ($status->loadFromCode('10') && $status->nombre === 'Nueva') {
             // unlock
