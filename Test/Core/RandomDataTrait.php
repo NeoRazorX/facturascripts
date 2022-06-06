@@ -27,8 +27,10 @@ use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FacturaProveedor;
+use FacturaScripts\Core\Model\GrupoClientes;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Core\Model\Tarifa;
 use FacturaScripts\Core\Model\User;
 
 trait RandomDataTrait
@@ -56,6 +58,14 @@ trait RandomDataTrait
         $cliente->nombre = 'Customer ' . mt_rand(1, 99999);
         $cliente->razonsocial = 'Empresa ' . mt_rand(1, 99999);
         return $cliente;
+    }
+
+    protected function getRandomCustomerGroup(): GrupoClientes
+    {
+        $group = new GrupoClientes();
+        $group->codgrupo = 'Test';
+        $group->nombre = 'Test Group';
+        return $group;
     }
 
     protected function getRandomCustomerInvoice(string $date = ''): FacturaCliente
@@ -99,6 +109,16 @@ trait RandomDataTrait
         $product->referencia = 'test' . $num;
         $product->descripcion = 'Test Product ' . $num;
         return $product;
+    }
+
+    protected function getRandomRate(string $codtarifa = 'Test', string $nombre = 'Test Rate', string $aplicar = 'pvp', float $valorx = 5): Tarifa
+    {
+        $rate = new Tarifa();
+        $rate->codtarifa = $codtarifa;
+        $rate->nombre = $nombre;
+        $rate->aplicar = $aplicar;
+        $rate->valorx = $valorx;
+        return $rate;
     }
 
     protected function getRandomSupplier(): Proveedor
