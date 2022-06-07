@@ -120,9 +120,12 @@ class Updater extends Controller
     /**
      * Download selected update.
      */
-    private function downloadAction()
+    private function downloadAction(int $idItem = null)
     {
-        $idItem = $this->request->get('item', '');
+        if (empty($idItem)) {
+            $idItem = $this->request->get('item', '');
+        }
+
         $this->updaterItems = $this->getUpdateItems();
         foreach ($this->updaterItems as $key => $item) {
             if ($item['id'] != $idItem) {
@@ -150,6 +153,7 @@ class Updater extends Controller
      * Execute selected action.
      *
      * @param string $action
+     * @return bool|void
      */
     protected function execAction(string $action)
     {
@@ -177,33 +181,50 @@ class Updater extends Controller
 
             case 'update':
                 return $this->updateAction();
+
+            case 'update-all':
+                return $this->updateAllAction();
         }
 
         $this->updaterItems = $this->getUpdateItems();
     }
 
-    private function getPluginIncompatibleWithNewCore(array &$items, array $projectData, $installedVersion)
+    private function getPluginIncompatibleWithNewCore(array &$items, array $json)
     {
         if ($items[0]['name' != 'CORE']) {
             return;
         }
 
-        $found = [];
-        foreach ($projectData['builds'] as $build) {
-            if ($build['version'] == $installedVersion) {
-                $found = $build;
-                break;
+        foreach ($json as $projectData) {
+            foreach ($this->pluginManager->installedPlugins() as $installed) {
+                if ($projectData['name'] !== $installed['name']) {
+                    continue;
+                }
+
+                $found = [];
+                foreach ($projectData['builds'] as $build) {
+                    if ($build['version'] != $installed['version']) {
+                        $found = $build;
+                        break;
+                    }
+                }
+
+                if (empty($found) || (empty($found['mincore']) && empty($found['maxcore']))) {
+                    $items[0]['forjaNotFound'][] = [
+                        'name' => $projectData['name'],
+                        'idproject' => $projectData['project']
+                    ];
+                    continue;
+                }
+
+                if (false === empty($found['mincore']) && $found['mincore'] < $items[0]['version']
+                    || false === empty($found['maxcore']) && $found['maxcore'] > $items[0]['version']) {
+                    $items[0]['installedIncompatibleNewCore'][] = [
+                        'name' => $projectData['name'],
+                        'idproject' => $projectData['project']
+                    ];
+                }
             }
-        }
-
-        if (empty($found) || (empty($found['mincore']) && empty($found['maxcore']))) {
-            $items[0]['forjaNotFound'][] = $projectData['name'];
-            return;
-        }
-
-        if (false === empty($found['mincore']) && $found['mincore'] < $items[0]['version']
-            || false === empty($found['maxcore']) && $found['maxcore'] > $items[0]['version']) {
-            $items[0]['installedIncompatibleCore'][] = $projectData['name'];
         }
     }
 
@@ -225,12 +246,12 @@ class Updater extends Controller
             foreach ($this->pluginManager->installedPlugins() as $installed) {
                 if ($projectData['name'] === $installed['name']) {
                     $this->getUpdateItemsPlugin($items, $projectData, $installed['version']);
-                    $this->getPluginIncompatibleWithNewCore($items, $projectData, $installed['version']);
                     break;
                 }
             }
         }
 
+        $this->getPluginIncompatibleWithNewCore($items, $json);
         $this->toolBox()->cache()->set('UPDATE_ITEMS', $items);
         return $items;
     }
@@ -376,9 +397,11 @@ class Updater extends Controller
      *
      * @return bool
      */
-    private function updateAction(): bool
+    private function updateAction(int $idItem = null): bool
     {
-        $idItem = $this->request->get('item', '');
+        if (empty($idItem)) {
+            $idItem = $this->request->get('item', '');
+        }
         $fileName = 'update-' . $idItem . '.zip';
 
         // open the zip file
@@ -412,6 +435,28 @@ class Updater extends Controller
         }
 
         return $done;
+    }
+
+    private function updateAllAction(): bool
+    {
+        $idCore = $this->request->get('item', '');
+        $idPlugins = $this->request->get('plugins') ? explode($this->request->get('plugins'), ',') : [];
+
+        foreach ($idPlugins as $idPlugin) {
+            $this->downloadAction((int)$idPlugin);
+        }
+
+        if (false === $this->updateAction((int)$idCore)) {
+            return false;
+        }
+
+        foreach ($idPlugins as $idPlugin) {
+            if (false === $this->updateAction((int)$idPlugin)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

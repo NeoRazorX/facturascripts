@@ -1256,6 +1256,8 @@
     "update-stock": "Actualizar stock",
     "update-supplier-prices": "Actualizar precios de proveedores",
     "update-time": "Hora de actualización",
+    "updated-forja-not-found": "Los siguientes plugins no tiene actualización disponible y pueden dejar de funcionar con la nueva versión del core.",
+    "updated-installed-incompatible-new-core": "Los siguientes plugins necesitan actualizarse para una correcta compatibilidad con el nuevo core.",
     "updated-model": "Actualizado %model% (%key%) %desc%",
     "updater": "Actualizador",
     "uploaded-at": "Cargado en",

@@ -87,7 +87,7 @@
                         {% if item.mincore is not empty and item.mincore > fsc.getCoreVersion() %}
                             {{ i18n.trans('core-min-version') }}: {{ item.mincore }}
                         {% elseif item.downloaded %}
-                            {% if item.name == 'CORE' and (item.forjaNotFound is defined or item.installedIncompatibleCore) %}
+                            {% if item.name == 'CORE' and (item.forjaNotFound is defined or item.installedIncompatibleCore is defined) %}
                                 {{ _self.btnUpdatedCore(item, i18n) }}
                             {% else %}
                                 <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
@@ -185,19 +185,29 @@
                 <div class="modal-body text-left">
                     {% if item.forjaNotFound is defined %}
                         <p>
-                            <p class="font-weight-bold">Los siguientes plugin no tienen actualizaciones disponibles y pueden no funcionar con la nueva versión del core:</p>
-                            {{ item.forjaNotFound|join(', ') }}
+                            <p class="font-weight-bold">{{ i18n.trans('updated-forja-not-found') }}</p>
+                            {% set forjaNotFound = [] %}
+                            {% for plugin in item.forjaNotFound %}
+                                {% set forjaNotFound = forjaNotFound | merge([plugin.name]) %}
+                            {% endfor %}
+                            {{ forjaNotFound|join(', ') }}
                         </p>
                     {% endif %}
-                    {% if item.installedIncompatibleCore is defined %}
+                    {% if item.installedIncompatibleNewCore is defined %}
                         <p>
-                            <p class="font-weight-bold">Los siguientes plugin deben actualizarse para poder funcionar con la nueva versión del core:</p>
-                            {{ item.installedIncompatibleCore|join(', ') }}
+                            <p class="font-weight-bold">{{ i18n.trans('updated-installed-incompatible-new-core') }}</p>
+                            {% set installedIncompatibleNewCore = [] %}
+                            {% set updatedIncompatibleNewCore = [] %}
+                            {% for plugin in item.installedIncompatibleNewCore %}
+                                {% set installedIncompatibleNewCore = installedIncompatibleNewCore | merge([plugin.name]) %}
+                                {% set updatedIncompatibleNewCore = updatedIncompatibleNewCore | merge([plugin.idproject]) %}
+                            {% endfor %}
+                            {{ installedIncompatibleNewCore|join(', ') }}
                         </p>
                     {% endif %}
                 </div>
                 <div class="modal-footer">
-                    <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
+                    <a href="{{ fsc.url() }}?action=update-all&item={{ item.id }}&plugins={{ updatedIncompatibleNewCore|join(',') }}" class="btn btn-sm btn-success">
                         <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ i18n.trans('update') }}
                     </a>
                     <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">
