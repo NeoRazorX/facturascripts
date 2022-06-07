@@ -141,6 +141,35 @@ final class TelemetryManager
         return $url . '?' . http_build_query($params);
     }
 
+    public function unlink(): bool
+    {
+        if (empty($this->idinstall)) {
+            return true;
+        }
+
+        $params = $this->collectData();
+        $params['action'] = 'unlink';
+        $this->calculateHash($params);
+        $json = DownloadTools::getContents(self::TELEMETRY_URL . '?' . http_build_query($params), 10);
+        $data = json_decode($json, true);
+
+        if (isset($data['error']) && $data['error']) {
+            return false;
+        }
+
+        $appSettings = new AppSettings();
+        $appSettings->set('default', 'telemetryinstall', null);
+        $appSettings->set('default', 'telemetrylastu', null);
+        $appSettings->set('default', 'telemetrykey', null);
+
+        if (false === $appSettings->save()) {
+            return false;
+        }
+
+        $this->idinstall = null;
+        return true;
+    }
+
     /**
      * @return bool
      */

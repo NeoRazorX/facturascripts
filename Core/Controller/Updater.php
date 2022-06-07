@@ -175,6 +175,15 @@ class Updater extends Controller
                 $this->toolBox()->i18nLog()->error('record-save-error');
                 break;
 
+            case 'unlink':
+                if ($this->telemetryManager->unlink()) {
+                    $this->telemetryManager = new TelemetryManager();
+                    $this->toolBox()->i18nLog()->notice('unlink-install-ok');
+                    break;
+                }
+                $this->toolBox()->i18nLog()->error('unlink-install-ko');
+                break;
+
             case 'update':
                 return $this->updateAction();
         }
