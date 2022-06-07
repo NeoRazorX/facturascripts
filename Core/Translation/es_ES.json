@@ -261,6 +261,7 @@
     "copy": "Copiar",
     "copy-p": "Rellene el formulario para hacer una copia de este modelo",
     "copy-subaccounts": "Copiar plan contable",
+    "core-min-version": "Versión mínima de Core",
     "core-update": "Actualización del núcleo a la versión %version%",
     "cost-price": "Precio de coste",
     "cost-price-policy": "Política de precio de coste",

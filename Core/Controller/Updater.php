@@ -182,6 +182,31 @@ class Updater extends Controller
         $this->updaterItems = $this->getUpdateItems();
     }
 
+    private function getPluginIncompatibleWithNewCore(array &$items, array $projectData, $installedVersion)
+    {
+        if ($items[0]['name' != 'CORE']) {
+            return;
+        }
+
+        $found = [];
+        foreach ($projectData['builds'] as $build) {
+            if ($build['version'] == $installedVersion) {
+                $found = $build;
+                break;
+            }
+        }
+
+        if (empty($found) || (empty($found['mincore']) && empty($found['maxcore']))) {
+            $items[0]['forjaNotFound'][] = $projectData['name'];
+            return;
+        }
+
+        if (false === empty($found['mincore']) && $found['mincore'] < $items[0]['version']
+            || false === empty($found['maxcore']) && $found['maxcore'] > $items[0]['version']) {
+            $items[0]['installedIncompatibleCore'][] = $projectData['name'];
+        }
+    }
+
     private function getUpdateItems(): array
     {
         $downloader = new DownloadTools();
@@ -200,6 +225,7 @@ class Updater extends Controller
             foreach ($this->pluginManager->installedPlugins() as $installed) {
                 if ($projectData['name'] === $installed['name']) {
                     $this->getUpdateItemsPlugin($items, $projectData, $installed['version']);
+                    $this->getPluginIncompatibleWithNewCore($items, $projectData, $installed['version']);
                     break;
                 }
             }
@@ -220,12 +246,14 @@ class Updater extends Controller
 
             $item = [
                 'description' => $this->toolBox()->i18n()->trans('core-update', ['%version%' => $build['version']]),
-                'downloaded' => file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
+                //'downloaded' => file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
+                'downloaded' => true,
                 'filename' => $fileName,
                 'id' => $projectData['project'],
                 'name' => $projectData['name'],
                 'stable' => $build['stable'],
-                'url' => self::UPDATE_CORE_URL . '/' . $projectData['project'] . '/' . $build['version']
+                'url' => self::UPDATE_CORE_URL . '/' . $projectData['project'] . '/' . $build['version'],
+                'version' => $build['version']
             ];
 
             if ($build['stable']) {
@@ -264,7 +292,9 @@ class Updater extends Controller
                 'id' => $pluginUpdate['project'],
                 'name' => $pluginUpdate['name'],
                 'stable' => $build['stable'],
-                'url' => self::UPDATE_CORE_URL . '/' . $pluginUpdate['project'] . '/' . $build['version']
+                'url' => self::UPDATE_CORE_URL . '/' . $pluginUpdate['project'] . '/' . $build['version'],
+                'mincore' => $build['mincore'],
+                'maxcore' => $build['maxcore']
             ];
 
             if ($build['stable']) {

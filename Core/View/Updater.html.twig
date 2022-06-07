@@ -50,7 +50,7 @@
                     <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal"
                             data-target="#modalTelemetry">
                         <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">{{ i18n.trans('register-installation') }} </span>
+                        <span class="d-none d-md-inline-block">{{ i18n.trans('manage-installation') }} </span>
                     </button>
                 {% else %}
                     <button class="btn btn-sm btn-warning" type="button" data-toggle="modal"
@@ -84,10 +84,16 @@
                     <td>{{ item.name }}</td>
                     <td>{{ item.description }}</td>
                     <td class="text-right">
-                        {% if item.downloaded %}
-                            <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
-                                <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ i18n.trans('update') }}
-                            </a>
+                        {% if item.mincore is not empty and item.mincore > fsc.getCoreVersion() %}
+                            {{ i18n.trans('core-min-version') }}: {{ item.mincore }}
+                        {% elseif item.downloaded %}
+                            {% if item.name == 'CORE' and (item.forjaNotFound is defined or item.installedIncompatibleCore) %}
+                                {{ _self.btnUpdatedCore(item, i18n) }}
+                            {% else %}
+                                <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ i18n.trans('update') }}
+                                </a>
+                            {% endif %}
                             <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}" class="btn btn-sm btn-warning">
                                 <i class="fas fa-times fa-fw" aria-hidden="true"></i> {{ i18n.trans('cancel') }}
                             </a>
@@ -126,9 +132,15 @@
                     <div class="modal-body">
                         <p>{{ i18n.trans('registered-installation-p') }}</p>
                         <p>{{ i18n.trans('telemetry-data-to-send') }}</p>
-                        <a class="btn btn-primary" href="{{ fsc.url() }}?action=claim-install" target="_blank">
-                            {{ i18n.trans('manage') }}
-                        </a>
+                        <form action="{{ fsc.url() }}" method="post">
+                            <input type="hidden" name="action" value="unlink"/>
+                            <a class="btn btn-primary" href="{{ fsc.url() }}?action=claim-install" target="_blank">
+                                {{ i18n.trans('manage') }}
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                {{ i18n.trans('unlink') }}
+                            </button>
+                        </form>
                     </div>
                 {% else %}
                     <form action="{{ fsc.url() }}" method="post">
@@ -153,3 +165,46 @@
         </div>
     </div>
 {% endblock %}
+
+{% macro btnUpdatedCore(item, i18n) %}
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#updateCoreModal">
+        <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ i18n.trans('update') }}
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="updateCoreModal" tabindex="-1" aria-labelledby="updateCoreModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateCoreModalLabel">{{ i18n.trans('alert') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ i18n.trans('close') }}">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-left">
+                    {% if item.forjaNotFound is defined %}
+                        <p>
+                            <p class="font-weight-bold">Los siguientes plugin no tienen actualizaciones disponibles y pueden no funcionar con la nueva versión del core:</p>
+                            {{ item.forjaNotFound|join(', ') }}
+                        </p>
+                    {% endif %}
+                    {% if item.installedIncompatibleCore is defined %}
+                        <p>
+                            <p class="font-weight-bold">Los siguientes plugin deben actualizarse para poder funcionar con la nueva versión del core:</p>
+                            {{ item.installedIncompatibleCore|join(', ') }}
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
+                        <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ i18n.trans('update') }}
+                    </a>
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">
+                        {{ i18n.trans('close') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
