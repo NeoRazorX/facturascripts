@@ -267,8 +267,7 @@ class Updater extends Controller
 
             $item = [
                 'description' => $this->toolBox()->i18n()->trans('core-update', ['%version%' => $build['version']]),
-                //'downloaded' => file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
-                'downloaded' => true,
+                'downloaded' => file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
                 'filename' => $fileName,
                 'id' => $projectData['project'],
                 'name' => $projectData['name'],
