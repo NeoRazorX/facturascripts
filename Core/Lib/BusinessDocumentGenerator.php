@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\DocTransformation;
@@ -32,6 +33,8 @@ use FacturaScripts\Dinamic\Model\DocTransformation;
  */
 class BusinessDocumentGenerator
 {
+
+    use ExtensionsTrait;
 
     /**
      * Document fields to exclude.
@@ -177,6 +180,14 @@ class BusinessDocumentGenerator
             if (!empty($line->primaryColumnValue()) && !$docTrans->save()) {
                 return false;
             }
+
+            if (false === $this->pipeFalse('cloneLine', $prototype, $line, $newLine->cantidad, $newDoc, $newLine)) {
+                return false;
+            }
+        }
+
+        if (false === $this->pipeFalse('cloneLines', $prototype, $newDoc, $lines, $quantity)) {
+            return false;
         }
 
         return true;
