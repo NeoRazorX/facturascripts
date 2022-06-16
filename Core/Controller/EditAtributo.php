@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  * Controller to edit a single item from the Atributo model
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Artex Trading sa         <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Ramiro Salvador Mamani   <ramiro@solsun.pe>
  * @author Carlos Jiménez Gómez     <carlos@evolunext.es>
  */
