@@ -54,6 +54,9 @@ class MailNotifier
         if (!isset($params['name'])) {
             $params['name'] = $name;
         }
+        if (!isset($params['verificode'])) {
+            $params['verificode'] = $newMail->verificode;
+        }
 
         $newMail->title = static::getText($notification->subject, $params);
         $newMail->text = static::getText($notification->body, $params);
