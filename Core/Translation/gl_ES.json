@@ -212,7 +212,7 @@
     "closing-accounting-completed": "Exercicio pechado correctamente",
     "closing-closing-concept": "Asento de peche do exercicio %exercise%",
     "closing-opening-concept": "Asento de apertura do exercicio %exercise%",
-    "closing-operation": "Cierre",
+    "closing-operation": "Peche",
     "closing-regularization-concept": "Asento de regularización do exercicio %exercise%",
     "codbarras": "Código de barras",
     "code": "Código",
