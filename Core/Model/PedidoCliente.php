@@ -34,18 +34,29 @@ class PedidoCliente extends Base\SalesDocument
     use Base\ModelTrait;
 
     /**
+     * Date on which the validity of the estimation ends.
+     *
+     * @var string
+     */
+    public $finoferta;
+
+    /**
      * Primary key.
      *
      * @var integer
      */
     public $idpedido;
 
-    /**
-     * Expected date of departure of the material.
-     *
-     * @var string
-     */
-    public $fechasalida;
+    public function clear()
+    {
+        parent::clear();
+
+        // set default expiration
+        $expirationDays = $this->toolBox()->appSettings()->get('default', 'finofertadays');
+        if ($expirationDays) {
+            $this->finoferta = date(self::DATE_STYLE, strtotime('+' . $expirationDays . ' days'));
+        }
+    }
 
     /**
      * Returns the lines associated with the order.
@@ -91,5 +102,15 @@ class PedidoCliente extends Base\SalesDocument
     public static function tableName(): string
     {
         return 'pedidoscli';
+    }
+
+    public function test(): bool
+    {
+        // finoferta can't be previous to fecha
+        if (!empty($this->finoferta) && strtotime($this->finoferta) < strtotime($this->fecha)) {
+            $this->finoferta = null;
+        }
+
+        return parent::test();
     }
 }
