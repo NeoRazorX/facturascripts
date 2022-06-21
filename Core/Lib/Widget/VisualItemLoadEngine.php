@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Core\Base\MiniLog;
@@ -33,25 +34,16 @@ class VisualItemLoadEngine
 {
 
     /**
-     *
      * @var string
      */
     private static $namespace = '\\FacturaScripts\\Dinamic\\Lib\\Widget\\';
 
-    /**
-     * 
-     * @return string
-     */
-    public static function getNamespace()
+    public static function getNamespace(): string
     {
         return self::$namespace;
     }
 
-    /**
-     * 
-     * @param string $namespace
-     */
-    public static function setNamespace($namespace)
+    public static function setNamespace(string $namespace)
     {
         self::$namespace = $namespace;
     }
@@ -59,32 +51,32 @@ class VisualItemLoadEngine
     /**
      * Loads an xmlview data into a PageOption model.
      *
-     * @param string           $name
+     * @param string $name
      * @param Model\PageOption $model
      *
-     * @return boolean
+     * @return bool
      */
-    public static function installXML($name, &$model)
+    public static function installXML($name, &$model): bool
     {
-        $model->name = $name;
+        $model->name = htmlspecialchars($name);
 
-        $fileName = \FS_FOLDER . '/Dinamic/XMLView/' . $name . '.xml';
-        if (\FS_DEBUG && !file_exists($fileName)) {
-            $fileName = \FS_FOLDER . '/Core/XMLView/' . $name . '.xml';
+        $fileName = FS_FOLDER . '/Dinamic/XMLView/' . $model->name . '.xml';
+        if (FS_DEBUG && !file_exists($fileName)) {
+            $fileName = FS_FOLDER . '/Core/XMLView/' . $model->name . '.xml';
         }
 
         if (!file_exists($fileName)) {
-            static::saveError('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $name . '.xml']);
+            static::saveError('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $model->name . '.xml']);
             return false;
         }
 
         $xml = simplexml_load_string(file_get_contents($fileName));
         if ($xml === false) {
-            static::saveError('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $name . '.xml']);
+            static::saveError('error-processing-xmlview', ['%fileName%' => 'XMLView\\' . $model->name . '.xml']);
             return false;
         }
 
-        /// turns xml into an array
+        // turns xml into an array
         $array = static::xmlToArray($xml);
         $model->columns = [];
         $model->modals = [];
@@ -111,9 +103,9 @@ class VisualItemLoadEngine
     /**
      * Reads PageOption data and loads groups, columns, rows and widgets into selected arrays.
      *
-     * @param array            $columns
-     * @param array            $modals
-     * @param array            $rows
+     * @param array $columns
+     * @param array $modals
+     * @param array $rows
      * @param Model\PageOption $model
      */
     public static function loadArray(&$columns, &$modals, &$rows, $model)
@@ -129,7 +121,7 @@ class VisualItemLoadEngine
             }
         }
 
-        /// we allways need a row type actions
+        // we always need a row type actions
         $className = static::getNamespace() . 'RowActions';
         if (!isset($rows['actions']) && class_exists($className)) {
             $rowItem = new $className([]);
@@ -161,7 +153,7 @@ class VisualItemLoadEngine
             }
         }
 
-        /// is there are loose columns, then we put it on a new group
+        // is there are loose columns, then we put it on a new group
         if (!empty($newGroupArray['children'])) {
             $groupItem = new $groupClass($newGroupArray);
             $target[$groupItem->name] = $groupItem;
@@ -169,19 +161,18 @@ class VisualItemLoadEngine
     }
 
     /**
-     * 
      * @param string $message
-     * @param array  $context
+     * @param array $context
      */
     private static function saveError($message, $context = [])
     {
         $i18n = new Translator();
-        $minilog = new MiniLog();
-        $minilog->critical($i18n->trans($message, $context));
+        $logger = new MiniLog();
+        $logger->critical($i18n->trans($message, $context));
     }
 
     /**
-     * Turns an xml into an array.
+     * Turns a xml into an array.
      *
      * @param SimpleXMLElement $xml
      *
@@ -194,12 +185,12 @@ class VisualItemLoadEngine
             'children' => [],
         ];
 
-        /// attributes
+        // attributes
         foreach ($xml->attributes() as $name => $value) {
-            $array[$name] = (string) $value;
+            $array[$name] = (string)$value;
         }
 
-        /// childs
+        // children
         foreach ($xml->children() as $tag => $child) {
             $childAttr = $child->attributes();
             $name = static::xmlToArrayAux($tag, $childAttr);
@@ -211,8 +202,8 @@ class VisualItemLoadEngine
             $array['children'][$name] = static::xmlToArray($child);
         }
 
-        /// text
-        $text = (string) $xml;
+        // text
+        $text = (string)$xml;
         if ('' !== $text) {
             $array['text'] = $text;
         }
@@ -221,20 +212,19 @@ class VisualItemLoadEngine
     }
 
     /**
-     * 
-     * @param string            $tag
+     * @param string $tag
      * @param SimpleXMLElement $attributes
      *
      * @return string
      */
-    private static function xmlToArrayAux($tag, $attributes)
+    private static function xmlToArrayAux($tag, $attributes): string
     {
         if (isset($attributes->name)) {
-            return (string) $attributes->name;
+            return (string)$attributes->name;
         }
 
         if ($tag === 'row' && isset($attributes->type)) {
-            return (string) $attributes->type;
+            return (string)$attributes->type;
         }
 
         return '';
