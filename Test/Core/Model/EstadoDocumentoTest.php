@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -42,6 +42,26 @@ final class EstadoDocumentoTest extends TestCase
         $this->assertTrue($status->save(), 'estado-documento-cant-save');
         $this->assertNotNull($status->primaryColumnValue(), 'estado-documento-pk-not-stored');
         $this->assertTrue($status->exists(), 'estado-documento-cant-persist');
+        $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
+    }
+
+    public function testHtmlOnFields()
+    {
+        // creamos un estado con html en los campos
+        $status = new EstadoDocumento();
+        $status->nombre = '<test>';
+        $status->tipodoc = '<test>';
+        $status->generadoc = '<test>';
+        $status->icon = '<test>';
+        $this->assertTrue($status->save(), 'estado-documento-cant-save');
+
+        // comprobamos que el html se ha escapado
+        $this->assertEquals('&lt;test&gt;', $status->nombre, 'estado-documento-html-not-escaped');
+        $this->assertEquals('&lt;test&gt;', $status->tipodoc, 'estado-documento-html-not-escaped');
+        $this->assertEquals('&lt;test&gt;', $status->generadoc, 'estado-documento-html-not-escaped');
+        $this->assertEquals('&lt;test&gt;', $status->icon, 'estado-documento-html-not-escaped');
+
+        // eliminamos
         $this->assertTrue($status->delete(), 'estado-documento-cant-delete');
     }
 
