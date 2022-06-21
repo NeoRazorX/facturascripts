@@ -154,7 +154,8 @@ final class AppRouter
         $safe = [
             'avi', 'css', 'csv', 'eot', 'gif', 'gz', 'ico', 'jpeg', 'jpg', 'js',
             'json', 'map', 'mkv', 'mp4', 'ogg', 'pdf', 'png', 'sql', 'svg',
-            'ttf', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
+            'ttf', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip',
+            'doc', 'docx', 'accdb', 'mdb', 'txt', 'odt', 'ods', 'cdr', 'cdr', 'ndg'
         ];
         return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
     }
