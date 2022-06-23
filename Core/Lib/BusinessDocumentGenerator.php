@@ -73,7 +73,7 @@ class BusinessDocumentGenerator
      *
      * @return bool
      */
-    public function generate(BusinessDocument $prototype, string $newClass, $lines = [], $quantity = [], $properties = [])
+    public function generate(BusinessDocument $prototype, string $newClass, array $lines = [], array $quantity = [], array $properties = []): bool
     {
         // Add primary column to exclude fields
         $this->excludeFields[] = $prototype->primaryColumn();
@@ -102,8 +102,8 @@ class BusinessDocumentGenerator
         $protoLines = empty($lines) ? $prototype->getLines() : $lines;
         if ($newDoc->save() && $this->cloneLines($prototype, $newDoc, $protoLines, $quantity)) {
             // recalculate totals on new document
-            Calculator::calculate($newDoc, $protoLines, false);
-            if ($newDoc->save()) {
+            $newLines = $newDoc->getLines();
+            if (Calculator::calculate($newDoc, $newLines, true)) {
                 // add to last doc list
                 $this->lastDocs[] = $newDoc;
                 return true;
@@ -120,14 +120,11 @@ class BusinessDocumentGenerator
     /**
      * @return BusinessDocument[]
      */
-    public function getLastDocs()
+    public function getLastDocs(): array
     {
         return $this->lastDocs;
     }
 
-    /**
-     * @param bool $value
-     */
     public static function setSameDate(bool $value)
     {
         self::$sameDate = $value;
@@ -143,7 +140,7 @@ class BusinessDocumentGenerator
      *
      * @return bool
      */
-    protected function cloneLines(BusinessDocument $prototype, BusinessDocument $newDoc, $lines, $quantity)
+    protected function cloneLines(BusinessDocument $prototype, BusinessDocument $newDoc, array $lines, array $quantity): bool
     {
         $docTrans = new DocTransformation();
         foreach ($lines as $line) {

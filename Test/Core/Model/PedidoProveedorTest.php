@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PedidoProveedor;
@@ -43,7 +43,10 @@ final class PedidoProveedorTest extends TestCase
 
     public function testDefaultValues()
     {
+        // creamos un pedido
         $doc = new PedidoProveedor();
+
+        // comprobamos que se asignan correctamente los valores por defecto
         $this->assertNotEmpty($doc->codalmacen, 'empty-warehouse');
         $this->assertNotEmpty($doc->coddivisa, 'empty-currency');
         $this->assertNotEmpty($doc->codserie, 'empty-serie');
@@ -53,17 +56,19 @@ final class PedidoProveedorTest extends TestCase
 
     public function testSetAuthor()
     {
-        // creamos el almacén
+        // creamos un almacén
         $warehouse = $this->getRandomWarehouse();
         $this->assertTrue($warehouse->save(), 'can-not-create-warehouse');
 
-        // creamos el usuario
+        // creamos un usuario y le asignamos el almacén
         $user = $this->getRandomUser();
         $user->codalmacen = $warehouse->codalmacen;
 
-        // asignamos usuario
+        // creamos un pedido y le asignamos el usuario
         $doc = new PedidoProveedor();
         $this->assertTrue($doc->setAuthor($user), 'can-not-set-user');
+
+        // comprobamos que se han asignado usuario y almacén correctamente
         $this->assertEquals($user->codalmacen, $doc->codalmacen, 'pedido-proveedor-bad-warehouse');
         $this->assertEquals($user->nick, $doc->nick, 'pedido-proveedor-bad-nick');
 
@@ -73,15 +78,15 @@ final class PedidoProveedorTest extends TestCase
 
     public function testSetSubject()
     {
-        // creamos el proveedor
+        // creamos un proveedor
         $subject = $this->getRandomSupplier();
         $this->assertTrue($subject->save(), 'can-not-save-supplier-1');
 
-        // creamos el pedido
+        // creamos un pedido y le asignamos el proveedor
         $doc = new PedidoProveedor();
         $this->assertTrue($doc->setSubject($subject), 'can-not-set-subject-1');
 
-        // comprobamos valores por defecto
+        // comprobamos que se hana siguido correctamente los datos del proveedor
         $this->assertEquals($subject->cifnif, $doc->cifnif, 'pedido-proveedor-bad-cifnif-1');
         $this->assertEquals($subject->codproveedor, $doc->codproveedor, 'pedido-proveedor-bad-codproveedor-1');
         $this->assertEquals($subject->razonsocial, $doc->nombre, 'pedido-proveedor-bad-nombre-1');
@@ -92,11 +97,11 @@ final class PedidoProveedorTest extends TestCase
 
     public function testCreateEmpty()
     {
-        // creamos el proveedor
+        // creamos un proveedor
         $subject = $this->getRandomSupplier();
         $this->assertTrue($subject->save(), 'can-not-save-supplier-1');
 
-        // creamos el pedido
+        // creamos un pedido
         $doc = new PedidoProveedor();
         $doc->setSubject($subject);
         $this->assertTrue($doc->save(), 'can-not-create-pedido-proveedor-1');
@@ -126,11 +131,11 @@ final class PedidoProveedorTest extends TestCase
 
     public function testCreateOneLine()
     {
-        // creamos el proveedor
+        // creamos un proveedor
         $subject = $this->getRandomSupplier();
         $this->assertTrue($subject->save(), 'can-not-save-supplier-2');
 
-        // creamos el pedido
+        // creamos un pedido
         $doc = new PedidoProveedor();
         $doc->setSubject($subject);
         $this->assertTrue($doc->save(), 'can-not-create-pedido-proveedor-2');
@@ -143,9 +148,8 @@ final class PedidoProveedorTest extends TestCase
         $this->assertTrue($line->exists(), 'line-not-persist-2');
 
         // actualizamos los totales
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-pedido-proveedor-2');
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-pedido-proveedor-2');
 
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'pedido-proveedor-bad-neto-2');
@@ -163,15 +167,15 @@ final class PedidoProveedorTest extends TestCase
 
     public function testCreateProductLine()
     {
-        // creamos el proveedor
+        // creamos un proveedor
         $subject = $this->getRandomSupplier();
         $this->assertTrue($subject->save(), 'can-not-save-supplier-3');
 
-        // creamos el producto
+        // creamos un producto
         $product = $this->getRandomProduct();
         $this->assertTrue($product->save(), 'can-not-save-supplier-3');
 
-        // creamos el pedido
+        // creamos un pedido
         $doc = new PedidoProveedor();
         $doc->setSubject($subject);
         $this->assertTrue($doc->save(), 'can-not-create-pedido-proveedor-3');
@@ -188,9 +192,8 @@ final class PedidoProveedorTest extends TestCase
         $this->assertEquals(1, $stock->pterecibir, 'pedido-proveedor-do-not-update-stock');
 
         // actualizamos los totales
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-pedido-proveedor-3');
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-pedido-proveedor-3');
 
         // comprobamos
         $this->assertEquals(10, $doc->neto, 'pedido-proveedor-bad-neto-3');
@@ -206,8 +209,8 @@ final class PedidoProveedorTest extends TestCase
         $this->assertEquals(10, $stock->pterecibir, 'pedido-proveedor-do-not-update-stock');
 
         // actualizamos los totales
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-pedido-proveedor-3');
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-pedido-proveedor-3');
 
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'pedido-proveedor-bad-neto-3');
@@ -240,11 +243,11 @@ final class PedidoProveedorTest extends TestCase
         $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
         $warehouse->loadFromCode('', $where);
 
-        // creamos el cliente
+        // creamos un cliente
         $subject = $this->getRandomSupplier();
         $this->assertTrue($subject->save(), 'can-not-save-customer-2');
 
-        // creamos el pedido
+        // creamos un pedido
         $doc = new PedidoProveedor();
         $doc->setSubject($subject);
         $doc->codalmacen = $warehouse->codalmacen;
@@ -266,9 +269,12 @@ final class PedidoProveedorTest extends TestCase
             $doc->idestado = $status->idestado;
             $this->assertTrue($doc->save(), 'pedido-cant-save');
 
+            // comprobamos que el albarán se ha creado
             $children = $doc->childrenDocuments();
             $this->assertNotEmpty($children, 'albaranes-no-creadas');
             foreach ($children as $child) {
+                // comprobamos que el albarán tiene el mismo almacén y la misma empresa
+                $this->assertEquals($warehouse->codalmacen, $child->codalmacen, 'albaran-bad-idempresa');
                 $this->assertEquals($company2->idempresa, $child->idempresa, 'albaran-bad-idempresa');
             }
         }
