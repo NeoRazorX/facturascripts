@@ -206,10 +206,11 @@ class ExportManager
      * @param array $headers
      * @param array $rows
      * @param array $options
+     * @param string $title
      *
      * @return bool
      */
-    public function addTablePage($headers, $rows, $options = []): bool
+    public function addTablePage($headers, $rows, $options = [], $title = ''): bool
     {
         // We need headers key to be equal to value
         $fixedHeaders = [];
@@ -217,7 +218,7 @@ class ExportManager
             $fixedHeaders[$value] = $value;
         }
 
-        return !empty(static::$engine) && static::$engine->addTablePage($fixedHeaders, $rows, $options);
+        return !empty(static::$engine) && static::$engine->addTablePage($fixedHeaders, $rows, $options, $title);
     }
 
     /**
