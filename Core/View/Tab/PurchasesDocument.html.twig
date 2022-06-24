@@ -16,6 +16,7 @@
 
 <script>
     let waitCounter = 0;
+    let keyupInputName = null;
 
     function findProduct() {
         $("#findProductInput").autocomplete({
@@ -125,6 +126,21 @@
                     break;
             }
 
+            // establecemos el foco si tenemos el name del input donde se estaba escribiendo
+            if (keyupInputName) {
+                let focusInput = $('input[name="' + keyupInputName + '"]');
+                let focusLength = focusInput.val().length;
+                let focusType = focusInput[0].type;
+                // para establecer el cursor al final de input el type debe ser text
+                if (focusType !== 'text') {
+                    focusInput[0].type = 'text';
+                }
+                focusInput.focus();
+                focusInput[0].setSelectionRange(focusLength, focusLength);
+                focusInput[0].type = focusType;
+                keyupInputName = null;
+            }
+
             findProduct();
         }).catch(function (error) {
             alert('error');
@@ -149,6 +165,11 @@
         await new Promise(r => setTimeout(r, 300));
         if (waitNum < waitCounter) {
             return false;
+        }
+
+        // obtenemos el name del input si cumple la condición de pulsado
+        if ($(event.target).is('input') && ['keyup', 'keypress', 'change'].includes(event.type)) {
+            keyupInputName = event.target.name;
         }
 
         console.log('waitNum: ' + waitNum);
