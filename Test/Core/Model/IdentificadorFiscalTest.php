@@ -64,60 +64,69 @@ final class IdentificadorFiscalTest extends TestCase
 
     public function testValidateCIF()
     {
-        $this->validate('T1234', 'P4698162G', 'CIF');
-    }
-
-    public function testValidateNIF()
-    {
-        $this->validate('T1234', '36155837K', 'NIF');
+        $this->validate('CIF', 'P4698162G', 'T1234');
     }
 
     public function testValidateDNI()
     {
-        $this->validate('T1234', '25296158E', 'DNI');
+        $this->validate('DNI', '25296158E', '25296158K');
     }
 
-    protected function validate(string $fiscalKo, string $fiscalOk, string $fiscalId)
+    public function testValidateNIF()
     {
+        $this->validate('NIF', '36155837K', '36155837V');
+    }
+
+    protected function validate(string $fiscalId, string $validCode, string $invalidCode)
+    {
+        // cargamos el identificador fiscal y activamos la validación
         $identificador = new IdentificadorFiscal();
         $where = [new DataBaseWhere('tipoidfiscal', $fiscalId)];
         $identificador->loadFromCode('', $where);
         $identificador->validar = true;
         $this->assertTrue($identificador->save(), 'identificador-fiscal-cant-save');
 
-        // creamos el cliente
+        // creamos un cliente con un cifnif inválido
         $customer = $this->getRandomCustomer();
         $customer->tipoidfiscal = $fiscalId;
-        $customer->cifnif = $fiscalKo;
+        $customer->cifnif = $invalidCode;
         $this->assertFalse($customer->save(), 'can-save-customer-with-' . strtolower($fiscalId));
-        $customer->cifnif = $fiscalOk;
+
+        // ahora le ponemos un cifnif válido
+        $customer->cifnif = $validCode;
         $this->assertTrue($customer->save(), 'cant-save-customer-with-' . strtolower($fiscalId));
 
-        // creamos el contacto
+        // creamos un contacto con un cifnif inválido
         $contact = $this->getRandomContact();
         $contact->tipoidfiscal = $fiscalId;
-        $contact->cifnif = $fiscalKo;
+        $contact->cifnif = $invalidCode;
         $this->assertFalse($contact->save(), 'can-save-contact-with-' . strtolower($fiscalId));
-        $contact->cifnif = $fiscalOk;
+
+        // ahora le ponemos un cifnif válido
+        $contact->cifnif = $validCode;
         $this->assertTrue($contact->save(), 'cant-save-contact-with-' . strtolower($fiscalId));
 
-        // creamos la empresa
+        // creamos una empresa con un cifnif inválido
         $company = $this->getRandomCompany();
         $company->tipoidfiscal = $fiscalId;
-        $company->cifnif = $fiscalKo;
+        $company->cifnif = $invalidCode;
         $this->assertFalse($company->save(), 'can-save-company-with-' . strtolower($fiscalId));
-        $company->cifnif = $fiscalOk;
+
+        // ahora le ponemos un cifnif válido
+        $company->cifnif = $validCode;
         $this->assertTrue($company->save(), 'cant-save-contact-with-' . strtolower($fiscalId));
 
-        // creamos el proveedor
+        // creamos un proveedor con un cifnif inválido
         $supplier = $this->getRandomSupplier();
         $supplier->tipoidfiscal = $fiscalId;
-        $supplier->cifnif = $fiscalKo;
+        $supplier->cifnif = $invalidCode;
         $this->assertFalse($supplier->save(), 'can-save-supplier-with-' . strtolower($fiscalId));
-        $supplier->cifnif = $fiscalOk;
+
+        // ahora le ponemos un cifnif válido
+        $supplier->cifnif = $validCode;
         $this->assertTrue($supplier->save(), 'cant-save-supplier-with-' . strtolower($fiscalId));
 
-        // dejamos el CIF como estaba
+        // desactivamos la validación
         $identificador->validar = false;
         $this->assertTrue($identificador->save(), 'identificador-fiscal-cant-save');
 
