@@ -19,13 +19,22 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\IdentificadorFiscal;
 use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Core\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class IdentificadorFiscalTest extends TestCase
 {
     use LogErrorsTrait;
+    use RandomDataTrait;
+
+    public function testDataInstalled()
+    {
+        $identificador = new IdentificadorFiscal();
+        $this->assertNotEmpty($identificador->all(), 'identificador-fiscal-data-not-installed-from-csv');
+    }
 
     public function testCreate()
     {
@@ -50,8 +59,73 @@ final class IdentificadorFiscalTest extends TestCase
         $identificador = new IdentificadorFiscal();
         $identificador->tipoidfiscal = '<test>';
         $identificador->codeid = '<test>';
-        $identificador->tipoidfiscal = 'test';
         $this->assertFalse($identificador->save(), 'can-save-with-html');
+    }
+
+    public function testValidateCIF()
+    {
+        $this->validate('T1234', 'P4698162G', 'CIF');
+    }
+
+    public function testValidateNIF()
+    {
+        $this->validate('T1234', '36155837K', 'NIF');
+    }
+
+    public function testValidateDNI()
+    {
+        $this->validate('T1234', '25296158E', 'DNI');
+    }
+
+    protected function validate(string $fiscalKo, string $fiscalOk, string $fiscalId)
+    {
+        $identificador = new IdentificadorFiscal();
+        $where = [new DataBaseWhere('tipoidfiscal', $fiscalId)];
+        $identificador->loadFromCode('', $where);
+        $identificador->validar = true;
+        $this->assertTrue($identificador->save(), 'identificador-fiscal-cant-save');
+
+        // creamos el cliente
+        $customer = $this->getRandomCustomer();
+        $customer->tipoidfiscal = $fiscalId;
+        $customer->cifnif = $fiscalKo;
+        $this->assertFalse($customer->save(), 'can-save-customer-with-' . strtolower($fiscalId));
+        $customer->cifnif = $fiscalOk;
+        $this->assertTrue($customer->save(), 'cant-save-customer-with-' . strtolower($fiscalId));
+
+        // creamos el contacto
+        $contact = $this->getRandomContact();
+        $contact->tipoidfiscal = $fiscalId;
+        $contact->cifnif = $fiscalKo;
+        $this->assertFalse($contact->save(), 'can-save-contact-with-' . strtolower($fiscalId));
+        $contact->cifnif = $fiscalOk;
+        $this->assertTrue($contact->save(), 'cant-save-contact-with-' . strtolower($fiscalId));
+
+        // creamos la empresa
+        $company = $this->getRandomCompany();
+        $company->tipoidfiscal = $fiscalId;
+        $company->cifnif = $fiscalKo;
+        $this->assertFalse($company->save(), 'can-save-company-with-' . strtolower($fiscalId));
+        $company->cifnif = $fiscalOk;
+        $this->assertTrue($company->save(), 'cant-save-contact-with-' . strtolower($fiscalId));
+
+        // creamos el proveedor
+        $supplier = $this->getRandomSupplier();
+        $supplier->tipoidfiscal = $fiscalId;
+        $supplier->cifnif = $fiscalKo;
+        $this->assertFalse($supplier->save(), 'can-save-supplier-with-' . strtolower($fiscalId));
+        $supplier->cifnif = $fiscalOk;
+        $this->assertTrue($supplier->save(), 'cant-save-supplier-with-' . strtolower($fiscalId));
+
+        // dejamos el CIF como estaba
+        $identificador->validar = false;
+        $this->assertTrue($identificador->save(), 'identificador-fiscal-cant-save');
+
+        // eliminamos
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($contact->delete(), 'cant-contact-customer');
+        $this->assertTrue($company->delete(), 'cant-company-customer');
+        $this->assertTrue($supplier->delete(), 'cant-supplier-customer');
     }
 
     protected function tearDown(): void
