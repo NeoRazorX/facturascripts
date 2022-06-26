@@ -250,5 +250,8 @@ final class TarifaTest extends TestCase
 
         // eliminamos
         $this->assertTrue($presupuesto->delete(), 'presupuesto-can-not-delete');
+        $this->assertTrue($producto->delete(), 'producto-can-not-delete');
+        $this->assertTrue($cliente->delete(), 'cliente-can-not-delete');
+        $this->assertTrue($tarifa->delete(), 'tarifa-can-not-delete');
     }
 }
