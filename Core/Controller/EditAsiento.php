@@ -73,21 +73,11 @@ class EditAsiento extends PanelController
         return $this->views[static::MAIN_VIEW_NAME]->model;
     }
 
-    /**
-     * Returns the class name of the main model.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Asiento';
     }
 
-    /**
-     * Return the basic data for this page.
-     *
-     * @return array
-     */
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -148,7 +138,13 @@ class EditAsiento extends PanelController
      */
     private function createViewsMain()
     {
-        $this->addHtmlView(static::MAIN_VIEW_NAME, static::MAIN_VIEW_TEMPLATE, $this->getModelClassName(), $this->title, 'fas fa-balance-scale');
+        $this->addHtmlView(
+            static::MAIN_VIEW_NAME,
+            static::MAIN_VIEW_TEMPLATE,
+            $this->getModelClassName(),
+            'accounting-entry',
+            'fas fa-balance-scale'
+        );
         AssetManager::add('css', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
         AssetManager::add('js', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
         AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
@@ -321,8 +317,6 @@ class EditAsiento extends PanelController
         if (false === $this->permissions->allowUpdate) {
             self::toolBox()::i18nLog()->warning('not-allowed-modify');
             return $this->sendJsonError();
-        } elseif (false === $this->validateFileActionToken()) {
-            return $this->sendJsonError();
         }
 
         $this->dataBase->beginTransaction();
@@ -355,20 +349,12 @@ class EditAsiento extends PanelController
         return false;
     }
 
-    /**
-     * @return bool
-     */
     protected function sendJsonError(): bool
     {
         $this->response->setContent(json_encode(['ok' => false, 'messages' => self::toolBox()::log()::read('', $this->logLevels)]));
         return false;
     }
 
-    /**
-     * @param bool $value
-     *
-     * @return bool
-     */
     protected function unlockAction(bool $value): bool
     {
         $this->setTemplate(false);

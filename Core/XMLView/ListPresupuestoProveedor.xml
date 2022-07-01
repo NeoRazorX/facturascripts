@@ -29,65 +29,88 @@
                 <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
             </widget>
         </column>
-        <column name="code" order="110">
+        <column name="warehouse" display="none" order="110">
+            <widget type="select" fieldname="codalmacen" onclick="EditAlmacen">
+                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
+            </widget>
+        </column>
+        <column name="serie" display="none" order="120">
+            <widget type="select" fieldname="codserie" onclick="EditSerie">
+                <values source="series" fieldcode="codserie" fieldtitle="codserie" />
+            </widget>
+        </column>
+        <column name="exercise" display="none" order="130">
+            <widget type="select" fieldname="codejercicio" onclick="EditEjercicio">
+                <values source="ejercicios" fieldcode="codejercicio" fieldtitle="codejercicio" />
+            </widget>
+        </column>
+        <column name="number" display="none" order="140">
+            <widget type="text" fieldname="numero" />
+        </column>
+        <column name="code" order="150">
             <widget type="text" fieldname="codigo" />
         </column>
-        <column name="numsupplier" order="120">
+        <column name="numsupplier" order="160">
             <widget type="text" fieldname="numproveedor" />
         </column>
-        <column name="supplier-code" display="none" order="130">
+        <column name="supplier-code" display="none" order="170">
             <widget type="text" fieldname="codproveedor" />
         </column>
-        <column name="supplier" order="140">
+        <column name="supplier" order="180">
             <widget type="text" fieldname="nombre" />
         </column>
-        <column name="fiscal-number" display="none" order="150">
+        <column name="fiscal-number" display="none" order="190">
             <widget type="text" fieldname="cifnif" />
         </column>
-        <column name="observations" order="160">
+        <column name="observations" order="200">
             <widget type="textarea" fieldname="observaciones" />
         </column>
-        <column name="status" display="right" order="170">
+        <column name="status" display="right" order="210">
             <widget type="autocomplete" fieldname="idestado">
                 <values source="estados_documentos" fieldcode="idestado" fieldtitle="nombre" />
             </widget>
         </column>
-        <column name="email-sent" display="none" order="180">
+        <column name="email-sent" display="none" order="220">
             <widget type="checkbox" fieldname="femail" />
         </column>
-        <column name="subtotal" display="none" order="190">
+        <column name="subtotal" display="none" order="230">
             <widget type="money" fieldname="netosindto" />
         </column>
-        <column name="global-dto" display="none" order="200">
+        <column name="global-dto" display="none" order="240">
             <widget type="percentage" fieldname="dtopor1" />
         </column>
-        <column name="global-dto-2" display="none" order="210">
+        <column name="global-dto-2" display="none" order="250">
             <widget type="percentage" fieldname="dtopor2" />
         </column>
-        <column name="net" display="none" order="220">
+        <column name="net" display="none" order="260">
             <widget type="money" fieldname="neto" />
         </column>
-        <column name="taxes" display="none" order="230">
+        <column name="taxes" display="none" order="270">
             <widget type="money" fieldname="totaliva" />
         </column>
-        <column name="surcharge" display="none" order="240">
+        <column name="surcharge" display="none" order="280">
             <widget type="money" fieldname="totalrecargo" />
         </column>
-        <column name="retention" display="none" order="250">
+        <column name="retention" display="none" order="290">
             <widget type="percentage" fieldname="irpf" />
         </column>
-        <column name="retentions" display="none" order="260">
+        <column name="retentions" display="none" order="300">
             <widget type="money" fieldname="totalirpf" />
         </column>
-        <column name="supplied-amount" display="none" order="270">
+        <column name="supplied-amount" display="none" order="310">
             <widget type="money" fieldname="totalsuplidos" />
         </column>
-        <column name="total" display="right" order="280">
+        <column name="total" display="right" order="320">
             <widget type="money" fieldname="total">
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="date" display="right" order="290">
+        <column name="currency" display="none" order="330">
+            <widget type="select" fieldname="coddivisa" onclick="EditDivisa">
+                <values source="divisas" fieldcode="coddivisa" fieldtitle="coddivisa" />
+            </widget>
+        </column>
+        <column name="date" display="right" order="340">
             <widget type="date" fieldname="fecha" />
         </column>
     </columns>

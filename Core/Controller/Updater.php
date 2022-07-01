@@ -295,8 +295,14 @@ class Updater extends Controller
             case 'CRM':
                 return $plugin['version'] >= 1.5;
 
+            case 'DocRecurringSale':
+                return $plugin['version'] >= 1.85;
+
+            case 'HumanResources':
+                return $plugin['version'] >= 1.34;
+
             case 'PlantillasPDF':
-                return $plugin['version'] >= 3;
+                return $plugin['version'] >= 4;
 
             case 'PlazosPago':
                 return $plugin['version'] >= 1.6;
@@ -306,6 +312,9 @@ class Updater extends Controller
 
             case 'PrintTicket':
                 return $plugin['version'] > 1.5;
+
+            case 'Ubicaciones':
+                return $plugin['version'] >= 3.5;
         }
 
         return true;

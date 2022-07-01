@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Dinamic\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\PageOption;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -121,7 +122,7 @@ class EditPageOption extends Controller
         parent::privateCore($response, $user, $permissions);
         $this->model = new PageOption();
         $this->loadSelectedViewName();
-        $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
+        $this->setBackPage();
         $this->selectedUser = $this->user->admin ? $this->request->get('nick') : $this->user->nick;
         $this->loadPageOptions();
 
@@ -273,6 +274,22 @@ class EditPageOption extends Controller
         $this->model->id = null;
         $this->model->nick = $this->selectedUser;
         return true;
+    }
+
+    private function setBackPage()
+    {
+        // check if the url is a real controller name
+        $url = $this->request->get('url', '');
+        $pageModel = new Page();
+        foreach ($pageModel->all([], [], 0, 0) as $page) {
+            if (substr($url, 0, strlen($page->name)) === $page->name) {
+                $this->backPage = $url;
+                return;
+            }
+        }
+
+        // set the default back page
+        $this->backPage = $this->selectedViewName;
     }
 
     /**

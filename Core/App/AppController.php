@@ -211,9 +211,9 @@ class AppController extends App
         $pass2 = $this->request->request->get('fsNewPasswd2');
 
         if ($pass != $pass2) {
-            ToolBox::i18nLog()->warning('different-passwords', ['%userNick%' => $nick]);
+            ToolBox::i18nLog()->warning('different-passwords', ['%userNick%' => htmlspecialchars($nick)]);
             return;
-        } elseif ($user->loadFromCode($nick) && $this->request->request->get('fsDbPasswd') == FS_DB_PASS) {
+        } elseif ($user->loadFromCode($nick) && $this->request->request->get('fsDbPasswd') === FS_DB_PASS) {
             $user->setPassword($pass);
             $user->save();
             ToolBox::i18nLog()->notice('record-updated-correctly');
@@ -318,7 +318,7 @@ class AppController extends App
             return false;
         }
 
-        ToolBox::i18nLog()->warning('login-user-not-found', ['%nick%' => $cookieNick]);
+        ToolBox::i18nLog()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($cookieNick)]);
         return false;
     }
 

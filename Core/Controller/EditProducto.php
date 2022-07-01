@@ -35,20 +35,12 @@ use FacturaScripts\Dinamic\Model\Atributo;
 class EditProducto extends EditController
 {
 
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Producto';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
@@ -68,9 +60,6 @@ class EditProducto extends EditController
         $this->createViewsSuppliers();
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsStock(string $viewName = 'EditStock')
     {
         $this->addEditListView($viewName, 'Stock', 'stock', 'fas fa-dolly');
@@ -81,17 +70,11 @@ class EditProducto extends EditController
         }
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsSuppliers(string $viewName = 'EditProductoProveedor')
     {
         $this->addEditListView($viewName, 'ProductoProveedor', 'suppliers', 'fas fa-users');
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsVariants(string $viewName = 'EditVariante')
     {
         $this->addEditListView($viewName, 'Variante', 'variants', 'fas fa-project-diagram');
@@ -128,9 +111,6 @@ class EditProducto extends EditController
         return false;
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function loadCustomAttributeWidgets(string $viewName)
     {
         $values = $this->codeModel->all('AtributoValor', 'id', '');
@@ -142,9 +122,6 @@ class EditProducto extends EditController
         }
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function loadCustomReferenceWidget(string $viewName)
     {
         $references = [];

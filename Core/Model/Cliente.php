@@ -187,6 +187,14 @@ class Cliente extends Base\ComercialContact
 
     public function test(): bool
     {
+        if (empty($this->nombre)) {
+            $this->toolBox()->i18nLog()->warning(
+                'field-can-not-be-null',
+                ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]
+            );
+            return false;
+        }
+
         if (!empty($this->codcliente) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcliente)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',

@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -103,7 +104,8 @@ class EmailSent extends Base\ModelClass
     public function test(): bool
     {
         $utils = $this->toolBox()->utils();
-        $this->body = $utils->noHtml($this->body);
+        $body = $utils->noHtml($this->body);
+        $this->body = strlen($body) > 5000 ? substr($body, 0, 4997) . '...' : $body;
         $this->subject = $utils->noHtml($this->subject);
         return parent::test();
     }

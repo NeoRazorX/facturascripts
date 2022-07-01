@@ -248,7 +248,7 @@ trait CommonSalesPurchases
 
         $attributes = empty($model->femail) && $model->editable ? 'name="femail" ' : 'disabled=""';
         $value = empty($model->femail) ? '' : date('Y-m-d', strtotime($model->femail));
-        return '<div class="col-sm">'
+        return '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('email-sent')
             . '<input type="date" ' . $attributes . ' value="' . $value . '" class="form-control"/>'
             . '</div>'
@@ -267,6 +267,7 @@ trait CommonSalesPurchases
 
     protected static function idestado(Translator $i18n, TransformerDocument $model, string $jsName): string
     {
+        // si no se ha guardado no se puede cambiar el estado. Mantenemos el predeterminado
         if (empty($model->primaryColumnValue())) {
             return '';
         }
@@ -277,6 +278,7 @@ trait CommonSalesPurchases
             $btnClass = 'btn btn-block btn-danger btn-spin-action';
         }
 
+        // si el estado genera documento, no se puede cambiar, sin eliminar el nuevo documento
         if ($status->generadoc) {
             return '<div class="col-sm-auto">'
                 . '<div class="form-group">'
@@ -287,6 +289,7 @@ trait CommonSalesPurchases
                 . '</div>';
         }
 
+        // añadimos los estados posibles
         $options = [];
         foreach ($model->getAvailableStatus() as $sta) {
             if ($sta->idestado === $model->idestado) {
@@ -298,7 +301,8 @@ trait CommonSalesPurchases
                 . '<i class="' . static::idestadoIcon($sta, true) . ' fa-fw"></i> ' . $sta->nombre . '</a>';
         }
 
-        if ($model->editable) {
+        // añadimos la opción de agrupar o partir (excepto facturas y documentos no editables)
+        if ($model->editable && false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
             $options[] = '<div class="dropdown-divider"></div>'
                 . '<a class="dropdown-item" href="DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $model->primaryColumnValue() . '">'
                 . '<i class="fas fa-magic fa-fw" aria-hidden="true"></i> ' . $i18n->trans('group-or-split')
@@ -516,7 +520,7 @@ trait CommonSalesPurchases
     protected static function user(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = 'disabled=""';
-        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
+        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('user')
             . '<input type="text" ' . $attributes . ' value="' . $model->nick . '" class="form-control"/>'
             . '</div>'

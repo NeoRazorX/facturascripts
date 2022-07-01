@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\BusinessDocumentTools;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PedidoCliente;
@@ -43,7 +43,10 @@ final class PedidoClienteTest extends TestCase
 
     public function testDefaultValues()
     {
+        // Creamos un pedido
         $doc = new PedidoCliente();
+
+        // comprobamos que se asigna almacén, divisa, serie, fecha y hora por defecto
         $this->assertNotEmpty($doc->codalmacen, 'empty-warehouse');
         $this->assertNotEmpty($doc->coddivisa, 'empty-currency');
         $this->assertNotEmpty($doc->codserie, 'empty-serie');
@@ -61,14 +64,16 @@ final class PedidoClienteTest extends TestCase
         $warehouse = $this->getRandomWarehouse();
         $this->assertTrue($warehouse->save(), 'can-not-create-warehouse');
 
-        // create user
+        // creamos un usuario y le asignamos el agente y el almacén
         $user = $this->getRandomUser();
         $user->codagente = $agent->codagente;
         $user->codalmacen = $warehouse->codalmacen;
 
-        // asignamos el usuario
+        // creamos un pedido y le asignamos el usuario
         $doc = new PedidoCliente();
         $this->assertTrue($doc->setAuthor($user), 'can-not-set-user');
+
+        // comprobamos que se han asignado el usuario, agente y almacén
         $this->assertEquals($user->codagente, $doc->codagente, 'pedido-agente-bad-warehouse');
         $this->assertEquals($user->codalmacen, $doc->codalmacen, 'pedido-usuario-bad-warehouse');
         $this->assertEquals($user->nick, $doc->nick, 'pedido-usuario-bad-nick');
@@ -80,16 +85,16 @@ final class PedidoClienteTest extends TestCase
 
     public function testCreateEmpty()
     {
-        // creamos el cliente
+        // creamos un cliente
         $subject = $this->getRandomCustomer();
         $this->assertTrue($subject->save(), 'can-not-save-customer-1');
 
-        // creamos el pedido
+        // creamos un pedido y le asignamos el cliente
         $doc = new PedidoCliente();
         $doc->setSubject($subject);
         $this->assertTrue($doc->save(), 'can-not-create-pedido-cliente-1');
 
-        // comprobamos valores
+        // comprobamos que se han asignado los datos del cliente
         $this->assertEquals($subject->cifnif, $doc->cifnif, 'pedido-cliente-bad-cifnif-1');
         $this->assertEquals($subject->codcliente, $doc->codcliente, 'pedido-cliente-bad-codcliente-1');
         $this->assertEquals($subject->idcontactoenv, $doc->idcontactoenv, 'pedido-cliente-bad-idcontactoenv-1');
@@ -119,11 +124,11 @@ final class PedidoClienteTest extends TestCase
 
     public function testCreateOneLine()
     {
-        // creamos el cliente
+        // creamos un cliente
         $subject = $this->getRandomCustomer();
         $this->assertTrue($subject->save(), 'can-not-save-customer-2');
 
-        // creamos el pedido
+        // creamos un pedido
         $doc = new PedidoCliente();
         $doc->setSubject($subject);
         $this->assertTrue($doc->save(), 'can-not-create-pedido-cliente-2');
@@ -137,9 +142,8 @@ final class PedidoClienteTest extends TestCase
         $this->assertTrue($line->exists(), 'line-not-persist-2');
 
         // actualizamos los totales
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-pedido-cliente-2');
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-pedido-cliente-2');
 
         // comprobamos
         $this->assertEquals(100, $doc->neto, 'pedido-cliente-bad-neto-2');
@@ -157,15 +161,15 @@ final class PedidoClienteTest extends TestCase
 
     public function testCreateProductLine()
     {
-        // creamos el cliente
+        // creamos un cliente
         $subject = $this->getRandomCustomer();
         $this->assertTrue($subject->save(), 'can-not-save-customer-2');
 
-        // creamos el producto
+        // creamos un producto
         $product = $this->getRandomProduct();
         $this->assertTrue($product->save(), 'can-not-save-supplier-3');
 
-        // creamos el pedido
+        // creamos un pedido
         $doc = new PedidoCliente();
         $doc->setSubject($subject);
         $this->assertTrue($doc->save(), 'can-not-create-pedido-cliente-2');
@@ -184,9 +188,8 @@ final class PedidoClienteTest extends TestCase
         $this->assertEquals(0, $stock->cantidad, 'pedido-cliente-do-not-update-stock');
 
         // actualizamos los totales
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($doc);
-        $this->assertTrue($doc->save(), 'can-not-update-pedido-cliente-3');
+        $lines = $doc->getLines();
+        $this->assertTrue(Calculator::calculate($doc, $lines, true), 'can-not-update-pedido-cliente-3');
 
         // comprobamos
         $this->assertEquals(10, $doc->neto, 'pedido-cliente-bad-neto-3');
@@ -221,11 +224,11 @@ final class PedidoClienteTest extends TestCase
         $where = [new DataBaseWhere('idempresa', $company2->idempresa)];
         $warehouse->loadFromCode('', $where);
 
-        // creamos el cliente
+        // creamos un cliente
         $subject = $this->getRandomCustomer();
         $this->assertTrue($subject->save(), 'can-not-save-customer-2');
 
-        // creamos el pedido
+        // creamos un pedido y le asignamos el cliente y el almacén
         $doc = new PedidoCliente();
         $doc->setSubject($subject);
         $doc->codalmacen = $warehouse->codalmacen;
@@ -247,9 +250,12 @@ final class PedidoClienteTest extends TestCase
             $doc->idestado = $status->idestado;
             $this->assertTrue($doc->save(), 'pedido-cant-save');
 
+            // comprobamos que el albarán se ha creado
             $children = $doc->childrenDocuments();
             $this->assertNotEmpty($children, 'albaranes-no-creados');
             foreach ($children as $child) {
+                // comprobamos que se han asignado el mismo almacén y empresa
+                $this->assertEquals($warehouse->codalmacen, $child->codalmacen, 'albaran-bad-codalmacen');
                 $this->assertEquals($company2->idempresa, $child->idempresa, 'albaran-bad-idempresa');
             }
         }

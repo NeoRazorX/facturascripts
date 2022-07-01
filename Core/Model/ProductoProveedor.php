@@ -148,6 +148,9 @@ class ProductoProveedor extends Base\ModelOnChangeClass
 
     public function test(): bool
     {
+        $this->referencia = self::toolBox()::utils()::noHtml($this->referencia);
+        $this->refproveedor = self::toolBox()::utils()::noHtml($this->refproveedor);
+
         if (empty($this->referencia)) {
             $this->toolBox()->i18nLog()->warning('field-can-not-be-null', ['%fieldName%' => 'referencia', '%tableName%' => static::tableName()]);
             return false;

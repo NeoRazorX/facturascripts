@@ -41,6 +41,7 @@ final class FacturaProveedorTest extends TestCase
     {
         self::setDefaultSettings();
         self::installAccountingPlan();
+        self::removeTaxRegularization();
     }
 
     public function testCreateNewInvoice()
@@ -136,6 +137,8 @@ final class FacturaProveedorTest extends TestCase
         // comprobamos que el stock del producto ha desaparecido
         $product->loadFromCode($product->idproducto);
         $this->assertEquals(0, $product->stockfis, 'bad-product1-stock-end');
+
+        // eliminamos el producto
         $this->assertTrue($product->delete(), 'cant-delete-producto');
     }
 

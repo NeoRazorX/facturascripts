@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\Paises;
+
 /**
  * A country, for example Spain.
  *
@@ -59,7 +61,13 @@ class Pais extends Base\ModelClass
             return false;
         }
 
-        return parent::delete();
+        if (parent::delete()) {
+            // limpiamos la caché
+            Paises::clear();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -80,6 +88,17 @@ class Pais extends Base\ModelClass
     public function primaryDescriptionColumn(): string
     {
         return 'nombre';
+    }
+
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            Paises::clear();
+            return true;
+        }
+
+        return false;
     }
 
     public static function tableName(): string

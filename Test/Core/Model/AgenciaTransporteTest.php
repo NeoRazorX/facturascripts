@@ -52,6 +52,66 @@ final class AgenciaTransporteTest extends TestCase
         $this->assertTrue($agency->delete(), 'agency-cant-delete');
     }
 
+    public function testBadWeb()
+    {
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'Test';
+        $agency->nombre = 'Test Agency';
+        $agency->web = 'javascript:alert(origin)';
+        $this->assertFalse($agency->save(), 'agency-can-save-bad-web');
+
+        // javascript con forma de url
+        $agency->web = 'javascript://example.com//%0aalert(document.domain);//';
+        $this->assertFalse($agency->save(), 'agency-can-save-bad-web-2');
+
+        // javascript con mayúsculas
+        $agency->web = 'jAvAsCriPt://sadas.com/%0aalert(11);//';
+        $this->assertFalse($agency->save(), 'agency-can-save-bad-web-3');
+    }
+
+    public function testGoodWeb()
+    {
+        $agency = new AgenciaTransporte();
+        $agency->codtrans = 'Test';
+        $agency->nombre = 'Test Agency';
+        $agency->web = 'https://www.facturascripts.com';
+        $this->assertTrue($agency->save(), 'agency-cant-save-good-web');
+        $this->assertTrue($agency->delete(), 'agency-cant-delete');
+    }
+
+    public function testLoadFromData()
+    {
+        $agency = new AgenciaTransporte();
+        $agency->loadFromData([
+            'activo' => true,
+            'codtrans' => 'Test',
+            'nombre' => 'Test Agency',
+            'telefono' => '+34 922 000 000',
+            'web' => 'https://www.facturascripts.com'
+        ]);
+
+        $this->assertEquals(true, $agency->activo, 'agency-cant-load-activo');
+        $this->assertEquals('Test', $agency->codtrans, 'agency-cant-load-codtrans');
+        $this->assertEquals('Test Agency', $agency->nombre, 'agency-cant-load-nombre');
+        $this->assertEquals('+34 922 000 000', $agency->telefono, 'agency-cant-load-telefono');
+        $this->assertEquals('https://www.facturascripts.com', $agency->web, 'agency-cant-load-web');
+
+        // ahora probamos a cambiar datos
+        $agency->loadFromData([
+            'activo' => false,
+            'codtrans' => 'Test2',
+            'nombre' => 'Test Agency 2',
+            'telefono' => '+34 922 000 001',
+            'web' => 'https://www.facturascripts.com/test'
+        ]);
+
+        $this->assertEquals(false, $agency->activo, 'agency-cant-load-activo-2');
+        $this->assertEquals('Test2', $agency->codtrans, 'agency-cant-load-codtrans-2');
+        $this->assertEquals('Test Agency 2', $agency->nombre, 'agency-cant-load-nombre-2');
+        $this->assertEquals('+34 922 000 001', $agency->telefono, 'agency-cant-load-telefono-2');
+        $this->assertEquals('https://www.facturascripts.com/test', $agency->web, 'agency-cant-load-web-2');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();

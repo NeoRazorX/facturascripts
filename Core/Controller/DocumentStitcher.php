@@ -83,12 +83,7 @@ class DocumentStitcher extends Controller
         return $status;
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -110,6 +105,13 @@ class DocumentStitcher extends Controller
         parent::privateCore($response, $user, $permissions);
         $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
+
+        // no se pueden agrupar o partir facturas
+        if (in_array($this->modelName, ['FacturaCliente', 'FacturaProveedor'])) {
+            $this->redirect('List' . $this->modelName);
+            return;
+        }
+
         $this->loadDocuments();
         $this->loadMoreDocuments();
 
@@ -137,11 +139,11 @@ class DocumentStitcher extends Controller
      */
     protected function addBlankLine(array &$newLines, $doc)
     {
-        $blankLine = $doc->getNewLine();
-        $blankLine->cantidad = 0;
-        $blankLine->iva = 0.0;
-        $blankLine->irpf = 0.0;
-        $blankLine->recargo = 0.0;
+        $blankLine = $doc->getNewLine([
+            'cantidad' => 0,
+            'mostrar_cantidad' => false,
+            'mostrar_precio' => false
+        ]);
         $newLines[] = $blankLine;
     }
 
@@ -174,12 +176,12 @@ class DocumentStitcher extends Controller
      */
     protected function addInfoLine(array &$newLines, $doc)
     {
-        $infoLine = $doc->getNewLine();
-        $infoLine->cantidad = 0;
-        $infoLine->descripcion = $this->getDocInfoLineDescription($doc);
-        $infoLine->iva = 0.0;
-        $infoLine->irpf = 0.0;
-        $infoLine->recargo = 0.0;
+        $infoLine = $doc->getNewLine([
+            'cantidad' => 0,
+            'descripcion' => $this->getDocInfoLineDescription($doc),
+            'mostrar_cantidad' => false,
+            'mostrar_precio' => false
+        ]);
         $newLines[] = $infoLine;
     }
 

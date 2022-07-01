@@ -55,22 +55,30 @@ final class ProductoTest extends TestCase
 
     public function testCreate()
     {
+        // creamos un producto
         $product = $this->getTestProduct();
         $this->assertTrue($product->save(), 'product-cant-save');
         $this->assertNotNull($product->primaryColumnValue(), 'estado-product-not-stored');
         $this->assertTrue($product->exists(), 'product-cant-persist');
+
+        // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
     public function testCreateWithOutReference()
     {
+        // creamos un producto sin referencia
         $product = new Producto();
         $product->descripcion = 'Test Product';
         $this->assertTrue($product->save(), 'product-cant-save-without-ref');
+
+        // lo eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete-without-ref');
     }
 
     public function testBlocked()
     {
+        // creamos un producto
         $product = $this->getTestProduct();
         $product->secompra = true;
         $product->sevende = true;
@@ -83,6 +91,8 @@ final class ProductoTest extends TestCase
         $this->assertFalse($product->publico, 'product-blocked-can-public');
         $this->assertFalse($product->secompra, 'product-blocked-can-buy');
         $this->assertFalse($product->sevende, 'product-blocked-can-sale');
+
+        // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
@@ -104,6 +114,8 @@ final class ProductoTest extends TestCase
         // recargamos el producto para ver que se ha desvinculado la familia
         $product->loadFromCode($product->primaryColumnValue());
         $this->assertNull($product->codfamilia, 'product-family-not-empty');
+
+        // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
@@ -125,6 +137,8 @@ final class ProductoTest extends TestCase
         // recargamos el producto para ver que se ha desvinculado el fabricante
         $product->loadFromCode($product->primaryColumnValue());
         $this->assertNull($product->codfabricante, 'product-manufacturer-not-empty');
+
+        // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
@@ -147,6 +161,8 @@ final class ProductoTest extends TestCase
         // recargamos el producto para ver que se ha desvinculado el impuesto
         $product->loadFromCode($product->primaryColumnValue());
         $this->assertNull($product->codimpuesto, 'product-tax-not-empty');
+
+        // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
@@ -281,7 +297,7 @@ final class ProductoTest extends TestCase
 
     public function testStock()
     {
-        // creamos el producto
+        // creamos un producto
         $product = $this->getTestProduct();
         $this->assertTrue($product->save(), 'product-cant-save');
 

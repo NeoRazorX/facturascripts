@@ -88,7 +88,7 @@ class PresupuestoCliente extends Base\SalesDocument
         $newLine->loadFromData($data, $exclude);
 
         // allow extensions
-        $this->pipe('getNewLine', $newLine);
+        $this->pipe('getNewLine', $newLine, $data, $exclude);
 
         return $newLine;
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -71,9 +71,6 @@ class ReportTaxes extends Controller
      */
     public $source;
 
-    /**
-     * @return array
-     */
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -157,12 +154,6 @@ class ReportTaxes extends Controller
         $this->processLayout($lines, $totals);
     }
 
-    /**
-     * @param string $format
-     * @param string $value
-     *
-     * @return string
-     */
     protected function exportFieldFormat(string $format, string $value): string
     {
         switch ($format) {
@@ -180,9 +171,6 @@ class ReportTaxes extends Controller
         }
     }
 
-    /**
-     * @return array
-     */
     protected function getReportData(): array
     {
         $sql = '';
@@ -195,7 +183,8 @@ class ReportTaxes extends Controller
                     . ' LEFT JOIN facturasprov AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
                     . ' AND f.fecha >= ' . $this->dataBase->var2str($this->datefrom)
-                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto);
+                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto)
+                    . ' AND (l.pvptotal <> 0.00 OR l.iva <> 0.00)';
                 break;
 
             case 'sales':
@@ -205,7 +194,8 @@ class ReportTaxes extends Controller
                     . ' LEFT JOIN facturascli AS f ON l.idfactura = f.idfactura '
                     . ' WHERE f.idempresa = ' . $this->dataBase->var2str($this->idempresa)
                     . ' AND f.fecha >= ' . $this->dataBase->var2str($this->datefrom)
-                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto);
+                    . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto)
+                    . ' AND (l.pvptotal <> 0.00 OR l.iva <> 0.00)';
                 break;
 
             default:
@@ -260,11 +250,6 @@ class ReportTaxes extends Controller
         return $data;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
     protected function getTotals(array $data): array
     {
         $totals = [];
@@ -304,10 +289,6 @@ class ReportTaxes extends Controller
         $this->source = $this->request->request->get('source');
     }
 
-    /**
-     * @param array $lines
-     * @param array $totals
-     */
     protected function processLayout(array &$lines, array &$totals)
     {
         $i18n = $this->toolBox()->i18n();
@@ -336,9 +317,6 @@ class ReportTaxes extends Controller
         $exportManager->show($this->response);
     }
 
-    /**
-     * @param array $lines
-     */
     protected function reduceLines(array &$lines)
     {
         $zero = $this->toolBox()->numbers()->format(0);
@@ -396,11 +374,6 @@ class ReportTaxes extends Controller
         }
     }
 
-    /**
-     * @param array $totalsData
-     *
-     * @return bool
-     */
     protected function validateTotals(array $totalsData): bool
     {
         // sum totals from the given data

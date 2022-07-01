@@ -203,7 +203,6 @@ class AccountingPlanImport
         if ($this->exercise->longsubcuenta != strlen($code)) {
             $this->exercise->longsubcuenta = strlen($code);
             $this->exercise->save();
-            $subaccount->clearExerciseCache();
         }
 
         $subaccount->codcuenta = $parentCode;

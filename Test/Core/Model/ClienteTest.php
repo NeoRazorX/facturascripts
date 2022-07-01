@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017      Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2022 Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,26 +20,150 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Cliente;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\LogErrorsTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Cliente
- *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- */
-final class ClienteTest extends CustomTest
+final class ClienteTest extends TestCase
 {
+    use LogErrorsTrait;
 
-    protected function setUp(): void
+    public function testCreate()
     {
-        $this->model = new Cliente();
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test';
+        $cliente->cifnif = '12345678A';
+        $this->assertTrue($cliente->save(), 'cliente-cant-save');
+        $this->assertNotNull($cliente->primaryColumnValue(), 'cliente-not-stored');
+        $this->assertTrue($cliente->exists(), 'cliente-cant-persist');
+
+        // razón social es igual a nombre
+        $this->assertEquals($cliente->nombre, $cliente->razonsocial);
+
+        // eliminamos
+        $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
-    public function testPrimaryColumnValue()
+    public function testCantCreateEmpty()
     {
-        $this->model->nombre = 'test description';
+        $cliente = new Cliente();
+        $cliente->nombre = '';
+        $cliente->cifnif = '';
+        $this->assertFalse($cliente->save(), 'cliente-can-save');
 
-        $this->model->{$this->model->primaryColumn()} = 'n"l123';
-        $this->assertFalse($this->model->test());
+        // el cliente no existe
+        $this->assertFalse($cliente->exists(), 'cliente-persisted');
+    }
+
+    public function testBadEmail()
+    {
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test';
+        $cliente->cifnif = '12345678A';
+        $cliente->email = 'bademail';
+        $this->assertFalse($cliente->save(), 'cliente-can-save');
+
+        // el cliente no existe
+        $this->assertFalse($cliente->exists(), 'cliente-persisted');
+
+        // probamos con un email correcto
+        $cliente->email = 'pepe@facturascripts.com';
+        $this->assertTrue($cliente->save(), 'cliente-cant-save');
+
+        // eliminamos
+        $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
+    }
+
+    public function testHtmlOnFields()
+    {
+        $cliente = new Cliente();
+        $cliente->nombre = '<test>';
+        $cliente->cifnif = '<test>';
+        $cliente->razonsocial = '<test>';
+        $cliente->telefono1 = '<test>';
+        $cliente->telefono2 = '<test>';
+        $cliente->fax = '<test>';
+        $cliente->observaciones = '<test>';
+        $this->assertTrue($cliente->save(), 'cliente-cant-save');
+
+        // comprobamos que el html se ha escapado
+        $this->assertEquals('&lt;test&gt;', $cliente->nombre, 'html-not-escaped-on-nombre');
+        $this->assertEquals('&lt;test&gt;', $cliente->cifnif, 'html-not-escaped-on-cifnif');
+        $this->assertEquals('&lt;test&gt;', $cliente->razonsocial, 'html-not-escaped-on-razonsocial');
+        $this->assertEquals('&lt;test&gt;', $cliente->telefono1, 'html-not-escaped-on-telefono1');
+        $this->assertEquals('&lt;test&gt;', $cliente->telefono2, 'html-not-escaped-on-telefono2');
+        $this->assertEquals('&lt;test&gt;', $cliente->fax, 'html-not-escaped-on-fax');
+        $this->assertEquals('&lt;test&gt;', $cliente->observaciones, 'html-not-escaped-on-observaciones');
+
+        // eliminamos
+        $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
+    }
+
+    public function testBadWeb()
+    {
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test';
+        $cliente->cifnif = '12345678A';
+        $cliente->web = 'javascript:alert(origin)';
+        $this->assertFalse($cliente->save(), 'cliente-can-save-bad-web');
+
+        // javascript con forma de url
+        $cliente->web = 'javascript://example.com//%0aalert(document.domain);//';
+        $this->assertFalse($cliente->save(), 'cliente-can-save-bad-web-2');
+
+        // javascript con mayúsculas
+        $cliente->web = 'jAvAsCriPt://sadas.com/%0aalert(11);//';
+        $this->assertFalse($cliente->save(), 'cliente-can-save-bad-web-3');
+    }
+
+    public function testGoodWeb()
+    {
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test';
+        $cliente->cifnif = '12345678A';
+        $cliente->web = 'https://www.example.com';
+        $this->assertTrue($cliente->save(), 'cliente-cant-save-web');
+        $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
+    }
+
+    public function testNotNullFields()
+    {
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test';
+        $cliente->cifnif = '12345678A';
+        $this->assertTrue($cliente->save(), 'cliente-cant-save');
+
+        // comprobamos que los teléfonos, fax, email y observaciones no sean nulos
+        $this->assertNotNull($cliente->telefono1, 'telefono1-is-null');
+        $this->assertNotNull($cliente->telefono2, 'telefono2-is-null');
+        $this->assertNotNull($cliente->fax, 'fax-is-null');
+        $this->assertNotNull($cliente->email, 'email-is-null');
+        $this->assertNotNull($cliente->observaciones, 'observaciones-is-null');
+
+        // eliminamos
+        $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
+    }
+
+    public function testPaymentDays()
+    {
+        // creamos un cliente sin días de pago
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test';
+        $cliente->cifnif = '12345678A';
+
+        // comprobamos que no tiene días de pago
+        $this->assertEmpty($cliente->getPaymentDays(), 'cliente-has-payment-days');
+
+        // añadimos un día de pago
+        $cliente->diaspago = '1';
+        $this->assertEquals([1], $cliente->getPaymentDays(), 'cliente-has-payment-days');
+
+        // añadimos un segundo día de pago
+        $cliente->diaspago = '1,5';
+        $this->assertEquals([1, 5], $cliente->getPaymentDays(), 'cliente-has-payment-days');
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }

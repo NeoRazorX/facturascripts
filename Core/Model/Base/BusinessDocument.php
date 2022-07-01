@@ -271,7 +271,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Serie();
@@ -311,7 +311,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
         // empty code?
         if (empty($this->codigo)) {
-            BusinessDocumentCode::getNewCode($this);
+            BusinessDocumentCode::setNewCode($this);
         }
 
         return parent::save();
@@ -403,7 +403,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 break;
 
             case 'codserie':
-                BusinessDocumentCode::getNewCode($this);
+                BusinessDocumentCode::setNewCode($this);
                 break;
 
             case 'fecha':
@@ -411,7 +411,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 if (false === $this->setDate($this->fecha, $this->hora)) {
                     return false;
                 } elseif ($this->codejercicio != $oldCodejercicio) {
-                    BusinessDocumentCode::getNewCode($this);
+                    BusinessDocumentCode::setNewCode($this);
                 }
                 break;
 
@@ -420,7 +420,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 return false;
 
             case 'numero':
-                BusinessDocumentCode::getNewCode($this, false);
+                BusinessDocumentCode::setNewCode($this, false);
                 break;
         }
 

@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\Divisas;
+
 /**
  * A currency with its symbol and its conversion rate with respect to the euro.
  *
@@ -87,7 +89,13 @@ class Divisa extends Base\ModelClass
             return false;
         }
 
-        return parent::delete();
+        if (parent::delete()) {
+            // limpiamos la caché
+            Divisas::clear();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -103,6 +111,17 @@ class Divisa extends Base\ModelClass
     public static function primaryColumn(): string
     {
         return 'coddivisa';
+    }
+
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            Divisas::clear();
+            return true;
+        }
+
+        return false;
     }
 
     public static function tableName(): string

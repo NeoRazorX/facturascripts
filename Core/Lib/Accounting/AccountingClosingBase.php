@@ -251,7 +251,6 @@ abstract class AccountingClosingBase
         ];
 
         $accountEntry = new Asiento();
-        $accountEntry->clearExerciseCache();
         foreach ($accountEntry->all($where) as $row) {
             $row->editable = true;
             if (!$row->delete()) {

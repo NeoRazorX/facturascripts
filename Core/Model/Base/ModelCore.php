@@ -99,18 +99,28 @@ abstract class ModelCore
     abstract public function pipe($name, ...$arguments);
 
     /**
+     * Executes all $name methods added from the extensions until someone returns false.
+     *
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return bool
+     */
+    abstract public function pipeFalse($name, ...$arguments): bool;
+
+    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
-    abstract public static function primaryColumn();
+    abstract public static function primaryColumn(): string;
 
     /**
      * Returns the name of the table that uses this model.
      *
      * @return string
      */
-    abstract public static function tableName();
+    abstract public static function tableName(): string;
 
     /**
      * ModelClass constructor.
@@ -305,7 +315,9 @@ abstract class ModelCore
      */
     private function getBoolValueForField($field, $value): ?bool
     {
-        if (in_array(strtolower($value), ['true', 't', '1'], false)) {
+        if (is_bool($value)) {
+            return $value;
+        } elseif (in_array(strtolower($value), ['true', 't', '1'], false)) {
             return true;
         } elseif (in_array(strtolower($value), ['false', 'f', '0'], false)) {
             return false;

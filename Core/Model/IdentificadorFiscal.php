@@ -62,9 +62,13 @@ class IdentificadorFiscal extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->tipoidfiscal = trim($this->tipoidfiscal);
-        if (1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,25}$/i', $this->tipoidfiscal)) {
-            $this->toolBox()->i18nLog()->error(
+        // escapamos el html
+        $this->codeid = self::toolBox()::utils()::noHtml($this->codeid);
+        $this->tipoidfiscal = self::toolBox()::utils()::noHtml($this->tipoidfiscal);
+
+        // comprobamos que el campo tenga un valor válido
+        if (empty($this->tipoidfiscal) || 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,25}$/i', $this->tipoidfiscal)) {
+            self::toolBox()::i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->tipoidfiscal, '%column%' => 'tipoidfiscal', '%min%' => '1', '%max%' => '25']
             );

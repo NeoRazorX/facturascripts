@@ -28,6 +28,7 @@ use FacturaScripts\Dinamic\Lib\FiscalNumberValitator;
  */
 abstract class Contact extends ModelClass
 {
+    use GravatarTrait;
 
     /**
      * Tax identifier of the customer.
@@ -101,28 +102,12 @@ abstract class Contact extends ModelClass
      */
     public $tipoidfiscal;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->fechaalta = date(self::DATE_STYLE);
         $this->personafisica = true;
         $this->tipoidfiscal = $this->toolBox()->appSettings()->get('default', 'tipoidfiscal');
-    }
-
-    /**
-     * Returns gravatar image url.
-     *
-     * @param int $size
-     *
-     * @return string
-     */
-    public function gravatar(int $size = 80): string
-    {
-        return $this->email === null ? '' :
-            'https://www.gravatar.com/avatar/' . md5(strtolower(trim($this->email))) . '?s=' . $size;
     }
 
     /**
@@ -137,16 +122,11 @@ abstract class Contact extends ModelClass
         if ($this->email !== null) {
             $this->email = $utils->noHtml(mb_strtolower($this->email, 'UTF8'));
         }
-        $this->fax = $utils->noHtml($this->fax);
+        $this->fax = $utils->noHtml($this->fax) ?? '';
         $this->nombre = $utils->noHtml($this->nombre);
-        $this->observaciones = $utils->noHtml($this->observaciones);
-        $this->telefono1 = $utils->noHtml($this->telefono1);
-        $this->telefono2 = $utils->noHtml($this->telefono2);
-
-        if (empty($this->nombre)) {
-            $this->toolBox()->i18nLog()->warning('field-can-not-be-null', ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]);
-            return false;
-        }
+        $this->observaciones = $utils->noHtml($this->observaciones) ?? '';
+        $this->telefono1 = $utils->noHtml($this->telefono1) ?? '';
+        $this->telefono2 = $utils->noHtml($this->telefono2) ?? '';
 
         $validator = new FiscalNumberValitator();
         if (!empty($this->cifnif) && false === $validator->validate($this->tipoidfiscal, $this->cifnif)) {
@@ -154,9 +134,11 @@ abstract class Contact extends ModelClass
             return false;
         }
 
-        if (!empty($this->email) && false === filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+        if (empty($this->email)) {
+            $this->email = '';
+        } elseif (false === filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
-            $this->email = null;
+            $this->email = '';
             return false;
         }
 

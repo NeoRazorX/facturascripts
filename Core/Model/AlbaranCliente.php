@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -56,10 +57,10 @@ class AlbaranCliente extends Base\SalesDocument
 
     /**
      * Returns a new line for the document.
-     * 
+     *
      * @param array $data
      * @param array $exclude
-     * 
+     *
      * @return LineaAlbaran
      */
     public function getNewLine(array $data = [], array $exclude = ['actualizastock', 'idlinea', 'idalbaran', 'servido'])
@@ -71,7 +72,7 @@ class AlbaranCliente extends Base\SalesDocument
         $newLine->loadFromData($data, $exclude);
 
         // allow extensions
-        $this->pipe('getNewLine', $newLine);
+        $this->pipe('getNewLine', $newLine, $data, $exclude);
 
         return $newLine;
     }

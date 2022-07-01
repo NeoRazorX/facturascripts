@@ -92,7 +92,9 @@
                 document.getElementById("salesFormLines").innerHTML = data.lines;
             } else {
                 $.each(data.linesMap, function (index, value) {
-                    document.forms['salesForm'][index].value = value;
+                    if (document.forms['salesForm'][index] != null) {
+                        document.forms['salesForm'][index].value = value;
+                    }
                 });
             }
             if (data.footer !== '') {
@@ -199,6 +201,8 @@
 
     function salesLineTotalWithTaxes(id) {
         const total = parseFloat(prompt('{{ i18n.trans('total-with-taxes') }}').replace(',', '.')) || 0;
+        const dtopor = parseFloat(document.forms['salesForm']['dtopor_' + id].value) || 0;
+        const dtopor2 = parseFloat(document.forms['salesForm']['dtopor2_' + id].value) || 0;
         const iva = parseFloat(document.forms['salesForm']['iva_' + id].value) || 0;
         const recargo = parseFloat(document.forms['salesForm']['recargo_' + id].value) || 0;
         const irpf = parseFloat(document.forms['salesForm']['irpf_' + id].value) || 0;
@@ -208,7 +212,8 @@
         } else if (cantidad <= 0) {
             alert('cantidad > 0');
         } else {
-            const pvp = (100 * total / cantidad) / (100 + iva + recargo - irpf);
+            let pvpSinDto = (100 * total / cantidad) / (100 + iva + recargo - irpf);
+            let pvp = 10000 * pvpSinDto / ((100 - dtopor) * (100 - dtopor2));
             document.forms['salesForm']['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
             salesFormAction('recalculate', '0');
         }
@@ -231,6 +236,12 @@
     function sortableDisable() {
         $("#salesFormLines").sortable("disable");
     }
+
+    $(document).on('keyup', '.doc-line-desc', function (e) {
+        while ($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
+            $(this).height($(this).height() + 1);
+        }
+    });
 
     {% if model.editable %}
     let sortable = false;

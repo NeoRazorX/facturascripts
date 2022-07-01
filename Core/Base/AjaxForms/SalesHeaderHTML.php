@@ -169,7 +169,7 @@ class SalesHeaderHTML
         }
 
         $attributes = $model->editable ? 'name="codagente"' : 'disabled=""';
-        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
+        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="form-group">'
             . '<a href="' . Agentes::get($model->codagente)->url() . '">' . $i18n->trans('agent') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
@@ -188,7 +188,8 @@ class SalesHeaderHTML
                 . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
                 . $i18n->trans('select') . '</a>'
                 . '</div>'
-                . '</div>';
+                . '</div>'
+                . self::detailModal($i18n, $model);
         }
 
         $btnCliente = $model->editable ?
@@ -243,14 +244,14 @@ class SalesHeaderHTML
             . '</div>';
     }
 
-    private static function detail(Translator $i18n, SalesDocument $model, bool $force = false): string
+    private static function detail(Translator $i18n, SalesDocument $model, bool $new = false): string
     {
-        if (empty($model->primaryColumnValue()) && $force === false) {
-            // necesitamos el modal para tener los inputs en el form
-            return self::detailModal($i18n, $model);
+        if (empty($model->primaryColumnValue()) && $new === false) {
+            // si el modelo es nuevo, ya hemos pintado el modal de detalle
+            return '';
         }
 
-        $css = $force ? 'col-sm-auto' : 'col-sm';
+        $css = $new ? 'col-sm-auto' : 'col-sm';
         return '<div class="' . $css . '">'
             . '<div class="form-group">'
             . '<button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#headerModal">'
@@ -290,12 +291,8 @@ class SalesHeaderHTML
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
-            . $i18n->trans('close')
-            . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">'
-            . $i18n->trans('accept')
-            . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-dismiss="modal">' . $i18n->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'

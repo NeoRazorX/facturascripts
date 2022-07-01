@@ -72,6 +72,21 @@ final class CuentaTest extends TestCase
         }
     }
 
+    public function testHtmlOnDescription()
+    {
+        $account = new Cuenta();
+        $account->codcuenta = '9999';
+        $account->codejercicio = $this->getRandomExercise()->codejercicio;
+        $account->descripcion = '<b>Test</b>';
+        $this->assertTrue($account->save(), 'can-not-create-account');
+
+        // comprobamos que el html se ha escapado
+        $this->assertEquals('&lt;b&gt;Test&lt;/b&gt;', $account->descripcion);
+
+        // eliminamos
+        $this->assertTrue($account->delete(), 'account-cant-delete');
+    }
+
     public function testCreateClosed()
     {
         // cerramos un ejercicio
@@ -81,9 +96,6 @@ final class CuentaTest extends TestCase
 
         // creamos una cuenta
         $account = $this->getRandomAccount($exercise->codejercicio);
-
-        // limpiamos la caché de ejercicios
-        $account->clearExerciseCache();
 
         try {
             // guardamos la cuenta
@@ -99,9 +111,6 @@ final class CuentaTest extends TestCase
             // reabrimos el ejercicio
             $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
             $exercise->save();
-
-            // limpiamos la caché de ejercicios
-            $account->clearExerciseCache();
         }
     }
 
@@ -117,9 +126,6 @@ final class CuentaTest extends TestCase
         $exercise->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
         $exercise->save();
 
-        // limpiamos la caché de ejercicios
-        $account->clearExerciseCache();
-
         try {
             // eliminamos la cuenta
             $this->assertFalse($account->delete(), 'account-can-delete-in-closed-exercise');
@@ -131,9 +137,6 @@ final class CuentaTest extends TestCase
             // reabrimos el ejercicio
             $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
             $exercise->save();
-
-            // limpiamos la caché de ejercicios
-            $account->clearExerciseCache();
         }
     }
 

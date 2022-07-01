@@ -1,8 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
- * Copyright (C) 2017-2018  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,21 +17,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Test\Core\Model;
-
-use FacturaScripts\Core\Model\LineaAlbaranCliente;
-use FacturaScripts\Test\Core\CustomTest;
+namespace FacturaScripts\Core\Model\Base;
 
 /**
- * @covers \LineaAlbaranCliente
+ * Description of GravatarTrait
  *
- * @author Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
+ * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
-final class LineaAlbaranClienteTest extends CustomTest
+trait GravatarTrait
 {
-
-    protected function setUp(): void
+    /**
+     * Returns gravatar image url.
+     */
+    public function gravatar(int $size = 80): string
     {
-        $this->model = new LineaAlbaranCliente();
+        return empty($this->email) ? '' :
+            'https://www.gravatar.com/avatar/' . md5(strtolower(trim($this->email))) . '?s=' . $size;
     }
 }

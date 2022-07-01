@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
@@ -29,6 +30,7 @@ use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\Cliente;
+use FacturaScripts\Dinamic\Model\RoleAccess;
 use FacturaScripts\Dinamic\Model\Variante;
 
 /**
@@ -85,7 +87,7 @@ abstract class SalesController extends PanelController
         return '<div id="salesFormHeader">' . SalesHeaderHTML::render($model) . '</div>'
             . '<div id="salesFormLines">' . SalesLineHTML::render($lines, $model) . '</div>'
             . '<div id="salesFormFooter">' . SalesFooterHTML::render($model) . '</div>'
-            . SalesModalHTML::render($model, $this->url());
+            . SalesModalHTML::render($model, $this->url(), $this->user, $this->permissions);
     }
 
     public function series(): array
@@ -100,7 +102,11 @@ abstract class SalesController extends PanelController
         $list = [];
         $variante = new Variante();
         $query = (string)$this->request->get('term');
-        foreach ($variante->codeModelSearch($query, 'referencia') as $value) {
+        $where = [
+            new DataBaseWhere('p.bloqueado', 0),
+            new DataBaseWhere('p.sevende', 1)
+        ];
+        foreach ($variante->codeModelSearch($query, 'referencia', $where) as $value) {
             $list[] = [
                 'key' => $this->toolBox()->utils()->fixHtml($value->code),
                 'value' => $this->toolBox()->utils()->fixHtml($value->description)
@@ -224,10 +230,24 @@ abstract class SalesController extends PanelController
     protected function findCustomerAction(): bool
     {
         $this->setTemplate(false);
-        $customer = new Cliente();
+
+        // ¿El usuario tiene permiso para ver todos los clientes?
+        $showAll = false;
+        foreach (RoleAccess::allFromUser($this->user->nick, 'EditCliente') as $access) {
+            if (false === $access->onlyownerdata) {
+                $showAll = true;
+            }
+        }
+        $where = [];
+        if ($this->permissions->onlyOwnerData && !$showAll) {
+            $where[] = new DataBaseWhere('codagente', $this->user->codagente);
+            $where[] = new DataBaseWhere('codagente', null, 'IS NOT');
+        }
+
         $list = [];
+        $customer = new Cliente();
         $term = $this->request->get('term');
-        foreach ($customer->codeModelSearch($term) as $item) {
+        foreach ($customer->codeModelSearch($term, '', $where) as $item) {
             $list[$item->code] = $item->code . ' | ' . $this->toolBox()->utils()->fixHtml($item->description);
         }
         $this->response->setContent(json_encode($list));

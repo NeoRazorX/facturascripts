@@ -48,9 +48,11 @@ abstract class ListBusinessDocument extends ListController
         $statusValues = $this->codeModel->all('estados_documentos', 'idestado', 'nombre', true, $where);
         $this->addFilterSelect($viewName, 'idestado', 'state', 'idestado', $statusValues);
 
-        $users = $this->codeModel->all('users', 'nick', 'nick');
-        if (count($users) > 1) {
-            $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
+        if ($this->permissions->onlyOwnerData === false) {
+            $users = $this->codeModel->all('users', 'nick', 'nick');
+            if (count($users) > 1) {
+                $this->addFilterSelect($viewName, 'nick', 'user', 'nick', $users);
+            }
         }
 
         $companies = Empresas::codeModel();
@@ -145,9 +147,11 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterAutocomplete($viewName, 'idcontactofact', 'billing-address', 'idcontactofact', 'contactos', 'idcontacto', 'direccion');
         $this->addFilterautocomplete($viewName, 'idcontactoenv', 'shipping-address', 'idcontactoenv', 'contactos', 'idcontacto', 'direccion');
 
-        $agents = Agentes::codeModel();
-        if (count($agents) > 1) {
-            $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
+        if ($this->permissions->onlyOwnerData === false) {
+            $agents = Agentes::codeModel();
+            if (count($agents) > 1) {
+                $this->addFilterSelect($viewName, 'codagente', 'agent', 'codagente', $agents);
+            }
         }
 
         $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');

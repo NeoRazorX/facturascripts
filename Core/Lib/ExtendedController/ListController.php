@@ -62,7 +62,7 @@ abstract class ListController extends BaseController
         $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
         // Execute actions before loading data
-        if (false === $this->execPreviousAction($action) || false === $this->pipe('execPreviousAction', $action)) {
+        if (false === $this->execPreviousAction($action) || false === $this->pipeFalse('execPreviousAction', $action)) {
             return;
         }
 
@@ -75,12 +75,12 @@ abstract class ListController extends BaseController
             }
 
             $this->loadData($viewName, $view);
-            $this->pipe('loadData', $viewName, $view);
+            $this->pipeFalse('loadData', $viewName, $view);
         }
 
         // Execute actions after loading data
         $this->execAfterAction($action);
-        $this->pipe('execAfterAction', $action);
+        $this->pipeFalse('execAfterAction', $action);
     }
 
     /**

@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\Series;
+
 /**
  * A series of invoicing or accounting, to have different numbering
  * in each series.
@@ -74,7 +76,13 @@ class Serie extends Base\ModelClass
             return false;
         }
 
-        return parent::delete();
+        if (parent::delete()) {
+            // limpiamos la caché
+            Series::clear();
+            return true;
+        }
+
+        return false;
     }
 
     public function install(): string
@@ -98,6 +106,17 @@ class Serie extends Base\ModelClass
     public static function primaryColumn(): string
     {
         return 'codserie';
+    }
+
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            Series::clear();
+            return true;
+        }
+
+        return false;
     }
 
     public static function tableName(): string

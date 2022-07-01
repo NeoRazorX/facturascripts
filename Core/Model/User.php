@@ -33,6 +33,7 @@ class User extends Base\ModelClass
     use Base\ModelTrait;
     use Base\CompanyRelationTrait;
     use Base\PasswordTrait;
+    use Base\GravatarTrait;
 
     const DEFAULT_LEVEL = 2;
 

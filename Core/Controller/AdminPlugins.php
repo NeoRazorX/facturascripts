@@ -41,11 +41,12 @@ class AdminPlugins extends Base\Controller
      */
     public $pluginManager;
 
-    /**
-     * @return array
-     */
     public function getAllPlugins(): array
     {
+        if (FS_DISABLE_ADD_PLUGINS) {
+            return [];
+        }
+
         $downloadTools = new Base\DownloadTools();
         $json = json_decode($downloadTools->getContents(self::PLUGIN_LIST_URL, 3), true);
         if (empty($json)) {
@@ -79,12 +80,7 @@ class AdminPlugins extends Base\Controller
         return UploadedFile::getMaxFilesize() / 1024 / 1024;
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';

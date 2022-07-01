@@ -152,9 +152,9 @@ final class AppRouter
     {
         $parts = explode('.', $filePath);
         $safe = [
-            'avi', 'css', 'csv', 'eot', 'gif', 'gz', 'ico', 'jpeg', 'jpg', 'js',
-            'json', 'map', 'mkv', 'mp4', 'ogg', 'pdf', 'png', 'sql', 'svg',
-            'ttf', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
+            'accdb', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'ico', 'jpeg', 'jpg', 'js',
+            'json', 'map', 'mdb', 'mkv', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf', 'png', 'sql', 'svg',
+            'ttf', 'txt', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
         ];
         return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
     }
@@ -206,8 +206,10 @@ final class AppRouter
             ob_end_flush();
         }
 
-        // force to download svg files to prevent XSS attacks
-        if (strpos($filePath, '.svg') !== false) {
+        // force to download svg, xml and xsig files to prevent XSS attacks
+        $info = pathinfo($filePath);
+        $extension = strtolower($info['extension']);
+        if (in_array($extension, ['svg', 'xml', 'xsig'])) {
             header('Content-Disposition: attachment; filename="' . basename($filePath) . '"');
         }
 
@@ -223,7 +225,8 @@ final class AppRouter
      */
     private function getMime(string $filePath): string
     {
-        $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+        $info = pathinfo($filePath);
+        $extension = strtolower($info['extension']);
         switch ($extension) {
             case 'css':
                 return 'text/css';
@@ -232,6 +235,7 @@ final class AppRouter
                 return 'application/javascript';
 
             case 'xml':
+            case 'xsig':
                 return 'text/xml';
         }
 

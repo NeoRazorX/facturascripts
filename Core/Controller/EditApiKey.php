@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,9 +33,6 @@ use FacturaScripts\Dinamic\Model\ApiAccess;
 class EditApiKey extends EditController
 {
 
-    /**
-     * @return array
-     */
     public function getAccessRules(): array
     {
         $rules = [];
@@ -60,22 +57,12 @@ class EditApiKey extends EditController
         return $rules;
     }
 
-    /**
-     * Returns the model name.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'ApiKey';
     }
 
-    /**
-     * Returns basic page attributes.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -94,17 +81,11 @@ class EditApiKey extends EditController
         $this->setTabsPosition('bottom');
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsAccess(string $viewName = 'ApiAccess')
     {
         $this->addHtmlView($viewName, 'Tab/ApiAccess', 'ApiAccess', 'rules', 'fas fa-check-square');
     }
 
-    /**
-     * @return bool
-     */
     protected function editRulesAction(): bool
     {
         // check user permissions
@@ -115,10 +96,10 @@ class EditApiKey extends EditController
             return true;
         }
 
-        $allowGet = $this->request->request->get('allowget');
-        $allowPut = $this->request->request->get('allowput');
-        $allowPost = $this->request->request->get('allowpost');
-        $allowDelete = $this->request->request->get('allowdelete');
+        $allowGet = $this->request->request->get('allowget', []);
+        $allowPut = $this->request->request->get('allowput', []);
+        $allowPost = $this->request->request->get('allowpost', []);
+        $allowDelete = $this->request->request->get('allowdelete', []);
 
         // update current access rules
         $accessModel = new ApiAccess();
@@ -169,9 +150,8 @@ class EditApiKey extends EditController
      */
     protected function execPreviousAction($action)
     {
-        switch ($action) {
-            case 'edit-rules':
-                return $this->editRulesAction();
+        if ($action == 'edit-rules') {
+            return $this->editRulesAction();
         }
 
         return parent::execPreviousAction($action);

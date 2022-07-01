@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\Utils;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -133,7 +134,7 @@ abstract class BaseFilter
      */
     public function setValue($value)
     {
-        $this->value = $value;
+        $this->value = Utils::noHtml($value);
     }
 
     /**

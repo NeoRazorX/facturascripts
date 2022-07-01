@@ -382,22 +382,23 @@ class Contacto extends Base\Contact
 
     public function test(): bool
     {
-        if (empty($this->descripcion)) {
-            $this->descripcion = empty($this->codcliente) ? $this->fullName() : $this->direccion;
+        if (empty($this->nombre) && empty($this->email) && empty($this->direccion)) {
+            $this->toolBox()->i18nLog()->warning('empty-contact-data');
+            return false;
         }
 
-        if (empty($this->nombre)) {
-            $this->nombre = $this->descripcion;
+        if (empty($this->descripcion)) {
+            $this->descripcion = empty($this->codcliente) && empty($this->codproveedor) ? $this->fullName() : $this->direccion;
         }
 
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->apellidos = $utils->noHtml($this->apellidos);
-        $this->cargo = $utils->noHtml($this->cargo);
-        $this->ciudad = $utils->noHtml($this->ciudad);
-        $this->direccion = $utils->noHtml($this->direccion);
-        $this->empresa = $utils->noHtml($this->empresa);
-        $this->provincia = $utils->noHtml($this->provincia);
+        $this->apellidos = $utils->noHtml($this->apellidos) ?? '';
+        $this->cargo = $utils->noHtml($this->cargo) ?? '';
+        $this->ciudad = $utils->noHtml($this->ciudad) ?? '';
+        $this->direccion = $utils->noHtml($this->direccion) ?? '';
+        $this->empresa = $utils->noHtml($this->empresa) ?? '';
+        $this->provincia = $utils->noHtml($this->provincia) ?? '';
 
         return $this->testPassword() && parent::test();
     }

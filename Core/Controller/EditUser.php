@@ -37,6 +37,12 @@ use Symfony\Component\HttpFoundation\Cookie;
 class EditUser extends EditController
 {
 
+    public function getImageUrl(): string
+    {
+        $mvn = $this->getMainViewName();
+        return $this->views[$mvn]->model->gravatar();
+    }
+
     public function getModelClassName(): string
     {
         return 'User';

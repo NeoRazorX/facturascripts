@@ -116,9 +116,7 @@ abstract class PDFDocument extends PDFCore
             return $payMethod->descripcion;
         }
 
-        $iban = $cuentaBco->getIban(true);
-        $blocks = explode(' ', $iban);
-        return $payMethod->descripcion . ' : ' . $iban . ' (' . $this->i18n->trans('last-block') . ' ' . end($blocks) . ')';
+        return $payMethod->descripcion . ' : ' . $cuentaBco->getIban(true);
     }
 
     /**
@@ -264,8 +262,16 @@ abstract class PDFDocument extends PDFCore
         foreach ($model->getlines() as $line) {
             $data = [];
             foreach ($this->getLineHeaders() as $key => $value) {
+                if (property_exists($line, 'mostrar_precio') &&
+                    $line->mostrar_precio === false &&
+                    in_array($key, ['pvpunitario', 'dtopor', 'dtopor2', 'pvptotal', 'iva', 'recargo', 'irpf'], true)) {
+                    continue;
+                }
+
                 if ($key === 'referencia') {
                     $data[$key] = empty($line->{$key}) ? Utils::fixHtml($line->descripcion) : Utils::fixHtml($line->{$key} . " - " . $line->descripcion);
+                } elseif ($key === 'cantidad' && property_exists($line, 'mostrar_cantidad')) {
+                    $data[$key] = $line->mostrar_cantidad ? $line->{$key} : '';
                 } elseif ($value['type'] === 'percentage') {
                     $data[$key] = $this->numberTools->format($line->{$key}) . '%';
                 } elseif ($value['type'] === 'number') {
@@ -276,10 +282,19 @@ abstract class PDFDocument extends PDFCore
             }
 
             $tableData[] = $data;
+
+            if (property_exists($line, 'salto_pagina') && $line->salto_pagina) {
+                $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
+                $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
+                $tableData = [];
+                $this->pdf->ezNewPage();
+            }
         }
 
-        $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
-        $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
+        if (false === empty($tableData)) {
+            $this->removeEmptyCols($tableData, $headers, $this->numberTools->format(0));
+            $this->pdf->ezTable($tableData, $headers, '', $tableOptions);
+        }
     }
 
     /**

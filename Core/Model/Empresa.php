@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 
@@ -130,7 +131,13 @@ class Empresa extends Base\Contact
             return false;
         }
 
-        return parent::delete();
+        if (parent::delete()) {
+            // limpiamos la caché
+            Empresas::clear();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -177,6 +184,17 @@ class Empresa extends Base\Contact
     public function primaryDescriptionColumn(): string
     {
         return 'nombrecorto';
+    }
+
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            Empresas::clear();
+            return true;
+        }
+
+        return false;
     }
 
     public static function tableName(): string

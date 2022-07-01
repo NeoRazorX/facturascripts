@@ -26,15 +26,12 @@ use FacturaScripts\Dinamic\Lib\Email\NewMail;
  * Controller to edit main settings
  *
  * @author Daniel Fernández Giménez  <hola@danielfg.es>
- * @author Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez       <carlos@facturascripts.com>
  */
 class ConfigEmail extends PanelController
 {
 
-    /**
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $pageData = parent::getPageData();
         $pageData['menu'] = 'admin';
@@ -98,18 +95,8 @@ class ConfigEmail extends PanelController
      */
     protected function execAfterAction($action)
     {
-        switch ($action) {
-            case 'testmail':
-                if (false === $this->editAction()) {
-                    break;
-                }
-                $email = new NewMail();
-                if ($email->test()) {
-                    $this->toolBox()->i18nLog()->notice('mail-test-ok');
-                    break;
-                }
-                $this->toolBox()->i18nLog()->warning('mail-test-error');
-                break;
+        if ($action === 'testmail') {
+            $this->testMailAction();
         }
     }
 
@@ -121,6 +108,15 @@ class ConfigEmail extends PanelController
             case 'ConfigEmail':
                 $view->loadData('email');
                 $view->model->name = 'email';
+                if ($view->model->mailer === 'smtp') {
+                    // añadimos el botón test
+                    $this->addButton($viewName, [
+                        'action' => 'testmail',
+                        'color' => 'info',
+                        'icon' => 'fas fa-envelope',
+                        'label' => 'test'
+                    ]);
+                }
                 break;
 
             case 'ListEmailNotification':
@@ -128,5 +124,21 @@ class ConfigEmail extends PanelController
                 $view->loadData();
                 break;
         }
+    }
+
+    protected function testMailAction()
+    {
+        // guardamos los datos del formulario primero
+        if (false === $this->editAction()) {
+            return;
+        }
+
+        $email = new NewMail();
+        if ($email->test()) {
+            $this->toolBox()->i18nLog()->notice('mail-test-ok');
+            return;
+        }
+
+        $this->toolBox()->i18nLog()->warning('mail-test-error');
     }
 }

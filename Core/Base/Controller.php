@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -186,6 +186,18 @@ class Controller
     }
 
     /**
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return bool
+     */
+    public function pipeFalse($name, ...$arguments): bool
+    {
+        $this->toolBox()->i18nLog()->error('no-extension-support', ['%className%' => static::class]);
+        return true;
+    }
+
+    /**
      * Runs the controller's private logic.
      *
      * @param Response $response
@@ -303,7 +315,7 @@ class Controller
      *   - the token does not exist
      *   - the token is invalid
      *   - the token is duplicated
-     * 
+     *
      * @return bool
      */
     protected function validateFormToken(): bool

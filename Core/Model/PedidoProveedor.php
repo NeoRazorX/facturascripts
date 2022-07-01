@@ -71,7 +71,7 @@ class PedidoProveedor extends Base\PurchaseDocument
         $newLine->loadFromData($data, $exclude);
 
         // allow extensions
-        $this->pipe('getNewLine', $newLine);
+        $this->pipe('getNewLine', $newLine, $data, $exclude);
 
         return $newLine;
     }

@@ -130,7 +130,8 @@ class PurchasesHeaderHTML
                 . ' $(\'#findSupplierInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
                 . $i18n->trans('select') . '</a>'
                 . '</div>'
-                . '</div>';
+                . '</div>'
+                . self::detailModal($i18n, $model);
         }
 
         $btnProveedor = $model->editable ?
@@ -156,14 +157,14 @@ class PurchasesHeaderHTML
         return $html;
     }
 
-    private static function detail(Translator $i18n, PurchaseDocument $model, bool $force = false): string
+    private static function detail(Translator $i18n, PurchaseDocument $model, bool $new = false): string
     {
-        if (empty($model->primaryColumnValue()) && $force === false) {
-            // necesitamos el modal para tener los inputs en el form
-            return self::detailModal($i18n, $model);
+        if (empty($model->primaryColumnValue()) && $new === false) {
+            // si el modelo es nuevo, ya hemos pintado el modal de detalle
+            return '';
         }
 
-        $css = $force ? 'col-sm-auto' : 'col-sm';
+        $css = $new ? 'col-sm-auto' : 'col-sm';
         return '<div class="' . $css . '">'
             . '<div class="form-group">'
             . '<button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#headerModal">'
@@ -198,12 +199,8 @@ class PurchasesHeaderHTML
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
-            . $i18n->trans('close')
-            . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">'
-            . $i18n->trans('accept')
-            . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-dismiss="modal">' . $i18n->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'

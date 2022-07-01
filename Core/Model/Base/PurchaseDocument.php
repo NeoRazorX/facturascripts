@@ -114,10 +114,7 @@ abstract class PurchaseDocument extends TransformerDocument
         return $proveedor;
     }
 
-    /**
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // we need to call parent first
         $result = parent::install();
