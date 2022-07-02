@@ -244,6 +244,16 @@ class InvoiceToAccounting extends AccountingClass
             if (false === $this->addTaxLine($entry, $subaccount, $this->counterpart, true, $value)) {
                 return false;
             }
+            if ((double) $value['totalrecargo'] != 0.0) {
+                $subreaccount = $this->getTaxRESupportedAccount($tax);
+                if (false === $subreaccount->exists()) {
+                    $this->toolBox()->i18nLog()->warning('resop-account-not-found');
+                    return false;
+                }
+                if (false === $this->addreTaxLine($entry, $subreaccount, $this->counterpart, true, $value)) {
+                    return false;
+                }
+            }
         }
 
         return true;
@@ -325,7 +335,19 @@ class InvoiceToAccounting extends AccountingClass
             if (false === $this->addTaxLine($entry, $subaccount, $this->counterpart, false, $value)) {
                 return false;
             }
+            if ((double) $value['totalrecargo'] != 0.0) {
+                $subreaccount = $this->getTaxREImpactedAccount($tax);
+                if (false === $subreaccount->exists()) {
+                    $this->toolBox()->i18nLog()->warning('rerep-subaccount-not-found');
+                    return false;
+                }
+                // add re tax line
+                if (false === $this->addRETaxLine($entry, $subreaccount, $this->counterpart, false, $value)) {
+                    return false;
+                }
+            }
         }
+        
         return true;
     }
 
@@ -441,16 +463,16 @@ class InvoiceToAccounting extends AccountingClass
             return;
         }
 
-        if ($this->addCustomerLine($entry) &&
-            $this->addSalesTaxLines($entry) &&
-            $this->addSalesIrpfLines($entry) &&
-            $this->addSalesSuppliedLines($entry) &&
-            $this->addGoodsSalesLine($entry) &&
-            $entry->isBalanced()) {
-            $this->document->idasiento = $entry->primaryColumnValue();
-            return;
-        }
-
+       
+         if ($this->addCustomerLine($entry) &&
+                $this->addSalesTaxLines($entry) &&
+          $this->addSalesIrpfLines($entry) &&
+          $this->addSalesSuppliedLines($entry) &&
+          $this->addGoodsSalesLine($entry) &&
+          $entry->isBalanced()) {
+          $this->document->idasiento = $entry->primaryColumnValue();
+          return;
+          }
         $this->toolBox()->i18nLog()->warning('accounting-lines-error');
         $entry->delete();
     }

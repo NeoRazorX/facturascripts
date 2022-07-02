@@ -30,6 +30,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Raúl Jiménez Jiménez          <raljopa@gmail.com>
  */
 abstract class AccountingClass extends AccountingAccounts
 {
@@ -117,7 +118,7 @@ abstract class AccountingClass extends AccountingAccounts
     protected function addTaxLine($accountEntry, $subaccount, $counterpart, $isDebit, $values): bool
     {
         /// add basic data
-        $amount = (float)$values['totaliva'] + (float)$values['totalrecargo'];
+        $amount = (float) $values['totaliva'];
         $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount);
 
         /// counterpart?
@@ -134,6 +135,40 @@ abstract class AccountingClass extends AccountingAccounts
         $line->documento = $this->document->codigo;
         $line->factura = $this->document->numero;
 
+        /// save new line
+        return $line->save();
+    }
+    /**
+     * Add a line of taxes to the accounting entry based on the sub-account
+     * and values reported
+     *
+     * @param Asiento $accountEntry
+     * @param Subcuenta $subaccount
+     * @param Subcuenta $counterpart
+     * @param bool $isDebit
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function addRETaxLine($accountEntry, $subaccount, $counterpart, $isDebit, $values): bool {
+        /// add basic data
+        $amount = (float) $values['totalrecargo'];
+        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount);
+
+        /// counterpart?
+        if (!empty($counterpart)) {
+            $line->setCounterpart($counterpart);
+        }
+
+        /// add tax register data
+        $line->baseimponible = (float) $values['neto'];
+        $line->iva = (float) $values['iva'];
+        $line->recargo = (float) $values['recargo'];
+        $line->cifnif = $this->document->cifnif;
+        $line->codserie = $this->document->codserie;
+        $line->documento = $this->document->codigo;
+        $line->factura = $this->document->numero;
+        
         /// save new line
         return $line->save();
     }

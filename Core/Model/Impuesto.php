@@ -28,6 +28,7 @@ use FacturaScripts\Dinamic\Model\Impuesto as DinImpuesto;
  * invoices, etc.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Raúl Jiménez Jiménez <raljopa@gmail.com>
  */
 class Impuesto extends Base\ModelClass
 {
@@ -53,6 +54,20 @@ class Impuesto extends Base\ModelClass
      * @var string
      */
     public $codsubcuentasop;
+
+    /**
+     * subaccount code for surcharge
+     *
+     * @var string
+     */
+    public $codsubcuentaresop;
+
+    /**
+     * subaccount code for surcharge
+     *
+     * @var string
+     */
+    public $codsubcuentarerep;
 
     /**
      * Description of the tax.
@@ -118,6 +133,18 @@ class Impuesto extends Base\ModelClass
     {
         return $this->getVatFromSubAccount('codsubcuentarep', $subAccount);
     }
+    /**
+     * Gets the input tax accounting subaccount indicated for
+     * equivalence surcharge.
+     * If it does not exist, the default tax is returned.
+     *
+     * @param string $subAccount
+     *
+     * @return self
+     */
+    public function inputReVatFromSubAccount(string $subAccount) {
+        return $this->getVatFromSubAccount('codsubcuentarerep', $subAccount);
+    }
 
     /**
      * Returns True if this is the default tax.
@@ -145,6 +172,18 @@ class Impuesto extends Base\ModelClass
     public function outputVatFromSubAccount(string $subAccount)
     {
         return $this->getVatFromSubAccount('codsubcuentasop', $subAccount);
+    }
+    /**
+     * Gets the output tax accounting subaccount for.
+     * equivalence surchage
+     * If it does not exist, the default tax is returned.
+     *
+     * @param string $subAccount
+     *
+     * @return static
+     */
+    public function outputReVatFromSubAccount(string $subAccount) {
+        return $this->getVatFromSubAccount('codsubcuentaresop', $subAccount);
     }
 
     public function save(): bool
@@ -176,6 +215,8 @@ class Impuesto extends Base\ModelClass
 
         $this->codsubcuentarep = empty($this->codsubcuentarep) ? null : $this->codsubcuentarep;
         $this->codsubcuentasop = empty($this->codsubcuentasop) ? null : $this->codsubcuentasop;
+        $this->codsubcuentarerep = empty($this->codsubcuentarerep) ? null : $this->codsubcuentarerep;
+        $this->codsubcuentaresop = empty($this->codsubcuentaresop) ? null : $this->codsubcuentaresop;
         $this->descripcion = self::toolBox()::utils()::noHtml($this->descripcion);
         return parent::test();
     }

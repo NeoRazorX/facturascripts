@@ -42,6 +42,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez           <carlos@facturascripts.com>
+ * @author Raúl Jiménez Jiménez          <raljopa@gmail.com>
  */
 class AccountingAccounts
 {
@@ -334,8 +335,21 @@ class AccountingAccounts
     {
         return $this->getAccountFromCode($tax->codsubcuentarep, $specialAccount);
     }
-
     /**
+     * Get the accounting of surcharge sub-account  for Impacted Tax.
+     *
+     * @param Impuesto $tax
+     * @param string $specialAccount
+     *
+     * @return Subcuenta
+     */
+    public function getTaxREImpactedAccount($tax, string $specialAccount = self::SPECIAL_TAX_IMPACTED_ACCOUNT) {
+        return $this->getAccountFromCode($tax->codsubcuentarerep, $specialAccount);
+    }
+
+
+
+/**
      * Get the accounting sub-account for Supported Tax.
      *
      * @param Impuesto $tax
@@ -346,6 +360,17 @@ class AccountingAccounts
     public function getTaxSupportedAccount($tax, string $specialAccount = self::SPECIAL_TAX_SUPPORTED_ACCOUNT)
     {
         return $this->getAccountFromCode($tax->codsubcuentasop, $specialAccount);
+    }
+    /**
+     * Get the accounting of surcharge sub-account for Supported Tax.
+     *
+     * @param Impuesto $tax
+     * @param string $specialAccount
+     *
+     * @return Subcuenta
+     */
+    public function getTaxRESupportedAccount($tax, string $specialAccount = self::SPECIAL_TAX_SUPPORTED_ACCOUNT) {
+        return $this->getAccountFromCode($tax->codsubcuentaresop, $specialAccount);
     }
 
     /**
