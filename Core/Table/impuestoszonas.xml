@@ -44,4 +44,12 @@
         <name>ca_impuestoszonas_impuestos2</name>
         <type>FOREIGN KEY (codimpuestosel) REFERENCES impuestos (codimpuesto) ON DELETE RESTRICT ON UPDATE CASCADE</type>
     </constraint>
+    <constraint>
+        <name>ca_impuestoszonas_paises</name>
+        <type>FOREIGN KEY (codpais) REFERENCES paises (codpais) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>    
+    <constraint>
+        <name>ca_impuestoszonas_provincias</name>
+        <type>FOREIGN KEY (codisopro) REFERENCES provincias (idprovincia) ON DELETE SET NULL ON UPDATE CASCADE</type>
+    </constraint>    
 </table>

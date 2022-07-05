@@ -16,8 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Dinamic\Model\Base\ModelClass;
+use FacturaScripts\Dinamic\Model\Pais;
+use FacturaScripts\Dinamic\Model\Provincia;
 
 /**
  * A tax (VAT) that can be associated to tax, country, province, and.
@@ -26,10 +30,10 @@ namespace FacturaScripts\Core\Model;
  * @author Rafael San José Tovar        <rafael.sanjose@x-netdigital.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  */
-class ImpuestoZona extends Base\ModelClass
+class ImpuestoZona extends ModelClass
 {
 
-    use Base\ModelTrait;
+    use ModelTrait;
 
     /**
      * Foreign key with tax table. varchar(10).
@@ -79,6 +83,9 @@ class ImpuestoZona extends Base\ModelClass
      */
     protected $provincia;
 
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
@@ -87,24 +94,81 @@ class ImpuestoZona extends Base\ModelClass
         $this->prioridad = 1;
     }
 
+    /**
+     * Get country data.
+     *
+     * @return Pais
+     */
+    public function getCountry()
+    {
+        $country = new Pais();
+        $country->loadFromCode($this->codpais);
+        return $country;
+    }
+
+    /**
+     * Get province data.
+     *
+     * @return Provincia
+     */
+    public function getProvince()
+    {
+        $province = new Provincia();
+        $province->loadFromCode($this->codisopro);
+        return $province;
+    }
+
+    /**
+     * Returns the current value of the main column of the model.
+     *
+     * @return mixed
+     */
     public static function primaryColumn(): string
     {
         return 'id';
     }
 
+    /**
+     * Get the name of the province.
+     *
+     * @return string|null
+     */
     public function provincia(): ?string
     {
-        if (!isset($this->provincia)) {
-            $provincia = new Provincia();
-            $provincia->loadFromCode($this->codisopro);
-            $this->provincia = $provincia->provincia;
+        if (false === isset($this->provincia)) {
+            $this->provincia = $this->getProvince()->provincia;
         }
 
         return $this->provincia;
     }
 
+    /**
+     * Returns the name of the table that uses this model.
+     *
+     * @return string
+     */
     public static function tableName(): string
     {
         return 'impuestoszonas';
+    }
+
+    /**
+     * Returns true if there are no errors in the values of the model properties.
+     * It runs inside the save method.
+     *
+     * @return bool
+     */
+    public function test() {
+        if (empty($this->codpais)) {
+            $this->codisopro = '';
+        } else {
+            $province = $this->getProvince();
+            if ($province->codpais !== $this->codpais) {
+                $this->toolBox()->i18nLog()->warning('province-not-country');
+                return false;
+            }
+        }
+
+        return parent::test();
     }
 }
