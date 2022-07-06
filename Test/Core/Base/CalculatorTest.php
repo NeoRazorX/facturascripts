@@ -437,7 +437,10 @@ final class CalculatorTest extends TestCase
 
         // cargamos la lista de países
         $country = new Pais();
-        $this->assertTrue($country->loadFromCode('AND'), 'can-load-country-AND');
+        $country->codpais = 'AND';
+        $country->codiso = 'AD';
+        $country->nombre = 'ANDORRA';
+        $this->assertTrue($country->save(), 'can-not-save-country-AND');
 
         // creamos una zona o excepción para el IVA 21 en Andorra
         $zone1 = new ImpuestoZona();
@@ -498,7 +501,10 @@ final class CalculatorTest extends TestCase
 
         // cargamos la lista de países
         $country = new Pais();
-        $this->assertTrue($country->loadFromCode('AND'), 'can-load-country-AND');
+        $country->codpais = 'AND';
+        $country->codiso = 'AD';
+        $country->nombre = 'ANDORRA';
+        $this->assertTrue($country->save(), 'can-not-save-country-AND');
 
         // creamos una zona o excepción para el IVA 21 en Andorra
         $zone1 = new ImpuestoZona();
