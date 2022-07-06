@@ -30,6 +30,7 @@ use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExtendedController\PanelController;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
+use FacturaScripts\Core\Model\Report\AccountingEntryReportPDF;
 
 /**
  * Description of EditAsiento
@@ -221,6 +222,32 @@ class EditAsiento extends PanelController
     }
 
     /**
+     * Generate export file from view data.
+     */
+    protected function exportAction()
+    {
+        $option = $this->request->get('option', 'PDF');
+        if ($option !== 'PDF') {
+            parent::exportAction();
+            return;
+        }
+
+        if (false === $this->views[$this->active]->settings['btnPrint']) {
+            $this->toolBox()->i18nLog()->warning('no-print-permission');
+            return;
+        }
+
+        $reportPDF = new AccountingEntryReportPDF(
+            $this->views[static::MAIN_VIEW_NAME]->model,
+            $this->response
+        );
+
+        if ($reportPDF->generatePDF()) {
+            $this->setTemplate(false);
+        }
+    }
+
+    /**
      * Recalculate the list of ledger subaccounts.
      *
      * @return bool
@@ -277,6 +304,7 @@ class EditAsiento extends PanelController
                 }
 
                 $this->title .= ' ' . $view->model->primaryDescription();
+                $view->settings['btnPrint'] = true;
                 break;
         }
     }
