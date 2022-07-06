@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\ImpuestoZona;
+use FacturaScripts\Core\Model\Pais;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Model\Serie;
@@ -433,6 +434,9 @@ final class CalculatorTest extends TestCase
             $tax2->iva = 19;
             $this->assertTrue($tax2->save(), 'can-not-save-iva19');
         }
+
+        // cargamos la lista de países
+        $country = new Pais();
 
         // creamos una zona o excepción para el IVA 21 en Andorra
         $zone1 = new ImpuestoZona();
