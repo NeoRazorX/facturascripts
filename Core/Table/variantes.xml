@@ -14,6 +14,7 @@
         <name>coste</name>
         <type>double precision</type>
         <default>0</default>
+        <null>NO</null>
     </column>
     <column>
         <name>idatributovalor1</name>
@@ -45,11 +46,13 @@
         <name>margen</name>
         <type>double precision</type>
         <default>0</default>
+        <null>NO</null>
     </column>
     <column>
         <name>precio</name>
         <type>double precision</type>
         <default>0</default>
+        <null>NO</null>
     </column>
     <column>
         <name>referencia</name>

@@ -44,13 +44,13 @@
                 <widget type="text" fieldname="codbarras" maxlength="20" icon="fas fa-barcode" />
             </column>
             <column name="cost-price" display="right" numcolumns="2" order="170">
-                <widget type="money" decimal="2" fieldname="coste" class="calc-cost" />
+                <widget type="money" decimal="2" fieldname="coste" class="calc-cost" min="0" required="true" />
             </column>
             <column name="margin" display="right" numcolumns="2" order="180">
-                <widget type="percentage" fieldname="margen" class="calc-margin" min="0" />
+                <widget type="percentage" fieldname="margen" class="calc-margin" min="0" required="true" />
             </column>
             <column name="price" display="right" numcolumns="2" order="190">
-                <widget type="money" decimal="2" fieldname="precio" class="calc-price" />
+                <widget type="money" decimal="2" fieldname="precio" class="calc-price" min="0" required="true" />
             </column>
             <column name="stock" display="right" numcolumns="2" order="200">
                 <widget type="number" fieldname="stockfis" readonly="true"/>

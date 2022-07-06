@@ -279,6 +279,10 @@ class Variante extends Base\ModelClass
             return false;
         }
 
+        $this->coste = $this->floatValue($this->coste);
+        $this->precio = $this->floatValue($this->coste);
+        $this->margen = $this->floatValue($this->coste);
+
         $this->codbarras = $utils->noHtml($this->codbarras);
         return parent::test();
     }
@@ -305,5 +309,15 @@ class Variante extends Base\ModelClass
         }
 
         return true;
+    }
+
+    /**
+     *
+     * @param float|null $value
+     * @return float
+     */
+    private function floatValue($value): float
+    {
+        return empty($value) ? 0.00 : $value;
     }
 }
