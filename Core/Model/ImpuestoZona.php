@@ -161,7 +161,9 @@ class ImpuestoZona extends ModelClass
     public function test() {
         if (empty($this->codpais)) {
             $this->codisopro = '';
-        } else {
+        }
+
+        if (false === empty($this->codisopro)) {
             $province = $this->getProvince();
             if ($province->codpais !== $this->codpais) {
                 $this->toolBox()->i18nLog()->warning('province-not-country');
