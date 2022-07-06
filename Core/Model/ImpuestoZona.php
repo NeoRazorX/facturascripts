@@ -160,7 +160,7 @@ class ImpuestoZona extends ModelClass
      */
     public function test() {
         if (empty($this->codpais)) {
-            $this->codisopro = '';
+            $this->codisopro = null;
         }
 
         if (false === empty($this->codisopro)) {
