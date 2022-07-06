@@ -20,8 +20,8 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Dinamic\Model\Base\ModelClass;
-use FacturaScripts\Dinamic\Model\Pais;
-use FacturaScripts\Dinamic\Model\Provincia;
+use FacturaScripts\Dinamic\Model\Pais as DinPais;
+use FacturaScripts\Dinamic\Model\Provincia as DinProvincia;
 
 /**
  * A tax (VAT) that can be associated to tax, country, province, and.
@@ -101,7 +101,7 @@ class ImpuestoZona extends ModelClass
      */
     public function getCountry()
     {
-        $country = new Pais();
+        $country = new DinPais();
         $country->loadFromCode($this->codpais);
         return $country;
     }
@@ -113,7 +113,7 @@ class ImpuestoZona extends ModelClass
      */
     public function getProvince()
     {
-        $province = new Provincia();
+        $province = new DinProvincia();
         $province->loadFromCode($this->codisopro);
         return $province;
     }
@@ -158,7 +158,8 @@ class ImpuestoZona extends ModelClass
      *
      * @return bool
      */
-    public function test() {
+    public function test()
+    {
         if (empty($this->codpais)) {
             $this->codisopro = null;
         }
