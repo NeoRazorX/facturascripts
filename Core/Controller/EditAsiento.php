@@ -74,11 +74,21 @@ class EditAsiento extends PanelController
         return $this->views[static::MAIN_VIEW_NAME]->model;
     }
 
+    /**
+     * Get name class for the main model of the controller.
+     *
+     * @return string
+     */
     public function getModelClassName(): string
     {
         return 'Asiento';
     }
 
+    /**
+     * Return the basic data for this page.
+     *
+     * @return array
+     */
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -106,24 +116,6 @@ class EditAsiento extends PanelController
     }
 
     /**
-     * Apply the changes made to the form to the models.
-     *
-     * @param Asiento $model
-     * @param Partida[] $lines
-     * @param bool $applyModal
-     */
-    private function applyMainFormData(Asiento &$model, array &$lines, bool $applyModal = false)
-    {
-        $formData = json_decode($this->request->request->get('data'), true);
-        AccountingHeaderHTML::apply($model, $formData);
-        AccountingFooterHTML::apply($model, $formData);
-        AccountingLineHTML::apply($model, $lines, $formData);
-        if ($applyModal) {
-            AccountingModalHTML::apply($model, $formData);
-        }
-    }
-
-    /**
      * Inserts the views or tabs to display.
      */
     protected function createViews()
@@ -132,23 +124,6 @@ class EditAsiento extends PanelController
         $this->createViewsMain();
         $this->createViewDocFiles();
         $this->createViewLogAudit();
-    }
-
-    /**
-     * Add main view (Accounting)
-     */
-    private function createViewsMain()
-    {
-        $this->addHtmlView(
-            static::MAIN_VIEW_NAME,
-            static::MAIN_VIEW_TEMPLATE,
-            $this->getModelClassName(),
-            'accounting-entry',
-            'fas fa-balance-scale'
-        );
-        AssetManager::add('css', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
-        AssetManager::add('js', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
     }
 
     /**
@@ -162,7 +137,9 @@ class EditAsiento extends PanelController
         if (false === $this->permissions->allowDelete) {
             self::toolBox()::i18nLog()->warning('not-allowed-delete');
             return $this->sendJsonError();
-        } elseif (false === $this->validateFileActionToken()) {
+        }
+
+        if (false === $this->validateFileActionToken()) {
             return $this->sendJsonError();
         }
 
@@ -389,7 +366,9 @@ class EditAsiento extends PanelController
         if (false === $this->permissions->allowUpdate) {
             self::toolBox()::i18nLog()->warning('not-allowed-modify');
             return $this->sendJsonError();
-        } elseif (false === $this->validateFileActionToken()) {
+        }
+
+        if (false === $this->validateFileActionToken()) {
             return $this->sendJsonError();
         }
 
@@ -401,5 +380,40 @@ class EditAsiento extends PanelController
 
         $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']));
         return false;
+    }
+
+    /**
+     * Apply the changes made to the form to the models.
+     *
+     * @param Asiento $model
+     * @param Partida[] $lines
+     * @param bool $applyModal
+     */
+    private function applyMainFormData(Asiento &$model, array &$lines, bool $applyModal = false)
+    {
+        $formData = json_decode($this->request->request->get('data'), true);
+        AccountingHeaderHTML::apply($model, $formData);
+        AccountingFooterHTML::apply($model, $formData);
+        AccountingLineHTML::apply($model, $lines, $formData);
+        if ($applyModal) {
+            AccountingModalHTML::apply($model, $formData);
+        }
+    }
+
+    /**
+     * Add main view (Accounting)
+     */
+    private function createViewsMain()
+    {
+        $this->addHtmlView(
+            static::MAIN_VIEW_NAME,
+            static::MAIN_VIEW_TEMPLATE,
+            $this->getModelClassName(),
+            'accounting-entry',
+            'fas fa-balance-scale'
+        );
+        AssetManager::add('css', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
+        AssetManager::add('js', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
     }
 }
