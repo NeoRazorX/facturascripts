@@ -126,15 +126,21 @@
                     <div class="modal-body">
                         <p>{{ i18n.trans('registered-installation-p') }}</p>
                         <p>{{ i18n.trans('telemetry-data-to-send') }}</p>
-                        <form action="{{ fsc.url() }}" method="post">
-                            <input type="hidden" name="action" value="unlink"/>
-                            <a class="btn btn-primary" href="{{ fsc.url() }}?action=claim-install" target="_blank">
-                                {{ i18n.trans('manage') }}
-                            </a>
-                            <button type="submit" class="btn btn-danger">
-                                {{ i18n.trans('unlink') }}
-                            </button>
-                        </form>
+                        <div class="form-row">
+                            <div class="col">
+                                <a class="btn btn-primary" href="{{ fsc.url() }}?action=claim-install" target="_blank">
+                                    {{ i18n.trans('manage') }}
+                                </a>
+                            </div>
+                            <div class="col text-right">
+                                <form action="{{ fsc.url() }}" method="post">
+                                    <input type="hidden" name="action" value="unlink"/>
+                                    <button type="submit" class="btn btn-danger">
+                                        {{ i18n.trans('unlink') }}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 {% else %}
                     <form action="{{ fsc.url() }}" method="post">

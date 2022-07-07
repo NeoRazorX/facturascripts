@@ -78,9 +78,6 @@ final class TelemetryManager
         }
     }
 
-    /**
-     * @return string
-     */
     public function claimUrl(): string
     {
         $params = $this->collectData(true);
@@ -94,9 +91,6 @@ final class TelemetryManager
         return $this->idinstall;
     }
 
-    /**
-     * @return bool
-     */
     public function install(): bool
     {
         if ($this->idinstall) {
@@ -117,19 +111,11 @@ final class TelemetryManager
         return false;
     }
 
-    /**
-     * @return bool
-     */
     public function ready(): bool
     {
         return !empty($this->idinstall);
     }
 
-    /**
-     * @param string $url
-     *
-     * @return string
-     */
     public function signUrl(string $url): string
     {
         if (empty($this->idinstall)) {
@@ -152,7 +138,6 @@ final class TelemetryManager
         $this->calculateHash($params);
         $json = DownloadTools::getContents(self::TELEMETRY_URL . '?' . http_build_query($params), 10);
         $data = json_decode($json, true);
-
         if (isset($data['error']) && $data['error']) {
             return false;
         }
@@ -161,18 +146,12 @@ final class TelemetryManager
         $appSettings->set('default', 'telemetryinstall', null);
         $appSettings->set('default', 'telemetrylastu', null);
         $appSettings->set('default', 'telemetrykey', null);
-
-        if (false === $appSettings->save()) {
-            return false;
-        }
+        $appSettings->save();
 
         $this->idinstall = null;
         return true;
     }
 
-    /**
-     * @return bool
-     */
     public function update(): bool
     {
         if (false === $this->ready() || time() - $this->lastupdate < self::UPDATE_INTERVAL) {
@@ -190,19 +169,11 @@ final class TelemetryManager
         return isset($data['ok']) && $data['ok'];
     }
 
-    /**
-     * @param array $data
-     */
     private function calculateHash(array &$data)
     {
         $data['hash'] = sha1($data['randomnum'] . $this->signkey);
     }
 
-    /**
-     * @param bool $minimum
-     *
-     * @return array
-     */
     private function collectData(bool $minimum = false): array
     {
         $data = [
