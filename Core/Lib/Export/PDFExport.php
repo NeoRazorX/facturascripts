@@ -199,7 +199,6 @@ class PDFExport extends PDFDocument
             }
             if (in_array($key, $columnsOption)) {
                 $tableOptions['cols'][$key]['justification'] = $options[$key]['display'] ?? 'left';
-                continue;
             }
         }
 
