@@ -80,7 +80,7 @@ class SalesModalHTML
             ToolBox::utils()->noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
     }
 
-    public static function render(SalesDocument $model, string $url = '', User $user, ControllerPermissions $permissions): string
+    public static function render(SalesDocument $model, string $url, User $user, ControllerPermissions $permissions): string
     {
         self::$codalmacen = $model->codalmacen;
 
