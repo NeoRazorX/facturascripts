@@ -61,7 +61,7 @@ final class CuentaBancoClienteTest extends TestCase
     {
         // desactivamos la validación de IBAN
         $settings = new AppSettings();
-        $settings->set('default', 'validate_iban', false);
+        $settings->set('default', 'validate_iban', '0');
 
         // creamos un cliente
         $cliente = $this->getRandomCustomer();
@@ -108,7 +108,7 @@ final class CuentaBancoClienteTest extends TestCase
     {
         // activamos la validación de IBAN
         $settings = new AppSettings();
-        $settings->set('default', 'validate_iban', true);
+        $settings->set('default', 'validate_iban', '1');
 
         // creamos un cliente
         $cliente = $this->getRandomCustomer();

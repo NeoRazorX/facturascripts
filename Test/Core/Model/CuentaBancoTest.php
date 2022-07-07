@@ -59,7 +59,7 @@ final class CuentaBancoTest extends TestCase
     {
         // desactivamos la validación de IBAN
         $settings = new AppSettings();
-        $settings->set('default', 'validate_iban', false);
+        $settings->set('default', 'validate_iban', '0');
 
         // creamos una cuenta bancaria con html en los campos
         $cuenta = new CuentaBanco();
@@ -85,7 +85,7 @@ final class CuentaBancoTest extends TestCase
     {
         // activamos la validación de IBAN
         $settings = new AppSettings();
-        $settings->set('default', 'validate_iban', true);
+        $settings->set('default', 'validate_iban', '1');
 
         // creamos una cuenta bancaria sin IBAN
         $cuenta = new CuentaBanco();
@@ -106,7 +106,7 @@ final class CuentaBancoTest extends TestCase
         foreach ($list as $iban) {
             // activamos la validación de IBAN
             $settings = new AppSettings();
-            $settings->set('default', 'validate_iban', true);
+            $settings->set('default', 'validate_iban', '1');
 
             // creamos una cuenta bancaria con IBAN correcto
             $cuenta = new CuentaBanco();
@@ -115,7 +115,7 @@ final class CuentaBancoTest extends TestCase
             $this->assertTrue($cuenta->save(), 'cuenta-cant-save-iban-' . $iban);
 
             // desactivamos la validación de IBAN
-            $settings->set('default', 'validate_iban', false);
+            $settings->set('default', 'validate_iban', '0');
 
             // comprobamos que se sigue guardando correctamente
             $this->assertTrue($cuenta->save(), 'cuenta-cant-save-good-iban');
@@ -135,7 +135,7 @@ final class CuentaBancoTest extends TestCase
         foreach ($list as $iban) {
             // activamos la validación de IBAN
             $settings = new AppSettings();
-            $settings->set('default', 'validate_iban', true);
+            $settings->set('default', 'validate_iban', '1');
 
             // creamos una cuenta bancaria con IBAN incorrecto
             $cuenta = new CuentaBanco();
@@ -144,7 +144,7 @@ final class CuentaBancoTest extends TestCase
             $this->assertFalse($cuenta->save(), 'cuenta-can-save-iban-' . $iban);
 
             // desactivamos la validación de IBAN
-            $settings->set('default', 'validate_iban', false);
+            $settings->set('default', 'validate_iban', '0');
 
             // comprobamos que ahora si se puede guardar
             $this->assertTrue($cuenta->save(), 'cuenta-cant-save-with-iban-error');

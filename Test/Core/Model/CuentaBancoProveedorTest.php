@@ -61,7 +61,7 @@ final class CuentaBancoProveedorTest extends TestCase
     {
         // desactivamos la validación de IBAN
         $settings = new AppSettings();
-        $settings->set('default', 'validate_iban', false);
+        $settings->set('default', 'validate_iban', '0');
 
         // creamos un proveedor
         $proveedor = $this->getRandomSupplier();
@@ -108,7 +108,7 @@ final class CuentaBancoProveedorTest extends TestCase
     {
         // activamos la validación de IBAN
         $settings = new AppSettings();
-        $settings->set('default', 'validate_iban', true);
+        $settings->set('default', 'validate_iban', '1');
 
         // creamos un proveedor
         $proveedor = $this->getRandomSupplier();
