@@ -57,7 +57,7 @@ abstract class ExportBase
     /**
      * Adds a new page with the table.
      */
-    abstract public function addTablePage($headers, $rows): bool;
+    abstract public function addTablePage($headers, $rows, $options = [], $title = ''): bool;
 
     /**
      * Return the full document.
