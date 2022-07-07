@@ -47,5 +47,8 @@
         <column name="end-date" display="right" order="170">
             <widget type="date" fieldname="enddate"/>
         </column>
+        <column name="comparative" display="center" order="180">
+            <widget type="checkbox" fieldname="comparative"/>
+        </column>
     </columns>
 </view>
