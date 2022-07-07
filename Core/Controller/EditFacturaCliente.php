@@ -12,6 +12,7 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
 use FacturaScripts\Dinamic\Lib\ReceiptGenerator;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\ReciboCliente;
 
 /**
  * Description of EditFacturaCliente
@@ -207,6 +208,7 @@ class EditFacturaCliente extends SalesController
             case self::VIEW_RECEIPTS:
                 $where = [new DataBaseWhere('idfactura', $this->getViewModelValue($mvn, 'idfactura'))];
                 $view->loadData('', $where);
+                $this->checkReciptsTotal($view->cursor);
                 break;
 
             case self::VIEW_ACCOUNTS:
@@ -313,6 +315,25 @@ class EditFacturaCliente extends SalesController
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         $this->redirect($newRefund->url() . '&action=save-ok');
         return false;
+    }
+
+    /**
+     * Adds a warning message if the sum of the receipts is not equal
+     * to the total of the invoice.
+     *
+     * @param ReciboCliente[] $recipts
+     */
+    private function checkReciptsTotal(array &$recipts)
+    {
+        $total = 0.00;
+        foreach ($recipts as $row) {
+            $total += $row->importe;
+        }
+
+        $dif = $this->getModel()->total - $total;
+        if (false === $this->toolBox()->utils()->floatcmp($dif, 0.0, FS_NF0, true)) {
+            $this->toolBox()->i18nLog()->warning('invoice-total-dif-recipts');
+        }
     }
 
     private function paidAction(): bool
