@@ -111,8 +111,9 @@ class AccountingEntryReportPDF
      */
     public function generatePDF(): bool
     {
+        $title = $this->toolBox()->i18n()->trans('accounting-entry') . '-' . $this->accountEntry->numero;
         $exportManager = new ExportManager();
-        $exportManager->newDoc('PDF', $this->accountEntry->numero);
+        $exportManager->newDoc('PDF', $title);
 
         $this->insertAccountEntryModel($exportManager);
         $this->insertAccountEntryLines($exportManager);
