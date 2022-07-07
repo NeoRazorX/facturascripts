@@ -50,7 +50,7 @@
                     <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal"
                             data-target="#modalTelemetry">
                         <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">{{ i18n.trans('register-installation') }} </span>
+                        <span class="d-none d-md-inline-block">{{ i18n.trans('manage-installation') }} </span>
                     </button>
                 {% else %}
                     <button class="btn btn-sm btn-warning" type="button" data-toggle="modal"
@@ -126,9 +126,15 @@
                     <div class="modal-body">
                         <p>{{ i18n.trans('registered-installation-p') }}</p>
                         <p>{{ i18n.trans('telemetry-data-to-send') }}</p>
-                        <a class="btn btn-primary" href="{{ fsc.url() }}?action=claim-install" target="_blank">
-                            {{ i18n.trans('manage') }}
-                        </a>
+                        <form action="{{ fsc.url() }}" method="post">
+                            <input type="hidden" name="action" value="unlink"/>
+                            <a class="btn btn-primary" href="{{ fsc.url() }}?action=claim-install" target="_blank">
+                                {{ i18n.trans('manage') }}
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                {{ i18n.trans('unlink') }}
+                            </button>
+                        </form>
                     </div>
                 {% else %}
                     <form action="{{ fsc.url() }}" method="post">
