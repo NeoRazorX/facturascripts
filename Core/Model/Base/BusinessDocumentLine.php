@@ -393,7 +393,9 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             case 'actualizastock':
             case 'cantidad':
             case 'servido':
-                return $this->updateStock();
+            if (false === $this->updateStock()) {
+                return false;
+            }
         }
 
         return parent::onChange($field);
