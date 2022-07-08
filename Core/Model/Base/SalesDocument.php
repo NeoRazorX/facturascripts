@@ -138,12 +138,20 @@ abstract class SalesDocument extends TransformerDocument
     public $provincia;
 
     /**
+     * total sum of the costs of the lines.
+     *
+     * @var float
+     */
+    public $totalcoste;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
         parent::clear();
         $this->direccion = '';
+        $this->totalcoste = 0.0;
 
         // select default currency
         $coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
