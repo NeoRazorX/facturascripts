@@ -392,8 +392,11 @@ abstract class SalesDocument extends TransformerDocument
                 break;
 
             case 'idcontactofact':
-                $contact = new Contacto();
+                if (empty($this->idcontactofact)) {
+                    return true;
+                }
                 // if billing address is changed, then change all billing fields
+                $contact = new Contacto();
                 if ($contact->loadFromCode($this->idcontactofact)) {
                     $this->apartado = $contact->apartado;
                     $this->ciudad = $contact->ciudad;
