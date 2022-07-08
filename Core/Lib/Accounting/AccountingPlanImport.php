@@ -84,7 +84,7 @@ class AccountingPlanImport
 
         try {
             $this->updateSpecialAccounts();
-            $this->processCsvData($filePath);
+            $return = $this->processCsvData($filePath);
 
             // confirm data
             $this->dataBase->commit();
@@ -286,7 +286,7 @@ class AccountingPlanImport
      *
      * @param string $filePath
      */
-    protected function processCsvData(string $filePath)
+    protected function processCsvData(string $filePath) : bool
     {
         $csv = new Csv();
         $csv->auto($filePath);
@@ -329,7 +329,7 @@ class AccountingPlanImport
             }
 
             if (false === $ok) {
-                break;
+                return false;
             }
         }
     }
