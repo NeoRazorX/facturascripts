@@ -332,6 +332,7 @@ class AccountingPlanImport
                 return false;
             }
         }
+        return true;
     }
 
     /**
