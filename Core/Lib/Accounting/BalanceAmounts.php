@@ -100,13 +100,12 @@ class BalanceAmounts extends AccountingBase
                 'saldo' => $this->formatValue($saldo, 'money', $bold)
             ];
 
-            if ($level > 0) {
-                continue;
-            }
-
             // add subaccount lines
             foreach ($amounts as $amount) {
                 if ($amount['idcuenta'] == $account->idcuenta) {
+                    if ($level > 0 && strlen($amount['codsubcuenta']) > $level) {
+                        continue;
+                    }
                     $rows[] = $this->processAmountLine($subaccounts, $amount);
                 }
             }
