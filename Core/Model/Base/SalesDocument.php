@@ -209,6 +209,7 @@ abstract class SalesDocument extends TransformerDocument
             $product = $variant->getProducto();
 
             $newLine->codimpuesto = $product->getTax()->codimpuesto;
+            $newLine->coste = $variant->coste;
             $newLine->descripcion = $variant->description();
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $product->getTax()->iva;
