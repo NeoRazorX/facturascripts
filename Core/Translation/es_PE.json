@@ -626,7 +626,7 @@
     "invalid-iban": "IBAN no válido: %iban%",
     "invalid-number": "Número no válido: %number%",
     "invalid-request": "Petición no válida",
-    "invalid-web": "Dirección web no válida",
+    "invalid-web": "Dirección web no válida: %web%",
     "invoice": "Facturar",
     "invoice-email-subject": "Su factura %code%",
     "invoice-email-text": "Hola, le adjunto su factura %code%",
