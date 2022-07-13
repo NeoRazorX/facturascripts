@@ -630,6 +630,7 @@
     "invoice": "fattura",
     "invoice-email-subject": "invoice-email-subject",
     "invoice-email-text": "invoice-email-text",
+    "invoice-has-no-receipts": "La factura no tiene recibos. Cree alguno desde la pestaña recibos.",
     "invoice-have-rectifying-cant-delete": "La fattura ha già una rettifica. Non posso essere cancellato.",
     "invoice-new-assigned-date": "Ci sono invocie con data più grande (0). Nuova data assegnata: 1",
     "invoice-number": "Numero di fattura",

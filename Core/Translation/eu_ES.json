@@ -630,6 +630,7 @@
     "invoice": "Faktura",
     "invoice-email-subject": "Zure %code% faktura",
     "invoice-email-text": "Kaixo, zure %code% faktura atxikitzen dizut",
+    "invoice-has-no-receipts": "La factura no tiene recibos. Cree alguno desde la pestaña recibos.",
     "invoice-have-rectifying-cant-delete": "Faktura dagoeneko zuzenketa bat dauka. Ezin da ezabatu.",
     "invoice-new-assigned-date": "Aukeratutako data (%oldDate%) ondorengo fakturak daude. Data esleitu berria: %newDate%",
     "invoice-number": "Faktura zenbakia",

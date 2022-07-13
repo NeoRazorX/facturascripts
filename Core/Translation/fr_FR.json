@@ -630,6 +630,7 @@
     "invoice": "facture",
     "invoice-email-subject": "Votre facture %code%",
     "invoice-email-text": "Bonjour, vous trouverez votre facture %code% en pièce jointe",
+    "invoice-has-no-receipts": "La factura no tiene recibos. Cree alguno desde la pestaña recibos.",
     "invoice-have-rectifying-cant-delete": "La facture a déjà un rectificatif. Ne peut pas être supprimé.",
     "invoice-new-assigned-date": "Il y a des invocies avec une plus grande date (%oldDate%). Nouvelle date d'attribution: %newDate%",
     "invoice-number": "Numéro de facture",
