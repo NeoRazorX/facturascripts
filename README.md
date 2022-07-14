@@ -1,5 +1,6 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/NeorazorX/facturascripts/issues?utf8=✓&q=is%3Aopen%20is%3Aissue)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/NeoRazorX/facturascripts/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/NeoRazorX/facturascripts/?branch=master)
+[![huntr](https://cdn.huntr.dev/huntr_security_badge_mono.svg)](https://huntr.dev)
 
 # FacturaScripts
 Open source ERP software. Built on modern PHP and bootstrap 4. Easy and powerful.

@@ -88,12 +88,14 @@ class ReciboCliente extends Base\Receipt
     {
         parent::setExpiration($date);
 
+        // obtenemos los días de pago del cliente
         $days = $this->getSubject()->getPaymentDays();
         if (empty($days)) {
+            // si no tiene ninguno, dejamos la fecha como está
             return;
         }
 
-        // try to select consumer defined days for expiration date
+        // si el cliente tiene días de pago, calculamos fechas con los días de pago
         $newDates = [];
         $maxDay = date('t', strtotime($this->vencimiento));
         foreach ($days as $numDay) {
@@ -109,6 +111,7 @@ class ReciboCliente extends Base\Receipt
             return;
         }
 
+        // asignamos la fecha más próxima a la fecha de vencimiento
         $this->vencimiento = date(self::DATE_STYLE, min($newDates));
     }
 

@@ -23,8 +23,10 @@ use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\Contacto;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Model\Producto;
@@ -47,6 +49,25 @@ trait RandomDataTrait
         $agente = new Agente();
         $agente->nombre = 'Pepe ' . mt_rand(1, 9999);
         return $agente;
+    }
+
+    protected function getRandomCompany(): Empresa
+    {
+        $company = new Empresa();
+        $company->direccion = 'Calle falsa 123';
+        $company->cifnif = 'B' . mt_rand(1, 999999);
+        $company->nombre = 'Company ' . mt_rand(1, 99999);
+        $company->nombrecorto = 'Comp' . mt_rand(1, 99999);
+        return $company;
+    }
+
+    protected function getRandomContact(): Contacto
+    {
+        $contact = new Contacto();
+        $contact->cifnif = 'B' . mt_rand(1, 999999);
+        $contact->nombre = 'Contact ' . mt_rand(1, 99999);
+        $contact->empresa = 'Empresa ' . mt_rand(1, 99999);
+        return $contact;
     }
 
     protected function getRandomCustomer(): Cliente

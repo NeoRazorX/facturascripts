@@ -19,13 +19,22 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\IdentificadorFiscal;
 use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Core\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class IdentificadorFiscalTest extends TestCase
 {
     use LogErrorsTrait;
+    use RandomDataTrait;
+
+    public function testDataInstalled()
+    {
+        $identificador = new IdentificadorFiscal();
+        $this->assertNotEmpty($identificador->all(), 'identificador-fiscal-data-not-installed-from-csv');
+    }
 
     public function testCreate()
     {
@@ -50,8 +59,82 @@ final class IdentificadorFiscalTest extends TestCase
         $identificador = new IdentificadorFiscal();
         $identificador->tipoidfiscal = '<test>';
         $identificador->codeid = '<test>';
-        $identificador->tipoidfiscal = 'test';
         $this->assertFalse($identificador->save(), 'can-save-with-html');
+    }
+
+    public function testValidateCIF()
+    {
+        $this->validate('CIF', 'P4698162G', 'T1234');
+    }
+
+    public function testValidateDNI()
+    {
+        $this->validate('DNI', '25296158E', '25296158K');
+    }
+
+    public function testValidateNIF()
+    {
+        $this->validate('NIF', '36155837K', '36155837V');
+    }
+
+    protected function validate(string $fiscalId, string $validCode, string $invalidCode)
+    {
+        // cargamos el identificador fiscal y activamos la validación
+        $identificador = new IdentificadorFiscal();
+        $where = [new DataBaseWhere('tipoidfiscal', $fiscalId)];
+        $identificador->loadFromCode('', $where);
+        $identificador->validar = true;
+        $this->assertTrue($identificador->save(), 'identificador-fiscal-cant-save');
+
+        // creamos un cliente con un cifnif inválido
+        $customer = $this->getRandomCustomer();
+        $customer->tipoidfiscal = $fiscalId;
+        $customer->cifnif = $invalidCode;
+        $this->assertFalse($customer->save(), 'can-save-customer-with-' . strtolower($fiscalId));
+
+        // ahora le ponemos un cifnif válido
+        $customer->cifnif = $validCode;
+        $this->assertTrue($customer->save(), 'cant-save-customer-with-' . strtolower($fiscalId));
+
+        // creamos un contacto con un cifnif inválido
+        $contact = $this->getRandomContact();
+        $contact->tipoidfiscal = $fiscalId;
+        $contact->cifnif = $invalidCode;
+        $this->assertFalse($contact->save(), 'can-save-contact-with-' . strtolower($fiscalId));
+
+        // ahora le ponemos un cifnif válido
+        $contact->cifnif = $validCode;
+        $this->assertTrue($contact->save(), 'cant-save-contact-with-' . strtolower($fiscalId));
+
+        // creamos una empresa con un cifnif inválido
+        $company = $this->getRandomCompany();
+        $company->tipoidfiscal = $fiscalId;
+        $company->cifnif = $invalidCode;
+        $this->assertFalse($company->save(), 'can-save-company-with-' . strtolower($fiscalId));
+
+        // ahora le ponemos un cifnif válido
+        $company->cifnif = $validCode;
+        $this->assertTrue($company->save(), 'cant-save-contact-with-' . strtolower($fiscalId));
+
+        // creamos un proveedor con un cifnif inválido
+        $supplier = $this->getRandomSupplier();
+        $supplier->tipoidfiscal = $fiscalId;
+        $supplier->cifnif = $invalidCode;
+        $this->assertFalse($supplier->save(), 'can-save-supplier-with-' . strtolower($fiscalId));
+
+        // ahora le ponemos un cifnif válido
+        $supplier->cifnif = $validCode;
+        $this->assertTrue($supplier->save(), 'cant-save-supplier-with-' . strtolower($fiscalId));
+
+        // desactivamos la validación
+        $identificador->validar = false;
+        $this->assertTrue($identificador->save(), 'identificador-fiscal-cant-save');
+
+        // eliminamos
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($contact->delete(), 'cant-contact-customer');
+        $this->assertTrue($company->delete(), 'cant-company-customer');
+        $this->assertTrue($supplier->delete(), 'cant-supplier-customer');
     }
 
     protected function tearDown(): void

@@ -127,6 +127,69 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
+    public function testCustomerPaymentDays()
+    {
+        // creamos una forma de pago con vencimiento de 0 días
+        $payMethod = new FormaPago();
+        $payMethod->descripcion = 'test';
+        $payMethod->plazovencimiento = 0;
+        $payMethod->tipovencimiento = 'days';
+        $payMethod->pagado = false;
+        $this->assertTrue($payMethod->save(), 'cant-save-forma-pago');
+
+        // creamos un cliente con días de pago 1 y 15
+        $customer = $this->getRandomCustomer();
+        $customer->diaspago = '1,15';
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos una factura con fecha del día 10 de marzo
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $date = date('10-03-Y');
+        $invoice->setDate($date, $invoice->hora);
+        $invoice->codpago = $payMethod->codpago;
+        $this->assertTrue($invoice->save(), 'can-not-create-invoice');
+
+        // añadimos una línea a la factura
+        $newLine = $invoice->getNewLine();
+        $newLine->cantidad = 1;
+        $newLine->descripcion = 'test';
+        $newLine->pvpunitario = 100;
+        $this->assertTrue($newLine->save(), 'cant-add-invoice-line');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        // comprobamos que el recibo tiene vencimiento el día 15 de marzo
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $vencimiento10 = date('15-03-Y');
+        $this->assertEquals($vencimiento10, $receipts[0]->vencimiento, 'bad-receipt-expiration');
+
+        // eliminamos el recibo
+        $this->assertTrue($receipts[0]->delete(), 'can-not-delete-receipt');
+
+        // ahora cambiamos los días de pago a 1 y 7
+        $customer->diaspago = '1,7';
+        $this->assertTrue($customer->save(), 'cant-update-customer');
+
+        // generados el recibo de nuevo
+        $generator = new ReceiptGenerator();
+        $generator->generate($invoice);
+
+        // comprobamos que el recibo tiene vencimiento el día 1 de abril
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $vencimiento20 = date('01-04-Y');
+        $this->assertEquals($vencimiento20, $receipts[0]->vencimiento, 'bad-receipt-expiration');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($customer->delete(), 'can-not-delete-customer');
+        $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
+    }
+
     public function testUpdateAndCreateReceipts()
     {
         // creamos una factura

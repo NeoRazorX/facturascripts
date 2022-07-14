@@ -175,10 +175,12 @@ class PDFExport extends PDFDocument
      *
      * @param array $headers
      * @param array $rows
+     * @param array $options
+     * @param string $title
      *
      * @return bool
      */
-    public function addTablePage($headers, $rows): bool
+    public function addTablePage($headers, $rows, $options = [], $title = ''): bool
     {
         $orientation = count($headers) > 5 ? 'landscape' : 'portrait';
         $this->newPage($orientation);
@@ -192,11 +194,15 @@ class PDFExport extends PDFDocument
         foreach (array_keys($headers) as $key) {
             if (in_array($key, ['debe', 'haber', 'saldo', 'saldoprev', 'total'])) {
                 $tableOptions['cols'][$key]['justification'] = 'right';
+                continue;
+            }
+            if (array_key_exists($key, $options)) {
+                $tableOptions['cols'][$key]['justification'] = $options[$key]['display'] ?? 'left';
             }
         }
 
         $this->insertHeader();
-        $this->pdf->ezTable($rows, $headers, '', $tableOptions);
+        $this->pdf->ezTable($rows, $headers, $title, $tableOptions);
         $this->insertFooter();
         return true;
     }

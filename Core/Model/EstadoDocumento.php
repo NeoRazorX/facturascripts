@@ -138,7 +138,13 @@ class EstadoDocumento extends Base\ModelOnChangeClass
 
     public function test(): bool
     {
-        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
+        // escapamos el html
+        $this->generadoc = self::toolBox()::utils()::noHtml($this->generadoc);
+        $this->icon = self::toolBox()::utils()::noHtml($this->icon);
+        $this->nombre = self::toolBox()::utils()::noHtml($this->nombre);
+        $this->tipodoc = self::toolBox()::utils()::noHtml($this->tipodoc);
+
+        // Comprobamos que el nombre no esté vacío
         if (empty($this->nombre) || empty($this->tipodoc)) {
             return false;
         }

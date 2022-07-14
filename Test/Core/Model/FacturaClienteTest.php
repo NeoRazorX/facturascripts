@@ -149,6 +149,8 @@ final class FacturaClienteTest extends TestCase
         // comprobamos que se restaura el stock del producto
         $product->loadFromCode($product->idproducto);
         $this->assertEquals(self::PRODUCT1_QUANTITY, $product->stockfis, 'bad-product1-stock-end');
+
+        // eliminamos el producto
         $this->assertTrue($product->delete(), 'cant-delete-product');
     }
 

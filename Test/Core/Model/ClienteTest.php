@@ -143,6 +143,25 @@ final class ClienteTest extends TestCase
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
+    public function testPaymentDays()
+    {
+        // creamos un cliente sin días de pago
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test';
+        $cliente->cifnif = '12345678A';
+
+        // comprobamos que no tiene días de pago
+        $this->assertEmpty($cliente->getPaymentDays(), 'cliente-has-payment-days');
+
+        // añadimos un día de pago
+        $cliente->diaspago = '1';
+        $this->assertEquals([1], $cliente->getPaymentDays(), 'cliente-has-payment-days');
+
+        // añadimos un segundo día de pago
+        $cliente->diaspago = '1,5';
+        $this->assertEquals([1, 5], $cliente->getPaymentDays(), 'cliente-has-payment-days');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
