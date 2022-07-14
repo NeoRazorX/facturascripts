@@ -44,6 +44,16 @@ class Updater extends Controller
     const UPDATE_CORE_URL = 'https://facturascripts.com/DownloadBuild';
 
     /**
+     * @var array
+     */
+    public $coreUpdateWarnings = [];
+
+    /**
+     * @var array
+     */
+    private $forjaJson = [];
+
+    /**
      * @var PluginManager
      */
     private $pluginManager;
@@ -144,6 +154,12 @@ class Updater extends Controller
 
             $this->toolBox()->i18nLog()->error('download-error');
         }
+
+        // ¿Hay que desactivar algo?
+        $disable = $this->request->get('disable', '');
+        foreach (explode(',', $disable) as $plugin) {
+            $this->pluginManager->disable($plugin);
+        }
     }
 
     /**
@@ -155,13 +171,16 @@ class Updater extends Controller
     {
         switch ($action) {
             case 'cancel':
-                return $this->cancelAction();
+                $this->cancelAction();
+                return;
 
             case 'claim-install':
-                return $this->redirect($this->telemetryManager->claimUrl());
+                $this->redirect($this->telemetryManager->claimUrl());
+                return;
 
             case 'download':
-                return $this->downloadAction();
+                $this->downloadAction();
+                return;
 
             case 'post-update':
                 $this->postUpdateAction();
@@ -175,23 +194,34 @@ class Updater extends Controller
                 $this->toolBox()->i18nLog()->error('record-save-error');
                 break;
 
+            case 'unlink':
+                if ($this->telemetryManager->unlink()) {
+                    $this->telemetryManager = new TelemetryManager();
+                    $this->toolBox()->i18nLog()->notice('unlink-install-ok');
+                    break;
+                }
+                $this->toolBox()->i18nLog()->error('unlink-install-ko');
+                break;
+
             case 'update':
-                return $this->updateAction();
+                $this->updateAction();
+                return;
         }
 
         $this->updaterItems = $this->getUpdateItems();
+        $this->setCoreWarnings();
     }
 
     private function getUpdateItems(): array
     {
         $downloader = new DownloadTools();
-        $json = json_decode($downloader->getContents(self::UPDATE_CORE_URL), true);
-        if (empty($json)) {
+        $this->forjaJson = json_decode($downloader->getContents(self::UPDATE_CORE_URL), true);
+        if (empty($this->forjaJson)) {
             return [];
         }
 
         $items = [];
-        foreach ($json as $projectData) {
+        foreach ($this->forjaJson as $projectData) {
             if ($projectData['project'] === self::CORE_PROJECT_ID) {
                 $this->getUpdateItemsCore($items, $projectData);
                 continue;
@@ -225,7 +255,10 @@ class Updater extends Controller
                 'id' => $projectData['project'],
                 'name' => $projectData['name'],
                 'stable' => $build['stable'],
-                'url' => self::UPDATE_CORE_URL . '/' . $projectData['project'] . '/' . $build['version']
+                'url' => self::UPDATE_CORE_URL . '/' . $projectData['project'] . '/' . $build['version'],
+                'version' => $build['version'],
+                'mincore' => 0,
+                'maxcore' => 0
             ];
 
             if ($build['stable']) {
@@ -243,12 +276,7 @@ class Updater extends Controller
         }
     }
 
-    /**
-     * @param array $items
-     * @param array $pluginUpdate
-     * @param float $installedVersion
-     */
-    private function getUpdateItemsPlugin(array &$items, array $pluginUpdate, $installedVersion)
+    private function getUpdateItemsPlugin(array &$items, array $pluginUpdate, float $installedVersion)
     {
         $beta = [];
         $fileName = 'update-' . $pluginUpdate['project'] . '.zip';
@@ -264,7 +292,10 @@ class Updater extends Controller
                 'id' => $pluginUpdate['project'],
                 'name' => $pluginUpdate['name'],
                 'stable' => $build['stable'],
-                'url' => self::UPDATE_CORE_URL . '/' . $pluginUpdate['project'] . '/' . $build['version']
+                'url' => self::UPDATE_CORE_URL . '/' . $pluginUpdate['project'] . '/' . $build['version'],
+                'version' => $build['version'],
+                'mincore' => $build['mincore'],
+                'maxcore' => $build['maxcore']
             ];
 
             if ($build['stable']) {
@@ -282,44 +313,6 @@ class Updater extends Controller
         }
     }
 
-    private function isPluginCompatible(array $plugin): bool
-    {
-        if ($plugin['compatible'] === false) {
-            return false;
-        }
-
-        switch ($plugin['name']) {
-            case 'BetaForms':
-                return false;
-
-            case 'CRM':
-                return $plugin['version'] >= 1.5;
-
-            case 'DocRecurringSale':
-                return $plugin['version'] >= 1.85;
-
-            case 'HumanResources':
-                return $plugin['version'] >= 1.34;
-
-            case 'PlantillasPDF':
-                return $plugin['version'] >= 4;
-
-            case 'PlazosPago':
-                return $plugin['version'] >= 1.6;
-
-            case 'POS':
-                return $plugin['version'] > 1.6;
-
-            case 'PrintTicket':
-                return $plugin['version'] > 1.5;
-
-            case 'Ubicaciones':
-                return $plugin['version'] >= 3.5;
-        }
-
-        return true;
-    }
-
     private function postUpdateAction()
     {
         $plugName = $this->request->get('init', '');
@@ -330,23 +323,50 @@ class Updater extends Controller
             return;
         }
 
-        // disable incompatible plugins
-        foreach ($this->pluginManager->installedPlugins() as $plugin) {
-            if ($plugin['enabled'] && false === $this->isPluginCompatible($plugin)) {
-                $this->pluginManager->disable($plugin['name']);
-            }
-        }
-
         Migrations::run();
         $this->pluginManager->deploy(true, true);
     }
 
+    private function setCoreWarnings()
+    {
+        // comprobamos si hay actualización del core
+        $newCore = 0;
+        foreach ($this->updaterItems as $item) {
+            if ($item['id'] === self::CORE_PROJECT_ID) {
+                $newCore = $item['version'];
+                break;
+            }
+        }
+        if (empty($newCore)) {
+            return;
+        }
+
+        // comprobamos los plugins instalados
+        foreach ($this->pluginManager->installedPlugins() as $plugin) {
+            // ¿El plugin está activo?
+            if (false === $plugin['enabled']) {
+                continue;
+            }
+
+            // ¿Funcionará con el nuevo core?
+            if ($this->willItWorkOnNewCore($plugin, $newCore)) {
+                continue;
+            }
+
+            // ¿Hay actualización para el nuevo core?
+            if ($this->willPluginNeedUpdate($plugin, $newCore)) {
+                $this->coreUpdateWarnings[$plugin['name']] = self::toolBox()::i18n()->trans('plugin-need-update', ['%plugin%' => $plugin['name']]);
+                continue;
+            }
+
+            $this->coreUpdateWarnings[$plugin['name']] = self::toolBox()::i18n()->trans('plugin-need-update-but', ['%plugin%' => $plugin['name']]);
+        }
+    }
+
     /**
      * Extract zip file and update all files.
-     *
-     * @return bool
      */
-    private function updateAction(): bool
+    private function updateAction()
     {
         $idItem = $this->request->get('item', '');
         $fileName = 'update-' . $idItem . '.zip';
@@ -356,7 +376,7 @@ class Updater extends Controller
         $zipStatus = $zip->open(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName, ZipArchive::CHECKCONS);
         if ($zipStatus !== true) {
             $this->toolBox()->log()->critical('ZIP ERROR: ' . $zipStatus);
-            return false;
+            return;
         }
 
         // get the name of the plugin to init after update (if the plugin is enabled)
@@ -380,17 +400,9 @@ class Updater extends Controller
             $this->toolBox()->i18nLog()->notice('reloading');
             $this->redirect($this->getClassName() . '?action=post-update&init=' . $init, 3);
         }
-
-        return $done;
     }
 
-    /**
-     * @param ZipArchive $zip
-     * @param string $fileName
-     *
-     * @return bool
-     */
-    private function updateCore($zip, $fileName): bool
+    private function updateCore(ZipArchive $zip, string $fileName): bool
     {
         // extract zip content
         if (false === $zip->extractTo(FS_FOLDER)) {
@@ -429,13 +441,7 @@ class Updater extends Controller
         return true;
     }
 
-    /**
-     * @param ZipArchive $zip
-     * @param string $fileName
-     *
-     * @return bool
-     */
-    private function updatePlugin($zip, $fileName): bool
+    private function updatePlugin(ZipArchive $zip, string $fileName): bool
     {
         $zip->close();
 
@@ -445,5 +451,38 @@ class Updater extends Controller
         // remove zip file
         unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName);
         return $return;
+    }
+
+    private function willItWorkOnNewCore(array $plugin, float $newCore): bool
+    {
+        // buscamos información del plugin en la forja
+        foreach ($this->forjaJson as $item) {
+            if ($item['name'] != $plugin['name']) {
+                continue;
+            }
+
+            // buscamos la versión que hay instalada
+            foreach ($item['builds'] as $build) {
+                if ($build['version'] == $plugin['version']) {
+                    // si soporta un core mayor o igual al que estamos actualizando, entonces funcionará
+                    return $build['maxcore'] >= $newCore;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function willPluginNeedUpdate(array $plugin, float $newCore): bool
+    {
+        // buscamos información del plugin en la forja
+        foreach ($this->forjaJson as $item) {
+            if ($item['name'] === $plugin['name']) {
+                // si soporta un core mayor o igual al que estamos actualizando, entonces funcionará
+                return $item['maxcore'] >= $newCore;
+            }
+        }
+
+        return false;
     }
 }

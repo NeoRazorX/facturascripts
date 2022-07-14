@@ -28,6 +28,13 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
 {
 
     /**
+     * Line cost amount.
+     *
+     * @var float
+     */
+    public $coste;
+
+    /**
      * False -> the quantity column is not displayed when printing.
      *
      * @var bool
@@ -54,6 +61,7 @@ abstract class SalesDocumentLine extends BusinessDocumentLine
     public function clear()
     {
         parent::clear();
+        $this->coste = 0.00;
         $this->mostrar_cantidad = true;
         $this->mostrar_precio = true;
         $this->salto_pagina = false;

@@ -168,6 +168,13 @@ final class AlbaranClienteTest extends TestCase
         $product = $this->getRandomProduct();
         $this->assertTrue($product->save(), 'can-not-save-supplier-3');
 
+        // modificamos el precio y coste del producto
+        foreach ($product->getVariants() as $variant) {
+            $variant->precio = 10;
+            $variant->coste = 5;
+            $this->assertTrue($variant->save(), 'can-not-save-variant-3');
+        }
+
         // creamos un albarán
         $doc = new AlbaranCliente();
         $doc->setSubject($subject);
@@ -175,7 +182,12 @@ final class AlbaranClienteTest extends TestCase
 
         // añadimos el producto sin stock
         $line = $doc->getNewProductLine($product->referencia);
-        $line->pvpunitario = 10;
+
+        // comprobamos que precio y coste se han asignado correctamente
+        $this->assertEquals(10, $line->pvpunitario, 'albaran-cliente-bad-pvpunitario-3');
+        $this->assertEquals(5, $line->coste, 'albaran-cliente-bad-coste-3');
+
+        // guardamos la línea
         $this->assertFalse($line->save(), 'can-add-product-without-stock');
 
         // añadimos stock

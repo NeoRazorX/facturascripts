@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,85 +21,115 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\CuentaBancoProveedor;
-use FacturaScripts\Core\Model\Proveedor;
-use FacturaScripts\Test\Core\CustomTest;
+use FacturaScripts\Test\Core\RandomDataTrait;
+use PHPUnit\Framework\TestCase;
 
-/**
- * Description of CuentaBancoProveedorTest
- *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- * @covers \FacturaScripts\Core\Model\CuentaBancoProveedor
- */
-class CuentaBancoProveedorTest extends CustomTest
+final class CuentaBancoProveedorTest extends TestCase
 {
+    use RandomDataTrait;
 
-    protected function setUp(): void
+    public function testCreate()
     {
-        $this->model = new CuentaBancoProveedor();
+        // creamos un proveedor
+        $proveedor = $this->getRandomSupplier();
+        $this->assertTrue($proveedor->save(), 'proveedor-cant-save');
+
+        // creamos una cuenta bancaria
+        $cuenta = new CuentaBancoProveedor();
+        $cuenta->codproveedor = $proveedor->codproveedor;
+        $cuenta->descripcion = 'Test Account';
+        $this->assertTrue($cuenta->save(), 'cuenta-cant-save');
+
+        // comprobamos que se ha guardado correctamente
+        $this->assertNotNull($cuenta->primaryColumnValue(), 'cuenta-not-stored');
+        $this->assertTrue($cuenta->exists(), 'cuenta-cant-persist');
+
+        // eliminamos
+        $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
+        $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
-    public function testSaveInsert()
+    public function testCreateWithoutSupplier()
     {
-        /// save supplier
-        $supplier = new Proveedor();
-        $supplier->cifnif = '1234';
-        $supplier->nombre = 'Test CBP';
-        $this->assertTrue($supplier->save());
-
-        /// save bank account
-        $account = new CuentaBancoProveedor();
-        $account->codproveedor = $supplier->primaryColumnValue();
-        $account->descripcion = 'test';
-        $this->assertTrue($account->save());
-
-        /// delete bank account
-        $this->assertTrue($account->delete());
-
-        /// get the contact
-        $contact = $supplier->getDefaultAddress();
-
-        /// delete customer
-        $this->assertTrue($supplier->delete());
-
-        /// delete the pending contact
-        $this->assertTrue($contact->delete());
+        // creamos una cuenta bancaria
+        $cuenta = new CuentaBancoProveedor();
+        $cuenta->descripcion = 'Test Account';
+        $this->assertFalse($cuenta->save(), 'cuenta-can-save');
     }
 
-    public function testIBAN()
+    public function testHtmlOnFields()
     {
-        /// save supplier
-        $supplier = new Proveedor();
-        $supplier->cifnif = '1234';
-        $supplier->nombre = 'Test CBP';
-        $this->assertTrue($supplier->save());
-
-        /// save valid iban with validate
+        // desactivamos la validación de IBAN
         $settings = new AppSettings();
-        $settings->set('default', 'validate_iban', true);
-        $account = new CuentaBancoProveedor();
-        $account->codproveedor = $supplier->primaryColumnValue();
-        $account->descripcion = 'test';
-        $account->iban = 'ES91 2100 0418 4502 0005 1332';
-        $this->assertTrue($account->save());
+        $settings->set('default', 'validate_iban', '0');
 
-        /// now save invalid iban with validate
-        $account->iban = '1234';
-        $this->assertFalse($account->save());
+        // creamos un proveedor
+        $proveedor = $this->getRandomSupplier();
+        $this->assertTrue($proveedor->save(), 'proveedor-cant-save');
 
-        /// now save invalid iban without validate
-        $settings->set('default', 'validate_iban', false);
-        $this->assertTrue($account->save());
+        // creamos una cuenta bancaria con html en los campos
+        $cuenta = new CuentaBancoProveedor();
+        $cuenta->codproveedor = $proveedor->codproveedor;
+        $cuenta->descripcion = '<p>Test Account</p>';
+        $cuenta->iban = '<test>';
+        $cuenta->swift = '<dd>';
+        $this->assertTrue($cuenta->save(), 'cuenta-cant-save');
 
-        /// delete bank account
-        $this->assertTrue($account->delete());
+        // comprobamos que el html se ha escapado
+        $this->assertEquals('&lt;p&gt;Test Account&lt;/p&gt;', $cuenta->descripcion);
+        $this->assertEquals('&lt;test&gt;', $cuenta->iban);
+        $this->assertEquals('&lt;dd&gt;', $cuenta->swift);
 
-        /// get the contact
-        $contact = $supplier->getDefaultAddress();
+        // eliminamos
+        $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
+        $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
+    }
 
-        /// delete customer
-        $this->assertTrue($supplier->delete());
+    public function testDeleteWithSupplier()
+    {
+        // creamos un proveedor
+        $proveedor = $this->getRandomSupplier();
+        $this->assertTrue($proveedor->save(), 'proveedor-cant-save');
 
-        /// delete the pending contact
-        $this->assertTrue($contact->delete());
+        // creamos una cuenta bancaria
+        $cuenta = new CuentaBancoProveedor();
+        $cuenta->codproveedor = $proveedor->codproveedor;
+        $cuenta->descripcion = 'Test Account';
+        $this->assertTrue($cuenta->save(), 'cuenta-cant-save');
+
+        // eliminamos el proveedor
+        $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
+
+        // comprobamos que la cuenta bancaria se ha eliminado
+        $this->assertFalse($cuenta->exists(), 'cuenta-persist');
+    }
+
+    public function testValidateIban()
+    {
+        // activamos la validación de IBAN
+        $settings = new AppSettings();
+        $settings->set('default', 'validate_iban', '1');
+
+        // creamos un proveedor
+        $proveedor = $this->getRandomSupplier();
+        $this->assertTrue($proveedor->save(), 'proveedor-cant-save');
+
+        // creamos una cuenta bancaria con IBAN incorrecto
+        $cuenta = new CuentaBancoProveedor();
+        $cuenta->codproveedor = $proveedor->codproveedor;
+        $cuenta->descripcion = 'Test Account';
+        $cuenta->iban = 'ES912100041840123456789';
+        $this->assertFalse($cuenta->save(), 'cuenta-can-save');
+
+        // creamos una cuenta bancaria con IBAN correcto
+        $cuenta = new CuentaBancoProveedor();
+        $cuenta->codproveedor = $proveedor->codproveedor;
+        $cuenta->descripcion = 'Test Account';
+        $cuenta->iban = 'ES79 2100 0813 6101 2345 6789';
+        $this->assertTrue($cuenta->save(), 'cuenta-cant-save');
+
+        // eliminamos
+        $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
+        $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 }

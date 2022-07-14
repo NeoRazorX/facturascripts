@@ -138,12 +138,20 @@ abstract class SalesDocument extends TransformerDocument
     public $provincia;
 
     /**
+     * total sum of the costs of the lines.
+     *
+     * @var float
+     */
+    public $totalcoste;
+
+    /**
      * Reset the values of all model properties.
      */
     public function clear()
     {
         parent::clear();
         $this->direccion = '';
+        $this->totalcoste = 0.0;
 
         // select default currency
         $coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
@@ -201,6 +209,7 @@ abstract class SalesDocument extends TransformerDocument
             $product = $variant->getProducto();
 
             $newLine->codimpuesto = $product->getTax()->codimpuesto;
+            $newLine->coste = $variant->coste;
             $newLine->descripcion = $variant->description();
             $newLine->idproducto = $product->idproducto;
             $newLine->iva = $product->getTax()->iva;
@@ -392,8 +401,11 @@ abstract class SalesDocument extends TransformerDocument
                 break;
 
             case 'idcontactofact':
-                $contact = new Contacto();
+                if (empty($this->idcontactofact)) {
+                    return true;
+                }
                 // if billing address is changed, then change all billing fields
+                $contact = new Contacto();
                 if ($contact->loadFromCode($this->idcontactofact)) {
                     $this->apartado = $contact->apartado;
                     $this->ciudad = $contact->ciudad;

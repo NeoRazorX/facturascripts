@@ -32,9 +32,6 @@ use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
 class ReportProducto extends ListController
 {
 
-    /**
-     * @return array
-     */
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -56,9 +53,6 @@ class ReportProducto extends ListController
         $this->createViewsCustomerInvoices();
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsCustomerDeliveryNotes(string $viewName = 'FacturaClienteProducto-alb')
     {
         $this->addView($viewName, 'Join\AlbaranClienteProducto', 'customer-delivery-notes', 'fas fa-shipping-fast');
@@ -75,9 +69,6 @@ class ReportProducto extends ListController
         $this->disableButtons($viewName);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsCustomerInvoices(string $viewName = 'FacturaClienteProducto')
     {
         $this->addView($viewName, 'Join\FacturaClienteProducto', 'customer-invoices', 'fas fa-shopping-cart');
@@ -94,9 +85,6 @@ class ReportProducto extends ListController
         $this->disableButtons($viewName);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsSupplierDeliveryNotes(string $viewName = 'FacturaProveedorProducto-alb')
     {
         $this->addView($viewName, 'Join\AlbaranProveedorProducto', 'supplier-delivery-notes', 'fas fa-copy');
@@ -112,9 +100,6 @@ class ReportProducto extends ListController
         $this->disableButtons($viewName);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsSupplierInvoices(string $viewName = 'FacturaProveedorProducto')
     {
         $this->addView($viewName, 'Join\FacturaProveedorProducto', 'supplier-invoices', 'fas fa-copy');
@@ -126,9 +111,6 @@ class ReportProducto extends ListController
         $this->disableButtons($viewName);
     }
 
-    /**
-     * @param string $viewName
-     */
     private function addCommonFilters(string $viewName)
     {
         $warehouses = Almacenes::codeModel();
@@ -145,9 +127,6 @@ class ReportProducto extends ListController
         $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
     }
 
-    /**
-     * @param string $viewName
-     */
     private function disableButtons(string $viewName)
     {
         $this->setSettings($viewName, 'btnDelete', false);

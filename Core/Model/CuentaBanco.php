@@ -73,10 +73,12 @@ class CuentaBanco extends Base\BankAccount
     public function test(): bool
     {
         if (empty($this->idempresa)) {
-            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+            $this->idempresa = self::toolBox()::appSettings()::get('default', 'idempresa');
         }
 
-        $this->sufijosepa = $this->toolBox()->utils()->noHtml($this->sufijosepa);
+        $this->codsubcuenta = self::toolBox()::utils()::noHtml($this->codsubcuenta);
+        $this->codsubcuentagasto = self::toolBox()::utils()::noHtml($this->codsubcuentagasto);
+        $this->sufijosepa = self::toolBox()::utils()::noHtml($this->sufijosepa);
         return parent::test();
     }
 
