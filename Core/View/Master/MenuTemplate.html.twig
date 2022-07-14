@@ -37,7 +37,7 @@
     {% block css %}
         <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}"/>
         <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}"/>
-        <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}?v=2"/>
+        <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}?v=3"/>
     {% endblock %}
     {# Adds custom CSS assets #}
     {% for css in assetManager.get('css') %}
@@ -49,7 +49,7 @@
         <script src="{{ asset('node_modules/bootbox/dist/bootbox.min.js') }}"></script>
         <script src="{{ asset('node_modules/bootbox/dist/bootbox.locales.min.js') }}"></script>
         <script src="{{ asset('node_modules/pace-js/pace.min.js') }}"></script>
-        <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}?v=3"></script>
+        <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}?v=5"></script>
     {% endblock %}
     {# Adds custom JS assets #}
     {% for js in assetManager.get('js') %}
@@ -82,7 +82,7 @@
                             </a>
                         </li>
                         <li class="nav-item" title="{{ i18n.trans('help') }}">
-                            <a class="nav-link" href="https://facturascripts.com/ayuda" target="_blank">
+                            <a class="nav-link" href="https://facturascripts.com/ayuda" rel="nofollow" target="_blank">
                                 <i class="fas fa-question-circle" aria-hidden="true"></i>
                             </a>
                         </li>

@@ -19,12 +19,14 @@
 
 namespace FacturaScripts\Test\Core;
 
-use FacturaScripts\Core\Lib\BusinessDocumentTools;
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\Contacto;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Model\Producto;
@@ -49,6 +51,25 @@ trait RandomDataTrait
         return $agente;
     }
 
+    protected function getRandomCompany(): Empresa
+    {
+        $company = new Empresa();
+        $company->direccion = 'Calle falsa 123';
+        $company->cifnif = 'B' . mt_rand(1, 999999);
+        $company->nombre = 'Company ' . mt_rand(1, 99999);
+        $company->nombrecorto = 'Comp' . mt_rand(1, 99999);
+        return $company;
+    }
+
+    protected function getRandomContact(): Contacto
+    {
+        $contact = new Contacto();
+        $contact->cifnif = 'B' . mt_rand(1, 999999);
+        $contact->nombre = 'Contact ' . mt_rand(1, 99999);
+        $contact->empresa = 'Empresa ' . mt_rand(1, 99999);
+        return $contact;
+    }
+
     protected function getRandomCustomer(): Cliente
     {
         $cliente = new Cliente();
@@ -58,7 +79,7 @@ trait RandomDataTrait
         return $cliente;
     }
 
-    protected function getRandomCustomerInvoice(): FacturaCliente
+    protected function getRandomCustomerInvoice(string $date = ''): FacturaCliente
     {
         // creamos el cliente
         $subject = $this->getRandomCustomer();
@@ -66,15 +87,17 @@ trait RandomDataTrait
 
         $invoice = new FacturaCliente();
         $invoice->setSubject($subject);
+        if ($date) {
+            $invoice->setDate($date, $invoice->hora);
+        }
         if ($invoice->save()) {
             $line = $invoice->getNewLine();
             $line->cantidad = 1;
             $line->pvpunitario = mt_rand(100, 9999);
             $line->save();
 
-            $tool = new BusinessDocumentTools();
-            $tool->recalculate($invoice);
-            $invoice->save();
+            $lines = $invoice->getLines();
+            Calculator::calculate($invoice, $lines, true);
         }
 
         return $invoice;
@@ -108,7 +131,7 @@ trait RandomDataTrait
         return $proveedor;
     }
 
-    protected function getRandomSupplierInvoice(): FacturaProveedor
+    protected function getRandomSupplierInvoice(string $date = ''): FacturaProveedor
     {
         // creamos el proveedor
         $subject = $this->getRandomSupplier();
@@ -116,15 +139,17 @@ trait RandomDataTrait
 
         $invoice = new FacturaProveedor();
         $invoice->setSubject($subject);
+        if ($date) {
+            $invoice->setDate($date, $invoice->hora);
+        }
         if ($invoice->save()) {
             $line = $invoice->getNewLine();
             $line->cantidad = 1;
             $line->pvpunitario = mt_rand(100, 9999);
             $line->save();
 
-            $tool = new BusinessDocumentTools();
-            $tool->recalculate($invoice);
-            $invoice->save();
+            $lines = $invoice->getLines();
+            Calculator::calculate($invoice, $lines, true);
         }
 
         return $invoice;

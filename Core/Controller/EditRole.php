@@ -34,9 +34,6 @@ use FacturaScripts\Dinamic\Model\RoleAccess;
 class EditRole extends EditController
 {
 
-    /**
-     * @return array
-     */
     public function getAccessRules(): array
     {
         $rules = [];
@@ -63,20 +60,12 @@ class EditRole extends EditController
         return $rules;
     }
 
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Role';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -96,17 +85,11 @@ class EditRole extends EditController
         $this->setTabsPosition('bottom');
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsAccess(string $viewName = 'RoleAccess')
     {
         $this->addHtmlView($viewName, 'Tab/RoleAccess', 'RoleAccess', 'rules', 'fas fa-check-square');
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsUsers(string $viewName = 'EditRoleUser')
     {
         $this->addEditListView($viewName, 'RoleUser', 'users', 'fas fa-address-card');
@@ -116,9 +99,6 @@ class EditRole extends EditController
         $this->views[$viewName]->disableColumn('role', true);
     }
 
-    /**
-     * @return bool
-     */
     protected function editRulesAction(): bool
     {
         // check user permissions
@@ -200,7 +180,7 @@ class EditRole extends EditController
      *
      * @return Page[]
      */
-    protected function getAllPages()
+    protected function getAllPages(): array
     {
         $page = new Page();
         $order = ['menu' => 'ASC', 'title' => 'ASC'];

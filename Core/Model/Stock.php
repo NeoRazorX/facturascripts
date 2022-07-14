@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -105,9 +105,6 @@ class Stock extends Base\ModelClass
      */
     public $ubicacion;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -120,10 +117,7 @@ class Stock extends Base\ModelClass
         $this->stockmin = 0.0;
     }
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if (parent::delete()) {
             $this->cantidad = 0.0;
@@ -134,14 +128,7 @@ class Stock extends Base\ModelClass
         return false;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new DinAlmacen();
@@ -151,20 +138,12 @@ class Stock extends Base\ModelClass
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idstock';
     }
 
-    /**
-     * @return bool
-     */
-    public function save()
+    public function save(): bool
     {
         if (parent::save()) {
             $this->updateProductStock();
@@ -174,12 +153,7 @@ class Stock extends Base\ModelClass
         return false;
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'stocks';
     }
@@ -212,17 +186,11 @@ class Stock extends Base\ModelClass
         return $destination->save() && $this->save();
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $this->ubicacion = self::toolBox()::utils()::noHtml($this->ubicacion);
 
-        // el stock no puede reflejar situaciones imposibles, como stock negativo
-        $this->cantidad = $this->cantidad < 0 ? 0 : round($this->cantidad, self::MAX_DECIMALS);
+        $this->cantidad = round($this->cantidad, self::MAX_DECIMALS);
         $this->reservada = round($this->reservada, self::MAX_DECIMALS);
         $this->pterecibir = round($this->pterecibir, self::MAX_DECIMALS);
         $this->disponible = max([0, $this->cantidad - $this->reservada]);
@@ -260,22 +228,11 @@ class Stock extends Base\ModelClass
         return empty($data) ? 0.0 : round((float)$data[0]['total'], self::MAX_DECIMALS);
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getProducto()->url($type);
     }
 
-    /**
-     * @return bool
-     */
     protected function updateProductStock(): bool
     {
         $total = $this->totalFromProduct($this->idproducto);

@@ -50,7 +50,7 @@ final class PaisTest extends TestCase
         $this->assertFalse($pais->save(), 'pais-can-not-create');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

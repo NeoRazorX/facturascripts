@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -65,22 +65,13 @@ class AtributoValor extends Base\ModelClass
      */
     public $valor;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->orden = 100;
     }
 
-    /**
-     * 
-     * @param string $fieldCode
-     *
-     * @return CodeModel[]
-     */
-    public function codeModelAll(string $fieldCode = '')
+    public function codeModelAll(string $fieldCode = ''): array
     {
         $results = [];
         $field = empty($fieldCode) ? static::primaryColumn() : $fieldCode;
@@ -94,51 +85,29 @@ class AtributoValor extends Base\ModelClass
         return $results;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependency
+        // needed dependency
         new DinAtributo();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'atributos_valores';
     }
 
-    /**
-     * Check the delivery note data, return True if it is correct.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $this->valor = $this->toolBox()->utils()->noHtml($this->valor);
 
-        /// combine attribute name + value
+        // combine attribute name + value
         $attribute = new DinAtributo();
         if ($attribute->loadFromCode($this->codatributo)) {
             $this->descripcion = $attribute->nombre . ' ' . $this->valor;
@@ -147,14 +116,7 @@ class AtributoValor extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListAtributo')
+    public function url(string $type = 'auto', string $list = 'ListAtributo'): string
     {
         $value = $this->codatributo;
         switch ($type) {
@@ -168,7 +130,7 @@ class AtributoValor extends Base\ModelClass
                 return 'EditAtributo';
         }
 
-        /// default
+        // default
         return empty($value) ? $list : 'EditAtributo?code=' . $value;
     }
 }

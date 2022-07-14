@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\Debug;
 
 use FacturaScripts\Core\Base\PluginManager;
@@ -44,26 +45,49 @@ class ProductionErrorHandler
     }
 
     /**
-     * 
      * @param array $error
      *
      * @return string
      */
-    private function cleanMessage($error)
+    private function cleanMessage($error): string
     {
         $parts = explode(' in ' . $error['file'], $error['message']);
         return $parts[0];
     }
 
+    private function getPluginName($error): string
+    {
+        // obtenemos la ruta del archivo sin el directorio de la instalación
+        $file = substr($error["file"], strlen(FS_FOLDER) + 1);
+
+        // partimos la ruta del archivo en partes
+        $parts = explode('/', $file);
+
+        // si la primera parte es Plugins, devolvemos el segundo
+        if ($parts[0] == 'Plugins') {
+            return $parts[1];
+        }
+
+        return '';
+    }
+
     /**
-     * 
      * @param array $error
      *
      * @return string
      */
-    private function render($error)
+    private function render($error): string
     {
-        $title = "FATAL ERROR #" . $error["type"];
+        $pluginName = $this->getPluginName($error);
+        $title = empty($pluginName) ? "FATAL ERROR #" . $error["type"] : 'Plugin ' . $pluginName . ': FATAL ERROR #' . $error["type"];
+
+        // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
+        $code = $error["type"] . substr($error["file"], strlen(FS_FOLDER)) . $error["line"] . $this->cleanMessage($error);
+        $hash = sha1($code);
+
+        $btn2 = empty($pluginName) ? '' :
+            ' <a class="btn2" href="AdminPlugins?action=disable&plugin=' . $pluginName . '">DISABLE / DESACTIVAR PLUGIN</a>';
+
         return "<html>"
             . "<head>"
             . "<title>" . $title . "</title>"
@@ -71,7 +95,8 @@ class ProductionErrorHandler
             . "body {background-color: silver;}"
             . ".container {padding: 20px 20px 40px 20px; max-width: 900px; margin-left: auto; margin-right: auto; border-radius: 10px; background-color: snow;}"
             . ".text-center {text-align: center;}"
-            . ".btn {padding: 10px; border-radius: 5px; background-color: orange; color: white; text-decoration: none; font-weight: bold;}"
+            . ".btn1 {padding: 10px; border-radius: 5px; background-color: orange; color: white; text-decoration: none; font-weight: bold;}"
+            . ".btn2 {padding: 10px; border-radius: 5px; background-color: silver; color: white; text-decoration: none; font-weight: bold;}"
             . "</style>"
             . "</head>"
             . "<body>"
@@ -84,7 +109,8 @@ class ProductionErrorHandler
             . "<li><b>PHP:</b> " . PHP_VERSION . "</li>"
             . "</ul>"
             . "<div class='text-center'>"
-            . "<a href='https://facturascripts.com/contacto' target='_blank' class='btn'>REPORT / INFORMAR</a>"
+            . "<a class='btn1' href='https://facturascripts.com/contacto?errhash=" . $hash . "' target='_blank'>REPORT / INFORMAR</a>"
+            . $btn2
             . "</div>"
             . "</div>"
             . "</body>"

@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -231,11 +231,10 @@
                 <tr class="clickableRow {{ extraClass }}" data-href="{{ plugin.url }}" data-target="_blank">
                     <td>{{ _self.healthStatus(plugin.health) }}</td>
                     <td>{{ plugin.name }}</td>
-                    <td>{{ plugin.description | nl2br }}</td>
+                    <td>{{ plugin.description | slice(0, 300) | nl2br }}</td>
                     <td class="text-center">
                         {% if plugin.installed %}
-                            <i class="fas fa-box-open fa-fw" aria-hidden="true"></i>
-                            {{ i18n.trans('installed') }}
+                            <i class="fas fa-box-open fa-fw" aria-hidden="true"></i> {{ i18n.trans('installed') }}
                         {% endif %}
                     </td>
                 </tr>
@@ -257,8 +256,7 @@
                 <th>{{ i18n.trans('name') }}</th>
                 <th class="text-right">{{ i18n.trans('version') }}</th>
                 <th>{{ i18n.trans('description') }}</th>
-                <th></th>
-                <th class="text-center">{{ i18n.trans('actions') }}</th>
+                <th class="text-right pr-3">{{ i18n.trans('actions') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -280,38 +278,35 @@
                     {% endif %}
                     <td>{{ plugin.description | nl2br }}</td>
                     {% if plugin.enabled %}
-                        <td></td>
-                        <td>
-                            <a class="btn btn-block btn-sm btn-secondary"
+                        <td class="text-right">
+                            <a class="btn btn-sm btn-secondary"
                                href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin.name }}">
                                 <i class="fas fa-times fa-fw" aria-hidden="true"></i>
                                 <span class="d-none d-sm-inline-block">{{ i18n.trans('disable') }}</span>
                             </a>
                         </td>
                     {% elseif plugin.compatible %}
-                        <td>
+                        <td class="text-right">
                             {% if not constant('FS_DISABLE_RM_PLUGINS') %}
-                                <a class="btn btn-block btn-sm btn-danger" href="#"
+                                <a class="btn btn-sm btn-danger mr-1" href="#"
                                    onclick="deletePlugin('{{ plugin.name }}');">
                                     <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
                                     <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
                                 </a>
                             {% endif %}
-                        </td>
-                        <td>
-                            <a class="btn btn-block btn-sm btn-success"
+                            <a class="btn btn-sm btn-success"
                                href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}">
                                 <i class="fas fa-check fa-fw" aria-hidden="true"></i>
                                 <span class="d-none d-sm-inline-block">{{ i18n.trans('enable') }}</span>
                             </a>
                         </td>
                     {% else %}
-                        <td colspan="2"></td>
+                        <td></td>
                     {% endif %}
                 </tr>
             {% else %}
                 <tr class="table-warning">
-                    <td colspan="5"><b>{{ i18n.trans('no-data') }}</b></td>
+                    <td colspan="4"><b>{{ i18n.trans('no-data') }}</b></td>
                 </tr>
             {% endfor %}
             </tbody>

@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Dinamic\Lib\BusinessDocumentTools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -145,8 +145,8 @@ class CopyModel extends Controller
      */
     protected function saveDocumentEnd($newDoc)
     {
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($newDoc);
+        $lines = $newDoc->getLines();
+        Calculator::calculate($newDoc, $lines, false);
         if (false === $newDoc->save()) {
             $this->toolBox()->i18nLog()->warning('record-save-error');
             $this->dataBase->rollback();

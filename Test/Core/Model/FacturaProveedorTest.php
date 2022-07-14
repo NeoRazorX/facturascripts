@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Lib\BusinessDocumentTools;
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Test\Core\DefaultSettingsTrait;
 use FacturaScripts\Test\Core\LogErrorsTrait;
@@ -37,10 +37,11 @@ final class FacturaProveedorTest extends TestCase
     const PRODUCT1_COST = 99.9;
     const PRODUCT1_QUANTITY = 10;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::setDefaultSettings();
         self::installAccountingPlan();
+        self::removeTaxRegularization();
     }
 
     public function testCreateNewInvoice()
@@ -66,11 +67,10 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($firstLine->exists(), 'first-invoice-line-does-not-exists');
 
         // recalculamos
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($invoice);
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
         $neto = round(self::PRODUCT1_QUANTITY * self::PRODUCT1_COST, 2);
         $this->assertEquals($neto, $invoice->neto, 'bad-invoice-neto');
-        $this->assertTrue($invoice->save(), 'cant-update-invoice');
 
         // buscamos la factura
         $dbInvoice = $invoice->get($invoice->idfactura);
@@ -122,9 +122,8 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculamos
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($invoice);
-        $this->assertTrue($invoice->save(), 'cant-update-invoice');
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
         // comprobamos el stock del producto
         $product->loadFromCode($product->idproducto);
@@ -138,6 +137,8 @@ final class FacturaProveedorTest extends TestCase
         // comprobamos que el stock del producto ha desaparecido
         $product->loadFromCode($product->idproducto);
         $this->assertEquals(0, $product->stockfis, 'bad-product1-stock-end');
+
+        // eliminamos el producto
         $this->assertTrue($product->delete(), 'cant-delete-producto');
     }
 
@@ -159,12 +160,11 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculamos
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($invoice);
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
         $netosindto = $invoice->netosindto;
         $neto = $invoice->neto;
         $total = $invoice->total;
-        $this->assertTrue($invoice->save(), 'cant-update-invoice');
 
         // comprobamos el asiento
         $entry = $invoice->getAccountingEntry();
@@ -173,11 +173,10 @@ final class FacturaProveedorTest extends TestCase
 
         // cambiamos el descuento para que cambie el total (el asiento debe cambiar)
         $invoice->dtopor1 = 50;
-        $tool->recalculate($invoice);
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice-discount');
         $this->assertEquals($netosindto, $invoice->netosindto, 'bad-netosindto');
         $this->assertLessThan($neto, $invoice->neto, 'bad-neto');
         $this->assertLessThan($total, $invoice->total, 'bad-total');
-        $this->assertTrue($invoice->save(), 'cant-update-invoice-discount');
 
         // comprobamos que el asiento ha cambiado
         $updEntry = $invoice->getAccountingEntry();
@@ -209,13 +208,12 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculamos
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($invoice);
-        $this->assertTrue($invoice->save(), 'cant-update-invoice');
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
         // asignamos un estado no editable
         $changed = false;
-        foreach ($invoice->getAvaliableStatus() as $status) {
+        foreach ($invoice->getAvailableStatus() as $status) {
             if (false === $status->editable) {
                 $invoice->idestado = $status->idestado;
                 $changed = true;
@@ -226,8 +224,7 @@ final class FacturaProveedorTest extends TestCase
 
         // cambiamos el descuento, recalculamos y guardamos
         $invoice->dtopor1 = 50;
-        $tool->recalculate($invoice);
-        $this->assertFalse($invoice->save(), 'can-update-non-editable-invoice');
+        $this->assertFalse(Calculator::calculate($invoice, $lines, true), 'can-update-non-editable-invoice');
         $this->assertFalse($invoice->delete(), 'can-delete-non-editable-invoice');
 
         // eliminamos
@@ -235,7 +232,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

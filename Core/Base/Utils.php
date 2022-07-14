@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
@@ -34,7 +35,7 @@ class Utils
      *
      * @return string
      */
-    public static function bin2str($val)
+    public static function bin2str($val): string
     {
         return $val === null ? 'NULL' : "'" . \base64_encode($val) . "'";
     }
@@ -46,7 +47,7 @@ class Utils
      *
      * @return string
      */
-    public static function bool2str($val)
+    public static function bool2str($val): string
     {
         switch ($val) {
             case true:
@@ -72,15 +73,15 @@ class Utils
      *
      * @return array
      */
-    public static function dateRange($first, $last, $step = '+1 day', $format = 'd-m-Y')
+    public static function dateRange($first, $last, $step = '+1 day', $format = 'd-m-Y'): array
     {
         $dates = [];
-        $start = \strtotime($first);
-        $end = \strtotime($last);
+        $start = strtotime($first);
+        $end = strtotime($last);
 
         while ($start <= $end) {
-            $dates[] = \date($format, $start);
-            $start = \strtotime($step, $start);
+            $dates[] = date($format, $start);
+            $start = strtotime($step, $start);
         }
 
         return $dates;
@@ -89,16 +90,16 @@ class Utils
     /**
      * Make corrections in the HTML code
      *
-     * @param string $txt
+     * @param ?string $txt
      *
-     * @return string
+     * @return ?string
      */
-    public static function fixHtml($txt)
+    public static function fixHtml(?string $txt): ?string
     {
         $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
         $final = ['<', '>', '"', "'"];
 
-        return $txt === null ? null : \trim(\str_replace($original, $final, $txt));
+        return $txt === null ? null : trim(str_replace($original, $final, $txt));
     }
 
     /**
@@ -107,31 +108,46 @@ class Utils
      *
      * @param double $f1
      * @param double $f2
-     * @param int    $precision
-     * @param bool   $round
+     * @param int $precision
+     * @param bool $round
      *
      * @return bool
      */
-    public static function floatcmp($f1, $f2, $precision = 10, $round = false)
+    public static function floatcmp($f1, $f2, $precision = 10, $round = false): bool
     {
-        if ($round || false === \function_exists('bccomp')) {
-            return \abs($f1 - $f2) < 6 / 10 ** ($precision + 1);
+        if ($round || false === function_exists('bccomp')) {
+            return abs($f1 - $f2) < 6 / 10 ** ($precision + 1);
         }
 
-        return \bccomp((string) $f1, (string) $f2, $precision) === 0;
+        return bccomp((string)$f1, (string)$f2, $precision) === 0;
     }
 
     /**
      * Returns the integer value of the variable $ s,
      * or null if it is null. The intval() function of the php returns 0 if it is null.
      *
-     * @param string $str
+     * @param ?string $str
      *
-     * @return int
+     * @return ?int
      */
-    public static function intval($str)
+    public static function intval(?string $str): ?int
     {
-        return $str === null ? null : (int) $str;
+        return $str === null ? null : (int)$str;
+    }
+
+    public static function isValidUrl(string $url): bool
+    {
+        // si la url está vacía o comienza por javascript: entonces no es una url válida
+        if (empty($url) || stripos($url, 'javascript:') === 0) {
+            return false;
+        }
+
+        // si la url comienza por www, entonces se añade https://
+        if (stripos($url, 'www.') === 0) {
+            $url = 'https://' . $url;
+        }
+
+        return filter_var($url, FILTER_VALIDATE_URL) !== false;
     }
 
     /**
@@ -144,28 +160,27 @@ class Utils
      * Do not be tempted to substitute by htmlentities or htmlspecialshars
      * because you will find many unpleasant surprises.
      *
-     * @param string $txt
+     * @param ?string $txt
      *
-     * @return string
+     * @return ?string
      */
-    public static function noHtml($txt)
+    public static function noHtml(?string $txt): ?string
     {
-        $newt = \str_replace(
-            ['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&#39;'], $txt
-        );
-
-        return $txt === null ? null : \trim($newt);
+        return $txt === null ? null :
+            str_replace(
+                ['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&#39;'], trim($txt)
+            );
     }
 
     /**
-     * Normalizes a string replacing accented characters to 
+     * Normalizes a string replacing accented characters to
      * their normalized counterparts.
      *
-     * @param string $string
-     * 
-     * @return string
+     * @param ?string $string
+     *
+     * @return ?string
      */
-    public static function normalize($string)
+    public static function normalize(?string $string): ?string
     {
         $table = [
             'Š' => 'S', 'š' => 's', 'Đ' => 'Dj', 'đ' => 'dj', 'Ž' => 'Z', 'ž' => 'z', 'Č' => 'C', 'č' => 'c', 'Ć' => 'C', 'ć' => 'c',
@@ -178,7 +193,7 @@ class Utils
             'ÿ' => 'y', 'Ŕ' => 'R', 'ŕ' => 'r'
         ];
 
-        return \strtr($string, $table);
+        return $string === null ? null : strtr($string, $table);
     }
 
     /**
@@ -188,22 +203,22 @@ class Utils
      *
      * @return string
      */
-    public static function randomString($length = 10)
+    public static function randomString(int $length = 10): string
     {
-        return \mb_substr(\str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
+        return mb_substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
     }
 
     /**
      * Convert a text to binary.
      * It does with base64.
      *
-     * @param string $val
+     * @param ?string $val
      *
-     * @return null|string
+     * @return ?string
      */
-    public static function str2bin($val)
+    public static function str2bin(?string $val): ?string
     {
-        return $val === null ? null : \base64_decode($val);
+        return $val === null ? null : base64_decode($val);
     }
 
     /**
@@ -215,30 +230,34 @@ class Utils
      *
      * @return bool
      */
-    public static function str2bool($val)
+    public static function str2bool(string $val): bool
     {
-        return \in_array(\strtolower($val), ['true', 't', '1'], false);
+        return in_array(strtolower($val), ['true', 't', '1'], false);
     }
 
     /**
      * Breaks text at maximum width, without break words.
      *
-     * @param string $desc
-     * @param int    $maxWidth
-     * 
-     * @return string
+     * @param ?string $text
+     * @param int $maxWidth
+     *
+     * @return ?string
      */
-    public static function trueTextBreak($text, $maxWidth = 500)
+    public static function trueTextBreak(?string $text, int $maxWidth = 500): ?string
     {
-        /// remove blank lines
-        $desc = \trim(\preg_replace(["/\s\s+/"], [" "], $text));
-        if (\mb_strlen($desc) <= $maxWidth) {
+        if ($text === null) {
+            return null;
+        }
+
+        // remove blank lines
+        $desc = trim(preg_replace(["/\s\s+/"], [" "], $text));
+        if (mb_strlen($desc) <= $maxWidth) {
             return $desc;
         }
 
         $description = '';
-        foreach (\explode(' ', $desc) as $aux) {
-            if (\mb_strlen($description . ' ' . $aux) >= $maxWidth - 3) {
+        foreach (explode(' ', $desc) as $aux) {
+            if (mb_strlen($description . ' ' . $aux) >= $maxWidth - 3) {
                 break;
             } elseif ($description == '') {
                 $description = $aux;

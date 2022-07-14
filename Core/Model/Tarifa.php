@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -73,19 +74,17 @@ class Tarifa extends Base\ModelClass
     public $valorx;
 
     /**
-     *
      * @var float
      */
     public $valory;
 
     /**
-     * 
      * @param float $cost
      * @param float $price
      *
      * @return float
      */
-    public function apply($cost, $price)
+    public function apply(float $cost, float $price)
     {
         $finalPrice = 0.0;
 
@@ -100,16 +99,15 @@ class Tarifa extends Base\ModelClass
         }
 
         if ($this->maxpvp && $finalPrice > $price) {
-            return (float) $price;
+            return (float)$price;
         } elseif ($this->mincoste && $finalPrice < $cost) {
-            return (float) $cost;
+            return (float)$cost;
         }
 
-        return $finalPrice > 0 ? $finalPrice : 0.0;
+        return $finalPrice;
     }
 
     /**
-     * 
      * @param Variante $variant
      * @param Producto $product
      *
@@ -117,12 +115,9 @@ class Tarifa extends Base\ModelClass
      */
     public function applyTo($variant, $product)
     {
-        return $this->apply($variant->coste, $variant->precio);
+        return $this->apply((float)$variant->coste, (float)$variant->precio);
     }
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -133,44 +128,25 @@ class Tarifa extends Base\ModelClass
         $this->valory = 0.0;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codtarifa';
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'tarifas';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $this->codtarifa = \trim($this->codtarifa);
-        if ($this->codtarifa && 1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codtarifa)) {
+        $this->codtarifa = trim($this->codtarifa);
+        if ($this->codtarifa && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,6}$/i', $this->codtarifa)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codtarifa, '%column%' => 'codtarifa', '%min%' => '1', '%max%' => '6']
@@ -182,13 +158,7 @@ class Tarifa extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codtarifa)) {
             $this->codtarifa = $this->newCode();

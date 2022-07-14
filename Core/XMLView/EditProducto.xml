@@ -23,8 +23,7 @@
     <columns>
         <group name="main" numcolumns="12">
             <column name="reference" numcolumns="3" order="100">
-                <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag" required="true"
-                        readonly="dinamic"/>
+                <widget type="text" fieldname="referencia" maxlength="30" icon="fas fa-hashtag" readonly="dinamic"/>
             </column>
             <column name="manufacturer" titleurl="ListFabricante" order="110">
                 <widget type="select" fieldname="codfabricante" onclick="EditFabricante">
@@ -51,7 +50,6 @@
             </column>
         </group>
         <group name="options" numcolumns="12" valign="bottom">
-
             <column name="nostock" title="no-stock" order="110">
                 <widget type="checkbox" fieldname="nostock"/>
             </column>

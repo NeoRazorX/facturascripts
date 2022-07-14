@@ -20,11 +20,11 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\EditView;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
-use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
@@ -38,12 +38,7 @@ class EditSettings extends PanelController
 
     const KEY_SETTINGS = 'Settings';
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -52,9 +47,6 @@ class EditSettings extends PanelController
         return $data;
     }
 
-    /**
-     * @return bool
-     */
     protected function checkPaymentMethod(): bool
     {
         $appSettings = $this->toolBox()->appSettings();
@@ -82,9 +74,6 @@ class EditSettings extends PanelController
         return false;
     }
 
-    /**
-     * @return bool
-     */
     protected function checkWarehouse(): bool
     {
         $appSettings = $this->toolBox()->appSettings();
@@ -112,9 +101,6 @@ class EditSettings extends PanelController
         return false;
     }
 
-    /**
-     * @return bool
-     */
     protected function checkTax(): bool
     {
         $appSettings = $this->toolBox()->appSettings();
@@ -135,9 +121,6 @@ class EditSettings extends PanelController
         return false;
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createDocTypeFilter(string $viewName)
     {
         $types = $this->codeModel->all('estados_documentos', 'tipodoc', 'tipodoc');
@@ -145,7 +128,7 @@ class EditSettings extends PanelController
         // custom translation
         foreach ($types as $key => $value) {
             if (!empty($value->code)) {
-                $types[$key]->description = $this->toolBox()->i18n()->trans($value->code);
+                $value->description = $this->toolBox()->i18n()->trans($value->code);
             }
         }
 
@@ -180,9 +163,6 @@ class EditSettings extends PanelController
         $this->createViewFormats();
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsApiKeys(string $viewName = 'ListApiKey')
     {
         $this->addListView($viewName, 'ApiKey', 'api-keys', 'fas fa-key');
@@ -192,18 +172,12 @@ class EditSettings extends PanelController
         $this->views[$viewName]->addSearchFields(['description', 'apikey', 'nick']);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsIdFiscal(string $viewName = 'EditIdentificadorFiscal')
     {
         $this->addEditListView($viewName, 'IdentificadorFiscal', 'fiscal-id', 'far fa-id-card');
         $this->views[$viewName]->setInLine(true);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewFormats(string $viewName = 'ListFormatoDocumento')
     {
         $this->addListView($viewName, 'FormatoDocumento', 'printing-formats', 'fas fa-print');
@@ -243,9 +217,6 @@ class EditSettings extends PanelController
         $this->setSettings($name, 'btnNew', false);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewSequences(string $viewName = 'ListSecuenciaDocumento')
     {
         $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code');
@@ -257,16 +228,10 @@ class EditSettings extends PanelController
         // Filters
         $this->createDocTypeFilter($viewName);
         $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
-
-        $exercises = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
-        $this->views[$viewName]->addFilterSelect('codejercicio', 'exercise', 'codejercicio', $exercises);
-
+        $this->views[$viewName]->addFilterSelect('codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
         $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewStates(string $viewName = 'ListEstadoDocumento')
     {
         $this->addListView($viewName, 'EstadoDocumento', 'states', 'fas fa-tags');
@@ -288,10 +253,7 @@ class EditSettings extends PanelController
         $this->views[$viewName]->addFilterCheckbox('editable', 'editable', 'editable');
     }
 
-    /**
-     * @return bool
-     */
-    protected function editAction()
+    protected function editAction(): bool
     {
         if (false === parent::editAction()) {
             return false;
@@ -306,29 +268,9 @@ class EditSettings extends PanelController
         return true;
     }
 
-    /**
-     * Run the controller after actions
-     *
-     * @param string $action
-     */
-    protected function execAfterAction($action)
+    protected function exportAction()
     {
-        switch ($action) {
-            case 'export':
-                break;
-
-            case 'testmail':
-                if (false === $this->editAction()) {
-                    break;
-                }
-                $email = new NewMail();
-                if ($email->test()) {
-                    $this->toolBox()->i18nLog()->notice('mail-test-ok');
-                    break;
-                }
-                $this->toolBox()->i18nLog()->warning('mail-test-error');
-                break;
-        }
+        // do nothing
     }
 
     /**
@@ -359,6 +301,7 @@ class EditSettings extends PanelController
                 }
                 $this->loadPaymentMethodValues($viewName);
                 $this->loadWarehouseValues($viewName);
+                $this->loadLogoImageValues($viewName);
                 break;
 
             default:
@@ -371,9 +314,17 @@ class EditSettings extends PanelController
         }
     }
 
-    /**
-     * @param string $viewName
-     */
+    protected function loadLogoImageValues($viewName)
+    {
+        $columnLogo = $this->views[$viewName]->columnForName('login-image');
+        if ($columnLogo && $columnLogo->widget->getType() === 'select') {
+            $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
+                new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
+            ]);
+            $columnLogo->widget->setValuesFromCodeModel($images);
+        }
+    }
+
     protected function loadPaymentMethodValues(string $viewName)
     {
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
@@ -386,9 +337,6 @@ class EditSettings extends PanelController
         }
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function loadWarehouseValues(string $viewName)
     {
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');

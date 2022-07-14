@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 
@@ -76,21 +77,25 @@ class Agente extends Base\Contact
      *
      * @return DinContacto
      */
-    public function getContact()
+    public function getContact(): DinContacto
     {
         $contact = new DinContacto();
         $contact->loadFromCode($this->idcontacto);
         return $contact;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function delete(): bool
+    {
+        if (parent::delete()) {
+            // limpiamos la caché
+            Agentes::clear();
+            return true;
+        }
+
+        return false;
+    }
+
+    public function install(): string
     {
         // needed dependencies
         new DinProducto();
@@ -98,42 +103,33 @@ class Agente extends Base\Contact
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codagente';
     }
 
-    /**
-     * Returns the description of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            Agentes::clear();
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function tableName(): string
     {
         return 'agentes';
     }
 
-    /**
-     * Check employee / agent data, return TRUE if correct.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $this->cargo = $this->toolBox()->utils()->noHtml($this->cargo);
 
@@ -149,13 +145,7 @@ class Agente extends Base\Contact
         return parent::test();
     }
 
-    /**
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codagente)) {
             $this->codagente = (string)$this->newCode();

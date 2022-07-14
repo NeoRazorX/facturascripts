@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -218,9 +218,6 @@ class Contacto extends Base\Contact
         }
     }
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -240,7 +237,7 @@ class Contacto extends Base\Contact
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
     {
         $results = [];
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
@@ -252,9 +249,6 @@ class Contacto extends Base\Contact
         return $results;
     }
 
-    /**
-     * @return string
-     */
     public function country(): string
     {
         $country = new DinPais();
@@ -291,6 +285,7 @@ class Contacto extends Base\Contact
         if ($create) {
             // creates a new customer
             $cliente->cifnif = $this->cifnif ?? '';
+            $cliente->codagente = $this->codagente;
             $cliente->codproveedor = $this->codproveedor;
             $cliente->email = $this->email;
             $cliente->fax = $this->fax;
@@ -345,14 +340,7 @@ class Contacto extends Base\Contact
         return $proveedor;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // we need this models to be checked before
         new DinAgente();
@@ -369,7 +357,7 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function newLogkey($ipAddress)
+    public function newLogkey($ipAddress): string
     {
         $this->lastactivity = date(self::DATETIME_STYLE);
         $this->lastip = $ipAddress;
@@ -377,72 +365,45 @@ class Contacto extends Base\Contact
         return $this->logkey;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idcontacto';
     }
 
-    /**
-     * Returns the name of the column used to describe this item.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'descripcion';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'contactos';
     }
 
-    /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        if (empty($this->descripcion)) {
-            $this->descripcion = empty($this->codcliente) ? $this->fullName() : $this->direccion;
+        if (empty($this->nombre) && empty($this->email) && empty($this->direccion)) {
+            $this->toolBox()->i18nLog()->warning('empty-contact-data');
+            return false;
         }
 
-        if (empty($this->nombre)) {
-            $this->nombre = $this->descripcion;
+        if (empty($this->descripcion)) {
+            $this->descripcion = empty($this->codcliente) && empty($this->codproveedor) ? $this->fullName() : $this->direccion;
         }
 
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->apellidos = $utils->noHtml($this->apellidos);
-        $this->cargo = $utils->noHtml($this->cargo);
-        $this->ciudad = $utils->noHtml($this->ciudad);
-        $this->direccion = $utils->noHtml($this->direccion);
-        $this->empresa = $utils->noHtml($this->empresa);
-        $this->provincia = $utils->noHtml($this->provincia);
+        $this->apellidos = $utils->noHtml($this->apellidos) ?? '';
+        $this->cargo = $utils->noHtml($this->cargo) ?? '';
+        $this->ciudad = $utils->noHtml($this->ciudad) ?? '';
+        $this->direccion = $utils->noHtml($this->direccion) ?? '';
+        $this->empresa = $utils->noHtml($this->empresa) ?? '';
+        $this->provincia = $utils->noHtml($this->provincia) ?? '';
 
         return $this->testPassword() && parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
     {
         return parent::url($type, $list);
     }
@@ -454,7 +415,7 @@ class Contacto extends Base\Contact
      *
      * @return bool
      */
-    public function verifyLogkey($value)
+    public function verifyLogkey(string $value): bool
     {
         return $this->logkey === $value;
     }

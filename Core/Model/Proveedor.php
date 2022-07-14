@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@ use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\CuentaBancoProveedor as DinCuentaBancoProveedor;
 
 /**
- * A supplier. It can be related to several addresses or sub-accounts.
+ * A supplier. It can be related to several addresses or subaccounts.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -55,9 +55,6 @@ class Proveedor extends Base\ComercialContact
      */
     public $idcontacto;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -65,14 +62,7 @@ class Proveedor extends Base\ComercialContact
         $this->codimpuestoportes = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
     }
 
-    /**
-     * @param string $query
-     * @param string $fieldCode
-     * @param DataBaseWhere[] $where
-     *
-     * @return CodeModel[]
-     */
-    public function codeModelSearch(string $query, string $fieldCode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
     {
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $fields = 'cifnif|codproveedor|email|nombre|observaciones|razonsocial|telefono1|telefono2';
@@ -86,7 +76,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return DinContacto[]
      */
-    public function getAdresses()
+    public function getAdresses(): array
     {
         $contactModel = new DinContacto();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
@@ -98,7 +88,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return DinCuentaBancoProveedor[]
      */
-    public function getBankAccounts()
+    public function getBankAccounts(): array
     {
         $contactAccounts = new DinCuentaBancoProveedor();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
@@ -117,43 +107,31 @@ class Proveedor extends Base\ComercialContact
         return $contact;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codproveedor';
     }
 
-    /**
-     * Returns the description of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'proveedores';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
+        if (empty($this->nombre)) {
+            $this->toolBox()->i18nLog()->warning(
+                'field-can-not-be-null',
+                ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]
+            );
+            return false;
+        }
+
         if (!empty($this->codproveedor) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-alphanumeric-code',
@@ -165,12 +143,7 @@ class Proveedor extends Base\ComercialContact
         return parent::test();
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codproveedor)) {
             $this->codproveedor = (string)$this->newCode();

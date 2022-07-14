@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 
@@ -31,12 +32,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 class ListAsiento extends ListController
 {
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -61,7 +57,7 @@ class ListAsiento extends ListController
     }
 
     /**
-     * Add an modal button for renumber entries
+     * Adds a modal button for renumber entries
      *
      * @param string $viewName
      */
@@ -70,7 +66,7 @@ class ListAsiento extends ListController
         $this->addButton($viewName, [
             'action' => 'renumber',
             'icon' => 'fas fa-sort-numeric-down',
-            'label' => 'renumber-accounting',
+            'label' => 'renumber',
             'type' => 'modal'
         ]);
     }
@@ -86,11 +82,6 @@ class ListAsiento extends ListController
         $this->createViewsJournals();
     }
 
-    /**
-     * Add accounting entries tab
-     *
-     * @param string $viewName
-     */
     protected function createViewsAccountEntries(string $viewName = 'ListAsiento')
     {
         $this->addView($viewName, 'Asiento', 'accounting-entries', 'fas fa-balance-scale');
@@ -102,7 +93,7 @@ class ListAsiento extends ListController
         // filters
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
 
-        $selectExercise = $this->codeModel->all('ejercicios', 'codejercicio', 'nombre');
+        $selectExercise = Ejercicios::codeModel();
         if (count($selectExercise) > 2) {
             $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
         }
@@ -126,12 +117,11 @@ class ListAsiento extends ListController
 
         // buttons
         $this->addLockButton($viewName);
-        $this->addRenumberButton($viewName);
+        if ($this->user->admin) {
+            $this->addRenumberButton($viewName);
+        }
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsConcepts(string $viewName = 'ListConceptoPartida')
     {
         $this->addView($viewName, 'ConceptoPartida', 'predefined-concepts', 'fas fa-indent');
@@ -140,9 +130,6 @@ class ListAsiento extends ListController
         $this->addSearchFields($viewName, ['codconcepto', 'descripcion']);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsJournals(string $viewName = 'ListDiario')
     {
         $this->addView($viewName, 'Diario', 'journals', 'fas fa-book');
@@ -151,9 +138,6 @@ class ListAsiento extends ListController
         $this->addSearchFields($viewName, ['descripcion']);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsNotBalanced(string $viewName = 'ListAsiento-not')
     {
         $idasientos = [];
@@ -191,30 +175,31 @@ class ListAsiento extends ListController
     {
         switch ($action) {
             case 'lock-entries':
-                return $this->lockEntriesAction();
+                $this->lockEntriesAction();
+                return true;
 
             case 'renumber':
-                return $this->renumberAction();
+                $this->renumberAction();
+                return true;
         }
 
         return parent::execPreviousAction($action);
     }
 
-    /**
-     * @return bool
-     */
-    protected function lockEntriesAction(): bool
+    protected function lockEntriesAction(): void
     {
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return true;
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
         }
 
         $codes = $this->request->request->get('code');
         $model = $this->views[$this->active]->model;
         if (false === is_array($codes) || empty($model)) {
             $this->toolBox()->i18nLog()->warning('no-selected-item');
-            return true;
+            return;
         }
 
         $this->dataBase->beginTransaction();
@@ -230,30 +215,33 @@ class ListAsiento extends ListController
             if (false === $model->save()) {
                 $this->toolBox()->i18nLog()->error('record-save-error');
                 $this->dataBase->rollback();
-                return true;
+                return;
             }
         }
 
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         $this->dataBase->commit();
         $model->clear();
-        return true;
     }
 
-    /**
-     * @return bool
-     */
-    protected function renumberAction(): bool
+    protected function renumberAction(): void
     {
-        if (false === $this->permissions->allowUpdate) {
+        if (false === $this->user->admin) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return true;
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
         }
 
+        $this->dataBase->beginTransaction();
         $codejercicio = $this->request->request->get('exercise');
         if ($this->views['ListAsiento']->model->renumber($codejercicio)) {
             $this->toolBox()->i18nLog()->notice('renumber-accounting-ok');
+            $this->dataBase->commit();
+            return;
         }
-        return true;
+
+        $this->dataBase->rollback();
+        $this->toolBox()->i18nLog()->error('record-save-error');
     }
 }

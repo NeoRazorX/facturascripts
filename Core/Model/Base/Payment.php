@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Dinamic\Lib\Accounting\PaymentToAccounting;
@@ -33,43 +34,36 @@ abstract class Payment extends ModelClass
     use AccEntryRelationTrait;
 
     /**
-     *
      * @var bool
      */
     protected $disableAccountingGeneration = false;
 
     /**
-     *
      * @var string
      */
     public $fecha;
 
     /**
-     *
      * @var string
      */
     public $hora;
 
     /**
-     *
      * @var int
      */
     public $idpago;
 
     /**
-     *
      * @var int
      */
     public $idrecibo;
 
     /**
-     *
      * @var float
      */
     public $importe;
 
     /**
-     *
      * @var string
      */
     public $nick;
@@ -79,18 +73,14 @@ abstract class Payment extends ModelClass
     public function clear()
     {
         parent::clear();
-        $this->fecha = \date(self::DATE_STYLE);
-        $this->hora = \date(self::HOUR_STYLE);
+        $this->fecha = date(self::DATE_STYLE);
+        $this->hora = date(self::HOUR_STYLE);
         $this->importe = 0.0;
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
-        /// remove accounting
+        // remove accounting
         $acEntry = $this->getAccountingEntry();
         $acEntry->editable = true;
         if ($acEntry->exists() && false === $acEntry->delete()) {
@@ -101,55 +91,30 @@ abstract class Payment extends ModelClass
         return parent::delete();
     }
 
-    /**
-     * 
-     * @param bool $value
-     */
     public function disableAccountingGeneration(bool $value = true)
     {
         $this->disableAccountingGeneration = $value;
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new Asiento();
 
         return parent::install();
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idpago';
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return empty($this->idasiento) ? $this->getReceipt()->url() : $this->getAccountingEntry()->url();
     }
 
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->idasiento) && !$this->disableAccountingGeneration) {
             $tool = new PaymentToAccounting();

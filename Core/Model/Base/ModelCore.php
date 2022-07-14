@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -64,7 +64,7 @@ abstract class ModelCore
      *
      * @return array
      */
-    abstract public function getModelFields();
+    abstract public function getModelFields(): array;
 
     /**
      * Loads table fields if is necessary.
@@ -79,14 +79,14 @@ abstract class ModelCore
      *
      * @return string
      */
-    abstract public function modelClassName();
+    abstract public function modelClassName(): string;
 
     /**
      * Returns the name of the model.
      *
      * @return string
      */
-    abstract protected function modelName();
+    abstract protected function modelName(): string;
 
     /**
      * Executes all $name methods added from the extensions.
@@ -99,18 +99,28 @@ abstract class ModelCore
     abstract public function pipe($name, ...$arguments);
 
     /**
+     * Executes all $name methods added from the extensions until someone returns false.
+     *
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return bool
+     */
+    abstract public function pipeFalse($name, ...$arguments): bool;
+
+    /**
      * Returns the name of the column that is the model's primary key.
      *
      * @return string
      */
-    abstract public static function primaryColumn();
+    abstract public static function primaryColumn(): string;
 
     /**
      * Returns the name of the table that uses this model.
      *
      * @return string
      */
-    abstract public static function tableName();
+    abstract public static function tableName(): string;
 
     /**
      * ModelClass constructor.
@@ -149,7 +159,7 @@ abstract class ModelCore
      *
      * @return bool
      */
-    public function changePrimaryColumnValue($newValue)
+    public function changePrimaryColumnValue($newValue): bool
     {
         if (empty($newValue) || $newValue == $this->primaryColumnValue()) {
             return true;
@@ -218,7 +228,7 @@ abstract class ModelCore
 
                 case 'integer':
                 case 'int':
-                    $this->{$key} = $this->getIntergerValueForField($field, $value);
+                    $this->{$key} = $this->getIntegerValueForField($field, $value);
                     break;
 
                 case 'decimal':
@@ -305,7 +315,9 @@ abstract class ModelCore
      */
     private function getBoolValueForField($field, $value): ?bool
     {
-        if (in_array(strtolower($value), ['true', 't', '1'], false)) {
+        if (is_bool($value)) {
+            return $value;
+        } elseif (in_array(strtolower($value), ['true', 't', '1'], false)) {
             return true;
         } elseif (in_array(strtolower($value), ['false', 'f', '0'], false)) {
             return false;
@@ -339,7 +351,7 @@ abstract class ModelCore
      *
      * @return int|null
      */
-    private function getIntergerValueForField($field, $value): ?int
+    private function getIntegerValueForField($field, $value): ?int
     {
         if (is_numeric($value)) {
             return (int)$value;
@@ -352,10 +364,7 @@ abstract class ModelCore
         return $field['is_nullable'] === 'NO' ? 0 : null;
     }
 
-    /**
-     * @return ToolBox
-     */
-    protected static function toolBox()
+    protected static function toolBox(): ToolBox
     {
         return new ToolBox();
     }

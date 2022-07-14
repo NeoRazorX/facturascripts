@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,22 +39,12 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 class EditSubcuenta extends EditController
 {
 
-    /**
-     * Returns the class name of the model to use in the editView.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Subcuenta';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -78,14 +68,10 @@ class EditSubcuenta extends EditController
         $this->setLedgerReportValues($viewName);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createDepartureView(string $viewName = 'ListPartidaAsiento')
     {
         $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->views[$viewName]->addOrderBy(['fecha', 'numero'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['fecha', 'numero', 'idpartida'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['partidas.concepto']);
 
         $this->views[$viewName]->addFilterPeriod('date', 'date', 'fecha');
@@ -223,10 +209,6 @@ class EditSubcuenta extends EditController
         }
     }
 
-    /**
-     *
-     * @param BaseView $view
-     */
     protected function prepareSubcuenta(BaseView $view)
     {
         $cuenta = new Cuenta();

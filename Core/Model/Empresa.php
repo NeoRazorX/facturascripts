@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 
@@ -115,9 +117,6 @@ class Empresa extends Base\Contact
      */
     public $web;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -125,48 +124,42 @@ class Empresa extends Base\Contact
         $this->regimeniva = RegimenIVA::defaultValue();
     }
 
-    /**
-     * Removes company from database.
-     *
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-company');
             return false;
         }
 
-        return parent::delete();
+        if (parent::delete()) {
+            // limpiamos la caché
+            Empresas::clear();
+            return true;
+        }
+
+        return false;
     }
 
     /**
      * Returns the bank accounts associated with the company.
-     * 
+     *
      * @return DinCuentaBanco[]
      */
-    public function getBankAccounts()
+    public function getBankAccounts(): array
     {
         $companyAccounts = new DinCuentaBanco();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
         return $companyAccounts->all($where, [], 0, 0);
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new AttachedFile();
 
         $num = mt_rand(1, 9999);
-        $name = \defined('FS_INITIAL_EMPRESA') ? \FS_INITIAL_EMPRESA : 'E-' . $num;
-        $codpais = \defined('FS_INITIAL_CODPAIS') ? \FS_INITIAL_CODPAIS : 'ESP';
+        $name = defined('FS_INITIAL_EMPRESA') ? FS_INITIAL_EMPRESA : 'E-' . $num;
+        $codpais = defined('FS_INITIAL_CODPAIS') ? FS_INITIAL_CODPAIS : 'ESP';
         return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,'
             . 'direccion,administrador,cifnif,nombre,nombrecorto,personafisica,regimeniva)'
             . "VALUES (1,'','" . $codpais . "','','','00000014Z','" . $name . "','" . $name . "','0',"
@@ -178,47 +171,38 @@ class Empresa extends Base\Contact
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
-        return $this->idempresa === (int) $this->toolBox()->appSettings()->get('default', 'idempresa');
+        return $this->idempresa === (int)$this->toolBox()->appSettings()->get('default', 'idempresa');
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idempresa';
     }
 
-    /**
-     * Returns the description of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombrecorto';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            Empresas::clear();
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function tableName(): string
     {
         return 'empresas';
     }
 
-    /**
-     * Check the company's data, return TRUE if correct
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->administrador = $utils->noHtml($this->administrador);
@@ -233,16 +217,16 @@ class Empresa extends Base\Contact
         return parent::test();
     }
 
-    protected function createPaymentMethods()
+    protected function createPaymentMethods(): bool
     {
         $formaPago = new FormaPago();
         $formaPago->codpago = $formaPago->newCode();
         $formaPago->descripcion = $this->toolBox()->i18n()->trans('default');
         $formaPago->idempresa = $this->idempresa;
-        $formaPago->save();
+        return $formaPago->save();
     }
 
-    protected function createWarehouse()
+    protected function createWarehouse(): bool
     {
         $almacen = new Almacen();
         $almacen->apartado = $this->apartado;
@@ -252,30 +236,18 @@ class Empresa extends Base\Contact
         $almacen->codpostal = $this->codpostal;
         $almacen->direccion = $this->direccion;
         $almacen->idempresa = $this->idempresa;
-        $almacen->nombre = $this->nombrecorto;
+        $almacen->nombre = $this->nombrecorto ?? $this->nombre;
         $almacen->provincia = $this->provincia;
         $almacen->telefono = $this->telefono1;
-        $almacen->save();
+        return $almacen->save();
     }
 
-    /**
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->idempresa)) {
             $this->idempresa = $this->newCode();
         }
 
-        if (parent::saveInsert($values)) {
-            $this->createPaymentMethods();
-            $this->createWarehouse();
-            return true;
-        }
-
-        return false;
+        return parent::saveInsert($values) && $this->createPaymentMethods() && $this->createWarehouse();
     }
 }

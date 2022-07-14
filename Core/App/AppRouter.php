@@ -127,8 +127,7 @@ final class AppRouter
         $allowedFolders = ['node_modules', 'vendor', 'Dinamic', 'Core', 'Plugins', 'MyFiles/Public'];
         foreach ($allowedFolders as $folder) {
             if ('/' . $folder === substr($uri, 0, 1 + strlen($folder))) {
-                header('Content-Type: ' . $this->getMime($filePath));
-                readfile($filePath);
+                $this->download($filePath);
                 return true;
             }
         }
@@ -137,14 +136,7 @@ final class AppRouter
         $token = filter_input(INPUT_GET, 'myft');
         $fixedFilePath = substr(urldecode($uri), 1);
         if ('/MyFiles/' === substr($uri, 0, 9) && $token && MyFilesToken::validate($fixedFilePath, $token)) {
-            header('Content-Type: ' . $this->getMime($filePath));
-
-            // disable the buffer if enabled
-            if (ob_get_contents()) {
-                ob_end_flush();
-            }
-
-            readfile($filePath);
+            $this->download($filePath);
             return true;
         }
 
@@ -160,9 +152,9 @@ final class AppRouter
     {
         $parts = explode('.', $filePath);
         $safe = [
-            'avi', 'css', 'csv', 'eot', 'gif', 'gz', 'ico', 'jpeg', 'jpg', 'js',
-            'json', 'map', 'mkv', 'mp4', 'ogg', 'pdf', 'png', 'sql', 'svg',
-            'ttf', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
+            'accdb', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'ico', 'jpeg', 'jpg', 'js',
+            'json', 'map', 'mdb', 'mkv', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf', 'png', 'sql', 'svg',
+            'ttf', 'txt', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
         ];
         return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
     }
@@ -205,6 +197,25 @@ final class AppRouter
         }
     }
 
+    private function download(string $filePath)
+    {
+        header('Content-Type: ' . $this->getMime($filePath));
+
+        // disable the buffer if enabled
+        if (ob_get_contents()) {
+            ob_end_flush();
+        }
+
+        // force to download svg, xml and xsig files to prevent XSS attacks
+        $info = pathinfo($filePath);
+        $extension = strtolower($info['extension']);
+        if (in_array($extension, ['svg', 'xml', 'xsig'])) {
+            header('Content-Disposition: attachment; filename="' . basename($filePath) . '"');
+        }
+
+        readfile($filePath);
+    }
+
     /**
      * Return the mime type from given file.
      *
@@ -214,12 +225,18 @@ final class AppRouter
      */
     private function getMime(string $filePath): string
     {
-        if ('.css' === substr($filePath, -4)) {
-            return 'text/css';
-        }
+        $info = pathinfo($filePath);
+        $extension = strtolower($info['extension']);
+        switch ($extension) {
+            case 'css':
+                return 'text/css';
 
-        if ('.js' === substr($filePath, -3)) {
-            return 'application/javascript';
+            case 'js':
+                return 'application/javascript';
+
+            case 'xml':
+            case 'xsig':
+                return 'text/xml';
         }
 
         return mime_content_type($filePath);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -127,7 +127,9 @@ class NewMail
 
         $this->mail->Host = $appSettings->get('email', 'host');
         $this->mail->Port = $appSettings->get('email', 'port');
-        $this->mail->Username = $appSettings->get('email', 'user') ? $appSettings->get('email', 'user') : $appSettings->get('email', 'email');
+        $this->mail->Username = $appSettings->get('email', 'user') ?
+            $appSettings->get('email', 'user') :
+            $appSettings->get('email', 'email');
         $this->mail->Password = $appSettings->get('email', 'password');
         $this->lowsecure = (bool)$appSettings->get('email', 'lowsecure');
 
@@ -224,9 +226,6 @@ class NewMail
         return !empty($this->fromEmail) && !empty($this->mail->Password) && !empty($this->mail->Host);
     }
 
-    /**
-     * @return array
-     */
     public function getAttachmentNames(): array
     {
         $names = [];
@@ -247,9 +246,6 @@ class NewMail
         return empty($this->fromEmail) ? [] : [$this->fromEmail];
     }
 
-    /**
-     * @return array
-     */
     public function getBCCAddresses(): array
     {
         $addresses = [];
@@ -260,9 +256,6 @@ class NewMail
         return $addresses;
     }
 
-    /**
-     * @return array
-     */
     public function getCCAddresses(): array
     {
         $addresses = [];
@@ -273,9 +266,6 @@ class NewMail
         return $addresses;
     }
 
-    /**
-     * @return array
-     */
     public function getToAddresses(): array
     {
         $addresses = [];
@@ -315,9 +305,6 @@ class NewMail
         return false;
     }
 
-    /**
-     * @param string $emailFrom
-     */
     public function setMailbox(string $emailFrom)
     {
     }
@@ -330,11 +317,6 @@ class NewMail
         $this->fromNick = $user->nick;
     }
 
-    /**
-     * @param string $emails
-     *
-     * @return array
-     */
     public static function splitEmails(string $emails): array
     {
         $return = [];
@@ -362,31 +344,22 @@ class NewMail
                 return $this->mail->smtpConnect($this->smtpOptions());
 
             default:
-                $this->toolBox()->i18nLog()->warning('not-implemented');
+                $this->toolBox()->i18nLog()->warning('test-' . $this->mail->Mailer . '-not-implemented');
                 return false;
         }
     }
 
-    /**
-     * @return array
-     */
     protected function getFooterBlocks(): array
     {
         $signature = $this->toolBox()->utils()->fixHtml($this->signature);
         return array_merge([new TextBlock($signature)], $this->footerBlocks);
     }
 
-    /**
-     * @return array
-     */
     protected function getMainBlocks(): array
     {
         return array_merge([new TextBlock($this->text)], $this->mainBlocks);
     }
 
-    /**
-     * @return string
-     */
     protected function renderHTML(): string
     {
         $webRender = new WebRender();
@@ -403,10 +376,10 @@ class NewMail
 
     protected function saveMailSent()
     {
-        /// get all email address
+        // get all email address
         $addresses = array_merge($this->getToAddresses(), $this->getCcAddresses(), $this->getBccAddresses());
 
-        /// save email sent
+        // save email sent
         foreach (array_unique($addresses) as $address) {
             $emailSent = new EmailSent();
             $emailSent->addressee = $address;
@@ -438,9 +411,6 @@ class NewMail
         return [];
     }
 
-    /**
-     * @return ToolBox
-     */
     protected function toolBox(): ToolBox
     {
         return new ToolBox();

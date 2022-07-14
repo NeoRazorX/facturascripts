@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -41,17 +41,11 @@ class DebugBar extends DumbBar
      */
     private static $init = [];
 
-    /**
-     * @param string $task
-     */
     public static function end(string $task = '')
     {
         self::$end[$task] = microtime(true);
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
         $items = [];
@@ -65,38 +59,23 @@ class DebugBar extends DumbBar
         return '<div class="debugbar"><ul>' . $this->renderItems($items) . '</ul>' . $this->renderSections($items) . '</div>';
     }
 
-    /**
-     * @return string
-     */
     public function renderHead(): string
     {
         return '<link rel="stylesheet" href="' . FS_ROUTE . '/Dinamic/Assets/CSS/debugbar.css" />'
             . '<script src="' . FS_ROUTE . '/Dinamic/Assets/JS/DebugBar.js"></script>';
     }
 
-    /**
-     * @param string $task
-     */
     public static function start(string $task = '')
     {
         self::$init[$task] = microtime(true);
     }
 
-    /**
-     * @param array $items
-     * @param string $label
-     * @param array $data
-     * @param bool $counter
-     */
     private function addItem(array &$items, string $label, array $data, bool $counter = false)
     {
         $key = 1 + count($items);
         $items[$key] = ['label' => $label, 'data' => $data, 'counter' => $counter];
     }
 
-    /**
-     * @param array $items
-     */
     private function addItemAssets(array &$items)
     {
         foreach (['css', 'js'] as $type) {
@@ -108,9 +87,6 @@ class DebugBar extends DumbBar
         }
     }
 
-    /**
-     * @param array $items
-     */
     private function addItemInputs(array &$items)
     {
         $inputs = [
@@ -127,6 +103,11 @@ class DebugBar extends DumbBar
             $label = '<i class="fas fa-keyboard"></i> ' . $type;
             $data = [];
             foreach ($rows as $key => $value) {
+                if (is_array($value)) {
+                    $data[] = [$key, json_encode($value)];
+                    continue;
+                }
+
                 $data[] = [$key, $value];
             }
 
@@ -134,9 +115,6 @@ class DebugBar extends DumbBar
         }
     }
 
-    /**
-     * @param array $items
-     */
     private function addItemLogs(array &$items)
     {
         $channels = [];
@@ -164,9 +142,6 @@ class DebugBar extends DumbBar
         }
     }
 
-    /**
-     * @param array $items
-     */
     private function addItemMemory(array &$items)
     {
         $usage = memory_get_usage();
@@ -181,9 +156,6 @@ class DebugBar extends DumbBar
         $this->addItem($items, $label, $data);
     }
 
-    /**
-     * @param array $items
-     */
     private function addItemTimer(array &$items)
     {
         $totalTime = microtime(true) - self::$init[''];
@@ -202,9 +174,6 @@ class DebugBar extends DumbBar
         $this->addItem($items, $label, $data);
     }
 
-    /**
-     * @param array $items
-     */
     private function addItemTranslations(array &$items)
     {
         $i18n = new Translator();
@@ -215,22 +184,19 @@ class DebugBar extends DumbBar
         }
     }
 
-    /**
-     * @param int $size
-     *
-     * @return string
-     */
     private function getSize(int $size): string
     {
         $unit = ['b', 'kb', 'mb', 'gb', 'tb', 'pb'];
         return round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . $unit[$i];
     }
 
-    /**
-     * @param array $items
-     *
-     * @return string
-     */
+    private function noHtml(string $string): string
+    {
+        return str_replace(
+            ['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&#39;'], $string
+        );
+    }
+
     private function renderItems(array $items): string
     {
         $html = '<li class="debugbar-item debugbar-minimize">'
@@ -249,11 +215,6 @@ class DebugBar extends DumbBar
         return $html;
     }
 
-    /**
-     * @param array $items
-     *
-     * @return string
-     */
     private function renderSections(array $items): string
     {
         $html = '';
@@ -266,11 +227,6 @@ class DebugBar extends DumbBar
         return $html;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return string
-     */
     private function renderTable(array $data): string
     {
         $html = '';
@@ -278,13 +234,13 @@ class DebugBar extends DumbBar
         foreach ($data as $row) {
             $count++;
             if (false === is_array($row)) {
-                $html .= '<tr><td>' . $row . '</td></tr>';
+                $html .= '<tr><td>' . $this->noHtml($row) . '</td></tr>';
                 continue;
             }
 
             $html .= '<tr><td>#' . $count . '</td>';
             foreach ($row as $cell) {
-                $html .= is_array($cell) ? '<td>' . var_export($cell, true) . '</td>' : '<td>' . $cell . '</td>';
+                $html .= is_array($cell) ? '<td>' . var_export($cell, true) . '</td>' : '<td>' . $this->noHtml($cell) . '</td>';
             }
             $html .= '</tr>';
         }

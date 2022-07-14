@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
+
+use FacturaScripts\Core\Base\Utils;
 
 /**
  * Description of WidgetLink
@@ -28,18 +31,19 @@ class WidgetLink extends WidgetText
 {
 
     /**
-     *
      * @param string $inside
      * @param string $titleurl
      *
      * @return string
      */
-    protected function onclickHtml($inside, $titleurl = '')
+    protected function onclickHtml($inside, $titleurl = ''): string
     {
         if (empty($this->value)) {
             return empty($titleurl) ? $inside : '<a href="' . $titleurl . '">' . $inside . '</a>';
         }
 
-        return '<a target="_blank" href="' . $this->value . '" class="cancelClickable">' . $inside . '</a>';
+        return Utils::isValidUrl($this->value) ?
+            '<a target="_blank" href="' . $this->value . '" class="cancelClickable">' . $inside . '</a>' :
+            $inside;
     }
 }

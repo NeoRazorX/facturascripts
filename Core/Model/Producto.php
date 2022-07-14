@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Variante as DinVariante;
 
 /**
  * Stores the data of an article.
@@ -168,9 +169,6 @@ class Producto extends Base\ModelClass
      */
     public $ventasinstock;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -188,26 +186,19 @@ class Producto extends Base\ModelClass
     }
 
     /**
-     * @return Variante[]
+     * @return DinVariante[]
      */
-    public function getVariants()
+    public function getVariants(): array
     {
-        $variantModel = new Variante();
+        $variantModel = new DinVariante();
         $where = [new DataBaseWhere('idproducto', $this->idproducto)];
         return $variantModel->all($where, [], 0, 0);
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         /**
-         * The articles table has several foreign keys, so we must force the checking of those tables.
+         * products table has several foreign keys, so we must force the checking of those tables.
          */
         new Fabricante();
         new Familia();
@@ -216,36 +207,22 @@ class Producto extends Base\ModelClass
         return parent::install();
     }
 
-    /**
-     * @return float
-     */
-    public function priceWithTax()
+    public function priceWithTax(): float
     {
         return $this->precio * (100 + $this->getTax()->iva) / 100;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idproducto';
     }
 
-    /**
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'referencia';
     }
 
-    /**
-     * @param float $price
-     */
-    public function setPriceWithTax($price)
+    public function setPriceWithTax(float $price)
     {
         $newPrice = (100 * $price) / (100 + $this->getTax()->iva);
         foreach ($this->getVariants() as $variant) {
@@ -258,29 +235,24 @@ class Producto extends Base\ModelClass
         $this->precio = round($newPrice, self::ROUND_DECIMALS);
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'productos';
     }
 
-    /**
-     * Returns True if the article's data is correct.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
         $this->observaciones = $utils->noHtml($this->observaciones);
         $this->referencia = $utils->noHtml($this->referencia);
 
-        if (strlen($this->referencia) < 1 || strlen($this->referencia) > 30) {
+        if (empty($this->referencia)) {
+            // obtenemos una nueva referencia de variantes, en lugar del producto
+            $variant = new DinVariante();
+            $this->referencia = (string)$variant->newCode('referencia');
+        }
+        if (strlen($this->referencia) > 30) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
@@ -317,7 +289,6 @@ class Producto extends Base\ModelClass
     {
         $newPrecio = 0.0;
         $newReferencia = null;
-
         foreach ($this->getVariants() as $variant) {
             if ($variant->referencia == $this->referencia || is_null($newReferencia)) {
                 $newPrecio = $variant->precio;
@@ -333,27 +304,22 @@ class Producto extends Base\ModelClass
         }
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
-        if (parent::saveInsert($values)) {
-            $variant = new Variante();
-            $variant->idproducto = $this->idproducto;
-            $variant->precio = $this->precio;
-            $variant->referencia = $this->referencia;
-            $variant->stockfis = $this->stockfis;
-            if ($variant->save()) {
-                return true;
-            }
-
-            $this->delete();
+        if (false === parent::saveInsert($values)) {
             return false;
         }
 
+        $variant = new DinVariante();
+        $variant->idproducto = $this->idproducto;
+        $variant->precio = $this->precio;
+        $variant->referencia = $this->referencia;
+        $variant->stockfis = $this->stockfis;
+        if ($variant->save()) {
+            return true;
+        }
+
+        $this->delete();
         return false;
     }
 }

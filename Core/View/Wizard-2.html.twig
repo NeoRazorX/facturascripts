@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -80,15 +80,15 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-sm-4">
-                            <div class="form-group form-check">
+                        <div class="col-sm-auto">
+                            <div class="form-group form-check pr-3">
                                 <input type="checkbox" name="defaultplan" value="1" id="checkboxPlan"
                                        class="form-check-input" checked=""/>
                                 <label for="checkboxPlan">{{ i18n.trans('load-def-acc-plan') }}</label>
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="form-group form-check">
+                        <div class="col-sm-auto">
+                            <div class="form-group form-check pr-3">
                                 {% if appSettings.get('default', 'ventasinstock') %}
                                     <input type="checkbox" name="ventasinstock" value="1" id="cbNoStock"
                                            class="form-check-input" checked=""/>
@@ -99,7 +99,7 @@
                                 <label for="cbNoStock">{{ i18n.trans('allow-sale-without-stock-n') }}</label>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-auto">
                             <div class="form-group form-check">
                                 {% if appSettings.get('default', 'updatesupplierprices') %}
                                     <input type="checkbox" name="updatesupplierprices" value="1"
@@ -137,7 +137,7 @@
         $(document).ready(function () {
             $("#formWizard").submit(function () {
                 $("#btnWizard").prop('disabled', true);
-                $("#btnWizard").html('<i class="fas fa-spinner fa-spin"></i>');
+                $("#btnWizard").html('<i class="fas fa-circle-notch fa-spin"></i>');
             });
         });
     </script>

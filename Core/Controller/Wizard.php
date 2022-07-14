@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -47,12 +47,7 @@ class Wizard extends Controller
      */
     protected $appSettings;
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -62,9 +57,6 @@ class Wizard extends Controller
         return $data;
     }
 
-    /**
-     * @return array
-     */
     public function getRegimenIva(): array
     {
         return RegimenIVA::all();
@@ -142,6 +134,10 @@ class Wizard extends Controller
 
         $role->save();
         $this->addPagesToRole($role->codrole);
+
+        // asignamos este rol como el predeterminado
+        $this->appSettings->set('default', 'codrole', $role->codrole);
+        $this->appSettings->save();
     }
 
     /**
@@ -297,11 +293,6 @@ class Wizard extends Controller
         $this->setWarehouse($almacen, $codpais);
     }
 
-    /**
-     * @param string $email
-     *
-     * @return bool
-     */
     private function saveEmail(string $email): bool
     {
         if (empty($this->empresa->email)) {
@@ -410,10 +401,6 @@ class Wizard extends Controller
         $this->finalRedirect();
     }
 
-    /**
-     * @param Model\Almacen $almacen
-     * @param string $codpais
-     */
     private function setWarehouse(Model\Almacen $almacen, string $codpais): void
     {
         $almacen->ciudad = $this->empresa->ciudad;

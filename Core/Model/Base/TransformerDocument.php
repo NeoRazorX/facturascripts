@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -63,7 +63,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return TransformerDocument[]
      */
-    public function childrenDocuments()
+    public function childrenDocuments(): array
     {
         $children = [];
         $keys = [];
@@ -103,7 +103,7 @@ abstract class TransformerDocument extends BusinessDocument
         $this->editable = true;
 
         // select default status
-        foreach ($this->getAvaliableStatus() as $status) {
+        foreach ($this->getAvailableStatus() as $status) {
             if ($status->predeterminado) {
                 $this->idestado = $status->idestado;
                 $this->editable = $status->editable;
@@ -125,14 +125,14 @@ abstract class TransformerDocument extends BusinessDocument
         }
 
         // we check if there is already an open transaction so as not to break it
-        $newTransation = false === static::$dataBase->inTransaction() && self::$dataBase->beginTransaction();
+        $newTransaction = false === static::$dataBase->inTransaction() && self::$dataBase->beginTransaction();
 
         // remove lines to update stock
         foreach ($this->getLines() as $line) {
             if ($line->delete()) {
                 continue;
             }
-            if ($newTransation) {
+            if ($newTransaction) {
                 self::$dataBase->rollback();
             }
             return false;
@@ -140,7 +140,7 @@ abstract class TransformerDocument extends BusinessDocument
 
         // remove this model
         if (false === parent::delete()) {
-            if ($newTransation) {
+            if ($newTransaction) {
                 self::$dataBase->rollback();
             }
             return false;
@@ -153,7 +153,7 @@ abstract class TransformerDocument extends BusinessDocument
 
         // change parent doc status
         foreach ($parents as $parent) {
-            foreach ($parent->getAvaliableStatus() as $status) {
+            foreach ($parent->getAvailableStatus() as $status) {
                 if ($status->predeterminado) {
                     $parent->idestado = $status->idestado;
                     $parent->save();
@@ -172,32 +172,41 @@ abstract class TransformerDocument extends BusinessDocument
             'model-data' => $this->toArray()
         ]);
 
-        if ($newTransation) {
+        if ($newTransaction) {
             self::$dataBase->commit();
         }
         return true;
     }
 
     /**
-     * Returns all avaliable status for this type of document.
+     * Returns all available status for this type of document.
      *
      * @return EstadoDocumento[]
      */
-    public function getAvaliableStatus()
+    public function getAvailableStatus(): array
     {
         if (null === self::$estados) {
             $statusModel = new EstadoDocumento();
             self::$estados = $statusModel->all([], ['idestado' => 'ASC'], 0, 0);
         }
 
-        $avaliables = [];
+        $available = [];
         foreach (self::$estados as $status) {
             if ($status->tipodoc === $this->modelClassName()) {
-                $avaliables[] = $status;
+                $available[] = $status;
             }
         }
 
-        return $avaliables;
+        return $available;
+    }
+
+    /**
+     * @return EstadoDocumento[]
+     * @deprecated since 2022
+     */
+    public function getAvaliableStatus(): array
+    {
+        return $this->getAvailableStatus();
     }
 
     /**
@@ -212,14 +221,7 @@ abstract class TransformerDocument extends BusinessDocument
         return $status;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new EstadoDocumento();
@@ -232,7 +234,7 @@ abstract class TransformerDocument extends BusinessDocument
      *
      * @return TransformerDocument[]
      */
-    public function parentDocuments()
+    public function parentDocuments(): array
     {
         $parents = [];
         $keys = [];
@@ -275,9 +277,6 @@ abstract class TransformerDocument extends BusinessDocument
         return parent::save();
     }
 
-    /**
-     * @param bool $value
-     */
     public function setDocumentGeneration(bool $value)
     {
         self::$documentGeneration = $value;

@@ -50,7 +50,7 @@
                     <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal"
                             data-target="#modalTelemetry">
                         <i class="fas fa-registered fa-fw" aria-hidden="true"></i>
-                        <span class="d-none d-md-inline-block">{{ i18n.trans('register-installation') }} </span>
+                        <span class="d-none d-md-inline-block">{{ i18n.trans('manage-installation') }} </span>
                     </button>
                 {% else %}
                     <button class="btn btn-sm btn-warning" type="button" data-toggle="modal"
@@ -84,23 +84,26 @@
                     <td>{{ item.name }}</td>
                     <td>{{ item.description }}</td>
                     <td class="text-right">
-                        {% if item.downloaded %}
+                        {% if item.mincore > fsc.getCoreVersion() %}
+                            {{ i18n.trans('requires-core', {'%version%': item.mincore}) }}
+                        {% elseif item.downloaded %}
                             <a href="{{ fsc.url() }}?action=update&item={{ item.id }}" class="btn btn-sm btn-success">
                                 <i class="fas fa-rocket fa-fw" aria-hidden="true"></i> {{ i18n.trans('update') }}
                             </a>
                             <a href="{{ fsc.url() }}?action=cancel&item={{ item.id }}" class="btn btn-sm btn-warning">
                                 <i class="fas fa-times fa-fw" aria-hidden="true"></i> {{ i18n.trans('cancel') }}
                             </a>
+                        {% elseif item.name == 'CORE' and fsc.coreUpdateWarnings %}
+                            <button type="button" class="btn btn-warning" data-toggle="modal"
+                                    data-target="#coreWarningModal">{{ i18n.trans('download') }}
+                            </button>
                         {% elseif item.stable %}
                             <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
-                               class="btn btn-sm btn-secondary">
-                                <i class="fas fa-cloud-download-alt fa-fw"
-                                   aria-hidden="true"></i> {{ i18n.trans('download') }}
+                               class="btn btn-sm btn-secondary">{{ i18n.trans('download') }}
                             </a>
                         {% else %}
                             <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
-                               class="btn btn-sm btn-outline-warning">
-                                <i class="fas fa-flask fa-fw" aria-hidden="true"></i> {{ i18n.trans('beta') }}
+                               class="btn btn-sm btn-outline-warning">{{ i18n.trans('beta') }}
                             </a>
                         {% endif %}
                     </td>
@@ -126,9 +129,21 @@
                     <div class="modal-body">
                         <p>{{ i18n.trans('registered-installation-p') }}</p>
                         <p>{{ i18n.trans('telemetry-data-to-send') }}</p>
-                        <a class="btn btn-primary" href="{{ fsc.url() }}?action=claim-install" target="_blank">
-                            {{ i18n.trans('manage') }}
-                        </a>
+                        <div class="form-row">
+                            <div class="col">
+                                <a class="btn btn-primary" href="{{ fsc.url() }}?action=claim-install" target="_blank">
+                                    {{ i18n.trans('manage') }}
+                                </a>
+                            </div>
+                            <div class="col text-right">
+                                <form action="{{ fsc.url() }}" method="post">
+                                    <input type="hidden" name="action" value="unlink"/>
+                                    <button type="submit" class="btn btn-danger">
+                                        {{ i18n.trans('unlink') }}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 {% else %}
                     <form action="{{ fsc.url() }}" method="post">
@@ -152,4 +167,37 @@
             </div>
         </div>
     </div>
+    {% if fsc.coreUpdateWarnings %}
+        <div class="modal fade" id="coreWarningModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-triangle mr-1" aria-hidden="true"></i>
+                            {{ i18n.trans('core-update-warning') }}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="mb-0">
+                            {% for message in fsc.coreUpdateWarnings %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        {% for item in fsc.updaterItems %}
+                            {% if item.name == 'CORE' and fsc.coreUpdateWarnings %}
+                                <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&disable={{ fsc.coreUpdateWarnings | keys | join(',') }}"
+                                   class="btn btn-warning">{{ i18n.trans('download') }}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

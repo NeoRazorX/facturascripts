@@ -47,7 +47,7 @@ final class GrupoClientesTest extends TestCase
         $this->assertTrue($group->delete(), 'customer-group-cant-delete');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\Translator;
  * Interface for each of the compatible database engines
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class DataBaseEngine
 {
@@ -200,7 +200,7 @@ abstract class DataBaseEngine
     }
 
     /**
-     * 
+     *
      * @param mixed  $link
      * @param string $tableName
      * @param array  $fields

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use FacturaScripts\Dinamic\Model\Stock as DinStock;
@@ -35,7 +37,7 @@ class Variante extends Base\ModelClass
     use Base\ProductRelationTrait;
 
     /**
-     * Barcode. Maximun 20 characteres.
+     * Barcode. Maximum 20 characters.
      *
      * @var string
      */
@@ -84,7 +86,6 @@ class Variante extends Base\ModelClass
     public $idvariante;
 
     /**
-     *
      * @var float
      */
     public $margen;
@@ -110,9 +111,6 @@ class Variante extends Base\ModelClass
      */
     public $stockfis;
 
-    /**
-     * Sets default values.
-     */
     public function clear()
     {
         parent::clear();
@@ -123,25 +121,29 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
-     * @param string          $query
-     * @param string          $fieldcode
+     * @param string $query
+     * @param string $fieldCode
      * @param DataBaseWhere[] $where
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldcode = '', $where = [])
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
     {
         $results = [];
-        $field = empty($fieldcode) ? $this->primaryColumn() : $fieldcode;
-        $find = $this->toolBox()->utils()->noHtml(\mb_strtolower($query, 'UTF8'));
+        $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
+        $find = $this->toolBox()->utils()->noHtml(mb_strtolower($query, 'UTF8'));
+
+        // añadimos opciones al inicio del where
+        array_unshift($where,
+            new DataBaseWhere('LOWER(v.referencia)', $find . '%', 'LIKE'),
+            new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
+            new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
+        );
 
         $sql = "SELECT v." . $field . " AS code, p.descripcion AS description, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3, v.idatributovalor4"
             . " FROM " . static::tableName() . " v"
             . " LEFT JOIN " . DinProducto::tableName() . " p ON v.idproducto = p.idproducto"
-            . " WHERE LOWER(v.referencia) LIKE '" . $find . "%'"
-            . " OR LOWER(v.codbarras) = '" . $find . "'"
-            . " OR LOWER(p.descripcion) LIKE '%" . $find . "%'"
+            . DataBaseWhere::getSQLWhere($where)
             . " ORDER BY v." . $field . " ASC";
 
         foreach (self::$dataBase->selectLimit($sql, CodeModel::ALL_LIMIT) as $data) {
@@ -158,27 +160,19 @@ class Variante extends Base\ModelClass
         return $results;
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function description(bool $onlyAttributes = false)
+    public function description(bool $onlyAttributes = false): string
     {
         $description = $onlyAttributes ? '' : $this->getProducto()->descripcion;
         return $this->getAttributeDescription(
-                $this->idatributovalor1,
-                $this->idatributovalor2,
-                $this->idatributovalor3,
-                $this->idatributovalor4,
-                $description
+            $this->idatributovalor1,
+            $this->idatributovalor2,
+            $this->idatributovalor3,
+            $this->idatributovalor4,
+            $description
         );
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->referencia == $this->getProducto()->referencia) {
             $this->toolBox()->i18nLog()->warning('you-cant-delete-primary-variant');
@@ -189,43 +183,35 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
-     * @param int    $idAttVal1
-     * @param int    $idAttVal2
-     * @param int    $idAttVal3
-     * @param int    $idAttVal4
+     * @param int $idAttVal1
+     * @param int $idAttVal2
+     * @param int $idAttVal3
+     * @param int $idAttVal4
      * @param string $description
      * @param string $separator1
      * @param string $separator2
      *
      * @return string
      */
-    protected function getAttributeDescription($idAttVal1, $idAttVal2, $idAttVal3, $idAttVal4, $description = '', $separator1 = "\n", $separator2 = ', ')
+    protected function getAttributeDescription($idAttVal1, $idAttVal2, $idAttVal3, $idAttVal4, $description = '', $separator1 = "\n", $separator2 = ', '): string
     {
-        $atributeValue = new DinAtributoValor();
+        $attributeValue = new DinAtributoValor();
         $extra = [];
         foreach ([$idAttVal1, $idAttVal2, $idAttVal3, $idAttVal4] as $id) {
-            if (!empty($id) && $atributeValue->loadFromCode($id)) {
-                $extra[] = $atributeValue->descripcion;
+            if (!empty($id) && $attributeValue->loadFromCode($id)) {
+                $extra[] = $attributeValue->descripcion;
             }
         }
 
-        /// compose text
+        // compose text
         if (empty($description)) {
-            return \implode($separator2, $extra);
+            return implode($separator2, $extra);
         }
 
-        return empty($extra) ? $description : \implode($separator1, [$description, \implode($separator2, $extra)]);
+        return empty($extra) ? $description : implode($separator1, [$description, implode($separator2, $extra)]);
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         new DinProducto();
         new DinAtributoValor();
@@ -234,7 +220,6 @@ class Variante extends Base\ModelClass
     }
 
     /**
-     * 
      * @return float
      */
     public function priceWithTax()
@@ -242,30 +227,17 @@ class Variante extends Base\ModelClass
         return $this->precio * (100 + $this->getProducto()->getTax()->iva) / 100;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idvariante';
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'referencia';
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function save()
+    public function save(): bool
     {
         if ($this->margen > 0) {
             $newPrice = $this->coste * (100 + $this->margen) / 100;
@@ -280,35 +252,26 @@ class Variante extends Base\ModelClass
         return false;
     }
 
-    /**
-     * 
-     * @param float $price
-     */
-    public function setPriceWithTax($price)
+    public function setPriceWithTax(float $price)
     {
         $newPrice = (100 * $price) / (100 + $this->getProducto()->getTax()->iva);
-        $this->precio = \round($newPrice, DinProducto::ROUND_DECIMALS);
+        $this->precio = round($newPrice, DinProducto::ROUND_DECIMALS);
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'variantes';
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->referencia = $utils->noHtml($this->referencia);
-        if (\strlen($this->referencia) < 1 || \strlen($this->referencia) > 30) {
+
+        if (empty($this->referencia)) {
+            $this->referencia = (string)$this->newCode('referencia');
+        }
+        if (strlen($this->referencia) > 30) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
                 ['%value%' => $this->referencia, '%column%' => 'referencia', '%min%' => '1', '%max%' => '30']
@@ -320,40 +283,27 @@ class Variante extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getProducto()->url($type);
     }
 
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
-        if (parent::saveInsert($values)) {
-            /// set new stock?
-            if ($this->stockfis != 0.0) {
-                $stock = new DinStock();
-                $stock->cantidad = $this->stockfis;
-                $stock->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
-                $stock->idproducto = $this->idproducto;
-                $stock->referencia = $this->referencia;
-                $stock->save();
-            }
-
-            return true;
+        if (false === parent::saveInsert($values)) {
+            return false;
         }
 
-        return false;
+        // set new stock?
+        if ($this->stockfis != 0.0) {
+            $stock = new DinStock();
+            $stock->cantidad = $this->stockfis;
+            $stock->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
+            $stock->idproducto = $this->idproducto;
+            $stock->referencia = $this->referencia;
+            $stock->save();
+        }
+
+        return true;
     }
 }

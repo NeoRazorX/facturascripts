@@ -50,10 +50,7 @@ class Ciudad extends Base\ModelClass
      */
     public $idprovincia;
 
-    /**
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependency
         new Provincia();
@@ -61,40 +58,23 @@ class Ciudad extends Base\ModelClass
         return parent::install();
     }
 
-    /**
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idciudad';
     }
 
-    /**
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'ciudades';
     }
 
-    /**
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $this->ciudad = self::toolBox()::utils()::noHtml($this->ciudad);
         return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListPais?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
         return parent::url($type, $list);
     }

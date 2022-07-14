@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,20 +35,15 @@ class ReportBalance extends Base\ReportAccounting
     const SUBTYPE_NORMAL = 'normal';
 
     /**
-     *
      * @var string
      */
     public $type;
 
     /**
-     *
      * @var string
      */
     public $subtype;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -56,20 +51,11 @@ class ReportBalance extends Base\ReportAccounting
         $this->subtype = self::SUBTYPE_ABBREVIATED;
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'reportsbalance';
     }
 
-    /**
-     *
-     * @return array
-     */
     public static function typeList(): array
     {
         $i18n = self::toolBox()->i18n();
@@ -80,10 +66,6 @@ class ReportBalance extends Base\ReportAccounting
         ];
     }
 
-    /**
-     *
-     * @return array
-     */
     public static function subtypeList(): array
     {
         $i18n = self::toolBox()->i18n();

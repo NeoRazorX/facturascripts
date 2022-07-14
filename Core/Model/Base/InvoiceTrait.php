@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -80,9 +80,9 @@ trait InvoiceTrait
      */
     private $refunds;
 
-    abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50);
+    abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array;
 
-    abstract public function getReceipts();
+    abstract public function getReceipts(): array;
 
     /**
      * @return bool
@@ -117,7 +117,7 @@ trait InvoiceTrait
     /**
      * @return static[]
      */
-    public function getRefunds()
+    public function getRefunds(): array
     {
         if (empty($this->idfactura)) {
             return [];
@@ -138,7 +138,7 @@ trait InvoiceTrait
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         $sql = parent::install();
         new Asiento();
@@ -146,9 +146,6 @@ trait InvoiceTrait
         return $sql;
     }
 
-    /**
-     * @return bool
-     */
     public function paid(): bool
     {
         return $this->pagada;
@@ -159,7 +156,7 @@ trait InvoiceTrait
      *
      * @return TransformerDocument[]
      */
-    public function parentDocuments()
+    public function parentDocuments(): array
     {
         $parents = parent::parentDocuments();
         $where = [new DataBaseWhere('idfactura', $this->idfacturarect)];
@@ -182,7 +179,7 @@ trait InvoiceTrait
      *
      * @return string
      */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idfactura';
     }
@@ -226,10 +223,7 @@ trait InvoiceTrait
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    protected function onChangeTotal()
+    protected function onChangeTotal(): bool
     {
         // remove accounting entry
         $asiento = $this->getAccountingEntry();

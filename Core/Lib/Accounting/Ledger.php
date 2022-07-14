@@ -50,7 +50,7 @@ class Ledger extends AccountingBase
      *
      * @return array
      */
-    public function generate(string $dateFrom, string $dateTo, array $params = [])
+    public function generate(string $dateFrom, string $dateTo, array $params = []): array
     {
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
@@ -133,7 +133,7 @@ class Ledger extends AccountingBase
      *
      * @return array
      */
-    protected function getData(array $params = [])
+    protected function getData(array $params = []): array
     {
         if (false === $this->dataBase->tableExists('partidas')) {
             return [];

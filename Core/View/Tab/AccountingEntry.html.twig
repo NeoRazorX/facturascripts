@@ -1,5 +1,4 @@
 {% set model = fsc.getCurrentView().model %}
-{% include 'Master/btnLoading.html.twig' %}
 
 <script>
     let editLine = 0;
@@ -24,10 +23,8 @@
         }, 500);
     }
 
-    function accEntryFormAction(action, selectedLine, btn = '') {
-        if (btn !== '') {
-            animateSpinner(btn, 'add');
-        }
+    function accEntryFormAction(action, selectedLine) {
+        animateSpinner('add');
 
         if (editLine > 1) {
             editLine--;
@@ -56,21 +53,15 @@
         data.append('idasiento', document.forms['accEntryForm']['idasiento'].value);
         data.append('data', formDataJsonString);
 
-        console.log(formData);
-
         fetch('{{ fsc.url() }}', {
             method: 'POST',
             body: data
         }).then(function (response) {
             if (response.ok) {
-                if (btn !== '') {
-                    animateSpinner(btn, 'remove', true);
-                }
+                animateSpinner('remove', true);
                 return response.json();
             }
-            if (btn !== '') {
-                animateSpinner(btn, 'remove', false);
-            }
+            animateSpinner('remove', false);
             return Promise.reject(response);
         }).then(function (data) {
             if (data.header !== '') {
@@ -85,10 +76,10 @@
             if (data.list !== '') {
                 document.getElementById("findSubaccountList").innerHTML = data.list;
             }
-            if (Array.isArray(data.messages)) {
+            if (Array.isArray(data.messages) && data.messages.length > 0) {
                 data.messages.forEach(item => alert(item.message));
-            }
-            if (document.forms['accEntryForm']['action'].value === 'new-line') {
+                $("#new_subaccount").focus();
+            } else if (document.forms['accEntryForm']['action'].value === 'new-line') {
                 $(".line-debit:last").focus().select();
             }
         }).catch(function (error) {
@@ -99,11 +90,8 @@
         return false;
     };
 
-    function accEntryFormSave(action, selectedLine, btn) {
-        if (btn !== '') {
-            animateSpinner(btn, 'add');
-        }
-
+    function accEntryFormSave(action, selectedLine) {
+        animateSpinner('add');
         document.forms['accEntryForm']['action'].value = action;
         document.forms['accEntryForm']['selectedLine'].value = selectedLine;
 
@@ -119,21 +107,15 @@
         data.append('idasiento', document.forms['accEntryForm']['idasiento'].value);
         data.append('data', formDataJsonString);
 
-        console.log(formData);
-
         fetch('{{ fsc.url() }}', {
             method: 'POST',
             body: data
         }).then(function (response) {
             if (response.ok) {
-                if (btn !== '') {
-                    animateSpinner(btn, 'remove', true);
-                }
+                animateSpinner('remove', true);
                 return response.json();
             }
-            if (btn !== '') {
-                animateSpinner(btn, 'remove', false);
-            }
+            animateSpinner('remove', false);
             return Promise.reject(response);
         }).then(function (data) {
             if (Array.isArray(data.messages)) {
@@ -150,8 +132,7 @@
         return false;
     };
 
-    $(document).ready(function () {
-        {% if model.editable %}
+    function sortableEnable() {
         $("#accEntryFormLines").sortable({
             update: function (event, ui) {
                 let orderInputs = $("input[name^='orden_']");
@@ -161,7 +142,29 @@
                 });
             }
         });
+        $("#accEntryFormLines").sortable("option", "disabled", false);
         $("#accEntryFormLines").disableSelection();
+    }
+
+    function sortableDisable() {
+        $("#accEntryFormLines").sortable("disable");
+    }
+
+    $(document).ready(function () {
+        {% if model.editable %}
+        let sortable = false;
+
+        $(document).on('click', '#sortableBtn', function () {
+            if (sortable) {
+                sortableDisable();
+                sortable = false;
+                $(this).removeClass('btn-secondary').addClass('btn-light');
+            } else {
+                sortableEnable();
+                sortable = true;
+                $(this).removeClass('btn-light').addClass('btn-secondary');
+            }
+        });
         {% endif %}
     });
 </script>

@@ -14,6 +14,7 @@ codcuentaesp;descripcion
 "GTOBAN";"Gastos bancarios"
 "INGRF";"Ingresos por recargo financiero"
 "IRPF";"Cuentas de retenciones IRPF"
+"IRPFA";"IRPF para alquileres"
 "IRPFPR";"Cuentas de retenciones para proveedores IRPF"
 "IVAACR";"Cuentas acreedoras de IVA en la regularización"
 "IVADEU";"Cuentas deudoras de IVA en la regularización"

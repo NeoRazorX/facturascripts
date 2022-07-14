@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -45,7 +46,7 @@ class AlbaranProveedor extends Base\PurchaseDocument
      *
      * @return LineaAlbaran[]
      */
-    public function getLines()
+    public function getLines(): array
     {
         $lineaModel = new LineaAlbaran();
         $where = [new DataBaseWhere('idalbaran', $this->idalbaran)];
@@ -56,7 +57,7 @@ class AlbaranProveedor extends Base\PurchaseDocument
 
     /**
      * Returns a new line for the document.
-     * 
+     *
      * @param array $data
      * @param array $exclude
      *
@@ -68,27 +69,20 @@ class AlbaranProveedor extends Base\PurchaseDocument
         $newLine->idalbaran = $this->idalbaran;
         $newLine->irpf = $this->irpf;
         $newLine->actualizastock = $this->getStatus()->actualizastock;
-
         $newLine->loadFromData($data, $exclude);
+
+        // allow extensions
+        $this->pipe('getNewLine', $newLine, $data, $exclude);
+
         return $newLine;
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idalbaran';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'albaranesprov';
     }

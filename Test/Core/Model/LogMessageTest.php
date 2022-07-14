@@ -62,7 +62,7 @@ class LogMessageTest extends TestCase
         $this->assertFalse($item->save(), 'can-update-audit-log');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

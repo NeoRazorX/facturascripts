@@ -73,7 +73,7 @@ class NumberFilter extends BaseFilter
             . '<span class="input-group-text">' . $this->operation . '</span>'
             . '</span>'
             . '<input type="text" name="' . $this->name() . '" value="' . $this->value . '" class="form-control" placeholder="'
-            . static::$i18n->trans($this->label) . '" autocomplete="off"' . $this->onChange() . '/>'
+            . static::$i18n->trans($this->label) . '" autocomplete="off"' . $this->onChange() . $this->readonly() . '/>'
             . '</div>'
             . '</div>'
             . '</div>';

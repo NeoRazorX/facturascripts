@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -184,7 +184,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     /**
      * Returns the lines associated with the document.
      */
-    abstract public function getLines();
+    abstract public function getLines(): array;
 
     /**
      * Returns a new line for this business document.
@@ -271,7 +271,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return string
      */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Serie();
@@ -282,9 +282,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
         return parent::install();
     }
 
-    /**
-     * @return bool
-     */
     public function paid(): bool
     {
         return false;
@@ -295,7 +292,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      *
      * @return string
      */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'codigo';
     }
@@ -314,7 +311,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
 
         // empty code?
         if (empty($this->codigo)) {
-            BusinessDocumentCode::getNewCode($this);
+            BusinessDocumentCode::setNewCode($this);
         }
 
         return parent::save();
@@ -406,7 +403,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 break;
 
             case 'codserie':
-                BusinessDocumentCode::getNewCode($this);
+                BusinessDocumentCode::setNewCode($this);
                 break;
 
             case 'fecha':
@@ -414,7 +411,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 if (false === $this->setDate($this->fecha, $this->hora)) {
                     return false;
                 } elseif ($this->codejercicio != $oldCodejercicio) {
-                    BusinessDocumentCode::getNewCode($this);
+                    BusinessDocumentCode::setNewCode($this);
                 }
                 break;
 
@@ -423,7 +420,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
                 return false;
 
             case 'numero':
-                BusinessDocumentCode::getNewCode($this, false);
+                BusinessDocumentCode::setNewCode($this, false);
                 break;
         }
 
@@ -460,10 +457,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     protected function setPreviousData(array $fields = [])
     {
-        $more = [
-            'codalmacen', 'coddivisa', 'codpago', 'codserie',
-            'fecha', 'hora', 'idempresa', 'numero', 'total'
-        ];
+        $more = ['codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'numero', 'total'];
         parent::setPreviousData(array_merge($more, $fields));
     }
 

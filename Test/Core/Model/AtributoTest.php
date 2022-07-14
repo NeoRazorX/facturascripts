@@ -79,7 +79,7 @@ final class AtributoTest extends TestCase
         return $attribute;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

@@ -94,11 +94,11 @@
         <null>NO</null>
     </column>
     <column>
-        <name>fechasalida</name>
+        <name>femail</name>
         <type>date</type>
     </column>
     <column>
-        <name>femail</name>
+        <name>finoferta</name>
         <type>date</type>
     </column>
     <column>
@@ -173,9 +173,8 @@
         <type>double precision</type>
     </column>
     <column>
-        <name>totalcomision</name>
+        <name>totalcoste</name>
         <type>double precision</type>
-        <default>0</default>
     </column>
     <column>
         <name>totaleuros</name>

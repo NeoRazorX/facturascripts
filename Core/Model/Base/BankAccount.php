@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -78,13 +78,13 @@ abstract class BankAccount extends ModelClass
     {
         $iban = str_replace(' ', '', $this->iban);
 
-        /// split in groups
+        // split in groups
         $groups = [];
         for ($num = 0; $num < strlen($iban); $num += self::GROUP_LENGTH) {
             $groups[] = substr($iban, $num, self::GROUP_LENGTH);
         }
 
-        /// censor
+        // censor
         if ($censure) {
             $groups[1] = $groups[2] = $groups[3] = $groups[4] = 'XXXX';
         }
@@ -92,19 +92,11 @@ abstract class BankAccount extends ModelClass
         return $spaced ? implode(' ', $groups) : implode('', $groups);
     }
 
-    /**
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codcuenta';
     }
 
-    /**
-     *
-     * @param bool $value
-     */
     public function setDisableIbanTest(bool $value)
     {
         $this->disableIbanTest = $value;
@@ -148,7 +140,6 @@ abstract class BankAccount extends ModelClass
     }
 
     /**
-     *
      * @param array $values
      *
      * @return bool

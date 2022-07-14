@@ -25,10 +25,11 @@ use FacturaScripts\Core\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Cuenta;
 use FacturaScripts\Core\Model\Ejercicio;
+use FacturaScripts\Core\Model\RegularizacionImpuesto;
 
 trait DefaultSettingsTrait
 {
-    protected static function installAccountingPlan()
+    protected static function installAccountingPlan(): void
     {
         // ¿Existe el archivo del plan contable?
         $filePath = FS_FOLDER . '/Core/Data/Codpais/ESP/defaultPlan.csv';
@@ -40,6 +41,12 @@ trait DefaultSettingsTrait
         $cuenta = new Cuenta();
         $exerciseModel = new Ejercicio();
         foreach ($exerciseModel->all() as $exercise) {
+            // si está cerrado, lo abrimos
+            if (false === $exercise->isOpened()) {
+                $exercise->estado = Ejercicio::EXERCISE_STATUS_OPEN;
+                $exercise->save();
+            }
+
             $where = [new DataBaseWhere('codejercicio', $exercise->codejercicio)];
             if ($cuenta->count($where) > 0) {
                 // ya tiene plan contable
@@ -52,7 +59,15 @@ trait DefaultSettingsTrait
         }
     }
 
-    protected static function setDefaultSettings()
+    protected static function removeTaxRegularization(): void
+    {
+        $regularizationModel = new RegularizacionImpuesto();
+        foreach ($regularizationModel->all() as $regularization) {
+            $regularization->delete();
+        }
+    }
+
+    protected static function setDefaultSettings(): void
     {
         $appSettings = new AppSettings();
         $fileContent = file_get_contents(FS_FOLDER . '/Core/Data/Codpais/ESP/default.json');
@@ -64,7 +79,8 @@ trait DefaultSettingsTrait
         }
 
         $almacenModel = new Almacen();
-        foreach ($almacenModel->all() as $almacen) {
+        $where = [new DataBaseWhere('idempresa', $appSettings->get('default', 'idempresa'))];
+        foreach ($almacenModel->all($where) as $almacen) {
             $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
         }
 

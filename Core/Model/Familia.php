@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,9 @@
  */
 
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
  * A family of products.
@@ -79,82 +82,62 @@ class Familia extends Base\ModelClass
      */
     public $numproductos;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->numproductos = 0;
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codfamilia';
     }
 
     /**
-     * Get the accounting sub-account for irpf purchases.
+     * Get the accounting account for irpf purchases.
      *
      * @param string $code
      *
      * @return string
      */
-    public static function purchaseIrpfSubAccount($code)
+    public static function purchaseIrpfSubAccount(string $code): string
     {
         return self::getSubaccountFromFamily($code, 'codsubcuentairpfcom');
     }
 
     /**
-     * Get the accounting sub-account for purchases.
+     * Get the accounting account for purchases.
      *
      * @param string $code
      *
      * @return string
      */
-    public static function purchaseSubAccount($code)
+    public static function purchaseSubAccount(string $code): string
     {
         return static::getSubaccountFromFamily($code, 'codsubcuentacom');
     }
 
     /**
-     * Get the accounting sub-account for sales.
+     * Get the accounting account for sales.
      *
      * @param string $code
      *
      * @return string
      */
-    public static function saleSubAccount($code)
+    public static function saleSubAccount(string $code): string
     {
         return self::getSubaccountFromFamily($code, 'codsubcuentaven');
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'familias';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->codfamilia = $utils->noHtml($this->codfamilia);
-        $this->descripcion = $utils->noHtml($this->descripcion);
-
+        // comprobamos codfamilia
+        $this->codfamilia = self::toolBox()::utils()::noHtml($this->codfamilia);
         if ($this->codfamilia && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,8}$/i', $this->codfamilia)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
@@ -163,6 +146,8 @@ class Familia extends Base\ModelClass
             return false;
         }
 
+        // comprobamos descripción
+        $this->descripcion = self::toolBox()::utils()::noHtml($this->descripcion);
         if (empty($this->descripcion) || strlen($this->descripcion) > 100) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-column-lenght',
@@ -171,21 +156,10 @@ class Familia extends Base\ModelClass
             return false;
         }
 
-        if (empty($this->madre) || $this->madre === $this->codfamilia) {
-            $this->madre = null;
-        }
-
-        return parent::test();
+        return parent::test() && $this->testLoops() && $this->testAccounting();
     }
 
-    /**
-     * @param string $code
-     * @param string $field
-     * @param Familia $model
-     *
-     * @return string
-     */
-    private static function getSubaccountFromFamily($code, $field, $model = null)
+    private static function getSubaccountFromFamily(?string $code, string $field, Familia $model = null): string
     {
         if (empty($code)) {
             return '';
@@ -201,20 +175,70 @@ class Familia extends Base\ModelClass
 
         return empty($model->{$field}) && $model->madre != $code ?
             self::getSubaccountFromFamily($model->madre, $field, $model) :
-            $model->{$field};
+            (string)$model->{$field};
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codfamilia)) {
             $this->codfamilia = $this->newCode();
         }
 
         return parent::saveInsert($values);
+    }
+
+    protected function testAccounting(): bool
+    {
+        // comprobamos las subcuentas vinculadas
+        $subaccount = new DinSubcuenta();
+        if ($this->codsubcuentacom) {
+            $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentacom)];
+            if (false === $subaccount->loadFromCode('', $where)) {
+                $this->toolBox()->i18nLog()->warning('purchases-subaccount-not-found');
+                return false;
+            }
+        }
+        if (false === empty($this->codsubcuentairpfcom)) {
+            $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentairpfcom)];
+            if (false === $subaccount->loadFromCode('', $where)) {
+                $this->toolBox()->i18nLog()->warning('irpf-subaccount-not-found');
+                return false;
+            }
+        }
+        if (false === empty($this->codsubcuentaven)) {
+            $where = [new DataBaseWhere('codsubcuenta', $this->codsubcuentaven)];
+            if (false === $subaccount->loadFromCode('', $where)) {
+                $this->toolBox()->i18nLog()->warning('sales-subaccount-not-found');
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected function testLoops(): bool
+    {
+        if (empty($this->madre)) {
+            return true;
+        }
+
+        // comprobamos que la familia no sea su propia madre
+        if ($this->madre === $this->codfamilia) {
+            $this->madre = null;
+            return true;
+        }
+
+        // recorremos los ancestros de esta familia, si repetimos ancestro es que hay un bucle, y eso es un problema
+        $ancestros = [$this->codfamilia];
+        $fam = new static();
+        $fam->madre = $this->madre;
+        while ($fam->madre && $fam->loadFromCode($fam->madre)) {
+            if (in_array($fam->codfamilia, $ancestros)) {
+                return false;
+            }
+            $ancestros[] = $fam->codfamilia;
+        }
+
+        return true;
     }
 }

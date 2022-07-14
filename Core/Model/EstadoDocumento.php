@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2017       Francesc Pineda Segarra <francesc.pineda.segarra@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -96,9 +96,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
      */
     public $tipodoc;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -108,10 +105,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         $this->predeterminado = false;
     }
 
-    /**
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->bloquear) {
             $this->toolBox()->i18nLog()->warning('locked');
@@ -121,9 +115,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::delete();
     }
 
-    /**
-     * @return string
-     */
     public function icon(): string
     {
         if (!empty($this->icon)) {
@@ -135,34 +126,25 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return $this->editable ? 'fas fa-pen' : 'fas fa-lock';
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idestado';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'estados_documentos';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
+        // escapamos el html
+        $this->generadoc = self::toolBox()::utils()::noHtml($this->generadoc);
+        $this->icon = self::toolBox()::utils()::noHtml($this->icon);
+        $this->nombre = self::toolBox()::utils()::noHtml($this->nombre);
+        $this->tipodoc = self::toolBox()::utils()::noHtml($this->tipodoc);
+
+        // Comprobamos que el nombre no esté vacío
         if (empty($this->nombre) || empty($this->tipodoc)) {
             return false;
         }
@@ -179,12 +161,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
     {
         return parent::url($type, $list);
@@ -209,9 +185,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::onChange($field);
     }
 
-    /**
-     * @return bool
-     */
     protected function onChangePredeterminado(): bool
     {
         if ($this->predeterminado) {
@@ -263,12 +236,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         }
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->idestado)) {
             /**
@@ -281,9 +249,6 @@ class EstadoDocumento extends Base\ModelOnChangeClass
         return parent::saveInsert($values);
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['actualizastock', 'bloquear', 'editable', 'generadoc', 'predeterminado', 'tipodoc'];

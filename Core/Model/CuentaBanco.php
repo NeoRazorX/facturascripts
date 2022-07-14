@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -29,13 +30,11 @@ class CuentaBanco extends Base\BankAccount
     use Base\ModelTrait;
 
     /**
-     *
      * @var string
      */
     public $codsubcuenta;
 
     /**
-     *
      * @var string
      */
     public $codsubcuentagasto;
@@ -48,7 +47,6 @@ class CuentaBanco extends Base\BankAccount
     public $idempresa;
 
     /**
-     *
      * @var string
      */
     public $sufijosepa;
@@ -59,54 +57,32 @@ class CuentaBanco extends Base\BankAccount
         $this->sufijosepa = '000';
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new Empresa();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'cuentasbanco';
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->idempresa)) {
-            $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+            $this->idempresa = self::toolBox()::appSettings()::get('default', 'idempresa');
         }
 
-        $this->sufijosepa = $this->toolBox()->utils()->noHtml($this->sufijosepa);
+        $this->codsubcuenta = self::toolBox()::utils()::noHtml($this->codsubcuenta);
+        $this->codsubcuentagasto = self::toolBox()::utils()::noHtml($this->codsubcuentagasto);
+        $this->sufijosepa = self::toolBox()::utils()::noHtml($this->sufijosepa);
         return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'ListFormaPago?activetab=List')
+    public function url(string $type = 'auto', string $list = 'ListFormaPago?activetab=List'): string
     {
         return parent::url($type, $list);
     }

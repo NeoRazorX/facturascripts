@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -66,7 +66,7 @@ class AccountingPlanImport
      *
      * @return bool
      */
-    public function importCSV(string $filePath, string $codejercicio)
+    public function importCSV(string $filePath, string $codejercicio): bool
     {
         if (false === $this->exercise->loadFromCode($codejercicio)) {
             $this->toolBox()->i18nLog()->error('exercise-not-found');
@@ -108,7 +108,7 @@ class AccountingPlanImport
      *
      * @return bool
      */
-    public function importXML(string $filePath, string $codejercicio)
+    public function importXML(string $filePath, string $codejercicio): bool
     {
         if (false === $this->exercise->loadFromCode($codejercicio)) {
             $this->toolBox()->i18nLog()->error('exercise-not-found');
@@ -155,11 +155,11 @@ class AccountingPlanImport
      *
      * @return bool
      */
-    protected function createAccount(string $code, string $definition, string $parentCode = '', string $codcuentaesp = '')
+    protected function createAccount(string $code, string $definition, string $parentCode = '', string $codcuentaesp = ''): bool
     {
         $account = new Cuenta();
 
-        /// the account exists?
+        // the account exists?
         $where = [
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codcuenta', $code)
@@ -186,11 +186,11 @@ class AccountingPlanImport
      *
      * @return bool
      */
-    protected function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp = '')
+    protected function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp = ''): bool
     {
         $subaccount = new Subcuenta();
 
-        /// the subaccount exists?
+        // the subaccount exists?
         $where = [
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codsubcuenta', $code)
@@ -199,11 +199,10 @@ class AccountingPlanImport
             return true;
         }
 
-        /// update exercise configuration
+        // update exercise configuration
         if ($this->exercise->longsubcuenta != strlen($code)) {
             $this->exercise->longsubcuenta = strlen($code);
             $this->exercise->save();
-            $subaccount->clearExerciseCache();
         }
 
         $subaccount->codcuenta = $parentCode;
@@ -315,18 +314,22 @@ class AccountingPlanImport
         foreach ($accountPlan as $key => $value) {
             switch (strlen($key)) {
                 case $minLength:
-                    $this->createAccount($key, $value['descripcion'], '', $value['codcuentaesp']);
+                    $ok = $this->createAccount($key, $value['descripcion'], '', $value['codcuentaesp']);
                     break;
 
                 case $maxLength:
                     $parentCode = $this->searchParent($keys, $key);
-                    $this->createSubaccount($key, $value['descripcion'], $parentCode, $value['codcuentaesp']);
+                    $ok = $this->createSubaccount($key, $value['descripcion'], $parentCode, $value['codcuentaesp']);
                     break;
 
                 default:
                     $parentCode = $this->searchParent($keys, $key);
-                    $this->createAccount($key, $value['descripcion'], $parentCode, $value['codcuentaesp']);
+                    $ok = $this->createAccount($key, $value['descripcion'], $parentCode, $value['codcuentaesp']);
                     break;
+            }
+
+            if (false === $ok) {
+                break;
             }
         }
     }
@@ -354,9 +357,6 @@ class AccountingPlanImport
         return $parentCode;
     }
 
-    /**
-     * @return ToolBox
-     */
     protected function toolBox(): ToolBox
     {
         return new ToolBox();

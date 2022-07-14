@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,6 +31,7 @@
             <div class="col-12">
                 <form action="{{ fsc.url() }}" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="send"/>
+                    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
                     <div class="card shadow">
                         <div class="card-body">
                             <h1 class="h3 mb-3">
@@ -148,7 +149,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
-    <script type="text/javascript">
+    <script>
         function split(val) {
             return val.split(/,\s*/);
         }
@@ -159,50 +160,47 @@
 
         $(document).ready(function () {
             var cacheQuery = {};
-            $("#email,#email-cc,#email-bcc")
-                // don't navigate away from the field on tab when selecting an item
-                .on("keydown", function (event) {
-                    if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
-                        event.preventDefault();
+            $("#email,#email-cc,#email-bcc").on("keydown", function (event) {
+                if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
+                    event.preventDefault();
+                }
+            }).autocomplete({
+                minLength: 0,
+                source: function (request, response) {
+                    // Avoid re-query the same
+                    var term = request.term;
+                    if (term in cacheQuery) {
+                        response(cacheQuery[term]);
+                        return;
                     }
-                })
-                .autocomplete({
-                    minLength: 0,
-                    source: function (request, response) {
-                        // Avoid re-query the same
-                        var term = request.term;
-                        if (term in cacheQuery) {
-                            response(cacheQuery[term]);
-                            return;
-                        }
 
-                        $.getJSON("SendMail", {
-                            action: 'autocomplete',
-                            source: 'contactos',
-                            field: 'email',
-                            title: 'email',
-                            term: extractLast(request.term)
-                        }, function (data) {
-                            cacheQuery[term] = data;
-                            response(data);
-                        });
-                    },
-                    focus: function () {
-                        // Prevent value inserted on focus
-                        return false;
-                    },
-                    select: function (event, ui) {
-                        var terms = split(this.value);
-                        // Remove the current input
-                        terms.pop();
-                        // Add the selected item
-                        terms.push(ui.item.value);
-                        // Add placeholder to get the comma-and-space at the end
-                        terms.push("");
-                        this.value = terms.join(", ");
-                        return false;
-                    }
-                });
+                    $.getJSON("SendMail", {
+                        action: 'autocomplete',
+                        source: 'contactos',
+                        field: 'email',
+                        title: 'email',
+                        term: extractLast(request.term)
+                    }, function (data) {
+                        cacheQuery[term] = data;
+                        response(data);
+                    });
+                },
+                focus: function () {
+                    // Prevent value inserted on focus
+                    return false;
+                },
+                select: function (event, ui) {
+                    var terms = split(this.value);
+                    // Remove the current input
+                    terms.pop();
+                    // Add the selected item
+                    terms.push(ui.item.value);
+                    // Add placeholder to get the comma-and-space at the end
+                    terms.push("");
+                    this.value = terms.join(", ");
+                    return false;
+                }
+            });
         });
     </script>
 {% endblock %}

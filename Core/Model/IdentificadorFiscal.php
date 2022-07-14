@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -29,19 +30,16 @@ class IdentificadorFiscal extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     *
      * @var string
      */
     public $codeid;
 
     /**
-     *
      * @var string
      */
     public $tipoidfiscal;
 
     /**
-     *
      * @var bool
      */
     public $validar;
@@ -52,33 +50,25 @@ class IdentificadorFiscal extends Base\ModelClass
         $this->validar = false;
     }
 
-    /**
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'tipoidfiscal';
     }
 
-    /**
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'idsfiscales';
     }
 
-    /**
-     * 
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $this->tipoidfiscal = \trim($this->tipoidfiscal);
-        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,25}$/i', $this->tipoidfiscal)) {
-            $this->toolBox()->i18nLog()->error(
+        // escapamos el html
+        $this->codeid = self::toolBox()::utils()::noHtml($this->codeid);
+        $this->tipoidfiscal = self::toolBox()::utils()::noHtml($this->tipoidfiscal);
+
+        // comprobamos que el campo tenga un valor válido
+        if (empty($this->tipoidfiscal) || 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,25}$/i', $this->tipoidfiscal)) {
+            self::toolBox()::i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->tipoidfiscal, '%column%' => 'tipoidfiscal', '%min%' => '1', '%max%' => '25']
             );
@@ -88,13 +78,6 @@ class IdentificadorFiscal extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
     {
         return parent::url($type, $list);

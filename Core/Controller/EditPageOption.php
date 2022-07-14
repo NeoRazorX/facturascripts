@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
@@ -23,6 +24,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\Widget\VisualItemLoadEngine;
 use FacturaScripts\Dinamic\Model\CodeModel;
+use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\PageOption;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,13 +47,11 @@ class EditPageOption extends Controller
     public $backPage;
 
     /**
-     *
      * @var array
      */
     public $columns = [];
 
     /**
-     *
      * @var array
      */
     public $modals = [];
@@ -64,7 +64,6 @@ class EditPageOption extends Controller
     public $model;
 
     /**
-     *
      * @var array
      */
     public $rows = [];
@@ -83,12 +82,7 @@ class EditPageOption extends Controller
      */
     public $selectedViewName;
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -103,7 +97,7 @@ class EditPageOption extends Controller
      *
      * @return array
      */
-    public function getUserList()
+    public function getUserList(): array
     {
         $result = [];
         $users = CodeModel::all(User::tableName(), 'nick', 'nick', false);
@@ -119,8 +113,8 @@ class EditPageOption extends Controller
     /**
      * Runs the controller's private logic.
      *
-     * @param Response              $response
-     * @param User                  $user
+     * @param Response $response
+     * @param User $user
      * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
@@ -128,7 +122,7 @@ class EditPageOption extends Controller
         parent::privateCore($response, $user, $permissions);
         $this->model = new PageOption();
         $this->loadSelectedViewName();
-        $this->backPage = $this->request->get('url') ?: $this->selectedViewName;
+        $this->setBackPage();
         $this->selectedUser = $this->user->admin ? $this->request->get('nick') : $this->user->nick;
         $this->loadPageOptions();
 
@@ -184,12 +178,12 @@ class EditPageOption extends Controller
     protected function loadSelectedViewName()
     {
         $code = $this->request->get('code', '');
-        if (false === \strpos($code, '-')) {
+        if (false === strpos($code, '-')) {
             $this->selectedViewName = $code;
             return;
         }
 
-        $parts = \explode('-', $code);
+        $parts = explode('-', $code);
         $this->selectedViewName = empty($parts) ? $code : $parts[0];
     }
 
@@ -266,11 +260,12 @@ class EditPageOption extends Controller
             new DataBaseWhere('nick', $this->selectedUser),
         ];
         if ($this->model->loadFromCode('', $where)) {
-            return true;  // Existen opciones para el usuario.
+            // Existen opciones para el usuario.
+            return true;
         }
 
-        if (false == $this->loadPageOptionsForAll()) {
-            // No existe opciones general. Asignamos las opciones por defecto de la vista xml al usuario.
+        if (false === $this->loadPageOptionsForAll()) {
+            // No existe opciones generales. Asignamos las opciones por defecto de la vista xml al usuario.
             $this->model->nick = $this->selectedUser;
             return false;
         }
@@ -281,17 +276,32 @@ class EditPageOption extends Controller
         return true;
     }
 
+    private function setBackPage()
+    {
+        // check if the url is a real controller name
+        $url = $this->request->get('url', '');
+        $pageModel = new Page();
+        foreach ($pageModel->all([], [], 0, 0) as $page) {
+            if (substr($url, 0, strlen($page->name)) === $page->name) {
+                $this->backPage = $url;
+                return;
+            }
+        }
+
+        // set the default back page
+        $this->backPage = $this->selectedViewName;
+    }
+
     /**
-     *
-     * @param array  $column
+     * @param array $column
      * @param string $name
      * @param string $key
-     * @param bool   $isWidget
-     * @param bool   $allowEmpty
+     * @param bool $isWidget
+     * @param bool $allowEmpty
      */
     private function setColumnOption(&$column, string $name, string $key, bool $isWidget, bool $allowEmpty)
     {
-        $newValue = $this->request->request->get($name . '-' . $key);
+        $newValue = self::toolBox()::utils()::noHtml($this->request->request->get($name . '-' . $key));
         if ($isWidget) {
             if (!empty($newValue) || $allowEmpty) {
                 $column['children'][0][$key] = $newValue;

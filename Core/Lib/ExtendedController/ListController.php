@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -61,7 +62,7 @@ abstract class ListController extends BaseController
         $action = $this->request->request->get('action', $this->request->query->get('action', ''));
 
         // Execute actions before loading data
-        if (false === $this->execPreviousAction($action) || false === $this->pipe('execPreviousAction', $action)) {
+        if (false === $this->execPreviousAction($action) || false === $this->pipeFalse('execPreviousAction', $action)) {
             return;
         }
 
@@ -74,12 +75,12 @@ abstract class ListController extends BaseController
             }
 
             $this->loadData($viewName, $view);
-            $this->pipe('loadData', $viewName, $view);
+            $this->pipeFalse('loadData', $viewName, $view);
         }
 
         // Execute actions after loading data
         $this->execAfterAction($action);
-        $this->pipe('execAfterAction', $action);
+        $this->pipeFalse('execAfterAction', $action);
     }
 
     /**
@@ -301,13 +302,45 @@ abstract class ListController extends BaseController
 
     protected function exportAction()
     {
-        $this->setTemplate(false);
+        if (false === $this->views[$this->active]->settings['btnPrint']) {
+            $this->toolBox()->i18nLog()->warning('no-print-permission');
+            return;
+        }
 
+        $this->setTemplate(false);
         $codes = $this->request->request->get('code');
         $option = $this->request->get('option', '');
         $this->exportManager->newDoc($option);
         $this->views[$this->active]->export($this->exportManager, $codes);
         $this->exportManager->show($this->response);
+    }
+
+    /**
+     * Returns the where filter to apply to obtain the data created by the active user.
+     *
+     * @param ModelClass $model
+     *
+     * @return DataBaseWhere[]
+     */
+    protected function getOwnerFilter($model): array
+    {
+        $where = [];
+
+        if (property_exists($model, 'nick')) {
+            // DatabaseWhere applies parentheses grouping the ORs
+            // result: (`nick` = 'username' OR `nick` IS NULL OR `codagente` = 'agent') AND [... user filters]
+            $where[] = new DataBaseWhere('nick', $this->user->nick);
+            $where[] = new DataBaseWhere('nick', null, 'IS', 'OR');
+            if (property_exists($model, 'codagente') && $this->user->codagente) {
+                $where[] = new DataBaseWhere('codagente', $this->user->codagente, '=', 'OR');
+            }
+            return $where;
+        }
+
+        if (property_exists($model, 'codagente')) {
+            $where[] = new DataBaseWhere('codagente', $this->user->codagente);
+        }
+        return $where;
     }
 
     /**
@@ -328,7 +361,7 @@ abstract class ListController extends BaseController
         $this->setTemplate(false);
         $json = [];
 
-        /// we search in all listviews
+        // we search in all listviews
         foreach ($this->views as $viewName => $listView) {
             if (false === $this->getSettings($viewName, 'megasearch') || empty($listView->searchFields)) {
                 continue;
@@ -387,7 +420,7 @@ abstract class ListController extends BaseController
         if (!empty($idFilter)) {
             $this->toolBox()->i18nLog()->notice('record-updated-correctly');
 
-            /// load filters in request
+            // load filters in request
             $this->request->request->set('loadfilter', $idFilter);
         }
     }

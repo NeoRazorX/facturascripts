@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -94,13 +94,6 @@ class Partida extends Base\ModelOnChangeClass
     public $debe;
 
     /**
-     * Debit of the accounting entry in secondary currency.
-     *
-     * @var float|int
-     */
-    public $debeme;
-
-    /**
      * Document of departure.
      *
      * @var string
@@ -120,13 +113,6 @@ class Partida extends Base\ModelOnChangeClass
      * @var float|int
      */
     public $haber;
-
-    /**
-     * Credit of the accounting entry in secondary currency.
-     *
-     * @var float|int
-     */
-    public $haberme;
 
     /**
      * Identifier of the counterpart.
@@ -189,18 +175,13 @@ class Partida extends Base\ModelOnChangeClass
      */
     public $tasaconv;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->baseimponible = 0.0;
         $this->coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
         $this->debe = 0.0;
-        $this->debeme = 0.0;
         $this->haber = 0.0;
-        $this->haberme = 0.0;
         $this->iva = 0.0;
         $this->orden = 0;
         $this->punteada = false;
@@ -209,12 +190,28 @@ class Partida extends Base\ModelOnChangeClass
         $this->tasaconv = 1.0;
     }
 
+    public function delete(): bool
+    {
+        $entry = $this->getAccountingEntry();
+        if (false === $entry->editable) {
+            return false;
+        }
+
+        $exercise = $entry->getExercise();
+        if (false === $exercise->isOpened()) {
+            self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
+            return false;
+        }
+
+        return parent::delete();
+    }
+
     /**
      * @param string $codsubcuenta
      *
      * @return DinSubcuenta
      */
-    public function getSubcuenta($codsubcuenta = '')
+    public function getSubcuenta(string $codsubcuenta = '')
     {
         $accEntry = $this->getAccountingEntry();
         $subcta = new DinSubcuenta();
@@ -246,14 +243,7 @@ class Partida extends Base\ModelOnChangeClass
         return $subcta;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         new DinDivisa();
         new DinAsiento();
@@ -262,14 +252,25 @@ class Partida extends Base\ModelOnChangeClass
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idpartida';
+    }
+
+    public function save(): bool
+    {
+        $entry = $this->getAccountingEntry();
+        if (false === $entry->editable) {
+            return false;
+        }
+
+        $exercise = $entry->getExercise();
+        if (false === $exercise->isOpened()) {
+            self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
+            return false;
+        }
+
+        return parent::save();
     }
 
     /**
@@ -305,27 +306,17 @@ class Partida extends Base\ModelOnChangeClass
         }
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'partidas';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
     public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->cifnif = $utils->noHtml($this->cifnif);
-        $this->codsubcuenta = trim($this->codsubcuenta);
-        $this->codcontrapartida = trim($this->codcontrapartida);
+        $this->codsubcuenta = $utils->noHtml($this->codsubcuenta);
+        $this->codcontrapartida = $utils->noHtml($this->codcontrapartida);
         $this->concepto = $utils->noHtml($this->concepto);
         $this->documento = $utils->noHtml($this->documento);
 
@@ -347,13 +338,7 @@ class Partida extends Base\ModelOnChangeClass
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getAccountingEntry()->url($type, $list);
     }
@@ -421,9 +406,6 @@ class Partida extends Base\ModelOnChangeClass
         parent::onUpdate();
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codcontrapartida', 'codsubcuenta', 'debe', 'haber', 'idcontrapartida', 'idsubcuenta'];
@@ -433,12 +415,12 @@ class Partida extends Base\ModelOnChangeClass
     /**
      * Update the subaccount balance.
      *
-     * @param int $idsubaccount
+     * @param int $idsubcuenta
      */
-    private function updateBalance($idsubaccount)
+    private function updateBalance(int $idsubcuenta)
     {
         $subaccount = new DinSubcuenta();
-        if ($subaccount->loadFromCode($idsubaccount)) {
+        if ($subaccount->loadFromCode($idsubcuenta)) {
             $subaccount->updateBalance();
         }
     }

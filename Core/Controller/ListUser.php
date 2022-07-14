@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,12 +31,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 class ListUser extends ListController
 {
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -54,9 +49,6 @@ class ListUser extends ListController
         $this->createViewsRoles();
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsRoles(string $viewName = 'ListRole')
     {
         $this->addView($viewName, 'Role', 'roles', 'fas fa-address-card');
@@ -65,22 +57,23 @@ class ListUser extends ListController
         $this->addOrderBy($viewName, ['codrole'], 'code');
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewsUsers(string $viewName = 'ListUser')
     {
         $this->addView($viewName, 'User', 'users', 'fas fa-users');
         $this->addSearchFields($viewName, ['nick', 'email']);
         $this->addOrderBy($viewName, ['nick'], 'nick', 1);
         $this->addOrderBy($viewName, ['email'], 'email');
-        $this->addOrderBy($viewName, ['level'], 'level');
+        if ($this->user->admin) {
+            $this->addOrderBy($viewName, ['level'], 'level');
+        }
         $this->addOrderBy($viewName, ['creationdate'], 'creation-date');
         $this->addOrderBy($viewName, ['lastactivity'], 'last-activity');
 
         // filters
-        $levels = $this->codeModel->all('users', 'level', 'level');
-        $this->addFilterSelect($viewName, 'level', 'level', 'level', $levels);
+        if ($this->user->admin) {
+            $levels = $this->codeModel->all('users', 'level', 'level');
+            $this->addFilterSelect($viewName, 'level', 'level', 'level', $levels);
+        }
 
         $languages = $this->codeModel->all('users', 'langcode', 'langcode');
         $this->addFilterSelect($viewName, 'langcode', 'language', 'langcode', $languages);
@@ -94,5 +87,8 @@ class ListUser extends ListController
         if (count($warehouses) > 2) {
             $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
         }
+
+        // disable print button
+        $this->setSettings($viewName, 'btnPrint', false);
     }
 }

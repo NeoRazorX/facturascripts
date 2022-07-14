@@ -78,7 +78,7 @@ final class CiudadTest extends TestCase
         $this->assertFalse($city->save(), 'city-must-exist-province');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

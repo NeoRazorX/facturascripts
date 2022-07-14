@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Test\Core\Translation;
 
 use PHPUnit\Framework\TestCase;
 
 /**
  * Class to verify that all JSON files from translation are correct.
- * 
+ *
  * @author Carlos Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 class TranslationTest extends TestCase
@@ -38,9 +39,9 @@ class TranslationTest extends TestCase
      */
     protected $mainLang;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->basePath = \FS_FOLDER . '/Core/Translation/';
+        $this->basePath = FS_FOLDER . '/Core/Translation/';
         $this->mainLang = 'en_EN.json';
     }
 
@@ -50,7 +51,7 @@ class TranslationTest extends TestCase
     public function testFiles()
     {
         foreach ($this->scanFolder($this->basePath) as $fileName) {
-            if (\substr($fileName, -5) !== '.json') {
+            if (substr($fileName, -5) !== '.json') {
                 continue;
             }
 
@@ -69,7 +70,7 @@ class TranslationTest extends TestCase
      */
     private function scanFolder(string $folderPath): array
     {
-        return \array_diff(\scandir($folderPath, \SCANDIR_SORT_ASCENDING), ['.', '..']);
+        return array_diff(scandir($folderPath, SCANDIR_SORT_ASCENDING), ['.', '..']);
     }
 
     /**
@@ -81,6 +82,6 @@ class TranslationTest extends TestCase
      */
     private function readJSON(string $pathName)
     {
-        return \json_decode(\file_get_contents($pathName), true);
+        return json_decode(file_get_contents($pathName), true);
     }
 }

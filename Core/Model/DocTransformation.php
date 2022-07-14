@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -34,7 +35,6 @@ class DocTransformation extends Base\ModelClass
     use Base\ModelTrait;
 
     /**
-     *
      * @var float
      */
     public $cantidad;
@@ -96,10 +96,10 @@ class DocTransformation extends Base\ModelClass
 
     /**
      * Removes related data from this document.
-     * 
+     *
      * @param string $tipoDoc
-     * @param int    $idDoc
-     * @param bool   $updateServido
+     * @param int $idDoc
+     * @param bool $updateServido
      */
     public function deleteFrom(string $tipoDoc, int $idDoc, bool $updateServido = false)
     {
@@ -121,13 +121,12 @@ class DocTransformation extends Base\ModelClass
     }
 
     /**
-     * 
      * @return BusinessDocumentLine
      */
     public function getParentLine()
     {
         $modelClass = '\\FacturaScripts\\Dinamic\\Model\\Linea' . $this->model1;
-        if (\class_exists($modelClass)) {
+        if (class_exists($modelClass)) {
             $line = new $modelClass();
             $line->loadFromCode($this->idlinea1);
             return $line;
@@ -136,22 +135,12 @@ class DocTransformation extends Base\ModelClass
         return new LineaAlbaranCliente();
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'doctransformations';
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
@@ -112,34 +113,29 @@ class Balance extends Base\ModelClass
      */
     public $naturaleza;
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codbalance';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'balances';
     }
 
-    /**
-     * Test model's data.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        if (1 !== \preg_match('/^[A-Z0-9_\+\.\-]{1,15}$/i', $this->codbalance)) {
+        // escapamos el html
+        $this->codbalance = self::toolBox()::utils()::noHtml($this->codbalance);
+        $this->descripcion1 = self::toolBox()::utils()::noHtml($this->descripcion1);
+        $this->descripcion2 = self::toolBox()::utils()::noHtml($this->descripcion2);
+        $this->descripcion3 = self::toolBox()::utils()::noHtml($this->descripcion3);
+        $this->descripcion4 = self::toolBox()::utils()::noHtml($this->descripcion4);
+        $this->descripcion4ba = self::toolBox()::utils()::noHtml($this->descripcion4ba);
+        $this->naturaleza = self::toolBox()::utils()::noHtml($this->naturaleza);
+
+        // comprobamos que tenga un código válido
+        if (empty($this->codbalance) || 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,15}$/i', $this->codbalance)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codbalance, '%column%' => 'codbalance', '%min%' => '1', '%max%' => '15']
@@ -147,23 +143,9 @@ class Balance extends Base\ModelClass
             return false;
         }
 
-        $utils = $this->toolBox()->utils();
-        $this->descripcion1 = $utils->noHtml($this->descripcion1);
-        $this->descripcion2 = $utils->noHtml($this->descripcion2);
-        $this->descripcion3 = $utils->noHtml($this->descripcion3);
-        $this->descripcion4 = $utils->noHtml($this->descripcion4);
-        $this->descripcion4ba = $utils->noHtml($this->descripcion4ba);
         return parent::test();
     }
 
-    /**
-     * Returns the url where to see / modify the data.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'ListReportAccounting?activetab=List'): string
     {
         return parent::url($type, $list);

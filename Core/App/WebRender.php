@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\Model\AttachedFile;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Extension\DebugExtension;
@@ -85,14 +86,8 @@ final class WebRender
         $twig = new Environment($this->loader, $this->getOptions());
 
         // asset functions
-        $assetFunction = new TwigFunction('asset', function ($string) {
-            $path = FS_ROUTE . '/';
-            if (substr($string, 0, strlen($path)) == $path) {
-                return $string;
-            }
-            return str_replace('//', '/', $path . $string);
-        });
-        $twig->addFunction($assetFunction);
+        $twig->addFunction($this->assetFunction());
+        $twig->addFunction($this->attachedFileFunction());
 
         // fixHtml functions
         $fixHtmlFunction = new TwigFilter('fixHtml', function ($string) {
@@ -149,6 +144,26 @@ final class WebRender
 
         $twig = $this->getTwig();
         return $twig->render($template, $templateVars);
+    }
+
+    private function assetFunction(): TwigFunction
+    {
+        return new TwigFunction('asset', function ($string) {
+            $path = FS_ROUTE . '/';
+            if (substr($string, 0, strlen($path)) == $path) {
+                return $string;
+            }
+            return str_replace('//', '/', $path . $string);
+        });
+    }
+
+    private function attachedFileFunction(): TwigFunction
+    {
+        return new TwigFunction('attachedFile', function ($idfile) {
+            $attached = new AttachedFile();
+            $attached->loadFromCode($idfile);
+            return $attached;
+        });
     }
 
     /**

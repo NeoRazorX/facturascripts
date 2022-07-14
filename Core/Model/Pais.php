@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\DataSrc\Paises;
 
 /**
  * A country, for example Spain.
@@ -51,19 +54,20 @@ class Pais extends Base\ModelClass
      */
     public $nombre;
 
-    /**
-     * Removed country from database.
-     * 
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-country');
             return false;
         }
 
-        return parent::delete();
+        if (parent::delete()) {
+            // limpiamos la caché
+            Paises::clear();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -71,50 +75,41 @@ class Pais extends Base\ModelClass
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->codpais === $this->toolBox()->appSettings()->get('default', 'codpais');
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codpais';
     }
 
-    /**
-     * Returns the name of the column that is the model's description.
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'nombre';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            Paises::clear();
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function tableName(): string
     {
         return 'paises';
     }
 
-    /**
-     * Check the country's data, return True if they are correct.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
-        $this->codpais = \trim($this->codpais);
-        if (1 !== \preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
+        $this->codpais = self::toolBox()::utils()::noHtml($this->codpais);
+        if ($this->codpais && 1 !== preg_match('/^[A-Z0-9]{1,20}$/i', $this->codpais)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codpais, '%column%' => 'codpais', '%min%' => '1', '%max%' => '20']
@@ -122,7 +117,7 @@ class Pais extends Base\ModelClass
             return false;
         }
 
-        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
+        $this->nombre = self::toolBox()::utils()::noHtml($this->nombre);
         return parent::test();
     }
 }

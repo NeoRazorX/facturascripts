@@ -205,6 +205,10 @@ class ReceiptGenerator
      */
     protected function newCustomerReceipt($invoice, $number, $amount): bool
     {
+        if (empty($amount)) {
+            return true;
+        }
+
         $newReceipt = new ReciboCliente();
         $newReceipt->codcliente = $invoice->codcliente;
         $newReceipt->coddivisa = $invoice->coddivisa;
@@ -228,6 +232,10 @@ class ReceiptGenerator
      */
     protected function newSupplierReceipt($invoice, $number, $amount): bool
     {
+        if (empty($amount)) {
+            return true;
+        }
+
         $newReceipt = new ReciboProveedor();
         $newReceipt->codproveedor = $invoice->codproveedor;
         $newReceipt->coddivisa = $invoice->coddivisa;
@@ -236,6 +244,7 @@ class ReceiptGenerator
         $newReceipt->importe = $amount;
         $newReceipt->nick = $invoice->nick;
         $newReceipt->numero = $number;
+        $newReceipt->fecha = $invoice->fecha;
         $newReceipt->setPaymentMethod($invoice->codpago);
         $newReceipt->disableInvoiceUpdate(true);
         return $newReceipt->save();
@@ -261,6 +270,9 @@ class ReceiptGenerator
 
         // calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
+        if (empty($amount)) {
+            return true;
+        }
 
         // calculate new receipt number
         $newNum = 1;
@@ -268,8 +280,7 @@ class ReceiptGenerator
             // try to update open receipts
             if ($receipt->pagado === false) {
                 $receipt->importe += $amount;
-                $receipt->save();
-                return true;
+                return $receipt->save();
             }
 
             if ($receipt->numero >= $newNum) {
@@ -293,6 +304,9 @@ class ReceiptGenerator
 
         // calculate outstanding amount
         $amount = $this->getOutstandingAmount($receipts, $invoice->total);
+        if (empty($amount)) {
+            return true;
+        }
 
         // calculate new receipt number
         $newNum = 1;
@@ -300,8 +314,7 @@ class ReceiptGenerator
             // try to update open receipts
             if ($receipt->pagado === false) {
                 $receipt->importe += $amount;
-                $receipt->save();
-                return true;
+                return $receipt->save();
             }
 
             if ($receipt->numero >= $newNum) {

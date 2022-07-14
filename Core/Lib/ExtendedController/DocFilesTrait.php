@@ -34,9 +34,6 @@ trait DocFilesTrait
 
     abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5');
 
-    /**
-     * @return bool
-     */
     private function addFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
@@ -63,7 +60,7 @@ trait DocFilesTrait
             $fileRelation->nick = $this->user->nick;
             $fileRelation->observations = $this->request->request->get('observations');
             if (false === $fileRelation->save()) {
-                ToolBox::i18nLog()->error('fail');
+                ToolBox::i18nLog()->error('fail-relation');
                 return true;
             }
         }
@@ -72,18 +69,11 @@ trait DocFilesTrait
         return true;
     }
 
-    /**
-     * @param string $viewName
-     * @param string $template
-     */
     protected function createViewDocFiles(string $viewName = 'docfiles', string $template = 'Tab/DocFiles')
     {
         $this->addHtmlView($viewName, $template, 'AttachedFileRelation', 'files', 'fas fa-paperclip');
     }
 
-    /**
-     * @return bool
-     */
     private function deleteFileAction(): bool
     {
         if (false === $this->permissions->allowDelete) {
@@ -105,9 +95,6 @@ trait DocFilesTrait
         return true;
     }
 
-    /**
-     * @return bool
-     */
     private function editFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
@@ -142,9 +129,6 @@ trait DocFilesTrait
         $view->loadData('', $where, ['creationdate' => 'DESC']);
     }
 
-    /**
-     * @return bool
-     */
     private function unlinkFileAction(): bool
     {
         if (false === $this->permissions->allowUpdate) {
@@ -164,9 +148,6 @@ trait DocFilesTrait
         return true;
     }
 
-    /**
-     * @return bool
-     */
     private function validateFileActionToken(): bool
     {
         // valid request?

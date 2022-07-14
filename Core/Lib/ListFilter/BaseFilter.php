@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Base\Utils;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -133,7 +134,7 @@ abstract class BaseFilter
      */
     public function setValue($value)
     {
-        $this->value = $value;
+        $this->value = Utils::noHtml($value);
     }
 
     /**
@@ -166,6 +167,6 @@ abstract class BaseFilter
      */
     protected function readonly(): string
     {
-        return $this->readonly ? ' readonly=""' : '';
+        return $this->readonly ? ' readonly="" disabled=""' : '';
     }
 }

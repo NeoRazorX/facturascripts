@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 
 /**
@@ -86,9 +88,6 @@ class FormaPago extends Base\ModelClass
      */
     public $tipovencimiento;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -97,23 +96,24 @@ class FormaPago extends Base\ModelClass
         $this->tipovencimiento = 'days';
     }
 
-    /**
-     * Removes payment method from database.
-     * 
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-payment-method');
             return false;
         }
 
-        return parent::delete();
+        if (parent::delete()) {
+            // limpiamos la caché
+            FormasPago::clear();
+            return true;
+        }
+
+        return false;
     }
 
     /**
-     * Return the the banck account.
+     * Return the bank account.
      *
      * @return DinCuentaBanco
      */
@@ -126,23 +126,19 @@ class FormaPago extends Base\ModelClass
 
     /**
      * Returns the date with the expiration term applied.
-     * 
+     *
      * @param string $date
      *
      * @return string
      */
-    public function getExpiration($date)
+    public function getExpiration(string $date): string
     {
-        return \date(self::DATE_STYLE, \strtotime($date . ' +' . $this->plazovencimiento . ' ' . $this->tipovencimiento));
+        return date(self::DATE_STYLE, strtotime($date . ' +' . $this->plazovencimiento . ' ' . $this->tipovencimiento));
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new CuentaBanco();
 
         return parent::install();
@@ -153,42 +149,38 @@ class FormaPago extends Base\ModelClass
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->codpago === $this->toolBox()->appSettings()->get('default', 'codpago');
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'codpago';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            FormasPago::clear();
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function tableName(): string
     {
         return 'formaspago';
     }
 
-    /**
-     * Returns True if there is no erros on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $this->codpago = $this->toolBox()->utils()->noHtml($this->codpago);
         $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
 
-        if ($this->codpago && 1 !== \preg_match('/^[A-Z0-9_\+\.\-\s]{1,10}$/i', $this->codpago)) {
+        if ($this->codpago && 1 !== preg_match('/^[A-Z0-9_\+\.\-\s]{1,10}$/i', $this->codpago)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codpago, '%column%' => 'codpago', '%min%' => '1', '%max%' => '10']
@@ -206,16 +198,10 @@ class FormaPago extends Base\ModelClass
         return parent::test();
     }
 
-    /**
-     * 
-     * @param array $values
-     *
-     * @return bool
-     */
-    protected function saveInsert(array $values = [])
+    protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codpago)) {
-            $this->codpago = (string) $this->newCode();
+            $this->codpago = (string)$this->newCode();
         }
 
         return parent::saveInsert($values);

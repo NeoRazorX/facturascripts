@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Lib\BusinessDocumentTools;
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Test\Core\DefaultSettingsTrait;
@@ -38,10 +38,11 @@ final class FacturaClienteTest extends TestCase
     const PRODUCT1_PRICE = 66.1;
     const PRODUCT1_QUANTITY = 3;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::setDefaultSettings();
         self::installAccountingPlan();
+        self::removeTaxRegularization();
     }
 
     public function testCanCreateInvoice()
@@ -67,11 +68,10 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($firstLine->exists(), 'first-invoice-line-does-not-exists');
 
         // recalculamos
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($invoice);
-        $neto = round(self::PRODUCT1_PRICE * self::PRODUCT1_QUANTITY, 2);
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+        $neto = round(self::PRODUCT1_PRICE * self::PRODUCT1_QUANTITY, FS_NF0);
         $this->assertEquals($neto, $invoice->neto, 'bad-invoice-neto');
-        $this->assertTrue($invoice->save(), 'cant-update-invoice');
 
         // buscamos la factura
         $dbInvoice = $invoice->get($invoice->idfactura);
@@ -84,6 +84,10 @@ final class FacturaClienteTest extends TestCase
         $this->assertEquals(self::INVOICE_REF, $dbInvoice->numero2, 'bad-invoice-numero2');
         $this->assertEquals(self::INVOICE_NOTES, $dbInvoice->observaciones, 'bad-invoice-notes');
         $this->assertEquals($invoice->total, $dbInvoice->total, 'bad-invoice-total');
+
+        // comprobamos que se añade la línea al log de auditoría
+        $found = $this->searchAuditLog($invoice->modelClassName(), $invoice->idfactura);
+        $this->assertTrue($found, 'invoice-log-audit-cant-persist');
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
@@ -130,9 +134,8 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculamos
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($invoice);
-        $this->assertTrue($invoice->save(), 'cant-update-invoice');
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
         // comprobamos el stock del producto
         $product->loadFromCode($product->idproducto);
@@ -146,6 +149,8 @@ final class FacturaClienteTest extends TestCase
         // comprobamos que se restaura el stock del producto
         $product->loadFromCode($product->idproducto);
         $this->assertEquals(self::PRODUCT1_QUANTITY, $product->stockfis, 'bad-product1-stock-end');
+
+        // eliminamos el producto
         $this->assertTrue($product->delete(), 'cant-delete-product');
     }
 
@@ -167,12 +172,11 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculamos
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($invoice);
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
         $netosindto = $invoice->netosindto;
         $neto = $invoice->neto;
         $total = $invoice->total;
-        $this->assertTrue($invoice->save(), 'cant-update-invoice');
 
         // comprobamos el asiento
         $entry = $invoice->getAccountingEntry();
@@ -181,7 +185,7 @@ final class FacturaClienteTest extends TestCase
 
         // aplicamos un descuento para modificar el total de la factura
         $invoice->dtopor1 = 50;
-        $tool->recalculate($invoice);
+        Calculator::calculate($invoice, $lines, false);
         $this->assertEquals($netosindto, $invoice->netosindto, 'bad-netosindto');
         $this->assertLessThan($neto, $invoice->neto, 'bad-neto');
         $this->assertLessThan($total, $invoice->total, 'bad-total');
@@ -217,13 +221,12 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculamos
-        $tool = new BusinessDocumentTools();
-        $tool->recalculate($invoice);
-        $this->assertTrue($invoice->save(), 'cant-update-invoice');
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
 
         // cambiamos el estado a uno no editable
         $changed = false;
-        foreach ($invoice->getAvaliableStatus() as $status) {
+        foreach ($invoice->getAvailableStatus() as $status) {
             if (false === $status->editable) {
                 $invoice->idestado = $status->idestado;
                 $changed = true;
@@ -234,8 +237,7 @@ final class FacturaClienteTest extends TestCase
 
         // cambiamos el descuento, recalculamos y guardamos
         $invoice->dtopor1 = 50;
-        $tool->recalculate($invoice);
-        $this->assertFalse($invoice->save(), 'can-update-non-editable-invoice');
+        $this->assertFalse(Calculator::calculate($invoice, $lines, true), 'can-update-non-editable-invoice');
         $this->assertFalse($invoice->delete(), 'can-delete-non-editable-invoice');
 
         // eliminamos
@@ -243,7 +245,7 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,6 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\RoleAccess;
 
 /**
  * Controller to edit a single item from the Contacto model
@@ -35,28 +36,18 @@ class EditContacto extends EditController
 
     use DocFilesTrait;
 
-    /**
-     * @return string
-     */
-    public function getImageUrl()
+    public function getImageUrl(): string
     {
-        return $this->views['EditContacto']->model->gravatar();
+        $mvn = $this->getMainViewName();
+        return $this->views[$mvn]->model->gravatar();
     }
 
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Contacto';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -65,12 +56,10 @@ class EditContacto extends EditController
         return $data;
     }
 
-    /**
-     * @param string $viewName
-     */
-    protected function addConversionButtons(string $viewName)
+    protected function addConversionButtons(string $viewName, BaseView $view)
     {
-        if (empty($this->views[$viewName]->model->codcliente)) {
+        $accessClient = $this->getRolePermissions('EditCliente');
+        if (empty($view->model->codcliente) && $accessClient['allowupdate']) {
             $this->addButton($viewName, [
                 'action' => 'convert-into-customer',
                 'color' => 'success',
@@ -79,7 +68,8 @@ class EditContacto extends EditController
             ]);
         }
 
-        if (empty($this->views[$viewName]->model->codproveedor)) {
+        $accessSupplier = $this->getRolePermissions('EditProveedor');
+        if (empty($view->model->codproveedor) && $accessSupplier['allowupdate']) {
             $this->addButton($viewName, [
                 'action' => 'convert-into-supplier',
                 'color' => 'success',
@@ -89,20 +79,55 @@ class EditContacto extends EditController
         }
     }
 
-    /**
-     * @param string $viewName
-     */
+    protected function createCustomerAction()
+    {
+        $access = $this->getRolePermissions('EditCliente');
+        if (false === $access['allowupdate']) {
+            self::toolBox()::i18nLog()->warning('not-allowed-update');
+            return;
+        }
+
+        $mvn = $this->getMainViewName();
+        $customer = $this->views[$mvn]->model->getCustomer();
+        if ($customer->exists()) {
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            $this->redirect($customer->url() . '&action=save-ok');
+            return;
+        }
+
+        $this->toolBox()->i18nLog()->error('record-save-error');
+    }
+
     protected function createEmailsView(string $viewName = 'ListEmailSent')
     {
         $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
 
-        /// disable column
+        // disable column
         $this->views[$viewName]->disableColumn('to');
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    protected function createSupplierAction()
+    {
+        $access = $this->getRolePermissions('EditProveedor');
+        if (false === $access['allowupdate']) {
+            self::toolBox()::i18nLog()->warning('not-allowed-update');
+            return;
+        }
+
+        $mvn = $this->getMainViewName();
+        $supplier = $this->views[$mvn]->model->getSupplier();
+        if ($supplier->exists()) {
+            $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+            $this->redirect($supplier->url() . '&action=save-ok');
+            return;
+        }
+
+        $this->toolBox()->i18nLog()->error('record-save-error');
     }
 
     /**
@@ -137,25 +162,11 @@ class EditContacto extends EditController
     {
         switch ($action) {
             case 'convert-into-customer':
-                $customer = $this->views['EditContacto']->model->getCustomer();
-                if ($customer->exists()) {
-                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-                    $this->redirect($customer->url() . '&action=save-ok');
-                    break;
-                }
-
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                $this->createCustomerAction();
                 break;
 
             case 'convert-into-supplier':
-                $supplier = $this->views['EditContacto']->model->getSupplier();
-                if ($supplier->exists()) {
-                    $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-                    $this->redirect($supplier->url() . '&action=save-ok');
-                    break;
-                }
-
-                $this->toolBox()->i18nLog()->error('record-save-error');
+                $this->createSupplierAction();
                 break;
 
             default:
@@ -187,6 +198,27 @@ class EditContacto extends EditController
         return parent::execPreviousAction($action);
     }
 
+    protected function getRolePermissions(string $pageName): array
+    {
+        $access = [
+            'allowdelete' => $this->user->admin,
+            'allowupdate' => $this->user->admin,
+            'onlyownerdata' => $this->user->admin
+        ];
+        foreach (RoleAccess::allFromUser($this->user->nick, $pageName) as $rolesPageUser) {
+            if ($rolesPageUser->allowdelete) {
+                $access['allowdelete'] = true;
+            }
+            if ($rolesPageUser->allowupdate) {
+                $access['allowupdate'] = true;
+            }
+            if ($rolesPageUser->onlyownerdata) {
+                $access['onlyownerdata'] = true;
+            }
+        }
+        return $access;
+    }
+
     /**
      * @param string $viewName
      * @param BaseView $view
@@ -209,8 +241,8 @@ class EditContacto extends EditController
 
             case $mainViewName:
                 parent::loadData($viewName, $view);
-                if ($view->model->exists()) {
-                    $this->addConversionButtons($viewName);
+                if ($view->model->exists() && $this->permissions->allowUpdate) {
+                    $this->addConversionButtons($viewName, $view);
                 }
                 break;
         }

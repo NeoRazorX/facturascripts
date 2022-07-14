@@ -98,8 +98,8 @@ trait ListBusinessActionTrait
         $this->addButton($viewName, [
             'action' => 'pay-receipt',
             'confirm' => 'true',
-            'icon' => 'fas fa-check',
-            'label' => 'pay',
+            'icon' => 'fas fa-dollar-sign',
+            'label' => 'paid',
             'type' => 'action'
         ]);
     }
@@ -131,7 +131,7 @@ trait ListBusinessActionTrait
                 continue;
             }
 
-            foreach ($model->getAvaliableStatus() as $status) {
+            foreach ($model->getAvailableStatus() as $status) {
                 if (empty($status->generadoc)) {
                     continue;
                 }
@@ -201,7 +201,7 @@ trait ListBusinessActionTrait
                 continue;
             }
 
-            foreach ($model->getAvaliableStatus() as $status) {
+            foreach ($model->getAvailableStatus() as $status) {
                 if ($status->editable) {
                     continue;
                 }

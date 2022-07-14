@@ -46,7 +46,42 @@ final class AgenteTest extends TestCase
         $this->assertTrue($agent->delete(), 'agent-cant-delete');
     }
 
-    protected function tearDown()
+    public function testNotNullFields()
+    {
+        $agent = new Agente();
+        $agent->codagente = 'Test';
+        $agent->nombre = 'Test Agent';
+        $this->assertTrue($agent->save(), 'agent-cant-save-2');
+
+        // comprobamos que los teléfonos, fax, email y observaciones no sean nulos
+        $this->assertNotNull($agent->telefono1, 'agent-telefono1-null');
+        $this->assertNotNull($agent->telefono2, 'agent-telefono2-null');
+        $this->assertNotNull($agent->fax, 'agent-fax-null');
+        $this->assertNotNull($agent->email, 'agent-email-null');
+        $this->assertNotNull($agent->observaciones, 'agent-observaciones-null');
+
+        // eliminamos
+        $this->assertTrue($agent->delete(), 'agent-cant-delete-2');
+    }
+
+    public function testEmailField()
+    {
+        // probamos con un email mal formado
+        $agent = new Agente();
+        $agent->codagente = 'Test';
+        $agent->nombre = 'Test Agent';
+        $agent->email = 'test-test@';
+        $this->assertFalse($agent->save(), 'agent-cant-save-3');
+
+        // probamos con un email correcto
+        $agent->email = 'pepe@facturascripts.com';
+        $this->assertTrue($agent->save(), 'agent-cant-save-4');
+
+        // eliminamos
+        $this->assertTrue($agent->delete(), 'agent-cant-delete-3');
+    }
+
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2020 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -84,13 +85,13 @@ class ApiAccess extends Base\ModelClass
     /**
      * Add the indicated resource list to the Role group
      *
-     * @param int   $idApiKey
+     * @param int $idApiKey
      * @param array $resources
-     * @param bool  $state
+     * @param bool $state
      *
      * @return bool
      */
-    public static function addResourcesToApiKey($idApiKey, $resources, $state = false)
+    public static function addResourcesToApiKey(int $idApiKey, array $resources, bool $state = false): bool
     {
         $apiAccess = new static();
 
@@ -117,37 +118,20 @@ class ApiAccess extends Base\ModelClass
         return true;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new DinApiKey();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'api_access';
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -112,9 +112,6 @@ class ProductoProveedor extends Base\ModelOnChangeClass
         return $eud;
     }
 
-    /**
-     * @return DinVariante
-     */
     public function getVariant(): DinVariante
     {
         $variant = new DinVariante();
@@ -123,9 +120,6 @@ class ProductoProveedor extends Base\ModelOnChangeClass
         return $variant;
     }
 
-    /**
-     * @return DinProveedor
-     */
     public function getSupplier(): DinProveedor
     {
         $supplier = new DinProveedor();
@@ -133,39 +127,30 @@ class ProductoProveedor extends Base\ModelOnChangeClass
         return $supplier;
     }
 
-    /**
-     * @return string
-     */
     public function install(): string
     {
-        /// needed dependencies
+        // needed dependencies
         new DinDivisa();
         new DinProveedor();
 
         return parent::install();
     }
 
-    /**
-     * @return string
-     */
     public static function primaryColumn(): string
     {
         return 'id';
     }
 
-    /**
-     * @return string
-     */
     public static function tableName(): string
     {
         return 'productosprov';
     }
 
-    /**
-     * @return bool
-     */
     public function test(): bool
     {
+        $this->referencia = self::toolBox()::utils()::noHtml($this->referencia);
+        $this->refproveedor = self::toolBox()::utils()::noHtml($this->refproveedor);
+
         if (empty($this->referencia)) {
             $this->toolBox()->i18nLog()->warning('field-can-not-be-null', ['%fieldName%' => 'referencia', '%tableName%' => static::tableName()]);
             return false;
@@ -181,12 +166,6 @@ class ProductoProveedor extends Base\ModelOnChangeClass
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         return $this->getVariant()->url($type);
@@ -221,9 +200,6 @@ class ProductoProveedor extends Base\ModelOnChangeClass
         parent::onUpdate();
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         parent::setPreviousData(array_merge(['neto'], $fields));

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -25,49 +26,42 @@ use Symfony\Component\HttpFoundation\Request;
  * Description of WidgetSelect
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Jose Antonio Cuello  <yopli2000@gmail.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class WidgetSelect extends BaseWidget
 {
 
     /**
-     *
      * @var CodeModel
      */
     protected static $codeModel;
 
     /**
-     *
      * @var string
      */
     protected $fieldcode;
 
     /**
-     *
      * @var string
      */
     protected $fieldtitle;
 
     /**
-     *
      * @var string
      */
     protected $source;
 
     /**
-     *
      * @var bool
      */
     protected $translate;
 
     /**
-     *
      * @var array
      */
     public $values = [];
 
     /**
-     *
      * @param array $data
      */
     public function __construct($data)
@@ -112,8 +106,7 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
-     *
-     * @param object  $model
+     * @param object $model
      * @param Request $request
      */
     public function processFormData(&$model, $request)
@@ -128,9 +121,9 @@ class WidgetSelect extends BaseWidget
      * - If it's a value array, it must uses the value of each element as title and value
      * - If it's a multidimensional array, the indexes value and title must be set for each element
      *
-     * @param array  $items
-     * @param bool   $translate
-     * @param bool   $addEmpty
+     * @param array $items
+     * @param bool $translate
+     * @param bool $addEmpty
      * @param string $col1
      * @param string $col2
      */
@@ -161,8 +154,8 @@ class WidgetSelect extends BaseWidget
     /**
      *
      * @param array $values
-     * @param bool  $translate
-     * @param bool  $addEmpty
+     * @param bool $translate
+     * @param bool $addEmpty
      */
     public function setValuesFromArrayKeys($values, $translate = false, $addEmpty = false)
     {
@@ -183,7 +176,7 @@ class WidgetSelect extends BaseWidget
      * Loads the value list from an array with value and title (description)
      *
      * @param array $rows
-     * @param bool  $translate
+     * @param bool $translate
      */
     public function setValuesFromCodeModel($rows, $translate = false)
     {
@@ -201,7 +194,6 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
-     *
      * @param int $start
      * @param int $end
      * @param int $step
@@ -227,7 +219,6 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
-     *
      * @param string $type
      * @param string $extraClass
      *
@@ -242,11 +233,12 @@ class WidgetSelect extends BaseWidget
         }
 
         $found = false;
-        $html = '<select name="' . $this->fieldname . '" id="' . $this->id . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '>';
+        $id = empty($this->id) ? '' : ' id="' . $this->id . '"';
+        $html = '<select name="' . $this->fieldname . '"' . $id . ' " class="' . $class . '"' . $this->inputHtmlExtraParams() . '>';
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
-            /// don't use strict comparation (===)
+            // don't use strict comparison (===)
             if ($option['value'] == $this->value) {
                 $found = true;
                 $html .= '<option value="' . $option['value'] . '" selected="">' . $title . '</option>';
@@ -256,7 +248,7 @@ class WidgetSelect extends BaseWidget
             $html .= '<option value="' . $option['value'] . '">' . $title . '</option>';
         }
 
-        /// value not found?
+        // value not found?
         if (!$found && !empty($this->value)) {
             $html .= '<option value="' . $this->value . '" selected="">'
                 . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
@@ -271,7 +263,7 @@ class WidgetSelect extends BaseWidget
      * Set datasource data and Load data from Model into values array.
      *
      * @param array $child
-     * @param bool  $loadData
+     * @param bool $loadData
      */
     protected function setSourceData(array $child, bool $loadData = true)
     {
@@ -285,7 +277,6 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
-     *
      * @return string
      */
     protected function show()
@@ -296,7 +287,7 @@ class WidgetSelect extends BaseWidget
 
         $selected = null;
         foreach ($this->values as $option) {
-            /// don't use strict comparation (===)
+            // don't use strict comparation (===)
             if ($option['value'] == $this->value) {
                 $selected = $option['title'];
             }

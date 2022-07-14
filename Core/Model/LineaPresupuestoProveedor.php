@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2020  Carlos Garcia Gomez       <carlos@facturascripts.com>
+ * Copyright (C) 2014-2022  Carlos Garcia Gomez       <carlos@facturascripts.com>
  * Copyright (C) 2014-2015  Francesc Pineda Segarra   <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Dinamic\Model\PresupuestoProveedor as DinPresupuestoProveedor;
 
 /**
  * Supplier order line.
@@ -36,56 +39,32 @@ class LineaPresupuestoProveedor extends Base\PurchaseDocumentLine
      */
     public $idpresupuesto;
 
-    /**
-     * 
-     * @return string
-     */
-    public function documentColumn()
+    public function documentColumn(): string
     {
         return 'idpresupuesto';
     }
 
-    /**
-     * 
-     * @return PresupuestoProveedor
-     */
-    public function getDocument()
+    public function getDocument(): DinPresupuestoProveedor
     {
-        $presupuesto = new PresupuestoProveedor();
+        $presupuesto = new DinPresupuestoProveedor();
         $presupuesto->loadFromCode($this->idpresupuesto);
         return $presupuesto;
     }
 
-    /**
-     * 
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
-        /// needed dependency
+        // needed dependency
         new PresupuestoProveedor();
 
         return parent::install();
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'lineaspresupuestosprov';
     }
 
-    /**
-     * 
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         if (null !== $this->idpresupuesto) {
             return 'EditPresupuestoProveedor?code=' . $this->idpresupuesto;

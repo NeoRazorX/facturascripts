@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -60,6 +60,11 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      * @var bool
      */
     private $disableUpdateStock = false;
+
+    /**
+     * @var bool
+     */
+    private $disableUpdateTotals = false;
 
     /**
      * Percentage of discount.
@@ -165,9 +170,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     abstract public function documentColumn();
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -190,12 +192,14 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         $this->recargo = $this->getTax()->recargo;
     }
 
-    /**
-     * @param bool $value
-     */
     public function disableUpdateStock(bool $value)
     {
         $this->disableUpdateStock = $value;
+    }
+
+    public function disableUpdateTotals(bool $value)
+    {
+        $this->disableUpdateTotals = $value;
     }
 
     /**
@@ -223,11 +227,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $eud;
     }
 
-    /**
-     * Returns related product.
-     *
-     * @return Producto
-     */
     public function getProducto(): Producto
     {
         $producto = new Producto();
@@ -241,9 +240,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $producto;
     }
 
-    /**
-     * @return Variante
-     */
     public function getVariante(): Variante
     {
         $variante = new Variante();
@@ -252,10 +248,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $variante;
     }
 
-    /**
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         // needed dependencies
         new Impuesto();
@@ -264,12 +257,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return parent::install();
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idlinea';
     }
@@ -289,10 +277,13 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             $this->servido = 0.0;
         }
 
+        if (false === $this->disableUpdateTotals) {
+            $this->pvpsindto = $this->pvpunitario * $this->cantidad;
+            $this->pvptotal = $this->pvpsindto * $this->getEUDiscount();
+        }
+
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->pvpsindto = $this->pvpunitario * $this->cantidad;
-        $this->pvptotal = $this->pvpsindto * $this->getEUDiscount();
         $this->referencia = $utils->noHtml($this->referencia);
         return parent::test();
     }
@@ -352,15 +343,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return false;
     }
 
-    /**
-     * Custom url method.
-     *
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
-    public function url(string $type = 'auto', string $list = 'List')
+    public function url(string $type = 'auto', string $list = 'List'): string
     {
         $name = str_replace('Linea', '', $this->modelClassName());
         return $type === 'new' ? 'Edit' . $name : parent::url($type, 'List' . $name . '?activetab=List');
@@ -436,9 +419,6 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $this->updateStock() && parent::saveInsert($values);
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['actualizastock', 'cantidad', 'servido'];

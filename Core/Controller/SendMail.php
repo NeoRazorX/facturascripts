@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,12 +57,7 @@ class SendMail extends Controller
      */
     public $newMail;
 
-    /**
-     * Return the basic data for this page.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -162,6 +157,10 @@ class SendMail extends Controller
                 break;
 
             case 'send':
+                // valid request?
+                if (false === $this->validateFormToken()) {
+                    break;
+                }
                 if ($this->send()) {
                     $this->toolBox()->i18nLog()->notice('send-mail-ok');
                     $this->updateFemail();

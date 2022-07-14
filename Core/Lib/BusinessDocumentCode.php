@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,8 @@ namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
-use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
+use FacturaScripts\Core\Model\SecuenciaDocumento;
+use FacturaScripts\Dinamic\Model\SecuenciaDocumento as DinSecuenciaDocumento;
 
 /**
  * Description of BusinessDocumentCode
@@ -35,21 +36,14 @@ class BusinessDocumentCode
     const GAP_LIMIT = 1000;
 
     /**
-     * Generates a new identifier for humans from a document.
-     *
+     * @param SecuenciaDocumento $sequence
      * @param BusinessDocument $document
-     * @param bool $newNumber
+     *
+     * @return string
      */
-    public static function getNewCode(&$document, bool $newNumber = true)
+    public static function getNewCode(SecuenciaDocumento &$sequence, BusinessDocument &$document): string
     {
-        $sequence = static::getSequence($document);
-        if ($newNumber) {
-            $document->numero = static::getNewNumber($sequence, $document);
-        }
-
-        $document->codigo = CodePatterns::trans(
-            $sequence->patron, $document, ['long' => $sequence->longnumero]
-        );
+        return CodePatterns::trans($sequence->patron, $document, ['long' => $sequence->longnumero]);
     }
 
     /**
@@ -58,11 +52,11 @@ class BusinessDocumentCode
      *
      * @return string
      */
-    protected static function getNewNumber(&$sequence, &$document): string
+    protected static function getNewNumber(SecuenciaDocumento &$sequence, BusinessDocument &$document): string
     {
         $previous = static::getPrevious($sequence, $document);
 
-        /// find maximum number for this sequence data
+        // find maximum number for this sequence data
         foreach ($previous as $lastDoc) {
             $lastNumber = (int)$lastDoc->numero;
             if ($lastNumber >= $sequence->numero || $sequence->usarhuecos) {
@@ -71,15 +65,15 @@ class BusinessDocumentCode
             break;
         }
 
-        /// use gaps?
+        // use gaps?
         if ($sequence->usarhuecos) {
-            /// we look for holes back
+            // we look for holes back
             $expectedNumber = $sequence->numero - 1;
             $preDate = $document->fecha;
             $preHour = $document->hora;
             foreach ($previous as $preDoc) {
                 if ($expectedNumber != $preDoc->numero && $expectedNumber >= $sequence->inicio) {
-                    /// hole found
+                    // hole found
                     $document->fecha = $preDate;
                     $document->hora = $preHour;
                     return (string)$expectedNumber;
@@ -91,10 +85,10 @@ class BusinessDocumentCode
             }
 
             if (empty($previous)) {
-                /// no previous document, then use initial number
+                // no previous document, then use initial number
                 $sequence->numero = $sequence->inicio;
             } elseif ($expectedNumber >= $sequence->inicio && $expectedNumber >= $sequence->numero - self::GAP_LIMIT) {
-                /// the gap is in the first positions of the range
+                // the gap is in the first positions of the range
                 $document->fecha = $preDate;
                 $document->hora = $preHour;
                 return (string)$expectedNumber;
@@ -103,30 +97,11 @@ class BusinessDocumentCode
 
         $newNumber = $sequence->numero;
 
-        /// update sequence
+        // update sequence
         $sequence->numero++;
         $sequence->save();
 
         return (string)$newNumber;
-    }
-
-    /**
-     * @param SecuenciaDocumento $sequence
-     * @param BusinessDocument $document
-     *
-     * @return BusinessDocument[]
-     */
-    protected static function getPrevious(&$sequence, &$document): array
-    {
-        $order = strtolower(FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
-        $where = [
-            new DataBaseWhere('codserie', $sequence->codserie),
-            new DataBaseWhere('idempresa', $sequence->idempresa)
-        ];
-        if ($sequence->codejercicio) {
-            $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
-        }
-        return $document->all($where, $order, 0, self::GAP_LIMIT);
     }
 
     /**
@@ -136,14 +111,14 @@ class BusinessDocumentCode
      *
      * @return SecuenciaDocumento
      */
-    protected static function getSequence(&$document)
+    public static function getSequence(BusinessDocument &$document): SecuenciaDocumento
     {
-        $selectedSequence = new SecuenciaDocumento();
+        $selectedSequence = new DinSecuenciaDocumento();
         $patron = substr(strtoupper($document->modelClassName()), 0, 3) . '{EJE}{SERIE}{NUM}';
         $long = $selectedSequence->longnumero;
 
-        /// find sequence for this document and serie
-        $sequence = new SecuenciaDocumento();
+        // find sequence for this document and serie
+        $sequence = new DinSecuenciaDocumento();
         $where = [
             new DataBaseWhere('codserie', $document->codserie),
             new DataBaseWhere('idempresa', $document->idempresa),
@@ -151,19 +126,19 @@ class BusinessDocumentCode
         ];
         foreach ($sequence->all($where) as $seq) {
             if (empty($seq->codejercicio)) {
-                /// sequence for all exercises
+                // sequence for all exercises
                 $selectedSequence = $seq;
             } elseif ($seq->codejercicio == $document->codejercicio) {
-                /// sequence for this exercise
+                // sequence for this exercise
                 return $seq;
             }
 
-            /// use old pattern for the new sequence
+            // use old pattern for the new sequence
             $patron = $seq->patron;
             $long = $seq->longnumero;
         }
 
-        /// sequence not found? Then create
+        // sequence not found? Then create
         if (false === $selectedSequence->exists()) {
             $selectedSequence->codejercicio = $document->codejercicio;
             $selectedSequence->codserie = $document->codserie;
@@ -176,5 +151,40 @@ class BusinessDocumentCode
         }
 
         return $selectedSequence;
+    }
+
+    /**
+     * Assign a new unique code for the document.
+     *
+     * @param BusinessDocument $document
+     * @param bool $newNumber
+     */
+    public static function setNewCode(BusinessDocument &$document, bool $newNumber = true): void
+    {
+        $sequence = static::getSequence($document);
+        if ($newNumber) {
+            $document->numero = static::getNewNumber($sequence, $document);
+        }
+
+        $document->codigo = static::getNewCode($sequence, $document);
+    }
+
+    /**
+     * @param SecuenciaDocumento $sequence
+     * @param BusinessDocument $document
+     *
+     * @return BusinessDocument[]
+     */
+    protected static function getPrevious(SecuenciaDocumento &$sequence, BusinessDocument &$document): array
+    {
+        $order = strtolower(FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
+        $where = [
+            new DataBaseWhere('codserie', $sequence->codserie),
+            new DataBaseWhere('idempresa', $sequence->idempresa)
+        ];
+        if ($sequence->codejercicio) {
+            $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
+        }
+        return $document->all($where, $order, 0, self::GAP_LIMIT);
     }
 }

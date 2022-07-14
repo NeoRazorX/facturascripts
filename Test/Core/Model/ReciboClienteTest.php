@@ -19,7 +19,11 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Lib\ReceiptGenerator;
+use FacturaScripts\Core\Model\Base\ModelCore;
+use FacturaScripts\Core\Model\FacturaCliente;
+use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\ReciboCliente;
 use FacturaScripts\Test\Core\DefaultSettingsTrait;
 use FacturaScripts\Test\Core\LogErrorsTrait;
@@ -32,7 +36,7 @@ final class ReciboClienteTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::setDefaultSettings();
         self::installAccountingPlan();
@@ -55,6 +59,135 @@ final class ReciboClienteTest extends TestCase
         foreach ($receipts as $receipt) {
             $this->assertFalse($receipt->exists());
         }
+    }
+
+    public function testCreateInvoiceOnPastDate()
+    {
+        // creamos una factura de ayer
+        $yesterday = date(ModelCore::DATE_STYLE, strtotime('-1 day'));
+        $invoice = $this->getRandomCustomerInvoice($yesterday);
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // comprobamos que existe un recibo de ayer para esta factura
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $this->assertEquals($yesterday, $receipts[0]->fecha);
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+    }
+
+    public function testCreatePaidInvoiceOnPastDate()
+    {
+        // creamos una forma de pago pagada
+        $payMethod = new FormaPago();
+        $payMethod->descripcion = 'test';
+        $payMethod->plazovencimiento = 0;
+        $payMethod->tipovencimiento = 'days';
+        $payMethod->pagado = true;
+        $this->assertTrue($payMethod->save(), 'cant-save-forma-pago');
+
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos una factura de ayer
+        $yesterday = date(ModelCore::DATE_STYLE, strtotime('-1 day'));
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $invoice->setDate($yesterday, $invoice->hora);
+        $invoice->codpago = $payMethod->codpago;
+        $this->assertTrue($invoice->save(), 'can-not-create-invoice');
+
+        // añadimos una línea a la factura
+        $newLine = $invoice->getNewLine();
+        $newLine->cantidad = 1;
+        $newLine->descripcion = 'test';
+        $newLine->pvpunitario = 100;
+        $this->assertTrue($newLine->save(), 'cant-add-invoice-line');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        // comprobamos que la factura está pagada
+        $this->assertTrue($invoice->pagada, 'invoice-unpaid');
+
+        // comprobamos que existe un recibo pagado de ayer para esta factura
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $this->assertTrue($receipts[0]->pagado, 'unpaid-receipt');
+        $this->assertEquals($yesterday, $receipts[0]->fecha, 'bad-receipt-date');
+        $this->assertEquals($yesterday, $receipts[0]->vencimiento, 'bad-receipt-expiration');
+        $this->assertEquals($yesterday, $receipts[0]->fechapago, 'bad-receipt-payment-date');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($customer->delete(), 'can-not-delete-customer');
+        $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
+    }
+
+    public function testCustomerPaymentDays()
+    {
+        // creamos una forma de pago con vencimiento de 0 días
+        $payMethod = new FormaPago();
+        $payMethod->descripcion = 'test';
+        $payMethod->plazovencimiento = 0;
+        $payMethod->tipovencimiento = 'days';
+        $payMethod->pagado = false;
+        $this->assertTrue($payMethod->save(), 'cant-save-forma-pago');
+
+        // creamos un cliente con días de pago 1 y 15
+        $customer = $this->getRandomCustomer();
+        $customer->diaspago = '1,15';
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos una factura con fecha del día 10 de marzo
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $date = date('10-03-Y');
+        $invoice->setDate($date, $invoice->hora);
+        $invoice->codpago = $payMethod->codpago;
+        $this->assertTrue($invoice->save(), 'can-not-create-invoice');
+
+        // añadimos una línea a la factura
+        $newLine = $invoice->getNewLine();
+        $newLine->cantidad = 1;
+        $newLine->descripcion = 'test';
+        $newLine->pvpunitario = 100;
+        $this->assertTrue($newLine->save(), 'cant-add-invoice-line');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        // comprobamos que el recibo tiene vencimiento el día 15 de marzo
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $vencimiento10 = date('15-03-Y');
+        $this->assertEquals($vencimiento10, $receipts[0]->vencimiento, 'bad-receipt-expiration');
+
+        // eliminamos el recibo
+        $this->assertTrue($receipts[0]->delete(), 'can-not-delete-receipt');
+
+        // ahora cambiamos los días de pago a 1 y 7
+        $customer->diaspago = '1,7';
+        $this->assertTrue($customer->save(), 'cant-update-customer');
+
+        // generados el recibo de nuevo
+        $generator = new ReceiptGenerator();
+        $generator->generate($invoice);
+
+        // comprobamos que el recibo tiene vencimiento el día 1 de abril
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $vencimiento20 = date('01-04-Y');
+        $this->assertEquals($vencimiento20, $receipts[0]->vencimiento, 'bad-receipt-expiration');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($customer->delete(), 'can-not-delete-customer');
+        $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
     public function testUpdateAndCreateReceipts()
@@ -148,7 +281,45 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
     }
 
-    protected function tearDown()
+    public function testUpdateInvoiceWithPaidReceipt()
+    {
+        // creamos una factura
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // marcamos el recibo como pagado
+        $receipt = $invoice->getReceipts()[0];
+        $receipt->pagado = true;
+        $this->assertTrue($receipt->save(), 'can-not-set-paid-receipt');
+
+        // comprobamos que la factura está pagada
+        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $this->assertTrue($invoice->pagada, 'invoice-unpaid');
+
+        // añadimos una línea con precio 0
+        $newLine = $invoice->getNewLine();
+        $newLine->cantidad = 1;
+        $newLine->descripcion = 'test';
+        $newLine->pvpunitario = 0;
+        $this->assertTrue($newLine->save(), 'can-not-create-new-line');
+
+        // forzamos a que se recalcule la factura
+        $invoice->fecha = date('d-m-Y', strtotime('+1 day'));
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'can-not-calculate-invoice');
+
+        // comprobamos que la factura sigue pagada
+        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $this->assertTrue($invoice->pagada, 'invoice-unpaid');
+
+        // comprobamos que solamente hay un recibo
+        $this->assertCount(1, $invoice->getReceipts(), 'bad-invoice-receipts-count');
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+    }
+
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

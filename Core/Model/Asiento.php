@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,7 +31,7 @@ use FacturaScripts\Dinamic\Model\RegularizacionImpuesto as DinRegularizacionImpu
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Artex Trading sa     <jcuello@artextrading.com>
  */
-class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
+class Asiento extends Base\ModelOnChangeClass
 {
 
     use Base\ModelTrait;
@@ -44,7 +44,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     const RENUMBER_LIMIT = 1000;
 
     /**
-     * Accounting channel. For statisctics purpose.
+     * Accounting channel. For statistics purpose.
      *
      * @var int
      */
@@ -131,43 +131,24 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     public function accumulateAmounts(array &$detail)
     {
         $haber = isset($detail['haber']) ? (float)$detail['haber'] : 0.0;
-        $this->importe += round($haber, (int)FS_NF0);
+        $this->importe += round($haber, FS_NF0);
     }
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
         $this->editable = true;
         $this->fecha = date(self::DATE_STYLE);
-        $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
+        $this->idempresa = self::toolBox()::appSettings()->get('default', 'idempresa');
         $this->importe = 0.0;
         $this->numero = '';
         $this->operacion = self::OPERATION_GENERAL;
     }
 
-    /**
-     * Remove the accounting entry.
-     *
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
-        if (false === $this->getExercise()->isOpened()) {
-            $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
-            return false;
-        }
-
-        $reg = new DinRegularizacionImpuesto();
-        if ($reg->loadFechaInside($this->fecha) && $reg->bloquear) {
-            $this->toolBox()->i18nLog()->warning('accounting-within-regularization');
-            return false;
-        }
-
-        if (false === $this->isEditable()) {
-            $this->toolBox()->i18nLog()->warning('non-editable-accounting-entry');
+        if (false === $this->editable()) {
+            self::toolBox()::i18nLog()->warning('non-editable-accounting-entry');
             return false;
         }
 
@@ -190,6 +171,23 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
             'model-data' => $this->toArray()
         ]);
         return true;
+    }
+
+    public function editable(): bool
+    {
+        $exercise = $this->getExercise();
+        if (false === $exercise->isOpened()) {
+            self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
+            return false;
+        }
+
+        $reg = new DinRegularizacionImpuesto();
+        if ($reg->loadFechaInside($this->fecha) && $reg->bloquear) {
+            self::toolBox()::i18nLog()->warning('accounting-within-regularization');
+            return false;
+        }
+
+        return $this->editable || $this->previousData['editable'];
     }
 
     /**
@@ -222,14 +220,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
         $this->importe = 0.0;
     }
 
-    /**
-     * This function is called when creating the model table. Returns the SQL
-     * that will be executed after the creation of the table. Useful to insert values
-     * default.
-     *
-     * @return string
-     */
-    public function install()
+    public function install(): string
     {
         new DinDiario();
         new DinEjercicio();
@@ -251,7 +242,7 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
             $haber += $line->haber;
         }
 
-        return $this->toolBox()->utils()->floatcmp($debe, $haber, FS_NF0, true);
+        return self::toolBox()::utils()->floatcmp($debe, $haber, FS_NF0, true);
     }
 
     /**
@@ -270,97 +261,81 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
         return parent::newCode($field, $where);
     }
 
-    /**
-     * Returns the name of the column that is the model's primary key.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idasiento';
     }
 
-    /**
-     * Returns the name of the column that describes the model, such as name, description...
-     *
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'numero';
     }
 
     /**
-     * Re-number the accounting entries of the open exercises.
+     * Renumber the accounting entries of the given exercise.
      *
      * @param string $codejercicio
      *
      * @return bool
      */
-    public function renumber($codejercicio = '')
+    public function renumber(string $codejercicio): bool
     {
-        $exerciseModel = new DinEjercicio();
-        $where = empty($codejercicio) ? [] : [new DataBaseWhere('codejercicio', $codejercicio)];
-        foreach ($exerciseModel->all($where) as $exe) {
-            if (false === $exe->isOpened()) {
-                continue;
-            }
-
-            $offset = 0;
-            $number = 1;
-            $sql = 'SELECT idasiento,numero,fecha FROM ' . static::tableName()
-                . ' WHERE codejercicio = ' . self::$dataBase->var2str($exe->codejercicio)
-                . ' ORDER BY codejercicio ASC, fecha ASC, idasiento ASC';
-
-            $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
-            while (!empty($rows)) {
-                if (false === $this->renumberAccEntries($rows, $number)) {
-                    $this->toolBox()->i18nLog()->warning('renumber-accounting-error', ['%exerciseCode%' => $exe->codejercicio]);
-                    return false;
-                }
-
-                $offset += self::RENUMBER_LIMIT;
-                $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
-            }
+        $exercise = new DinEjercicio();
+        if (false === $exercise->loadFromCode($codejercicio)) {
+            self::toolBox()::i18nLog()->error('exercise-not-found', ['%code%' => $codejercicio]);
+            return false;
+        } elseif (false === $exercise->isOpened()) {
+            self::toolBox()::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $exercise->nombre]);
+            return false;
         }
 
+        $offset = 0;
+        $number = 1;
+        $sql = 'SELECT idasiento,numero,fecha FROM ' . static::tableName()
+            . ' WHERE codejercicio = ' . self::$dataBase->var2str($exercise->codejercicio)
+            . ' ORDER BY fecha ASC, idasiento ASC';
+
+        $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
+        while (!empty($rows)) {
+            if (false === $this->renumberAccEntries($rows, $number)) {
+                self::toolBox()::i18nLog()->warning('renumber-accounting-error', ['%exerciseCode%' => $codejercicio]);
+                return false;
+            }
+
+            $offset += self::RENUMBER_LIMIT;
+            $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
+        }
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    public function save()
+    public function save(): bool
     {
         if (empty($this->codejercicio)) {
             $this->setDate($this->fecha);
         }
 
-        if (false === $this->getExercise()->isOpened()) {
-            $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->getExercise()->nombre]);
+        if (false === $this->editable()) {
+            self::toolBox()::i18nLog()->warning('non-editable-accounting-entry');
             return false;
         }
 
-        $reg = new DinRegularizacionImpuesto();
-        if ($reg->loadFechaInside($this->fecha) && $reg->bloquear) {
-            $this->toolBox()->i18nLog()->warning('accounting-within-regularization');
+        if (false === parent::save()) {
             return false;
         }
 
-        if (false === $this->isEditable()) {
-            $this->toolBox()->i18nLog()->warning('non-editable-accounting-entry');
-            return false;
-        }
-
-        return parent::save();
+        // add audit log
+        self::toolBox()::i18nLog(self::AUDIT_CHANNEL)->info('updated-model', [
+            '%model%' => $this->modelClassName(),
+            '%key%' => $this->primaryColumnValue(),
+            '%desc%' => $this->primaryDescription(),
+            'model-class' => $this->modelClassName(),
+            'model-code' => $this->primaryColumnValue(),
+            'model-data' => $this->toArray()
+        ]);
+        return true;
     }
 
-    /**
-     * @param string $date
-     *
-     * @return bool
-     */
-    public function setDate($date)
+    public function setDate(string $date): bool
     {
         $exercise = new DinEjercicio();
         $exercise->idempresa = $this->idempresa;
@@ -373,29 +348,21 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
         return false;
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'asientos';
     }
 
-    /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
     public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
+        $utils = self::toolBox()::utils();
         $this->concepto = $utils->noHtml($this->concepto);
         $this->documento = $utils->noHtml($this->documento);
 
         if (strlen($this->concepto) == 0 || strlen($this->concepto) > 255) {
-            $this->toolBox()->i18nLog()->warning('invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']);
+            self::toolBox()::i18nLog()->warning(
+                'invalid-column-lenght', ['%column%' => 'concepto', '%min%' => '1', '%max%' => '255']
+            );
             return false;
         }
 
@@ -407,16 +374,6 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     }
 
     /**
-     * Check if the accounting entry is editable.
-     *
-     * @return bool
-     */
-    protected function isEditable(): bool
-    {
-        return $this->editable || $this->previousData['editable'];
-    }
-
-    /**
      * @param string $field
      *
      * @return bool
@@ -425,13 +382,13 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
     {
         switch ($field) {
             case 'codejercicio':
-                $this->toolBox()->i18nLog()->warning('cant-change-accounting-entry-exercise');
+                self::toolBox()::i18nLog()->warning('cant-change-accounting-entry-exercise');
                 return false;
 
             case 'fecha':
                 $this->setDate($this->fecha);
                 if ($this->codejercicio != $this->previousData['codejercicio']) {
-                    $this->toolBox()->i18nLog()->warning('cant-change-accounting-entry-exercise');
+                    self::toolBox()::i18nLog()->warning('cant-change-accounting-entry-exercise');
                     return false;
                 }
                 return true;
@@ -448,37 +405,26 @@ class Asiento extends Base\ModelOnChangeClass implements Base\GridModelInterface
      *
      * @return bool
      */
-    protected function renumberAccEntries(&$entries, &$number)
+    protected function renumberAccEntries(array &$entries, int &$number): bool
     {
         $sql = '';
         foreach ($entries as $row) {
             if (self::$dataBase->var2str($row['numero']) !== self::$dataBase->var2str($number)) {
-                $sql .= 'UPDATE ' . static::tableName() . ' SET numero = ' . self::$dataBase->var2str($number)
+                $sql .= 'UPDATE ' . static::tableName()
+                    . ' SET numero = ' . self::$dataBase->var2str($number)
                     . ' WHERE idasiento = ' . self::$dataBase->var2str($row['idasiento']) . ';';
             }
-
             ++$number;
         }
-
         return empty($sql) || self::$dataBase->exec($sql);
     }
 
-    /**
-     * Insert the model data in the database.
-     *
-     * @param array $values
-     *
-     * @return bool
-     */
     protected function saveInsert(array $values = []): bool
     {
         $this->numero = $this->newCode('numero');
         return parent::saveInsert($values);
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codejercicio', 'editable', 'fecha'];

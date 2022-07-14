@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 /**
@@ -72,7 +73,7 @@ abstract class EditController extends PanelController
     /**
      * Loads the data to display.
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -88,13 +89,13 @@ abstract class EditController extends PanelController
                 $code = $this->request->query->get('code', $primaryKey);
                 $view->loadData($code);
 
-                /// User can access to data?
+                // User can access to data?
                 if (false === $this->checkOwnerData($view->model)) {
                     $this->setTemplate('Error/AccessDenied');
                     break;
                 }
 
-                /// Data not found?
+                // Data not found?
                 $action = $this->request->request->get('action', '');
                 if ('' === $action && !empty($code) && false === $view->model->exists()) {
                     $this->toolBox()->i18nLog()->warning('record-not-found');

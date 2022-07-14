@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,14 +20,21 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Base\ModelCore;
+use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Fabricante;
 use FacturaScripts\Core\Model\Familia;
+use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\Impuesto;
+use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Model\Stock;
+use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Test\Core\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -35,24 +42,43 @@ final class ProductoTest extends TestCase
 {
     use LogErrorsTrait;
 
+    const TEST_REFERENCE = 'Test';
+
+    public static function setUpBeforeClass(): void
+    {
+        $productModel = new Producto();
+        $where = [new DataBaseWhere('referencia', self::TEST_REFERENCE)];
+        foreach ($productModel->all($where, [], 0, 0) as $product) {
+            $product->delete();
+        }
+    }
+
     public function testCreate()
     {
+        // creamos un producto
         $product = $this->getTestProduct();
         $this->assertTrue($product->save(), 'product-cant-save');
         $this->assertNotNull($product->primaryColumnValue(), 'estado-product-not-stored');
         $this->assertTrue($product->exists(), 'product-cant-persist');
+
+        // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
     public function testCreateWithOutReference()
     {
+        // creamos un producto sin referencia
         $product = new Producto();
         $product->descripcion = 'Test Product';
-        $this->assertFalse($product->save(), 'product-cant-save');
+        $this->assertTrue($product->save(), 'product-cant-save-without-ref');
+
+        // lo eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete-without-ref');
     }
 
     public function testBlocked()
     {
+        // creamos un producto
         $product = $this->getTestProduct();
         $product->secompra = true;
         $product->sevende = true;
@@ -65,6 +91,8 @@ final class ProductoTest extends TestCase
         $this->assertFalse($product->publico, 'product-blocked-can-public');
         $this->assertFalse($product->secompra, 'product-blocked-can-buy');
         $this->assertFalse($product->sevende, 'product-blocked-can-sale');
+
+        // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
@@ -86,6 +114,8 @@ final class ProductoTest extends TestCase
         // recargamos el producto para ver que se ha desvinculado la familia
         $product->loadFromCode($product->primaryColumnValue());
         $this->assertNull($product->codfamilia, 'product-family-not-empty');
+
+        // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
@@ -107,6 +137,8 @@ final class ProductoTest extends TestCase
         // recargamos el producto para ver que se ha desvinculado el fabricante
         $product->loadFromCode($product->primaryColumnValue());
         $this->assertNull($product->codfabricante, 'product-manufacturer-not-empty');
+
+        // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
@@ -129,6 +161,8 @@ final class ProductoTest extends TestCase
         // recargamos el producto para ver que se ha desvinculado el impuesto
         $product->loadFromCode($product->primaryColumnValue());
         $this->assertNull($product->codimpuesto, 'product-tax-not-empty');
+
+        // lo eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
@@ -263,7 +297,7 @@ final class ProductoTest extends TestCase
 
     public function testStock()
     {
-        // creamos el producto
+        // creamos un producto
         $product = $this->getTestProduct();
         $this->assertTrue($product->save(), 'product-cant-save');
 
@@ -341,10 +375,78 @@ final class ProductoTest extends TestCase
         $this->assertFalse($variants[0]->exists(), 'variant-still-exists');
     }
 
+    public function testVarianteWithoutRef()
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // añadimos una variante sin referencia
+        $variant = new Variante();
+        $variant->idproducto = $product->idproducto;
+        $this->assertTrue($variant->save(), 'variant-cant-save-without-ref');
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertFalse($variant->exists(), 'variant-still-exists');
+    }
+
+    public function testNegativePrice()
+    {
+        // creamos un producto con precio negativo
+        $product = $this->getTestProduct();
+        $product->precio = -10;
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // comprobamos que no se ha alterado el precio
+        $product->loadFromCode($product->primaryColumnValue());
+        $this->assertEquals(-10, $product->precio, 'product-negative-price-error');
+
+        // creamos un cliente
+        $customer = new Cliente();
+        $customer->cifnif = '1234';
+        $customer->nombre = 'Pepe Sales';
+        $this->assertTrue($customer->save(), 'cliente-save-error');
+
+        // hacemos un presupuesto
+        $budget = new PresupuestoCliente();
+        $budget->setSubject($customer);
+        $warehouseModel = new Almacen();
+        foreach ($warehouseModel->all() as $warehouse) {
+            $budget->codalmacen = $warehouse->codalmacen;
+            break;
+        }
+        $paymentModel = new FormaPago();
+        foreach ($paymentModel->all() as $payment) {
+            $budget->codpago = $payment->codpago;
+            break;
+        }
+        $serieModel = new Serie();
+        foreach ($serieModel->all() as $serie) {
+            $budget->codserie = $serie->codserie;
+            break;
+        }
+        $this->assertTrue($budget->save(), $budget->modelClassName() . '-save-error');
+
+        // añadimos el producto al presupuesto
+        $newLine = $budget->getNewProductLine($product->referencia);
+        $this->assertTrue($newLine->save(), $newLine->modelClassName() . '-save-error');
+
+        // comprobamos que el precio es el original
+        $this->assertEquals(-10, $newLine->pvpunitario, 'doc-line-negative-price-error');
+
+        // eliminamos
+        $this->assertTrue($budget->delete(), $budget->modelClassName() . '-delete-error');
+        $contact = $customer->getDefaultAddress();
+        $this->assertTrue($customer->delete(), 'cliente-delete-error');
+        $this->assertTrue($contact->delete(), 'contacto-delete-error');
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+    }
+
     private function getTestProduct(): Producto
     {
         $product = new Producto();
-        $product->referencia = 'Test';
+        $product->referencia = self::TEST_REFERENCE;
         $product->descripcion = 'Test Product';
         return $product;
     }
@@ -359,7 +461,7 @@ final class ProductoTest extends TestCase
         return $supplier;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

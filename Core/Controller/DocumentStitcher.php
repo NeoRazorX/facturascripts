@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -48,7 +48,6 @@ class DocumentStitcher extends Controller
     public $codes = [];
 
     /**
-     *
      * @var TransformerDocument[]
      */
     public $documents = [];
@@ -61,7 +60,6 @@ class DocumentStitcher extends Controller
     public $modelName;
 
     /**
-     *
      * @var TransformerDocument[]
      */
     public $moreDocuments = [];
@@ -85,12 +83,7 @@ class DocumentStitcher extends Controller
         return $status;
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -112,6 +105,13 @@ class DocumentStitcher extends Controller
         parent::privateCore($response, $user, $permissions);
         $this->codes = $this->getCodes();
         $this->modelName = $this->getModelName();
+
+        // no se pueden agrupar o partir facturas
+        if (in_array($this->modelName, ['FacturaCliente', 'FacturaProveedor'])) {
+            $this->redirect('List' . $this->modelName);
+            return;
+        }
+
         $this->loadDocuments();
         $this->loadMoreDocuments();
 
@@ -134,22 +134,20 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     *
      * @param array $newLines
      * @param TransformerDocument $doc
      */
     protected function addBlankLine(array &$newLines, $doc)
     {
-        $blankLine = $doc->getNewLine();
-        $blankLine->cantidad = 0;
-        $blankLine->iva = 0.0;
-        $blankLine->irpf = 0.0;
-        $blankLine->recargo = 0.0;
+        $blankLine = $doc->getNewLine([
+            'cantidad' => 0,
+            'mostrar_cantidad' => false,
+            'mostrar_precio' => false
+        ]);
         $newLines[] = $blankLine;
     }
 
     /**
-     *
      * @param TransformerDocument $newDoc
      *
      * @return bool
@@ -160,6 +158,8 @@ class DocumentStitcher extends Controller
             if ($doc->codalmacen != $newDoc->codalmacen ||
                 $doc->coddivisa != $newDoc->coddivisa ||
                 $doc->idempresa != $newDoc->idempresa ||
+                $doc->dtopor1 != $newDoc->dtopor1 ||
+                $doc->dtopor2 != $newDoc->dtopor2 ||
                 $doc->subjectColumnValue() != $newDoc->subjectColumnValue()) {
                 $this->toolBox()->i18nLog()->warning('incompatible-document', ['%code%' => $newDoc->codigo]);
                 return false;
@@ -171,23 +171,21 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     *
      * @param array $newLines
      * @param TransformerDocument $doc
      */
     protected function addInfoLine(array &$newLines, $doc)
     {
-        $infoLine = $doc->getNewLine();
-        $infoLine->cantidad = 0;
-        $infoLine->descripcion = $this->getDocInfoLineDescription($doc);
-        $infoLine->iva = 0.0;
-        $infoLine->irpf = 0.0;
-        $infoLine->recargo = 0.0;
+        $infoLine = $doc->getNewLine([
+            'cantidad' => 0,
+            'descripcion' => $this->getDocInfoLineDescription($doc),
+            'mostrar_cantidad' => false,
+            'mostrar_precio' => false
+        ]);
         $newLines[] = $infoLine;
     }
 
     /**
-     *
      * @param TransformerDocument $doc
      * @param BusinessDocumentLine $docLines
      * @param array $newLines
@@ -221,7 +219,7 @@ class DocumentStitcher extends Controller
             }
         }
 
-        /// we get the lines again in case they have been updated
+        // we get the lines again in case they have been updated
         foreach ($doc->getLines() as $line) {
             $line->servido += $quantities[$line->primaryColumnValue()];
             if (false === $line->save()) {
@@ -241,7 +239,7 @@ class DocumentStitcher extends Controller
     {
         $this->dataBase->beginTransaction();
 
-        /// group needed data
+        // group needed data
         $newLines = [];
         $properties = ['fecha' => $this->request->request->get('fecha', '')];
         $prototype = null;
@@ -259,7 +257,7 @@ class DocumentStitcher extends Controller
                 $this->addInfoLine($newLines, $doc);
             }
 
-            /// we break down quantities and lines
+            // we break down quantities and lines
             $this->breakDownLines($doc, $lines, $newLines, $quantities, $idestado);
         }
 
@@ -268,15 +266,20 @@ class DocumentStitcher extends Controller
             return;
         }
 
-        /// allow plugins to do stuff on the prototype before save
+        // allow plugins to do stuff on the prototype before save
         if (false === $this->pipe('checkPrototype', $prototype, $newLines)) {
             $this->dataBase->rollback();
             return;
         }
 
-        /// generate new document
+        // generate new document
         $generator = new BusinessDocumentGenerator();
         $newClass = $this->getGenerateClass($idestado);
+        if (empty($newClass)) {
+            $this->dataBase->rollback();
+            return;
+        }
+
         if (false === $generator->generate($prototype, $newClass, $newLines, $quantities, $properties)) {
             $this->dataBase->rollback();
             $this->toolBox()->i18nLog()->error('record-save-error');
@@ -285,7 +288,7 @@ class DocumentStitcher extends Controller
 
         $this->dataBase->commit();
 
-        /// redirect to the new document
+        // redirect to the new document
         foreach ($generator->getLastDocs() as $doc) {
             $this->redirect($doc->url());
             $this->toolBox()->i18nLog()->notice('record-updated-correctly');
@@ -311,7 +314,6 @@ class DocumentStitcher extends Controller
     }
 
     /**
-     *
      * @param TransformerDocument $doc
      *
      * @return string
@@ -335,9 +337,9 @@ class DocumentStitcher extends Controller
      *
      * @param int $idestado
      *
-     * @return string
+     * @return ?string
      */
-    protected function getGenerateClass(int $idestado): string
+    protected function getGenerateClass(int $idestado): ?string
     {
         $estado = new EstadoDocumento();
         $estado->loadFromCode($idestado);
@@ -372,7 +374,7 @@ class DocumentStitcher extends Controller
             }
         }
 
-        /// sort by date
+        // sort by date
         uasort($this->documents, function ($doc1, $doc2) {
             if (strtotime($doc1->fecha . ' ' . $doc1->hora) > strtotime($doc2->fecha . ' ' . $doc2->hora)) {
                 return 1;

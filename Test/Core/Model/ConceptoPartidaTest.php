@@ -47,7 +47,7 @@ final class ConceptoPartidaTest extends TestCase
         $this->assertTrue($concept->delete(), 'concept-cant-delete');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->logErrors();
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,6 +18,8 @@
  */
 
 namespace FacturaScripts\Core\Model;
+
+use FacturaScripts\Core\DataSrc\Divisas;
 
 /**
  * A currency with its symbol and its conversion rate with respect to the euro.
@@ -71,9 +73,6 @@ class Divisa extends Base\ModelClass
      */
     public $simbolo;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -83,19 +82,20 @@ class Divisa extends Base\ModelClass
         $this->simbolo = '?';
     }
 
-    /**
-     * Removed currency from database.
-     *
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         if ($this->isDefault()) {
             $this->toolBox()->i18nLog()->warning('cant-delete-default-currency');
             return false;
         }
 
-        return parent::delete();
+        if (parent::delete()) {
+            // limpiamos la caché
+            Divisas::clear();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -108,38 +108,34 @@ class Divisa extends Base\ModelClass
         return $this->coddivisa === $this->toolBox()->appSettings()->get('default', 'coddivisa');
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'coddivisa';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public function save(): bool
+    {
+        if (parent::save()) {
+            // limpiamos la caché
+            Divisas::clear();
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function tableName(): string
     {
         return 'divisas';
     }
 
-    /**
-     * Returns True if there is no errors on properties values.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         $utils = $this->toolBox()->utils();
         $this->descripcion = $utils->noHtml($this->descripcion);
         $this->simbolo = $utils->noHtml($this->simbolo);
 
-        if (1 !== preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
+        if ($this->coddivisa && 1 !== preg_match('/^[A-Z0-9]{1,3}$/i', $this->coddivisa)) {
             $this->toolBox()->i18nLog()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->coddivisa, '%column%' => 'coddivisa', '%min%' => '1', '%max%' => '3']
@@ -158,12 +154,6 @@ class Divisa extends Base\ModelClass
         return false;
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'ListPais?activetab=List'): string
     {
         return parent::url($type, $list);

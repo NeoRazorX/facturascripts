@@ -85,9 +85,6 @@ class AttachedFile extends Base\ModelOnChangeClass
      */
     public $size;
 
-    /**
-     * Reset the values of all model properties.
-     */
     public function clear()
     {
         parent::clear();
@@ -96,12 +93,7 @@ class AttachedFile extends Base\ModelOnChangeClass
         $this->size = 0;
     }
 
-    /**
-     * Remove the model data from the database.
-     *
-     * @return bool
-     */
-    public function delete()
+    public function delete(): bool
     {
         $fullPath = $this->getFullPath();
         if (file_exists($fullPath) && false === unlink($fullPath)) {
@@ -112,36 +104,22 @@ class AttachedFile extends Base\ModelOnChangeClass
         return parent::delete();
     }
 
-    /**
-     * @return string
-     */
-    public function getExtension()
+    public function getExtension(): string
     {
         $parts = explode('.', strtolower($this->filename));
         return count($parts) > 1 ? end($parts) : '';
     }
 
-    /**
-     * @return string
-     */
-    public function getFullPath()
+    public function getFullPath(): string
     {
         return FS_FOLDER . '/' . $this->path;
     }
 
-    /**
-     * @return int
-     */
     public function getStorageLimit(): int
     {
         return defined('FS_STORAGE_LIMIT') ? (int)FS_STORAGE_LIMIT : 0;
     }
 
-    /**
-     * @param array $exclude
-     *
-     * @return int
-     */
     public function getStorageUsed(array $exclude = []): int
     {
         $sql = 'SELECT SUM(size) as size FROM ' . static::tableName();
@@ -155,55 +133,34 @@ class AttachedFile extends Base\ModelOnChangeClass
         return 0;
     }
 
-    /**
-     * Returns the name of the column that is the primary key of the model.
-     *
-     * @return string
-     */
-    public static function primaryColumn()
+    public static function primaryColumn(): string
     {
         return 'idfile';
     }
 
-    /**
-     * @return string
-     */
-    public function primaryDescriptionColumn()
+    public function primaryDescriptionColumn(): string
     {
         return 'filename';
     }
 
-    /**
-     * Returns the name of the table that uses this model.
-     *
-     * @return string
-     */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'attached_files';
     }
 
-    /**
-     * Test model data.
-     *
-     * @return bool
-     */
-    public function test()
+    public function test(): bool
     {
         if (empty($this->idfile)) {
             $this->idfile = $this->newCode();
             return $this->setFile() && parent::test();
         }
 
+        $this->filename = self::toolBox()::utils()::noHtml($this->filename);
+        $this->mimetype = self::toolBox()::utils()::noHtml($this->mimetype);
+        $this->path = self::toolBox()::utils()::noHtml($this->path);
         return parent::test();
     }
 
-    /**
-     * @param string $type
-     * @param string $list
-     *
-     * @return string
-     */
     public function url(string $type = 'auto', string $list = 'List'): string
     {
         switch ($type) {
@@ -218,20 +175,16 @@ class AttachedFile extends Base\ModelOnChangeClass
         }
     }
 
-    /**
-     * @param string $orignal
-     *
-     * @return string
-     */
-    protected function fixFileName($orignal): string
+    protected function fixFileName(string $original): string
     {
-        if (strlen($orignal) <= static::MAX_FILENAME_LEN) {
-            return (string)$orignal;
+        $fixed = self::toolBox()::utils()::noHtml($original);
+        if (strlen($fixed) <= static::MAX_FILENAME_LEN) {
+            return empty($fixed) ? '' : strtolower($fixed);
         }
 
-        $parts = explode('.', strtolower($orignal));
+        $parts = explode('.', strtolower($fixed));
         $extension = count($parts) > 1 ? end($parts) : '';
-        $name = substr($orignal, 0, static::MAX_FILENAME_LEN - strlen('.' . $extension));
+        $name = substr($fixed, 0, static::MAX_FILENAME_LEN - strlen('.' . $extension));
         return $name . '.' . $extension;
     }
 
@@ -256,11 +209,11 @@ class AttachedFile extends Base\ModelOnChangeClass
     }
 
     /**
-     * Examine and move new file setted.
+     * Examine and move new file set.
      *
      * @return bool
      */
-    protected function setFile()
+    protected function setFile(): bool
     {
         $this->filename = $this->fixFileName($this->path);
         $newFolder = 'MyFiles/' . date('Y/m', strtotime($this->date));
@@ -294,9 +247,6 @@ class AttachedFile extends Base\ModelOnChangeClass
         return true;
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['path'];

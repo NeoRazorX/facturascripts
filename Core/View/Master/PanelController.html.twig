@@ -169,6 +169,7 @@
                     <span class="d-none d-lg-inline-block">{{ i18n.trans('options') }}</span>
                 </button>
                 <div class="dropdown-menu">
+                    <h6 class="dropdown-header">{{ i18n.trans('options-button-header') }}</h6>
                     {% for viewName, view in fsc.views %}
                         {% if view.settings.active and view.columns is not empty %}
                             <a class="dropdown-item"

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,10 +69,7 @@ class RowButton extends VisualItem
      */
     public $type;
 
-    /**
-     * @param array $data
-     */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         parent::__construct($data);
         $this->action = $data['action'] ?? '';
@@ -85,14 +82,7 @@ class RowButton extends VisualItem
         $this->type = $data['type'] ?? 'action';
     }
 
-    /**
-     * @param bool $small
-     * @param string $viewName
-     * @param string $jsFunction
-     *
-     * @return string
-     */
-    public function render($small = false, $viewName = '', $jsFunction = '')
+    public function render(bool $small = false, string $viewName = '', string $jsFunction = ''): string
     {
         if ($this->getLevel() < $this->level) {
             return '';
@@ -100,11 +90,17 @@ class RowButton extends VisualItem
 
         $cssClass = $small ? 'btn mr-1 ' : 'btn btn-sm mr-1 ';
         $cssClass .= empty($this->color) ? 'btn-light' : $this->colorToClass($this->color, 'btn-');
-        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
-        $label = $small ? '' : $this->label;
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
+
+        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         if ($small && empty($icon)) {
             $icon = $this->label;
+        }
+
+        $label = $this->label;
+        if ($small) {
+            $label = mb_strlen($label) < 8 ? '<span class="d-none d-xl-inline-block">' . $this->label . '</span>' :
+                '<span class="d-none d-xl-inline-block">' . mb_substr($this->label, 0, 8) . '...</span>';
         }
 
         switch ($this->type) {
@@ -130,10 +126,7 @@ class RowButton extends VisualItem
         }
     }
 
-    /**
-     * @return string
-     */
-    public function renderTop()
+    public function renderTop(): string
     {
         if ($this->getLevel() < $this->level) {
             return '';
@@ -165,29 +158,23 @@ class RowButton extends VisualItem
      *
      * @return string
      */
-    protected function asset($url)
+    protected function asset(string $url): string
     {
-        $path = \FS_ROUTE . '/';
-        if (\substr($url, 0, \strlen($path)) == $path) {
+        $path = FS_ROUTE . '/';
+        if (substr($url, 0, strlen($path)) == $path) {
             return $url;
         }
 
-        /// external link?
-        $parts = \explode(':', $url);
-        if (\in_array($parts[0], ['http', 'https'])) {
+        // external link?
+        $parts = explode(':', $url);
+        if (in_array($parts[0], ['http', 'https'])) {
             return $url;
         }
 
-        return \str_replace('//', '/', $path . $url);
+        return str_replace('//', '/', $path . $url);
     }
 
-    /**
-     * @param string $viewName
-     * @param string $jsFunction
-     *
-     * @return string
-     */
-    protected function getOnClickValue($viewName, $jsFunction)
+    protected function getOnClickValue(string $viewName, string $jsFunction): string
     {
         if ($this->confirm) {
             return 'confirmAction(\'' . $viewName . '\',\'' . $this->action . '\',\''
