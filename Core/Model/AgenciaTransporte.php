@@ -94,7 +94,7 @@ class AgenciaTransporte extends Base\ModelClass
 
         // check if the web is a valid url
         if (!empty($this->web) && false === self::toolBox()::utils()::isValidUrl($this->web)) {
-            self::toolBox()::i18nLog()->error('invalid-web');
+            self::toolBox()::i18nLog()->error('invalid-web', ['%web%' => $this->web]);
             return false;
         }
 

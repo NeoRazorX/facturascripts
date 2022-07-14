@@ -376,7 +376,14 @@ abstract class PurchasesController extends PanelController
         $this->setTemplate(false);
 
         $model = $this->getModel();
-        foreach ($model->getReceipts() as $receipt) {
+        $receipts = $model->getReceipts();
+        if (empty($receipts)) {
+            self::toolBox()::i18nLog()->warning('invoice-has-no-receipts');
+            $this->response->setContent(json_encode(['ok' => false, 'messages' => self::toolBox()::log()::read('', $this->logLevels)]));
+            return false;
+        }
+
+        foreach ($receipts as $receipt) {
             $receipt->nick = $this->user->nick;
             $receipt->pagado = (bool)$this->request->request->get('selectedLine');
             if (false === $receipt->save()) {

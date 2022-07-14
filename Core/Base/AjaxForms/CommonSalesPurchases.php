@@ -34,7 +34,7 @@ trait CommonSalesPurchases
     protected static function cifnif(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="cifnif" maxlength="30" autocomplete="off"' : 'disabled=""';
-        return '<div class="col-sm-12">'
+        return '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('cifnif')
             . '<input type="text" ' . $attributes . ' value="' . $model->cifnif . '" class="form-control"/>'
             . '</div>'

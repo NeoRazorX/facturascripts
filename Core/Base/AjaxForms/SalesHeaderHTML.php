@@ -22,11 +22,13 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 use FacturaScripts\Core\Base\Contract\SalesModInterface;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Agentes;
+use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\AgenciaTransporte;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Contacto;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Dinamic\Model\Pais;
 
 /**
  * Description of SalesHeaderHTML
@@ -102,7 +104,14 @@ class SalesHeaderHTML
         $dir = new Contacto();
         if (empty($formData['idcontactofact'])) {
             $model->idcontactofact = null;
+            $model->direccion = $formData['direccion'] ?? $model->direccion;
+            $model->apartado = $formData['apartado'] ?? $model->apartado;
+            $model->codpostal = $formData['codpostal'] ?? $model->codpostal;
+            $model->ciudad = $formData['ciudad'] ?? $model->ciudad;
+            $model->provincia = $formData['provincia'] ?? $model->provincia;
+            $model->codpais = $formData['codpais'] ?? $model->codpais;
         } elseif ($dir->loadFromCode($formData['idcontactofact'])) {
+            // update billing address
             $model->idcontactofact = $dir->idcontacto;
             $model->direccion = $dir->direccion;
             $model->apartado = $dir->apartado;
@@ -150,6 +159,18 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, '_email')
             . self::renderField($i18n, $model, '_paid')
             . self::renderField($i18n, $model, 'idestado')
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function addressField(Translator $i18n, SalesDocument $model, string $field, string $label, int $size, int $maxlength): string
+    {
+        $attributes = $model->editable && empty($model->idcontactofact) ?
+            'name="' . $field . '" maxlength="' . $maxlength . '" autocomplete="off"' :
+            'disabled=""';
+        return '<div class="col-sm-' . $size . '">'
+            . '<div class="form-group">' . $i18n->trans($label)
+            . '<input type="text" ' . $attributes . ' value="' . $model->{$field} . '" class="form-control"/>'
             . '</div>'
             . '</div>';
     }
@@ -218,9 +239,28 @@ class SalesHeaderHTML
     private static function codigoenv(Translator $i18n, SalesDocument $model): string
     {
         $attributes = $model->editable ? 'name="codigoenv" maxlength="200" autocomplete="off"' : 'disabled=""';
-        return '<div class="col-sm-6">'
+        return '<div class="col-sm-4">'
             . '<div class="form-group">' . $i18n->trans('tracking-code')
             . '<input type="text" ' . $attributes . ' value="' . $model->codigoenv . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function codpais(Translator $i18n, SalesDocument $model): string
+    {
+        $options = [];
+        foreach (Paises::all() as $pais) {
+            $options[] = ($pais->codpais === $model->codpais) ?
+                '<option value="' . $pais->codpais . '" selected="">' . $pais->nombre . '</option>' :
+                '<option value="' . $pais->codpais . '">' . $pais->nombre . '</option>';
+        }
+
+        $pais = new Pais();
+        $attributes = $model->editable && empty($model->idcontactofact) ? 'name="codpais"' : 'disabled=""';
+        return '<div class="col-sm-6">'
+            . '<div class="form-group">'
+            . '<a href="' . $pais->url() . '">' . $i18n->trans('country') . '</a>'
+            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -236,7 +276,7 @@ class SalesHeaderHTML
         }
 
         $attributes = $model->editable ? 'name="codtrans"' : 'disabled=""';
-        return '<div class="col-sm-6">'
+        return '<div class="col-sm-4">'
             . '<div class="form-group">'
             . '<a href="' . $agenciaTransporte->url() . '">' . $i18n->trans('carrier') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
@@ -264,7 +304,7 @@ class SalesHeaderHTML
     private static function detailModal(Translator $i18n, SalesDocument $model): string
     {
         return '<div class="modal fade" id="headerModal" tabindex="-1" aria-labelledby="headerModalLabel" aria-hidden="true">'
-            . '<div class="modal-dialog modal-dialog-centered">'
+            . '<div class="modal-dialog modal-dialog-centered modal-lg">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title">' . $i18n->trans('detail') . '</h5>'
@@ -277,6 +317,12 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'nombrecliente')
             . self::renderField($i18n, $model, 'cifnif')
             . self::renderField($i18n, $model, 'idcontactofact')
+            . self::renderField($i18n, $model, 'direccion')
+            . self::renderField($i18n, $model, 'apartado')
+            . self::renderField($i18n, $model, 'codpostal')
+            . self::renderField($i18n, $model, 'ciudad')
+            . self::renderField($i18n, $model, 'provincia')
+            . self::renderField($i18n, $model, 'codpais')
             . self::renderField($i18n, $model, 'idcontactoenv')
             . self::renderField($i18n, $model, 'codtrans')
             . self::renderField($i18n, $model, 'codigoenv')
@@ -346,7 +392,7 @@ class SalesHeaderHTML
 
         $attributes = $model->editable ? 'name="idcontactoenv"' : 'disabled=""';
         $options = self::getAddressOptions($i18n, $model->idcontactoenv, true);
-        return '<div class="col-sm-12">'
+        return '<div class="col-sm-4">'
             . '<div class="form-group">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">'
             . $i18n->trans('shipping-address') . '</a>'
@@ -362,8 +408,8 @@ class SalesHeaderHTML
         }
 
         $attributes = $model->editable ? 'name="idcontactofact" onchange="return salesFormActionWait(\'recalculate-line\', \'0\', event);"' : 'disabled=""';
-        $options = self::getAddressOptions($i18n, $model->idcontactofact, false);
-        return '<div class="col-sm-12">'
+        $options = self::getAddressOptions($i18n, $model->idcontactofact, true);
+        return '<div class="col-sm-6">'
             . '<div class="form-group">'
             . '<a href="' . self::$cliente->url() . '&activetab=EditDireccionContacto" target="_blank">' . $i18n->trans('billing-address') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
@@ -374,7 +420,7 @@ class SalesHeaderHTML
     private static function nombrecliente(Translator $i18n, SalesDocument $model): string
     {
         $attributes = $model->editable ? 'name="nombrecliente" required="" maxlength="100" autocomplete="off"' : 'disabled=""';
-        return '<div class="col-sm-12">'
+        return '<div class="col-sm-6">'
             . '<div class="form-group">'
             . $i18n->trans('business-name')
             . '<input type="text" ' . $attributes . ' value="' . $model->nombrecliente . '" class="form-control"/>'
@@ -421,8 +467,14 @@ class SalesHeaderHTML
             case '_parents':
                 return self::parents($i18n, $model);
 
+            case 'apartado':
+                return self::addressField($i18n, $model, 'apartado', 'post-office-box', 4, 10);
+
             case 'cifnif':
                 return self::cifnif($i18n, $model);
+
+            case 'ciudad':
+                return self::addressField($i18n, $model, 'ciudad', 'city', 4, 100);
 
             case 'codagente':
                 return self::codagente($i18n, $model);
@@ -442,11 +494,20 @@ class SalesHeaderHTML
             case 'codpago':
                 return self::codpago($i18n, $model);
 
+            case 'codpais':
+                return self::codpais($i18n, $model);
+
+            case 'codpostal':
+                return self::addressField($i18n, $model, 'codpostal', 'zip-code', 4, 10);
+
             case 'codserie':
                 return self::codserie($i18n, $model, 'salesFormAction');
 
             case 'codtrans':
                 return self::codtrans($i18n, $model);
+
+            case 'direccion':
+                return self::addressField($i18n, $model, 'direccion', 'address', 6, 100);
 
             case 'fecha':
                 return self::fecha($i18n, $model);
@@ -474,6 +535,9 @@ class SalesHeaderHTML
 
             case 'numero2':
                 return self::numero2($i18n, $model);
+
+            case 'provincia':
+                return self::addressField($i18n, $model, 'provincia', 'province', 6, 100);
 
             case 'tasaconv':
                 return self::tasaconv($i18n, $model);
