@@ -23,14 +23,22 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Retenciones;
+use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Model\Variante;
 
 trait CommonLineHTML
 {
+    private static $regimeniva;
+
     private static function codimpuesto(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
+        // comprobamos el régimen de IVA del cliente o proveedor
+        if (!isset(self::$regimeniva)) {
+            self::$regimeniva = $model->getSubject()->regimeniva;
+        }
+
         // necesitamos una opción vacía para cuando el sujeto está exento de impuestos
         $options = ['<option value="">------</option>'];
         foreach (Impuestos::all() as $imp) {
@@ -39,7 +47,9 @@ trait CommonLineHTML
                 '<option value="' . $imp->codimpuesto . '">' . $imp->descripcion . '</option>';
         }
 
-        $attributes = $model->editable && false === $line->suplido ?
+        // solamente se puede cambiar el impuesto si el documento es editable, la línea no tiene suplidos
+        // y el sujeto no está exento de impuestos
+        $attributes = $model->editable && false === $line->suplido && self::$regimeniva != RegimenIVA::TAX_SYSTEM_EXEMPT ?
             'name="codimpuesto_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
             'disabled=""';
         return '<div class="col-sm col-lg-1 order-6">'
