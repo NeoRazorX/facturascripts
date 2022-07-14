@@ -305,14 +305,26 @@ class ReportTaxes extends Controller
             ]
         ]);
 
+        $options = [
+            'neto' => ['display' => 'right'],
+            'iva' => ['display' => 'right'],
+            'totaliva' => ['display' => 'right'],
+            'recargo' => ['display' => 'right'],
+            'totalrecargo' => ['display' => 'right'],
+            'irpf' => ['display' => 'right'],
+            'totalirpf' => ['display' => 'right'],
+            'suplidos' => ['display' => 'right'],
+            'total' => ['display' => 'right']
+        ];
+
         // add lines table
         $this->reduceLines($lines);
         $headers = empty($lines) ? [] : array_keys(end($lines));
-        $exportManager->addTablePage($headers, $lines);
+        $exportManager->addTablePage($headers, $lines, $options);
 
         // add totals table
         $headtotals = empty($totals) ? [] : array_keys(end($totals));
-        $exportManager->addTablePage($headtotals, $totals);
+        $exportManager->addTablePage($headtotals, $totals, $options);
 
         $exportManager->show($this->response);
     }

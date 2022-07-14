@@ -191,15 +191,13 @@ class PDFExport extends PDFDocument
             'shadeHeadingCol' => [0.95, 0.95, 0.95],
             'cols' => []
         ];
-        $columnsOption = array_keys($options);
         foreach (array_keys($headers) as $key) {
             if (in_array($key, ['debe', 'haber', 'saldo', 'saldoprev', 'total'])) {
                 $tableOptions['cols'][$key]['justification'] = 'right';
                 continue;
             }
-            if (in_array($key, $columnsOption)) {
+            if (array_key_exists($key, $options)) {
                 $tableOptions['cols'][$key]['justification'] = $options[$key]['display'] ?? 'left';
-                continue;
             }
         }
 
