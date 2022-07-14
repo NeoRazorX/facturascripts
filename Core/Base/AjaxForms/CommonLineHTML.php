@@ -153,7 +153,13 @@ trait CommonLineHTML
             return '';
         }
 
-        $attributes = $model->editable ?
+        // comprobamos el régimen de IVA del cliente o proveedor
+        if (!isset(self::$regimeniva)) {
+            self::$regimeniva = $model->getSubject()->regimeniva;
+        }
+
+        // solamente se puede cambiar el recargo si el documento es editable y el sujeto tiene régimen de recargo
+        $attributes = $model->editable && self::$regimeniva === RegimenIVA::TAX_SYSTEM_SURCHARGE ?
             'name="recargo_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-6">'
