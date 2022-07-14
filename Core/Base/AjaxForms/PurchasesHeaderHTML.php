@@ -187,7 +187,7 @@ class PurchasesHeaderHTML
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="form-row">'
-            . self::renderField($i18n, $model, 'nombreproveedor')
+            . self::renderField($i18n, $model, 'nombre')
             . self::renderField($i18n, $model, 'cifnif')
             . self::renderField($i18n, $model, 'coddivisa')
             . self::renderField($i18n, $model, 'tasaconv')
@@ -207,10 +207,10 @@ class PurchasesHeaderHTML
             . '</div>';
     }
 
-    private static function nombreproveedor(Translator $i18n, PurchaseDocument $model): string
+    private static function nombre(Translator $i18n, PurchaseDocument $model): string
     {
         $attributes = $model->editable ? 'name="nombre" required=""' : 'disabled=""';
-        return '<div class="col-sm-12">'
+        return '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('business-name')
             . '<input type="text" ' . $attributes . ' value="' . $model->nombre . '" class="form-control" maxlength="100" autocomplete="off" />'
             . '</div>'
@@ -286,8 +286,8 @@ class PurchasesHeaderHTML
             case 'idestado':
                 return self::idestado($i18n, $model, 'purchasesFormSave');
 
-            case 'nombreproveedor':
-                return self::nombreproveedor($i18n, $model);
+            case 'nombre':
+                return self::nombre($i18n, $model);
 
             case 'numproveedor':
                 return self::numproveedor($i18n, $model);

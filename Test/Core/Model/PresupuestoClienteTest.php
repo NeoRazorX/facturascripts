@@ -169,6 +169,13 @@ final class PresupuestoClienteTest extends TestCase
         $product = $this->getRandomProduct();
         $this->assertTrue($product->save(), 'can-not-save-supplier-3');
 
+        // modificamos el precio y coste del producto
+        foreach ($product->getVariants() as $variant) {
+            $variant->precio = 10;
+            $variant->coste = 5;
+            $this->assertTrue($variant->save(), 'can-not-save-variant-3');
+        }
+
         // creamos un presupuesto y le asignamos el cliente
         $doc = new PresupuestoCliente();
         $doc->setSubject($subject);
@@ -176,7 +183,12 @@ final class PresupuestoClienteTest extends TestCase
 
         // añadimos el producto sin stock
         $line = $doc->getNewProductLine($product->referencia);
-        $line->pvpunitario = 10;
+
+        // comprobamos que precio y coste se han asignado correctamente
+        $this->assertEquals(10, $line->pvpunitario, 'presupuesto-cliente-bad-pvpunitario-3');
+        $this->assertEquals(5, $line->coste, 'presupuesto-cliente-bad-coste-3');
+
+        // guardamos la línea
         $this->assertTrue($line->save(), 'can-not-add-product-without-stock');
 
         // actualizamos los totales
