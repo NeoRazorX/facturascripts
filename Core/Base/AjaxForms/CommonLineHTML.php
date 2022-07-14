@@ -179,14 +179,17 @@ trait CommonLineHTML
 
         $variante = new Variante();
         $where = [new DataBaseWhere('referencia', $line->referencia)];
-        if (empty($line->referencia) || false === $variante->loadFromCode('', $where)) {
+        if (empty($line->referencia)) {
             return '<div class="col-sm-2 col-lg-1 order-1">' . $sortable . '</div>';
         }
 
+        $link = $variante->loadFromCode('', $where) ?
+            '<a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>' :
+            $line->referencia;
+
         return '<div class="col-sm-2 col-lg-1 order-1">'
             . '<div class="small text-break"><div class="d-lg-none mt-2 text-truncate">' . $i18n->trans('reference') . '</div>'
-            . $sortable . '<a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>'
-            . '<input type="hidden" name="referencia_' . $idlinea . '" value="' . $line->referencia . '"/>'
+            . $sortable . $link . '<input type="hidden" name="referencia_' . $idlinea . '" value="' . $line->referencia . '"/>'
             . '</div>'
             . '</div>';
     }
