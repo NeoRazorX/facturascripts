@@ -23,14 +23,23 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Retenciones;
+use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Model\Variante;
 
 trait CommonLineHTML
 {
+    private static $regimeniva;
+
     private static function codimpuesto(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
+        // comprobamos el régimen de IVA del cliente o proveedor
+        if (!isset(self::$regimeniva)) {
+            self::$regimeniva = $model->getSubject()->regimeniva;
+        }
+
         // necesitamos una opción vacía para cuando el sujeto está exento de impuestos
         $options = ['<option value="">------</option>'];
         foreach (Impuestos::all() as $imp) {
@@ -39,7 +48,13 @@ trait CommonLineHTML
                 '<option value="' . $imp->codimpuesto . '">' . $imp->descripcion . '</option>';
         }
 
-        $attributes = $model->editable && false === $line->suplido ?
+        // solamente se puede cambiar el impuesto si el documento es editable,
+        // el sujeto no está exento de impuestos, la serie tiene impuestos
+        // y la línea no tiene suplidos
+        $editable = $model->editable && self::$regimeniva != RegimenIVA::TAX_SYSTEM_EXEMPT
+            && false === Series::get($model->codserie)->siniva && false === $line->suplido;
+
+        $attributes = $editable ?
             'name="codimpuesto_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
             'disabled=""';
         return '<div class="col-sm col-lg-1 order-6">'
@@ -104,10 +119,6 @@ trait CommonLineHTML
 
     private static function irpf(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
-        if ($line->suplido) {
-            return '';
-        }
-
         $options = ['<option value="">------</option>'];
         foreach (Retenciones::all() as $ret) {
             $options[] = $line->irpf === $ret->porcentaje ?
@@ -115,7 +126,7 @@ trait CommonLineHTML
                 '<option value="' . $ret->porcentaje . '">' . $ret->descripcion . '</option>';
         }
 
-        $attributes = $model->editable ?
+        $attributes = $model->editable && false === $line->suplido ?
             'name="irpf_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-6">'
@@ -139,11 +150,18 @@ trait CommonLineHTML
 
     private static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
-        if ($line->suplido) {
-            return '';
+        // comprobamos el régimen de IVA del cliente o proveedor
+        if (!isset(self::$regimeniva)) {
+            self::$regimeniva = $model->getSubject()->regimeniva;
         }
 
-        $attributes = $model->editable ?
+        // solamente se puede cambiar el recargo si el documento es editable,
+        // el sujeto tiene régimen de recargo, la serie tiene impuestos
+        // y la línea no tiene suplido
+        $editable = $model->editable && self::$regimeniva === RegimenIVA::TAX_SYSTEM_SURCHARGE
+            && false === Series::get($model->codserie)->siniva && false === $line->suplido;
+
+        $attributes = $editable ?
             'name="recargo_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-6">'
@@ -161,14 +179,17 @@ trait CommonLineHTML
 
         $variante = new Variante();
         $where = [new DataBaseWhere('referencia', $line->referencia)];
-        if (empty($line->referencia) || false === $variante->loadFromCode('', $where)) {
+        if (empty($line->referencia)) {
             return '<div class="col-sm-2 col-lg-1 order-1">' . $sortable . '</div>';
         }
 
+        $link = $variante->loadFromCode('', $where) ?
+            '<a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>' :
+            $line->referencia;
+
         return '<div class="col-sm-2 col-lg-1 order-1">'
             . '<div class="small text-break"><div class="d-lg-none mt-2 text-truncate">' . $i18n->trans('reference') . '</div>'
-            . $sortable . '<a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>'
-            . '<input type="hidden" name="referencia_' . $idlinea . '" value="' . $line->referencia . '"/>'
+            . $sortable . $link . '<input type="hidden" name="referencia_' . $idlinea . '" value="' . $line->referencia . '"/>'
             . '</div>'
             . '</div>';
     }
