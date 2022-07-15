@@ -240,6 +240,9 @@
     $(document).on('keyup', '.doc-line-desc', function (e) {
         while ($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
             $(this).height($(this).height() + 1);
+            if ($(this).height() > 200) {
+                break;
+            }
         }
     });
 
