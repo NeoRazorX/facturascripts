@@ -634,6 +634,7 @@
     "invoice-have-rectifying-cant-delete": "Die Rechnung hat bereits eine Berichtigung. Kann nicht gelöscht werden.",
     "invoice-new-assigned-date": "Es gibt Invocies mit größerem Datum (0). Neues zugewiesenes Datum: 1",
     "invoice-number": "Rechnungsnummer",
+    "invoice-receipts-diff": "Hay una diferencia (%diff%) entre el importe de la factura y la suma de sus recibos.",
     "invoice-regularized-cant-change-date": "Die Rechnung liegt innerhalb einer Regularisierung von 0. Das Datum kann nicht geändert werden.",
     "invoice-regularized-cant-delete": "Die Rechnung liegt innerhalb einer Regularisierung von 0. Sie kann nicht gelöscht werden.",
     "invoice-without-acc-entry": "invoice-without-acc-entry",

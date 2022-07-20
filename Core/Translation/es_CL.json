@@ -634,6 +634,7 @@
     "invoice-have-rectifying-cant-delete": "La factura ya tiene una nota e crédito. No se puede eliminar.",
     "invoice-new-assigned-date": "Ya hay facturas posteriores a la fecha seleccionada (%oldDate%). Nueva fecha asignada: %newDate%",
     "invoice-number": "Número de factura",
+    "invoice-receipts-diff": "Hay una diferencia (%diff%) entre el importe de la factura y la suma de sus recibos.",
     "invoice-regularized-cant-change-date": "La factura se encuentra dentro de una regularización de %tax%. No se puede modificar la fecha.",
     "invoice-regularized-cant-delete": "La factura se encuentra dentro de una regularización de %tax% No se puede eliminar.",
     "invoice-without-acc-entry": "Factura sin asiento",

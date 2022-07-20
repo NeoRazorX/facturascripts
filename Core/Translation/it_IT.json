@@ -634,6 +634,7 @@
     "invoice-have-rectifying-cant-delete": "La fattura ha già una rettifica. Non posso essere cancellato.",
     "invoice-new-assigned-date": "Ci sono invocie con data più grande (0). Nuova data assegnata: 1",
     "invoice-number": "Numero di fattura",
+    "invoice-receipts-diff": "Hay una diferencia (%diff%) entre el importe de la factura y la suma de sus recibos.",
     "invoice-regularized-cant-change-date": "La fattura è all'interno di una regolarizzazione di 0. La data non può essere modificata.",
     "invoice-regularized-cant-delete": "La fattura è all'interno di una regolarizzazione di 0. Non può essere cancellata.",
     "invoice-without-acc-entry": "invoice-without-acc-entry",

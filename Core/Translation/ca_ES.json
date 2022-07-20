@@ -634,6 +634,7 @@
     "invoice-have-rectifying-cant-delete": "La factura ja té una rectificativa. No es pot eliminar.",
     "invoice-new-assigned-date": "Ja hi ha factures posteriors a la data seleccionada (%oldDate%). Nova data assignada: %newDate%",
     "invoice-number": "Nombre de factura",
+    "invoice-receipts-diff": "Hay una diferencia (%diff%) entre el importe de la factura y la suma de sus recibos.",
     "invoice-regularized-cant-change-date": "La factura es troba dins d'una regularització de %tax%. La data no es pot modificar.",
     "invoice-regularized-cant-delete": "La factura es troba dins d'una regularització de %tax%. No es pot eliminar.",
     "invoice-without-acc-entry": "Factura sense assentament",

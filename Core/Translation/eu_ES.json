@@ -634,6 +634,7 @@
     "invoice-have-rectifying-cant-delete": "Faktura dagoeneko zuzenketa bat dauka. Ezin da ezabatu.",
     "invoice-new-assigned-date": "Aukeratutako data (%oldDate%) ondorengo fakturak daude. Data esleitu berria: %newDate%",
     "invoice-number": "Faktura zenbakia",
+    "invoice-receipts-diff": "Hay una diferencia (%diff%) entre el importe de la factura y la suma de sus recibos.",
     "invoice-regularized-cant-change-date": "Faktura %tax% erregularizazioan dago. Data ezin da aldatu.",
     "invoice-regularized-cant-delete": "Faktura %tax% erregularizazioan dago. Ezin da ezabatu.",
     "invoice-without-acc-entry": "Idazpen gabeko faktura",
