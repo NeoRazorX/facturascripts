@@ -77,7 +77,7 @@ class ReceiptGenerator
                 $paidAmount += $receipt->importe;
             }
         }
-        $invoice->pagada = $this->isCero($invoice->total - $paidAmount);
+        $invoice->pagada = ($invoice->total <= round($paidAmount, FS_NF0));
 
         // update by sql
         $dataBase = new DataBase();
