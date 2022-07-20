@@ -132,6 +132,27 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
+    public function testReciptsTotalGreaterThanInvoice()
+    {
+        // creamos una factura
+        $invoice = $this->getRandomSupplierInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // aumentamos el total y marcamos como cobrados
+        foreach ($invoice->getReceipts() as $receipt) {
+            $receipt->importe += 10;
+            $receipt->pagado = true;
+            $this->assertTrue($receipt->save(), 'can-not-set-paid-receipt');
+        }
+
+        // comprobamos que la factura está pagada
+        $invoice->loadFromCode($invoice->primaryColumnValue());
+        $this->assertTrue($invoice->pagada, 'invoice-unpaid');
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+    }
+
     public function testUpdateAndCreateReceipts()
     {
         // creamos una factura
