@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\AjaxForms\AccountingFooterHTML;
 use FacturaScripts\Core\Base\AjaxForms\AccountingHeaderHTML;
 use FacturaScripts\Core\Base\AjaxForms\AccountingLineHTML;
 use FacturaScripts\Core\Base\AjaxForms\AccountingModalHTML;
+use FacturaScripts\Core\Lib\Export\AsientoExport;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
 use FacturaScripts\Core\Lib\ExtendedController\LogAuditTrait;
@@ -53,7 +54,7 @@ class EditAsiento extends PanelController
      *
      * @return Asiento
      */
-    public function getModel()
+    public function getModel(): Asiento
     {
         // loaded record? just return it
         if ($this->views[static::MAIN_VIEW_NAME]->model->primaryColumnValue()) {
@@ -145,6 +146,11 @@ class EditAsiento extends PanelController
             'accounting-entry',
             'fas fa-balance-scale'
         );
+
+        // activamos el botón de imprimir
+        $this->setSettings(static::MAIN_VIEW_NAME, 'btnPrint', true);
+
+        // cargamos css y javascript
         AssetManager::add('css', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.css', 2);
         AssetManager::add('js', FS_ROUTE . '/node_modules/jquery-ui-dist/jquery-ui.min.js', 2);
         AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetAutocomplete.js');
@@ -218,6 +224,19 @@ class EditAsiento extends PanelController
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    protected function exportAction()
+    {
+        $this->setTemplate(false);
+        AsientoExport::show(
+            $this->getModel(),
+            $this->request->get('option', ''),
+            $this->title,
+            (int)$this->request->request->get('idformat', ''),
+            $this->request->request->get('langcode', ''),
+            $this->response
+        );
     }
 
     /**
