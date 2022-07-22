@@ -239,10 +239,10 @@ class Subcuenta extends Base\ModelClass
      * Transform subaccount code if necessary
      *
      * @param string $code
-     *
+     * @param string $codejercicio
      * @return string
      */
-    public function transformCodsubcuenta(string $code): string
+    public function transformCodsubcuenta(string $code, string $codejercicio = ''): string
     {
         if (strpos($code, '.') === false) {
             return trim($code);
@@ -250,7 +250,7 @@ class Subcuenta extends Base\ModelClass
 
         $parts = explode('.', trim($code));
         if (count($parts) === 2) {
-            return str_pad($parts[0], $this->getExercise()->longsubcuenta - strlen($parts[1]), '0', STR_PAD_RIGHT) . $parts[1];
+            return str_pad($parts[0], $this->getExercise($codejercicio)->longsubcuenta - strlen($parts[1]), '0', STR_PAD_RIGHT) . $parts[1];
         }
 
         return trim($code);

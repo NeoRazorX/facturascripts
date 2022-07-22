@@ -341,7 +341,7 @@ class AccountingLineHTML
         $subcuenta = new Subcuenta();
         $where = [
             new DataBaseWhere('codejercicio', $model->codejercicio),
-            new DataBaseWhere('codsubcuenta', $subcuenta->transformCodsubcuenta($code))
+            new DataBaseWhere('codsubcuenta', $subcuenta->transformCodsubcuenta($code, $model->codejercicio))
         ];
         $subcuenta->loadFromCode('', $where);
         return $subcuenta;
