@@ -65,6 +65,12 @@ class BaseWidget extends VisualItem
     public $required;
 
     /**
+     *
+     * @var int
+     */
+    public $tabindex;
+
+    /**
      * @var string
      */
     private $type;
@@ -85,6 +91,7 @@ class BaseWidget extends VisualItem
         $this->icon = $data['icon'] ?? '';
         $this->onclick = $data['onclick'] ?? '';
         $this->readonly = $data['readonly'] ?? 'false';
+        $this->tabindex = $data['tabindex'] ?? '';
         $this->required = isset($data['required']) && strtolower($data['required']) === 'true';
         $this->type = $data['type'];
         $this->loadOptions($data['children']);
@@ -234,6 +241,7 @@ class BaseWidget extends VisualItem
         $params = $this->required ? ' required=""' : '';
         $params .= $this->readonly() ? ' readonly=""' : '';
         $params .= $this->autocomplete ? '' : ' autocomplete="off"';
+        $params .= $this->tabindex ? ' tabindex="' . $this->tabindex . '"' : '';
 
         return $params;
     }
