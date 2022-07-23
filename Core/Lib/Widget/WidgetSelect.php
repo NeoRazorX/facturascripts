@@ -152,6 +152,7 @@ class WidgetSelect extends BaseWidget
     }
 
     /**
+     *
      * @param array $values
      * @param bool $translate
      * @param bool $addEmpty
