@@ -1226,6 +1226,7 @@
     "totalirpf-value-error": "Quantità totale IRPF pari a 0 1 non corretta (2). Importo corretto: 3",
     "totaliva-value-error": "Importo totale della tassa pari a 0 1 non corretto (2). Importo corretto: 3",
     "totallinea-value-error": "Errore nel valore totallinea della riga IVA dell'imposta 0 della fattura. Valore corretto: 1",
+    "totals": "Totales",
     "town": "Cittadina",
     "traceability": "tracciabilità",
     "tracking-code": "tracking-code",

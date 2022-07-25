@@ -1226,6 +1226,7 @@
     "totalirpf-value-error": "Import IRPF total de %docType% %docCode% incorrecte (%docTotalIRPF%). Import correcte: %calcTotalIRPF%",
     "totaliva-value-error": "Import totaliva de %docType% %docCode% incorrecte (%docTotalTax%). Import correcte: %calcTotalTax%",
     "totallinea-value-error": "Error en el valor de totallinea de la línia IVA de l'impost %taxCode% de la factura. Valor correcte: %totalLine%",
+    "totals": "Totales",
     "town": "Població",
     "traceability": "Traçabilitat",
     "tracking-code": "Codi de seguiment",

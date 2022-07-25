@@ -1226,6 +1226,7 @@
     "totalirpf-value-error": "Valor total IRPF de %docType% %docCode% incorrecto (%docTotalIRPF%). Valor correcto: %calcTotalIRPF%",
     "totaliva-value-error": "Valor total ive de %docType% %docCode%incorrecto (%docTotalTax%). Valor correcto:  %calcTotalTax%",
     "totallinea-value-error": "Erro no valor total da liña de IVE do imposto %taxCode% da factura. Valor correcto: %totalLínea%",
+    "totals": "Totais",
     "town": "Cidade",
     "traceability": "Trazabilidade",
     "tracking-code": "Código de seguimento",
