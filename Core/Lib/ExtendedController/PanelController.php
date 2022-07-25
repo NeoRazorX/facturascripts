@@ -296,6 +296,12 @@ abstract class PanelController extends BaseController
                     $this->views[$this->active]->model->clear();
                 }
                 break;
+
+            case 'select':
+                $this->setTemplate(false);
+                $results = $this->selectAction();
+                $this->response->setContent(json_encode($results));
+                return false;
         }
 
         return true;
