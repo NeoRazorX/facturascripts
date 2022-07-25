@@ -16,39 +16,88 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 /**
  * Description of MyFilesToken
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class MyFilesToken
 {
 
-    /**
-     * 
-     * @param string $path
-     * @param bool   $permanent
-     *
-     * @return string
-     */
-    public static function get(string $path, bool $permanent): string
+    const DATE_FORMAT = 'Y-m-d H:i:s';
+    public static $date = null;
+    public static $datetime = null;
+    private static $method = 'aes-256-cbc';
+    private static $clave = 'IeUZU0kRPvchirLTZlQAtfdgf4I8a934cx2LM6HpUuxsV1jd1cnrxOogeJkWS';
+    private static $iv = '17Fa7tO0y4oFBA==';
+
+    public static function get(string $path, bool $permanent, ?string $datetime = null): string
     {
-        $init = \FS_DB_NAME . \FS_DB_PASS;
-        $date = \date('d-m-Y');
-        return $permanent ? \sha1($init . $path . $date) : \sha1($init . $path);
+        if (substr($path, 0, 1) == '/') {
+            $path = substr($path, 1);
+        }
+
+        if ($permanent) {
+            return self::encrypt($path);
+        }
+
+        $path .= is_null($datetime) ?
+            '|' . date(self::DATE_FORMAT, strtotime("+ 1 days")) :
+            '|' . date(self::DATE_FORMAT, strtotime($datetime));
+
+        return self::encrypt($path);
     }
 
-    /**
-     * 
-     * @param string $path
-     * @param string $token
-     *
-     * @return bool
-     */
     public static function validate(string $path, string $token): bool
     {
-        return $token === static::get($path, true) || $token === static::get($path, false);
+        if (self::validateNew($path, $token)) {
+            return true;
+        }
+
+        return self::validateOld($path, $token);
+    }
+
+    protected static function decrypt($valor)
+    {
+        return openssl_decrypt($valor, self::$method, self::$clave, false, self::$iv);
+    }
+
+    protected static function encrypt($valor)
+    {
+        return openssl_encrypt($valor, self::$method, self::$clave, false, self::$iv);
+    }
+
+    protected static function validateNew(string $path, string $token): bool
+    {
+        $decrypt = self::decrypt($token);
+        $parts = explode('|', $decrypt);
+
+        if (count($parts) > 1) {
+            if (is_null(self::$datetime)) {
+                self::$datetime = date(self::DATE_FORMAT);
+            }
+            return $parts[0] == $path && self::$datetime <= date(self::DATE_FORMAT, strtotime(end($parts)));
+        }
+
+        return $parts[0] == $path;
+    }
+
+    protected static function validateOld(string $path, string $token): bool
+    {
+        $init = FS_DB_NAME . \FS_DB_PASS;
+
+        if (is_null(self::$date)) {
+            self::$date = date('d-m-Y');
+        }
+
+        if (sha1($init . $path . self::$date) === $token || sha1($init . $path) === $token) {
+            return true;
+        }
+
+        return false;
     }
 }
