@@ -204,7 +204,7 @@
         const dtopor = parseFloat(document.forms['purchasesForm']['dtopor_' + id].value) || 0;
         const dtopor2 = parseFloat(document.forms['purchasesForm']['dtopor2_' + id].value) || 0;
         const iva = parseFloat(document.forms['purchasesForm']['iva_' + id].value) || 0;
-        const recargo = parseFloat(document.forms['purchasesForm']['recargo_' + id].value) || 0;
+        const recargo = document.forms['purchasesForm']['recargo_' + id] ? parseFloat(document.forms['purchasesForm']['recargo_' + id].value) || 0 : 0;
         const irpf = parseFloat(document.forms['purchasesForm']['irpf_' + id].value) || 0;
         const cantidad = parseFloat(document.forms['purchasesForm']['cantidad_' + id].value) || 0;
         if (total <= 0) {
