@@ -265,7 +265,7 @@ class Controller
      *
      * @return bool
      */
-    public function setTemplate($template)
+    public function setTemplate($template): bool
     {
         $this->template = ($template === false) ? false : $template . '.html.twig';
         return true;
