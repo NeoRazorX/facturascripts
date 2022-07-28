@@ -392,6 +392,7 @@
     "document-sequence": "Seqüència del document",
     "document-sequences": "Seqüències del documents",
     "document-states": "Estats de document",
+    "document-type": "Tipo documento",
     "document-type-valid-length": "El tipo de document no és vàlit. Ha de tindre entre 1 i 20 caràcters.",
     "document-wildcard-info": "Document indicat en la capçalera de l'assentament contable",
     "documentation": "Documentació",

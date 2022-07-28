@@ -392,6 +392,7 @@
     "document-sequence": "document-sequence",
     "document-sequences": "document-sequences",
     "document-states": "Document states",
+    "document-type": "Tipo documento",
     "document-type-valid-length": "Tipo de documento inválido. Deve ter entre 1 e 20 caracteres.",
     "document-wildcard-info": "Documento assinalado na cabeceira do registo contábil",
     "documentation": "Documentação",

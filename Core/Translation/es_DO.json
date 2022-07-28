@@ -392,6 +392,7 @@
     "document-sequence": "Secuencia de documento",
     "document-sequences": "Secuencias de documentos",
     "document-states": "Estados del documento",
+    "document-type": "Tipo documento",
     "document-type-valid-length": "Tipo de documento no válido (debe tener entre 1 y 20 carácteres).",
     "document-wildcard-info": "Documento indicado en la cabecera del asiento contable",
     "documentation": "Documentación",

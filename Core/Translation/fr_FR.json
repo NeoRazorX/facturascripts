@@ -392,6 +392,7 @@
     "document-sequence": "Numérotation des documents",
     "document-sequences": "Numérotations des documents",
     "document-states": "Etats du document",
+    "document-type": "Type de document",
     "document-type-valid-length": "Type de document incorrect Doit être compris entre 1 et 20 caractères.",
     "document-wildcard-info": "Document indiqué dans l'en-tête de l'entrée comptable",
     "documentation": "Documentation",

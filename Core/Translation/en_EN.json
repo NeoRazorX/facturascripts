@@ -392,6 +392,7 @@
     "document-sequence": "Document sequence",
     "document-sequences": "Document sequences",
     "document-states": "Document states",
+    "document-type": "Document type",
     "document-type-valid-length": "Invalid document type. Must be between 1 and 20 characters.",
     "document-wildcard-info": "Document indicated in the head of the accounting entry",
     "documentation": "Documentation",
