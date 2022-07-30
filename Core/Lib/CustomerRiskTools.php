@@ -76,7 +76,7 @@ class CustomerRiskTools
     }
 
     /**
-     * Returns the sum of the customer's unpaid invoices receipts.
+     * Returns the customer's unpaid invoices minus the customer's paid invoices receipts of those unpaid invoices.
      *
      * @param string $codcliente
      * @param int    $idempresa
@@ -84,14 +84,46 @@ class CustomerRiskTools
      * @return float
      */
     public static function getInvoicesRisk($codcliente, $idempresa = null): float
-    {
-        $sql = "SELECT SUM(importe) AS total FROM recibospagoscli"
+    {       
+        $sqlInvoices = "SELECT idfactura FROM facturascli"
             . " WHERE codcliente = " . static::database()->var2str($codcliente)
-            . " AND pagado = false";
+            . " AND pagada = false";
+        if (null !== $idempresa) {
+            $sqlInvoices .= " AND idempresa = " . static::database()->var2str($idempresa);
+        }
+        
+        $sqlReceipt = "SELECT SUM(importe) AS total FROM recibospagoscli"
+            . " WHERE codcliente = " . static::database()->var2str($codcliente)
+            . " AND idfactura in (".$sqlInvoices.")"
+            . " AND pagado = true";
+        if (null !== $idempresa) {
+            $sqlReceipt .= " AND idempresa = " . static::database()->var2str($idempresa);
+        }
+
+        foreach (static::dataBase()->select($sqlReceipt) as $item) {
+            return (float) (static::getUnpaidInvoices($codcliente, $idempresa)-$item['total']);
+        }
+
+        return 0.0;
+    }
+    
+    /**
+     * Returns the sum of the customer's unpaid invoices.
+     *
+     * @param string $codcliente
+     * @param int    $idempresa
+     *
+     * @return float
+     */
+    protected static function getUnpaidInvoices($codcliente, $idempresa = null): float
+    {
+        $sql = "SELECT SUM(total) AS total FROM facturascli"
+            . " WHERE codcliente = " . static::database()->var2str($codcliente)
+            . " AND pagada = false";
         if (null !== $idempresa) {
             $sql .= " AND idempresa = " . static::database()->var2str($idempresa);
         }
-
+        
         foreach (static::dataBase()->select($sql) as $item) {
             return (float) $item['total'];
         }

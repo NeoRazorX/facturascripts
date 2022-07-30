@@ -225,6 +225,8 @@ abstract class Receipt extends ModelOnChangeClass
     protected function onDelete()
     {
         $this->updateInvoice();
+        // Update client risk
+        $this->updateRisk();
         parent::onDelete();
     }
 
@@ -238,7 +240,10 @@ abstract class Receipt extends ModelOnChangeClass
             $this->newPayment();
             $this->updateInvoice();
         }
-
+        
+        // Update client risk
+        $this->updateRisk();
+        
         return true;
     }
 
@@ -246,6 +251,8 @@ abstract class Receipt extends ModelOnChangeClass
     {
         if (parent::saveUpdate($values)) {
             $this->updateInvoice();
+            // Update client risk
+            $this->updateRisk();
             return true;
         }
 
@@ -266,5 +273,15 @@ abstract class Receipt extends ModelOnChangeClass
         $invoice = $this->getInvoice();
         $generator = new ReceiptGenerator();
         $generator->update($invoice);
+    }
+    
+    protected function updateRisk() {
+        if (property_exists($this, 'codcliente')) {
+            $customer = new Cliente();
+            if ($customer->loadFromCode($this->codcliente)) {
+                $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->primaryColumnValue());
+                $customer->save();
+            }
+        }
     }
 }
