@@ -149,11 +149,10 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function column(Translator $i18n, BusinessDocument $model, string $colName, string $label, bool $autoHide = false): string
-    {
+    protected static function column(Translator $i18n, BusinessDocument $model, string $colName, string $label, bool $autoHide = false, string $class = ''): string {
         return empty($model->{$colName}) && $autoHide ? '' : '<div class="col-sm"><div class="form-group">' . $i18n->trans($label)
             . '<input type="text" value="' . number_format($model->{$colName}, FS_NF0, FS_NF1, '')
-            . '" class="form-control" disabled=""/></div></div>';
+            . '" class="form-control ' . $class . '" disabled=""/></div></div>';
     }
 
     protected static function deleteBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
@@ -193,8 +192,8 @@ trait CommonSalesPurchases
         return empty($model->netosindto) ? '' : '<div class="col-sm"><div class="form-group">' . $i18n->trans('global-dto')
             . '<div class="input-group">'
             . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-percentage"></i></span></div>'
-            . '<input type="number" ' . $attributes . ' value="' . $model->dtopor1 . '" class="form-control"/>'
-            . '</div></div></div>';
+            . '<input type="number" ' . $attributes . ' value="' . $model->dtopor1 . '" class="form-control  text-right"/>'
+                . '</div></div></div>';
     }
 
     protected static function dtopor2(Translator $i18n, BusinessDocument $model, string $jsName): string
@@ -207,8 +206,8 @@ trait CommonSalesPurchases
             . '<div class="input-group-prepend">'
             . '<span class="input-group-text"><i class="fas fa-percentage"></i></span>'
             . '</div>'
-            . '<input type="number" ' . $attributes . ' value="' . $model->dtopor2 . '" class="form-control"/>'
-            . '</div></div></div>';
+            . '<input type="number" ' . $attributes . ' value="' . $model->dtopor2 . '" class="form-control  text-right"/>'
+                . '</div></div></div>';
     }
 
     private static function email(Translator $i18n, BusinessDocument $model): string
@@ -384,7 +383,7 @@ trait CommonSalesPurchases
     {
         return empty($model->dtopor1) ? '' : '<div class="col-sm-2"><div class="form-group">' . $i18n->trans('subtotal')
             . '<input type="text" value="' . number_format($model->netosindto, FS_NF0, FS_NF1, '')
-            . '" class="form-control" disabled=""/></div></div>';
+            . '" class="form-control  text-right" disabled=""/></div></div>';
     }
 
     protected static function newLineBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
@@ -500,8 +499,8 @@ trait CommonSalesPurchases
         $attributes = $model->editable ? 'name="tasaconv" step="any" autocomplete="off"' : 'disabled=""';
         return '<div class="col-sm-6">'
             . '<div class="form-group">' . $i18n->trans('conversion-rate')
-            . '<input type="number" ' . $attributes . ' value="' . $model->tasaconv . '" class="form-control"/>'
-            . '</div>'
+            . '<input type="number" ' . $attributes . ' value="' . $model->tasaconv . '" class="form-control  text-right"/>'
+                . '</div>'
             . '</div>';
     }
 
@@ -510,8 +509,8 @@ trait CommonSalesPurchases
         return empty($model->total) ? '' : '<div class="col-sm"><div class="form-group">' . $i18n->trans('total')
             . '<div class="input-group">'
             . '<input type="text" value="' . number_format($model->total, FS_NF0, FS_NF1, '')
-            . '" class="form-control" disabled=""/>'
-            . '<div class="input-group-append"><button class="btn btn-primary btn-spin-action" onclick="return ' . $jsName
+            . '" class="form-control  text-right" disabled=""/>'
+                . '<div class="input-group-append"><button class="btn btn-primary btn-spin-action" onclick="return ' . $jsName
             . '(\'save-doc\', \'0\');" title="' . $i18n->trans('save') . '" type="button">'
             . '<i class="fas fa-save fa-fw"></i></button></div>'
             . '</div></div></div>';
