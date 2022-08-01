@@ -417,6 +417,7 @@
     "email-cc": "Email Carbon Copy",
     "email-not-configured": "email-not-configured",
     "email-not-sent": "Not sent",
+    "email-notification": "Notificación por email",
     "email-replies-to": "email-replies-to",
     "email-sent": "Sent by Mail",
     "email-sent-to": "email-sent-to",

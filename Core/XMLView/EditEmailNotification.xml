@@ -3,19 +3,19 @@
     <columns>
         <group name="main" valign="bottom" numcolumns="12">
             <column name="name" order="100">
-                <widget type="text" fieldname="name" required="true" />
+                <widget type="text" fieldname="name" readonly="dinamic" required="true"/>
             </column>
             <column name="subject" order="110">
-                <widget type="text" fieldname="subject" required="true" />
+                <widget type="text" fieldname="subject" required="true"/>
             </column>
             <column name="date" display="right" numcolumns="2" order="120">
-                <widget type="date" fieldname="creationdate" readonly="true" />
+                <widget type="date" fieldname="creationdate" readonly="true"/>
             </column>
             <column name="message" numcolumns="12" order="130">
-                <widget type="textarea" fieldname="body" rows="10" />
+                <widget type="textarea" fieldname="body" rows="10"/>
             </column>
             <column name="enabled" display="center" order="140">
-                <widget type="checkbox" fieldname="enabled" />
+                <widget type="checkbox" fieldname="enabled"/>
             </column>
         </group>
     </columns>

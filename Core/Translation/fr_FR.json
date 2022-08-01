@@ -417,6 +417,7 @@
     "email-cc": "Mettre en copie",
     "email-not-configured": "Les paramètres e-mail ne sont pas configurés. Vous pouvez le faire depuis le menu Administration > Panneau de contrôle > Préférences de l'application",
     "email-not-sent": "Non envoyé",
+    "email-notification": "Notificación por email",
     "email-replies-to": "Les réponses à cet e-mail seront envoyées à %email%",
     "email-sent": "Envoyé par email",
     "email-sent-to": "E-mail envoyé à %email%",

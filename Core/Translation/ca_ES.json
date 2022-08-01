@@ -417,6 +417,7 @@
     "email-cc": "Email amb Còpia",
     "email-not-configured": "Email no configurat. Pots configurar l'email des del menú administrador, panell de control, preferències d'aplicació.",
     "email-not-sent": "No enviat",
+    "email-notification": "Notificación por email",
     "email-replies-to": "Les respostes a aquest email aniran a %email%",
     "email-sent": "Envio per Mail",
     "email-sent-to": "Email enviat a %email%",

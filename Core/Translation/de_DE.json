@@ -417,6 +417,7 @@
     "email-cc": "Email mit Kopie",
     "email-not-configured": "E-Mail nicht konfiguriert. Sie können die E-Mail über das Administratormenü, Systemsteuerung, Anwendungseinstellungen konfigurieren.",
     "email-not-sent": "nicht gesendet",
+    "email-notification": "Notificación por email",
     "email-replies-to": "Die Antworten auf dieses Email gehen an %email%",
     "email-sent": "E-Mail gesendet",
     "email-sent-to": "Mail gesendet %email%",

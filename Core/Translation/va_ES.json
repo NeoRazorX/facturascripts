@@ -417,6 +417,7 @@
     "email-cc": "Email en còpia",
     "email-not-configured": "El correu electònic no està configurat",
     "email-not-sent": "No s'ha enviat",
+    "email-notification": "Notificación por email",
     "email-replies-to": "email-replies-to",
     "email-sent": "Enviat per email",
     "email-sent-to": "Email enviat a %email%",

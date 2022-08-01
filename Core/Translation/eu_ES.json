@@ -417,6 +417,7 @@
     "email-cc": "Emaila Karboi Kopiarekin",
     "email-not-configured": "Posta elektronikoa ez dago konfiguratuta. Administratzailea, kontrol panela, aplikazioaren lehentasunak menutik ahal duzu konfiguratu.",
     "email-not-sent": "Bidali gabe",
+    "email-notification": "Notificación por email",
     "email-replies-to": "Email honen erantzunak %email% helbidera joango dira",
     "email-sent": "Posta elektronikoz bidalita",
     "email-sent-to": "%email%(e)ri bidalitako emaila",
