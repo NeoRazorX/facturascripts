@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,12 +35,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 class ListProveedor extends ListController
 {
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
@@ -55,13 +50,10 @@ class ListProveedor extends ListController
     protected function createViews()
     {
         $this->createViewSuppliers();
-        $this->createViewAdresses();
+        $this->createViewAddresses();
     }
 
-    /**
-     * @param string $viewName
-     */
-    protected function createViewAdresses(string $viewName = 'ListContacto')
+    protected function createViewAddresses(string $viewName = 'ListContacto')
     {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addSearchFields($viewName, [
@@ -100,17 +92,13 @@ class ListProveedor extends ListController
         $this->setSettings($viewName, 'megasearch', false);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewSuppliers(string $viewName = 'ListProveedor')
     {
         $this->addView($viewName, 'Proveedor', 'suppliers', 'fas fa-users');
         $this->addSearchFields($viewName, ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->addOrderBy($viewName, ['codproveedor'], 'code');
         $this->addOrderBy($viewName, ['cifnif'], 'fiscal-number');
-        $this->addOrderBy($viewName, ['nombre'], 'name', 1);
+        $this->addOrderBy($viewName, ['LOWER(nombre)'], 'name', 1);
         $this->addOrderBy($viewName, ['fechaalta'], 'creation-date');
 
         // filters

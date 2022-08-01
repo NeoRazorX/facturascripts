@@ -276,7 +276,7 @@ class PurchasesModalHTML
         $trs = '';
         $proveedor = new Proveedor();
         $where = [new DataBaseWhere('fechabaja', null, 'IS')];
-        foreach ($proveedor->all($where, ['nombre' => 'ASC']) as $pro) {
+        foreach ($proveedor->all($where, ['LOWER(nombre)' => 'ASC']) as $pro) {
             $name = ($pro->nombre === $pro->razonsocial) ? $pro->nombre : $pro->nombre . ' <small>(' . $pro->razonsocial . ')</span>';
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'purchasesForm\'][\'codproveedor\'].value = \''
                 . $pro->codproveedor . '\'; $(\'#findSupplierModal\').modal(\'hide\'); purchasesFormAction(\'set-supplier\', \'0\'); return false;">'
