@@ -229,4 +229,19 @@ class EditProveedor extends ComercialContactController
             $columnBilling->widget->setValuesFromCodeModel($contacts);
         }
     }
+
+    protected function execAfterAction($action) {
+        switch ($action) {
+            case 'save-ok':
+            case 'edit':
+                $testSubject = new \FacturaScripts\Dinamic\Model\Proveedor();
+                $testSubject->loadFromCode($this->request->get('code', ''));
+
+                if ($testSubject->cifnifExists($testSubject->codproveedor, $testSubject->cifnif)) {
+                    $this->toolBox()->i18nLog()->warning('duplicated-cifnif');
+                }
+        }
+        parent::execAfterAction($action);
+    }
+
 }

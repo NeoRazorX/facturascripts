@@ -172,4 +172,24 @@ class Proveedor extends Base\ComercialContact
 
         return $return;
     }
+
+    /**
+     * Return true if cifnif exist in database
+     * @return boolean
+     */
+    public function cifnifExists(string $codproveedor, string $cifnif): bool {
+        if ($cifnif === '') {
+            return false;
+        }
+        $where = [new DataBaseWhere('cifnif', $cifnif)
+            , new DataBaseWhere('codproveedor', $codproveedor, '<>')
+        ];
+        $testData = new \FacturaScripts\Dinamic\Model\Proveedor();
+        $testData = $testData->all($where);
+        if (count($testData) > 0) {
+            return true;
+        }
+        return false;
+    }
+
 }

@@ -211,6 +211,7 @@ class Cliente extends Base\ComercialContact
             }
         }
         $this->diaspago = empty($arrayDias) ? null : implode(',', $arrayDias);
+
         return parent::test();
     }
 
@@ -219,7 +220,7 @@ class Cliente extends Base\ComercialContact
         if (empty($this->codcliente)) {
             $this->codcliente = (string)$this->newCode();
         }
-
+        
         $return = parent::saveInsert($values);
         if ($return && empty($this->idcontactofact)) {
             $parts = explode(' ', $this->nombre);
@@ -243,7 +244,28 @@ class Cliente extends Base\ComercialContact
                 return $this->save();
             }
         }
-
+        
         return $return;
     }
+
+   /**
+     * Return true if cifnif exist in database
+     * @return boolean
+     */
+    public function cifnifExists(string $codcliente, string $cifnif): bool {
+        if ($cifnif === '') {
+            return false;
+        }
+        $where = [new DataBaseWhere('cifnif', $cifnif)
+            , new DataBaseWhere('codcliente', $codcliente, '<>')
+        ];
+        $testData = new \FacturaScripts\Dinamic\Model\Cliente();
+        $testData = $testData->all($where);
+       
+        if (count($testData) > 0) {
+            return true;
+        }
+        return false;
+    }
+
 }
