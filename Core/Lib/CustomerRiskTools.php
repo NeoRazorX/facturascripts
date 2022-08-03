@@ -85,6 +85,13 @@ class CustomerRiskTools
      */
     public static function getInvoicesRisk($codcliente, $idempresa = null): float
     {       
+        $unpaidInvoicesAmount = static::getUnpaidInvoices($codcliente, $idempresa);
+        
+        // If there are no unpaid invoices there is no need to calculate unpaid bills.
+        if($unpaidInvoicesAmount == 0.0) {
+            return 0.0;
+        }
+        
         $sqlInvoices = "SELECT idfactura FROM facturascli"
             . " WHERE codcliente = " . static::database()->var2str($codcliente)
             . " AND pagada = false";
@@ -101,7 +108,7 @@ class CustomerRiskTools
         }
 
         foreach (static::dataBase()->select($sqlReceipt) as $item) {
-            return (float) (static::getUnpaidInvoices($codcliente, $idempresa)-$item['total']);
+            return (float) ($unpaidInvoicesAmount-$item['total']);
         }
 
         return 0.0;
