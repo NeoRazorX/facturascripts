@@ -18,10 +18,13 @@
  */
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Base\ToolBox;
+
 /**
  * This class centralizes all common method for VAT Regime.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class RegimenIVA
 {
@@ -29,6 +32,13 @@ class RegimenIVA
     const TAX_SYSTEM_EXEMPT = 'Exento';
     const TAX_SYSTEM_GENERAL = 'General';
     const TAX_SYSTEM_SURCHARGE = 'Recargo';
+
+    const ES_TAX_EXCEPTION_E1 = 'ES_20';
+    const ES_TAX_EXCEPTION_E2 = 'ES_21';
+    const ES_TAX_EXCEPTION_E3 = 'ES_22';
+    const ES_TAX_EXCEPTION_E4 = 'ES_23_24';
+    const ES_TAX_EXCEPTION_E5 = 'ES_25';
+    const ES_TAX_EXCEPTION_E6 = 'ES_OTHER';
 
     /**
      * Returns all the available options
@@ -38,9 +48,26 @@ class RegimenIVA
     public static function all()
     {
         return [
-            self::TAX_SYSTEM_EXEMPT => 'Exento',
-            self::TAX_SYSTEM_GENERAL => 'General',
-            self::TAX_SYSTEM_SURCHARGE => 'Recargo de equivalencia'
+            self::TAX_SYSTEM_EXEMPT => ToolBox::i18n()->trans('tax-system-exempt'),
+            self::TAX_SYSTEM_GENERAL => ToolBox::i18n()->trans('tax-system-general'),
+            self::TAX_SYSTEM_SURCHARGE => ToolBox::i18n()->trans('tax-system-surcharge'),
+        ];
+    }
+
+    /**
+     * Returns all the available options
+     *
+     * @return array
+     */
+    public static function allExceptions()
+    {
+        return [
+            self::ES_TAX_EXCEPTION_E1 => ToolBox::i18n()->trans('es-tax-exception-e1'),
+            self::ES_TAX_EXCEPTION_E2 => ToolBox::i18n()->trans('es-tax-exception-e2'),
+            self::ES_TAX_EXCEPTION_E3 => ToolBox::i18n()->trans('es-tax-exception-e3'),
+            self::ES_TAX_EXCEPTION_E4 => ToolBox::i18n()->trans('es-tax-exception-e4'),
+            self::ES_TAX_EXCEPTION_E5 => ToolBox::i18n()->trans('es-tax-exception-e5'),
+            self::ES_TAX_EXCEPTION_E6 => ToolBox::i18n()->trans('es-tax-exception-e6'),
         ];
     }
 
