@@ -32,6 +32,8 @@ class RegimenIVA
     const TAX_SYSTEM_EXEMPT = 'Exento';
     const TAX_SYSTEM_GENERAL = 'General';
     const TAX_SYSTEM_SURCHARGE = 'Recargo';
+    const TAX_SYSTEM_SIMPLIFIED = 'Simplificado';
+    const TAX_SYSTEM_ESPECIAL_AGP = 'Especial_AGP';
 
     const ES_TAX_EXCEPTION_E1 = 'ES_20';
     const ES_TAX_EXCEPTION_E2 = 'ES_21';
@@ -51,6 +53,8 @@ class RegimenIVA
             self::TAX_SYSTEM_EXEMPT => ToolBox::i18n()->trans('tax-system-exempt'),
             self::TAX_SYSTEM_GENERAL => ToolBox::i18n()->trans('tax-system-general'),
             self::TAX_SYSTEM_SURCHARGE => ToolBox::i18n()->trans('tax-system-surcharge'),
+            self::TAX_SYSTEM_SIMPLIFIED => ToolBox::i18n()->trans('tax-system-simplified'),
+            self::TAX_SYSTEM_ESPECIAL_AGP => ToolBox::i18n()->trans('tax-system-especial-agp'),
         ];
     }
 
