@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -32,22 +33,12 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
 class EditEmpresa extends EditController
 {
 
-    /**
-     * Returns the model name.
-     * 
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Empresa';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -92,7 +83,7 @@ class EditEmpresa extends EditController
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -120,19 +111,16 @@ class EditEmpresa extends EditController
         }
     }
 
-    /**
-     * @param BaseView $view
-     */
-    protected function setCustomWidgetValues(&$view)
+    protected function setCustomWidgetValues(BaseView &$view)
     {
         $columnVATType = $view->columnForName('vat-regime');
         if ($columnVATType && $columnVATType->widget->getType() === 'select') {
-            $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
+            $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all(), true);
         }
 
         $columnVATException = $view->columnForName('vat-exception');
         if ($columnVATException && $columnVATException->widget->getType() === 'select') {
-            $columnVATException->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), false, true);
+            $columnVATException->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
         }
 
         $columnLogo = $view->columnForName('logo');
