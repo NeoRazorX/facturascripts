@@ -35,6 +35,10 @@
         <type>character varying(100)</type>
     </column>
     <column>
+        <name>exceptioniva</name>
+        <type>character varying(20)</type>
+    </column>
+    <column>
         <name>email</name>
         <type>character varying(100)</type>
     </column>

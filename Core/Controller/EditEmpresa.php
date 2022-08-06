@@ -130,6 +130,11 @@ class EditEmpresa extends EditController
             $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
         }
 
+        $columnVATException = $view->columnForName('vat-exception');
+        if ($columnVATException && $columnVATException->widget->getType() === 'select') {
+            $columnVATException->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), false, true);
+        }
+
         $columnLogo = $view->columnForName('logo');
         if ($columnLogo && $columnLogo->widget->getType() === 'select') {
             $images = $this->codeModel->all('attached_files', 'idfile', 'filename', true, [
