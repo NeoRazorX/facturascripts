@@ -124,16 +124,14 @@ class EditAgente extends ComercialContactController
         $this->createDocumentView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
     }
 
-    /**
-     * @return bool
-     */
-    protected function editAction()
+    protected function editAction(): bool
     {
         $return = parent::editAction();
         if ($return && $this->active == 'EditContacto') {
             // update agent data when contact data is updated
             $agente = new Agente();
-            if ($agente->loadFromCode($this->views[$this->active]->model->codagente)) {
+            $where = [new DataBaseWhere('idcontacto', $this->views[$this->active]->model->idcontacto)];
+            if ($agente->loadFromCode('', $where)) {
                 $agente->email = $this->views[$this->active]->model->email;
                 $agente->telefono1 = $this->views[$this->active]->model->telefono1;
                 $agente->telefono2 = $this->views[$this->active]->model->telefono2;
@@ -156,6 +154,15 @@ class EditAgente extends ComercialContactController
 
         switch ($viewName) {
             case 'EditContacto':
+                $idcontacto = $this->getViewModelValue($mvn, 'idcontacto');
+                if (empty($idcontacto)) {
+                    $this->setSettings($viewName, 'active', false);
+                    break;
+                }
+                $where = [new DataBaseWhere('idcontacto', $idcontacto)];
+                $view->loadData('', $where);
+                break;
+
             case 'ListAlbaranCliente':
             case 'ListCliente':
             case 'ListFacturaCliente':
