@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -35,21 +36,11 @@ use FacturaScripts\Dinamic\Model\ReportBalance;
 class EditReportBalance extends EditReportAccounting
 {
 
-    /**
-     * Returns the class name of the model to use in the editView.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'ReportBalance';
     }
 
-    /**
-     * Return the basic data for this page.
-     *
-     * @return array
-     */
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -62,7 +53,7 @@ class EditReportBalance extends EditReportAccounting
     protected function createViews()
     {
         parent::createViews();
-        /// disable company column if there is only one company
+        // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }
@@ -71,10 +62,6 @@ class EditReportBalance extends EditReportAccounting
         $this->setTabsPosition('bottom');
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewsBalances(string $viewName = 'ListBalance')
     {
         $this->addListView($viewName, 'Balance', 'preferences');
@@ -89,10 +76,10 @@ class EditReportBalance extends EditReportAccounting
             'descripcion3', 'descripcion4', 'descripcion4ba'
         ]);
 
-        /// disable column
+        // disable column
         $this->views[$viewName]->disableColumn('nature');
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'checkBoxes', false);
@@ -102,18 +89,18 @@ class EditReportBalance extends EditReportAccounting
      * Generate Balance Amounts data for report
      *
      * @param ReportBalance $model
-     * @param string        $format
+     * @param string $format
      *
      * @return array
      */
-    protected function generateReport($model, $format)
+    protected function generateReport($model, $format): array
     {
         $params = [
             'channel' => $model->channel,
             'format' => $format,
             'idcompany' => $model->idcompany,
             'subtype' => $model->subtype,
-            'comparative' => $model->comparative,
+            'comparative' => $model->comparative
         ];
 
         switch ($model->type) {
@@ -136,11 +123,7 @@ class EditReportBalance extends EditReportAccounting
         return [];
     }
 
-    /**
-     *
-     * @return array
-     */
-    protected function getPreferencesWhere()
+    protected function getPreferencesWhere(): array
     {
         switch ($this->getModel()->type) {
             case 'balance-sheet':
@@ -162,7 +145,7 @@ class EditReportBalance extends EditReportAccounting
     /**
      * Loads the data to display.
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -186,7 +169,7 @@ class EditReportBalance extends EditReportAccounting
      *
      * @param BaseView $view
      */
-    protected function loadWidgetValues($view)
+    protected function loadWidgetValues(BaseView $view)
     {
         $columnType = $view->columnForField('type');
         if ($columnType && $columnType->widget->getType() === 'select') {

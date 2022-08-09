@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Balance;
 use FacturaScripts\Dinamic\Model\BalanceCuenta;
 use FacturaScripts\Dinamic\Model\BalanceCuentaA;
@@ -37,33 +37,18 @@ use FacturaScripts\Dinamic\Model\Partida;
 class BalanceSheet extends AccountingBase
 {
 
-    /**
-     * Date from for filter
-     *
-     * @var string
-     */
+    /** @var string */
     protected $dateFromPrev;
 
-    /**
-     * * Date to for filter
-     *
-     * @var string
-     */
+    /** @var string */
     protected $dateToPrev;
 
-    /**
-     * @var Ejercicio
-     */
+    /** @var Ejercicio */
     protected $exercisePrev;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $format;
 
-    /**
-     * BalanceSheet constructor
-     */
     public function __construct()
     {
         parent::__construct();
@@ -89,21 +74,32 @@ class BalanceSheet extends AccountingBase
         $this->dateTo = $dateTo;
         $this->dateFromPrev = $this->addToDate($dateFrom, '-1 year');
         $this->dateToPrev = $this->addToDate($dateTo, '-1 year');
+        $this->exercisePrev = new Ejercicio();
+        $where = [
+            new DataBaseWhere('fechainicio', $this->dateFromPrev, '<='),
+            new DataBaseWhere('fechafin', $this->dateToPrev, '>='),
+            new DataBaseWhere('idempresa', $this->exercise->idempresa)
+        ];
+        $this->exercisePrev->loadFromCode('', $where);
         $this->format = $params['format'];
 
-        if ($params['comparative']) {
-            $this->exercisePrev = new Ejercicio();
-            $where = [
-                new DataBaseWhere('fechainicio', $this->dateFromPrev, '<='),
-                new DataBaseWhere('fechafin', $this->dateToPrev, '>='),
-                new DataBaseWhere('idempresa', $this->exercise->idempresa)
-            ];
-            $this->exercisePrev->loadFromCode('', $where);
-        }
-        return [
+        $return = [
             $this->getData('A', $params),
             $this->getData('P', $params)
         ];
+
+        // Si se ha elegido sin comparativo, eliminamos los datos del comparativo
+        if ($params['comparative'] == false) {
+            $code2 = $this->exercisePrev->codejercicio ?? '-';
+            foreach ($return[0] as $key => $value) {
+                unset($return[0][$key][$code2]);
+            }
+            foreach ($return[1] as $key => $value) {
+                unset($return[1][$key][$code2]);
+            }
+        }
+
+        return $return;
     }
 
     /**
@@ -131,7 +127,7 @@ class BalanceSheet extends AccountingBase
         }
 
         $rows[] = [
-            'descripcion' => $this->formatValue('Total (' . \implode('+', $levels) . ')', 'text', true),
+            'descripcion' => $this->formatValue('Total (' . implode('+', $levels) . ')', 'text', true),
             $code1 => $this->formatValue($total1, 'money', true),
             $code2 => $this->formatValue($total2, 'money', true)
         ];
@@ -144,7 +140,7 @@ class BalanceSheet extends AccountingBase
      *
      * @return string
      */
-    protected function formatValue($value, $type = 'money', $bold = false)
+    protected function formatValue($value, $type = 'money', $bold = false): string
     {
         $prefix = $bold ? '<b>' : '';
         $suffix = $bold ? '</b>' : '';
@@ -153,13 +149,13 @@ class BalanceSheet extends AccountingBase
                 if ($this->format === 'PDF') {
                     return $prefix . $this->toolBox()->coins()->format($value, FS_NF0, '') . $suffix;
                 }
-                return \number_format($value, FS_NF0, '.', '');
+                return number_format($value, FS_NF0, '.', '');
 
             default:
                 if ($this->format === 'PDF') {
                     return $prefix . $this->toolBox()->utils()->fixHtml($value) . $suffix;
                 }
-                return $this->toolBox()->utils()->fixHtml($value);
+                return $this->toolBox()->utils()->fixHtml($value) ?? '';
         }
     }
 
@@ -247,9 +243,7 @@ class BalanceSheet extends AccountingBase
         $amountsNE2 = [];
         foreach ($balances as $bal) {
             $this->sumAmounts($amountsE1, $amountsNE1, $bal, $code1, $params);
-            if ($params['comparative']) {
-                $this->sumAmounts($amountsE2, $amountsNE2, $bal, $code2, $params);
-            }
+            $this->sumAmounts($amountsE2, $amountsNE2, $bal, $code2, $params);
         }
 
         // add to table
@@ -257,53 +251,43 @@ class BalanceSheet extends AccountingBase
         foreach ($balances as $bal) {
             if ($bal->nivel1 != $nivel1 && !empty($bal->nivel1)) {
                 $nivel1 = $bal->nivel1;
-                $item1 = array_push($rows, ['descripcion' => '', $code1 => '']) - 1;
-                $item2 = array_push($rows, [
+                $rows[] = ['descripcion' => '', $code1 => '', $code2 => ''];
+                $rows[] = [
                     'descripcion' => $this->formatValue($bal->descripcion1, 'text', true),
                     $code1 => $this->formatValue($amountsNE1[$bal->nivel1], 'money', true),
-                ]) - 1;
-
-                if ($params['comparative']) {
-                    $rows[$item1][$code2] = '';
-                    $rows[$item2][$code2] = $this->formatValue($amountsNE2[$bal->nivel1], 'money', true);
-                }
+                    $code2 => $this->formatValue($amountsNE2[$bal->nivel1], 'money', true)
+                ];
             }
 
             if ($bal->nivel2 != $nivel2 && !empty($bal->nivel2)) {
                 $nivel2 = $bal->nivel2;
-                $item1 = array_push($rows, [
+                $rows[] = [
                     'descripcion' => '  ' . $bal->descripcion2,
                     $code1 => $this->formatValue($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2]),
-                ]) - 1;
-                if ($params['comparative']) {
-                    $rows[$item1][$code2] = $this->formatValue($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2]);
-                }
+                    $code2 => $this->formatValue($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2])
+                ];
             }
 
             if ($bal->nivel3 != $nivel3 && !empty($bal->nivel3)) {
                 $nivel3 = $bal->nivel3;
-                $item1 = array_push($rows, [
+                $rows[] = [
                     'descripcion' => '    ' . $bal->descripcion3,
                     $code1 => $this->formatValue($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3]),
-                ]) - 1;
-                if ($params['comparative']) {
-                    $rows[$item1][$code2] = $this->formatValue($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3]);
-                }
+                    $code2 => $this->formatValue($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3])
+                ];
             }
 
             if ($bal->nivel4 != $nivel4 && !empty($bal->nivel4)) {
+                $nivel4 = $bal->nivel4;
                 if (empty($amountsE1[$bal->codbalance]) && empty($amountsE2[$bal->codbalance])) {
                     continue;
                 }
 
-                $nivel4 = $bal->nivel4;
-                $item1 = array_push($rows, [
+                $rows[] = [
                     'descripcion' => '      ' . $bal->descripcion4,
                     $code1 => $this->formatValue($amountsE1[$bal->codbalance]),
-                ]) - 1;
-                if ($params['comparative']) {
-                    $rows[$item1][$code2] = $this->formatValue($amountsE2[$bal->codbalance]);
-                }
+                    $code2 => $this->formatValue($amountsE2[$bal->codbalance])
+                ];
             }
         }
 
