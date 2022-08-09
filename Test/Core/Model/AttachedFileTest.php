@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\AttachedFile;
 use PHPUnit\Framework\TestCase;
@@ -53,5 +54,42 @@ final class AttachedFileTest extends TestCase
 
         // el archivo ya no está en el path
         $this->assertFalse(file_exists($model->path));
+    }
+
+    public function testTokens()
+    {
+        $original = 'xss_img_src_onerror_alert(123).jpeg';
+        $originalPath = FS_FOLDER . '/Test/__files/' . $original;
+        $this->assertTrue(file_exists($originalPath), 'File not found: ' . $originalPath);
+
+        // copiamos el archivo a MyFiles y renombramos
+        $name = 'test.jpg';
+        $this->assertTrue(copy($originalPath, FS_FOLDER . '/MyFiles/' . $name), 'File not copied');
+
+        $model = new AttachedFile();
+        $model->path = $name;
+        $this->assertTrue($model->save(), 'can-not-save-file');
+
+        // comprobamos que la fecha es hoy
+        $this->assertEquals(MyFilesToken::getCurrentDate(), date('d-m-Y'), 'Bad current date');
+
+        // generamos los tokens
+        $tokenPermanent = MyFilesToken::get($model->path, true);
+        $tokenTemporal = MyFilesToken::get($model->path, false);
+
+        // validamos los tokens
+        $this->assertTrue(MyFilesToken::validate($model->path, $tokenPermanent), 'Permanent Token not valid');
+        $this->assertTrue(MyFilesToken::validate($model->path, $tokenTemporal), 'Temporal default Token not valid');
+
+        // asignamos la fecha de mañana
+        $tomorrow = date('d-m-Y', strtotime('+1 day'));
+        MyFilesToken::setCurrentDate($tomorrow);
+
+        // validamos los tokens de nuevo
+        $this->assertTrue(MyFilesToken::validate($model->path, $tokenPermanent), 'Permanent Token not valid');
+        $this->assertFalse(MyFilesToken::validate($model->path, $tokenTemporal), 'Temporal default Token still valid');
+
+        // eliminamos el archivo
+        $this->assertTrue($model->delete(), 'can-not-delete-file');
     }
 }
