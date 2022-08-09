@@ -49,5 +49,10 @@
                 <widget type="number" fieldname="channel" decimal="0"/>
             </column>
         </group>
+        <group name="aditional" numcolumns="12">
+            <column name="comparative" display="center" order="180">
+                <widget type="checkbox" fieldname="comparative"/>
+            </column>
+        </group>
     </columns>
 </view>

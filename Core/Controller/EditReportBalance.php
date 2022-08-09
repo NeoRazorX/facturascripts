@@ -112,7 +112,8 @@ class EditReportBalance extends EditReportAccounting
             'channel' => $model->channel,
             'format' => $format,
             'idcompany' => $model->idcompany,
-            'subtype' => $model->subtype
+            'subtype' => $model->subtype,
+            'comparative' => $model->comparative,
         ];
 
         switch ($model->type) {

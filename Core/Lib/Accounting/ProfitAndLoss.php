@@ -91,15 +91,17 @@ class ProfitAndLoss extends AccountingBase
         $this->dateTo = $dateTo;
         $this->dateFromPrev = $this->addToDate($dateFrom, '-1 year');
         $this->dateToPrev = $this->addToDate($dateTo, '-1 year');
-        $this->exercisePrev = new Ejercicio();
-        $where = [
-            new DataBaseWhere('fechainicio', $this->dateFromPrev, '<='),
-            new DataBaseWhere('fechafin', $this->dateToPrev, '>='),
-            new DataBaseWhere('idempresa', $this->exercise->idempresa)
-        ];
-        $this->exercisePrev->loadFromCode('', $where);
         $this->format = $params['format'];
 
+        if ($params['comparative']) {
+            $this->exercisePrev = new Ejercicio();
+            $where = [
+                new DataBaseWhere('fechainicio', $this->dateFromPrev, '<='),
+                new DataBaseWhere('fechafin', $this->dateToPrev, '>='),
+                new DataBaseWhere('idempresa', $this->exercise->idempresa)
+            ];
+            $this->exercisePrev->loadFromCode('', $where);
+        }
         return [$this->getData('PG', $params)];
     }
 
@@ -124,7 +126,7 @@ class ProfitAndLoss extends AccountingBase
 
             $levels[$bal->nivel1] = $bal->nivel1;
             $total1 += $amouns1[$bal->nivel1];
-            $total2 += $amouns2[$bal->nivel1];
+            $total2 += $amouns2[$bal->nivel1] ?? 0.00;
         }
 
         $rows[] = [
@@ -244,7 +246,9 @@ class ProfitAndLoss extends AccountingBase
         $amountsNE2 = [];
         foreach ($balances as $bal) {
             $this->sumAmounts($amountsE1, $amountsNE1, $bal, $code1, $params);
-            $this->sumAmounts($amountsE2, $amountsNE2, $bal, $code2, $params);
+            if ($params['comparative']) {
+                $this->sumAmounts($amountsE2, $amountsNE2, $bal, $code2, $params);
+            }
         }
 
         // add to table
@@ -252,43 +256,53 @@ class ProfitAndLoss extends AccountingBase
         foreach ($balances as $bal) {
             if ($bal->nivel1 != $nivel1 && !empty($bal->nivel1)) {
                 $nivel1 = $bal->nivel1;
-                $rows[] = ['descripcion' => '', $code1 => '', $code2 => ''];
-                $rows[] = [
+                $item1 = array_push($rows, ['descripcion' => '', $code1 => '']) - 1;
+                $item2 = array_push($rows, [
                     'descripcion' => $this->formatValue($bal->descripcion1, 'text', true),
                     $code1 => $this->formatValue($amountsNE1[$bal->nivel1], 'money', true),
-                    $code2 => $this->formatValue($amountsNE2[$bal->nivel1], 'money', true)
-                ];
+                ]) - 1;
+
+                if ($params['comparative']) {
+                    $rows[$item1][$code2] = '';
+                    $rows[$item2][$code2] = $this->formatValue($amountsNE2[$bal->nivel1], 'money', true);
+                }
             }
 
             if ($bal->nivel2 != $nivel2 && !empty($bal->nivel2)) {
                 $nivel2 = $bal->nivel2;
-                $rows[] = [
+                $item1 = array_push($rows, [
                     'descripcion' => '  ' . $bal->descripcion2,
                     $code1 => $this->formatValue($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2]),
-                    $code2 => $this->formatValue($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2])
-                ];
+                ]) - 1;
+                if ($params['comparative']) {
+                    $rows[$item1][$code2] = $this->formatValue($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2]);
+                }
             }
 
             if ($bal->nivel3 != $nivel3 && !empty($bal->nivel3)) {
                 $nivel3 = $bal->nivel3;
-                $rows[] = [
+                $item1 = array_push($rows, [
                     'descripcion' => '    ' . $bal->descripcion3,
                     $code1 => $this->formatValue($amountsNE1[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3]),
-                    $code2 => $this->formatValue($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3])
-                ];
+                ]) - 1;
+                if ($params['comparative']) {
+                    $rows[$item1][$code2] = $this->formatValue($amountsNE2[$bal->nivel1 . '-' . $bal->nivel2 . '-' . $bal->nivel3]);
+                }
             }
 
             if ($bal->nivel4 != $nivel4 && !empty($bal->nivel4)) {
-                $nivel4 = $bal->nivel4;
                 if (empty($amountsE1[$bal->codbalance]) && empty($amountsE2[$bal->codbalance])) {
                     continue;
                 }
 
-                $rows[] = [
+                $nivel4 = $bal->nivel4;
+                $item1 = array_push($rows, [
                     'descripcion' => '      ' . $bal->descripcion4,
                     $code1 => $this->formatValue($amountsE1[$bal->codbalance]),
-                    $code2 => $this->formatValue($amountsE2[$bal->codbalance])
-                ];
+                ]) - 1;
+                if ($params['comparative']) {
+                    $rows[$item1][$code2] = $this->formatValue($amountsE2[$bal->codbalance]);
+                }
             }
         }
 

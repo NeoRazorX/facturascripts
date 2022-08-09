@@ -11,6 +11,12 @@
         <type>integer</type>
     </column>
     <column>
+        <name>comparative</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>true</default>
+    </column>
+    <column>
         <name>enddate</name>
         <type>date</type>
     </column>

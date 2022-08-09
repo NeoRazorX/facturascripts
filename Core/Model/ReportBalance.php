@@ -35,6 +35,13 @@ class ReportBalance extends Base\ReportAccounting
     const SUBTYPE_NORMAL = 'normal';
 
     /**
+     * Indicate if you want to make a comparison with the previous year.
+     *
+     * @var bool
+     */
+    public $comparative;
+
+    /**
      * @var string
      */
     public $type;
@@ -44,18 +51,32 @@ class ReportBalance extends Base\ReportAccounting
      */
     public $subtype;
 
+    /**
+     * Reset the values of all model properties.
+     */
     public function clear()
     {
         parent::clear();
+        $this->comparative = true;
         $this->type = self::TYPE_SHEET;
         $this->subtype = self::SUBTYPE_ABBREVIATED;
     }
 
+    /**
+     * Returns the name of the class of the model.
+     *
+     * @return string
+     */
     public static function tableName(): string
     {
         return 'reportsbalance';
     }
 
+    /**
+     * Return the list of balances.
+     *
+     * @return array
+     */
     public static function typeList(): array
     {
         $i18n = self::toolBox()->i18n();
@@ -66,6 +87,11 @@ class ReportBalance extends Base\ReportAccounting
         ];
     }
 
+    /**
+     * Returns the list of available balance types.
+     *
+     * @return array
+     */
     public static function subtypeList(): array
     {
         $i18n = self::toolBox()->i18n();
