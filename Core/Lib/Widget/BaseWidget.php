@@ -270,7 +270,8 @@ class BaseWidget extends VisualItem
             return empty($titleurl) ? $inside : '<a href="' . $titleurl . '">' . $inside . '</a>';
         }
 
-        return '<a href="' . FS_ROUTE . '/' . $this->onclick . '?code=' . rawurlencode($this->value)
+        $params = strpos($this->onclick, '?') !== false ? '&' : '?';
+        return '<a href="' . FS_ROUTE . '/' . $this->onclick . $params . 'code=' . rawurlencode($this->value)
             . '" class="cancelClickable">' . $inside . '</a>';
     }
 
