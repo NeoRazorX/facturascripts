@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\ListFilter;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\CodeModel;
 
 /**
  * Description of SelectFilter
@@ -29,14 +30,10 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 class SelectFilter extends BaseFilter
 {
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $icon = '';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $values;
 
     public function __construct(string $key, string $field, string $label, array $values = [])
@@ -87,15 +84,23 @@ class SelectFilter extends BaseFilter
     protected function getHtmlOptions(): string
     {
         $html = '<option value="">' . static::$i18n->trans($this->label) . '</option>';
-        foreach ($this->values as $data) {
-            if (is_array($data)) {
+        foreach ($this->values as $key => $data) {
+            if ($data instanceof CodeModel) {
+                $extra = ('' != $this->value && $data->code == $this->value) ? ' selected=""' : '';
+                $html .= '<option value="' . $data->code . '"' . $extra . '>' . $data->description . '</option>';
+                continue;
+            }
+
+            if (is_array($data) && array_key_exists('code', $data) && array_key_exists('description', $data)) {
                 $extra = ('' != $this->value && $data['code'] == $this->value) ? ' selected=""' : '';
                 $html .= '<option value="' . $data['code'] . '"' . $extra . '>' . $data['description'] . '</option>';
                 continue;
             }
 
-            $extra = ('' != $this->value && $data->code == $this->value) ? ' selected=""' : '';
-            $html .= '<option value="' . $data->code . '"' . $extra . '>' . $data->description . '</option>';
+            if (is_string($data)) {
+                $extra = ('' != $this->value && $key == $this->value) ? ' selected=""' : '';
+                $html .= '<option value="' . $key . '"' . $extra . '>' . $data . '</option>';
+            }
         }
 
         return $html;
