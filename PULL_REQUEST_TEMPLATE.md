@@ -20,7 +20,7 @@ Toda modificación debe haber sido mínimamente probada. Marca o describe las pr
 - [ ] He probado que funciona correctamente con una base de datos vacía.
 - [ ] He ejecutado los tests unitarios.
 
-## How has the changes been tested? (english)
+### How has the changes been tested? (english)
 Any modification must have been tested minimally. Mark or describe the tests you have performed:
 - [ ] I have reviewed my code before sending it.
 - [ ] I have tested it on my PC.
@@ -33,7 +33,7 @@ Aquí tienes algunos enlaces de ayuda:
 - (Plan de desarrollo) https://facturascripts.com/roadmap
 - (Discord) https://discord.gg/qKm7j9AaJT
 
-## Help (english)
+### Help (english)
 Here are some help links:
 - (Documentation for developers) https://facturascripts.com/help?type=developer
 - (Development roadmap) https://facturascripts.com/roadmap
