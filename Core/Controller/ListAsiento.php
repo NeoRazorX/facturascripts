@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Model\Asiento;
 
 /**
  * Controller to list the items in the Asiento model
@@ -114,6 +115,15 @@ class ListAsiento extends ListController
         if (count($selectChannel) > 2) {
             $this->addFilterSelect($viewName, 'canal', 'channel', 'canal', $selectChannel);
         }
+
+        // filtro de operación
+        $operaciones = [
+            '' => '------',
+            Asiento::OPERATION_OPENING => self::toolBox()::i18n()->trans('opening-operation'),
+            Asiento::OPERATION_CLOSING => self::toolBox()::i18n()->trans('closing-operation'),
+            Asiento::OPERATION_REGULARIZATION => self::toolBox()::i18n()->trans('regularization-operation')
+        ];
+        $this->addFilterSelect($viewName, 'operacion', 'operation', 'operacion', $operaciones);
 
         // buttons
         $this->addLockButton($viewName);
