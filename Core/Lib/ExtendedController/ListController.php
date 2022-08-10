@@ -258,6 +258,10 @@ abstract class ListController extends BaseController
     protected function execAfterAction($action)
     {
         switch ($action) {
+            case 'delete-ok':
+                $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
+                break;
+
             case 'export':
                 $this->exportAction();
                 break;
