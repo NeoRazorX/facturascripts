@@ -76,10 +76,12 @@ final class AttachedFileTest extends TestCase
         // generamos los tokens
         $tokenPermanent = MyFilesToken::get($model->path, true);
         $tokenTemporal = MyFilesToken::get($model->path, false);
+        $tokenOneWeek = MyFilesToken::get($model->path, false, date('d-m-Y', strtotime('+1 week')));
 
         // validamos los tokens
         $this->assertTrue(MyFilesToken::validate($model->path, $tokenPermanent), 'Permanent Token not valid');
         $this->assertTrue(MyFilesToken::validate($model->path, $tokenTemporal), 'Temporal default Token not valid');
+        $this->assertTrue(MyFilesToken::validate($model->path, $tokenOneWeek), 'Temporal one week Token not valid');
 
         // asignamos la fecha de mañana
         $tomorrow = date('d-m-Y', strtotime('+1 day'));
@@ -88,6 +90,16 @@ final class AttachedFileTest extends TestCase
         // validamos los tokens de nuevo
         $this->assertTrue(MyFilesToken::validate($model->path, $tokenPermanent), 'Permanent Token not valid');
         $this->assertFalse(MyFilesToken::validate($model->path, $tokenTemporal), 'Temporal default Token still valid');
+        $this->assertTrue(MyFilesToken::validate($model->path, $tokenOneWeek), 'Temporal one week Token not valid');
+
+        // asignamos la fecha de dentro de 8 días
+        $nextWeek = date('d-m-Y', strtotime('+8 days'));
+        MyFilesToken::setCurrentDate($nextWeek);
+
+        // validamos los tokens de nuevo
+        $this->assertTrue(MyFilesToken::validate($model->path, $tokenPermanent), 'Permanent Token not valid');
+        $this->assertFalse(MyFilesToken::validate($model->path, $tokenTemporal), 'Temporal default Token still valid');
+        $this->assertFalse(MyFilesToken::validate($model->path, $tokenOneWeek), 'Temporal one week Token still valid');
 
         // eliminamos el archivo
         $this->assertTrue($model->delete(), 'can-not-delete-file');
