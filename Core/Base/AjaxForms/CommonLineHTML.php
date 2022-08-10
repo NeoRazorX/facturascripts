@@ -88,7 +88,7 @@ trait CommonLineHTML
             'disabled=""';
         return '<div class="col-sm col-lg-1 order-5">'
             . '<div class="d-lg-none mt-3 small">' . $i18n->trans('percentage-discount') . '</div>'
-            . '<input type="number" ' . $attributes . ' value="' . $line->dtopor . '" class="form-control form-control-sm border-0"/>'
+            . '<input type="number" ' . $attributes . ' value="' . $line->dtopor . '" class="form-control form-control-sm text-lg-center border-0"/>'
             . '</div>';
     }
 
@@ -145,7 +145,7 @@ trait CommonLineHTML
         return '<div class="col col-lg-1 order-7">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
             . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($total, FS_NF0, '.', '')
-            . '" class="form-control form-control-sm border-0"' . $onclick . ' readonly/></div>';
+            . '" class="form-control form-control-sm text-lg-right border-0"' . $onclick . ' readonly/></div>';
     }
 
     private static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
@@ -234,7 +234,7 @@ trait CommonLineHTML
 
     private static function titleCantidad(Translator $i18n): string
     {
-        return '<div class="col-lg-1 order-3">' . $i18n->trans('quantity') . '</div>';
+        return '<div class="col-lg-1 text-right order-3">' . $i18n->trans('quantity') . '</div>';
     }
 
     private static function titleCodimpuesto(Translator $i18n): string
@@ -249,12 +249,12 @@ trait CommonLineHTML
 
     private static function titleDtopor(Translator $i18n): string
     {
-        return '<div class="col-lg-1 order-5">' . $i18n->trans('percentage-discount') . '</div>';
+        return '<div class="col-lg-1 text-center order-5">' . $i18n->trans('percentage-discount') . '</div>';
     }
 
     private static function titlePrecio(Translator $i18n): string
     {
-        return '<div class="col-lg-1 order-4">' . $i18n->trans('price') . '</div>';
+        return '<div class="col-lg-1 text-right order-4">' . $i18n->trans('price') . '</div>';
     }
 
     private static function titleReferencia(Translator $i18n): string
@@ -264,6 +264,6 @@ trait CommonLineHTML
 
     private static function titleTotal(Translator $i18n): string
     {
-        return '<div class="col-lg-1 order-7">' . $i18n->trans('subtotal') . '</div>';
+        return '<div class="col-lg-1 text-right order-7">' . $i18n->trans('subtotal') . '</div>';
     }
 }

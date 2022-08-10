@@ -215,14 +215,14 @@ class PurchasesLineHTML
         if (false === $model->editable) {
             return '<div class="col-sm-2 col-lg-1 order-3">'
                 . '<div class="d-lg-none mt-2 small">' . $i18n->trans('quantity') . '</div>'
-                . '<input type="number" class="form-control form-control-sm border-0" value="' . $line->cantidad . '" disabled=""/>'
+                . '<input type="number" class="form-control form-control-sm text-lg-right border-0" value="' . $line->cantidad . '" disabled=""/>'
                 . '</div>';
         }
 
         return '<div class="col-sm-2 col-lg-1 order-3">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('quantity') . '</div>'
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
-            . '" class="form-control form-control-sm border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"/>'
+            . '" class="form-control form-control-sm text-lg-right border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"/>'
             . '</div>';
     }
 
@@ -247,14 +247,14 @@ class PurchasesLineHTML
         if (false === $model->editable) {
             return '<div class="col-sm col-lg-1 order-4">'
                 . '<div class="d-lg-none mt-2 small">' . $i18n->trans('price') . '</div>'
-                . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm border-0" disabled=""/>'
+                . '<input type="number" value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-right border-0" disabled=""/>'
                 . '</div>';
         }
 
         $attributes = 'name="pvpunitario_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"';
         return '<div class="col-sm col-lg-1 order-4">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('price') . '</div>'
-            . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm border-0"/>'
+            . '<input type="number" ' . $attributes . ' value="' . $line->pvpunitario . '" class="form-control form-control-sm text-lg-right border-0"/>'
             . '</div>';
     }
 
