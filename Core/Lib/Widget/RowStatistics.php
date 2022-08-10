@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2018 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 /**
@@ -26,34 +27,29 @@ namespace FacturaScripts\Core\Lib\Widget;
 class RowStatistics extends VisualItem
 {
 
-    /**
-     *
-     * @var array
-     */
+    /** @var array */
     protected $children;
 
     /**
-     *
      * @param array $data
      */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         parent::__construct($data);
         $this->children = $data['children'];
     }
 
     /**
-     *
      * @param object $controller
      *
      * @return string
      */
-    public function render(&$controller)
+    public function render(&$controller): string
     {
         $html = '';
         foreach ($this->children as $child) {
             if ($child['tag'] === 'datalabel') {
-                $html .= $this->renderDatalabel($controller, $child);
+                $html .= $this->renderDataLabel($controller, $child);
             }
         }
 
@@ -61,18 +57,17 @@ class RowStatistics extends VisualItem
     }
 
     /**
-     *
      * @param object $controller
-     * @param array  $data
+     * @param array $data
      *
      * @return string
      */
-    protected function renderDatalabel(&$controller, $data)
+    protected function renderDataLabel(&$controller, array $data): string
     {
         $color = isset($data['color']) ? $this->colorToClass($data['color'], 'btn-') : 'btn-light';
         $icon = isset($data['icon']) ? '<i class="' . $data['icon'] . ' fa-fw"></i> ' : '';
         $label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
-        $link = isset($data['link']) ? $data['link'] : '#';
+        $link = $data['link'] ?? '#';
         $divID = empty($data['id']) ? '' : ' id="' . $data['id'] . '"';
         $class = empty($data['class']) ? '' : $data['class'];
 
@@ -81,6 +76,6 @@ class RowStatistics extends VisualItem
         }
 
         $value = method_exists($controller, $data['function']) ? $controller->{$data['function']}() : '-';
-        return ' <a href="' . $link . '"' . $divID . ' class="btn ' . $color . ' ' . $class . '">' . $icon . $label . ' ' . $value . '</a>';
+        return ' <a href="' . $link . '"' . $divID . ' class="btn ' . $color . ' ' . $class . ' mb-2">' . $icon . $label . ' ' . $value . '</a>';
     }
 }
