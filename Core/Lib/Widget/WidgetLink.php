@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\Utils;
 /**
  * Description of WidgetLink
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello  <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class WidgetLink extends WidgetText

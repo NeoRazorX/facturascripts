@@ -113,12 +113,23 @@ class SalesHeaderHTML
         } elseif ($dir->loadFromCode($formData['idcontactofact'])) {
             // update billing address
             $model->idcontactofact = $dir->idcontacto;
-            $model->direccion = $dir->direccion;
-            $model->apartado = $dir->apartado;
-            $model->codpostal = $dir->codpostal;
-            $model->ciudad = $dir->ciudad;
-            $model->provincia = $dir->provincia;
-            $model->codpais = $dir->codpais;
+
+            // Is Billing address empty?
+            if (empty($dir->direccion)) {
+                $model->direccion = $formData['direccion'] ?? $model->direccion;
+                $model->apartado = $formData['apartado'] ?? $model->apartado;
+                $model->codpostal = $formData['codpostal'] ?? $model->codpostal;
+                $model->ciudad = $formData['ciudad'] ?? $model->ciudad;
+                $model->provincia = $formData['provincia'] ?? $model->provincia;
+                $model->codpais = $formData['codpais'] ?? $model->codpais;
+            } else {
+                $model->direccion = $dir->direccion;
+                $model->apartado = $dir->apartado;
+                $model->codpostal = $dir->codpostal;
+                $model->ciudad = $dir->ciudad;
+                $model->provincia = $dir->provincia;
+                $model->codpais = $dir->codpais;
+            }
         }
 
         // set shipping address
@@ -165,7 +176,7 @@ class SalesHeaderHTML
 
     private static function addressField(Translator $i18n, SalesDocument $model, string $field, string $label, int $size, int $maxlength): string
     {
-        $attributes = $model->editable && empty($model->idcontactofact) ?
+        $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
             'name="' . $field . '" maxlength="' . $maxlength . '" autocomplete="off"' :
             'disabled=""';
         return '<div class="col-sm-' . $size . '">'
@@ -256,7 +267,9 @@ class SalesHeaderHTML
         }
 
         $pais = new Pais();
-        $attributes = $model->editable && empty($model->idcontactofact) ? 'name="codpais"' : 'disabled=""';
+        $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
+            'name="codpais"' :
+            'disabled=""';
         return '<div class="col-sm-6">'
             . '<div class="form-group">'
             . '<a href="' . $pais->url() . '">' . $i18n->trans('country') . '</a>'

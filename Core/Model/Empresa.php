@@ -77,6 +77,11 @@ class Empresa extends Base\Contact
     public $direccion;
 
     /**
+     * @var string
+     */
+    public $exceptioniva;
+
+    /**
      * Primary key. Integer.
      *
      * @var int

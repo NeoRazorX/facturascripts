@@ -95,10 +95,15 @@
                     <values/>
                 </widget>
             </column>
-            <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" order="120">
+            <column name="vat-exception" numcolumns="3" order="120">
+                <widget type="select" fieldname="exceptioniva">
+                    <values/>
+                </widget>
+            </column>
+            <column name="logo" titleurl="ListAttachedFile" description="click-link-to-add" order="130">
                 <widget type="select" fieldname="idlogo" onclick="EditAttachedFile"/>
             </column>
-            <column name="observations" numcolumns="12" order="130">
+            <column name="observations" numcolumns="12" order="140">
                 <widget type="textarea" fieldname="observaciones"/>
             </column>
         </group>

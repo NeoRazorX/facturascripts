@@ -67,19 +67,20 @@ class ReceiptGenerator
      */
     public function update(&$invoice)
     {
-        // check current invoice receipts
+        // obtenemos los recibos de la factura
         $receipts = $invoice->getReceipts();
 
-        // set invoice as pais or not
+        // sumamos los importes pagados
         $paidAmount = 0.0;
         foreach ($receipts as $receipt) {
             if ($receipt->pagado) {
                 $paidAmount += $receipt->importe;
             }
         }
-        $invoice->pagada = $this->isCero($invoice->total - $paidAmount);
+        // la factura está pagada si el importe pagado es igual o superior al importe total
+        $invoice->pagada = $this->isCero($invoice->total - $paidAmount) || ($invoice->total > 0 && $invoice->total <= $paidAmount);
 
-        // update by sql
+        // actualizamos la factura por sql
         $dataBase = new DataBase();
         $sql = 'UPDATE ' . $invoice::tableName() . ' SET pagada = ' . $dataBase->var2str($invoice->pagada)
             . ' WHERE ' . $invoice::primaryColumn() . ' = ' . $dataBase->var2str($invoice->primaryColumnValue()) . ';';

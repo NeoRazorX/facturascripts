@@ -87,19 +87,6 @@ class Translator
     }
 
     /**
-     * Translate the text into the default language.
-     *
-     * @param string $txt
-     * @param array $parameters
-     *
-     * @return string
-     */
-    public function trans(string $txt, array $parameters = []): string
-    {
-        return empty($txt) ? '' : $this->customTrans($this->currentLang, $txt, $parameters);
-    }
-
-    /**
      * Translate the text into the selected language.
      *
      * @param string $langCode
@@ -174,6 +161,28 @@ class Translator
     public function getMissingStrings(): array
     {
         return self::$missingStrings;
+    }
+
+    public static function reload(): void
+    {
+        if (self::$translator !== null) {
+            self::$languages = [];
+            self::$translator = new symfonyTranslator(self::$defaultLang);
+            self::$translator->addLoader('json', new JsonFileLoader());
+        }
+    }
+
+    /**
+     * Translate the text into the default language.
+     *
+     * @param string $txt
+     * @param array $parameters
+     *
+     * @return string
+     */
+    public function trans(string $txt, array $parameters = []): string
+    {
+        return empty($txt) ? '' : $this->customTrans($this->currentLang, $txt, $parameters);
     }
 
     /**

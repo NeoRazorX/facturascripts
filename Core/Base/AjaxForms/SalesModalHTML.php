@@ -236,7 +236,7 @@ class SalesModalHTML
         }
 
         $cliente = new Cliente();
-        foreach ($cliente->all($where, ['nombre' => 'ASC']) as $cli) {
+        foreach ($cliente->all($where, ['LOWER(nombre)' => 'ASC']) as $cli) {
             $name = ($cli->nombre === $cli->razonsocial) ? $cli->nombre : $cli->nombre . ' <small>(' . $cli->razonsocial . ')</span>';
             $trs .= '<tr class="clickableRow" onclick="document.forms[\'salesForm\'][\'codcliente\'].value = \''
                 . $cli->codcliente . '\'; $(\'#findCustomerModal\').modal(\'hide\'); salesFormAction(\'set-customer\', \'0\'); return false;">'

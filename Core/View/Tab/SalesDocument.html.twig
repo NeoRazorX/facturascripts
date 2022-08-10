@@ -16,6 +16,7 @@
 
 <script>
     let waitCounter = 0;
+    let keyupInputName = null;
 
     function findProduct() {
         $("#findProductInput").autocomplete({
@@ -125,6 +126,21 @@
                     break;
             }
 
+            // si no hay foco, establecemos el foco si tenemos el name del input donde se estaba escribiendo
+            if (document.activeElement.name === undefined && keyupInputName !== null) {
+                let focusInput = $('input[name="' + keyupInputName + '"]');
+                let focusLength = focusInput.val().length;
+                let focusType = focusInput[0].type;
+                // para establecer el cursor al final de input el type debe ser text
+                if (focusType !== 'text') {
+                    focusInput[0].type = 'text';
+                }
+                focusInput.focus();
+                focusInput[0].setSelectionRange(focusLength, focusLength);
+                focusInput[0].type = focusType;
+                keyupInputName = null;
+            }
+
             findProduct();
         }).catch(function (error) {
             alert('error');
@@ -149,6 +165,11 @@
         await new Promise(r => setTimeout(r, 300));
         if (waitNum < waitCounter) {
             return false;
+        }
+
+        // obtenemos el name del input si cumple la condición de pulsado
+        if ($(event.target).is('input') && ['keyup', 'keypress', 'change'].includes(event.type)) {
+            keyupInputName = event.target.name;
         }
 
         console.log('waitNum: ' + waitNum);
@@ -204,7 +225,7 @@
         const dtopor = parseFloat(document.forms['salesForm']['dtopor_' + id].value) || 0;
         const dtopor2 = parseFloat(document.forms['salesForm']['dtopor2_' + id].value) || 0;
         const iva = parseFloat(document.forms['salesForm']['iva_' + id].value) || 0;
-        const recargo = parseFloat(document.forms['salesForm']['recargo_' + id].value) || 0;
+        const recargo = document.forms['salesForm']['recargo_' + id] ? parseFloat(document.forms['salesForm']['recargo_' + id].value) || 0 : 0;
         const irpf = parseFloat(document.forms['salesForm']['irpf_' + id].value) || 0;
         const cantidad = parseFloat(document.forms['salesForm']['cantidad_' + id].value) || 0;
         if (total <= 0) {
@@ -240,6 +261,9 @@
     $(document).on('keyup', '.doc-line-desc', function (e) {
         while ($(this).outerHeight() < this.scrollHeight + parseFloat($(this).css("borderTopWidth")) + parseFloat($(this).css("borderBottomWidth"))) {
             $(this).height($(this).height() + 1);
+            if ($(this).height() > 200) {
+                break;
+            }
         }
     });
 

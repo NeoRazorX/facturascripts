@@ -187,10 +187,14 @@ trait CommonSalesPurchases
 
     protected static function dtopor1(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
+        if (empty($model->netosindto) && empty($model->dtopor1)) {
+            return '<input type="hidden" name="dtopor1" value="0"/>';
+        }
+
         $attributes = $model->editable ?
-            'max="100" min="0" name="dtopor1" required="" step="any" onchange="return ' . $jsName . '(\'recalculate\', \'0\', event);"' :
+            'max="100" min="0" name="dtopor1" required="" step="any" onkeyup="return ' . $jsName . '(\'recalculate\', \'0\', event);"' :
             'disabled=""';
-        return empty($model->netosindto) ? '' : '<div class="col-sm"><div class="form-group">' . $i18n->trans('global-dto')
+        return '<div class="col-sm"><div class="form-group">' . $i18n->trans('global-dto')
             . '<div class="input-group">'
             . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-percentage"></i></span></div>'
             . '<input type="number" ' . $attributes . ' value="' . $model->dtopor1 . '" class="form-control"/>'
@@ -199,10 +203,14 @@ trait CommonSalesPurchases
 
     protected static function dtopor2(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
+        if (empty($model->dtopor1) && empty($model->dtopor2)) {
+            return '<input type="hidden" name="dtopor2" value="0"/>';
+        }
+
         $attributes = $model->editable ?
-            'max="100" min="0" name="dtopor2" required="" step="any" onchange="return ' . $jsName . '(\'recalculate\', \'0\', event);"' :
+            'max="100" min="0" name="dtopor2" required="" step="any" onkeyup="return ' . $jsName . '(\'recalculate\', \'0\', event);"' :
             'disabled=""';
-        return empty($model->dtopor1) ? '' : '<div class="col-sm-2 col-md"><div class="form-group">' . $i18n->trans('global-dto-2')
+        return '<div class="col-sm-2 col-md"><div class="form-group">' . $i18n->trans('global-dto-2')
             . '<div class="input-group">'
             . '<div class="input-group-prepend">'
             . '<span class="input-group-text"><i class="fas fa-percentage"></i></span>'
@@ -382,7 +390,7 @@ trait CommonSalesPurchases
 
     protected static function netosindto(Translator $i18n, BusinessDocument $model): string
     {
-        return empty($model->dtopor1) ? '' : '<div class="col-sm-2"><div class="form-group">' . $i18n->trans('subtotal')
+        return empty($model->dtopor1) && empty($model->dtopor2) ? '' : '<div class="col-sm-2"><div class="form-group">' . $i18n->trans('subtotal')
             . '<input type="text" value="' . number_format($model->netosindto, FS_NF0, FS_NF1, '')
             . '" class="form-control" disabled=""/></div></div>';
     }

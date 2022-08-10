@@ -104,6 +104,19 @@ class EditAgente extends ComercialContactController
         $this->addButtonApproveDocument($viewName);
     }
 
+    protected function createEmailsView(string $viewName = 'ListEmailSent')
+    {
+        $this->addListView($viewName, 'EmailSent', 'emails-sent', 'fas fa-envelope');
+        $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
+        $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
+
+        // disable column
+        $this->views[$viewName]->disableColumn('to');
+
+        // disable buttons
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
     protected function createInvoiceView(string $viewName)
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
@@ -118,22 +131,21 @@ class EditAgente extends ComercialContactController
         parent::createViews();
         $this->createContactView();
         $this->createCustomerView();
+        $this->createEmailsView();
         $this->createInvoiceView('ListFacturaCliente');
         $this->createDocumentView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
         $this->createDocumentView('ListPedidoCliente', 'PedidoCliente', 'orders');
         $this->createDocumentView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
     }
 
-    /**
-     * @return bool
-     */
-    protected function editAction()
+    protected function editAction(): bool
     {
         $return = parent::editAction();
         if ($return && $this->active == 'EditContacto') {
             // update agent data when contact data is updated
             $agente = new Agente();
-            if ($agente->loadFromCode($this->views[$this->active]->model->codagente)) {
+            $where = [new DataBaseWhere('idcontacto', $this->views[$this->active]->model->idcontacto)];
+            if ($agente->loadFromCode('', $where)) {
                 $agente->email = $this->views[$this->active]->model->email;
                 $agente->telefono1 = $this->views[$this->active]->model->telefono1;
                 $agente->telefono2 = $this->views[$this->active]->model->telefono2;
@@ -156,6 +168,15 @@ class EditAgente extends ComercialContactController
 
         switch ($viewName) {
             case 'EditContacto':
+                $idcontacto = $this->getViewModelValue($mvn, 'idcontacto');
+                if (empty($idcontacto)) {
+                    $this->setSettings($viewName, 'active', false);
+                    break;
+                }
+                $where = [new DataBaseWhere('idcontacto', $idcontacto)];
+                $view->loadData('', $where);
+                break;
+
             case 'ListAlbaranCliente':
             case 'ListCliente':
             case 'ListFacturaCliente':
@@ -164,6 +185,13 @@ class EditAgente extends ComercialContactController
                 $codagente = $this->getViewModelValue($mvn, 'codagente');
                 $where = [new DataBaseWhere('codagente', $codagente)];
                 $view->loadData('', $where);
+                break;
+
+            case 'ListEmailSent':
+                $email = $this->getViewModelValue($mvn, 'email');
+                $where = [new DataBaseWhere('addressee', $email)];
+                $view->loadData('', $where);
+                $this->setSettings($viewName, 'active', $view->count > 0);
                 break;
 
             case $mvn:

@@ -212,6 +212,16 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         return $this->{$this->documentColumn()};
     }
 
+    public function getDisableUpdateStock(): bool
+    {
+        return $this->disableUpdateStock;
+    }
+
+    public function getDisableUpdateTotals(): bool
+    {
+        return $this->disableUpdateTotals;
+    }
+
     /**
      * Returns the Equivalent Unified Discount.
      *
@@ -393,7 +403,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
             case 'actualizastock':
             case 'cantidad':
             case 'servido':
-                return $this->updateStock();
+                return $this->updateStock() && parent::onChange($field);
         }
 
         return parent::onChange($field);

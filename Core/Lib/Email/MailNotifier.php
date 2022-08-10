@@ -31,23 +31,27 @@ use FacturaScripts\Dinamic\Model\EmailNotification;
 class MailNotifier
 {
 
-    public static function send(string $notificationName, string $email, string $name = '', array $params = [])
+    public static function send(string $notificationName, string $email, string $name = '', array $params = []): bool
     {
+        // ¿La notificación existe?
         $notification = new EmailNotification();
         if (false === $notification->loadFromCode($notificationName)) {
             ToolBox::i18nLog()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
-            return;
+            return false;
         }
+
+        // ¿Está desactivada?
         if (false === $notification->enabled) {
-            return;
+            return false;
         }
 
+        // ¿El email está configurado?
         $newMail = new DinNewMail();
-        $newMail->addAddress($email, $name);
+        if (false === $newMail->canSendMail()) {
+            return false;
+        }
 
-        /**
-         * Add email and name to params
-         */
+        // añadimos algunos campos más a los parámetros
         if (!isset($params['email'])) {
             $params['email'] = $email;
         }
@@ -58,9 +62,10 @@ class MailNotifier
             $params['verificode'] = $newMail->verificode;
         }
 
+        $newMail->addAddress($email, $name);
         $newMail->title = static::getText($notification->subject, $params);
         $newMail->text = static::getText($notification->body, $params);
-        $newMail->send();
+        return $newMail->send();
     }
 
     protected static function getText(string $text, array $params): string

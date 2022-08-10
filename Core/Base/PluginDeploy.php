@@ -72,6 +72,8 @@ final class PluginDeploy
                 $this->linkFiles($folder);
             }
         }
+
+        ToolBox::i18n()::reload();
     }
 
     /**

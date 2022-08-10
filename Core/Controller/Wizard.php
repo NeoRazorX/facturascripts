@@ -42,9 +42,7 @@ class Wizard extends Controller
     const ITEM_SELECT_LIMIT = 500;
     const NEW_DEFAULT_PAGE = 'Dashboard';
 
-    /**
-     * @var AppSettings
-     */
+    /** @var AppSettings */
     protected $appSettings;
 
     public function getPageData(): array
@@ -59,7 +57,11 @@ class Wizard extends Controller
 
     public function getRegimenIva(): array
     {
-        return RegimenIVA::all();
+        $list = [];
+        foreach (RegimenIVA::all() as $key => $value) {
+            $list[$key] = self::toolBox()::i18n()->trans($value);
+        }
+        return $list;
     }
 
     /**

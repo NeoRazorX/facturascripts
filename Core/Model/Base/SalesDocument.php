@@ -384,12 +384,16 @@ abstract class SalesDocument extends TransformerDocument
             return false;
         }
 
+        if (empty($this->idcontactofact)) {
+            return true;
+        }
+
         // after parent checks
+        $contact = new Contacto();
         switch ($field) {
             case 'direccion':
-                $contact = new Contacto();
                 // if address is changed and customer billing address is empty, then save new values
-                if ($contact->loadFromCode($this->idcontactofact) && empty($contact->direccion)) {
+                if ($this->direccion && $contact->loadFromCode($this->idcontactofact) && empty($contact->direccion)) {
                     $contact->apartado = $this->apartado;
                     $contact->ciudad = $this->ciudad;
                     $contact->codpais = $this->codpais;
@@ -401,11 +405,7 @@ abstract class SalesDocument extends TransformerDocument
                 break;
 
             case 'idcontactofact':
-                if (empty($this->idcontactofact)) {
-                    return true;
-                }
                 // if billing address is changed, then change all billing fields
-                $contact = new Contacto();
                 if ($contact->loadFromCode($this->idcontactofact)) {
                     $this->apartado = $contact->apartado;
                     $this->ciudad = $contact->ciudad;
@@ -413,12 +413,29 @@ abstract class SalesDocument extends TransformerDocument
                     $this->codpostal = $contact->codpostal;
                     $this->direccion = $contact->direccion;
                     $this->provincia = $contact->provincia;
-                    return true;
+                    break;
                 }
                 return false;
         }
 
         return true;
+    }
+
+    protected function onInsert()
+    {
+        // if billing address is empty, then save new values
+        $contact = new Contacto();
+        if ($this->direccion && $contact->loadFromCode($this->idcontactofact) && empty($contact->direccion)) {
+            $contact->apartado = $this->apartado;
+            $contact->ciudad = $this->ciudad;
+            $contact->codpais = $this->codpais;
+            $contact->codpostal = $this->codpostal;
+            $contact->direccion = $this->direccion;
+            $contact->provincia = $this->provincia;
+            $contact->save();
+        }
+
+        parent::onInsert();
     }
 
     /**

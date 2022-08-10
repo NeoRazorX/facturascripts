@@ -47,6 +47,12 @@ trait DefaultSettingsTrait
                 $exercise->save();
             }
 
+            // si el ejercicio no tiene 10 dígitos en las subcuentas, lo eliminamos
+            if ($exercise->longsubcuenta != 10) {
+                $exercise->delete();
+                continue;
+            }
+
             $where = [new DataBaseWhere('codejercicio', $exercise->codejercicio)];
             if ($cuenta->count($where) > 0) {
                 // ya tiene plan contable

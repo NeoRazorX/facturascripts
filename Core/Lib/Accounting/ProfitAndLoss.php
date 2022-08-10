@@ -20,14 +20,12 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Dinamic\Model\Asiento;
+use FacturaScripts\Core\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Balance;
 use FacturaScripts\Dinamic\Model\BalanceCuenta;
 use FacturaScripts\Dinamic\Model\BalanceCuentaA;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Partida;
-use function implode;
-use function number_format;
 
 /**
  * Description of ProfitAndLoss
@@ -39,33 +37,18 @@ use function number_format;
 class ProfitAndLoss extends AccountingBase
 {
 
-    /**
-     * Date from for filter
-     *
-     * @var string
-     */
+    /** @var string */
     protected $dateFromPrev;
 
-    /**
-     * Date to for filter
-     *
-     * @var string
-     */
+    /** @var string */
     protected $dateToPrev;
 
-    /**
-     * @var Ejercicio
-     */
+    /** @var Ejercicio */
     protected $exercisePrev;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $format;
 
-    /**
-     * ProfitAndLoss class constructor
-     */
     public function __construct()
     {
         parent::__construct();
@@ -100,7 +83,17 @@ class ProfitAndLoss extends AccountingBase
         $this->exercisePrev->loadFromCode('', $where);
         $this->format = $params['format'];
 
-        return [$this->getData('PG', $params)];
+        $return = [$this->getData('PG', $params)];
+
+        // Si se ha elegido sin comparativo, eliminamos los datos del comparativo
+        if ($params['comparative'] == false) {
+            $code2 = $this->exercisePrev->codejercicio ?? '-';
+            foreach ($return[0] as $key => $value) {
+                unset($return[0][$key][$code2]);
+            }
+        }
+
+        return $return;
     }
 
     /**
@@ -124,7 +117,7 @@ class ProfitAndLoss extends AccountingBase
 
             $levels[$bal->nivel1] = $bal->nivel1;
             $total1 += $amouns1[$bal->nivel1];
-            $total2 += $amouns2[$bal->nivel1];
+            $total2 += $amouns2[$bal->nivel1] ?? 0.00;
         }
 
         $rows[] = [
@@ -141,7 +134,7 @@ class ProfitAndLoss extends AccountingBase
      *
      * @return string
      */
-    protected function formatValue($value, $type = 'money', $bold = false)
+    protected function formatValue($value, $type = 'money', $bold = false): string
     {
         $prefix = $bold ? '<b>' : '';
         $suffix = $bold ? '</b>' : '';
@@ -156,7 +149,7 @@ class ProfitAndLoss extends AccountingBase
                 if ($this->format === 'PDF') {
                     return $prefix . $this->toolBox()->utils()->fixHtml($value) . $suffix;
                 }
-                return $this->toolBox()->utils()->fixHtml($value);
+                return $this->toolBox()->utils()->fixHtml($value) ?? '';
         }
     }
 

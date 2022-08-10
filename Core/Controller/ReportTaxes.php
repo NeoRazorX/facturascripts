@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Dinamic\Lib\ExportManager;
+use FacturaScripts\Dinamic\Model\Pais;
 use FacturaScripts\Dinamic\Model\Serie;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,6 +36,11 @@ class ReportTaxes extends Controller
 {
 
     const MAX_TOTAL_DIFF = 0.05;
+
+    /**
+     * @var string
+     */
+    public $codpais;
 
     /**
      * @var string
@@ -60,6 +66,11 @@ class ReportTaxes extends Controller
      * @var int
      */
     public $idempresa;
+
+    /**
+     * @var Pais
+     */
+    public $pais;
 
     /**
      * @var Serie
@@ -88,6 +99,7 @@ class ReportTaxes extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
+        $this->pais = new Pais();
         $this->serie = new Serie();
         $this->initFilters();
         if ('export' === $this->request->request->get('action')) {
@@ -196,6 +208,9 @@ class ReportTaxes extends Controller
                     . ' AND f.fecha >= ' . $this->dataBase->var2str($this->datefrom)
                     . ' AND f.fecha <= ' . $this->dataBase->var2str($this->dateto)
                     . ' AND (l.pvptotal <> 0.00 OR l.iva <> 0.00)';
+                if ($this->codpais) {
+                    $sql .= ' AND codpais = ' . $this->dataBase->var2str($this->codpais);
+                }
                 break;
 
             default:
@@ -281,6 +296,7 @@ class ReportTaxes extends Controller
 
     protected function initFilters()
     {
+        $this->codpais = $this->request->request->get('codpais', '');
         $this->codserie = $this->request->request->get('codserie', '');
         $this->datefrom = $this->request->request->get('datefrom', date('Y-m-01'));
         $this->dateto = $this->request->request->get('dateto', date('Y-m-t'));
@@ -405,6 +421,9 @@ class ReportTaxes extends Controller
             . ' AND fecha <= ' . $this->dataBase->var2str($this->dateto);
         if ($this->codserie) {
             $sql .= ' AND codserie = ' . $this->dataBase->var2str($this->codserie);
+        }
+        if ($this->codpais && $this->source === 'sales') {
+            $sql .= ' AND codpais = ' . $this->dataBase->var2str($this->codpais);
         }
         foreach ($this->dataBase->selectLimit($sql) as $row) {
             $neto2 += (float)$row['neto'];

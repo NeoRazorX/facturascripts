@@ -64,7 +64,12 @@ abstract class EditReportAccounting extends EditController
 
         foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);
-            $this->exportManager->addTablePage($headers, $data);
+            $options = [ $headers[1] => ['display' => 'right'] ];
+
+            if (isset($headers[2])) {
+                $options[$headers[2]] = ['display' => 'right'];
+            }
+            $this->exportManager->addTablePage($headers, $data, $options);
         }
 
         $this->exportManager->show($this->response);

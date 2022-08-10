@@ -46,8 +46,9 @@ trait ExerciseRelationTrait
         Ejercicios::clear();
     }
 
-    public function getExercise(): Ejercicio
+    public function getExercise(string $codejercicio = ''): Ejercicio
     {
-        return Ejercicios::get($this->codejercicio);
+        $code = empty($codejercicio) ? $this->codejercicio : $codejercicio;
+        return Ejercicios::get($code);
     }
 }

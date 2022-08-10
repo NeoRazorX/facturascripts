@@ -95,8 +95,16 @@ class WidgetFile extends BaseWidget
                 continue;
             }
 
-            if ($uploadFile->move(\FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
-                $model->{$this->fieldname} = $uploadFile->getClientOriginalName();
+            // check if the file already exists
+            $destiny = FS_FOLDER . '/MyFiles/';
+            $destinyName = $uploadFile->getClientOriginalName();
+            if (file_exists($destiny . $destinyName)) {
+                $destinyName = mt_rand(1, 999999) . '_' . $destinyName;
+            }
+
+            // move the file to the MyFiles folder
+            if ($uploadFile->move($destiny, $destinyName)) {
+                $model->{$this->fieldname} = $destinyName;
                 break;
             }
 

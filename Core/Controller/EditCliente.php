@@ -204,7 +204,7 @@ class EditCliente extends ComercialContactController
         // Load values option to VAT Type select input
         $columnVATType = $this->views[$viewName]->columnForName('vat-regime');
         if ($columnVATType && $columnVATType->widget->getType() === 'select') {
-            $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all());
+            $columnVATType->widget->setValuesFromArrayKeys(RegimenIVA::all(), true);
         }
 
         // Model exists?

@@ -228,16 +228,40 @@ class AccountingCreation
             return $code;
         }
 
-        // probamos combinaciones para elegir una subcuenta
-        $numbers = array_merge([$code], range(1, 999));
+        // conformamos un array con el número del cliente y los 100 primeros números
+        $numbers = array_merge([$code], range(1, 99));
+
+        // añadimos también los 100 siguientes números al total de subcuentas
+        $subcuenta = new Subcuenta();
+        $whereTotal = [
+            new DataBaseWhere('codcuenta', $account->codcuenta),
+            new DataBaseWhere('codejercicio', $account->codejercicio)
+        ];
+        $total = $subcuenta->count($whereTotal);
+        if ($total > 99) {
+            $numbers = array_merge($numbers, range($total, $total + 99));
+        }
+
+        // probamos los números para elegir el primer código de subcuenta que no exista
         foreach ($numbers as $num) {
             $newCode = $this->fillToLength($this->exercise->longsubcuenta, $num, $account->codcuenta);
+            if (empty($newCode)) {
+                continue;
+            }
 
-            // comprobamos que esta subcuenta no esté en uso
+            // comprobamos que esta subcuenta no esté en uso en otro cliente o proveedor
             $where = [new DataBaseWhere('codsubcuenta', $newCode)];
             $count = $subject->count($where);
+            if ($count > 0) {
+                continue;
+            }
 
-            if (!empty($newCode) && !$this->getSubAccount($newCode)->exists() && $count == 0) {
+            // si la subcuenta no existe, la elegimos
+            $where = [
+                new DataBaseWhere('codejercicio', $account->codejercicio),
+                new DataBaseWhere('codsubcuenta', $newCode)
+            ];
+            if (false === $subcuenta->loadFromCode('', $where)) {
                 return $newCode;
             }
         }
@@ -259,24 +283,5 @@ class AccountingCreation
         }
 
         return $this->exercise->isOpened();
-    }
-
-    /**
-     * Get the indicated accounting sub-account.
-     *
-     * @param string $code
-     *
-     * @return Subcuenta
-     */
-    private function getSubAccount(string $code)
-    {
-        $where = [
-            new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
-            new DataBaseWhere('codsubcuenta', $code)
-        ];
-
-        $subAccount = new Subcuenta();
-        $subAccount->loadFromCode('', $where);
-        return $subAccount;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -65,6 +65,11 @@ class BaseWidget extends VisualItem
     public $required;
 
     /**
+     * @var int
+     */
+    public $tabindex;
+
+    /**
      * @var string
      */
     private $type;
@@ -85,6 +90,7 @@ class BaseWidget extends VisualItem
         $this->icon = $data['icon'] ?? '';
         $this->onclick = $data['onclick'] ?? '';
         $this->readonly = $data['readonly'] ?? 'false';
+        $this->tabindex = intval($data['tabindex'] ?? '-1');
         $this->required = isset($data['required']) && strtolower($data['required']) === 'true';
         $this->type = $data['type'];
         $this->loadOptions($data['children']);
@@ -234,6 +240,7 @@ class BaseWidget extends VisualItem
         $params = $this->required ? ' required=""' : '';
         $params .= $this->readonly() ? ' readonly=""' : '';
         $params .= $this->autocomplete ? '' : ' autocomplete="off"';
+        $params .= $this->tabindex >= 0 ? ' tabindex="' . $this->tabindex . '"' : '';
 
         return $params;
     }
