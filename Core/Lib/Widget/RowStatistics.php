@@ -74,12 +74,13 @@ class RowStatistics extends VisualItem
         $label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
         $link = isset($data['link']) ? $data['link'] : '#';
         $divID = empty($data['id']) ? '' : ' id="' . $data['id'] . '"';
+        $class = empty($data['class']) ? '' : $data['class'];
 
         if (!isset($data['function'])) {
             return ' ERROR';
         }
 
         $value = method_exists($controller, $data['function']) ? $controller->{$data['function']}() : '-';
-        return ' <a href="' . $link . '"' . $divID . ' class="btn ' . $color . ' mb-2">' . $icon . $label . ' ' . $value . '</a>';
+        return ' <a href="' . $link . '"' . $divID . ' class="btn ' . $color . ' ' . $class . '">' . $icon . $label . ' ' . $value . '</a>';
     }
 }
