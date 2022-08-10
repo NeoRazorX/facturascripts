@@ -238,7 +238,7 @@ abstract class Receipt extends ModelOnChangeClass
             $this->newPayment();
             $this->updateInvoice();
         }
-
+        
         return true;
     }
 
@@ -267,4 +267,5 @@ abstract class Receipt extends ModelOnChangeClass
         $generator = new ReceiptGenerator();
         $generator->update($invoice);
     }
+    
 }
