@@ -190,7 +190,7 @@ final class ReciboClienteTest extends TestCase
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
-    public function testReciptsTotalGreaterThanInvoice()
+    public function testReceiptsTotalGreaterThanInvoice()
     {
         // creamos una factura
         $invoice = $this->getRandomCustomerInvoice();
@@ -335,6 +335,49 @@ final class ReciboClienteTest extends TestCase
 
         // comprobamos que solamente hay un recibo
         $this->assertCount(1, $invoice->getReceipts(), 'bad-invoice-receipts-count');
+
+        // eliminamos la factura
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+    }
+
+    public function testPayReceiptUpdatesCustomerRisk()
+    {
+        // creamos una factura
+        $invoice = $this->getRandomCustomerInvoice();
+        $this->assertTrue($invoice->exists(), 'can-not-create-random-invoice');
+
+        // eliminamos sus recibos
+        foreach ($invoice->getReceipts() as $receipt) {
+            $this->assertTrue($receipt->delete(), 'can-not-delete-receipt');
+        }
+
+        // creamos dos recibos
+        $generator = new ReceiptGenerator();
+        $this->assertTrue($generator->generate($invoice, 2), 'can-not-create-new-receipts');
+
+        // marcamos los recibos como impagados
+        foreach ($invoice->getReceipts() as $receipt) {
+            $receipt->pagado = false;
+            $this->assertTrue($receipt->save(), 'can-not-set-unpaid-receipt');
+        }
+
+        // comprobamos que el cliente tiene un riesgo igual al total de la factura
+        $customer = $invoice->getSubject();
+        $this->assertEquals($invoice->total, $customer->riesgoalcanzado, 'bad-customer-risk');
+
+        // nos guardamos el riesgo antes de pagar el recibo
+        $risk = $customer->riesgoalcanzado;
+
+        // marcamos un recibo como pagado
+        foreach ($invoice->getReceipts() as $receipt) {
+            $receipt->pagado = true;
+            $this->assertTrue($receipt->save(), 'can-not-set-paid-receipt');
+            break;
+        }
+
+        // comprobamos que el riesgo es menor que el anterior
+        $customer->loadFromCode($customer->primaryColumnValue());
+        $this->assertLessThan($risk, $customer->riesgoalcanzado, 'bad-customer-risk');
 
         // eliminamos la factura
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');

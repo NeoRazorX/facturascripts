@@ -30,26 +30,25 @@ use FacturaScripts\Dinamic\Model\PagoCliente as DinPagoCliente;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class ReciboCliente extends Base\Receipt {
+class ReciboCliente extends Base\Receipt
+{
 
     use Base\ModelTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codcliente;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $gastos;
 
-    public function clear() {
+    public function clear()
+    {
         parent::clear();
         $this->gastos = 0.0;
     }
 
-    public function getInvoice(): DinFacturaCliente {
+    public function getInvoice(): DinFacturaCliente
+    {
         $invoice = new DinFacturaCliente();
         $invoice->loadFromCode($this->idfactura);
         return $invoice;
@@ -60,26 +59,30 @@ class ReciboCliente extends Base\Receipt {
      *
      * @return DinPagoCliente[]
      */
-    public function getPayments(): array {
+    public function getPayments(): array
+    {
         $payModel = new DinPagoCliente();
         $where = [new DataBaseWhere('idrecibo', $this->idrecibo)];
         return $payModel->all($where, [], 0, 0);
     }
 
-    public function getSubject(): DinCliente {
+    public function getSubject(): DinCliente
+    {
         $cliente = new DinCliente();
         $cliente->loadFromCode($this->codcliente);
         return $cliente;
     }
 
-    public function install(): string {
+    public function install(): string
+    {
         // needed dependencies
         new Cliente();
 
         return parent::install();
     }
 
-    public function setExpiration(string $date) {
+    public function setExpiration(string $date)
+    {
         parent::setExpiration($date);
 
         // obtenemos los días de pago del cliente
@@ -109,11 +112,13 @@ class ReciboCliente extends Base\Receipt {
         $this->vencimiento = date(self::DATE_STYLE, min($newDates));
     }
 
-    public static function tableName(): string {
+    public static function tableName(): string
+    {
         return 'recibospagoscli';
     }
 
-    public function url(string $type = 'auto', string $list = 'ListFacturaCliente?activetab=List'): string {
+    public function url(string $type = 'auto', string $list = 'ListFacturaCliente?activetab=List'): string
+    {
         if ('list' === $type && !empty($this->idfactura)) {
             return $this->getInvoice()->url() . '&activetab=List' . $this->modelClassName();
         } elseif ('pay' === $type) {
@@ -128,7 +133,8 @@ class ReciboCliente extends Base\Receipt {
      *
      * @return bool
      */
-    protected function newPayment(): bool {
+    protected function newPayment(): bool
+    {
         if ($this->disablePaymentGeneration) {
             return false;
         }
@@ -143,28 +149,22 @@ class ReciboCliente extends Base\Receipt {
         return $pago->save();
     }
 
-    protected function onDelete() {
-        // Update client risk
-        $this->updateRisk();
+    protected function onDelete()
+    {
+        $this->updateCustomerRisk();
         parent::onDelete();
     }
 
-    protected function saveInsert(array $values = []): bool {
-        // Update client risk
-        $this->updateRisk();
-
-        parent::saveInsert($values);
-        return true;
+    protected function onInsert()
+    {
+        $this->updateCustomerRisk();
+        parent::onInsert();
     }
 
-    protected function saveUpdate(array $values = []): bool {
-        if (parent::saveUpdate($values)) {
-            // Update client risk
-            $this->updateRisk();
-            return true;
-        }
-
-        return false;
+    protected function onUpdate()
+    {
+        $this->updateCustomerRisk();
+        parent::onUpdate();
     }
 
     /**
@@ -172,13 +172,12 @@ class ReciboCliente extends Base\Receipt {
      *
      * @return void
      */
-    protected function updateRisk() {
-
+    protected function updateCustomerRisk()
+    {
         $customer = new DinCliente();
         if ($customer->loadFromCode($this->codcliente)) {
             $customer->riesgoalcanzado = CustomerRiskTools::getCurrent($customer->primaryColumnValue());
             $customer->save();
         }
     }
-
 }
