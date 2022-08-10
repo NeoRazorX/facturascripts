@@ -262,6 +262,7 @@
     "contacts": "Contatti",
     "continue": "continuare",
     "control-panel": "pannello di controllo",
+    "control-panel-decimal-warning": "Advertencia: este cambio se aplicará a los precios de productos, pero también a los totales de facturas, asientos, etc.",
     "controller": "controllore",
     "controller-error": "Controller error",
     "controller-not-found": "Controllore non trovato",

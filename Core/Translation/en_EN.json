@@ -262,6 +262,7 @@
     "contacts": "Contacts",
     "continue": "Continue",
     "control-panel": "Control Panel",
+    "control-panel-decimal-warning": "Advertencia: este cambio se aplicará a los precios de productos, pero también a los totales de facturas, asientos, etc.",
     "controller": "Controller",
     "controller-error": "Controller error",
     "controller-not-found": "Controller not found",
