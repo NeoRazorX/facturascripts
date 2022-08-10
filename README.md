@@ -17,8 +17,9 @@ npm install
 ## Documentation
 https://facturascripts.com/ayuda
 
-## Issues / Feedback
-https://facturascripts.com/contacto
+## Issues / Feedback / Discord
+- https://facturascripts.com/contacto
+- https://discord.gg/qKm7j9AaJT
 
 ### Security Vulnerabilities
 If you discover a security vulnerability within FacturaScripts, please send an e-mail to Carlos Garcia via [carlos@facturascripts.com](mailto:carlos@facturascripts.com)
