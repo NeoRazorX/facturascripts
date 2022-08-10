@@ -40,10 +40,10 @@ class EditCliente extends ComercialContactController
      *
      * @return string
      */
-    public function getDeliveryNotesRisk()
+    public function getDeliveryNotesRisk(): string
     {
         $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
-        $total = CustomerRiskTools::getDeliveryNotesRisk($codcliente);
+        $total = empty($codcliente) ? 0 : CustomerRiskTools::getDeliveryNotesRisk($codcliente);
         return $this->toolBox()->coins()->format($total);
     }
 
@@ -58,10 +58,10 @@ class EditCliente extends ComercialContactController
      *
      * @return string
      */
-    public function getInvoicesRisk()
+    public function getInvoicesRisk(): string
     {
         $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
-        $total = CustomerRiskTools::getInvoicesRisk($codcliente);
+        $total = empty($codcliente) ? 0 : CustomerRiskTools::getInvoicesRisk($codcliente);
         return $this->toolBox()->coins()->format($total);
     }
 
@@ -75,10 +75,10 @@ class EditCliente extends ComercialContactController
      *
      * @return string
      */
-    public function getOrdersRisk()
+    public function getOrdersRisk(): string
     {
         $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
-        $total = CustomerRiskTools::getOrdersRisk($codcliente);
+        $total = empty($codcliente) ? 0 : CustomerRiskTools::getOrdersRisk($codcliente);
         return $this->toolBox()->coins()->format($total);
     }
 
