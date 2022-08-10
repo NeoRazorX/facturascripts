@@ -178,6 +178,7 @@
 
     function salesFormSave(action, selectedLine) {
         animateSpinner('add');
+        setOrdenLines();
 
         document.forms['salesForm']['action'].value = action;
         document.forms['salesForm']['selectedLine'].value = selectedLine;
@@ -240,14 +241,18 @@
         }
     }
 
+    function setOrdenLines() {
+        let orderInputs = $("input[name^='orden_']");
+        let count = orderInputs.length * 10;
+        orderInputs.each(function (index) {
+            $(this).val(count - (index * 10));
+        });
+    }
+
     function sortableEnable() {
         $("#salesFormLines").sortable({
             update: function (event, ui) {
-                let orderInputs = $("input[name^='orden_']");
-                let count = orderInputs.length * 10;
-                orderInputs.each(function (index) {
-                    $(this).val(count - (index * 10));
-                });
+                setOrdenLines();
             }
         });
         $("#salesFormLines").sortable("option", "disabled", false);
