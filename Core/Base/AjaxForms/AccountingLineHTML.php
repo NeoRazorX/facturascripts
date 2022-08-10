@@ -200,7 +200,10 @@ class AccountingLineHTML
         $line->debe = (float)($formData['debe_' . $id] ?? '0');
         $line->documento = $formData['documento_' . $id] ?? '';
         $line->haber = (float)($formData['haber_' . $id] ?? '0');
-        $line->iva = (float)($formData['iva_' . $id] ?? '0');
+
+        // el iva puede llegar vacío y entonces asignamos null, o puede llegar un valor numérico y lo pasamos a float
+        $line->iva = $formData['iva_' . $id] === '' ? null : (float)$formData['iva_' . $id];
+
         $line->orden = (int)($formData['orden_' . $id] ?? '0');
         $line->recargo = (float)($formData['recargo_' . $id] ?? '0');
     }
@@ -377,7 +380,7 @@ class AccountingLineHTML
     {
         $options = ['<option value="">------</option>'];
         foreach (Impuestos::all() as $row) {
-            $selected = ($row->iva == $line->iva) ? ' selected' : '';
+            $selected = ($row->iva === $line->iva) ? ' selected' : '';
             $options[] = '<option value="' . $row->iva . '"' . $selected . '>' . $row->descripcion . '</option>';
         }
 

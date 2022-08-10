@@ -182,7 +182,6 @@ class Partida extends Base\ModelOnChangeClass
         $this->coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
         $this->debe = 0.0;
         $this->haber = 0.0;
-        $this->iva = 0.0;
         $this->orden = 0;
         $this->punteada = false;
         $this->recargo = 0.0;
