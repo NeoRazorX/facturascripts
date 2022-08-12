@@ -446,7 +446,7 @@ abstract class PDFDocument extends PDFCore
             $tableData[3] = ['key' => $this->i18n->trans('original'), 'value' => $model->codigorect];
         } elseif (property_exists($model, 'numproveedor') && $model->numproveedor) {
             $tableData[3] = ['key' => $this->i18n->trans('numsupplier'), 'value' => $model->numproveedor];
-        } elseif (property_exists($model, 'numpero2') && $model->numero2) {
+        } elseif (property_exists($model, 'numero2') && $model->numero2) {
             $tableData[3] = ['key' => $this->i18n->trans('number2'), 'value' => $model->numero2];
         } else {
             $tableData[3] = ['key' => $this->i18n->trans('serie'), 'value' => $serie->descripcion];
