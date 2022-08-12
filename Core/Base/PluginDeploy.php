@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -60,20 +60,24 @@ final class PluginDeploy
 
             $this->createFolder(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . $folder);
 
-            /// examine the plugins
+            // examine the plugins
             foreach ($this->enabledPlugins as $pluginName) {
                 if (file_exists($pluginPath . $pluginName . DIRECTORY_SEPARATOR . $folder)) {
                     $this->linkFiles($folder, 'Plugins', $pluginName);
                 }
             }
 
-            /// examine the core
+            // examine the core
             if (file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . $folder)) {
                 $this->linkFiles($folder);
             }
         }
 
-        ToolBox::i18n()::reload();
+        // reload translations
+        $i18n = ToolBox::i18n();
+        if (method_exists($i18n, 'reload')) {
+            $i18n::reload();
+        }
     }
 
     /**
@@ -95,7 +99,7 @@ final class PluginDeploy
             $controllerNamespace = '\\FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
 
             if (!class_exists($controllerNamespace)) {
-                /// we force the loading of the file because at this point the autoloader will not find it
+                // we force the loading of the file because at this point the autoloader will not find it
                 require FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . $controllerName . '.php';
             }
 
@@ -112,7 +116,7 @@ final class PluginDeploy
         $menuManager->removeOld($pageNames);
         $menuManager->reload();
 
-        /// checks app homepage
+        // checks app homepage
         $appSettings = ToolBox::appSettings();
         if (!in_array($appSettings->get('default', 'homepage', ''), $pageNames)) {
             $appSettings->set('default', 'homepage', 'AdminPlugins');
@@ -265,7 +269,7 @@ final class PluginDeploy
      */
     private function linkXMLFile(string $fileName, string $folder, string $originPath)
     {
-        /// Find extensions
+        // Find extensions
         $extensions = [];
         foreach ($this->enabledPlugins as $pluginName) {
             $extensionPath = FS_FOLDER . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . $pluginName . DIRECTORY_SEPARATOR
@@ -275,7 +279,7 @@ final class PluginDeploy
             }
         }
 
-        /// Merge XML files
+        // Merge XML files
         $xml = simplexml_load_file($originPath);
         foreach ($extensions as $extension) {
             $xmlExtension = simplexml_load_file($extension);
@@ -295,7 +299,7 @@ final class PluginDeploy
     private function mergeXMLDocs(&$source, $extension)
     {
         foreach ($extension->children() as $extChild) {
-            /// we need $num to know which dom element number to overwrite
+            // we need $num to know which dom element number to overwrite
             $num = -1;
 
             $found = false;
@@ -308,7 +312,7 @@ final class PluginDeploy
                     continue;
                 }
 
-                /// Element found. Overwrite or append children? Only for parents example group, etc.
+                // Element found. Overwrite or append children? Only for parents example group, etc.
                 $found = true;
                 $extDom = dom_import_simplexml($extChild);
 
@@ -325,7 +329,7 @@ final class PluginDeploy
                 break;
             }
 
-            /// Elemento not found. Append all or Replace child, Only for child example widget, etc.
+            // Elemento not found. Append all or Replace child, Only for child example widget, etc.
             if (!$found) {
                 $sourceDom = dom_import_simplexml($source);
                 $extDom = dom_import_simplexml($extChild);
@@ -357,7 +361,7 @@ final class PluginDeploy
         }
 
         foreach ($extension->attributes() as $extAttr => $extAttrValue) {
-            /// We use name as identifier except with row, which is identified by type
+            // We use name as identifier except with row, which is identified by type
             if ($extAttr != 'name' && $extension->getName() != 'row') {
                 continue;
             } elseif ($extAttr != 'type' && $extension->getName() == 'row') {
