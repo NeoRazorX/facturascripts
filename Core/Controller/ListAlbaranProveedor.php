@@ -25,7 +25,7 @@ use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
  *  Controller to list the items in the AlbaranProveedor model
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 class ListAlbaranProveedor extends ListBusinessDocument

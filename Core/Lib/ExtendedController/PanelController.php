@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Controller to edit data through the vertical panel
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class PanelController extends BaseController
 {

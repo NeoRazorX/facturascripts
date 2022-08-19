@@ -31,7 +31,7 @@ use FacturaScripts\Dinamic\Model\CodeModel;
  * Controller to list the items in the Cliente model
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */
 class ListCliente extends ListController

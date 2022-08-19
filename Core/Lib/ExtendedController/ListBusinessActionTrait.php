@@ -28,7 +28,6 @@ use FacturaScripts\Core\Model\Base\TransformerDocument;
  * Contains common utilities for grouping and collecting documents.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
  */
 trait ListBusinessActionTrait
 {

@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Description of ColumnItem
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class ColumnItem extends VisualItem

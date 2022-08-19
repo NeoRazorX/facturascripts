@@ -25,7 +25,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  * Controller to list the items in the Familia model
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListFamilia extends ListController
 {

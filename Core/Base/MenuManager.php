@@ -29,7 +29,7 @@ use FacturaScripts\Dinamic\Model\User;
  * Manage the use of the Facturascripts menu.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class MenuManager
 {

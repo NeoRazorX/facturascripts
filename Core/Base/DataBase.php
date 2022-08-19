@@ -27,7 +27,7 @@ use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
  * Generic class of access to the database, either MySQL or PostgreSQL.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 final class DataBase
 {

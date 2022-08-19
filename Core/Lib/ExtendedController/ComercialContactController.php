@@ -30,7 +30,7 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  * a history of purchase or sale documents.
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class ComercialContactController extends EditController
 {

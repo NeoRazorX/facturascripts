@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
  * Description of WidgetTime
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class WidgetTime extends BaseWidget
 {
@@ -121,7 +121,7 @@ class WidgetTime extends BaseWidget
     }
 
     /**
-     * 
+     *
      * @param string|int $value
      *
      * @return string

@@ -28,7 +28,7 @@ use FacturaScripts\Dinamic\Model\GrupoClientes;
  * Controller to edit a single item from the Tarifa model
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author jhonsmall            <juancarloschico0@gmail.com>
  */
 class EditTarifa extends EditController
@@ -36,7 +36,7 @@ class EditTarifa extends EditController
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -59,7 +59,7 @@ class EditTarifa extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createCustomerGroupView(string $viewName = 'ListGrupoClientes')
@@ -94,7 +94,7 @@ class EditTarifa extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createCustomerView(string $viewName = 'ListCliente')
@@ -126,7 +126,7 @@ class EditTarifa extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createProductView(string $viewName = 'ListTarifaProducto')
@@ -158,7 +158,7 @@ class EditTarifa extends EditController
     }
 
     /**
-     * 
+     *
      * @param string   $viewName
      * @param BaseView $view
      */
@@ -180,7 +180,7 @@ class EditTarifa extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $action
      *
      * @return bool

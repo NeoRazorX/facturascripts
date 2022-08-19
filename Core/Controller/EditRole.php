@@ -28,7 +28,7 @@ use FacturaScripts\Dinamic\Model\RoleAccess;
 /**
  * Controller to edit a single item from the Role model.
  *
- * @author Artex Trading sa     <jferrer@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class EditRole extends EditController

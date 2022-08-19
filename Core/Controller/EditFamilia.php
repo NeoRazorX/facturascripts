@@ -27,14 +27,14 @@ use FacturaScripts\Dinamic\Model\Producto;
  * Controller to edit a single item from the Familia model
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
 class EditFamilia extends EditController
 {
 
     /**
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -94,7 +94,7 @@ class EditFamilia extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewFamilies(string $viewName = 'ListFamilia')
@@ -110,7 +110,7 @@ class EditFamilia extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewNewProducts(string $viewName = 'ListProducto-new')
@@ -128,7 +128,7 @@ class EditFamilia extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewProducts(string $viewName = 'ListProducto')
@@ -147,7 +147,7 @@ class EditFamilia extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewProductsCommon(string $viewName)
@@ -164,7 +164,7 @@ class EditFamilia extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $action
      *
      * @return bool

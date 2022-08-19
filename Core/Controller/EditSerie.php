@@ -26,7 +26,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  * Controller to edit a single item from the Serie model
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Artex Trading sa         <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
  */
 class EditSerie extends EditController
@@ -34,7 +34,7 @@ class EditSerie extends EditController
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -57,7 +57,7 @@ class EditSerie extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createFormatView(string $viewName = 'ListFormatoDocumento')
@@ -70,7 +70,7 @@ class EditSerie extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createSequenceView(string $viewName = 'ListSecuenciaDocumento')

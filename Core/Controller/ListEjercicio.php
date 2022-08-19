@@ -28,7 +28,7 @@ use FacturaScripts\Core\Model\Ejercicio;
  * Controller to list the items in the Ejercicio model
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListEjercicio extends ListController
 {

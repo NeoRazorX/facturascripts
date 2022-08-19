@@ -32,7 +32,7 @@ use FacturaScripts\Dinamic\Model\User;
  * Base definition for the views used in ExtendedControllers
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class BaseView
 {

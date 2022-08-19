@@ -32,7 +32,7 @@ use FacturaScripts\Dinamic\Model\Partida;
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Raul Jiménez         <comercial@nazcanetworks.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ProfitAndLoss extends AccountingBase
 {
