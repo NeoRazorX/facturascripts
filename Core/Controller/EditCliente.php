@@ -24,6 +24,8 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\RoleAccess;
+use FacturaScripts\Dinamic\Model\RoleUser;
 
 /**
  * Controller to edit a single item from the Cliente model
@@ -31,6 +33,7 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
  * @author Carlos García Gómez          <carlos@facturascripts.com>
  * @author Artex Trading sa             <jcuello@artextrading.com>
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
+ * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class EditCliente extends ComercialContactController
 {
@@ -116,12 +119,24 @@ class EditCliente extends ComercialContactController
         $this->createEmailsView();
         $this->createViewDocFiles();
 
-        $this->createInvoiceView('ListFacturaCliente');
-        $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente');
-        $this->createDocumentView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
-        $this->createDocumentView('ListPedidoCliente', 'PedidoCliente', 'orders');
-        $this->createDocumentView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
-        $this->createReceiptView('ListReciboCliente', 'ReciboCliente');
+        if ($this->user->can('ListFacturaCliente')) {
+            $this->createInvoiceView('ListFacturaCliente');
+        }
+        if ($this->user->can('ListLineaFacturaCliente')) {
+            $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente');
+        }
+        if ($this->user->can('ListAlbaranCliente')) {
+            $this->createDocumentView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
+        }
+        if ($this->user->can('ListPedidoCliente')) {
+            $this->createDocumentView('ListPedidoCliente', 'PedidoCliente', 'orders');
+        }
+        if ($this->user->can('ListPresupuestoCliente')) {
+            $this->createDocumentView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+        }
+        if ($this->user->can('ListReciboCliente')) {
+            $this->createReceiptView('ListReciboCliente', 'ReciboCliente');
+        }
     }
 
     /**

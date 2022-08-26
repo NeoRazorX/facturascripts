@@ -26,6 +26,7 @@ use FacturaScripts\Dinamic\Model\Page as DinPage;
  * Usuario de FacturaScripts.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class User extends Base\ModelClass
 {
@@ -142,6 +143,30 @@ class User extends Base\ModelClass
         }
 
         return parent::delete();
+    }
+
+    public function can(string $pagename, string $type = ''): bool
+    {
+        if ($this->admin) {
+            return true;
+        }
+
+        $roleAccess = RoleAccess::allFromUser($this->nick, $pagename);
+        if (empty($roleAccess)) {
+            return false;
+        }
+
+        if (empty($type)) {
+            return true;
+        }
+
+        foreach ($roleAccess as $access) {
+            if (isset($access->{$type}) && $access->{$type}) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function install(): string
