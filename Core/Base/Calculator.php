@@ -26,6 +26,10 @@ use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\ImpuestoZona;
 
+/**
+ * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
+ */
 final class Calculator
 {
     /**
@@ -62,6 +66,10 @@ final class Calculator
         $doc->totalrecargo = $subtotals['totalrecargo'];
         $doc->totalsuplidos = $subtotals['totalsuplidos'];
 
+        if (isset($doc->totalcoste)) {
+            $doc->totalcoste = $subtotals['totalcoste'];
+        }
+
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
             // si el mod devuelve false, terminamos
@@ -87,6 +95,7 @@ final class Calculator
             'neto' => 0.0,
             'netosindto' => 0.0,
             'total' => 0.0,
+            'totalcoste' => 0.0,
             'totalirpf' => 0.0,
             'totaliva' => 0.0,
             'totalrecargo' => 0.0,
@@ -134,6 +143,11 @@ final class Calculator
                 $subtotals['iva'][$ivaKey]['totalrecargo'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
                     $pvpTotal * $line->recargo :
                     $pvpTotal * $line->recargo / 100;
+            }
+
+            // coste
+            if (isset($line->coste)) {
+                $subtotals['totalcoste'] += $line->cantidad * $line->coste;
             }
         }
 

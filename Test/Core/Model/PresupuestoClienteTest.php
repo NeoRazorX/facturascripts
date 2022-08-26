@@ -199,6 +199,7 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertEquals(10, $doc->neto, 'presupuesto-cliente-bad-neto-3');
         $this->assertEquals(12.1, $doc->total, 'presupuesto-cliente-bad-total-3');
         $this->assertEquals(2.1, $doc->totaliva, 'presupuesto-cliente-bad-totaliva-3');
+        $this->assertEquals(5, $doc->totalcoste, 'presupuesto-cliente-bad-totalcoste-3');
 
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-cliente-3');
