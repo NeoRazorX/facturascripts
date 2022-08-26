@@ -44,6 +44,20 @@ class RoleAccess extends Base\ModelClass
     public $allowdelete;
 
     /**
+     * Permission to export.
+     *
+     * @var bool
+     */
+    public $allowexport;
+
+    /**
+     * Permission to import.
+     *
+     * @var bool
+     */
+    public $allowimport;
+
+    /**
      * Permission to update.
      *
      * @var bool
@@ -101,6 +115,8 @@ class RoleAccess extends Base\ModelClass
             $roleAccess->codrole = $codrole;
             $roleAccess->pagename = $page->name;
             $roleAccess->allowdelete = true;
+            $roleAccess->allowexport = true;
+            $roleAccess->allowimport = true;
             $roleAccess->allowupdate = true;
             $roleAccess->onlyownerdata = false;
             if (false === $roleAccess->save()) {

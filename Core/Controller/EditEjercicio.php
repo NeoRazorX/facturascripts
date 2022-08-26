@@ -251,6 +251,11 @@ class EditEjercicio extends EditController
      */
     protected function exportAccountingPlan(): bool
     {
+        if (false === $this->permissions->allowImport) {
+            $this->toolBox()->i18nLog()->warning('no-print-permission');
+            return true;
+        }
+
         $codejercicio = $this->request->get('code', '');
         if (empty($codejercicio)) {
             $this->toolBox()->i18nLog()->error('exercise-not-found');
@@ -272,6 +277,11 @@ class EditEjercicio extends EditController
      */
     protected function importAccountingPlan(): bool
     {
+        if (false === $this->permissions->allowImport) {
+            $this->toolBox()->i18nLog()->warning('no-import-permission');
+            return true;
+        }
+
         $codejercicio = $this->request->request->get('codejercicio', '');
         if (empty($codejercicio)) {
             $this->toolBox()->i18nLog()->error('exercise-not-found');

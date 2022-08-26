@@ -32,6 +32,8 @@
                     <th class="text-center">{{ i18n.trans('only-owner-data') }}</th>
                     <th class="text-center">{{ i18n.trans('allow-update') }}</th>
                     <th class="text-center">{{ i18n.trans('allow-delete') }}</th>
+                    <th class="text-center">{{ i18n.trans('allow-export') }}</th>
+                    <th class="text-center">{{ i18n.trans('allow-import') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -63,6 +65,20 @@
                             <input class="all-permission custom-control-input" id="checkbox-all-delete" value="delete"
                                    type="checkbox"/>
                             <label class="custom-control-label" for="checkbox-all-delete">&nbsp</label>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <div class="custom-control-lg custom-control custom-checkbox">
+                            <input class="all-permission custom-control-input" id="checkbox-all-export" value="export"
+                                   type="checkbox"/>
+                            <label class="custom-control-label" for="checkbox-all-export">&nbsp</label>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <div class="custom-control-lg custom-control custom-checkbox">
+                            <input class="all-permission custom-control-input" id="checkbox-all-import" value="import"
+                                   type="checkbox"/>
+                            <label class="custom-control-label" for="checkbox-all-import">&nbsp</label>
                         </div>
                     </td>
                 </tr>
@@ -135,6 +151,36 @@
                                        for="checkbox-large-delete-{{ pageName }}">&nbsp</label>
                             </div>
                         </td>
+                        <td class="text-center">
+                            <div class="custom-control-lg custom-control custom-checkbox">
+                                {% if rule.export %}
+                                    <input class="export-permission custom-control-input"
+                                           id="checkbox-large-export-{{ pageName }}" type="checkbox" name="export[]"
+                                           value="{{ pageName }}" checked=""/>
+                                {% else %}
+                                    <input class="export-permission custom-control-input"
+                                           id="checkbox-large-export-{{ pageName }}" type="checkbox" name="export[]"
+                                           value="{{ pageName }}"/>
+                                {% endif %}
+                                <label class="custom-control-label"
+                                       for="checkbox-large-export-{{ pageName }}">&nbsp</label>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="custom-control-lg custom-control custom-checkbox">
+                                {% if rule.import %}
+                                    <input class="import-permission custom-control-input"
+                                           id="checkbox-large-import-{{ pageName }}" type="checkbox" name="import[]"
+                                           value="{{ pageName }}" checked=""/>
+                                {% else %}
+                                    <input class="import-permission custom-control-input"
+                                           id="checkbox-large-import-{{ pageName }}" type="checkbox" name="import[]"
+                                           value="{{ pageName }}"/>
+                                {% endif %}
+                                <label class="custom-control-label"
+                                       for="checkbox-large-import-{{ pageName }}">&nbsp</label>
+                            </div>
+                        </td>
                     </tr>
                 {% else %}
                     <tr class="table-warning">
@@ -167,6 +213,8 @@
                 $(this).parent().parent().parent().find('input.only-owner-permission').prop('checked', false);
                 $(this).parent().parent().parent().find('input.update-permission').prop('checked', false);
                 $(this).parent().parent().parent().find('input.delete-permission').prop('checked', false);
+                $(this).parent().parent().parent().find('input.export-permission').prop('checked', false);
+                $(this).parent().parent().parent().find('input.import-permission').prop('checked', false);
             }
         });
 
