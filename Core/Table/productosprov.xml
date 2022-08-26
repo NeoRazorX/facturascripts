@@ -41,6 +41,11 @@
         <type>double precision</type>
     </column>
     <column>
+        <name>netoeuros</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
+    <column>
         <name>precio</name>
         <type>double precision</type>
     </column>
@@ -70,7 +75,7 @@
         <type>FOREIGN KEY (idproducto) REFERENCES productos (idproducto) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>uniq_productosprov_ref</name>
-        <type>UNIQUE (codproveedor,refproveedor,referencia)</type>
+        <name>uniq_productosprov</name>
+        <type>UNIQUE (codproveedor,refproveedor,referencia,coddivisa)</type>
     </constraint>
 </table>

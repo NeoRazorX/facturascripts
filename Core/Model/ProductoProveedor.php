@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Dinamic\Lib\CostPriceTools;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
@@ -75,6 +76,11 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     /**
      * @var float
      */
+    public $netoeuros;
+
+    /**
+     * @var float
+     */
     public $precio;
 
     /**
@@ -94,6 +100,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
         $this->dtopor = 0.0;
         $this->dtopor2 = 0.0;
         $this->neto = 0.0;
+        $this->netoeuros = 0.0;
         $this->precio = 0.0;
     }
 
@@ -163,6 +170,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
         }
 
         $this->neto = round($this->precio * $this->getEUDiscount(), DinProducto::ROUND_DECIMALS);
+        $this->netoeuros = Divisas::get($this->coddivisa)->tasaconvcompra * $this->neto;
         return parent::test();
     }
 
