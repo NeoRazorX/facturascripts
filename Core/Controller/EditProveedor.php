@@ -31,6 +31,7 @@ use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
  * @author Nazca Networks               <comercial@nazcanetworks.com>
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class EditProveedor extends ComercialContactController
 {
@@ -119,13 +120,22 @@ class EditProveedor extends ComercialContactController
         $this->createSubaccountsView();
         $this->createEmailsView();
         $this->createViewDocFiles();
-
         $this->createProductView();
-        $this->createInvoiceView('ListFacturaProveedor');
-        $this->createDocumentView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
-        $this->createDocumentView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
-        $this->createDocumentView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
-        $this->createReceiptView('ListReciboProveedor', 'ReciboProveedor');
+        if ($this->user->can('EditFacturaProveedor')) {
+            $this->createInvoiceView('ListFacturaProveedor');
+        }
+        if ($this->user->can('EditAlbaranProveedor')) {
+            $this->createDocumentView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
+        }
+        if ($this->user->can('EditPedidoProveedor')) {
+            $this->createDocumentView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
+        }
+        if ($this->user->can('EditPresupuestoProveedor')) {
+            $this->createDocumentView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
+        }
+        if ($this->user->can('EditReciboProveedor')) {
+            $this->createReceiptView('ListReciboProveedor', 'ReciboProveedor');
+        }
     }
 
     /**

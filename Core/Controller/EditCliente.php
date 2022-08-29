@@ -24,8 +24,6 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\ComercialContactController;
 use FacturaScripts\Dinamic\Lib\CustomerRiskTools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
-use FacturaScripts\Dinamic\Model\RoleAccess;
-use FacturaScripts\Dinamic\Model\RoleUser;
 
 /**
  * Controller to edit a single item from the Cliente model
@@ -119,22 +117,20 @@ class EditCliente extends ComercialContactController
         $this->createEmailsView();
         $this->createViewDocFiles();
 
-        if ($this->user->can('ListFacturaCliente')) {
+        if ($this->user->can('EditFacturaCliente')) {
             $this->createInvoiceView('ListFacturaCliente');
-        }
-        if ($this->user->can('ListLineaFacturaCliente')) {
             $this->createLineView('ListLineaFacturaCliente', 'LineaFacturaCliente');
         }
-        if ($this->user->can('ListAlbaranCliente')) {
+        if ($this->user->can('EditAlbaranCliente')) {
             $this->createDocumentView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
         }
-        if ($this->user->can('ListPedidoCliente')) {
+        if ($this->user->can('EditPedidoCliente')) {
             $this->createDocumentView('ListPedidoCliente', 'PedidoCliente', 'orders');
         }
-        if ($this->user->can('ListPresupuestoCliente')) {
+        if ($this->user->can('EditPresupuestoCliente')) {
             $this->createDocumentView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
         }
-        if ($this->user->can('ListReciboCliente')) {
+        if ($this->user->can('EditReciboCliente')) {
             $this->createReceiptView('ListReciboCliente', 'ReciboCliente');
         }
     }

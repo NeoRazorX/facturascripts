@@ -31,6 +31,7 @@ use FacturaScripts\Dinamic\Model\TotalModel;
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  * @author Artex Trading sa    <jcuello@artextrading.com>
  * @author Raul
+ * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class EditAgente extends ComercialContactController
 {
@@ -132,10 +133,18 @@ class EditAgente extends ComercialContactController
         $this->createContactView();
         $this->createCustomerView();
         $this->createEmailsView();
-        $this->createInvoiceView('ListFacturaCliente');
-        $this->createDocumentView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
-        $this->createDocumentView('ListPedidoCliente', 'PedidoCliente', 'orders');
-        $this->createDocumentView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+        if ($this->user->can('EditFacturaCliente')) {
+            $this->createInvoiceView('ListFacturaCliente');
+        }
+        if ($this->user->can('EditAlbaranCliente')) {
+            $this->createDocumentView('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
+        }
+        if ($this->user->can('EditPedidoCliente')) {
+            $this->createDocumentView('ListPedidoCliente', 'PedidoCliente', 'orders');
+        }
+        if ($this->user->can('EditPresupuestoCliente')) {
+            $this->createDocumentView('ListPresupuestoCliente', 'PresupuestoCliente', 'estimations');
+        }
     }
 
     protected function editAction(): bool
