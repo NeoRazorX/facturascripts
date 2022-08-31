@@ -23,7 +23,6 @@ use FacturaScripts\Dinamic\Model\ProductImage as DinProductImage;
 
 use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
-use FacturaScripts\Dinamic\Model\Base\JoinModel;
 
 /**
  * Model ProductImage with attached file data
@@ -140,7 +139,7 @@ class ProductImage extends JoinModel
     {
         return 'productosimagenes img'
             . ' INNER JOIN variantes ON variantes.idvariante = img.idvariante'
-            . ' INNER JOIN attached_files_rel rel ON rel.model = \'ProductImage\' AND rel.modelid = doc.id'
+            . ' INNER JOIN attached_files_rel rel ON rel.model = \'ProductImage\' AND rel.modelid = img.idimage'
             . ' INNER JOIN attached_files att ON att.idfile = rel.idfile';
     }
 
