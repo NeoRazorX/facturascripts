@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Import;
 
 use FacturaScripts\Core\App\AppSettings;
@@ -33,9 +34,9 @@ class CSVImport
     /**
      * Return the insert SQL reading a CSV file for the specific file
      *
-     * @param string  $table
-     * @param string  $filePath
-     * @param bool    $update
+     * @param string $table
+     * @param string $filePath
+     * @param bool $update
      *
      * @return string
      */
@@ -57,10 +58,10 @@ class CSVImport
                 $insertRow[] = static::valueToSql($dataBase, $value);
             }
 
-            $insertRows[] = '(' . \implode(',', $insertRow) . ')';
+            $insertRows[] = '(' . implode(',', $insertRow) . ')';
         }
 
-        $sql = 'INSERT INTO ' . $table . ' (' . \implode(',', $insertFields) . ') VALUES ' . \implode(',', $insertRows);
+        $sql = 'INSERT INTO ' . $table . ' (' . implode(',', $insertFields) . ') VALUES ' . implode(',', $insertRows);
         return $update ? static::insertOnDuplicateSql($sql, $csv) : $sql . ';';
     }
 
@@ -78,7 +79,6 @@ class CSVImport
     }
 
     /**
-     *
      * @param string $table
      *
      * @return string
@@ -93,7 +93,7 @@ class CSVImport
      * Returns a value to SQL format.
      *
      * @param DataBase $dataBase
-     * @param string   $value
+     * @param string $value
      *
      * @return string
      */
@@ -116,20 +116,20 @@ class CSVImport
     protected static function getTableFilePath(string $table): string
     {
         $codpais = AppSettings::get('default', 'codpais', 'ESP');
-        $filePath = \FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/' . $table . '.csv';
-        if (\file_exists($filePath)) {
+        $filePath = FS_FOLDER . '/Dinamic/Data/Codpais/' . $codpais . '/' . $table . '.csv';
+        if (file_exists($filePath)) {
             return $filePath;
         }
 
-        $lang = \strtoupper(\substr(\FS_LANG, 0, 2));
-        $filePath = \FS_FOLDER . '/Dinamic/Data/Lang/' . $lang . '/' . $table . '.csv';
-        if (\file_exists($filePath)) {
+        $lang = strtoupper(substr(FS_LANG, 0, 2));
+        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . $lang . '/' . $table . '.csv';
+        if (file_exists($filePath)) {
             return $filePath;
         }
 
-        /// If everything else fails
-        $filePath = \FS_FOLDER . '/Dinamic/Data/Lang/ES/' . $table . '.csv';
-        if (\file_exists($filePath)) {
+        // If everything else fails
+        $filePath = FS_FOLDER . '/Dinamic/Data/Lang/ES/' . $table . '.csv';
+        if (file_exists($filePath)) {
             return $filePath;
         }
 
@@ -137,29 +137,28 @@ class CSVImport
     }
 
     /**
-     *
      * @param string $sql
-     * @param Csv    $csv
+     * @param Csv $csv
      *
      * @return string
      */
-    private static function insertOnDuplicateSql($sql, $csv)
+    private static function insertOnDuplicateSql($sql, $csv): string
     {
-        switch (\FS_DB_TYPE) {
+        switch (FS_DB_TYPE) {
             case 'mysql':
                 $sql .= ' ON DUPLICATE KEY UPDATE '
-                    . \implode(', ', \array_map(function ($value) {
-                            return "{$value} = VALUES({$value})";
-                        }, $csv->titles, \array_keys($csv->titles)));
+                    . implode(', ', array_map(function ($value) {
+                        return "{$value} = VALUES({$value})";
+                    }, $csv->titles, array_keys($csv->titles)));
                 break;
 
             case 'postgresql':
                 $sql .= ' ON CONFLICT ('
                     . $csv->titles[0]
                     . ') DO UPDATE SET '
-                    . \implode(', ', \array_map(function ($value) {
-                            return "{$value} = EXCLUDED.{$value}";
-                        }, $csv->titles, \array_keys($csv->titles)));
+                    . implode(', ', array_map(function ($value) {
+                        return "{$value} = EXCLUDED.{$value}";
+                    }, $csv->titles, array_keys($csv->titles)));
                 break;
         }
 
