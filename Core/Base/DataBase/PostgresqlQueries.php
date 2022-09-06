@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
  * Class that gathers all the needed SQL sentences by the database engine
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class PostgresqlQueries implements DataBaseQueries
@@ -34,7 +35,7 @@ class PostgresqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sql2Int($colName)
+    public function sql2Int(string $colName): string
     {
         return 'CAST(' . $colName . ' as INTEGER)';
     }
@@ -48,7 +49,7 @@ class PostgresqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlAddConstraint($tableName, $constraintName, $sql)
+    public function sqlAddConstraint(string $tableName, string $constraintName, string $sql): string
     {
         return 'ALTER TABLE ' . $tableName . ' ADD CONSTRAINT ' . $constraintName . ' ' . $sql . ';';
     }
@@ -57,11 +58,11 @@ class PostgresqlQueries implements DataBaseQueries
      * Returns the SQL needed to add a column to a table
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlAlterAddColumn($tableName, $colData)
+    public function sqlAlterAddColumn(string $tableName, array $colData): string
     {
         $sql = 'ALTER TABLE ' . $tableName . ' ADD COLUMN ' . $colData['name'] . ' ' . $colData['type'];
 
@@ -82,11 +83,11 @@ class PostgresqlQueries implements DataBaseQueries
      * Returns the needed SQL to alter a column default constraint
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlAlterColumnDefault($tableName, $colData)
+    public function sqlAlterColumnDefault(string $tableName, array $colData): string
     {
         if ($colData['type'] === 'serial') {
             return '';
@@ -100,12 +101,16 @@ class PostgresqlQueries implements DataBaseQueries
      * SQL statement to alter a null constraint in a table column
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlAlterColumnNull($tableName, $colData)
+    public function sqlAlterColumnNull(string $tableName, array $colData): string
     {
+        if ($colData['type'] === 'serial') {
+            return '';
+        }
+
         $action = $colData['null'] === 'YES' ? ' DROP ' : ' SET ';
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . $action . 'NOT NULL;';
     }
@@ -114,11 +119,11 @@ class PostgresqlQueries implements DataBaseQueries
      * Returns the SQL needed to alter a column in a table
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlAlterModifyColumn($tableName, $colData)
+    public function sqlAlterModifyColumn(string $tableName, array $colData): string
     {
         return 'ALTER TABLE ' . $tableName . ' ALTER COLUMN ' . $colData['name'] . ' TYPE ' . $colData['type'] . ';';
     }
@@ -130,13 +135,13 @@ class PostgresqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlColumns($tableName)
+    public function sqlColumns(string $tableName): string
     {
         return 'SELECT column_name as name, data_type as type,'
             . 'character_maximum_length, column_default as default,'
             . 'is_nullable'
             . ' FROM information_schema.columns'
-            . " WHERE table_catalog = '" . \FS_DB_NAME . "'"
+            . " WHERE table_catalog = '" . FS_DB_NAME . "'"
             . " AND table_name = '" . $tableName . "'"
             . ' ORDER BY 1 ASC;';
     }
@@ -148,7 +153,7 @@ class PostgresqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlConstraints($tableName)
+    public function sqlConstraints(string $tableName): string
     {
         return 'SELECT tc.constraint_type as type, tc.constraint_name as name'
             . ' FROM information_schema.table_constraints AS tc'
@@ -164,7 +169,7 @@ class PostgresqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlConstraintsExtended($tableName)
+    public function sqlConstraintsExtended(string $tableName): string
     {
         return 'SELECT tc.constraint_type as type, tc.constraint_name as name,'
             . 'kcu.column_name,'
@@ -192,12 +197,12 @@ class PostgresqlQueries implements DataBaseQueries
      * Returns the SQL needed to create a table with the given structure
      *
      * @param string $tableName
-     * @param array  $columns
-     * @param array  $constraints
+     * @param array $columns
+     * @param array $constraints
      *
      * @return string
      */
-    public function sqlCreateTable($tableName, $columns, $constraints)
+    public function sqlCreateTable(string $tableName, array $columns, array $constraints): string
     {
         $serials = ['serial', 'bigserial'];
         $fields = '';
@@ -225,11 +230,11 @@ class PostgresqlQueries implements DataBaseQueries
      * Returns the SQL needed to remove a constraint from a table
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlDropConstraint($tableName, $colData)
+    public function sqlDropConstraint(string $tableName, array $colData): string
     {
         return 'ALTER TABLE ' . $tableName . ' DROP CONSTRAINT ' . $colData['name'] . ';';
     }
@@ -241,7 +246,7 @@ class PostgresqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlDropTable($tableName)
+    public function sqlDropTable(string $tableName): string
     {
         return 'DROP TABLE IF EXISTS ' . $tableName . ';';
     }
@@ -253,7 +258,7 @@ class PostgresqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlIndexes($tableName)
+    public function sqlIndexes(string $tableName): string
     {
         return "SELECT indexname as Key_name FROM pg_indexes WHERE tablename = '" . $tableName . "';";
     }
@@ -263,7 +268,7 @@ class PostgresqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlLastValue()
+    public function sqlLastValue(): string
     {
         return 'SELECT lastval() as num;';
     }
@@ -275,7 +280,7 @@ class PostgresqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlTableConstraints($xmlCons)
+    public function sqlTableConstraints(array $xmlCons): string
     {
         $sql = '';
 
@@ -286,7 +291,7 @@ class PostgresqlQueries implements DataBaseQueries
                 continue;
             }
 
-            if (\FS_DB_FOREIGN_KEYS || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
+            if (FS_DB_FOREIGN_KEYS || 0 !== strpos($res['constraint'], 'FOREIGN KEY')) {
                 $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
             }
         }
