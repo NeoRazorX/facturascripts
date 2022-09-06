@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Core\Lib\ExtendedController\DocFilesTrait;
+use FacturaScripts\Core\Model\Base\ProductImageFilesTrait;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Atributo;
 
@@ -36,7 +36,7 @@ use FacturaScripts\Dinamic\Model\Atributo;
 class EditProducto extends EditController
 {
 
-    use DocFilesTrait;
+    use ProductImageFilesTrait;
 
     public function getModelClassName(): string
     {
@@ -61,12 +61,7 @@ class EditProducto extends EditController
         $this->createViewsVariants();
         $this->createViewsStock();
         $this->createViewsSuppliers();
-        $this->createViewsImages();
-    }
-
-    protected function createViewsImages(string $viewName = 'EditProductImage')
-    {
-        $this->addHtmlView($viewName, 'Tab/ProductImage', 'Join\ProductImage', 'images', 'fas fa-images');
+        $this->createViewEmployeeFiles();
     }
 
     protected function createViewsStock(string $viewName = 'EditStock')
@@ -118,12 +113,6 @@ class EditProducto extends EditController
 
             case 'delete-file':
                 return $this->deleteFileAction();
-
-            case 'edit-file':
-                return $this->editFileAction();
-
-            case 'unlink-file':
-                return $this->unlinkFileAction();
         }
 
         return parent::execPreviousAction($action);
@@ -198,7 +187,8 @@ class EditProducto extends EditController
 
             case 'EditProductImage':
                 $where = [ new DataBaseWhere('img.idproducto', $idproducto) ];
-                $view->loadData('', $where, ['rel.creationdate' => 'DESC']);
+                $order = ['img.referencia' => 'ASC', 'rel.creationdate' => 'DESC'];
+                $view->loadData('', $where, $order);
                 break;
 
             case 'EditVariante':
