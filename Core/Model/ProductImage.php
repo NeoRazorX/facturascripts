@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\AttachedFileRelation;
+
 /**
  * Description of ProductImage
  *
@@ -45,9 +48,9 @@ class ProductImage extends Base\ModelClass
     /**
      * Link to Variant model.
      *
-     * @var int
+     * @var string
      */
-    public $idvariante;
+    public $referencia;
 
     /**
      * Link to Attached File model.
@@ -55,6 +58,21 @@ class ProductImage extends Base\ModelClass
      * @var int
      */
     public $idfile;
+
+    /**
+     *
+     * @return AttachedFileRelation
+     */
+    public function getFile()
+    {
+        $where = [
+            new DataBaseWhere('model', 'ProductImage'),
+            new DataBaseWhere('modelid', $this->idimage),
+        ];
+        $file = new AttachedFileRelation();
+        $file->loadFromCode('', $where);
+        return $file;
+    }
 
     /**
      * Returns the name of the column that is the model's primary key.
@@ -74,5 +92,13 @@ class ProductImage extends Base\ModelClass
     public static function tableName(): string
     {
         return 'productosimagenes';
+    }
+
+    public function test(): bool
+    {
+        if (isset($this->referencia)) {
+            $this->referencia = $this->toolBox()->utils()->noHtml($this->referencia);
+        }
+        return parent::test();
     }
 }

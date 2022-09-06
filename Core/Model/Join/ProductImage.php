@@ -114,9 +114,9 @@ class ProductImage extends JoinModel
     protected function getFields(): array
     {
         return [
-            'idimagen' => 'img.idimage',
+            'idimage' => 'img.idimage',
             'idproducto' => 'img.idproducto',
-            'idvariante' => 'img.idvariante',
+            'referencia' => 'img.referencia',
             'idfile' => 'img.idfile',
             'referencia' => 'variantes.referencia',
             'creationdate' => 'rel.creationdate',
@@ -138,7 +138,7 @@ class ProductImage extends JoinModel
     protected function getSQLFrom(): string
     {
         return 'productosimagenes img'
-            . ' INNER JOIN variantes ON variantes.idvariante = img.idvariante'
+            . ' LEFT JOIN variantes ON variantes.referencia = img.referencia'
             . ' INNER JOIN attached_files_rel rel ON rel.model = \'ProductImage\' AND rel.modelid = img.idimage'
             . ' INNER JOIN attached_files att ON att.idfile = rel.idfile';
     }
