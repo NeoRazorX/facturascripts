@@ -61,7 +61,7 @@ class EditProducto extends EditController
         $this->createViewsVariants();
         $this->createViewsStock();
         $this->createViewsSuppliers();
-        $this->createViewEmployeeFiles();
+        $this->createViewProductImageFiles();
     }
 
     protected function createViewsStock(string $viewName = 'EditStock')
