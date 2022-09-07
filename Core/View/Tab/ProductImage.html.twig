@@ -63,7 +63,7 @@
         </div>
     </div>
     {# -- Attached files -- #}
-    <div class="row row-cols-1 row-cols-md-3">
+    <div class="row row-cols-1 row-cols-md-5">
         {% for counter, productImage in currentView.cursor %}        
             {% set formName = currentView.getViewName() ~ (counter + 1) %}
             {% set border = productImage.referencia ? '' : 'border-primary' %}
