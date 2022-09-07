@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use Exception;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\ProductImage;
@@ -37,6 +36,7 @@ trait ProductImageFilesTrait
     abstract public static function toolBox();
 
     /**
+     * Add a list of images.
      *
      * @return bool
      */
@@ -60,18 +60,10 @@ trait ProductImageFilesTrait
             }
 
             if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
-                $this->dataBase->beginTransaction();
-                try {
-                    $idfile = $this->createFileAttached($uploadFile->getClientOriginalName());
-                    $idproduct = $this->createProductImage($idfile);
-                    $this->createFileRelation($idproduct, $idfile);
-                    $this->dataBase->commit();
-                    ++$count;
-                } catch (\Exception $ex) {
-                    $this->dataBase->rollback();
-                    $this->toolBox()->i18nLog()->error($ex->getMessage());
-                    // FIXME: Remove, if exists, uploadfile
-                }
+                $idfile = $this->createFileAttached($uploadFile->getClientOriginalName());
+                $idproduct = $this->createProductImage($idfile);
+                $this->createFileRelation($idproduct, $idfile);
+                ++$count;
             }
         }
         $this->toolBox()->i18nLog()->notice('images-updated-correctly', ['%count%' => $count]);
@@ -79,6 +71,17 @@ trait ProductImageFilesTrait
     }
 
     /**
+     * Add view for product images.
+     *
+     * @param string $viewName
+     */
+    protected function createViewProductImageFiles(string $viewName = 'EditProductImage')
+    {
+        $this->addHtmlView($viewName, 'Tab/ProductImage', 'Join\ProductImage', 'images', 'fas fa-images');
+    }
+
+    /**
+     * Delete an image.
      *
      * @return bool
      */
@@ -114,6 +117,7 @@ trait ProductImageFilesTrait
     }
 
     /**
+     * Check if the user has the necessary permissions.
      *
      * @return bool
      */
@@ -138,25 +142,25 @@ trait ProductImageFilesTrait
     }
 
     /**
+     * Create the record in the AttachedFile model
+     * and returns its identifier.
      *
      * @return int
-     * @throws Exception
      */
     private function createFileAttached(string $path): int
     {
         $newFile = new AttachedFile();
         $newFile->path = $path;
-        if (false === $newFile->save()) {
-            throw new Exception();
-        }
+        $newFile->save();
         return $newFile->idfile;
     }
 
     /**
+     * Create the record in the ProductImage model
+     * and returns its identifier.
      *
      * @param int $idfile
      * @return int
-     * @throws Exception
      */
     private function createProductImage(int $idfile): int
     {
@@ -166,17 +170,15 @@ trait ProductImageFilesTrait
 
         $reference = $this->request->request->get('referencia', '');
         $productImage->referencia = empty($reference) ? null : $reference;
-        if (false === $productImage->save()) {
-            throw new Exception();
-        }
+        $productImage->save();
         return $productImage->idimage;
     }
 
     /**
+     * Create the record in the AttachedFileRelation model.
      *
      * @param int $idproduct
      * @param int $idfile
-     * @throws Exception
      */
     private function createFileRelation(int $idproduct, int $idfile)
     {
@@ -185,17 +187,6 @@ trait ProductImageFilesTrait
         $fileRelation->model = 'ProductImage';
         $fileRelation->modelid = $idproduct;
         $fileRelation->nick = $this->user->nick;
-        if (false === $fileRelation->save()) {
-            throw new Exception();
-        }
-    }
-
-    /**
-     *
-     * @param string $viewName
-     */
-    private function createViewEmployeeFiles(string $viewName = 'EditProductImage')
-    {
-        $this->addHtmlView($viewName, 'Tab/ProductImage', 'Join\ProductImage', 'images', 'fas fa-images');
+        $fileRelation->save();
     }
 }
