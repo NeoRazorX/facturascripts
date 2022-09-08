@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,23 +32,12 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditImpuesto extends EditController
 {
-
-    /**
-     * Returns the model name.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Impuesto';
     }
 
-    /**
-     * Returns basic page attributes.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -67,10 +57,6 @@ class EditImpuesto extends EditController
         $this->setTabsPosition('bottom');
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewsProducts(string $viewName = 'ListProducto')
     {
         $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
@@ -79,15 +65,11 @@ class EditImpuesto extends EditController
         $this->views[$viewName]->addOrderBy(['stockfis'], 'stock');
         $this->views[$viewName]->addSearchFields(['referencia', 'descripcion', 'observaciones']);
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewsZones(string $viewName = 'EditImpuestoZona')
     {
         $this->addEditListView($viewName, 'ImpuestoZona', 'exceptions', 'fas fa-globe-americas');
@@ -98,16 +80,21 @@ class EditImpuesto extends EditController
     /**
      * Loads the data to display.
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
     {
+        $code = $this->getViewModelValue($this->getMainViewName(), 'codimpuesto');
+
         switch ($viewName) {
             case 'EditImpuestoZona':
+                $where = [new DataBaseWhere('codimpuesto', $code)];
+                $view->loadData('', $where, ['prioridad' => 'DESC']);
+                break;
+
             case 'ListProducto':
-                $codimpuesto = $this->getViewModelValue('EditImpuesto', 'codimpuesto');
-                $where = [new DataBaseWhere('codimpuesto', $codimpuesto)];
+                $where = [new DataBaseWhere('codimpuesto', $code)];
                 $view->loadData('', $where);
                 break;
 
