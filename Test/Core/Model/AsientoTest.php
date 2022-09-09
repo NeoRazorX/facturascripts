@@ -369,11 +369,23 @@ final class AsientoTest extends TestCase
             $asiento = new Asiento();
             $asiento->concepto = 'Test';
             $asiento->codejercicio = $exercise->codejercicio;
-            $asiento->fecha = date(ModelCore::DATE_STYLE, strtotime('-' . $i . ' days', strtotime($exercise->fechafin)));
             $asiento->idempresa = $exercise->idempresa;
+            $asiento->fecha = ($i > 1)
+                ? date(ModelCore::DATE_STYLE, strtotime('-' . $i . ' days', strtotime($exercise->fechafin)))
+                : $this->getFirstDay($exercise->fechafin);
+
             $this->assertTrue($asiento->save(), 'asiento-cant-save-7');
             $this->assertEquals($i, $asiento->numero, 'asiento-number-not-correct');
         }
+
+        // creamos asiento de apertura
+        $asiento = new Asiento();
+        $asiento->operacion = Asiento::OPERATION_OPENING;
+        $asiento->concepto = 'Test Apertura';
+        $asiento->codejercicio = $exercise->codejercicio;
+        $asiento->idempresa = $exercise->idempresa;
+        $asiento->fecha = $this->getFirstDay($exercise->fechafin);
+        $this->assertTrue($asiento->save(), 'asiento-cant-save-7');
 
         // renumeramos
         $this->assertTrue($asientoModel->renumber($exercise->codejercicio), 'can-not-renumber-asientos');
@@ -382,6 +394,9 @@ final class AsientoTest extends TestCase
         $numero = 1;
         foreach ($asientoModel->all([], ['numero' => 'ASC'], 0, 0) as $asiento) {
             $this->assertEquals($numero, $asiento->numero, 'asiento-number-not-correct');
+            if ($numero === 1) {
+                $this->assertTrue($asiento->operacion === Asiento::OPERATION_OPENING, 'asiento-first-not-is-opening');
+            }
             $numero++;
         }
 
@@ -394,5 +409,10 @@ final class AsientoTest extends TestCase
     protected function tearDown(): void
     {
         $this->logErrors();
+    }
+
+    private function getFirstDay(string $date): string
+    {
+        return '01-01-' . date('Y', strtotime($date));
     }
 }
