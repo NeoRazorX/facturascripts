@@ -50,7 +50,7 @@
         <column name="code" order="150">
             <widget type="text" fieldname="codigo"/>
         </column>
-        <column name="rectified" display="none" order="155">
+        <column name="original" display="none" order="155">
             <widget type="text" fieldname="codigorect"/>
         </column>
         <column name="number2" order="160">
