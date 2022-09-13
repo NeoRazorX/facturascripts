@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,111 +22,114 @@
 <view>
     <columns>
         <column name="id" display="none" order="90">
-            <widget type="text" fieldname="idfactura" />
+            <widget type="text" fieldname="idfactura"/>
         </column>
         <column name="company" display="none" order="100">
             <widget type="select" fieldname="idempresa">
-                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+                <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
             </widget>
         </column>
         <column name="warehouse" display="none" order="110">
             <widget type="select" fieldname="codalmacen" onclick="EditAlmacen">
-                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" />
+                <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"/>
             </widget>
         </column>
         <column name="serie" display="none" order="120">
             <widget type="select" fieldname="codserie" onclick="EditSerie">
-                <values source="series" fieldcode="codserie" fieldtitle="codserie" />
+                <values source="series" fieldcode="codserie" fieldtitle="codserie"/>
             </widget>
         </column>
         <column name="exercise" display="none" order="130">
             <widget type="select" fieldname="codejercicio" onclick="EditEjercicio">
-                <values source="ejercicios" fieldcode="codejercicio" fieldtitle="codejercicio" />
+                <values source="ejercicios" fieldcode="codejercicio" fieldtitle="codejercicio"/>
             </widget>
         </column>
         <column name="number" display="none" order="140">
-            <widget type="text" fieldname="numero" />
+            <widget type="text" fieldname="numero"/>
         </column>
         <column name="code" order="150">
-            <widget type="text" fieldname="codigo" />
+            <widget type="text" fieldname="codigo"/>
+        </column>
+        <column name="rectified" display="none" order="155">
+            <widget type="text" fieldname="codigorect"/>
         </column>
         <column name="number2" order="160">
-            <widget type="text" fieldname="numero2" />
+            <widget type="text" fieldname="numero2"/>
         </column>
         <column name="customer-code" display="none" order="170">
-            <widget type="text" fieldname="codcliente" />
+            <widget type="text" fieldname="codcliente"/>
         </column>
         <column name="customer" order="180">
-            <widget type="text" fieldname="nombrecliente" />
+            <widget type="text" fieldname="nombrecliente"/>
         </column>
         <column name="fiscal-number" display="none" order="190">
-            <widget type="text" fieldname="cifnif" />
+            <widget type="text" fieldname="cifnif"/>
         </column>
         <column name="address" display="none" order="200">
-            <widget type="text" fieldname="direccion" />
+            <widget type="text" fieldname="direccion"/>
         </column>
         <column name="post-office-box" display="none" order="210">
-            <widget type="text" fieldname="apartado" />
+            <widget type="text" fieldname="apartado"/>
         </column>
         <column name="zip-code" display="none" order="220">
-            <widget type="text" fieldname="codpostal" />
+            <widget type="text" fieldname="codpostal"/>
         </column>
         <column name="city" display="none" order="230">
-            <widget type="text" fieldname="ciudad" />
+            <widget type="text" fieldname="ciudad"/>
         </column>
         <column name="province" display="none" order="240">
-            <widget type="text" fieldname="provincia" />
+            <widget type="text" fieldname="provincia"/>
         </column>
         <column name="country" display="none" order="250">
             <widget type="select" fieldname="codpais">
-                <values source="paises" fieldcode="codpais" fieldtitle="nombre" />
+                <values source="paises" fieldcode="codpais" fieldtitle="nombre"/>
             </widget>
         </column>
         <column name="observations" order="260">
-            <widget type="textarea" fieldname="observaciones" />
+            <widget type="textarea" fieldname="observaciones"/>
         </column>
         <column name="status" display="none" order="270">
             <widget type="autocomplete" fieldname="idestado">
-                <values source="estados_documentos" fieldcode="idestado" fieldtitle="nombre" />
+                <values source="estados_documentos" fieldcode="idestado" fieldtitle="nombre"/>
             </widget>
         </column>
         <column name="email-sent" display="center" order="280">
-            <widget type="checkbox" fieldname="femail" />
+            <widget type="checkbox" fieldname="femail"/>
         </column>
         <column name="paid" display="center" order="290">
-            <widget type="checkbox" fieldname="pagada" />
+            <widget type="checkbox" fieldname="pagada"/>
         </column>
         <column name="payment-methods" display="none" order="300">
             <widget type="select" fieldname="codpago" onclick="EditFormaPago">
-                <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" />
+                <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"/>
             </widget>
         </column>
         <column name="subtotal" display="none" order="310">
-            <widget type="money" fieldname="netosindto" />
+            <widget type="money" fieldname="netosindto"/>
         </column>
         <column name="global-dto" display="none" order="320">
-            <widget type="percentage" fieldname="dtopor1" />
+            <widget type="percentage" fieldname="dtopor1"/>
         </column>
         <column name="global-dto-2" display="none" order="330">
-            <widget type="percentage" fieldname="dtopor2" />
+            <widget type="percentage" fieldname="dtopor2"/>
         </column>
         <column name="net" display="none" order="340">
-            <widget type="money" fieldname="neto" />
+            <widget type="money" fieldname="neto"/>
         </column>
         <column name="taxes" display="none" order="350">
-            <widget type="money" fieldname="totaliva" />
+            <widget type="money" fieldname="totaliva"/>
         </column>
         <column name="surcharge" display="none" order="360">
-            <widget type="money" fieldname="totalrecargo" />
+            <widget type="money" fieldname="totalrecargo"/>
         </column>
         <column name="retention" display="none" order="370">
-            <widget type="percentage" fieldname="irpf" />
+            <widget type="percentage" fieldname="irpf"/>
         </column>
         <column name="retentions" display="none" order="380">
-            <widget type="money" fieldname="totalirpf" />
+            <widget type="money" fieldname="totalirpf"/>
         </column>
         <column name="supplied-amount" display="none" order="390">
-            <widget type="money" fieldname="totalsuplidos" />
+            <widget type="money" fieldname="totalsuplidos"/>
         </column>
         <column name="total" display="right" order="400">
             <widget type="money" fieldname="total">
@@ -135,16 +138,16 @@
         </column>
         <column name="currency" display="none" order="410">
             <widget type="select" fieldname="coddivisa" onclick="EditDivisa">
-                <values source="divisas" fieldcode="coddivisa" fieldtitle="coddivisa" />
+                <values source="divisas" fieldcode="coddivisa" fieldtitle="coddivisa"/>
             </widget>
         </column>
         <column name="agent" display="none" order="420">
             <widget type="autocomplete" fieldname="codagente">
-                <values source="agentes" fieldcode="codagente" fieldtitle="nombre" />
+                <values source="agentes" fieldcode="codagente" fieldtitle="nombre"/>
             </widget>
         </column>
         <column name="date" display="right" order="430">
-            <widget type="date" fieldname="fecha" />
+            <widget type="date" fieldname="fecha"/>
         </column>
     </columns>
     <rows>
