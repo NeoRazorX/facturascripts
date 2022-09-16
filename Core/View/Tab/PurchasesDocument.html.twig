@@ -18,6 +18,20 @@
     let waitCounter = 0;
     let keyupInputName = null;
 
+    function changeColumn(btn) {
+        $(btn).addClass('active').siblings().removeClass('active');
+        $(btn).find('i').removeClass('fa-eye-slash').addClass('fa-eye');
+        $(btn).siblings().find('i').removeClass('fa-eye').addClass('fa-eye-slash');
+
+        if (btn.getAttribute('data-column') === 'subtotal') {
+            $('.columSubtotal').removeClass('d-none').addClass('d-block');
+            $('.columNeto').removeClass('d-block').addClass('d-none');
+        } else {
+            $('.columSubtotal').removeClass('d-block').addClass('d-none');
+            $('.columNeto').removeClass('d-none').addClass('d-block');
+        }
+    }
+
     function findProduct() {
         $("#findProductInput").autocomplete({
             source: function (request, response) {
@@ -63,6 +77,7 @@
 
         document.forms['purchasesForm']['action'].value = action;
         document.forms['purchasesForm']['selectedLine'].value = selectedLine;
+        document.forms['purchasesForm']['columnView'].value = $('#columnView button.active').attr('data-column');
 
         const formData = new FormData(document.forms['purchasesForm']);
         const plainFormData = Object.fromEntries(formData.entries());
@@ -241,6 +256,23 @@
         }
     }
 
+    function purchasesLineTotalWithoutTaxes(id) {
+        const total = parseFloat(prompt('{{ i18n.trans('total-with-taxes') }}').replace(',', '.')) || 0;
+        const dtopor = parseFloat(document.forms['purchasesForm']['dtopor_' + id].value) || 0;
+        const dtopor2 = parseFloat(document.forms['purchasesForm']['dtopor2_' + id].value) || 0;
+        const cantidad = parseFloat(document.forms['purchasesForm']['cantidad_' + id].value) || 0;
+        if (total <= 0) {
+            alert('total > 0');
+        } else if (cantidad <= 0) {
+            alert('cantidad > 0');
+        } else {
+            let pvpSinDto = (100 * total / cantidad) / 100;
+            let pvp = 10000 * pvpSinDto / ((100 - dtopor) * (100 - dtopor2));
+            document.forms['purchasesForm']['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
+            purchasesFormAction('recalculate', '0');
+        }
+    }
+
     function setOrdenLines() {
         let orderInputs = $("input[name^='orden_']");
         let count = orderInputs.length * 10;
@@ -335,5 +367,6 @@
     <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
     <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <input type="hidden" name="selectedLine"/>
+    <input type="hidden" name="columnView" value="{{ AppSettings.get('default', 'columnetosubtotal', 'subtotal') }}"/>
     {{ fsc.renderPurchasesForm(model, model.getLines()) | raw }}
 </form>

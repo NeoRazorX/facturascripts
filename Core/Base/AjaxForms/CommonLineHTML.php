@@ -31,6 +31,9 @@ use FacturaScripts\Dinamic\Model\Variante;
 
 trait CommonLineHTML
 {
+
+    protected static $columnView = '';
+
     private static $regimeniva;
 
     private static function codimpuesto(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
@@ -136,16 +139,33 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function lineTotal(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    private static function lineTotal(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsSubtotal, string $jsNeto): string
     {
-        $total = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
-        $onclick = $model->editable ?
-            ' onclick="' . $jsFunc . '(\'' . $idlinea . '\')"' :
+        if ('subtotal' === self::$columnView) {
+            $cssSubtotal = '';
+            $cssNeto = 'd-none';
+        } else {
+            $cssSubtotal = 'd-none';
+            $cssNeto = '';
+        }
+
+        $onclickSubtotal = $model->editable ?
+            ' onclick="' . $jsSubtotal . '(\'' . $idlinea . '\')"' :
             '';
-        return '<div class="col col-lg-1 order-7">'
+
+        $onclickNeto = $model->editable ?
+            ' onclick="' . $jsNeto . '(\'' . $idlinea . '\')"' :
+            '';
+
+        $subtotal = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+        return '<div class="col col-lg-1 order-7 columSubtotal ' . $cssSubtotal . '">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
-            . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($total, FS_NF0, '.', '')
-            . '" class="form-control form-control-sm text-lg-right border-0"' . $onclick . ' readonly/></div>';
+            . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($subtotal, FS_NF0, '.', '')
+            . '" class="form-control form-control-sm text-lg-right border-0"' . $onclickSubtotal . ' readonly/></div>'
+            . '<div class="col col-lg-1 order-7 columNeto ' . $cssNeto . '">'
+            . '<div class="d-lg-none mt-2 small">' . $i18n->trans('net') . '</div>'
+            . '<input type="number" name="lineneto_' . $idlinea . '"  value="' . number_format($line->pvptotal, FS_NF0, '.', '')
+            . '" class="form-control form-control-sm text-lg-right border-0"' . $onclickNeto . ' readonly/></div>';
     }
 
     private static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
@@ -264,6 +284,15 @@ trait CommonLineHTML
 
     private static function titleTotal(Translator $i18n): string
     {
-        return '<div class="col-lg-1 text-right order-7">' . $i18n->trans('subtotal') . '</div>';
+        if ('subtotal' === self::$columnView) {
+            $cssSubtotal = '';
+            $cssNeto = 'd-none';
+        } else {
+            $cssSubtotal = 'd-none';
+            $cssNeto = '';
+        }
+
+        return '<div class="col-lg-1 text-right order-7 columSubtotal ' . $cssSubtotal . '">' . $i18n->trans('subtotal') . '</div>'
+            . '<div class="col-lg-1 text-right order-7 columNeto ' . $cssNeto . '">' . $i18n->trans('net') . '</div>';
     }
 }
