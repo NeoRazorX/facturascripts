@@ -30,16 +30,16 @@
                 {{ include(firstView.template) }}
             </div>
         </div>
-        {% if fsc.views | length > 2 and firstView.model.exists() %}
-            {% set activeViewName = (fsc.active is empty) or (fsc.active == firstViewName) 
-                ? fsc.views[1:]|keys|first 
-                : fsc.active 
+        {% if fsc.views | length > 1 and firstView.model.exists() %}
+            {% set activeViewName = (fsc.active is empty) or (fsc.active == firstViewName)
+                ? fsc.views[1:]|keys|first
+                : fsc.active
             %}
             <div class="row">
                 {# -- Left Panel -- #}
                 <div class="col-lg-2">
                     <div class="nav nav-pills flex-row flex-lg-column pb-3" id="mainTabs" role="tablist">
-                        {# -- All views but we skipped the first one -- #}                    
+                        {# -- All views but we skipped the first one -- #}
                         {% for viewName, view in fsc.views[1:] %}
                             {% set active = (viewName == activeViewName) ? ' active' : '' %}
                             {% set disable = view.settings.active ? '' : ' disabled' %}
@@ -57,7 +57,7 @@
                 {# -- Right Panel -- #}
                 <div class="col">
                     <div class="tab-content" id="mainTabsContent">
-                        {# -- All views but we skipped the first one -- #}                    
+                        {# -- All views but we skipped the first one -- #}
                         {% for viewName, view in fsc.views[1:] %}
                             {% set active = (viewName == activeViewName) ? ' show active' : '' %}
                             <div class="tab-pane fade{{ active }}" id="{{ viewName }}" role="tabpanel"
