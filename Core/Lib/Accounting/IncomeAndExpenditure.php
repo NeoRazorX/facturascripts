@@ -162,6 +162,10 @@ class IncomeAndExpenditure extends AccountingBase
     protected function getAmounts($balance, $codejercicio, $params): float
     {
         $total = 0.00;
+        if ($codejercicio === '-') {
+            return $total;
+        }
+
         $balAccount = $params['subtype'] === 'normal' ? new BalanceCuenta() : new BalanceCuentaA();
         $where = [new DataBaseWhere('codbalance', $balance->codbalance)];
         foreach ($balAccount->all($where, [], 0, 0) as $model) {
@@ -178,7 +182,7 @@ class IncomeAndExpenditure extends AccountingBase
                     . " LEFT JOIN subcuentas ON partidas.idsubcuenta = subcuentas.idsubcuenta"
                     . " LEFT JOIN cuentas ON subcuentas.idcuenta = cuentas.idcuenta"
                     . " WHERE asientos.codejercicio = " . $this->dataBase->var2str($codejercicio)
-                    . " AND (subcuentas.codcuenta LIKE '6%' OR subcuentas.codcuenta LIKE '7%')";
+                    . " AND (partidas.codsubcuenta LIKE '" . $model->codcuenta . "%' OR subcuentas.codcuenta LIKE '6%' OR subcuentas.codcuenta LIKE '7%')";
             }
 
             if ($codejercicio === $this->exercise->codejercicio) {
