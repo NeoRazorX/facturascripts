@@ -160,8 +160,8 @@ final class Calculator
         $subtotals['totalsuplidos'] = round($subtotals['totalsuplidos'], FS_NF0);
 
         // calculamos el total
-        $subtotals['total'] = $subtotals['neto'] + $subtotals['totalsuplidos'] + $subtotals['totaliva']
-            + $subtotals['totalrecargo'] - $subtotals['totalirpf'];
+        $subtotals['total'] = round($subtotals['neto'] + $subtotals['totalsuplidos'] + $subtotals['totaliva']
+            + $subtotals['totalrecargo'] - $subtotals['totalirpf'], FS_NF0);
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
