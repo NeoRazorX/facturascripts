@@ -33,6 +33,23 @@ trait CommonLineHTML
 {
     private static $regimeniva;
 
+    private static function cantidadRestante(Translator $i18n, BusinessDocumentLine $line, TransformerDocument $model): string
+    {
+        $html = '';
+        if ($line->servido <= 0 || false === $model->editable) {
+            return $html;
+        }
+
+        $restante = $line->cantidad - $line->servido;
+        $html .= '<div class="input-group-prepend" title="' . $i18n->trans('quantity-remaining') . '">';
+        $html .= $restante > 0 ?
+            '<span class="input-group-text text-warning rounded-0">' . $restante . '</span>' :
+            '<span class="input-group-text text-success rounded-0">' . $restante . '</span>';
+        $html .= '</div>';
+
+        return $html;
+    }
+
     private static function codimpuesto(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         // comprobamos el régimen de IVA del cliente o proveedor
