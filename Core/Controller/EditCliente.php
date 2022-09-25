@@ -28,10 +28,10 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
 /**
  * Controller to edit a single item from the Cliente model
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
- * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
- * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
+ * @author       Carlos García Gómez        <carlos@facturascripts.com>
+ * @author       Artex Trading sa           <jcuello@artextrading.com>
+ * @author       Fco. Antonio Moreno Pérez  <famphuelva@gmail.com>
+ * @collaborator Daniel Fernández Giménez   <hola@danielfg.es>
  */
 class EditCliente extends ComercialContactController
 {
@@ -113,7 +113,11 @@ class EditCliente extends ComercialContactController
         parent::createViews();
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoCliente', 'CuentaBancoCliente', 'customer-banking-accounts', 'fas fa-piggy-bank');
-        $this->createSubaccountsView();
+
+        if ($this->user->can('EditSubcuenta')) {
+            $this->createSubaccountsView();
+        }
+
         $this->createEmailsView();
         $this->createViewDocFiles();
 

@@ -16,35 +16,25 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
  * EditCiudad
- * 
+ *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Frank Aguirre        <faguirre@soenac.com>
  */
 class EditCiudad extends EditController
 {
-
-    /**
-     * Get model class name
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Ciudad';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';

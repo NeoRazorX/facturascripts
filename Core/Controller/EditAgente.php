@@ -28,9 +28,8 @@ use FacturaScripts\Dinamic\Model\TotalModel;
 /**
  * Controller to edit a single item from the Agente model
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
- * @author Artex Trading sa    <jcuello@artextrading.com>
- * @author Raul
+ * @author       Carlos Garcia Gomez      <carlos@facturascripts.com>
+ * @author       Artex Trading sa         <jcuello@artextrading.com>
  * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class EditAgente extends ComercialContactController
@@ -52,11 +51,6 @@ class EditAgente extends ComercialContactController
         return $this->toolBox()->coins()->format($totalModel->totals['total'], 2);
     }
 
-    /**
-     * Returns the class name of the model to use.
-     *
-     * @return string
-     */
     public function getModelClassName(): string
     {
         return 'Agente';
@@ -133,6 +127,7 @@ class EditAgente extends ComercialContactController
         $this->createContactView();
         $this->createCustomerView();
         $this->createEmailsView();
+
         if ($this->user->can('EditFacturaCliente')) {
             $this->createInvoiceView('ListFacturaCliente');
         }

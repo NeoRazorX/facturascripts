@@ -27,7 +27,7 @@ use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\ImpuestoZona;
 
 /**
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author       Carlos García Gómez      <carlos@facturascripts.com>
  * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 final class Calculator
@@ -94,7 +94,6 @@ final class Calculator
             'iva' => [],
             'neto' => 0.0,
             'netosindto' => 0.0,
-            'total' => 0.0,
             'totalcoste' => 0.0,
             'totalirpf' => 0.0,
             'totaliva' => 0.0,
@@ -151,7 +150,7 @@ final class Calculator
             }
         }
 
-        // redondeamos los IVAs
+        // redondeamos los IVA
         foreach ($subtotals['iva'] as $key => $value) {
             $subtotals['iva'][$key]['neto'] = round($value['neto'], FS_NF0);
             $subtotals['iva'][$key]['netosindto'] = round($value['netosindto'], FS_NF0);

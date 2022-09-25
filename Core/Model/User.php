@@ -25,12 +25,11 @@ use FacturaScripts\Dinamic\Model\Page as DinPage;
 /**
  * Usuario de FacturaScripts.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author       Carlos García Gómez      <carlos@facturascripts.com>
  * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class User extends Base\ModelClass
 {
-
     use Base\ModelTrait;
     use Base\CompanyRelationTrait;
     use Base\PasswordTrait;
@@ -38,89 +37,43 @@ class User extends Base\ModelClass
 
     const DEFAULT_LEVEL = 2;
 
-    /**
-     * true -> user is admin.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $admin;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codagente;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codalmacen;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $creationdate;
 
-    /**
-     * user's email.
-     *
-     * @var string
-     */
+    /** @var string */
     public $email;
 
-    /**
-     * true -> user enabled.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $enabled;
 
-    /**
-     * Homepage.
-     *
-     * @var string
-     */
+    /** @var string */
     public $homepage;
 
-    /**
-     * Language code.
-     *
-     * @var string
-     */
+    /** @var string */
     public $langcode;
 
-    /**
-     * Last activity date.
-     *
-     * @var string
-     */
+    /** @var string */
     public $lastactivity;
 
-    /**
-     * Last IP used.
-     *
-     * @var string
-     */
+    /** @var string */
     public $lastip;
 
-    /**
-     * Indicates the level of security that the user can access.
-     *
-     * @var integer
-     */
+    /** @var integer */
     public $level;
 
-    /**
-     * Session key, saved also in cookie. Regenerated when user log in.
-     *
-     * @var string
-     */
+    /** @var string */
     public $logkey;
 
-    /**
-     * Primary key. Varchar (50).
-     *
-     * @var string
-     */
+    /** @var string */
     public $nick;
 
     public function clear()
@@ -137,7 +90,7 @@ class User extends Base\ModelClass
     public function delete(): bool
     {
         if ($this->count() === 1) {
-            // prevent delete all users
+            // impide eliminar el último usuario
             $this->toolBox()->i18nLog()->error('cant-delete-last-user');
             return false;
         }
@@ -145,21 +98,34 @@ class User extends Base\ModelClass
         return parent::delete();
     }
 
-    public function can(string $pagename, string $type = ''): bool
+    /**
+     * Devuelve true si el usuario tiene acceso a la página $pageName. Para comprobar si el usuario
+     * puede modificar la página, se debe pasar 'allowupdate' como parámetro $type.
+     *
+     * @param string $pageName
+     * @param string $type
+     * @return bool
+     */
+    public function can(string $pageName, string $type = ''): bool
     {
+        // si es admin, tiene acceso completo
         if ($this->admin) {
             return true;
         }
 
-        $roleAccess = RoleAccess::allFromUser($this->nick, $pagename);
+        // si no es admin, comprobamos si tiene acceso a la página
+        $roleAccess = RoleAccess::allFromUser($this->nick, $pageName);
         if (empty($roleAccess)) {
+            // no tiene acceso a la página
             return false;
         }
 
+        // si no se ha pasado el parámetro $type, solamente comprobamos si tiene acceso a la página
         if (empty($type)) {
             return true;
         }
 
+        // comprobamos si tiene el permiso $type
         foreach ($roleAccess as $access) {
             if (isset($access->{$type}) && $access->{$type}) {
                 return true;

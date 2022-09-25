@@ -102,8 +102,8 @@
         </div>
         {# -- Pagination -- #}
         {% set pages = currentView.getPagination() %}
-        {% if pages | length > 0 %}
-            <div class="{{ currentView.settings.card ? 'card-footer text-center' : 'pt-3 text-center' }}">
+        {% if pages | length > 4 %}
+            <div class="text-center pb-2">
                 <div class="btn-group">
                     {% for page in currentView.getPagination() %}
                         {% set btnClass = page.active ? 'btn btn-outline-dark active' : 'btn btn-outline-dark' %}
@@ -196,7 +196,6 @@
             </div>
         {% endif %}
         {# -- Pagination -- #}
-        {% set pages = currentView.getPagination() %}
         {% if pages | length > 0 %}
             <div class="{{ currentView.settings.card ? 'card-footer text-center' : 'pt-3 text-center' }}">
                 <div class="btn-group">
