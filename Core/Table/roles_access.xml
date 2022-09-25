@@ -13,6 +13,18 @@
         <default>true</default>
     </column>
     <column>
+        <name>allowexport</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>true</default>
+    </column>
+    <column>
+        <name>allowimport</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>true</default>
+    </column>
+    <column>
         <name>allowupdate</name>
         <type>boolean</type>
         <null>NO</null>
