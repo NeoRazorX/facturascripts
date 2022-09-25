@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
 
@@ -76,26 +77,31 @@ class User extends Base\ModelClass
     /** @var string */
     public $nick;
 
-    public function clear()
+    public function addRole(?string $code): bool
     {
-        parent::clear();
-        $this->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
-        $this->creationdate = date(self::DATE_STYLE);
-        $this->enabled = true;
-        $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa', 1);
-        $this->langcode = FS_LANG;
-        $this->level = self::DEFAULT_LEVEL;
-    }
-
-    public function delete(): bool
-    {
-        if ($this->count() === 1) {
-            // impide eliminar el último usuario
-            $this->toolBox()->i18nLog()->error('cant-delete-last-user');
+        if (empty($code)) {
             return false;
         }
 
-        return parent::delete();
+        $roleUser = new RoleUser();
+        $roleUser->codrole = $code;
+        $roleUser->nick = $this->nick;
+        if (false === $roleUser->save()) {
+            return false;
+        }
+
+        // si el usuario no tiene página de inicio, la ponemos
+        if (empty($this->homepage)) {
+            foreach ($roleUser->getRoleAccess() as $roleAccess) {
+                $this->homepage = $roleAccess->pagename;
+                if ('List' == substr($this->homepage, 0, 4)) {
+                    break;
+                }
+            }
+            $this->save();
+        }
+
+        return true;
     }
 
     /**
@@ -133,6 +139,41 @@ class User extends Base\ModelClass
         }
 
         return false;
+    }
+
+    public function clear()
+    {
+        parent::clear();
+        $this->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
+        $this->creationdate = date(self::DATE_STYLE);
+        $this->enabled = true;
+        $this->idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa', 1);
+        $this->langcode = FS_LANG;
+        $this->level = self::DEFAULT_LEVEL;
+    }
+
+    public function delete(): bool
+    {
+        if ($this->count() === 1) {
+            // impide eliminar el último usuario
+            $this->toolBox()->i18nLog()->error('cant-delete-last-user');
+            return false;
+        }
+
+        return parent::delete();
+    }
+
+    public function getRoles(): array
+    {
+        $roles = [];
+
+        $roleUser = new RoleUser();
+        $where = [new DataBaseWhere('nick', $this->nick)];
+        foreach ($roleUser->all($where, [], 0, 0) as $role) {
+            $roles[] = $role->getRole();
+        }
+
+        return $roles;
     }
 
     public function install(): string
@@ -235,38 +276,17 @@ class User extends Base\ModelClass
 
     protected function saveInsert(array $values = []): bool
     {
-        $result = parent::saveInsert($values);
-        if ($result && false === $this->admin) {
-            $this->setNewRole();
+        if (false === parent::saveInsert($values)) {
+            return false;
         }
 
-        return $result;
-    }
-
-    /**
-     * Assigns the default role to this user.
-     */
-    protected function setNewRole()
-    {
-        $role = new Role();
-        $code = $this->toolBox()->appSettings()->get('default', 'codrole');
-        if (false === $role->loadFromCode($code)) {
-            return;
+        // si el usuario no es admin, le asignamos el rol por defecto
+        if (false === $this->admin) {
+            $code = $this->toolBox()->appSettings()->get('default', 'codrole');
+            $this->addRole($code);
         }
 
-        $roleUser = new RoleUser();
-        $roleUser->codrole = $role->codrole;
-        $roleUser->nick = $this->nick;
-        $roleUser->save();
-
-        // set user homepage
-        foreach ($roleUser->getRoleAccess() as $roleAccess) {
-            $this->homepage = $roleAccess->pagename;
-            if ('List' == substr($this->homepage, 0, 4)) {
-                break;
-            }
-        }
-        $this->save();
+        return true;
     }
 
     protected function testAgent(): bool
