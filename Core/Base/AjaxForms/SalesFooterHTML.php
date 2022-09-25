@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Contract\SalesModInterface;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\SalesDocument;
@@ -47,6 +48,8 @@ class SalesFooterHTML
         foreach (self::$mods as $mod) {
             $mod->applyBefore($model, $formData, $user);
         }
+
+        self::$columnView = $formData['columnView'] ?? AppSettings::get('default', 'columnetosubtotal', 'subtotal');
 
         $model->dtopor1 = isset($formData['dtopor1']) ? (float)$formData['dtopor1'] : $model->dtopor1;
         $model->dtopor2 = isset($formData['dtopor2']) ? (float)$formData['dtopor2'] : $model->dtopor2;
@@ -79,6 +82,7 @@ class SalesFooterHTML
             . self::renderField($i18n, $model, '_newLineBtn')
             . self::renderField($i18n, $model, '_sortableBtn')
             . self::renderField($i18n, $model, '_fastLineInput')
+            . self::renderField($i18n, $model, '_subtotalNetoBtn')
             . '</div>'
             . '<div class="form-row">'
             . self::renderField($i18n, $model, 'observaciones')
@@ -131,6 +135,9 @@ class SalesFooterHTML
 
             case '_sortableBtn':
                 return self::sortableBtn($i18n, $model);
+
+            case '_subtotalNetoBtn':
+                return self::subtotalNetoBtn($i18n);
 
             case 'dtopor1':
                 return self::dtopor1($i18n, $model, 'salesFormActionWait');

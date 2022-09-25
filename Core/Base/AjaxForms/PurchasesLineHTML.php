@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Contract\PurchasesLineModInterface;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
@@ -59,6 +60,8 @@ class PurchasesLineHTML
      */
     public static function apply(PurchaseDocument &$model, array &$lines, array $formData)
     {
+        self::$columnView = $formData['columnView'] ?? AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+
         // update or remove lines
         $rmLineId = $formData['action'] === 'rm-line' ? $formData['selectedLine'] : 0;
         foreach ($lines as $key => $value) {
@@ -131,6 +134,9 @@ class PurchasesLineHTML
 
             // total
             $map['linetotal_' . $idlinea] = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+
+            // neto
+            $map['lineneto_' . $idlinea] = $line->pvptotal;
         }
 
         // mods
@@ -275,7 +281,7 @@ class PurchasesLineHTML
 
         switch ($field) {
             case '_total':
-                return self::lineTotal($i18n, $idlinea, $line, $model, 'purchasesLineTotalWithTaxes');
+                return self::lineTotal($i18n, $idlinea, $line, $model, 'purchasesLineTotalWithTaxes', 'purchasesLineTotalWithoutTaxes');
 
             case 'cantidad':
                 return self::cantidad($i18n, $idlinea, $line, $model, 'purchasesFormActionWait');
