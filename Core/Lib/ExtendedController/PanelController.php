@@ -113,7 +113,7 @@ abstract class PanelController extends BaseController
     }
 
     /**
-     * Sets the tabs position, by default is set to 'left', also supported 'bottom' and 'top'.
+     * Sets the tabs position, by default is set to 'left', also supported 'bottom', 'top' and 'left-bottom.
      *
      * @param string $position
      */
@@ -125,12 +125,12 @@ abstract class PanelController extends BaseController
                 $this->setTemplate('Master/PanelControllerBottom');
                 break;
 
-            case 'top':
-                $this->setTemplate('Master/PanelControllerTop');
+            case 'left-bottom':
+                $this->setTemplate('Master/PanelControllerLeftBottom');
                 break;
 
-            case 'leftbottom':
-                $this->setTemplate('Master/PanelControllerLeftBottom');
+            case 'top':
+                $this->setTemplate('Master/PanelControllerTop');
                 break;
 
             default:

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -27,10 +28,16 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class WidgetDatetime extends BaseWidget
 {
+    protected function inputHtml($type = 'datetime-local', $extraClass = '')
+    {
+        $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
+        $value = empty($this->value) ? '' : date('Y-m-d H:i', strtotime($this->value));
+        return '<input type="' . $type . '" name="' . $this->fieldname . '" value="' . $value
+            . '" class="' . $class . '"' . $this->inputHtmlExtraParams() . '/>';
+    }
 
     /**
-     *
-     * @param object  $model
+     * @param object $model
      * @param Request $request
      */
     public function processFormData(&$model, $request)
@@ -40,7 +47,6 @@ class WidgetDatetime extends BaseWidget
     }
 
     /**
-     * 
      * @return string
      */
     protected function show()
@@ -57,7 +63,6 @@ class WidgetDatetime extends BaseWidget
     }
 
     /**
-     * 
      * @param string $initialClass
      * @param string $alternativeClass
      *
@@ -67,8 +72,8 @@ class WidgetDatetime extends BaseWidget
     {
         $initialClass .= ' text-nowrap';
 
-        /// is today? is the future?
-        if (\strtotime($this->value) >= \strtotime(date('Y-m-d'))) {
+        // is today? is the future?
+        if (strtotime($this->value) >= strtotime(date('Y-m-d'))) {
             $alternativeClass = 'font-weight-bold';
         }
 
