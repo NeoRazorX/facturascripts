@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
+use FacturaScripts\Dinamic\Model\ProductoImagen as DinProductoImagen;
 use FacturaScripts\Dinamic\Model\Stock as DinStock;
 
 /**
@@ -32,7 +33,6 @@ use FacturaScripts\Dinamic\Model\Stock as DinStock;
  */
 class Variante extends Base\ModelClass
 {
-
     use Base\ModelTrait;
     use Base\ProductRelationTrait;
 
@@ -98,7 +98,7 @@ class Variante extends Base\ModelClass
     public $precio;
 
     /**
-     * Reference of the variant. Maximun 30 characteres.
+     * Reference of the variant. Maximum 30 characters.
      *
      * @var string
      */
@@ -134,7 +134,8 @@ class Variante extends Base\ModelClass
         $find = $this->toolBox()->utils()->noHtml(mb_strtolower($query, 'UTF8'));
 
         // añadimos opciones al inicio del where
-        array_unshift($where,
+        array_unshift(
+            $where,
             new DataBaseWhere('LOWER(v.referencia)', $find . '%', 'LIKE'),
             new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
             new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
@@ -211,6 +212,25 @@ class Variante extends Base\ModelClass
         return empty($extra) ? $description : implode($separator1, [$description, implode($separator2, $extra)]);
     }
 
+    /**
+     * @return ProductoImagen[]
+     */
+    public function getImages(): array
+    {
+        // buscamos las imágenes propias de esta variante
+        $image = new DinProductoImagen();
+        $whereVar = [new DataBaseWhere('referencia', $this->referencia)];
+        $orderBy = ['id' => 'ASC'];
+        $images = $image->all($whereVar, $orderBy, 0, 0);
+
+        // añadimos las imágenes del producto para todas las variantes
+        $whereProd = [
+            new DataBaseWhere('idproducto', $this->idproducto),
+            new DataBaseWhere('referencia', null, 'IS')
+        ];
+        return array_merge($images, $image->all($whereProd, $orderBy, 0, 0));
+    }
+
     public function install(): string
     {
         new DinProducto();
@@ -219,10 +239,7 @@ class Variante extends Base\ModelClass
         return parent::install();
     }
 
-    /**
-     * @return float
-     */
-    public function priceWithTax()
+    public function priceWithTax(): float
     {
         return $this->precio * (100 + $this->getProducto()->getTax()->iva) / 100;
     }

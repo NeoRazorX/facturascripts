@@ -186,7 +186,7 @@ class EditProducto extends EditController
 
             case 'EditProductoImagen':
                 $where = [new DataBaseWhere('idproducto', $idproducto)];
-                $orderBy = ['referencia' => 'ASC', 'id' => 'DESC'];
+                $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
                 $view->loadData('', $where, $orderBy);
                 break;
 
