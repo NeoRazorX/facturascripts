@@ -31,8 +31,7 @@ use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 trait CommonSalesPurchases
 {
-
-    protected static $columnView = '';
+    protected static $columnView = 'subtotal';
 
     protected static function cifnif(Translator $i18n, BusinessDocument $model): string
     {
@@ -278,7 +277,7 @@ trait CommonSalesPurchases
 
     protected static function idestado(Translator $i18n, TransformerDocument $model, string $jsName): string
     {
-        // si no se ha guardado no se puede cambiar el estado. Mantenemos el predeterminado
+        // Si no se ha guardado no se puede cambiar el estado. Mantenemos el predeterminado
         if (empty($model->primaryColumnValue())) {
             return '';
         }
@@ -512,24 +511,19 @@ trait CommonSalesPurchases
             . '<div id="columnView" class="btn-group btn-block" role="group">';
 
         if ('subtotal' === self::$columnView) {
-            $html .= '<button type="button" class="btn btn-light active" data-column="subtotal" onclick="changeColumn(this)">'
-                . '<i class="fas fa-eye fa-fw"></i> ' . $i18n->trans('subtotal')
-                . '</button>'
-                . '<button type="button" class="btn btn-light" data-column="neto" onclick="changeColumn(this)">'
-                . '<i class="fas fa-eye-slash fa-fw"></i> ' . $i18n->trans('net')
-                . '</button>';
+            $html .= '<button type="button" class="btn btn-light" data-column="neto" onclick="changeColumn(this)">'
+                . $i18n->trans('net') . '</button>'
+                . '<button type="button" class="btn btn-light active" data-column="subtotal" onclick="changeColumn(this)">'
+                . $i18n->trans('subtotal') . '</button>';
         } else {
-            $html .= '<button type="button" class="btn btn-light" data-column="subtotal" onclick="changeColumn(this)">'
-                . '<i class="fas fa-eye-slash fa-fw"></i> ' . $i18n->trans('subtotal')
-                . '</button>'
-                . '<button type="button" class="btn btn-light active" data-column="neto" onclick="changeColumn(this)">'
-                . '<i class="fas fa-eye fa-fw"></i> ' . $i18n->trans('net')
-                . '</button>';
+            $html .= '<button type="button" class="btn btn-light active" data-column="neto" onclick="changeColumn(this)">'
+                . $i18n->trans('net') . '</button>'
+                . '<button type="button" class="btn btn-light" data-column="subtotal" onclick="changeColumn(this)">'
+                . $i18n->trans('subtotal') . '</button>';
         }
 
         $html .= '</div>'
             . '</div>';
-
         return $html;
     }
 
