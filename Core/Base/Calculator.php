@@ -119,6 +119,7 @@ final class Calculator
             $ivaKey = $line->iva . '|' . $line->recargo;
             if (false === array_key_exists($ivaKey, $subtotals['iva'])) {
                 $subtotals['iva'][$ivaKey] = [
+                    'codimpuesto' => $line->codimpuesto,
                     'iva' => $line->iva,
                     'neto' => 0.0,
                     'netosindto' => 0.0,

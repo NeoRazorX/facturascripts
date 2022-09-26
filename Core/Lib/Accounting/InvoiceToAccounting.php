@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Lib\BusinessDocumentTools;
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
@@ -41,6 +41,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Raúl Jiménez Jiménez          <raljopa@gmail.com>
  */
 class InvoiceToAccounting extends AccountingClass
 {
@@ -232,9 +233,9 @@ class InvoiceToAccounting extends AccountingClass
     protected function addPurchaseTaxLines(Asiento $entry): bool
     {
         $tax = new Impuesto();
-        foreach ($this->subtotals as $key => $value) {
+        foreach ($this->subtotals['iva'] as $key => $value) {
             // search for tax data
-            $tax->loadFromCode($key);
+            $tax->loadFromCode($value['codimpuesto']);
             $subaccount = $this->getTaxSupportedAccount($tax);
             if (false === $subaccount->exists()) {
                 $this->toolBox()->i18nLog()->warning('ivasop-account-not-found');
@@ -312,9 +313,9 @@ class InvoiceToAccounting extends AccountingClass
     protected function addSalesTaxLines(Asiento $entry): bool
     {
         $tax = new Impuesto();
-        foreach ($this->subtotals as $key => $value) {
+        foreach ($this->subtotals['iva'] as $key => $value) {
             // search for tax data
-            $tax->loadFromCode($key);
+            $tax->loadFromCode($value['codimpuesto']);
             $subaccount = $this->getTaxImpactedAccount($tax);
             if (false === $subaccount->exists()) {
                 $this->toolBox()->i18nLog()->warning('ivarep-subaccount-not-found');
@@ -390,8 +391,8 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function loadSubtotals(): bool
     {
-        $tools = new BusinessDocumentTools();
-        $this->subtotals = $tools->getSubtotals($this->document->getLines(), [$this->document->dtopor1, $this->document->dtopor2]);
+
+        $this->subtotals = Calculator::getSubtotals($this->document, $this->document->getLines());
         return !empty($this->document->total);
     }
 
