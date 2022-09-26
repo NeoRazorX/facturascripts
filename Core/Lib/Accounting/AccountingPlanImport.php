@@ -36,6 +36,7 @@ use SimpleXMLElement;
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author Raul Jimenez         <comercial@nazcanetworks.com>
+ * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class AccountingPlanImport
 {
@@ -60,11 +61,6 @@ class AccountingPlanImport
 
     /**
      * Import data from CSV file.
-     *
-     * @param string $filePath
-     * @param string $codejercicio
-     *
-     * @return bool
      */
     public function importCSV(string $filePath, string $codejercicio): bool
     {
@@ -80,33 +76,25 @@ class AccountingPlanImport
 
         // start transaction
         $this->dataBase->beginTransaction();
-        $return = true;
 
         try {
             $this->updateSpecialAccounts();
-            $this->processCsvData($filePath);
-
-            // confirm data
-            $this->dataBase->commit();
-        } catch (Exception $exp) {
-            $this->toolBox()->log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
-            $return = false;
-        } finally {
-            if ($this->dataBase->inTransaction()) {
+            if (false === $this->processCsvData($filePath)) {
                 $this->dataBase->rollback();
+                return false;
             }
-        }
 
-        return $return;
+            $this->dataBase->commit();
+            return true;
+        } catch (Exception $exp) {
+            $this->dataBase->rollback();
+            $this->toolBox()->log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
+            return false;
+        }
     }
 
     /**
      * Import data from XML file.
-     *
-     * @param string $filePath
-     * @param string $codejercicio
-     *
-     * @return bool
      */
     public function importXML(string $filePath, string $codejercicio): bool
     {
@@ -122,38 +110,37 @@ class AccountingPlanImport
 
         // start transaction
         $this->dataBase->beginTransaction();
-        $return = true;
 
         try {
             $this->updateSpecialAccounts();
-            $this->importEpigrafeGroup($data->grupo_epigrafes);
-            $this->importEpigrafe($data->epigrafe);
-            $this->importCuenta($data->cuenta);
-            $this->importSubcuenta($data->subcuenta);
-
-            // confirm data
-            $this->dataBase->commit();
-        } catch (Exception $exp) {
-            $this->toolBox()->log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
-            $return = false;
-        } finally {
-            if ($this->dataBase->inTransaction()) {
+            if (false === $this->importEpigrafeGroup($data->grupo_epigrafes)) {
                 $this->dataBase->rollback();
+                return false;
             }
-        }
+            if (false === $this->importEpigrafe($data->epigrafes)) {
+                $this->dataBase->rollback();
+                return false;
+            }
+            if (false === $this->importCuenta($data->cuenta)) {
+                $this->dataBase->rollback();
+                return false;
+            }
+            if (false === $this->importSubcuenta($data->subcuenta)) {
+                $this->dataBase->rollback();
+                return false;
+            }
 
-        return $return;
+            $this->dataBase->commit();
+            return true;
+        } catch (Exception $exp) {
+            $this->dataBase->rollback();
+            $this->toolBox()->log()->error($exp->getLine() . ' -> ' . $exp->getMessage());
+            return false;
+        }
     }
 
     /**
      * Insert/update and account in accounting plan.
-     *
-     * @param string $code
-     * @param string $definition
-     * @param string $parentCode
-     * @param string $codcuentaesp
-     *
-     * @return bool
      */
     protected function createAccount(string $code, string $definition, string $parentCode = '', string $codcuentaesp = ''): bool
     {
@@ -178,13 +165,6 @@ class AccountingPlanImport
 
     /**
      * Insert or update an account in accounting Plan.
-     *
-     * @param string $code
-     * @param string $description
-     * @param string $parentCode
-     * @param string $codcuentaesp
-     *
-     * @return bool
      */
     protected function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp = ''): bool
     {
@@ -202,7 +182,9 @@ class AccountingPlanImport
         // update exercise configuration
         if ($this->exercise->longsubcuenta != strlen($code)) {
             $this->exercise->longsubcuenta = strlen($code);
-            $this->exercise->save();
+            if (false === $this->exercise->save()) {
+                return false;
+            }
         }
 
         $subaccount->codcuenta = $parentCode;
@@ -231,62 +213,64 @@ class AccountingPlanImport
 
     /**
      * insert Cuenta of accounting plan
-     *
-     * @param SimpleXMLElement $data
      */
-    protected function importCuenta($data)
+    protected function importCuenta(SimpleXMLElement $data): bool
     {
         foreach ($data as $xmlAccount) {
             $accountElement = (array)$xmlAccount;
-            $this->createAccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe'], $accountElement['idcuentaesp']);
+            if (false === $this->createAccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe'], $accountElement['idcuentaesp'])) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * insert Epigrafe of accounting plan
-     *
-     * @param SimpleXMLElement $data
      */
-    protected function importEpigrafe($data)
+    protected function importEpigrafe(SimpleXMLElement $data): bool
     {
         foreach ($data as $xmlEpigrafeElement) {
             $epigrafeElement = (array)$xmlEpigrafeElement;
-            $this->createAccount($epigrafeElement['codepigrafe'], base64_decode($epigrafeElement['descripcion']), $epigrafeElement['codgrupo']);
+            if (false === $this->createAccount($epigrafeElement['codepigrafe'], base64_decode($epigrafeElement['descripcion']), $epigrafeElement['codgrupo']) ) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * Insert Groups of accounting plan
-     *
-     * @param SimpleXMLElement $data
      */
-    protected function importEpigrafeGroup($data)
+    protected function importEpigrafeGroup(SimpleXMLElement $data): bool
     {
         foreach ($data as $xmlEpigrafeGroup) {
             $epigrafeGroupElement = (array)$xmlEpigrafeGroup;
-            $this->createAccount($epigrafeGroupElement['codgrupo'], base64_decode($epigrafeGroupElement['descripcion']));
+            if (false === $this->createAccount($epigrafeGroupElement['codgrupo'], base64_decode($epigrafeGroupElement['descripcion']))) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * Import subaccounts of accounting plan
-     *
-     * @param SimpleXMLElement $data
      */
-    protected function importSubcuenta($data)
+    protected function importSubcuenta(SimpleXMLElement $data): bool
     {
         foreach ($data as $xmlSubaccountElement) {
             $subaccountElement = (array)$xmlSubaccountElement;
-            $this->createSubaccount($subaccountElement['codsubcuenta'], base64_decode($subaccountElement['descripcion']), $subaccountElement['codcuenta']);
+            if (false === $this->createSubaccount($subaccountElement['codsubcuenta'], base64_decode($subaccountElement['descripcion']), $subaccountElement['codcuenta']) ) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * Load accounting plan from CSV File and imports in accounting plan.
-     *
-     * @param string $filePath
      */
-    protected function processCsvData(string $filePath)
+    protected function processCsvData(string $filePath): bool
     {
         $csv = new Csv();
         $csv->auto($filePath);
@@ -329,18 +313,15 @@ class AccountingPlanImport
             }
 
             if (false === $ok) {
-                break;
+                return false;
             }
         }
+
+        return true;
     }
 
     /**
      * Search the parent of account in a accounting Plan.
-     *
-     * @param array $accountCodes
-     * @param string $account
-     *
-     * @return string
      */
     protected function searchParent(array &$accountCodes, string $account): string
     {
