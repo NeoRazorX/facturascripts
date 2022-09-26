@@ -308,7 +308,7 @@ class PurchasesLineHTML
                 return self::recargo($i18n, $idlinea, $line, $model, 'purchasesFormActionWait');
 
             case 'referencia':
-                return self::referencia($i18n, $idlinea, $line, $model);
+                return self::referencia($i18n, $idlinea, $line, $model, self::$num);
 
             case 'suplido':
                 return self::suplido($i18n, $idlinea, $line, $model, 'purchasesFormAction');

@@ -362,7 +362,7 @@ class SalesLineHTML
                 return self::recargo($i18n, $idlinea, $line, $model, 'salesFormActionWait');
 
             case 'referencia':
-                return self::referencia($i18n, $idlinea, $line, $model);
+                return self::referencia($i18n, $idlinea, $line, $model, self::$num);
 
             case 'salto_pagina':
                 return self::genericBool($i18n, $idlinea, $line, $model, 'salto_pagina', 'page-break');
