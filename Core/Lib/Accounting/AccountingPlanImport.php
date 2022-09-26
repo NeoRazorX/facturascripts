@@ -34,8 +34,8 @@ use SimpleXMLElement;
 /**
  * Description of AccountingPlanImport
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Raul Jimenez         <comercial@nazcanetworks.com>
+ * @author       Carlos García Gómez      <carlos@facturascripts.com>
+ * @author       Raul Jimenez             <comercial@nazcanetworks.com>
  * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class AccountingPlanImport
@@ -74,10 +74,9 @@ class AccountingPlanImport
             return false;
         }
 
-        // start transaction
-        $this->dataBase->beginTransaction();
-
         try {
+            $this->dataBase->beginTransaction();
+
             $this->updateSpecialAccounts();
             if (false === $this->processCsvData($filePath)) {
                 $this->dataBase->rollback();
@@ -108,10 +107,9 @@ class AccountingPlanImport
             return false;
         }
 
-        // start transaction
-        $this->dataBase->beginTransaction();
-
         try {
+            $this->dataBase->beginTransaction();
+
             $this->updateSpecialAccounts();
             if (false === $this->importEpigrafeGroup($data->grupo_epigrafes)) {
                 $this->dataBase->rollback();
@@ -144,9 +142,8 @@ class AccountingPlanImport
      */
     protected function createAccount(string $code, string $definition, string $parentCode = '', string $codcuentaesp = ''): bool
     {
-        $account = new Cuenta();
-
         // the account exists?
+        $account = new Cuenta();
         $where = [
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codcuenta', $code)
@@ -168,9 +165,8 @@ class AccountingPlanImport
      */
     protected function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp = ''): bool
     {
-        $subaccount = new Subcuenta();
-
         // the subaccount exists?
+        $subaccount = new Subcuenta();
         $where = [
             new DataBaseWhere('codejercicio', $this->exercise->codejercicio),
             new DataBaseWhere('codsubcuenta', $code)
@@ -217,8 +213,8 @@ class AccountingPlanImport
     protected function importCuenta(SimpleXMLElement $data): bool
     {
         foreach ($data as $xmlAccount) {
-            $accountElement = (array)$xmlAccount;
-            if (false === $this->createAccount($accountElement['codcuenta'], base64_decode($accountElement['descripcion']), $accountElement['codepigrafe'], $accountElement['idcuentaesp'])) {
+            $item = (array)$xmlAccount;
+            if (false === $this->createAccount($item['codcuenta'], base64_decode($item['descripcion']), $item['codepigrafe'], $item['idcuentaesp'])) {
                 return false;
             }
         }
@@ -231,8 +227,8 @@ class AccountingPlanImport
     protected function importEpigrafe(SimpleXMLElement $data): bool
     {
         foreach ($data as $xmlEpigrafeElement) {
-            $epigrafeElement = (array)$xmlEpigrafeElement;
-            if (false === $this->createAccount($epigrafeElement['codepigrafe'], base64_decode($epigrafeElement['descripcion']), $epigrafeElement['codgrupo']) ) {
+            $item = (array)$xmlEpigrafeElement;
+            if (false === $this->createAccount($item['codepigrafe'], base64_decode($item['descripcion']), $item['codgrupo'])) {
                 return false;
             }
         }
@@ -245,8 +241,8 @@ class AccountingPlanImport
     protected function importEpigrafeGroup(SimpleXMLElement $data): bool
     {
         foreach ($data as $xmlEpigrafeGroup) {
-            $epigrafeGroupElement = (array)$xmlEpigrafeGroup;
-            if (false === $this->createAccount($epigrafeGroupElement['codgrupo'], base64_decode($epigrafeGroupElement['descripcion']))) {
+            $item = (array)$xmlEpigrafeGroup;
+            if (false === $this->createAccount($item['codgrupo'], base64_decode($item['descripcion']))) {
                 return false;
             }
         }
@@ -259,8 +255,8 @@ class AccountingPlanImport
     protected function importSubcuenta(SimpleXMLElement $data): bool
     {
         foreach ($data as $xmlSubaccountElement) {
-            $subaccountElement = (array)$xmlSubaccountElement;
-            if (false === $this->createSubaccount($subaccountElement['codsubcuenta'], base64_decode($subaccountElement['descripcion']), $subaccountElement['codcuenta']) ) {
+            $item = (array)$xmlSubaccountElement;
+            if (false === $this->createSubaccount($item['codsubcuenta'], base64_decode($item['descripcion']), $item['codcuenta'])) {
                 return false;
             }
         }
@@ -321,7 +317,7 @@ class AccountingPlanImport
     }
 
     /**
-     * Search the parent of account in a accounting Plan.
+     * Search the parent of account in accounting Plan.
      */
     protected function searchParent(array &$accountCodes, string $account): string
     {
