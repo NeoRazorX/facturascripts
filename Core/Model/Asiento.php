@@ -293,7 +293,7 @@ class Asiento extends Base\ModelOnChangeClass
         $number = 1;
         $sql = 'SELECT idasiento,numero,fecha FROM ' . static::tableName()
             . ' WHERE codejercicio = ' . self::$dataBase->var2str($exercise->codejercicio)
-            . ' ORDER BY fecha ASC, idasiento ASC';
+            . " ORDER BY fecha ASC, CASE WHEN operacion = 'A' THEN 1 ELSE 2 END ASC, idasiento ASC";
 
         $rows = self::$dataBase->selectLimit($sql, self::RENUMBER_LIMIT, $offset);
         while (!empty($rows)) {
