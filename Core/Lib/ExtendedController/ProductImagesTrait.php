@@ -17,56 +17,75 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Model\Base;
+namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use Exception;
+use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
-use FacturaScripts\Dinamic\Model\ProductImage;
+use FacturaScripts\Dinamic\Model\ProductoImagen;
 
 /**
  * Auxiliar Method for images of the product.
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
-trait ProductImageFilesTrait
+trait ProductImagesTrait
 {
-
     abstract protected function addHtmlView(string $viewName, string $fileName, string $modelName, string $viewTitle, string $viewIcon = 'fab fa-html5');
 
-    abstract public static function toolBox();
+    abstract protected function validateFormToken(): bool;
 
     /**
      * Add a list of images.
      *
      * @return bool
      */
-    protected function addFileAction(): bool
+    protected function addImageAction(): bool
     {
-        if (false === $this->checkFileAction()) {
-            return true;
+        if (false === $this->permissions->allowUpdate) {
+            ToolBox::i18nLog()->warning('not-allowed-modify');
+            return false;
+        } elseif (false === $this->validateFormToken()) {
+            return false;
         }
 
         $count = 0;
         $uploadFiles = $this->request->files->get('newfiles', []);
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
-                $this->toolBox()->log()->error($uploadFile->getErrorMessage());
+                ToolBox::log()->error($uploadFile->getErrorMessage());
                 continue;
             }
 
             if (false === strpos($uploadFile->getMimeType(), 'image/')) {
-                $this->toolBox()->i18nLog()->error('file-not-supported');
+                ToolBox::i18nLog()->error('file-not-supported');
                 continue;
             }
 
-            if ($uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName())) {
-                $idfile = $this->createFileAttached($uploadFile->getClientOriginalName());
+            try {
+                $uploadFile->move(FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles', $uploadFile->getClientOriginalName());
+                $idfile = $this->createAttachedFile($uploadFile->getClientOriginalName());
+                if (empty($idfile)) {
+                    ToolBox::i18nLog()->error('record-save-error');
+                    break;
+                }
+
                 $idproduct = $this->createProductImage($idfile);
+                if (empty($idproduct)) {
+                    ToolBox::i18nLog()->error('record-save-error');
+                    break;
+                }
+
                 $this->createFileRelation($idproduct, $idfile);
                 ++$count;
+            } catch (Exception $exc) {
+                ToolBox::i18nLog()->error($exc->getMessage());
+                return true;
             }
         }
-        $this->toolBox()->i18nLog()->notice('images-updated-correctly', ['%count%' => $count]);
+
+        ToolBox::i18nLog()->notice('images-added-correctly', ['%count%' => $count]);
         return true;
     }
 
@@ -75,9 +94,9 @@ trait ProductImageFilesTrait
      *
      * @param string $viewName
      */
-    protected function createViewProductImageFiles(string $viewName = 'EditProductImage')
+    protected function createViewsProductImages(string $viewName = 'EditProductoImagen')
     {
-        $this->addHtmlView($viewName, 'Tab/ProductImage', 'Join\ProductImage', 'images', 'fas fa-images');
+        $this->addHtmlView($viewName, 'Tab/ProductoImagen', 'ProductoImagen', 'images', 'fas fa-images');
     }
 
     /**
@@ -85,59 +104,30 @@ trait ProductImageFilesTrait
      *
      * @return bool
      */
-    protected function deleteFileAction(): bool
+    protected function deleteImageAction(): bool
     {
         if (false === $this->permissions->allowDelete) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-delete');
+            ToolBox::i18nLog()->warning('not-allowed-delete');
+            return true;
+        } elseif (false === $this->validateFormToken()) {
+            return false;
+        }
+
+        $id = $this->request->request->get('idimage');
+        $productImage = new ProductoImagen();
+        if (false === $productImage->loadFromCode($id)) {
             return true;
         }
 
-        $idimage = $this->request->request->get('idimage');
-        $productImage = new ProductImage();
-        if (false === $productImage->loadFromCode($idimage)) {
-            return true;
-        }
-
-        $fileRelation = $productImage->getFile();
-        $file = $fileRelation->getFile();
         $this->dataBase->beginTransaction();
-        try {
-            // FK of product image delete fileRelation.
-            // need delete firt product image to avoid error when setting null the idfile.
-            if ($productImage->delete() && $file->delete()) {
-                $this->dataBase->commit();
-                $this->toolBox()->i18nLog()->notice('record-deleted-correctly');
-            }
-        } finally {
-            if ($this->dataBase->inTransaction()) {
-                $this->dataBase->rollback();
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Check if the user has the necessary permissions.
-     *
-     * @return bool
-     */
-    private function checkFileAction(): bool
-    {
-        if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return false;
+        if ($productImage->delete() && $productImage->getFile()->delete()) {
+            $this->dataBase->commit();
+            ToolBox::i18nLog()->notice('record-deleted-correctly');
+            return true;
         }
 
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
-            $this->toolBox()->i18nLog()->warning('invalid-request');
-            return false;
-        }
-
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            $this->toolBox()->i18nLog()->warning('duplicated-request');
-            return false;
-        }
+        $this->dataBase->rollback();
+        ToolBox::i18nLog()->error('record-delete-error');
         return true;
     }
 
@@ -145,9 +135,10 @@ trait ProductImageFilesTrait
      * Create the record in the AttachedFile model
      * and returns its identifier.
      *
+     * @param string $path
      * @return int
      */
-    private function createFileAttached(string $path): int
+    protected function createAttachedFile(string $path): int
     {
         $newFile = new AttachedFile();
         $newFile->path = $path;
@@ -156,22 +147,21 @@ trait ProductImageFilesTrait
     }
 
     /**
-     * Create the record in the ProductImage model
-     * and returns its identifier.
+     * Create the record in the ProductoImagen model
+     * and returns its idproducto.
      *
      * @param int $idfile
-     * @return int
+     * @return ?int
      */
-    private function createProductImage(int $idfile): int
+    protected function createProductImage(int $idfile): ?int
     {
-        $productImage = new ProductImage();
+        $productImage = new ProductoImagen();
         $productImage->idproducto = $this->request->request->get('idproducto');
         $productImage->idfile = $idfile;
 
         $reference = $this->request->request->get('referencia', '');
         $productImage->referencia = empty($reference) ? null : $reference;
-        $productImage->save();
-        return $productImage->idimage;
+        return $productImage->save() ? $productImage->idproducto : null;
     }
 
     /**
@@ -180,11 +170,11 @@ trait ProductImageFilesTrait
      * @param int $idproduct
      * @param int $idfile
      */
-    private function createFileRelation(int $idproduct, int $idfile)
+    protected function createFileRelation(int $idproduct, int $idfile)
     {
         $fileRelation = new AttachedFileRelation();
         $fileRelation->idfile = $idfile;
-        $fileRelation->model = 'ProductImage';
+        $fileRelation->model = 'Producto';
         $fileRelation->modelid = $idproduct;
         $fileRelation->nick = $this->user->nick;
         $fileRelation->save();
