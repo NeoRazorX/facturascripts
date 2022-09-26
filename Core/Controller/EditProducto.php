@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Core\Model\Base\ProductImageFilesTrait;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Atributo;
 
@@ -29,11 +30,13 @@ use FacturaScripts\Dinamic\Model\Atributo;
  * Controller to edit a single item from the EditProducto model
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello          <yopli2000@gmail.com>
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
 class EditProducto extends EditController
 {
+
+    use ProductImageFilesTrait;
 
     public function getModelClassName(): string
     {
@@ -58,6 +61,7 @@ class EditProducto extends EditController
         $this->createViewsVariants();
         $this->createViewsStock();
         $this->createViewsSuppliers();
+        $this->createViewProductImageFiles();
     }
 
     protected function createViewsStock(string $viewName = 'EditStock')
@@ -93,6 +97,25 @@ class EditProducto extends EditController
         if ($attCount < 1) {
             $this->views[$viewName]->disableColumn('attribute-value-1');
         }
+    }
+
+    /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'add-file':
+                return $this->addFileAction();
+
+            case 'delete-file':
+                return $this->deleteFileAction();
+        }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -160,6 +183,12 @@ class EditProducto extends EditController
                     break;
                 }
                 $this->loadCustomReferenceWidget('EditStock');
+                break;
+
+            case 'EditProductImage':
+                $where = [ new DataBaseWhere('img.idproducto', $idproducto) ];
+                $order = ['img.referencia' => 'ASC', 'rel.creationdate' => 'DESC'];
+                $view->loadData('', $where, $order);
                 break;
 
             case 'EditVariante':
