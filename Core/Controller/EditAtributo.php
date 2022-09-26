@@ -27,7 +27,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  * Controller to edit a single item from the Atributo model
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Artex Trading sa         <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Ramiro Salvador Mamani   <ramiro@solsun.pe>
  * @author Carlos Jiménez Gómez     <carlos@evolunext.es>
  */

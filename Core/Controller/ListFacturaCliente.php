@@ -28,7 +28,7 @@ use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
  * Controller to list the items in the FacturaCliente model
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Raul Jimenez                 <raul.jimenez@nazcanetworks.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */

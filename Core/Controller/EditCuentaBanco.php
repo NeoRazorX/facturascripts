@@ -26,14 +26,14 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  * Controller to edit a single item from the CuentaBanco model
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jferrer@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditCuentaBanco extends EditController
 {
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -56,7 +56,7 @@ class EditCuentaBanco extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createSubAccountingView($viewName = 'ListSubcuenta')
@@ -85,7 +85,7 @@ class EditCuentaBanco extends EditController
     }
 
     /**
-     * 
+     *
      * @param string   $viewName
      * @param BaseView $view
      */

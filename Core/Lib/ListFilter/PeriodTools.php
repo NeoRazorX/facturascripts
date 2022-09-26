@@ -24,7 +24,7 @@ use FacturaScripts\Core\Base\Translator;
 /**
  * PeriodTools give us some basic and common methods for periods.
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class PeriodTools

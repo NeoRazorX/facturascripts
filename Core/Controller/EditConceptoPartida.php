@@ -24,14 +24,14 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  * Controller to edit a single item from the Concepto Partida model
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditConceptoPartida extends EditController
 {
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()

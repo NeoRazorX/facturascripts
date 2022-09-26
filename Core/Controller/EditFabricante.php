@@ -27,13 +27,13 @@ use FacturaScripts\Dinamic\Model\Producto;
  * Controller to edit a single item from the Fabricante model
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditFabricante extends EditController
 {
 
     /**
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -91,7 +91,7 @@ class EditFabricante extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewNewProducts(string $viewName = 'ListProducto-new')
@@ -109,7 +109,7 @@ class EditFabricante extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewProducts(string $viewName = 'ListProducto')
@@ -128,7 +128,7 @@ class EditFabricante extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewProductsCommon(string $viewName)
@@ -145,7 +145,7 @@ class EditFabricante extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $action
      *
      * @return bool

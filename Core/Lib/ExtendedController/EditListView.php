@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
  * View definition for its use in ExtendedControllers
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditListView extends BaseView
 {
@@ -105,7 +105,7 @@ class EditListView extends BaseView
 
     /**
      * Sets edit mode to single line.
-     * 
+     *
      * @param bool $value
      */
     public function setInLine(bool $value)

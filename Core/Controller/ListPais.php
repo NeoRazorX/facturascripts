@@ -24,7 +24,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  * Controller to list the items in the Pais model
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListPais extends ListController
 {
@@ -55,7 +55,7 @@ class ListPais extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewCities(string $viewName = 'ListCiudad')
@@ -67,7 +67,7 @@ class ListPais extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewCountries(string $viewName = 'ListPais')
@@ -80,7 +80,7 @@ class ListPais extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewsDivisas(string $viewName = 'ListDivisa')
@@ -93,7 +93,7 @@ class ListPais extends ListController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createViewProvinces(string $viewName = 'ListProvincia')

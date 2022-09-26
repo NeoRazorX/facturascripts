@@ -26,14 +26,14 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  * Controller to edit a single item from the CuentaEspecial model
  *
  * @author Carlos García Gómez  <carlos@facturascripts.com>
- * @author Artex Trading sa     <jferrer@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditCuentaEspecial extends EditController
 {
 
     /**
      * Returns the model name.
-     * 
+     *
      * @return string
      */
     public function getModelClassName()
@@ -56,7 +56,7 @@ class EditCuentaEspecial extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createAccountsView(string $viewName = 'ListCuenta')
@@ -74,7 +74,7 @@ class EditCuentaEspecial extends EditController
     }
 
     /**
-     * 
+     *
      * @param string $viewName
      */
     protected function createSubaccountsView(string $viewName = 'ListSubcuenta')
@@ -109,7 +109,7 @@ class EditCuentaEspecial extends EditController
     }
 
     /**
-     * 
+     *
      * @param string   $viewName
      * @param BaseView $view
      */

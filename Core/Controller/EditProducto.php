@@ -30,7 +30,7 @@ use FacturaScripts\Dinamic\Model\Atributo;
  * Controller to edit a single item from the EditProducto model
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Jose Antonio Cuello          <yopli2000@gmail.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
  */
 class EditProducto extends EditController

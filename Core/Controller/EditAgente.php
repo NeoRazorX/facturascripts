@@ -28,8 +28,8 @@ use FacturaScripts\Dinamic\Model\TotalModel;
 /**
  * Controller to edit a single item from the Agente model
  *
- * @author       Carlos Garcia Gomez      <carlos@facturascripts.com>
- * @author       Artex Trading sa         <jcuello@artextrading.com>
+ * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class EditAgente extends ComercialContactController

@@ -30,7 +30,7 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
  * Controller to edit a single item from the Cuenta model
  *
  * @author Carlos García Gómez          <carlos@facturascripts.com>
- * @author Artex Trading sa             <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author PC REDNET S.L.               <luismi@pcrednet.com>
  * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
  */

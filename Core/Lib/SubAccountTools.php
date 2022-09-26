@@ -26,7 +26,7 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Set of tools for the management of accounting sub-accounts
  *
- * @author Artex Trading sa     <jcuello@artextrading.com>
+ * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  */
 class SubAccountTools
@@ -49,7 +49,7 @@ class SubAccountTools
 
     /**
      * Returns a list of sub-accounts for the exercise and search term informed.
-     * 
+     *
      * @param array $keys
      *      source: source table name. default 'subcuentas'.
      *      fieldcode: source field name. default 'codsubcuenta'.
@@ -92,7 +92,7 @@ class SubAccountTools
 
     /**
      * Indicates whether the subaccount has associated taxes.
-     * 
+     *
      * @param Subcuenta|string $subAccount
      *
      * @return bool
