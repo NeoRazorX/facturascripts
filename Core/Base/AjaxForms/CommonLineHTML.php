@@ -31,7 +31,24 @@ use FacturaScripts\Dinamic\Model\Variante;
 
 trait CommonLineHTML
 {
+    protected static $columnView = 'subtotal';
+
     private static $regimeniva;
+
+    private static function cantidadRestante(Translator $i18n, BusinessDocumentLine $line, TransformerDocument $model): string
+    {
+        if ($line->servido <= 0 || false === $model->editable) {
+            return '';
+        }
+
+        $restante = $line->cantidad - $line->servido;
+        $html = '<div class="input-group-prepend" title="' . $i18n->trans('quantity-remaining') . '">';
+        $html .= $restante > 0 ?
+            '<span class="input-group-text text-warning rounded-0">' . $restante . '</span>' :
+            '<span class="input-group-text text-success rounded-0">' . $restante . '</span>';
+        $html .= '</div>';
+        return $html;
+    }
 
     private static function codimpuesto(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
@@ -136,16 +153,33 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function lineTotal(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
+    private static function lineTotal(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsSubtotal, string $jsNeto): string
     {
-        $total = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
-        $onclick = $model->editable ?
-            ' onclick="' . $jsFunc . '(\'' . $idlinea . '\')"' :
+        if ('subtotal' === self::$columnView) {
+            $cssSubtotal = '';
+            $cssNeto = 'd-none';
+        } else {
+            $cssSubtotal = 'd-none';
+            $cssNeto = '';
+        }
+
+        $onclickSubtotal = $model->editable ?
+            ' onclick="' . $jsSubtotal . '(\'' . $idlinea . '\')"' :
             '';
-        return '<div class="col col-lg-1 order-7">'
+
+        $onclickNeto = $model->editable ?
+            ' onclick="' . $jsNeto . '(\'' . $idlinea . '\')"' :
+            '';
+
+        $subtotal = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+        return '<div class="col col-lg-1 order-7 columSubtotal ' . $cssSubtotal . '">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
-            . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($total, FS_NF0, '.', '')
-            . '" class="form-control form-control-sm text-lg-right border-0"' . $onclick . ' readonly/></div>';
+            . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($subtotal, FS_NF0, '.', '')
+            . '" class="form-control form-control-sm text-lg-right border-0"' . $onclickSubtotal . ' readonly/></div>'
+            . '<div class="col col-lg-1 order-7 columNeto ' . $cssNeto . '">'
+            . '<div class="d-lg-none mt-2 small">' . $i18n->trans('net') . '</div>'
+            . '<input type="number" name="lineneto_' . $idlinea . '"  value="' . number_format($line->pvptotal, FS_NF0, '.', '')
+            . '" class="form-control form-control-sm text-lg-right border-0"' . $onclickNeto . ' readonly/></div>';
     }
 
     private static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
@@ -171,7 +205,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function referencia(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
+    private static function referencia(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, int $numlinea): string
     {
         $sortable = $model->editable ?
             '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' :
@@ -180,11 +214,11 @@ trait CommonLineHTML
         $variante = new Variante();
         $where = [new DataBaseWhere('referencia', $line->referencia)];
         if (empty($line->referencia)) {
-            return '<div class="col-sm-2 col-lg-1 order-1">' . $sortable . '</div>';
+            return '<div class="col-sm-2 col-lg-1 order-1">' . $sortable . '<div class="small text-break"><small>' . $numlinea . '.</small></div></div>';
         }
 
         $link = $variante->loadFromCode('', $where) ?
-            '<a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>' :
+            '<small>' . $numlinea . '.</small> <a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>' :
             $line->referencia;
 
         return '<div class="col-sm-2 col-lg-1 order-1">'
@@ -264,6 +298,15 @@ trait CommonLineHTML
 
     private static function titleTotal(Translator $i18n): string
     {
-        return '<div class="col-lg-1 text-right order-7">' . $i18n->trans('subtotal') . '</div>';
+        if ('subtotal' === self::$columnView) {
+            $cssSubtotal = '';
+            $cssNeto = 'd-none';
+        } else {
+            $cssSubtotal = 'd-none';
+            $cssNeto = '';
+        }
+
+        return '<div class="col-lg-1 text-right order-7 columSubtotal ' . $cssSubtotal . '">' . $i18n->trans('subtotal') . '</div>'
+            . '<div class="col-lg-1 text-right order-7 columNeto ' . $cssNeto . '">' . $i18n->trans('net') . '</div>';
     }
 }

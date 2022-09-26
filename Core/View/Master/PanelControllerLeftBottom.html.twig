@@ -1,0 +1,74 @@
+{#
+    /**
+     * This file is part of FacturaScripts
+     * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+     *
+     * This program is free software: you can redistribute it and/or modify
+     * it under the terms of the GNU Lesser General Public License as
+     * published by the Free Software Foundation, either version 3 of the
+     * License, or (at your option) any later version.
+     *
+     * This program is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+     * GNU Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public License
+     * along with this program. If not, see http://www.gnu.org/licenses/.
+     */
+#}
+{% extends "Master/PanelController.html.twig" %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {# -- First view -- #}
+                {% set firstView = fsc.views | first %}
+                {% set firstViewName = firstView.getViewName() %}
+                {% do fsc.setCurrentView(firstViewName) %}
+                {{ include(firstView.template) }}
+            </div>
+        </div>
+        {% if fsc.views | length > 1 and firstView.model.exists() %}
+            {% set activeViewName = (fsc.active is empty) or (fsc.active == firstViewName)
+                ? fsc.views[1:]|keys|first
+                : fsc.active
+            %}
+            <div class="row">
+                {# -- Left Panel -- #}
+                <div class="col-lg-2">
+                    <div class="nav nav-pills flex-row flex-lg-column pb-3" id="mainTabs" role="tablist">
+                        {# -- All views but we skipped the first one -- #}
+                        {% for viewName, view in fsc.views[1:] %}
+                            {% set active = (viewName == activeViewName) ? ' active' : '' %}
+                            {% set disable = view.settings.active ? '' : ' disabled' %}
+                                <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-toggle="pill"
+                                href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
+                                 <i class="{{ view.icon }} fa-fw mr-1 d-none d-xl-inline-block"
+                                    aria-hidden="true"></i>{{ view.title }}
+                                 {% if view.count >= 1 and viewName != firstView.getViewName() %}
+                                     <span class='badge badge-secondary mt-lg-1 mb-lg-1 float-lg-right'>{{ view.count }}</span>
+                                 {% endif %}
+                             </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {# -- Right Panel -- #}
+                <div class="col">
+                    <div class="tab-content" id="mainTabsContent">
+                        {# -- All views but we skipped the first one -- #}
+                        {% for viewName, view in fsc.views[1:] %}
+                            {% set active = (viewName == activeViewName) ? ' show active' : '' %}
+                            <div class="tab-pane fade{{ active }}" id="{{ viewName }}" role="tabpanel"
+                                 aria-labelledby="{{ viewName }}-tab">
+                                {% do fsc.setCurrentView(viewName) %}
+                                {{ include(view.template) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

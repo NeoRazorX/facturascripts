@@ -21,6 +21,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Role as DinRole;
 use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
 
 /**
@@ -31,34 +32,27 @@ use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
  */
 class RoleUser extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Role code.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codrole;
 
-    /**
-     * Identifier.
-     *
-     * @var int
-     */
+    /** @var int */
     public $id;
 
-    /**
-     * Nick.
-     *
-     * @var string
-     */
+    /** @var string */
     public $nick;
 
+    public function getRole(): Role
+    {
+        $role = new DinRole();
+        $role->loadFromCode($this->codrole);
+        return $role;
+    }
+
     /**
-     * Return the user role access.
-     * If $pageName is empty, return role access for all pages.
-     * Else return only role access for specified $pageName.
+     * Devuelve la lista de permisos de acceso para el usuario.
+     * Si se proporciona un $pageName, devuelve el permiso para esa página.
      *
      * @param string $pageName
      *

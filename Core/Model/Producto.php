@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\Fabricante as DinFabricante;
+use FacturaScripts\Dinamic\Model\Familia as DinFamilia;
+use FacturaScripts\Dinamic\Model\ProductoImagen as DinProductoImagen;
 use FacturaScripts\Dinamic\Model\Variante as DinVariante;
 
 /**
@@ -29,7 +32,6 @@ use FacturaScripts\Dinamic\Model\Variante as DinVariante;
  */
 class Producto extends Base\ModelClass
 {
-
     use Base\ModelTrait;
     use Base\TaxRelationTrait;
 
@@ -64,21 +66,21 @@ class Producto extends Base\ModelClass
     public $codfamilia;
 
     /**
-     * Sub-account code for purchases.
+     * Account code for purchases.
      *
      * @var string
      */
     public $codsubcuentacom;
 
     /**
-     * Code for the shopping sub-account, but with IRPF.
+     * Code for the shopping account, but with IRPF.
      *
      * @var string
      */
     public $codsubcuentairpfcom;
 
     /**
-     * Sub-account code for sales.
+     * Aaccount code for sales.
      *
      * @var string
      */
@@ -185,8 +187,33 @@ class Producto extends Base\ModelClass
         $this->ventasinstock = (bool)$this->toolBox()->appSettings()->get('default', 'ventasinstock', false);
     }
 
+    public function getFabricante(): Fabricante
+    {
+        $fabricante = new DinFabricante();
+        $fabricante->loadFromCode($this->codfabricante);
+        return $fabricante;
+    }
+
+    public function getFamilia(): Familia
+    {
+        $familia = new DinFamilia();
+        $familia->loadFromCode($this->codfamilia);
+        return $familia;
+    }
+
     /**
-     * @return DinVariante[]
+     * @return ProductoImagen[]
+     */
+    public function getImages(): array
+    {
+        $image = new DinProductoImagen();
+        $where = [new DataBaseWhere('idproducto', $this->idproducto)];
+        $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
+        return $image->all($where, $orderBy, 0, 0);
+    }
+
+    /**
+     * @return Variante[]
      */
     public function getVariants(): array
     {

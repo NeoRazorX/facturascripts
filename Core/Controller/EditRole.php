@@ -55,6 +55,8 @@ class EditRole extends EditController
             $rules[$roleAccess->pagename]['onlyOwner'] = $roleAccess->onlyownerdata;
             $rules[$roleAccess->pagename]['update'] = $roleAccess->allowupdate;
             $rules[$roleAccess->pagename]['delete'] = $roleAccess->allowdelete;
+            $rules[$roleAccess->pagename]['export'] = $roleAccess->allowexport;
+            $rules[$roleAccess->pagename]['import'] = $roleAccess->allowimport;
         }
 
         return $rules;
@@ -113,6 +115,8 @@ class EditRole extends EditController
         $onlyOwner = $this->request->request->get('onlyOwner', []);
         $update = $this->request->request->get('update', []);
         $delete = $this->request->request->get('delete', []);
+        $export = $this->request->request->get('export', []);
+        $import = $this->request->request->get('import', []);
 
         // update or delete current access rules
         $roleAccessModel = new RoleAccess();
@@ -129,6 +133,8 @@ class EditRole extends EditController
             $roleAccess->onlyownerdata = is_array($onlyOwner) && in_array($roleAccess->pagename, $onlyOwner);
             $roleAccess->allowupdate = is_array($update) && in_array($roleAccess->pagename, $update);
             $roleAccess->allowdelete = is_array($delete) && in_array($roleAccess->pagename, $delete);
+            $roleAccess->allowexport = is_array($export) && in_array($roleAccess->pagename, $export);
+            $roleAccess->allowimport = is_array($import) && in_array($roleAccess->pagename, $import);
             $roleAccess->save();
         }
 
@@ -152,6 +158,8 @@ class EditRole extends EditController
             $newRoleAccess->onlyownerdata = is_array($onlyOwner) && in_array($pageName, $onlyOwner);
             $newRoleAccess->allowupdate = is_array($update) && in_array($pageName, $update);
             $newRoleAccess->allowdelete = is_array($delete) && in_array($pageName, $delete);
+            $newRoleAccess->allowexport = is_array($export) && in_array($pageName, $export);
+            $newRoleAccess->allowimport = is_array($import) && in_array($pageName, $import);
             $newRoleAccess->save();
         }
 

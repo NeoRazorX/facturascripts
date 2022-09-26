@@ -20,9 +20,10 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
-use FacturaScripts\Dinamic\Model\Almacen;
+use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Dinamic\Model\Atributo;
 
 /**
@@ -34,6 +35,7 @@ use FacturaScripts\Dinamic\Model\Atributo;
  */
 class EditProducto extends EditController
 {
+    use ProductImagesTrait;
 
     public function getModelClassName(): string
     {
@@ -56,6 +58,7 @@ class EditProducto extends EditController
     {
         parent::createViews();
         $this->createViewsVariants();
+        $this->createViewsProductImages();
         $this->createViewsStock();
         $this->createViewsSuppliers();
     }
@@ -64,8 +67,8 @@ class EditProducto extends EditController
     {
         $this->addEditListView($viewName, 'Stock', 'stock', 'fas fa-dolly');
 
-        $almacen = new Almacen();
-        if ($almacen->count() <= 1) {
+        // si solamente hay un almacén, ocultamos la columna
+        if (count(Almacenes::all()) <= 1) {
             $this->views[$viewName]->disableColumn('warehouse');
         }
     }
@@ -93,6 +96,25 @@ class EditProducto extends EditController
         if ($attCount < 1) {
             $this->views[$viewName]->disableColumn('attribute-value-1');
         }
+    }
+
+    /**
+     * Run the actions that alter data before reading it.
+     *
+     * @param string $action
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'add-image':
+                return $this->addImageAction();
+
+            case 'delete-image':
+                return $this->deleteImageAction();
+        }
+
+        return parent::execPreviousAction($action);
     }
 
     /**
@@ -160,6 +182,12 @@ class EditProducto extends EditController
                     break;
                 }
                 $this->loadCustomReferenceWidget('EditStock');
+                break;
+
+            case 'EditProductoImagen':
+                $where = [new DataBaseWhere('idproducto', $idproducto)];
+                $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
+                $view->loadData('', $where, $orderBy);
                 break;
 
             case 'EditVariante':

@@ -31,6 +31,8 @@ use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 trait CommonSalesPurchases
 {
+    protected static $columnView = 'subtotal';
+
     protected static function cifnif(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = $model->editable ? 'name="cifnif" maxlength="30" autocomplete="off"' : 'disabled=""';
@@ -275,7 +277,7 @@ trait CommonSalesPurchases
 
     protected static function idestado(Translator $i18n, TransformerDocument $model, string $jsName): string
     {
-        // si no se ha guardado no se puede cambiar el estado. Mantenemos el predeterminado
+        // Si no se ha guardado no se puede cambiar el estado. Mantenemos el predeterminado
         if (empty($model->primaryColumnValue())) {
             return '';
         }
@@ -398,7 +400,7 @@ trait CommonSalesPurchases
     protected static function newLineBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         return $model->editable ? '<div class="col-3 col-md-auto">'
-            . '<a href="#" class="btn btn-success btn-spin-action mb-3" onclick="return ' . $jsName . '(\'new-line\', \'0\');">'
+            . '<a href="#" class="btn btn-success btn-block btn-spin-action mb-3" onclick="return ' . $jsName . '(\'new-line\', \'0\');">'
             . '<i class="fas fa-plus fa-fw"></i> ' . $i18n->trans('line') . '</a></div>' : '';
     }
 
@@ -497,10 +499,32 @@ trait CommonSalesPurchases
     protected static function sortableBtn(Translator $i18n, BusinessDocument $model): string
     {
         return $model->editable ? '<div class="col-4 col-md-auto">'
-            . '<button type="button" class="btn btn-light mb-3" id="sortableBtn">'
+            . '<button type="button" class="btn btn-block btn-light mb-3" id="sortableBtn">'
             . '<i class="fas fa-arrows-alt-v fa-fw"></i> ' . $i18n->trans('move-lines')
             . '</button>'
             . '</div>' : '';
+    }
+
+    protected static function subtotalNetoBtn(Translator $i18n): string
+    {
+        $html = '<div class="col-12 col-md-auto mb-3">'
+            . '<div id="columnView" class="btn-group btn-block" role="group">';
+
+        if ('subtotal' === self::$columnView) {
+            $html .= '<button type="button" class="btn btn-light" data-column="neto" onclick="changeColumn(this)">'
+                . $i18n->trans('net') . '</button>'
+                . '<button type="button" class="btn btn-light active" data-column="subtotal" onclick="changeColumn(this)">'
+                . $i18n->trans('subtotal') . '</button>';
+        } else {
+            $html .= '<button type="button" class="btn btn-light active" data-column="neto" onclick="changeColumn(this)">'
+                . $i18n->trans('net') . '</button>'
+                . '<button type="button" class="btn btn-light" data-column="subtotal" onclick="changeColumn(this)">'
+                . $i18n->trans('subtotal') . '</button>';
+        }
+
+        $html .= '</div>'
+            . '</div>';
+        return $html;
     }
 
     protected static function tasaconv(Translator $i18n, BusinessDocument $model): string

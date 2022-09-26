@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Contract\PurchasesLineModInterface;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
@@ -59,6 +60,8 @@ class PurchasesLineHTML
      */
     public static function apply(PurchaseDocument &$model, array &$lines, array $formData)
     {
+        self::$columnView = $formData['columnView'] ?? AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+
         // update or remove lines
         $rmLineId = $formData['action'] === 'rm-line' ? $formData['selectedLine'] : 0;
         foreach ($lines as $key => $value) {
@@ -131,6 +134,9 @@ class PurchasesLineHTML
 
             // total
             $map['linetotal_' . $idlinea] = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+
+            // neto
+            $map['lineneto_' . $idlinea] = $line->pvptotal;
         }
 
         // mods
@@ -215,14 +221,20 @@ class PurchasesLineHTML
         if (false === $model->editable) {
             return '<div class="col-sm-2 col-lg-1 order-3">'
                 . '<div class="d-lg-none mt-2 small">' . $i18n->trans('quantity') . '</div>'
+                . '<div class="input-group input-group-sm">'
+                . self::cantidadRestante($i18n, $line, $model)
                 . '<input type="number" class="form-control form-control-sm text-lg-right border-0" value="' . $line->cantidad . '" disabled=""/>'
+                . '</div>'
                 . '</div>';
         }
 
         return '<div class="col-sm-2 col-lg-1 order-3">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('quantity') . '</div>'
+            . '<div class="input-group input-group-sm">'
+            . self::cantidadRestante($i18n, $line, $model)
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
             . '" class="form-control form-control-sm text-lg-right border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"/>'
+            . '</div>'
             . '</div>';
     }
 
@@ -269,7 +281,7 @@ class PurchasesLineHTML
 
         switch ($field) {
             case '_total':
-                return self::lineTotal($i18n, $idlinea, $line, $model, 'purchasesLineTotalWithTaxes');
+                return self::lineTotal($i18n, $idlinea, $line, $model, 'purchasesLineTotalWithTaxes', 'purchasesLineTotalWithoutTaxes');
 
             case 'cantidad':
                 return self::cantidad($i18n, $idlinea, $line, $model, 'purchasesFormActionWait');
@@ -296,7 +308,7 @@ class PurchasesLineHTML
                 return self::recargo($i18n, $idlinea, $line, $model, 'purchasesFormActionWait');
 
             case 'referencia':
-                return self::referencia($i18n, $idlinea, $line, $model);
+                return self::referencia($i18n, $idlinea, $line, $model, self::$num);
 
             case 'suplido':
                 return self::suplido($i18n, $idlinea, $line, $model, 'purchasesFormAction');

@@ -38,6 +38,7 @@ final class AppCron extends App
         $this->response->headers->set('Content-Type', 'text/plain');
 
         $title = <<<END
+
   ______         _                    _____           _       _       
  |  ____|       | |                  / ____|         (_)     | |      
  | |__ __ _  ___| |_ _   _ _ __ __ _| (___   ___ _ __ _ _ __ | |_ ___ 

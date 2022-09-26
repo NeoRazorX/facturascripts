@@ -26,6 +26,10 @@ use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\ImpuestoZona;
 
+/**
+ * @author       Carlos García Gómez      <carlos@facturascripts.com>
+ * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
+ */
 final class Calculator
 {
     /**
@@ -62,6 +66,10 @@ final class Calculator
         $doc->totalrecargo = $subtotals['totalrecargo'];
         $doc->totalsuplidos = $subtotals['totalsuplidos'];
 
+        if (isset($doc->totalcoste)) {
+            $doc->totalcoste = $subtotals['totalcoste'];
+        }
+
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {
             // si el mod devuelve false, terminamos
@@ -86,7 +94,7 @@ final class Calculator
             'iva' => [],
             'neto' => 0.0,
             'netosindto' => 0.0,
-            'total' => 0.0,
+            'totalcoste' => 0.0,
             'totalirpf' => 0.0,
             'totaliva' => 0.0,
             'totalrecargo' => 0.0,
@@ -111,6 +119,7 @@ final class Calculator
             $ivaKey = $line->iva . '|' . $line->recargo;
             if (false === array_key_exists($ivaKey, $subtotals['iva'])) {
                 $subtotals['iva'][$ivaKey] = [
+                    'codimpuesto' => $line->codimpuesto,
                     'iva' => $line->iva,
                     'neto' => 0.0,
                     'netosindto' => 0.0,
@@ -135,9 +144,14 @@ final class Calculator
                     $pvpTotal * $line->recargo :
                     $pvpTotal * $line->recargo / 100;
             }
+
+            // coste
+            if (isset($line->coste)) {
+                $subtotals['totalcoste'] += $line->cantidad * $line->coste;
+            }
         }
 
-        // redondeamos los IVAs
+        // redondeamos los IVA
         foreach ($subtotals['iva'] as $key => $value) {
             $subtotals['iva'][$key]['neto'] = round($value['neto'], FS_NF0);
             $subtotals['iva'][$key]['netosindto'] = round($value['netosindto'], FS_NF0);
@@ -160,8 +174,8 @@ final class Calculator
         $subtotals['totalsuplidos'] = round($subtotals['totalsuplidos'], FS_NF0);
 
         // calculamos el total
-        $subtotals['total'] = $subtotals['neto'] + $subtotals['totalsuplidos'] + $subtotals['totaliva']
-            + $subtotals['totalrecargo'] - $subtotals['totalirpf'];
+        $subtotals['total'] = round($subtotals['neto'] + $subtotals['totalsuplidos'] + $subtotals['totaliva']
+            + $subtotals['totalrecargo'] - $subtotals['totalirpf'], FS_NF0);
 
         // turno para que los mods apliquen cambios
         foreach (self::$mods as $mod) {

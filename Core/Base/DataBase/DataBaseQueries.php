@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
  * Interface to manage the SQL statements needed by the database
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 interface DataBaseQueries
@@ -34,7 +35,7 @@ interface DataBaseQueries
      *
      * @return string
      */
-    public function sql2Int($colName);
+    public function sql2Int(string $colName): string;
 
     /**
      * SQL statement to add a constraint to a given table
@@ -45,47 +46,47 @@ interface DataBaseQueries
      *
      * @return string
      */
-    public function sqlAddConstraint($tableName, $constraintName, $sql);
+    public function sqlAddConstraint(string $tableName, string $constraintName, string $sql): string;
 
     /**
      * SQL statement to add a given table column
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlAlterAddColumn($tableName, $colData);
+    public function sqlAlterAddColumn(string $tableName, array $colData): string;
 
     /**
      * SQL statement to alter a given table column's default value
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlAlterColumnDefault($tableName, $colData);
+    public function sqlAlterColumnDefault(string $tableName, array $colData): string;
 
     /**
      * SQL statement to alter a given table column's null constraint
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlAlterColumnNull($tableName, $colData);
+    public function sqlAlterColumnNull(string $tableName, array $colData): string;
 
     /**
      * SQL statement to alter a given table column's definition
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlAlterModifyColumn($tableName, $colData);
+    public function sqlAlterModifyColumn(string $tableName, array $colData): string;
 
     /**
      * SQL statement to get the columns in a table
@@ -94,7 +95,7 @@ interface DataBaseQueries
      *
      * @return string
      */
-    public function sqlColumns($tableName);
+    public function sqlColumns(string $tableName): string;
 
     /**
      * SQL statement to get the table constraints
@@ -103,7 +104,7 @@ interface DataBaseQueries
      *
      * @return string
      */
-    public function sqlConstraints($tableName);
+    public function sqlConstraints(string $tableName): string;
 
     /**
      * SQL statement to get the table extended constraints
@@ -112,28 +113,28 @@ interface DataBaseQueries
      *
      * @return string
      */
-    public function sqlConstraintsExtended($tableName);
+    public function sqlConstraintsExtended(string $tableName): string;
 
     /**
      * SQL statement to create a table
      *
      * @param string $tableName
-     * @param array  $columns
-     * @param array  $constraints
+     * @param array $columns
+     * @param array $constraints
      *
      * @return string
      */
-    public function sqlCreateTable($tableName, $columns, $constraints);
+    public function sqlCreateTable(string $tableName, array $columns, array $constraints): string;
 
     /**
      * SQL statement to delete a given table column's constraint
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlDropConstraint($tableName, $colData);
+    public function sqlDropConstraint(string $tableName, array $colData): string;
 
     /**
      * SQL statement to drop a given table
@@ -142,7 +143,7 @@ interface DataBaseQueries
      *
      * @return string
      */
-    public function sqlDropTable($tableName);
+    public function sqlDropTable(string $tableName): string;
 
     /**
      * SQL statement to get a given table's indexes
@@ -151,14 +152,14 @@ interface DataBaseQueries
      *
      * @return string
      */
-    public function sqlIndexes($tableName);
+    public function sqlIndexes(string $tableName): string;
 
     /**
      * SQL statement to get the last value of a sequence or ID
      *
      * @return string
      */
-    public function sqlLastValue();
+    public function sqlLastValue(): string;
 
     /**
      * Generates the SQL to establish the given restrictions.
@@ -167,5 +168,5 @@ interface DataBaseQueries
      *
      * @return string
      */
-    public function sqlTableConstraints($xmlCons);
+    public function sqlTableConstraints(array $xmlCons): string;
 }

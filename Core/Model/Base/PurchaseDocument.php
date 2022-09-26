@@ -220,12 +220,15 @@ abstract class PurchaseDocument extends TransformerDocument
         $supplierProd = new ProductoProveedor();
         $where = [
             new DataBaseWhere('codproveedor', $this->codproveedor),
-            new DataBaseWhere('referencia', $newLine->referencia)
+            new DataBaseWhere('referencia', $newLine->referencia),
+            new DataBaseWhere('coddivisa', $this->coddivisa),
         ];
         if ($supplierProd->loadFromCode('', $where) && $supplierProd->precio > 0) {
             $newLine->dtopor = $supplierProd->dtopor;
             $newLine->dtopor2 = $supplierProd->dtopor2;
             $newLine->pvpunitario = $supplierProd->precio;
+        } else {
+            $newLine->pvpunitario = 0;
         }
     }
 

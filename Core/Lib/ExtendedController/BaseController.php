@@ -344,7 +344,8 @@ abstract class BaseController extends Controller
 
     protected function exportAction()
     {
-        if (false === $this->views[$this->active]->settings['btnPrint']) {
+        if (false === $this->views[$this->active]->settings['btnPrint']
+            || false === $this->permissions->allowExport) {
             $this->toolBox()->i18nLog()->warning('no-print-permission');
             return;
         }

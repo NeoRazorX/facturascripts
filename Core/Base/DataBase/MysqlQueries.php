@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 /**
  * Class that gathers all the needed SQL sentences by the database engine
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class MysqlQueries implements DataBaseQueries
@@ -34,7 +35,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sql2Int($colName)
+    public function sql2Int(string $colName): string
     {
         return 'CAST(' . $colName . ' as UNSIGNED)';
     }
@@ -48,7 +49,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlAddConstraint($tableName, $constraintName, $sql)
+    public function sqlAddConstraint(string $tableName, string $constraintName, string $sql): string
     {
         return 'ALTER TABLE ' . $tableName . ' ADD CONSTRAINT ' . $constraintName
             . ' ' . $this->fixPostgresql($sql) . ';';
@@ -58,11 +59,11 @@ class MysqlQueries implements DataBaseQueries
      * Returns the SQL needed to add a column to a table
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlAlterAddColumn($tableName, $colData)
+    public function sqlAlterAddColumn(string $tableName, array $colData): string
     {
         return 'ALTER TABLE ' . $tableName . ' ADD `' . $colData['name'] . '` '
             . $this->getTypeAndConstraints($colData) . ';';
@@ -72,11 +73,11 @@ class MysqlQueries implements DataBaseQueries
      * Returns the needed SQL to alter a column default constraint
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlAlterColumnDefault($tableName, $colData)
+    public function sqlAlterColumnDefault(string $tableName, array $colData): string
     {
         return $colData['type'] === 'serial' ? '' : $this->sqlAlterModifyColumn($tableName, $colData);
     }
@@ -85,11 +86,11 @@ class MysqlQueries implements DataBaseQueries
      * SQL statement to alter a null constraint in a table column
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlAlterColumnNull($tableName, $colData)
+    public function sqlAlterColumnNull(string $tableName, array $colData): string
     {
         return $this->sqlAlterModifyColumn($tableName, $colData);
     }
@@ -98,11 +99,11 @@ class MysqlQueries implements DataBaseQueries
      * Returns the SQL needed to alter a column in a table
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlAlterModifyColumn($tableName, $colData)
+    public function sqlAlterModifyColumn(string $tableName, array $colData): string
     {
         $sql = 'ALTER TABLE ' . $tableName . ' MODIFY `' . $colData['name'] . '` '
             . $this->getTypeAndConstraints($colData) . ';';
@@ -117,7 +118,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlColumns($tableName)
+    public function sqlColumns(string $tableName): string
     {
         return 'SHOW COLUMNS FROM `' . $tableName . '`;';
     }
@@ -129,7 +130,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlConstraints($tableName)
+    public function sqlConstraints(string $tableName): string
     {
         return 'SELECT CONSTRAINT_NAME as name, CONSTRAINT_TYPE as type'
             . ' FROM information_schema.table_constraints '
@@ -144,7 +145,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlConstraintsExtended($tableName)
+    public function sqlConstraintsExtended(string $tableName): string
     {
         return 'SELECT t1.constraint_name as name,'
             . ' t1.constraint_type as type,'
@@ -170,12 +171,12 @@ class MysqlQueries implements DataBaseQueries
      * Returns the SQL needed to create a table with the given structure
      *
      * @param string $tableName
-     * @param array  $columns
-     * @param array  $constraints
+     * @param array $columns
+     * @param array $constraints
      *
      * @return string
      */
-    public function sqlCreateTable($tableName, $columns, $constraints)
+    public function sqlCreateTable(string $tableName, array $columns, array $constraints): string
     {
         $fields = '';
         foreach ($columns as $col) {
@@ -184,8 +185,8 @@ class MysqlQueries implements DataBaseQueries
 
         $sql = $this->fixPostgresql(substr($fields, 2));
 
-        $charset = defined('FS_MYSQL_CHARSET') ? \FS_MYSQL_CHARSET : 'utf8';
-        $collate = defined('FS_MYSQL_COLLATE') ? \FS_MYSQL_COLLATE : 'utf8_bin';
+        $charset = defined('FS_MYSQL_CHARSET') ? FS_MYSQL_CHARSET : 'utf8';
+        $collate = defined('FS_MYSQL_COLLATE') ? FS_MYSQL_COLLATE : 'utf8_bin';
         return 'CREATE TABLE ' . $tableName . ' (' . $sql
             . $this->sqlTableConstraints($constraints) . ') '
             . 'ENGINE=InnoDB DEFAULT CHARSET=' . $charset . ' COLLATE=' . $collate . ';';
@@ -195,11 +196,11 @@ class MysqlQueries implements DataBaseQueries
      * Returns the SQL needed to remove a constraint from a table
      *
      * @param string $tableName
-     * @param array  $colData
+     * @param array $colData
      *
      * @return string
      */
-    public function sqlDropConstraint($tableName, $colData)
+    public function sqlDropConstraint(string $tableName, array $colData): string
     {
         $start = 'ALTER TABLE ' . $tableName . ' DROP';
         switch ($colData['type']) {
@@ -221,7 +222,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlDropTable($tableName)
+    public function sqlDropTable(string $tableName): string
     {
         return 'DROP TABLE IF EXISTS ' . $tableName . ';';
     }
@@ -233,7 +234,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlIndexes($tableName)
+    public function sqlIndexes(string $tableName): string
     {
         return 'SHOW INDEXES FROM ' . $tableName . ';';
     }
@@ -243,7 +244,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlLastValue()
+    public function sqlLastValue(): string
     {
         return 'SELECT LAST_INSERT_ID() as num;';
     }
@@ -255,7 +256,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    public function sqlTableConstraints($xmlCons)
+    public function sqlTableConstraints(array $xmlCons): string
     {
         $sql = '';
         foreach ($xmlCons as $res) {
@@ -272,7 +273,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    private function fixPostgresql($sql)
+    private function fixPostgresql(string $sql): string
     {
         $search = ['::character varying', 'without time zone', 'now()', 'CURRENT_TIMESTAMP', 'CURRENT_DATE'];
         $replace = ['', '', "'00:00'", "'" . date('Y-m-d') . " 00:00:00'", date("'Y-m-d'")];
@@ -286,7 +287,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    private function getConstraints($colData)
+    private function getConstraints(array $colData): string
     {
         $notNull = ($colData['null'] === 'NO');
         $result = ' NULL';
@@ -311,7 +312,7 @@ class MysqlQueries implements DataBaseQueries
      *
      * @return string
      */
-    private function getTypeAndConstraints($colData)
+    private function getTypeAndConstraints(array $colData): string
     {
         switch ($colData['type']) {
             case 'serial':

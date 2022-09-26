@@ -342,6 +342,10 @@ class AccountingLineHTML
     protected static function getSubcuenta(string $code, Asiento $model): Subcuenta
     {
         $subcuenta = new Subcuenta();
+        if (empty($code) || empty($model->codejercicio)) {
+            return $subcuenta;
+        }
+
         $where = [
             new DataBaseWhere('codejercicio', $model->codejercicio),
             new DataBaseWhere('codsubcuenta', $subcuenta->transformCodsubcuenta($code, $model->codejercicio))

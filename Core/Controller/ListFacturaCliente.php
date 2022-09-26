@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
@@ -33,13 +34,7 @@ use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
  */
 class ListFacturaCliente extends ListBusinessDocument
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -48,34 +43,26 @@ class ListFacturaCliente extends ListBusinessDocument
         return $data;
     }
 
-    /**
-     * Load views
-     */
     protected function createViews()
     {
+        // listado de facturas de cliente
         $this->createViewSales('ListFacturaCliente', 'FacturaCliente', 'invoices');
-        if ($this->permissions->onlyOwnerData === false) {
-            $this->createViewLines('ListLineaFacturaCliente', 'LineaFacturaCliente');
+
+        // si el usuario solamente tiene permiso para ver lo suyo, no añadimos el resto de pestañas
+        if ($this->permissions->onlyOwnerData) {
+            return;
         }
+
+        // líneas de facturas de cliente
+        $this->createViewLines('ListLineaFacturaCliente', 'LineaFacturaCliente');
+
+        // recibos de cliente
         $this->createViewReceipts();
+
+        // facturas rectificativas
+        $this->createViewRefunds();
     }
 
-    /**
-     * @param string $viewName
-     * @param string $modelName
-     * @param string $label
-     */
-    protected function createViewSales(string $viewName, string $modelName, string $label)
-    {
-        parent::createViewSales($viewName, $modelName, $label);
-        $this->addFilterCheckbox('ListFacturaCliente', 'pagada', 'unpaid', 'pagada', '=', false);
-        $this->addFilterCheckbox('ListFacturaCliente', 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
-        $this->addButtonLockInvoice('ListFacturaCliente');
-    }
-
-    /**
-     * @param string $viewName
-     */
     protected function createViewReceipts(string $viewName = 'ListReciboCliente')
     {
         $this->addView($viewName, 'ReciboCliente', 'receipts', 'fas fa-dollar-sign');
@@ -85,11 +72,12 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addOrderBy($viewName, ['importe'], 'amount');
         $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
 
-        // filters
+        // filtros
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
         $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
+        $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');
 
         $currencies = Divisas::codeModel();
         if (count($currencies) > 2) {
@@ -101,12 +89,46 @@ class ListFacturaCliente extends ListBusinessDocument
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymethods);
         }
 
-        $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');
-
-        // buttons
+        // botones
         $this->addButtonPayReceipt($viewName);
 
-        // settings
+        // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    protected function createViewRefunds(string $viewName = 'ListFacturaCliente-rect')
+    {
+        $this->addView($viewName, 'FacturaCliente', 'refunds', 'fas fa-share-square');
+        $this->addSearchFields($viewName, ['codigo', 'codigorect', 'numero2', 'observaciones']);
+        $this->addOrderBy($viewName, ['fecha', 'idfactura'], 'date', 2);
+        $this->addOrderBy($viewName, ['total'], 'total');
+
+        // filtro de fecha
+        $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
+
+        // añadimos un filtro select where para forzar las que tienen idfacturarect
+        $this->addFilterSelectWhere($viewName, 'idfacturarect', [
+            [
+                'label' => self::toolBox()::i18n()->trans('rectified-invoices'),
+                'where' => [new DataBaseWhere('idfacturarect', null, 'IS NOT')]
+            ]
+        ]);
+
+        // desactivamos el botón nuevo
+        $this->setSettings($viewName, 'btnNew', false);
+
+        // mostramos la columna original
+        $this->views[$viewName]->disableColumn('original', false);
+    }
+
+    protected function createViewSales(string $viewName, string $modelName, string $label)
+    {
+        parent::createViewSales($viewName, $modelName, $label);
+        $this->addSearchFields($viewName, ['codigorect']);
+
+        // filtros
+        $this->addFilterCheckbox('ListFacturaCliente', 'pagada', 'unpaid', 'pagada', '=', false);
+        $this->addFilterCheckbox('ListFacturaCliente', 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
+        $this->addButtonLockInvoice('ListFacturaCliente');
     }
 }

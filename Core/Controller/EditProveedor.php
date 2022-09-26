@@ -28,9 +28,10 @@ use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
 /**
  * Controller to edit a single item from the Proveedor model
  *
- * @author Nazca Networks               <comercial@nazcanetworks.com>
- * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
- * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author       Nazca Networks             <comercial@nazcanetworks.com>
+ * @author       Fco. Antonio Moreno Pérez  <famphuelva@gmail.com>
+ * @author       Carlos García Gómez        <carlos@facturascripts.com>
+ * @collaborator Daniel Fernández Giménez   <hola@danielfg.es>
  */
 class EditProveedor extends ComercialContactController
 {
@@ -42,8 +43,8 @@ class EditProveedor extends ComercialContactController
      */
     public function getDeliveryNotesRisk(): string
     {
-        $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
-        $total = SupplierRiskTools::getDeliveryNotesRisk($codproveedor);
+        $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $total = SupplierRiskTools::getDeliveryNotesRisk($code);
         return $this->toolBox()->coins()->format($total);
     }
 
@@ -60,8 +61,8 @@ class EditProveedor extends ComercialContactController
      */
     public function getInvoicesRisk(): string
     {
-        $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
-        $total = SupplierRiskTools::getInvoicesRisk($codproveedor);
+        $code = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $total = SupplierRiskTools::getInvoicesRisk($code);
         return $this->toolBox()->coins()->format($total);
     }
 
@@ -116,16 +117,32 @@ class EditProveedor extends ComercialContactController
         parent::createViews();
         $this->createContactsView();
         $this->addEditListView('EditCuentaBancoProveedor', 'CuentaBancoProveedor', 'bank-accounts', 'fas fa-piggy-bank');
-        $this->createSubaccountsView();
+
+        if ($this->user->can('EditSubcuenta')) {
+            $this->createSubaccountsView();
+        }
+
         $this->createEmailsView();
         $this->createViewDocFiles();
 
-        $this->createProductView();
-        $this->createInvoiceView('ListFacturaProveedor');
-        $this->createDocumentView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
-        $this->createDocumentView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
-        $this->createDocumentView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
-        $this->createReceiptView('ListReciboProveedor', 'ReciboProveedor');
+        if ($this->user->can('EditProducto')) {
+            $this->createProductView();
+        }
+        if ($this->user->can('EditFacturaProveedor')) {
+            $this->createInvoiceView('ListFacturaProveedor');
+        }
+        if ($this->user->can('EditAlbaranProveedor')) {
+            $this->createDocumentView('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
+        }
+        if ($this->user->can('EditPedidoProveedor')) {
+            $this->createDocumentView('ListPedidoProveedor', 'PedidoProveedor', 'orders');
+        }
+        if ($this->user->can('EditPresupuestoProveedor')) {
+            $this->createDocumentView('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
+        }
+        if ($this->user->can('EditReciboProveedor')) {
+            $this->createReceiptView('ListReciboProveedor', 'ReciboProveedor');
+        }
     }
 
     /**

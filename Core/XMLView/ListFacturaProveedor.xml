@@ -50,6 +50,9 @@
         <column name="code" order="150">
             <widget type="text" fieldname="codigo"/>
         </column>
+        <column name="original" display="none" order="155">
+            <widget type="text" fieldname="codigorect"/>
+        </column>
         <column name="numsupplier" order="160">
             <widget type="text" fieldname="numproveedor"/>
         </column>

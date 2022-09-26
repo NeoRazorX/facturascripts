@@ -25,6 +25,7 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\EditView;
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
+use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Dinamic\Model\Impuesto;
 
 /**
@@ -296,7 +297,7 @@ class EditSettings extends PanelController
             case 'SettingsDefault':
                 $code = $this->getKeyFromViewName($viewName);
                 $view->loadData($code);
-                if (empty($view->model->name)) {
+                if ($view->model instanceof Settings && empty($view->model->name)) {
                     $view->model->name = $code;
                 }
                 $this->loadPaymentMethodValues($viewName);
@@ -307,7 +308,7 @@ class EditSettings extends PanelController
             default:
                 $code = $this->getKeyFromViewName($viewName);
                 $view->loadData($code);
-                if (empty($view->model->name)) {
+                if ($view->model instanceof Settings && empty($view->model->name)) {
                     $view->model->name = $code;
                 }
                 break;

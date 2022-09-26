@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,9 +27,7 @@ namespace FacturaScripts\Core\Lib;
 class AssetManager
 {
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected static $list;
 
     /**
@@ -42,15 +40,18 @@ class AssetManager
     public static function add(string $type, string $asset, int $priority = 1)
     {
         static::init();
+        if (!isset(static::$list[$type])) {
+            return;
+        }
 
-        /// avoid duplicates
+        // avoid duplicates
         foreach (static::$list[$type] as $item) {
             if ($item['asset'] == $asset) {
                 return;
             }
         }
 
-        /// insert
+        // insert
         static::$list[$type][] = [
             'asset' => $asset,
             'priority' => $priority,
@@ -104,7 +105,7 @@ class AssetManager
     {
         static::init();
 
-        /// sort by priority
+        // sort by priority
         uasort(static::$list[$type], function ($item1, $item2) {
             if ($item1['priority'] > $item2['priority']) {
                 return -1;
@@ -115,7 +116,7 @@ class AssetManager
             return 0;
         });
 
-        /// extract assets
+        // extract assets
         $assets = [];
         foreach (static::$list[$type] as $item) {
             $assets[] = $item['asset'];
@@ -132,13 +133,13 @@ class AssetManager
     {
         $base = DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR;
 
-        /// find js file with $name name
+        // find js file with $name name
         $jsFile = $base . 'JS' . DIRECTORY_SEPARATOR . $name . '.js';
         if (file_exists(FS_FOLDER . $jsFile)) {
             static::add('js', FS_ROUTE . $jsFile, 0);
         }
 
-        /// find css file with $name name
+        // find css file with $name name
         $cssFile = $base . 'CSS' . DIRECTORY_SEPARATOR . $name . '.css';
         if (file_exists(FS_FOLDER . $cssFile)) {
             static::add('css', FS_ROUTE . $cssFile, 0);
@@ -164,7 +165,7 @@ class AssetManager
      */
     protected static function fixCombineContent(string $data, string $url): string
     {
-        // Excluce url("data:) from replacement
+        // Exclude url("data:) from replacement
         $buffer = str_replace('url("data:', '#url-data:#', $data);
 
         // Replace relative paths in url()

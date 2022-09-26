@@ -207,6 +207,7 @@ final class PedidoClienteTest extends TestCase
         $this->assertEquals(10, $doc->neto, 'pedido-cliente-bad-neto-3');
         $this->assertEquals(12.1, $doc->total, 'pedido-cliente-bad-total-3');
         $this->assertEquals(2.1, $doc->totaliva, 'pedido-cliente-bad-totaliva-3');
+        $this->assertEquals(5, $doc->totalcoste, 'pedido-cliente-bad-totalcoste-3');
 
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-pedido-cliente-3');

@@ -18,6 +18,19 @@
     let waitCounter = 0;
     let keyupInputName = null;
 
+    function changeColumn(btn) {
+        $(btn).addClass('active').siblings().removeClass('active');
+        document.forms['salesForm']['columnView'].value = $(btn).data('column');
+
+        if ($(btn).data('column') === 'subtotal') {
+            $('.columSubtotal').removeClass('d-none').addClass('d-block');
+            $('.columNeto').removeClass('d-block').addClass('d-none');
+        } else {
+            $('.columSubtotal').removeClass('d-block').addClass('d-none');
+            $('.columNeto').removeClass('d-none').addClass('d-block');
+        }
+    }
+
     function findProduct() {
         $("#findProductInput").autocomplete({
             source: function (request, response) {
@@ -241,6 +254,23 @@
         }
     }
 
+    function salesLineTotalWithoutTaxes(id) {
+        const total = parseFloat(prompt('{{ i18n.trans('net-without-taxes') }}').replace(',', '.')) || 0;
+        const dtopor = parseFloat(document.forms['salesForm']['dtopor_' + id].value) || 0;
+        const dtopor2 = parseFloat(document.forms['salesForm']['dtopor2_' + id].value) || 0;
+        const cantidad = parseFloat(document.forms['salesForm']['cantidad_' + id].value) || 0;
+        if (total <= 0) {
+            alert('total > 0');
+        } else if (cantidad <= 0) {
+            alert('cantidad > 0');
+        } else {
+            let pvpSinDto = (100 * total / cantidad) / 100;
+            let pvp = 10000 * pvpSinDto / ((100 - dtopor) * (100 - dtopor2));
+            document.forms['salesForm']['pvpunitario_' + id].value = Math.round(pvp * 100000) / 100000;
+            salesFormAction('recalculate', '0');
+        }
+    }
+
     function setOrdenLines() {
         let orderInputs = $("input[name^='orden_']");
         let count = orderInputs.length * 10;
@@ -335,5 +365,6 @@
     <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
     <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <input type="hidden" name="selectedLine"/>
+    <input type="hidden" name="columnView" value="{{ appSettings.get('default', 'columnetosubtotal', 'subtotal') }}"/>
     {{ fsc.renderSalesForm(model, model.getLines()) | raw }}
 </form>

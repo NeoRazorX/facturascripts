@@ -215,6 +215,8 @@ class ListReportAccounting extends ListController
         if (false === $amounts->loadFromCode('', $where)) {
             $amounts->enddate = $ejercicio->fechafin;
             $amounts->idcompany = $ejercicio->idempresa;
+            $amounts->ignoreclosure = true;
+            $amounts->ignoreregularization = true;
             $amounts->name = $this->toolBox()->i18n()->trans('balance-amounts') . ' ' . $ejercicio->nombre;
             $amounts->startdate = $ejercicio->fechainicio;
             $total += $amounts->save() ? 1 : 0;

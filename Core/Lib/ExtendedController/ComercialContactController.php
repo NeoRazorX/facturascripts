@@ -48,9 +48,9 @@ abstract class ComercialContactController extends EditController
     /**
      * Check that the subaccount length is correct.
      *
-     * @param string $code
+     * @param ?string $code
      */
-    protected function checkSubaccountLength(string $code)
+    protected function checkSubaccountLength(?string $code)
     {
         if (empty($code)) {
             return;

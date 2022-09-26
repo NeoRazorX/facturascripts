@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base\AjaxForms;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Contract\SalesLineModInterface;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
@@ -60,6 +61,8 @@ class SalesLineHTML
      */
     public static function apply(SalesDocument &$model, array &$lines, array $formData)
     {
+        self::$columnView = $formData['columnView'] ?? AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+
         // update or remove lines
         $rmLineId = $formData['action'] === 'rm-line' ? $formData['selectedLine'] : 0;
         foreach ($lines as $key => $value) {
@@ -132,6 +135,9 @@ class SalesLineHTML
 
             // total
             $map['linetotal_' . $idlinea] = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+
+            // neto
+            $map['lineneto_' . $idlinea] = $line->pvptotal;
         }
 
         // mods
@@ -221,7 +227,7 @@ class SalesLineHTML
             return '<div class="col-sm-2 col-lg-1 order-3">'
                 . '<div class="d-lg-none mt-2 small">' . $i18n->trans('quantity') . '</div>'
                 . '<div class="input-group input-group-sm">'
-                . self::cantidadServido($i18n, $line, $model)
+                . self::cantidadRestante($i18n, $line, $model)
                 . '<input type="number" class="form-control text-lg-right border-0" value="' . $line->cantidad . '" disabled=""/>'
                 . '</div>'
                 . '</div>';
@@ -230,29 +236,12 @@ class SalesLineHTML
         return '<div class="col-sm-2 col-lg-1 order-3">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('quantity') . '</div>'
             . '<div class="input-group input-group-sm">'
-            . self::cantidadServido($i18n, $line, $model)
+            . self::cantidadRestante($i18n, $line, $model)
             . '<input type="number" name="cantidad_' . $idlinea . '" value="' . $line->cantidad
             . '" class="form-control text-lg-right border-0 doc-line-qty" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"/>'
             . self::cantidadStock($i18n, $line, $model)
             . '</div>'
             . '</div>';
-    }
-
-    private static function cantidadServido(Translator $i18n, SalesDocumentLine $line, SalesDocument $model): string
-    {
-        $html = '';
-        if (empty($line->referencia) || $line->modelClassName() === 'LineaFacturaCliente') {
-            return $html;
-        }
-
-        if (false === $model->editable) {
-            $html .= '<div class="input-group-prepend" title="' . $i18n->trans('quantity-served') . '">';
-            $html .= $line->servido == $line->cantidad ?
-                '<span class="input-group-text text-success rounded-0">' . $line->servido . '</span>' :
-                '<span class="input-group-text text-warning rounded-0">' . $line->servido . '</span>';
-            $html .= '</div>';
-        }
-        return $html;
     }
 
     private static function cantidadStock(Translator $i18n, SalesDocumentLine $line, SalesDocument $model): string
@@ -340,7 +329,7 @@ class SalesLineHTML
 
         switch ($field) {
             case '_total':
-                return self::lineTotal($i18n, $idlinea, $line, $model, 'salesLineTotalWithTaxes');
+                return self::lineTotal($i18n, $idlinea, $line, $model, 'salesLineTotalWithTaxes', 'salesLineTotalWithoutTaxes');
 
             case 'cantidad':
                 return self::cantidad($i18n, $idlinea, $line, $model, 'salesFormActionWait');
@@ -373,7 +362,7 @@ class SalesLineHTML
                 return self::recargo($i18n, $idlinea, $line, $model, 'salesFormActionWait');
 
             case 'referencia':
-                return self::referencia($i18n, $idlinea, $line, $model);
+                return self::referencia($i18n, $idlinea, $line, $model, self::$num);
 
             case 'salto_pagina':
                 return self::genericBool($i18n, $idlinea, $line, $model, 'salto_pagina', 'page-break');

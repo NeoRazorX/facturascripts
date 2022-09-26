@@ -16,48 +16,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Model;
 
 /**
  * Model for amounts balance
  *
+ * @author Carlos García Gómez <carlos@facturascripts.com>
  * @author Jose Antonio Cuello <yopli2000@gmail.com>
  */
 class ReportAmount extends Base\ReportAccounting
 {
-
     use Base\ModelTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $endcodsubaccount;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $ignoreclosure;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $ignoreregularization;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $level;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $startcodsubaccount;
 
     public function clear()
     {
         parent::clear();
-        $this->ignoreclosure = false;
-        $this->ignoreregularization = false;
+        $this->ignoreclosure = true;
+        $this->ignoreregularization = true;
         $this->level = 0;
     }
 

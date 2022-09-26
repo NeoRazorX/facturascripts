@@ -50,6 +50,20 @@ class ControllerPermissions
     public $allowDelete = false;
 
     /**
+     * Have permission to export data.
+     *
+     * @var bool
+     */
+    public $allowExport = false;
+
+    /**
+     * Have permission to import data.
+     *
+     * @var bool
+     */
+    public $allowImport = false;
+
+    /**
      * Have permission to update data.
      *
      * @var bool
@@ -78,6 +92,8 @@ class ControllerPermissions
             $this->accessMode = 99;
             $this->allowAccess = true;
             $this->allowDelete = true;
+            $this->allowExport = true;
+            $this->allowImport = true;
             $this->allowUpdate = true;
             $this->onlyOwnerData = false;
         } else {
@@ -85,6 +101,8 @@ class ControllerPermissions
             foreach (RoleAccess::allFromUser($user->nick, $pageName) as $access) {
                 $this->allowAccess = true;
                 $this->allowDelete = $access->allowdelete ? true : $this->allowDelete;
+                $this->allowExport = $access->allowexport ? true : $this->allowExport;
+                $this->allowImport = $access->allowimport ? true : $this->allowImport;
                 $this->allowUpdate = $access->allowupdate ? true : $this->allowUpdate;
                 $this->onlyOwnerData = $access->onlyownerdata ? true : $this->onlyOwnerData;
             }

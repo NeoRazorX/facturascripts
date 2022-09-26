@@ -33,7 +33,7 @@ final class Paises implements DataSrcInterface
     {
         if (!isset(self::$list)) {
             $model = new Pais();
-            self::$list = $model->all([], [], 0, 0);
+            self::$list = $model->all([], ['nombre' => 'ASC'], 0, 0);
         }
 
         return self::$list;

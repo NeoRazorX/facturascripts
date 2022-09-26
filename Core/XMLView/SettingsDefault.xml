@@ -98,7 +98,7 @@
                 <widget type="select" fieldname="thousands_separator" icon="fas fa-calculator" required="true">
                     <values title=",">,</values>
                     <values title=".">.</values>
-                    <values title=" "></values>
+                    <values title=" "> </values>
                 </widget>
             </column>
             <column name="currency-position" numcolumns="3" order="130">
@@ -123,8 +123,14 @@
                 <widget type="checkbox" fieldname="ventasinstock"/>
             </column>
         </group>
-        <group name="estimations" title="estimations" icon="fas fa-copy" valign="bottom" numcolumns="12">
-            <column name="days-until-expiration" numcolumns="3" order="100">
+        <group name="documents" title="documents" icon="fas fa-copy" valign="bottom" numcolumns="12">
+            <column name="view-column-net-subtotal" numcolumns="3" order="100">
+                <widget type="select" fieldname="columnetosubtotal" translate="true" required="true">
+                    <values title="subtotal">subtotal</values>
+                    <values title="net">neto</values>
+                </widget>
+            </column>
+            <column name="days-until-expiration" numcolumns="3" order="110">
                 <widget type="number" fieldname="finofertadays" min="0" required="true"/>
             </column>
         </group>

@@ -19,17 +19,18 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 use FacturaScripts\Dinamic\Model\Page as DinPage;
 
 /**
  * Usuario de FacturaScripts.
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author       Carlos García Gómez      <carlos@facturascripts.com>
+ * @collaborator Daniel Fernández Giménez <hola@danielfg.es>
  */
 class User extends Base\ModelClass
 {
-
     use Base\ModelTrait;
     use Base\CompanyRelationTrait;
     use Base\PasswordTrait;
@@ -37,90 +38,108 @@ class User extends Base\ModelClass
 
     const DEFAULT_LEVEL = 2;
 
-    /**
-     * true -> user is admin.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $admin;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codagente;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codalmacen;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $creationdate;
 
-    /**
-     * user's email.
-     *
-     * @var string
-     */
+    /** @var string */
     public $email;
 
-    /**
-     * true -> user enabled.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $enabled;
 
-    /**
-     * Homepage.
-     *
-     * @var string
-     */
+    /** @var string */
     public $homepage;
 
-    /**
-     * Language code.
-     *
-     * @var string
-     */
+    /** @var string */
     public $langcode;
 
-    /**
-     * Last activity date.
-     *
-     * @var string
-     */
+    /** @var string */
     public $lastactivity;
 
-    /**
-     * Last IP used.
-     *
-     * @var string
-     */
+    /** @var string */
     public $lastip;
 
-    /**
-     * Indicates the level of security that the user can access.
-     *
-     * @var integer
-     */
+    /** @var integer */
     public $level;
 
-    /**
-     * Session key, saved also in cookie. Regenerated when user log in.
-     *
-     * @var string
-     */
+    /** @var string */
     public $logkey;
 
-    /**
-     * Primary key. Varchar (50).
-     *
-     * @var string
-     */
+    /** @var string */
     public $nick;
+
+    public function addRole(?string $code): bool
+    {
+        if (empty($code)) {
+            return false;
+        }
+
+        $roleUser = new RoleUser();
+        $roleUser->codrole = $code;
+        $roleUser->nick = $this->nick;
+        if (false === $roleUser->save()) {
+            return false;
+        }
+
+        // si el usuario no tiene página de inicio, la ponemos
+        if (empty($this->homepage)) {
+            foreach ($roleUser->getRoleAccess() as $roleAccess) {
+                $this->homepage = $roleAccess->pagename;
+                if ('List' == substr($this->homepage, 0, 4)) {
+                    break;
+                }
+            }
+            $this->save();
+        }
+
+        return true;
+    }
+
+    /**
+     * Devuelve true si el usuario tiene acceso a la página $pageName. Para comprobar si el usuario
+     * puede modificar la página, se debe pasar 'allowupdate' como parámetro $type.
+     *
+     * @param string $pageName
+     * @param string $type
+     * @return bool
+     */
+    public function can(string $pageName, string $type = ''): bool
+    {
+        // si es admin, tiene acceso completo
+        if ($this->admin) {
+            return true;
+        }
+
+        // si no es admin, comprobamos si tiene acceso a la página
+        $roleAccess = RoleAccess::allFromUser($this->nick, $pageName);
+        if (empty($roleAccess)) {
+            // no tiene acceso a la página
+            return false;
+        }
+
+        // si no se ha pasado el parámetro $type, solamente comprobamos si tiene acceso a la página
+        if (empty($type)) {
+            return true;
+        }
+
+        // comprobamos si tiene el permiso $type
+        foreach ($roleAccess as $access) {
+            if (isset($access->{$type}) && $access->{$type}) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public function clear()
     {
@@ -136,12 +155,25 @@ class User extends Base\ModelClass
     public function delete(): bool
     {
         if ($this->count() === 1) {
-            // prevent delete all users
+            // impide eliminar el último usuario
             $this->toolBox()->i18nLog()->error('cant-delete-last-user');
             return false;
         }
 
         return parent::delete();
+    }
+
+    public function getRoles(): array
+    {
+        $roles = [];
+
+        $roleUser = new RoleUser();
+        $where = [new DataBaseWhere('nick', $this->nick)];
+        foreach ($roleUser->all($where, [], 0, 0) as $role) {
+            $roles[] = $role->getRole();
+        }
+
+        return $roles;
     }
 
     public function install(): string
@@ -244,38 +276,17 @@ class User extends Base\ModelClass
 
     protected function saveInsert(array $values = []): bool
     {
-        $result = parent::saveInsert($values);
-        if ($result && false === $this->admin) {
-            $this->setNewRole();
+        if (false === parent::saveInsert($values)) {
+            return false;
         }
 
-        return $result;
-    }
-
-    /**
-     * Assigns the default role to this user.
-     */
-    protected function setNewRole()
-    {
-        $role = new Role();
-        $code = $this->toolBox()->appSettings()->get('default', 'codrole');
-        if (false === $role->loadFromCode($code)) {
-            return;
+        // si el usuario no es admin, le asignamos el rol por defecto
+        if (false === $this->admin) {
+            $code = $this->toolBox()->appSettings()->get('default', 'codrole');
+            $this->addRole($code);
         }
 
-        $roleUser = new RoleUser();
-        $roleUser->codrole = $role->codrole;
-        $roleUser->nick = $this->nick;
-        $roleUser->save();
-
-        // set user homepage
-        foreach ($roleUser->getRoleAccess() as $roleAccess) {
-            $this->homepage = $roleAccess->pagename;
-            if ('List' == substr($this->homepage, 0, 4)) {
-                break;
-            }
-        }
-        $this->save();
+        return true;
     }
 
     protected function testAgent(): bool
