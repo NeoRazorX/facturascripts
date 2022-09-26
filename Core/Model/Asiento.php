@@ -33,7 +33,6 @@ use FacturaScripts\Dinamic\Model\RegularizacionImpuesto as DinRegularizacionImpu
  */
 class Asiento extends Base\ModelOnChangeClass
 {
-
     use Base\ModelTrait;
     use Base\ExerciseRelationTrait;
 
