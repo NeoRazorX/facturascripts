@@ -63,6 +63,16 @@ class ProductoImagen extends Base\ModelClass
         return UploadedFile::getMaxFilesize() / 1024 / 1024;
     }
 
+    public function install(): string
+    {
+        // dependencias
+        new AttachedFile();
+        new Producto();
+        new Variante();
+
+        return parent::install();
+    }
+
     public static function primaryColumn(): string
     {
         return 'id';
