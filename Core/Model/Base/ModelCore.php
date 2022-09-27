@@ -32,7 +32,6 @@ use FacturaScripts\Core\Lib\Import\CSVImport;
  */
 abstract class ModelCore
 {
-
     const AUDIT_CHANNEL = 'audit';
     const DATE_STYLE = 'd-m-Y';
     const DATETIME_STYLE = 'd-m-Y H:i:s';
@@ -309,21 +308,19 @@ abstract class ModelCore
      * Returns the boolean value for the field.
      *
      * @param array $field
-     * @param string $value
+     * @param mixed $value
      *
      * @return bool|null
      */
-    private function getBoolValueForField($field, $value): ?bool
+    private function getBoolValueForField(array $field, $value): ?bool
     {
-        if (is_bool($value)) {
+        if ($value === null) {
+            return $field['is_nullable'] === 'NO' ? false : null;
+        } elseif (is_bool($value)) {
             return $value;
-        } elseif (in_array(strtolower($value), ['true', 't', '1'], false)) {
-            return true;
-        } elseif (in_array(strtolower($value), ['false', 'f', '0'], false)) {
-            return false;
         }
 
-        return $field['is_nullable'] === 'NO' ? false : null;
+        return in_array(strtolower($value), ['true', 't', '1'], false);
     }
 
     /**

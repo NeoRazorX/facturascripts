@@ -408,7 +408,7 @@ trait CommonSalesPurchases
     {
         $attributes = $model->editable ? 'name="observaciones"' : 'disabled=""';
         $rows = 1;
-        foreach (explode("\n", $model->observaciones) as $desLine) {
+        foreach (explode("\n", $model->observaciones ?? '') as $desLine) {
             $rows += mb_strlen($desLine) < 140 ? 1 : ceil(mb_strlen($desLine) / 140);
         }
 

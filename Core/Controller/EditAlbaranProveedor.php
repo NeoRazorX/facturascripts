@@ -15,11 +15,7 @@ use FacturaScripts\Core\Base\AjaxForms\PurchasesController;
  */
 class EditAlbaranProveedor extends PurchasesController
 {
-
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'AlbaranProveedor';
     }

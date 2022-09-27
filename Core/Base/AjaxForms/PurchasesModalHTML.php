@@ -178,21 +178,23 @@ class PurchasesModalHTML
             $sql .= ' AND codfamilia = ' . $dataBase->var2str(self::$codfamilia);
         }
 
-        $words = explode(' ', self::$query);
-        if (count($words) === 1) {
-            $sql .= " AND (LOWER(v.codbarras) = " . $dataBase->var2str(self::$query)
-                . " OR LOWER(v.referencia) LIKE '" . self::$query . "%'"
-                . " OR LOWER(pp.refproveedor) LIKE '" . self::$query . "%'"
-                . " OR LOWER(p.descripcion) LIKE '%" . self::$query . "%')";
-        } elseif (count($words) > 1) {
-            $sql .= " AND (LOWER(v.referencia) LIKE '" . self::$query . "%'"
-                . " OR LOWER(pp.refproveedor) LIKE '" . self::$query . "%' OR (";
-            foreach ($words as $wc => $word) {
-                $sql .= $wc > 0 ?
-                    " AND LOWER(p.descripcion) LIKE '%" . $word . "%'" :
-                    "LOWER(p.descripcion) LIKE '%" . $word . "%'";
+        if (self::$query) {
+            $words = explode(' ', self::$query);
+            if (count($words) === 1) {
+                $sql .= " AND (LOWER(v.codbarras) = " . $dataBase->var2str(self::$query)
+                    . " OR LOWER(v.referencia) LIKE '" . self::$query . "%'"
+                    . " OR LOWER(pp.refproveedor) LIKE '" . self::$query . "%'"
+                    . " OR LOWER(p.descripcion) LIKE '%" . self::$query . "%')";
+            } elseif (count($words) > 1) {
+                $sql .= " AND (LOWER(v.referencia) LIKE '" . self::$query . "%'"
+                    . " OR LOWER(pp.refproveedor) LIKE '" . self::$query . "%' OR (";
+                foreach ($words as $wc => $word) {
+                    $sql .= $wc > 0 ?
+                        " AND LOWER(p.descripcion) LIKE '%" . $word . "%'" :
+                        "LOWER(p.descripcion) LIKE '%" . $word . "%'";
+                }
+                $sql .= "))";
             }
-            $sql .= "))";
         }
 
         switch (self::$orden) {
