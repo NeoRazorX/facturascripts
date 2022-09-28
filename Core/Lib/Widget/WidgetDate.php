@@ -80,7 +80,7 @@ class WidgetDate extends BaseWidget
         $initialClass .= ' text-nowrap';
 
         // is today? is the future?
-        if (strtotime($this->value) >= strtotime(date('Y-m-d'))) {
+        if ($this->value && strtotime($this->value) >= strtotime(date('Y-m-d'))) {
             $alternativeClass = 'font-weight-bold';
         }
 
