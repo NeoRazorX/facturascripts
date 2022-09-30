@@ -60,8 +60,6 @@ if (file_exists($listPath)) {
         echo 'Plugin ' . $plugin . ' not found.' . PHP_EOL . PHP_EOL;
     }
     unlink($listPath);
-} else {
-    echo 'No plugins to install.' . PHP_EOL . PHP_EOL;
 }
 
 // disconnect from database

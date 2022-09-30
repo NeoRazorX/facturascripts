@@ -76,6 +76,8 @@ trait DefaultSettingsTrait
     protected static function setDefaultSettings(): void
     {
         $appSettings = new AppSettings();
+        $appSettings->load();
+
         $fileContent = file_get_contents(FS_FOLDER . '/Core/Data/Codpais/ESP/default.json');
         $defaultValues = json_decode($fileContent, true) ?? [];
         foreach ($defaultValues as $group => $values) {
@@ -85,7 +87,7 @@ trait DefaultSettingsTrait
         }
 
         $almacenModel = new Almacen();
-        $where = [new DataBaseWhere('idempresa', $appSettings->get('default', 'idempresa'))];
+        $where = [new DataBaseWhere('idempresa', $appSettings->get('default', 'idempresa', 1))];
         foreach ($almacenModel->all($where) as $almacen) {
             $appSettings->set('default', 'codalmacen', $almacen->codalmacen);
         }

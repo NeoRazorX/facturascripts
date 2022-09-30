@@ -203,7 +203,7 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 
-    public function cantUpdateOrDeleteNonEditableInvoice()
+    public function testCantUpdateOrDeleteNonEditableInvoice()
     {
         // creamos el cliente
         $customer = $this->getRandomCustomer();
@@ -226,10 +226,12 @@ final class FacturaClienteTest extends TestCase
 
         // cambiamos el estado a uno no editable
         $changed = false;
+        $previous = $invoice->idestado;
         foreach ($invoice->getAvailableStatus() as $status) {
             if (false === $status->editable) {
                 $invoice->idestado = $status->idestado;
                 $changed = true;
+                break;
             }
         }
         $this->assertTrue($changed, 'non-editable-status-not-found');
@@ -239,6 +241,10 @@ final class FacturaClienteTest extends TestCase
         $invoice->dtopor1 = 50;
         $this->assertFalse(Calculator::calculate($invoice, $lines, true), 'can-update-non-editable-invoice');
         $this->assertFalse($invoice->delete(), 'can-delete-non-editable-invoice');
+
+        // volvemos a cambiar el estado
+        $invoice->idestado = $previous;
+        $this->assertTrue($invoice->save(), 'cant-update-invoice');
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');

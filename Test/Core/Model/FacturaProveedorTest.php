@@ -190,7 +190,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
-    public function cantUpdateOrDeleteNonEditableInvoice()
+    public function testCantUpdateOrDeleteNonEditableInvoice()
     {
         // creamos el proveedor
         $supplier = $this->getRandomSupplier();
@@ -213,10 +213,12 @@ final class FacturaProveedorTest extends TestCase
 
         // asignamos un estado no editable
         $changed = false;
+        $previous = $invoice->idestado;
         foreach ($invoice->getAvailableStatus() as $status) {
             if (false === $status->editable) {
                 $invoice->idestado = $status->idestado;
                 $changed = true;
+                break;
             }
         }
         $this->assertTrue($changed, 'non-editable-status-not-found');
@@ -226,6 +228,10 @@ final class FacturaProveedorTest extends TestCase
         $invoice->dtopor1 = 50;
         $this->assertFalse(Calculator::calculate($invoice, $lines, true), 'can-update-non-editable-invoice');
         $this->assertFalse($invoice->delete(), 'can-delete-non-editable-invoice');
+
+        // volvemos al estado anterior
+        $invoice->idestado = $previous;
+        $this->assertTrue($invoice->save(), 'cant-update-invoice');
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');

@@ -176,12 +176,9 @@ class InvoiceToAccounting extends AccountingClass
             return true;
         }
 
-        $key = array_keys($this->subtotals)[0];
-        $percentage = $this->subtotals[$key]['irpf'];
-
         $retention = new Retencion();
-        if (false === $retention->loadFromPercentage($percentage)) {
-            $this->toolBox()->i18nLog()->warning('irpf-record-not-found', ['%value%' => $percentage]);
+        if (false === $retention->loadFromPercentage($this->subtotals['irpf'])) {
+            $this->toolBox()->i18nLog()->warning('irpf-record-not-found', ['%value%' => $this->subtotals['irpf']]);
             return false;
         }
 
@@ -192,7 +189,7 @@ class InvoiceToAccounting extends AccountingClass
         }
 
         $tool = new PurchasesDocIrpfAccount();
-        $totals = $tool->getTotalsForDocument($this->document, $account->codsubcuenta ?? '', $percentage);
+        $totals = $tool->getTotalsForDocument($this->document, $account->codsubcuenta ?? '', $this->subtotals['irpf']);
         return $this->addLinesFromTotals(
             $entry,
             $totals,
@@ -261,12 +258,9 @@ class InvoiceToAccounting extends AccountingClass
             return true;
         }
 
-        $key = array_keys($this->subtotals)[0];
-        $percentage = $this->subtotals[$key]['irpf'];
-
         $retention = new Retencion();
-        if (false === $retention->loadFromPercentage($percentage)) {
-            $this->toolBox()->i18nLog()->warning('irpf-record-not-found', ['%value%' => $percentage]);
+        if (false === $retention->loadFromPercentage($this->subtotals['irpf'])) {
+            $this->toolBox()->i18nLog()->warning('irpf-record-not-found', ['%value%' => $this->subtotals['irpf']]);
             return false;
         }
 
@@ -276,7 +270,7 @@ class InvoiceToAccounting extends AccountingClass
             return false;
         }
 
-        $newLine = $this->getBasicLine($entry, $account, true, $this->subtotals[$key]['totalirpf']);
+        $newLine = $this->getBasicLine($entry, $account, true, $this->subtotals['totalirpf']);
         $newLine->setCounterpart($this->counterpart);
         return $newLine->save();
     }
