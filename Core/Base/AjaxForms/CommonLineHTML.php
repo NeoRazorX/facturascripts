@@ -31,9 +31,17 @@ use FacturaScripts\Dinamic\Model\Variante;
 
 trait CommonLineHTML
 {
+    /** @var string */
     protected static $columnView = 'subtotal';
 
-    private static $regimeniva;
+    /** @var int */
+    protected static $num = 0;
+
+    /** @var int */
+    protected static $numlines = 0;
+
+    /** @var string */
+    protected static $regimeniva;
 
     private static function cantidadRestante(Translator $i18n, BusinessDocumentLine $line, TransformerDocument $model): string
     {
@@ -203,20 +211,21 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function referencia(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, int $numlinea): string
+    private static function referencia(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model): string
     {
         $sortable = $model->editable ?
             '<input type="hidden" name="orden_' . $idlinea . '" value="' . $line->orden . '"/>' :
             '';
+        $numlinea = self::$numlines > 10 ? self::$num . '. ' : '';
 
         $variante = new Variante();
         $where = [new DataBaseWhere('referencia', $line->referencia)];
         if (empty($line->referencia)) {
-            return '<div class="col-sm-2 col-lg-1 order-1">' . $sortable . '<div class="small text-break"><small>' . $numlinea . '.</small></div></div>';
+            return '<div class="col-sm-2 col-lg-1 order-1">' . $sortable . '<div class="small text-break">' . $numlinea . '</div></div>';
         }
 
         $link = $variante->loadFromCode('', $where) ?
-            '<small>' . $numlinea . '.</small> <a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>' :
+            $numlinea . '<a href="' . $variante->url() . '" target="_blank">' . $line->referencia . '</a>' :
             $line->referencia;
 
         return '<div class="col-sm-2 col-lg-1 order-1">'

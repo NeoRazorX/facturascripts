@@ -46,9 +46,6 @@ class SalesLineHTML
     /** @var SalesLineModInterface[] */
     private static $mods = [];
 
-    /** @var int */
-    private static $num = 0;
-
     public static function addMod(SalesLineModInterface $mod)
     {
         self::$mods[] = $mod;
@@ -158,6 +155,7 @@ class SalesLineHTML
      */
     public static function render(array $lines, SalesDocument $model): string
     {
+        self::$numlines = count($lines);
         $i18n = new Translator();
         $html = '';
         foreach ($lines as $line) {
@@ -358,7 +356,7 @@ class SalesLineHTML
                 return self::recargo($i18n, $idlinea, $line, $model, 'salesFormActionWait');
 
             case 'referencia':
-                return self::referencia($i18n, $idlinea, $line, $model, self::$num);
+                return self::referencia($i18n, $idlinea, $line, $model);
 
             case 'salto_pagina':
                 return self::genericBool($i18n, $idlinea, $line, $model, 'salto_pagina', 'page-break');

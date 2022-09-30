@@ -45,9 +45,6 @@ class PurchasesLineHTML
     /** @var PurchasesLineModInterface[] */
     private static $mods = [];
 
-    /** @var int */
-    private static $num = 0;
-
     public static function addMod(PurchasesLineModInterface $mod)
     {
         self::$mods[] = $mod;
@@ -157,6 +154,7 @@ class PurchasesLineHTML
      */
     public static function render(array $lines, PurchaseDocument $model): string
     {
+        self::$numlines = count($lines);
         $i18n = new Translator();
         $html = '';
         foreach ($lines as $line) {
@@ -308,7 +306,7 @@ class PurchasesLineHTML
                 return self::recargo($i18n, $idlinea, $line, $model, 'purchasesFormActionWait');
 
             case 'referencia':
-                return self::referencia($i18n, $idlinea, $line, $model, self::$num);
+                return self::referencia($i18n, $idlinea, $line, $model);
 
             case 'suplido':
                 return self::suplido($i18n, $idlinea, $line, $model, 'purchasesFormAction');
