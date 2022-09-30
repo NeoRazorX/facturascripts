@@ -332,6 +332,49 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 
+    public function testCreateInvoiceWithSupplied()
+    {
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos una factura
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // añadimos una línea
+        $firstLine = $invoice->getNewLine();
+        $firstLine->cantidad = 1;
+        $firstLine->pvpunitario = 200;
+        $firstLine->suplido = true;
+        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+        $this->assertEquals(200, $invoice->totalsuplidos, 'bad-totalsuplidos');
+
+        // comprobamos el asiento
+        $entry = $invoice->getAccountingEntry();
+        $this->assertTrue($entry->exists(), 'accounting-entry-not-found');
+        $this->assertEquals($invoice->total, $entry->importe, 'accounting-entry-bad-importe');
+
+        // comprobamos que el asiento tiene una línea cuyo debe es el totalsuplidos de la factura
+        $found = false;
+        foreach ($entry->getLines() as $line) {
+            if ($line->debe == $invoice->totalsuplidos) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found, 'accounting-entry-without-supplied-line');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
