@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\DataSrc\Retenciones;
+use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Test\Core\DefaultSettingsTrait;
 use FacturaScripts\Test\Core\LogErrorsTrait;
@@ -263,6 +264,7 @@ final class FacturaProveedorTest extends TestCase
         // recalculamos
         $lines = $invoice->getLines();
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+        $this->assertGreaterThan(0, $invoice->totalirpf, 'bad-totalirpf');
 
         // comprobamos el asiento
         $entry = $invoice->getAccountingEntry();
@@ -278,6 +280,39 @@ final class FacturaProveedorTest extends TestCase
             }
         }
         $this->assertTrue($found, 'accounting-entry-without-retention-line');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
+    }
+
+    public function testCreateInvoiceWithSurcharge()
+    {
+        // creamos un proveedor con el régimen de recargo de equivalencia
+        $supplier = $this->getRandomSupplier();
+        $supplier->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
+
+        // creamos la factura
+        $invoice = new FacturaProveedor();
+        $invoice->setSubject($supplier);
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // añadimos una línea
+        $firstLine = $invoice->getNewLine();
+        $firstLine->cantidad = 2;
+        $firstLine->pvpunitario = self::PRODUCT1_COST;
+        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+        $this->assertGreaterThan(0, $invoice->totalrecargo, 'bad-totalrecargo');
+
+        // comprobamos el asiento
+        $entry = $invoice->getAccountingEntry();
+        $this->assertTrue($entry->exists(), 'accounting-entry-not-found');
+        $this->assertEquals($invoice->total, $entry->importe, 'accounting-entry-bad-importe');
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
