@@ -252,7 +252,7 @@ class SalesLineHTML
         }
 
         $product = $line->getProducto();
-        if ($product->nostock || $product->ventasinstock) {
+        if ($product->nostock) {
             return $html;
         }
 
@@ -263,27 +263,23 @@ class SalesLineHTML
             new DataBaseWhere('referencia', $line->referencia)
         ];
         $stock->loadFromCode('', $where);
-
         switch ($line->actualizastock) {
             case -1:
             case -2:
                 $html = $stock->disponible > 0 ?
-                    '<span class="input-group-text text-success rounded-0">' . $stock->disponible . '</span>' :
-                    '<span class="input-group-text text-danger rounded-0">' . $stock->disponible . '</span>';
+                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-success">' . $stock->disponible . '</a>' :
+                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-danger">' . $stock->disponible . '</a>';
                 break;
 
             default:
                 $html = $line->cantidad <= $stock->cantidad ?
-                    '<span class="input-group-text text-success rounded-0">' . $stock->cantidad . '</span>' :
-                    '<span class="input-group-text text-danger rounded-0">' . $stock->cantidad . '</span>';
+                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-success">' . $stock->cantidad . '</a>' :
+                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-danger">' . $stock->cantidad . '</a>';
                 break;
         }
 
-        if (empty($html)) {
-            return $html;
-        }
-
-        return '<div class="input-group-prepend" title="' . $i18n->trans('stock') . '">' . $html . '</div>';
+        return empty($html) ? $html :
+            '<div class="input-group-prepend" title="' . $i18n->trans('stock') . '">' . $html . '</div>';
     }
 
     private static function getFastLine(SalesDocument $model, array $formData): ?SalesDocumentLine

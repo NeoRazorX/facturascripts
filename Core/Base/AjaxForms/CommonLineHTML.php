@@ -42,12 +42,10 @@ trait CommonLineHTML
         }
 
         $restante = $line->cantidad - $line->servido;
-        $html = '<div class="input-group-prepend" title="' . $i18n->trans('quantity-remaining') . '">';
-        $html .= $restante > 0 ?
-            '<span class="input-group-text text-warning rounded-0">' . $restante . '</span>' :
-            '<span class="input-group-text text-success rounded-0">' . $restante . '</span>';
-        $html .= '</div>';
-        return $html;
+        return '<div class="input-group-prepend" title="' . $i18n->trans('quantity-remaining') . '">'
+            . '<a href="DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $model->primaryColumnValue()
+            . '" class="btn btn-outline-secondary" type="button">' . $restante . '</a>'
+            . '</div>';
     }
 
     private static function codimpuesto(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
