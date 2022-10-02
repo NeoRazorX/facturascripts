@@ -247,4 +247,19 @@ class EditCliente extends ComercialContactController
             $columnShipping->widget->setValuesFromCodeModel($contacts2);
         }
     }
+
+    protected function execAfterAction($action) {
+        switch ($action) {
+            case 'save-ok':
+            case 'edit':
+                $testSubject = new \FacturaScripts\Dinamic\Model\Cliente();
+                $testSubject->loadFromCode($this->request->get('code', ''));
+
+                if ($testSubject->cifnifExists($testSubject->codcliente, $testSubject->cifnif)) {
+                    $this->toolBox()->i18nLog()->warning('duplicated-cifnif');
+                }
+        }
+        parent::execAfterAction($action);
+    }
+
 }

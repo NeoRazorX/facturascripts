@@ -216,11 +216,13 @@ class Cliente extends Base\ComercialContact
 
     protected function saveInsert(array $values = []): bool
     {
+        $this->toolBox()->i18nLog()->warning('Un mensaje porque me apetece');
         if (empty($this->codcliente)) {
             $this->codcliente = (string)$this->newCode();
         }
 
         $return = parent::saveInsert($values);
+        
         if ($return && empty($this->idcontactofact)) {
             $parts = explode(' ', $this->nombre);
 
@@ -240,10 +242,33 @@ class Cliente extends Base\ComercialContact
             $contact->tipoidfiscal = $this->tipoidfiscal;
             if ($contact->save()) {
                 $this->idcontactofact = $contact->idcontacto;
+                $this->toolBox()->i18nLog()->warning('saveInsert. Un mensaje porque me apetece');
+                error_log("cifnif duplicado.Mensajes mostrados\r\n", 3, "./r");
                 return $this->save();
             }
         }
-
+       
         return $return;
     }
+
+  
+
+    /**
+     * Return true if cifnif exist in database
+     * @return boolean
+     */
+    public function cifnifExists(string $codcliente, string $cifnif): bool {
+        if ($cifnif === '') {
+            return false;
+        }
+        $where = [new DataBaseWhere('cifnif', $cifnif)
+            , new DataBaseWhere('codcliente', $codcliente, '<>')
+        ];
+
+        if ($this->count($where) > 0) {
+            return true;
+        }
+        return false;
+    }
+
 }
