@@ -50,9 +50,14 @@ class ListPresupuestoProveedor extends ListBusinessDocument
      */
     protected function createViews()
     {
-        $this->createViewPurchases('ListPresupuestoProveedor', 'PresupuestoProveedor', 'estimations');
-        $this->addButtonGroupDocument('ListPresupuestoProveedor');
-        $this->addButtonApproveDocument('ListPresupuestoProveedor');
+        $mainViewName = 'ListPresupuestoProveedor';
+        $this->createViewPurchases($mainViewName, 'PresupuestoProveedor', 'estimations');
+        $this->addButtonGroupDocument($mainViewName);
+        $this->addButtonApproveDocument($mainViewName);
+        $this->views[$mainViewName]->addColor('idestado', '13', 'success', 'approved');
+        $this->views[$mainViewName]->addColor('idestado', '14', 'danger', 'cancelled');
+        $this->views[$mainViewName]->addColor('editable', '0', 'warning', 'non-editable-document');
+        $this->views[$mainViewName]->addColor('femail', 'notnull:', 'info', 'email-sent');
 
         if ($this->permissions->onlyOwnerData === false) {
             $this->createViewLines('ListLineaPresupuestoProveedor', 'LineaPresupuestoProveedor');

@@ -63,16 +63,27 @@
             </column>
         </group>
         <group name="config" valign="bottom" numcolumns="12">
-            <column name="icon" titleurl="https://fontawesome.com/icons?d=gallery" numcolumns="3" order="100">
+            <column name="color" numcolumns="2" titleurl="https://getbootstrap.com/docs/4.6/utilities/colors/#background-color" order="100">
+                <widget type="select" fieldname="color">
+                    <values title="Primary">primary</values>
+                    <values title="Secondary">secondary</values>
+                    <values title="Success">success</values>
+                    <values title="Danger">danger</values>
+                    <values title="Warning">warning</values>
+                    <values title="Info">info</values>
+                    <values title="Dark">dark</values>
+                </widget>
+            </column>
+            <column name="icon" titleurl="https://fontawesome.com/icons?d=gallery" numcolumns="3" order="110">
                 <widget type="text" fieldname="icon" icon="fas fa-icons"/>
             </column>
-            <column name="editable" order="110">
+            <column name="editable" order="120">
                 <widget type="checkbox" fieldname="editable" />
             </column>
-            <column name="locked" display="none" order="120">
+            <column name="locked" display="none" order="130">
                 <widget type="checkbox" fieldname="bloquear" />
             </column>
-            <column name="default" order="130">
+            <column name="default" order="140">
                 <widget type="checkbox" fieldname="predeterminado" />
             </column>
         </group>

@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Lib\Widget\RowStatus;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Lib\AssetManager;
@@ -72,6 +73,22 @@ class ListView extends BaseView
      * @var array
      */
     public $totalAmounts = [];
+
+    public function addColor(string $fieldname, $value, string $color, string $title)
+    {
+        if (false === isset($this->rows['status'])) {
+            $this->rows['status'] = new RowStatus([]);
+        }
+
+        $this->rows['status']->options[] = [
+            'tag' => 'option',
+            'children' => [],
+            'color' => $color,
+            'fieldname' => $fieldname,
+            'text' => $value,
+            'title' => $title
+        ];
+    }
 
     /**
      * Adds a field to the Order By list

@@ -48,6 +48,13 @@ class EstadoDocumento extends Base\ModelOnChangeClass
     public $bloquear;
 
     /**
+     * Indicates the color to use in the list row
+     *
+     * @var string
+     */
+    public $color;
+
+    /**
      * Indicates whether the document will be editable or not.
      *
      * @var bool

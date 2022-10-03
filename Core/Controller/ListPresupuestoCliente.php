@@ -58,6 +58,11 @@ class ListPresupuestoCliente extends ListBusinessDocument
         $this->views[$mainViewName]->addOrderBy(['finoferta'], 'expiration');
         $this->addButtonGroupDocument($mainViewName);
         $this->addButtonApproveDocument($mainViewName);
+        $this->views[$mainViewName]->addColor('idestado', '2', 'success', 'approved');
+        $this->views[$mainViewName]->addColor('idestado', '3', 'danger', 'cancelled');
+        $this->views[$mainViewName]->addColor('idestado', '23', 'danger', 'expired');
+        $this->views[$mainViewName]->addColor('editable', '0', 'warning', 'non-editable-document');
+        $this->views[$mainViewName]->addColor('femail', 'notnull:', 'info', 'email-sent');
 
         if ($this->permissions->onlyOwnerData === false) {
             // lines view/tab

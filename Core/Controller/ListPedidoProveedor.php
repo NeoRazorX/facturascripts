@@ -50,9 +50,14 @@ class ListPedidoProveedor extends ListBusinessDocument
      */
     protected function createViews()
     {
-        $this->createViewPurchases('ListPedidoProveedor', 'PedidoProveedor', 'orders');
-        $this->addButtonGroupDocument('ListPedidoProveedor');
-        $this->addButtonApproveDocument('ListPedidoProveedor');
+        $viewName = 'ListPedidoProveedor';
+        $this->createViewPurchases($viewName, 'PedidoProveedor', 'orders');
+        $this->addButtonGroupDocument($viewName);
+        $this->addButtonApproveDocument($viewName);
+        $this->views[$viewName]->addColor('idestado', '16', 'success', 'approved');
+        $this->views[$viewName]->addColor('idestado', '17', 'danger', 'cancelled');
+        $this->views[$viewName]->addColor('editable', '0', 'warning', 'non-editable-document');
+        $this->views[$viewName]->addColor('femail', 'notnull:', 'info', 'email-sent');
 
         if ($this->permissions->onlyOwnerData === false) {
             $this->createViewLines('ListLineaPedidoProveedor', 'LineaPedidoProveedor');

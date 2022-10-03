@@ -50,9 +50,14 @@ class ListAlbaranCliente extends ListBusinessDocument
      */
     protected function createViews()
     {
-        $this->createViewSales('ListAlbaranCliente', 'AlbaranCliente', 'delivery-notes');
-        $this->addButtonGroupDocument('ListAlbaranCliente');
-        $this->addButtonApproveDocument('ListAlbaranCliente');
+        $viewName = 'ListAlbaranCliente';
+        $this->createViewSales($viewName, 'AlbaranCliente', 'delivery-notes');
+        $this->addButtonGroupDocument($viewName);
+        $this->addButtonApproveDocument($viewName);
+        $this->views[$viewName]->addColor('idestado', '8', 'success', 'approved');
+        $this->views[$viewName]->addColor('idestado', '9', 'danger', 'cancelled');
+        $this->views[$viewName]->addColor('editable', '0', 'warning', 'non-editable-document');
+        $this->views[$viewName]->addColor('femail', 'notnull:', 'info', 'email-sent');
 
         if ($this->permissions->onlyOwnerData === false) {
             $this->createViewLines('ListLineaAlbaranCliente', 'LineaAlbaranCliente');
