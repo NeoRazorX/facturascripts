@@ -165,6 +165,7 @@
                     },
                     callback: function (result) {
                         if (result) {
+                            animateSpinner('add');
                             window.location = "{{ fsc.url() }}?action=remove" + "\u0026" + "plugin=" + pluginName;
                         }
                     }
@@ -279,22 +280,22 @@
                     <td>{{ plugin.description | nl2br }}</td>
                     {% if plugin.enabled %}
                         <td class="text-right">
-                            <a class="btn btn-sm btn-secondary"
+                            <a class="btn btn-sm btn-secondary btn-spin-action" onclick="animateSpinner('add');"
                                href="{{ fsc.url() }}?action=disable&amp;plugin={{ plugin.name }}">
                                 <i class="fas fa-times fa-fw" aria-hidden="true"></i>
                                 <span class="d-none d-sm-inline-block">{{ i18n.trans('disable') }}</span>
                             </a>
                         </td>
                     {% elseif plugin.compatible %}
-                        <td class="text-right">
+                        <td class="text-right text-nowrap">
                             {% if not constant('FS_DISABLE_RM_PLUGINS') %}
-                                <a class="btn btn-sm btn-danger mr-1" href="#"
+                                <a class="btn btn-sm btn-danger mr-1 btn-spin-action" href="#"
                                    onclick="deletePlugin('{{ plugin.name }}');">
                                     <i class="fas fa-trash-alt fa-fw" aria-hidden="true"></i>
                                     <span class="d-none d-sm-inline-block">{{ i18n.trans('delete') }}</span>
                                 </a>
                             {% endif %}
-                            <a class="btn btn-sm btn-success"
+                            <a class="btn btn-sm btn-success btn-spin-action"onclick="animateSpinner('add');"
                                href="{{ fsc.url() }}?action=enable&amp;plugin={{ plugin.name }}">
                                 <i class="fas fa-check fa-fw" aria-hidden="true"></i>
                                 <span class="d-none d-sm-inline-block">{{ i18n.trans('enable') }}</span>
