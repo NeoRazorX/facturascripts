@@ -156,6 +156,17 @@ abstract class SalesController extends PanelController
         return false;
     }
 
+   /**
+     * @param $message
+     * @return void
+     */
+    private function sendNotAllowedResponse($message): void
+    {
+        $this->setTemplate(false);
+        $this->response->setStatusCode(401);
+        $this->response->setContent(json_encode(['ok' => false, 'messages' => self::ToolBox()::i18n()->trans($message)]));
+    }
+
     /**
      * @param string $action
      *
@@ -163,6 +174,15 @@ abstract class SalesController extends PanelController
      */
     protected function execPreviousAction($action)
     {
+        if (in_array($action, ['save-doc', 'save-status', 'save-paid']) && $this->permissions->allowUpdate === false){
+            $this->sendNotAllowedResponse('not-allowed-modify');
+            return false;
+        }
+
+        if ($action == 'delete-doc' && $this->permissions->allowDelete === false){
+            $this->sendNotAllowedResponse('not-allowed-delete');
+            return false;
+        }
         switch ($action) {
             case 'add-file':
                 return $this->addFileAction();
