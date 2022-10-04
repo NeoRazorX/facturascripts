@@ -72,6 +72,15 @@ class CopyModel extends Controller
         return $data;
     }
 
+    public function loadDiaries(): string
+    {
+        $html = '';
+        foreach ($this->codeModel->all('diarios', 'iddiario', 'descripcion') as $value) {
+            $html .= '<option value="' . $value->code . '">' . $value->description . '</option>';
+        }
+        return $html;
+    }
+
     /**
      * @param Response $response
      * @param User $user
@@ -106,6 +115,10 @@ class CopyModel extends Controller
                 case 'PedidoProveedor':
                 case 'PresupuestoProveedor':
                     $this->savePurchaseDocument();
+                    break;
+
+                case 'Asiento':
+                    $this->saveAccounting();
                     break;
             }
         }
@@ -156,6 +169,37 @@ class CopyModel extends Controller
         $this->dataBase->commit();
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         $this->redirect($newDoc->url() . '&action=save-ok');
+    }
+
+    protected function saveAccounting()
+    {
+        $this->dataBase->beginTransaction();
+
+        $className = self::MODEL_NAMESPACE . $this->modelClass;
+        $newAccount = new $className();
+        $newAccount->concepto = $this->request->request->get('concepto');
+        $newAccount->iddiario = $this->request->request->get('iddiario');
+        $newAccount->canal = $this->request->request->get('canal');
+        $newAccount->fecha = $this->request->request->get('fecha');
+        if (false === $newAccount->save()) {
+            $this->toolBox()->i18nLog()->warning('record-save-error');
+            $this->dataBase->rollback();
+            return;
+        }
+
+        foreach ($this->model->getLines() as $line) {
+            $line->idasiento = $newAccount->primaryColumnValue();
+            unset($line->idpartida);
+            if (false === $line->save()) {
+                $this->toolBox()->i18nLog()->warning('record-save-error');
+                $this->dataBase->rollback();
+                return;
+            }
+        }
+
+        $this->dataBase->commit();
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        $this->redirect($newAccount->url() . '&action=save-ok');
     }
 
     protected function savePurchaseDocument()
