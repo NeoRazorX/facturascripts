@@ -1031,7 +1031,7 @@
     "pvptotal-line-error": "Erro no valor de 'pvptotal' da liña %reference% do documento. Valor correcto: %total%",
     "quantity": "Cantidade",
     "quantity-abb": "Cant.",
-    "quantity-remaining": "Cantidad restante",
+    "quantity-remaining": "Cantidade restante",
     "quantity-served": "cantidade servida",
     "quantity-sold": "Cant. vendida",
     "randomizer-generating-more-items": "Xerando máis elementos...",
