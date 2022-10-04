@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -44,7 +45,17 @@ class WidgetSelect extends BaseWidget
     /**
      * @var string
      */
+    protected $fieldfilter;
+
+    /**
+     * @var string
+     */
     protected $fieldtitle;
+
+    /**
+     * @var string
+     */
+    protected $parent;
 
     /**
      * @var string
@@ -71,6 +82,7 @@ class WidgetSelect extends BaseWidget
         }
 
         parent::__construct($data);
+        $this->parent = $data['parent'] ?? '';
         $this->translate = isset($data['translate']);
 
         foreach ($data['children'] as $child) {
@@ -101,6 +113,7 @@ class WidgetSelect extends BaseWidget
         return [
             'source' => $this->source,
             'fieldcode' => $this->fieldcode,
+            'fieldfilter' => $this->fieldfilter,
             'fieldtitle' => $this->fieldtitle
         ];
     }
@@ -218,6 +231,11 @@ class WidgetSelect extends BaseWidget
         }
     }
 
+    protected function assets()
+    {
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
+    }
+
     /**
      * @param string $type
      * @param string $extraClass
@@ -227,14 +245,30 @@ class WidgetSelect extends BaseWidget
     protected function inputHtml($type = 'text', $extraClass = '')
     {
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
+
+        if ($this->parent != '') {
+            $class = $class . ' parentSelect';
+        }
+
         if ($this->readonly()) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
                 . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>';
         }
 
         $found = false;
-        $id = empty($this->id) ? '' : ' id="' . $this->id . '"';
-        $html = '<select name="' . $this->fieldname . '"' . $id . ' " class="' . $class . '"' . $this->inputHtmlExtraParams() . '>';
+        $html = '<select'
+            . ' name="' . $this->fieldname . '"'
+            . ' id="' . $this->id . '"'
+            . ' class="' . $class . '"'
+            . $this->inputHtmlExtraParams()
+            . ' parent="' . $this->parent . '"'
+            . ' value="' . $this->value . '"'
+            . ' data-field="' . $this->fieldname . '"'
+            . ' data-source="' . $this->source . '"'
+            . ' data-fieldcode="' . $this->fieldcode . '"'
+            . ' data-fieldtitle="' . $this->fieldtitle . '"'
+            . ' data-fieldfilter="' . $this->fieldfilter . '"'
+            . '>';
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
@@ -269,6 +303,7 @@ class WidgetSelect extends BaseWidget
     {
         $this->source = $child['source'];
         $this->fieldcode = $child['fieldcode'] ?? 'id';
+        $this->fieldfilter = $child['fieldfilter'] ?? $this->fieldfilter;
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
         if ($loadData) {
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
