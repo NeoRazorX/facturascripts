@@ -21,10 +21,12 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\User;
@@ -191,6 +193,45 @@ class SendMail extends Controller
         return NewMail::splitEmails($this->request->request->get($field, ''));
     }
 
+    protected function loadDataDefault($model)
+    {
+        $notificationModel = new EmailNotification();
+        $where = [
+            new DataBaseWhere('name', 'sendmail-' . $model->modelClassName()),
+            new DataBaseWhere('enabled', true)
+        ];
+
+        if ($notificationModel->loadFromCode('', $where)) {
+            $shortcodes = ['{code}', '{name}', '{date}', '{total}'];
+            $shortvalues = [$model->codigo, $model->nombrecliente, $model->fecha, $model->total];
+            $this->newMail->title = str_replace($shortcodes, $shortvalues, $notificationModel->subject);
+            $this->newMail->text = str_replace($shortcodes, $shortvalues, $notificationModel->body);
+            return;
+        }
+
+        switch ($model->modelClassName()) {
+            case 'AlbaranCliente':
+                $this->newMail->title = $this->toolBox()->i18n()->trans('delivery-note-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = $this->toolBox()->i18n()->trans('delivery-note-email-text', ['%code%' => $model->codigo]);
+                break;
+
+            case 'FacturaCliente':
+                $this->newMail->title = $this->toolBox()->i18n()->trans('invoice-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = $this->toolBox()->i18n()->trans('invoice-email-text', ['%code%' => $model->codigo]);
+                break;
+
+            case 'PedidoCliente':
+                $this->newMail->title = $this->toolBox()->i18n()->trans('order-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = $this->toolBox()->i18n()->trans('order-email-text', ['%code%' => $model->codigo]);
+                break;
+
+            case 'PresupuestoCliente':
+                $this->newMail->title = $this->toolBox()->i18n()->trans('estimation-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = $this->toolBox()->i18n()->trans('estimation-email-text', ['%code%' => $model->codigo]);
+                break;
+        }
+    }
+
     protected function redirAfter()
     {
         $className = self::MODEL_NAMESPACE . $this->request->get('modelClassName');
@@ -302,27 +343,7 @@ class SendMail extends Controller
 
         $model = new $className();
         $model->loadFromCode($this->request->get('modelCode', ''));
-        switch ($model->modelClassName()) {
-            case 'AlbaranCliente':
-                $this->newMail->title = $this->toolBox()->i18n()->trans('delivery-note-email-subject', ['%code%' => $model->codigo]);
-                $this->newMail->text = $this->toolBox()->i18n()->trans('delivery-note-email-text', ['%code%' => $model->codigo]);
-                break;
-
-            case 'FacturaCliente':
-                $this->newMail->title = $this->toolBox()->i18n()->trans('invoice-email-subject', ['%code%' => $model->codigo]);
-                $this->newMail->text = $this->toolBox()->i18n()->trans('invoice-email-text', ['%code%' => $model->codigo]);
-                break;
-
-            case 'PedidoCliente':
-                $this->newMail->title = $this->toolBox()->i18n()->trans('order-email-subject', ['%code%' => $model->codigo]);
-                $this->newMail->text = $this->toolBox()->i18n()->trans('order-email-text', ['%code%' => $model->codigo]);
-                break;
-
-            case 'PresupuestoCliente':
-                $this->newMail->title = $this->toolBox()->i18n()->trans('estimation-email-subject', ['%code%' => $model->codigo]);
-                $this->newMail->text = $this->toolBox()->i18n()->trans('estimation-email-text', ['%code%' => $model->codigo]);
-                break;
-        }
+        $this->loadDataDefault($model);
 
         if (property_exists($model, 'email')) {
             $this->newMail->addAddress($model->email);
