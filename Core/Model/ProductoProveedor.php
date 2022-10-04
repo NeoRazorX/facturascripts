@@ -97,6 +97,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     {
         parent::clear();
         $this->actualizado = date(self::DATETIME_STYLE);
+        $this->coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
         $this->dtopor = 0.0;
         $this->dtopor2 = 0.0;
         $this->neto = 0.0;
