@@ -95,7 +95,9 @@ class CodeModel
         $modelClass = self::MODEL_NAMESPACE . $tableName;
         if (class_exists($modelClass)) {
             $model = new $modelClass();
-            return array_merge($result, $model->codeModelAll($fieldCode));
+            if ($model->modelClassName() === $tableName) {
+                return array_merge($result, $model->codeModelAll($fieldCode));
+            }
         }
 
         self::initDataBase();
