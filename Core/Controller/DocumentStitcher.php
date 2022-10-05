@@ -400,8 +400,8 @@ class DocumentStitcher extends Controller
             new DataBaseWhere('coddivisa', $this->documents[0]->coddivisa),
             new DataBaseWhere($model->subjectColumn(), $this->documents[0]->subjectColumnValue())
         ];
-        $order = ['fecha' => 'ASC', 'hora' => 'ASC'];
-        foreach ($model->all($where, $order) as $doc) {
+        $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
+        foreach ($model->all($where, $orderBy, 0, 0) as $doc) {
             if (false === in_array($doc->primaryColumnValue(), $this->getCodes())) {
                 $this->moreDocuments[] = $doc;
             }
