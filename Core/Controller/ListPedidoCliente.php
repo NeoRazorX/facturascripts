@@ -50,14 +50,9 @@ class ListPedidoCliente extends ListBusinessDocument
      */
     protected function createViews()
     {
-        $viewName = 'ListPedidoCliente';
-        $this->createViewSales($viewName, 'PedidoCliente', 'orders');
-        $this->addButtonGroupDocument($viewName);
-        $this->addButtonApproveDocument($viewName);
-        $this->views[$viewName]->addColor('idestado', '5', 'success', 'approved');
-        $this->views[$viewName]->addColor('idestado', '6', 'danger', 'cancelled');
-        $this->views[$viewName]->addColor('editable', '0', 'warning', 'non-editable-document');
-        $this->views[$viewName]->addColor('femail', 'notnull:', 'info', 'email-sent');
+        $this->createViewSales('ListPedidoCliente', 'PedidoCliente', 'orders');
+        $this->addButtonGroupDocument('ListPedidoCliente');
+        $this->addButtonApproveDocument('ListPedidoCliente');
 
         if ($this->permissions->onlyOwnerData === false) {
             $this->createViewLines('ListLineaPedidoCliente', 'LineaPedidoCliente');

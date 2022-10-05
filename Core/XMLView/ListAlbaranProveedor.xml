@@ -114,4 +114,10 @@
             <widget type="date" fieldname="fecha" />
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="warning" title="non-editable-document" fieldname="editable">0</option>
+            <option color="info" title="email-sent" fieldname="femail">notnull:</option>
+        </row>
+    </rows>
 </view>

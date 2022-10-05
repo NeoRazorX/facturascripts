@@ -104,6 +104,22 @@ trait ListBusinessActionTrait
     }
 
     /**
+     * Add color to listing rows.
+     *
+     * @param string $viewName
+     */
+    protected function addColorRow(string $viewName)
+    {
+        $model = $this->views[$this->active]->model;
+        foreach ($model->getAvailableStatus() as $status) {
+            if (empty($status->color)) {
+                continue;
+            }
+            $this->views[$viewName]->addColor('idestado', $status->idestado, $status->color, $status->nombre);
+        }
+    }
+
+    /**
      * Approves selected documents.
      *
      * @param mixed $codes

@@ -50,14 +50,9 @@ class ListAlbaranProveedor extends ListBusinessDocument
      */
     protected function createViews()
     {
-        $viewName = 'ListAlbaranProveedor';
-        $this->createViewPurchases($viewName, 'AlbaranProveedor', 'delivery-notes');
-        $this->addButtonGroupDocument($viewName);
-        $this->addButtonApproveDocument($viewName);
-        $this->views[$viewName]->addColor('idestado', '198', 'success', 'approved');
-        $this->views[$viewName]->addColor('idestado', '20', 'danger', 'cancelled');
-        $this->views[$viewName]->addColor('editable', '0', 'warning', 'non-editable-document');
-        $this->views[$viewName]->addColor('femail', 'notnull:', 'info', 'email-sent');
+        $this->createViewPurchases('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
+        $this->addButtonGroupDocument('ListAlbaranProveedor');
+        $this->addButtonApproveDocument('ListAlbaranProveedor');
 
         if ($this->permissions->onlyOwnerData === false) {
             $this->createViewLines('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor');

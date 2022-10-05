@@ -128,6 +128,8 @@ abstract class ListBusinessDocument extends ListController
         $this->addCommonViewFilters($viewName, $modelName);
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
+
+        $this->addColorRow($viewName);
     }
 
     protected function createViewSales(string $viewName, string $modelName, string $label)
@@ -158,6 +160,8 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
 
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
+
+        $this->addColorRow($viewName);
     }
 
     /**

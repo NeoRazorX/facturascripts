@@ -46,13 +46,7 @@ class ListFacturaProveedor extends ListBusinessDocument
     protected function createViews()
     {
         // listado de facturas de proveedor
-        $viewName = 'ListFacturaProveedor';
-        $this->createViewPurchases($viewName, 'FacturaProveedor', 'invoices');
-        $this->views[$viewName]->addColor('idfacturarect', 'notnull:', 'danger', 'rectified-invoice');
-        $this->views[$viewName]->addColor('pagada', '1', 'success', 'paid');
-        $this->views[$viewName]->addColor('editable', '0', 'warning', 'non-editable-document');
-        $this->views[$viewName]->addColor('femail', 'notnull:', 'info', 'email-sent');
-        $this->views[$viewName]->addColor('idasiento', 'null:', 'dark', 'invoice-without-acc-entry');
+        $this->createViewPurchases('ListFacturaProveedor', 'FacturaProveedor', 'invoices');
 
         // si el usuario solamente tiene permiso para ver lo suyo, no añadimos el resto de pestañas
         if ($this->permissions->onlyOwnerData) {
