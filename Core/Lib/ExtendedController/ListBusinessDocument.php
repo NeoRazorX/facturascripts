@@ -181,6 +181,9 @@ abstract class ListBusinessDocument extends ListController
                 BusinessDocumentGenerator::setSameDate(true);
                 return $this->approveDocumentAction($codes, $model, $allowUpdate, $this->dataBase);
 
+            case 'generate-accounting-entries':
+                return $this->generateAccountingEntriesAction($model, $allowUpdate, $this->dataBase);
+
             case 'group-document':
                 return $this->groupDocumentAction($codes, $model);
 

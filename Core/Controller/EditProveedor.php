@@ -200,8 +200,12 @@ class EditProveedor extends ComercialContactController
                 $view->loadData('', $where, ['idcontacto' => 'DESC']);
                 break;
 
-            case 'ListAlbaranProveedor':
             case 'ListFacturaProveedor':
+                $view->loadData('', $where);
+                $this->addButtonGenerateAccountingInvoices('ListFacturaProveedor', $codproveedor);
+                break;
+
+            case 'ListAlbaranProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
             case 'ListProductoProveedor':

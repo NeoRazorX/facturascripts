@@ -252,6 +252,9 @@ abstract class ComercialContactController extends EditController
             case 'edit-file':
                 return $this->editFileAction();
 
+            case 'generate-accounting-entries':
+                return $this->generateAccountingEntriesAction($model, $allowUpdate, $this->dataBase);
+
             case 'group-document':
                 return $this->groupDocumentAction($codes, $model);
 

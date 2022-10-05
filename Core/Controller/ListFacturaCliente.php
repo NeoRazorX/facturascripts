@@ -131,4 +131,12 @@ class ListFacturaCliente extends ListBusinessDocument
         $this->addFilterCheckbox('ListFacturaCliente', 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
         $this->addButtonLockInvoice('ListFacturaCliente');
     }
+
+    protected function loadData($viewName, $view)
+    {
+        parent::loadData($viewName, $view);
+        if ($viewName === 'ListFacturaCliente') {
+            $this->addButtonGenerateAccountingInvoices('ListFacturaCliente');
+        }
+    }
 }

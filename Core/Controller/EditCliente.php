@@ -194,8 +194,12 @@ class EditCliente extends ComercialContactController
                 $view->loadData('', $where, ['idcontacto' => 'DESC']);
                 break;
 
-            case 'ListAlbaranCliente':
             case 'ListFacturaCliente':
+                $view->loadData('', $where);
+                $this->addButtonGenerateAccountingInvoices('ListFacturaCliente', $codcliente);
+                break;
+
+            case 'ListAlbaranCliente':
             case 'ListPedidoCliente':
             case 'ListPresupuestoCliente':
             case 'ListReciboCliente':
