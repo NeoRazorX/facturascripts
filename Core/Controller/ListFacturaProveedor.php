@@ -27,10 +27,10 @@ use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 /**
  * Controller to list the items in the FacturaProveedor model
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Raul Jimenez                 <raul.jimenez@nazcanetworks.com>
- * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Raul Jimenez                  <raul.jimenez@nazcanetworks.com>
+ * @author Cristo M. Estévez Hernández   <cristom.estevez@gmail.com>
  */
 class ListFacturaProveedor extends ListBusinessDocument
 {
@@ -103,9 +103,9 @@ class ListFacturaProveedor extends ListBusinessDocument
             $this->addFilterSelect($viewName, 'coddivisa', 'currency', 'coddivisa', $currencies);
         }
 
-        $paymethods = FormasPago::codeModel();
-        if (count($paymethods) > 2) {
-            $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $paymethods);
+        $payMethods = FormasPago::codeModel();
+        if (count($payMethods) > 2) {
+            $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $payMethods);
         }
 
         $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');
