@@ -37,7 +37,7 @@
         </group>
         <group name="seccondary-data" numcolumns="12">
             <column name="account" order="100">
-                <widget type="autocomplete" fieldname="idcuenta" onclick="EditCuenta" readonly="dinamic" required="true">
+                <widget type="select" parent="codejercicio" fieldname="idcuenta" onclick="EditCuenta" readonly="dinamic" required="true">
                     <values source="cuentas" fieldcode="idcuenta" fieldtitle="codcuenta" fieldfilter="codejercicio" />
                 </widget>
             </column>

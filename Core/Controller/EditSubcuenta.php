@@ -220,6 +220,28 @@ class EditSubcuenta extends EditController
         }
     }
 
+    protected function selectAction(): array
+    {
+        $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
+
+        $where = [];
+        foreach (DataBaseWhere::applyOperation($data['fieldfilter'] ?? '') as $field => $operation) {
+            $where[] = new DataBaseWhere($field, $data['term'], '=', $operation);
+        }
+
+        $results = [];
+        $accountModel = new Cuenta();
+        $utils = $this->toolBox()->utils();
+        foreach ($accountModel->all($where, ['codcuenta' => 'ASC'], 0, 0) as $account) {
+            $results[] = [
+                'key' => $utils->fixHtml($account->idcuenta),
+                'value' => $utils->fixHtml($account->codcuenta . ' | ' . $utils->fixHtml($account->descripcion))
+            ];
+        }
+
+        return $results;
+    }
+
     /**
      * Set dotted status to indicated value.
      *
