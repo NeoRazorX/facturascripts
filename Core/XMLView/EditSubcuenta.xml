@@ -27,7 +27,7 @@
                 <widget type="text" fieldname="codsubcuenta" icon="fas fa-hashtag" maxlength="15" readonly="dinamic" required="true"/>
             </column>
             <column name="description" numcolumns="6" order="110">
-                <widget type="text" fieldname="descripcion" maxlength="255" required="true" />
+                <widget type="text" fieldname="descripcion2" maxlength="255" required="true" />
             </column>
             <column name="fiscal-exercise" numcolumns="3" order="120">
                 <widget type="select" fieldname="codejercicio" onclick="EditEjercicio" readonly="dinamic" required="true">
@@ -37,7 +37,7 @@
         </group>
         <group name="seccondary-data" numcolumns="12">
             <column name="account" order="100">
-                <widget type="autocomplete" fieldname="idcuenta" onclick="EditCuenta" readonly="dinamic" required="true">
+                <widget type="select" parent="codejercicio" fieldname="idcuenta" onclick="EditCuenta" readonly="dinamic" required="true">
                     <values source="cuentas" fieldcode="idcuenta" fieldtitle="codcuenta" fieldfilter="codejercicio" />
                 </widget>
             </column>
