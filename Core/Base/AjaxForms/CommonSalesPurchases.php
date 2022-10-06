@@ -31,7 +31,7 @@ use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 trait CommonSalesPurchases
 {
-    protected static $columnView = 'subtotal';
+    protected static $columnView;
 
     protected static function cifnif(Translator $i18n, BusinessDocument $model): string
     {
@@ -522,8 +522,7 @@ trait CommonSalesPurchases
                 . $i18n->trans('subtotal') . '</button>';
         }
 
-        $html .= '</div>'
-            . '</div>';
+        $html .= '</div></div>';
         return $html;
     }
 

@@ -154,6 +154,10 @@ class PurchasesLineHTML
      */
     public static function render(array $lines, PurchaseDocument $model): string
     {
+        if (empty(self::$columnView)) {
+            self::$columnView = AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+        }
+
         self::$numlines = count($lines);
         $i18n = new Translator();
         $html = '';

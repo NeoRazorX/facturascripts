@@ -20,10 +20,10 @@
 namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
-use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
 
 /**
  * Description of PurchasesFooterHTML
@@ -72,6 +72,10 @@ class PurchasesFooterHTML
 
     public static function render(PurchaseDocument $model): string
     {
+        if (empty(self::$columnView)) {
+            self::$columnView = AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+        }
+
         if (empty($model->codproveedor)) {
             return '';
         }

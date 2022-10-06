@@ -71,6 +71,10 @@ class SalesFooterHTML
 
     public static function render(SalesDocument $model): string
     {
+        if (empty(self::$columnView)) {
+            self::$columnView = AppSettings::get('default', 'columnetosubtotal', 'subtotal');
+        }
+
         if (empty($model->codcliente)) {
             return '';
         }
