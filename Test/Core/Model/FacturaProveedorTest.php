@@ -91,6 +91,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertFalse($dbInvoice->exists(), 'deleted-invoice-still-found');
         $this->assertFalse($invoice->exists(), 'deleted-invoice-still-found-2');
         $this->assertFalse($firstLine->exists(), 'deleted-line-invoice-still-found');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'cant-delete-invoice');
     }
 
@@ -134,6 +135,7 @@ final class FacturaProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
         $this->assertFalse($firstLine->exists(), 'deleted-line-invoice-still-found');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
 
         // comprobamos que el stock del producto ha desaparecido
@@ -189,6 +191,7 @@ final class FacturaProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
         $this->assertFalse($updEntry->exists(), 'deleted-accounting-entry-still-found');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
@@ -237,6 +240,7 @@ final class FacturaProveedorTest extends TestCase
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
@@ -283,6 +287,7 @@ final class FacturaProveedorTest extends TestCase
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
@@ -316,6 +321,7 @@ final class FacturaProveedorTest extends TestCase
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
@@ -359,6 +365,7 @@ final class FacturaProveedorTest extends TestCase
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 

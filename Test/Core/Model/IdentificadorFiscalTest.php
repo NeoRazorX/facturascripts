@@ -131,9 +131,11 @@ final class IdentificadorFiscalTest extends TestCase
         $this->assertTrue($identificador->save(), 'identificador-fiscal-cant-save');
 
         // eliminamos
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
         $this->assertTrue($contact->delete(), 'cant-contact-customer');
         $this->assertTrue($company->delete(), 'cant-company-customer');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'cant-supplier-customer');
     }
 
