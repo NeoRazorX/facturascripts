@@ -76,7 +76,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return DinContacto[]
      */
-    public function getAdresses(): array
+    public function getAddresses(): array
     {
         $contactModel = new DinContacto();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
@@ -100,7 +100,7 @@ class Proveedor extends Base\ComercialContact
      *
      * @return DinContacto
      */
-    public function getDefaultAddress()
+    public function getDefaultAddress(): Contacto
     {
         $contact = new DinContacto();
         $contact->loadFromCode($this->idcontacto);

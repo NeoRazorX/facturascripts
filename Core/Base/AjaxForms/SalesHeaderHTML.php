@@ -387,7 +387,7 @@ class SalesHeaderHTML
     private static function getAddressOptions(Translator $i18n, $selected, bool $empty): array
     {
         $options = $empty ? ['<option value="">------</option>'] : [];
-        foreach (self::$cliente->getAdresses() as $contact) {
+        foreach (self::$cliente->getAddresses() as $contact) {
             $descripcion = empty($contact->descripcion) ? '(' . $i18n->trans('empty') . ') ' : '(' . $contact->descripcion . ') ';
             $descripcion .= empty($contact->direccion) ? '' : $contact->direccion;
             $options[] = $contact->idcontacto == $selected ?

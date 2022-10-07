@@ -24,7 +24,7 @@ use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\CuentaBancoCliente as DinCuentaBancoCliente;
 
 /**
- * The client. You can have one or more associated addresses and sub-accounts.
+ * The client. You can have one or more associated addresses and subaccounts.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -111,7 +111,7 @@ class Cliente extends Base\ComercialContact
      *
      * @return DinContacto[]
      */
-    public function getAdresses(): array
+    public function getAddresses(): array
     {
         $contactModel = new DinContacto();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
@@ -135,7 +135,7 @@ class Cliente extends Base\ComercialContact
      *
      * @return DinContacto
      */
-    public function getDefaultAddress($type = 'billing')
+    public function getDefaultAddress($type = 'billing'): Contacto
     {
         $contact = new DinContacto();
         $idcontacto = $type === 'shipping' ? $this->idcontactoenv : $this->idcontactofact;
