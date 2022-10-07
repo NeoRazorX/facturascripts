@@ -111,6 +111,7 @@ final class TarifaTest extends TestCase
         // eliminamos
         $this->assertTrue($presupuesto->delete(), 'presupuesto-can-not-delete');
         $this->assertTrue($producto->delete(), 'producto-can-not-delete');
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-can-not-delete');
         $this->assertTrue($tarifa->delete(), 'tarifa-can-not-delete');
     }
@@ -156,6 +157,7 @@ final class TarifaTest extends TestCase
         // eliminamos
         $this->assertTrue($presupuesto->delete(), 'presupuesto-can-not-delete');
         $this->assertTrue($producto->delete(), 'producto-can-not-delete');
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-can-not-delete');
         $this->assertTrue($grupo->delete(), 'grupo-can-not-delete');
         $this->assertTrue($tarifa->delete(), 'tarifa-can-not-delete');
@@ -210,6 +212,7 @@ final class TarifaTest extends TestCase
         // eliminamos
         $this->assertTrue($presupuesto->delete(), 'presupuesto-can-not-delete');
         $this->assertTrue($producto->delete(), 'producto-can-not-delete');
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-can-not-delete');
         $this->assertTrue($grupo->delete(), 'grupo-can-not-delete');
         $this->assertTrue($tarifa->delete(), 'tarifa-can-not-delete');
@@ -251,6 +254,7 @@ final class TarifaTest extends TestCase
         // eliminamos
         $this->assertTrue($presupuesto->delete(), 'presupuesto-can-not-delete');
         $this->assertTrue($producto->delete(), 'producto-can-not-delete');
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-can-not-delete');
         $this->assertTrue($tarifa->delete(), 'tarifa-can-not-delete');
     }

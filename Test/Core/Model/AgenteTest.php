@@ -35,6 +35,7 @@ final class AgenteTest extends TestCase
         $this->assertTrue($agent->save(), 'agent-cant-save');
         $this->assertNotNull($agent->primaryColumnValue(), 'agent-not-stored');
         $this->assertTrue($agent->exists(), 'agent-cant-persist');
+        $this->assertTrue($agent->getContact()->delete(), 'contacto-cant-delete');
         $this->assertTrue($agent->delete(), 'agent-cant-delete');
     }
 
@@ -43,6 +44,7 @@ final class AgenteTest extends TestCase
         $agent = new Agente();
         $agent->nombre = 'Test Agent with new code';
         $this->assertTrue($agent->save(), 'agent-cant-save');
+        $this->assertTrue($agent->getContact()->delete(), 'contacto-cant-delete');
         $this->assertTrue($agent->delete(), 'agent-cant-delete');
     }
 
@@ -61,6 +63,7 @@ final class AgenteTest extends TestCase
         $this->assertNotNull($agent->observaciones, 'agent-observaciones-null');
 
         // eliminamos
+        $this->assertTrue($agent->getContact()->delete(), 'contacto-cant-delete');
         $this->assertTrue($agent->delete(), 'agent-cant-delete-2');
     }
 
@@ -78,6 +81,7 @@ final class AgenteTest extends TestCase
         $this->assertTrue($agent->save(), 'agent-cant-save-4');
 
         // eliminamos
+        $this->assertTrue($agent->getContact()->delete(), 'contacto-cant-delete');
         $this->assertTrue($agent->delete(), 'agent-cant-delete-3');
     }
 

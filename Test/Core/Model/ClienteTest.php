@@ -40,6 +40,7 @@ final class ClienteTest extends TestCase
         $this->assertEquals($cliente->nombre, $cliente->razonsocial);
 
         // eliminamos
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
@@ -70,6 +71,7 @@ final class ClienteTest extends TestCase
         $this->assertTrue($cliente->save(), 'cliente-cant-save');
 
         // eliminamos
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
@@ -95,6 +97,7 @@ final class ClienteTest extends TestCase
         $this->assertEquals('&lt;test&gt;', $cliente->observaciones, 'html-not-escaped-on-observaciones');
 
         // eliminamos
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
@@ -122,6 +125,7 @@ final class ClienteTest extends TestCase
         $cliente->cifnif = '12345678A';
         $cliente->web = 'https://www.example.com';
         $this->assertTrue($cliente->save(), 'cliente-cant-save-web');
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
@@ -140,6 +144,7 @@ final class ClienteTest extends TestCase
         $this->assertNotNull($cliente->observaciones, 'observaciones-is-null');
 
         // eliminamos
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 

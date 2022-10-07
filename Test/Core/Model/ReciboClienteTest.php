@@ -52,6 +52,9 @@ final class ReciboClienteTest extends TestCase
         $receipts = $invoice->getReceipts();
         $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
 
+        // obtenemos el subject de la factura
+        $subject = $invoice->getSubject();
+
         // eliminamos la factura
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
 
@@ -59,6 +62,10 @@ final class ReciboClienteTest extends TestCase
         foreach ($receipts as $receipt) {
             $this->assertFalse($receipt->exists());
         }
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
     public function testCreateInvoiceOnPastDate()
@@ -73,8 +80,15 @@ final class ReciboClienteTest extends TestCase
         $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
         $this->assertEquals($yesterday, $receipts[0]->fecha);
 
+        // obtenemos el subject de la factura
+        $subject = $invoice->getSubject();
+
         // eliminamos la factura
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
     public function testCreatePaidInvoiceOnPastDate()
@@ -123,6 +137,7 @@ final class ReciboClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'can-not-delete-customer');
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
@@ -186,6 +201,7 @@ final class ReciboClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'can-not-delete-customer');
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
@@ -207,8 +223,15 @@ final class ReciboClienteTest extends TestCase
         $invoice->loadFromCode($invoice->primaryColumnValue());
         $this->assertTrue($invoice->pagada, 'invoice-unpaid');
 
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
         // eliminamos la factura
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
     public function testUpdateAndCreateReceipts()
@@ -237,8 +260,15 @@ final class ReciboClienteTest extends TestCase
         $newReceipt->setPaymentMethod($invoice->codpago);
         $this->assertTrue($newReceipt->save(), 'can-not-create-receipt-1');
 
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
         // eliminamos la factura
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
     public function testUpdateReceiptsUpdateInvoice()
@@ -298,8 +328,15 @@ final class ReciboClienteTest extends TestCase
         $invoice->loadFromCode($invoice->primaryColumnValue());
         $this->assertFalse($invoice->pagada, 'invoice-paid');
 
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
         // eliminamos la factura
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
     public function testUpdateInvoiceWithPaidReceipt()
@@ -336,8 +373,15 @@ final class ReciboClienteTest extends TestCase
         // comprobamos que solamente hay un recibo
         $this->assertCount(1, $invoice->getReceipts(), 'bad-invoice-receipts-count');
 
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
         // eliminamos la factura
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
     public function testPayReceiptUpdatesCustomerRisk()
@@ -379,8 +423,15 @@ final class ReciboClienteTest extends TestCase
         $customer->loadFromCode($customer->primaryColumnValue());
         $this->assertLessThan($risk, $customer->riesgoalcanzado, 'bad-customer-risk');
 
+        // obtenemos el subject
+        $subject = $invoice->getSubject();
+
         // eliminamos la factura
         $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+
+        // eliminamos el subject
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'can-not-delete-subject');
     }
 
     protected function tearDown(): void

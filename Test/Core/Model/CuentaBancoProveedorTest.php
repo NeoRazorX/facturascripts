@@ -46,6 +46,7 @@ final class CuentaBancoProveedorTest extends TestCase
 
         // eliminamos
         $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
+        $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
@@ -82,6 +83,7 @@ final class CuentaBancoProveedorTest extends TestCase
 
         // eliminamos
         $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
+        $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
@@ -98,6 +100,7 @@ final class CuentaBancoProveedorTest extends TestCase
         $this->assertTrue($cuenta->save(), 'cuenta-cant-save');
 
         // eliminamos el proveedor
+        $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
 
         // comprobamos que la cuenta bancaria se ha eliminado
@@ -130,6 +133,7 @@ final class CuentaBancoProveedorTest extends TestCase
 
         // eliminamos
         $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
+        $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 }

@@ -92,6 +92,7 @@ final class PedidoProveedorTest extends TestCase
         $this->assertEquals($subject->razonsocial, $doc->nombre, 'pedido-proveedor-bad-nombre-1');
 
         // eliminamos
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-1');
     }
 
@@ -120,6 +121,7 @@ final class PedidoProveedorTest extends TestCase
 
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-pedido-proveedor-1');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-1');
     }
 
@@ -162,6 +164,7 @@ final class PedidoProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-pedido-proveedor-2');
         $this->assertFalse($line->exists(), 'linea-pedido-proveedor-still-exists-2');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-2');
     }
 
@@ -220,6 +223,7 @@ final class PedidoProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-pedido-proveedor-3');
         $this->assertFalse($line->exists(), 'linea-pedido-proveedor-still-exists-3');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-3');
 
         // recargamos y comprobamos el stock
@@ -286,6 +290,7 @@ final class PedidoProveedorTest extends TestCase
             $this->assertTrue($child->delete(), 'albarán-cant-delete');
         }
         $this->assertTrue($doc->delete(), 'pedido-cant-delete');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'cliente-cant-delete');
         $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }

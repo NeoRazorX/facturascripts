@@ -65,6 +65,7 @@ final class AccountingCreationTest extends TestCase
         }
 
         // eliminamos el cliente
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 

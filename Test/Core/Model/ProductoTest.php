@@ -197,6 +197,7 @@ final class ProductoTest extends TestCase
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'supplier-cant-delete');
     }
 
@@ -244,7 +245,9 @@ final class ProductoTest extends TestCase
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($supplier1->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier1->delete(), 'supplier-cant-delete');
+        $this->assertTrue($supplier2->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier2->delete(), 'supplier-cant-delete');
     }
 
@@ -291,7 +294,9 @@ final class ProductoTest extends TestCase
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($supplier1->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier1->delete(), 'supplier-cant-delete');
+        $this->assertTrue($supplier2->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier2->delete(), 'supplier-cant-delete');
     }
 
@@ -437,9 +442,8 @@ final class ProductoTest extends TestCase
 
         // eliminamos
         $this->assertTrue($budget->delete(), $budget->modelClassName() . '-delete-error');
-        $contact = $customer->getDefaultAddress();
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cliente-delete-error');
-        $this->assertTrue($contact->delete(), 'contacto-delete-error');
         $this->assertTrue($product->delete(), 'product-cant-delete');
     }
 
