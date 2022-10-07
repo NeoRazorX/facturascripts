@@ -91,6 +91,7 @@ final class PresupuestoProveedorTest extends TestCase
         $this->assertEquals($subject->razonsocial, $doc->nombre, 'presupuesto-proveedor-bad-nombre-1');
 
         // eliminamos
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-1');
     }
 
@@ -119,6 +120,7 @@ final class PresupuestoProveedorTest extends TestCase
 
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-proveedor-1');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-1');
     }
 
@@ -161,6 +163,7 @@ final class PresupuestoProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-proveedor-2');
         $this->assertFalse($line->exists(), 'linea-presupuesto-proveedor-still-exists-2');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-2');
     }
 
@@ -209,6 +212,7 @@ final class PresupuestoProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-proveedor-3');
         $this->assertFalse($line->exists(), 'linea-presupuesto-proveedor-still-exists-3');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-3');
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
     }
@@ -242,6 +246,7 @@ final class PresupuestoProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-proveedor-3');
         $this->assertFalse($line->exists(), 'linea-presupuesto-proveedor-still-exists-3');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-3');
     }
 
@@ -301,6 +306,7 @@ final class PresupuestoProveedorTest extends TestCase
             $this->assertTrue($child->delete(), 'pedido-cant-delete');
         }
         $this->assertTrue($doc->delete(), 'presupuesto-cant-delete');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
         $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }
