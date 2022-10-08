@@ -153,7 +153,6 @@ class PeriodTools
             'this-last-week',
             'last-week',
             'this-last-fortnight',
-            '',
             'this-month',
             'this-last-month',
             'last-month',
