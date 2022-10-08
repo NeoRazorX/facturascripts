@@ -31,33 +31,12 @@ class PeriodTools
 {
     const DATE_FORMAT = 'd-m-Y';
 
-    /**
-     * Returns a date applying to the date reported
-     * or to the current date (if no date is reported)
-     * a relative date format.
-     *
-     * @param string $format Relative date format (+1 day)
-     * @param string $dateFormat Return date format (d-m-Y)
-     * @param string $date Date to apply relative format
-     *
-     * @return string
-     */
     public static function applyFormatToDate(string $format, string $dateFormat = self::DATE_FORMAT, string $date = ''): string
     {
         $time = empty($date) ? time() : strtotime($date);
         return date($dateFormat, strtotime($format, $time));
     }
 
-    /**
-     * Applies on the indicated start and end date
-     * the relative formats reported from the current date
-     *
-     * @param string $startDate
-     * @param string $endDate
-     * @param string $startFormat
-     * @param string $endFormat
-     * @param string $dateFormat
-     */
     public static function applyFormatToPeriod(string &$startDate, string &$endDate, string $startFormat, string $endFormat, string $dateFormat = self::DATE_FORMAT)
     {
         $startDate = static::applyFormatToDate($startFormat, $dateFormat);
@@ -65,16 +44,14 @@ class PeriodTools
     }
 
     /**
-     * Applies on the start and end date indicated
-     * the relative format corresponding to the period indicated
+     * Applies on the start and end date indicated the relative format corresponding to the period indicated
      * starting from the current date
      *
      * @param string $period
      * @param string $startDate
      * @param string $endDate
-     * @param string $dateFormat
      */
-    public static function applyPeriod(string $period, string &$startDate, string &$endDate, string $dateFormat = self::DATE_FORMAT)
+    public static function applyPeriod(string $period, string &$startDate, string &$endDate)
     {
         switch ($period) {
             case 'today':

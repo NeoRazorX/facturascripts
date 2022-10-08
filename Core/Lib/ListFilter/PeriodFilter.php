@@ -29,9 +29,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PeriodFilter extends BaseFilter
 {
-    const ENDDATE_ID = 'end';
+    const END_DATE_ID = 'end';
     const SELECT_ID = 'period';
-    const STARTDATE_ID = 'start';
+    const START_DATE_ID = 'start';
 
     /** @var DateFilter */
     private $endDate;
@@ -48,8 +48,8 @@ class PeriodFilter extends BaseFilter
         $values = PeriodTools::getFilterOptions(static::$i18n);
         $this->select = new SelectFilter($key, '', $label, $values);
         $this->select->icon = 'fas fa-calendar-alt';
-        $this->startDate = new DateFilter(self::STARTDATE_ID . $key, $field, 'from-date', '>=');
-        $this->endDate = new DateFilter(self::ENDDATE_ID . $key, $field, 'until-date', '<=');
+        $this->startDate = new DateFilter(self::START_DATE_ID . $key, $field, 'from-date', '>=');
+        $this->endDate = new DateFilter(self::END_DATE_ID . $key, $field, 'until-date', '<=');
     }
 
     public function getDataBaseWhere(array &$where): bool
@@ -72,10 +72,10 @@ class PeriodFilter extends BaseFilter
     public function getValue(string $option = self::SELECT_ID)
     {
         switch ($option) {
-            case self::STARTDATE_ID:
+            case self::START_DATE_ID:
                 return $this->startDate->getValue();
 
-            case self::ENDDATE_ID:
+            case self::END_DATE_ID:
                 return $this->endDate->getValue();
         }
 
@@ -103,11 +103,11 @@ class PeriodFilter extends BaseFilter
     public function setValue($value, $option = self::SELECT_ID)
     {
         switch ($option) {
-            case self::STARTDATE_ID:
+            case self::START_DATE_ID:
                 $this->startDate->setValue($value);
                 break;
 
-            case self::ENDDATE_ID:
+            case self::END_DATE_ID:
                 $this->endDate->setValue($value);
                 break;
 
@@ -129,11 +129,11 @@ class PeriodFilter extends BaseFilter
         if (empty($selectValue)) {
             // start
             $startValue = $request->request->get($this->startDate->name());
-            $this->setValue($startValue, self::STARTDATE_ID);
+            $this->setValue($startValue, self::START_DATE_ID);
 
             // end
             $endValue = $request->request->get($this->endDate->name());
-            $this->setValue($endValue, self::ENDDATE_ID);
+            $this->setValue($endValue, self::END_DATE_ID);
             return;
         }
 
@@ -161,7 +161,7 @@ class PeriodFilter extends BaseFilter
         $startDate = date('d-m-Y');
         $endDate = date('d-m-Y');
         PeriodTools::applyPeriod($this->getValue(), $startDate, $endDate);
-        $this->setDateAndDisable($startDate, self::STARTDATE_ID);
-        $this->setDateAndDisable($endDate, self::ENDDATE_ID);
+        $this->setDateAndDisable($startDate, self::START_DATE_ID);
+        $this->setDateAndDisable($endDate, self::END_DATE_ID);
     }
 }
