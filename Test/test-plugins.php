@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -17,6 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Cache;
+
 define("FS_FOLDER", getcwd());
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -29,12 +32,11 @@ if (!file_exists($config)) {
 require_once $config;
 
 // connect to database
-$db = new FacturaScripts\Core\Base\DataBase();
+$db = new DataBase();
 $db->connect();
 
 // clean cache
-$cache = new FacturaScripts\Core\Base\Cache();
-$cache->clear();
+Cache::clear();
 
 // load Init file for every plugin
 $pluginManager = new FacturaScripts\Core\Base\PluginManager();
