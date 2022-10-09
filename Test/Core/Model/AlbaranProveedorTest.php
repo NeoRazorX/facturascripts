@@ -24,9 +24,9 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\AlbaranProveedor;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
-use FacturaScripts\Test\Core\DefaultSettingsTrait;
-use FacturaScripts\Test\Core\LogErrorsTrait;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\DefaultSettingsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class AlbaranProveedorTest extends TestCase

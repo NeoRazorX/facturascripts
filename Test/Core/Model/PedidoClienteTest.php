@@ -25,9 +25,9 @@ use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PedidoCliente;
 use FacturaScripts\Core\Model\Stock;
-use FacturaScripts\Test\Core\DefaultSettingsTrait;
-use FacturaScripts\Test\Core\LogErrorsTrait;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\DefaultSettingsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class PedidoClienteTest extends TestCase

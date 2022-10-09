@@ -27,7 +27,7 @@ use FacturaScripts\Core\Model\ImpuestoZona;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Model\Serie;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CalculatorTest extends TestCase

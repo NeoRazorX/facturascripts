@@ -21,7 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Fabricante;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class FabricanteTest extends TestCase

@@ -21,7 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Atributo;
 use FacturaScripts\Core\Model\AtributoValor;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class AtributoTest extends TestCase

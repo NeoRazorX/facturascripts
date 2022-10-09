@@ -21,7 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\LogMessage;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 class LogMessageTest extends TestCase

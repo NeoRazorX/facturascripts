@@ -20,8 +20,8 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Contacto;
-use FacturaScripts\Test\Core\LogErrorsTrait;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class ContactoTest extends TestCase

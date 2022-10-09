@@ -20,7 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\FormaPago;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class FormaPagoTest extends TestCase

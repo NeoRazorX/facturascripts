@@ -20,7 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Proveedor;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class ProveedorTest extends TestCase

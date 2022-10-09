@@ -21,7 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\CuentaBancoProveedor;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CuentaBancoProveedorTest extends TestCase

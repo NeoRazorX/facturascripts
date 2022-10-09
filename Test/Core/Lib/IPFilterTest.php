@@ -20,7 +20,7 @@
 namespace FacturaScripts\Test\Core\Lib;
 
 use FacturaScripts\Core\Lib\IPFilter;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 /**

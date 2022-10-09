@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\LogMessage;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 /**

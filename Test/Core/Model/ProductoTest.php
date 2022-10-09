@@ -35,7 +35,7 @@ use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Model\Variante;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class ProductoTest extends TestCase

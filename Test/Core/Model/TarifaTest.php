@@ -22,7 +22,7 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\Model\GrupoClientes;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\Tarifa;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class TarifaTest extends TestCase

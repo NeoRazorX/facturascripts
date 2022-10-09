@@ -23,9 +23,9 @@ use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\FacturaProveedor;
-use FacturaScripts\Test\Core\DefaultSettingsTrait;
-use FacturaScripts\Test\Core\LogErrorsTrait;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\DefaultSettingsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class FacturaProveedorTest extends TestCase

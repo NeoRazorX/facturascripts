@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Test\Core;
+namespace FacturaScripts\Test\Traits;
 
 use FacturaScripts\Core\Base\MiniLog;
 

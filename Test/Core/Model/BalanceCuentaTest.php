@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Balance;
 use FacturaScripts\Core\Model\BalanceCuenta;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 /**

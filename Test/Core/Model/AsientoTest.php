@@ -23,9 +23,9 @@ use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\RegularizacionImpuesto;
 use FacturaScripts\Dinamic\Model\Asiento;
-use FacturaScripts\Test\Core\DefaultSettingsTrait;
-use FacturaScripts\Test\Core\LogErrorsTrait;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\DefaultSettingsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
