@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ExtensionsTrait;
+use FacturaScripts\Core\Cache;
 
 /**
  * The class from which all models inherit, connects to the database,
@@ -31,7 +31,6 @@ use FacturaScripts\Core\Base\ExtensionsTrait;
  */
 trait ModelTrait
 {
-
     use ExtensionsTrait;
 
     /**
@@ -85,13 +84,12 @@ trait ModelTrait
         }
 
         // read from the cache
-        $cache = new Cache();
         $key = 'model-fields-' . get_class($this);
-        static::$fields = $cache->get($key);
+        static::$fields = Cache::get($key);
         if (is_null(static::$fields)) {
             // empty value? Then get from the database and store on the cache
             static::$fields = $dataBase->tableExists($tableName) ? $dataBase->getColumns($tableName) : [];
-            $cache->set($key, static::$fields);
+            Cache::set($key, static::$fields);
         }
     }
 }
