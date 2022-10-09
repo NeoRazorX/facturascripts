@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\Debug\DumbBar;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -187,6 +188,7 @@ class AppController extends App
                 $this->controller->publicCore($this->response);
                 $template = $this->controller->getTemplate();
             } elseif ($permissions->allowAccess) {
+                Session::set('user', $this->user);
                 $this->menuManager->selectPage($this->controller->getPageData());
                 $this->controller->privateCore($this->response, $this->user, $permissions);
                 $template = $this->controller->getTemplate();
@@ -331,7 +333,7 @@ class AppController extends App
     private function updateCookies(User &$user, bool $force = false)
     {
         if ($force || time() - strtotime($user->lastactivity) > self::USER_UPDATE_ACTIVITY_PERIOD) {
-            $ipAddress = ToolBox::ipFilter()->getClientIp();
+            $ipAddress = Session::getClientIp();
             if ($force) {
                 $user->newLogkey($ipAddress);
             } else {

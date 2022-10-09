@@ -74,6 +74,7 @@ class IPFilter
      * Returns true client IP address.
      *
      * @return string
+     * @deprecated since version 2022.5
      */
     public static function getClientIp(): string
     {
