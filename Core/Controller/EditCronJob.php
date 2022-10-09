@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,8 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
 /**
@@ -28,23 +31,12 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditCronJob extends EditController
 {
-
-    /**
-     * Returns the model name.
-     * 
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'CronJob';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -57,7 +49,42 @@ class EditCronJob extends EditController
     {
         parent::createViews();
 
-        /// settings
+        // desactivamos el botón nuevo de la primera pestaña
         $this->setSettings($this->getMainViewName(), 'btnNew', false);
+
+        // añadimos la pestaña de logs
+        $this->createViewsLogs();
+
+        // colocamos las pestañas abajo
+        $this->setTabsPosition('bottom');
+    }
+
+    protected function createViewsLogs(string $viewName = 'ListLogMessage')
+    {
+        $this->addListView($viewName, 'LogMessage', 'related', 'fas fa-file-medical-alt');
+        $this->views[$viewName]->addSearchFields(['ip', 'message', 'uri']);
+        $this->views[$viewName]->addOrderBy(['time', 'id'], 'date', 2);
+
+        // desactivamos el botón nuevo
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    /**
+     * @param string $viewName
+     * @param BaseView $view
+     */
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListLogMessage':
+                $name = $this->getViewModelValue($this->getMainViewName(), 'jobname');
+                $where = [new DataBaseWhere('channel', $name)];
+                $view->loadData('', $where);
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
+        }
     }
 }
