@@ -31,6 +31,7 @@ use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Model\User;
 
 trait RandomDataTrait
@@ -120,6 +121,14 @@ trait RandomDataTrait
         $product->referencia = 'test' . $num;
         $product->descripcion = 'Test Product ' . $num;
         return $product;
+    }
+
+    protected function getRandomSerie(): Serie
+    {
+        $serie = new Serie();
+        $serie->codserie = 'T';
+        $serie->descripcion = 'Test Serie';
+        return $serie;
     }
 
     protected function getRandomSupplier(): Proveedor
