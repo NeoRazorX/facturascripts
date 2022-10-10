@@ -221,20 +221,21 @@ abstract class PurchaseDocument extends TransformerDocument
         $where = [
             new DataBaseWhere('codproveedor', $this->codproveedor),
             new DataBaseWhere('referencia', $newLine->referencia),
-            new DataBaseWhere('coddivisa', $this->coddivisa),
+            new DataBaseWhere('precio', 0, '>')
         ];
-        if ($supplierProd->loadFromCode('', $where) && $supplierProd->precio > 0) {
-            $newLine->dtopor = $supplierProd->dtopor;
-            $newLine->dtopor2 = $supplierProd->dtopor2;
-            $newLine->pvpunitario = $supplierProd->precio;
-        } else {
-            $newLine->pvpunitario = 0;
+        $orderBy = ['coddivisa' => 'DESC'];
+        foreach ($supplierProd->all($where, $orderBy) as $prod) {
+            if ($prod->coddivisa === $this->coddivisa || $prod->coddivisa === null) {
+                $newLine->dtopor = $prod->dtopor;
+                $newLine->dtopor2 = $prod->dtopor2;
+                $newLine->pvpunitario = $prod->precio;
+                return;
+            }
         }
+
+        $newLine->pvpunitario = 0;
     }
 
-    /**
-     * @param array $fields
-     */
     protected function setPreviousData(array $fields = [])
     {
         $more = ['codproveedor'];
