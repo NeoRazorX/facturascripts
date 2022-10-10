@@ -170,7 +170,7 @@ final class PedidoClienteTest extends TestCase
 
         // creamos un producto
         $product = $this->getRandomProduct();
-        $this->assertTrue($product->save(), 'can-not-save-supplier-3');
+        $this->assertTrue($product->save(), 'can-not-save-product-3');
 
         // modificamos el precio y coste del producto
         foreach ($product->getVariants() as $variant) {
