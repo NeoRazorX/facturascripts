@@ -1201,6 +1201,7 @@
     "sum-netos-line-tax-must-be": "La somme du net des lignes de TVA devrait être: %lineNet%",
     "sum-total-line-tax-must-be": "La somme des totaux de TVA des lignes de TVA devrait être: %lineTotalTax%",
     "summary": "Résumé",
+    "sums-and-balances": "Sumas y saldos",
     "supplied": "Fourni",
     "supplied-amount": "Montant fourni",
     "supplied-subaccount-not-found": "Sous-compte de subventions non trouvé",

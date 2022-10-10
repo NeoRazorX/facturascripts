@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -51,4 +51,10 @@
             <widget type="checkbox" fieldname="comparative"/>
         </column>
     </columns>
+    <rows>
+        <row type="status">
+            <option color="info" fieldname="type" title="balance-sheet">balance-sheet</option>
+            <option color="warning" fieldname="type" title="profit-and-loss">profit-and-loss</option>
+        </row>
+    </rows>
 </view>

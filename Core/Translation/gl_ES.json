@@ -1201,6 +1201,7 @@
     "sum-netos-line-tax-must-be": "A suma dos netos das liñas de IVE debe ser: %lineNet%",
     "sum-total-line-tax-must-be": "A suma dos totais de IVE das liñas de IVE debe ser: %lineTotalTax%",
     "summary": "Resumo",
+    "sums-and-balances": "Sumas y saldos",
     "supplied": "Suplido (término de facturación)",
     "supplied-amount": "Suplidos",
     "supplied-subaccount-not-found": "Subconta de suplidos non foi encontrada",

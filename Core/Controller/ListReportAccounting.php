@@ -35,7 +35,6 @@ use FacturaScripts\Dinamic\Model\ReportLedger;
  */
 class ListReportAccounting extends ListController
 {
-
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -52,7 +51,11 @@ class ListReportAccounting extends ListController
      */
     private function addCommonFilter(string $viewName)
     {
-        $this->addFilterSelect($viewName, 'idcompany', 'company', 'idcompany', Empresas::codeModel());
+        // si hay más de una empresa, añadimos un filtro para seleccionarla
+        if ($this->empresa->count() > 1) {
+            $this->addFilterSelect($viewName, 'idcompany', 'company', 'idcompany', Empresas::codeModel());
+        }
+
         $this->addFilterNumber($viewName, 'channel', 'channel', 'channel', '=');
     }
 
@@ -84,7 +87,7 @@ class ListReportAccounting extends ListController
      */
     protected function createViewsAmount(string $viewName = 'ListReportAmount')
     {
-        $this->addView($viewName, 'ReportAmount', 'balance-amounts', 'fas fa-calculator');
+        $this->addView($viewName, 'ReportAmount', 'sums-and-balances', 'fas fa-calculator');
         $this->addOrderBy($viewName, ['name'], 'name');
         $this->addOrderBy($viewName, ['idcompany', 'name'], 'company');
         $this->addSearchFields($viewName, ['name']);
@@ -247,7 +250,7 @@ class ListReportAccounting extends ListController
      *
      * @param string $viewName
      */
-    protected function loadWidgetValues($viewName)
+    protected function loadWidgetValues(string $viewName)
     {
         $columnType = $this->views[$viewName]->columnForField('type');
         if ($columnType && $columnType->widget->getType() === 'select') {
