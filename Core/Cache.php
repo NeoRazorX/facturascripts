@@ -104,6 +104,8 @@ final class Cache
 
     private static function filename(string $key): string
     {
-        return FS_FOLDER . self::FILE_PATH . '/' . $key . '.cache';
+        // reemplazamos / y \ por _
+        $name = str_replace(['/', '\\'], '_', $key);
+        return FS_FOLDER . self::FILE_PATH . '/' . $name . '.cache';
     }
 }

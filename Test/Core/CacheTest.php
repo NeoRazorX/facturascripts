@@ -40,6 +40,19 @@ final class CacheTest extends TestCase
         $this->assertNull(Cache::get($key), 'cache-value-not-erased');
     }
 
+    public function testSlashOnKeys(): void
+    {
+        Cache::clear();
+
+        $key = 'test/key';
+        $value = '1234';
+        Cache::set($key, $value);
+        $this->assertEquals($value, Cache::get($key), 'cache-value-not-found');
+
+        Cache::delete($key);
+        $this->assertNull(Cache::get($key), 'cache-value-not-erased');
+    }
+
     public function testDeleteMultiWorks(): void
     {
         Cache::clear();
