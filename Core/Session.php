@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,8 +44,6 @@ final class Session
 
     public static function set(string $key, $value)
     {
-        if (false === array_key_exists($key, self::$data)) {
-            self::$data[$key] = $value;
-        }
+        self::$data[$key] = $value;
     }
 }

@@ -37,9 +37,15 @@ final class SessionTest extends TestCase
         // comprobamos que se ha añadido
         $this->assertEquals($value, Session::get($key), 'session-value-not-found');
 
-        // comprobamos que no se puede cambiar el valor
+        // comprobamos que se puede cambiar el valor
         Session::set($key, '5678');
-        $this->assertEquals($value, Session::get($key), 'session-value-changed');
+        $this->assertEquals('5678', Session::get($key), 'session-value-not-changed');
+    }
+
+    public function testGetNull(): void
+    {
+        // comprobamos que devuelve null si no existe
+        $this->assertNull(Session::get('not-found'), 'session-value-not-null');
     }
 
     public function testGetClientIp(): void
