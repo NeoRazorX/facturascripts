@@ -83,6 +83,7 @@ final class CalculatorTest extends TestCase
         // segunda línea
         $line2 = $doc->getNewLine();
         $line2->cantidad = 2;
+        $line2->coste = 3;
         $line2->pvpunitario = 10;
         $line2->iva = 4;
 
@@ -97,6 +98,7 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
         $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+        $this->assertEquals(6.0, $doc->totalcoste, 'bad-totalcoste');
 
         // comprobamos la primera línea
         $this->assertEquals(100.0, $lines[0]->pvpsindto, 'bad-line1-pvpsindto');

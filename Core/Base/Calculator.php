@@ -66,7 +66,8 @@ final class Calculator
         $doc->totalrecargo = $subtotals['totalrecargo'];
         $doc->totalsuplidos = $subtotals['totalsuplidos'];
 
-        if (isset($doc->totalcoste)) {
+        // si tiene totalcoste, lo asignamos
+        if (property_exists($doc, 'totalcoste')) {
             $doc->totalcoste = $subtotals['totalcoste'];
         }
 
@@ -278,6 +279,11 @@ final class Calculator
         $doc->totaliva = 0.0;
         $doc->totalrecargo = 0.0;
         $doc->totalsuplidos = 0.0;
+
+        // si tiene totalcoste, lo reiniciamos
+        if (property_exists($doc, 'totalcoste')) {
+            $doc->totalcoste = 0.0;
+        }
 
         foreach ($lines as $line) {
             $line->pvpsindto = $line->pvptotal = 0.0;
