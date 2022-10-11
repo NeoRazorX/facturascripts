@@ -83,7 +83,7 @@
             <input type="hidden" name="activetab" value="{{ currentView.getViewName() }}"/>
             <input type="hidden" name="code" value="{{ model.primaryColumnValue() }}"/>
             <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
-            <div class="card shadow mb-2">
+            <div class="card shadow mb-2"{% if currentView.selected == model.primaryColumnValue() %} id="EditListViewSelected"{% endif %}>
                 <div class="card-body">
                     <div class="form-row">
                         {% for group in currentView.getColumns() %}
