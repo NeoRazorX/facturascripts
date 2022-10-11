@@ -27,11 +27,10 @@ use FacturaScripts\Core\Base\ToolBox;
  * Auxiliary model to load a list of codes and their descriptions
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  */
 class CodeModel
 {
-
     const ALL_LIMIT = 1000;
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
     const SEARCH_LIMIT = 50;
@@ -139,31 +138,6 @@ class CodeModel
     }
 
     /**
-     * Load a CodeModel list (code and description) for the indicated table and search.
-     *
-     * @param string $tableName
-     * @param string $fieldCode
-     * @param string $fieldDescription
-     * @param string $query
-     * @param DataBaseWhere[] $where
-     *
-     * @return static[]
-     */
-    public static function search($tableName, $fieldCode, $fieldDescription, $query, $where = []): array
-    {
-        // is a table or a model?
-        $modelClass = self::MODEL_NAMESPACE . $tableName;
-        if (class_exists($modelClass)) {
-            $model = new $modelClass();
-            return $model->codeModelSearch($query, $fieldCode, $where);
-        }
-
-        $fields = $fieldCode . '|' . $fieldDescription;
-        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
-        return self::all($tableName, $fieldCode, $fieldDescription, false, $where);
-    }
-
-    /**
      * Returns a codemodel with the selected data.
      *
      * @param string $tableName
@@ -177,7 +151,7 @@ class CodeModel
     {
         // is a table or a model?
         $modelClass = self::MODEL_NAMESPACE . $tableName;
-        if (class_exists($modelClass)) {
+        if ($tableName && class_exists($modelClass)) {
             $model = new $modelClass();
             $where = [new DataBaseWhere($fieldCode, $code)];
             if ($model->loadFromCode('', $where)) {
@@ -188,7 +162,7 @@ class CodeModel
         }
 
         self::initDataBase();
-        if (self::$dataBase->tableExists($tableName)) {
+        if ($tableName && self::$dataBase->tableExists($tableName)) {
             $sql = 'SELECT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description FROM '
                 . $tableName . ' WHERE ' . $fieldCode . ' = ' . self::$dataBase->var2str($code);
             $data = self::$dataBase->selectLimit($sql, 1);
@@ -212,6 +186,31 @@ class CodeModel
     {
         $model = $this->get($tableName, $fieldCode, $code, $fieldDescription);
         return empty($model->description) ? (string)$code : $model->description;
+    }
+
+    /**
+     * Load a CodeModel list (code and description) for the indicated table and search.
+     *
+     * @param string $tableName
+     * @param string $fieldCode
+     * @param string $fieldDescription
+     * @param string $query
+     * @param DataBaseWhere[] $where
+     *
+     * @return static[]
+     */
+    public static function search($tableName, $fieldCode, $fieldDescription, $query, $where = []): array
+    {
+        // is a table or a model?
+        $modelClass = self::MODEL_NAMESPACE . $tableName;
+        if (class_exists($modelClass)) {
+            $model = new $modelClass();
+            return $model->codeModelSearch($query, $fieldCode, $where);
+        }
+
+        $fields = $fieldCode . '|' . $fieldDescription;
+        $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
+        return self::all($tableName, $fieldCode, $fieldDescription, false, $where);
     }
 
     /**
