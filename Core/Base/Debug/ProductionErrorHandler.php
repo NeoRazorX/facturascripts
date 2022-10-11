@@ -71,6 +71,12 @@ class ProductionErrorHandler
         return '';
     }
 
+    private function getPlugins(): string
+    {
+        $pluginManager = new PluginManager();
+        return implode(',', $pluginManager->enabledPlugins());
+    }
+
     /**
      * @param array $error
      *
@@ -109,8 +115,17 @@ class ProductionErrorHandler
             . "<li><b>PHP:</b> " . PHP_VERSION . "</li>"
             . "</ul>"
             . "<div class='text-center'>"
-            . "<a class='btn1' href='https://facturascripts.com/contacto?errhash=" . $hash . "' target='_blank'>REPORT / INFORMAR</a>"
+            . "<form action='https://facturascripts.com/contacto' method='post' target='_blank'>"
+            . "<input type='hidden' name='errhash' value='" . $hash . "' />"
+            . "<input type='hidden' name='errtype' value='" . $error["type"] . "' />"
+            . "<input type='hidden' name='errfile' value='" . $error["file"] . "' />"
+            . "<input type='hidden' name='errline' value='" . $error["line"] . "' />"
+            . "<input type='hidden' name='errversion' value='" . PluginManager::CORE_VERSION . "' />"
+            . "<input type='hidden' name='errplugins' value='" . $this->getPlugins() . "' />"
+            . "<input type='hidden' name='errphp' value='" . PHP_VERSION . "' />"
+            . "<button type='submit' class='btn1'>REPORT / INFORMAR</button>"
             . $btn2
+            . "</form>"
             . "</div>"
             . "</div>"
             . "</body>"
