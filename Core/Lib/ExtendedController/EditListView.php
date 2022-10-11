@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -50,7 +51,7 @@ class EditListView extends BaseView
         }
 
         return $exportManager->addListModelPage(
-                $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
+            $this->model, $this->where, $this->order, $this->offset, $this->getColumns(), $this->title
         );
     }
 
@@ -58,11 +59,11 @@ class EditListView extends BaseView
      * Load the data in the cursor property, according to the where filter specified.
      * Adds an empty row/model at the end of the loaded data.
      *
-     * @param string          $code
+     * @param string $code
      * @param DataBaseWhere[] $where
-     * @param array           $order
-     * @param int             $offset
-     * @param int             $limit
+     * @param array $order
+     * @param int $offset
+     * @param int $limit
      */
     public function loadData($code = '', $where = [], $order = [], $offset = -1, $limit = FS_ITEM_LIMIT)
     {
@@ -77,8 +78,10 @@ class EditListView extends BaseView
         }
 
         $this->where = $finalWhere;
-        foreach (DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
-            $this->model->{$field} = $value;
+        if ($this->model !== null) {
+            foreach (DataBaseWhere::getFieldsFilter($this->where) as $field => $value) {
+                $this->model->{$field} = $value;
+            }
         }
     }
 
@@ -86,7 +89,7 @@ class EditListView extends BaseView
      * Process form data needed.
      *
      * @param Request $request
-     * @param string  $case
+     * @param string $case
      */
     public function processFormData($request, $case)
     {
@@ -98,7 +101,7 @@ class EditListView extends BaseView
                 break;
 
             case 'load':
-                $this->offset = (int) $request->request->get('offset', 0);
+                $this->offset = (int)$request->request->get('offset', 0);
                 break;
         }
     }
