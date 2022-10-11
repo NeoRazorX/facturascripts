@@ -57,10 +57,8 @@ function editListViewSetOffset(viewName, value) {
 }
 
 $(document).ready(function () {
-    var my_element = document.getElementById('EditListViewSelected');
-    console.log(my_element);
-
-    if (my_element !== null) {
-        my_element.scrollIntoView();
+    var formSelected = document.getElementById('EditListViewSelected');
+    if (formSelected !== null) {
+        formSelected.scrollIntoView();
     }
 });
