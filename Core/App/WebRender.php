@@ -35,6 +35,7 @@ use Twig\TwigFunction;
  * Description of WebRender
  *
  * @author Carlos García Gómez
+ * @deprecated since version 2022.6
  */
 final class WebRender
 {

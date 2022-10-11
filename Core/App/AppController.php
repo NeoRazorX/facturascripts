@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\Debug\DumbBar;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\User;
@@ -246,14 +247,11 @@ class AppController extends App
             'template' => $template
         ];
 
-        $webRender = new WebRender();
-        $webRender->loadPluginFolders();
-
         try {
-            $this->response->setContent($webRender->render($template, $templateVars));
+            $this->response->setContent(Html::render($template, $templateVars));
         } catch (Exception $exc) {
             ToolBox::log()->critical($exc->getMessage());
-            $this->response->setContent($webRender->render('Error/TemplateError.html.twig', $templateVars));
+            $this->response->setContent(Html::render('Error/TemplateError.html.twig', $templateVars));
             $this->response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
