@@ -31,14 +31,13 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Controller to edit a single item from the SubCuenta model
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author PC REDNET S.L.               <luismi@pcrednet.com>
- * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author PC REDNET S.L.                <luismi@pcrednet.com>
+ * @author Cristo M. Estévez Hernández   <cristom.estevez@gmail.com>
  */
 class EditSubcuenta extends EditController
 {
-
     public function getModelClassName(): string
     {
         return 'Subcuenta';
@@ -51,21 +50,6 @@ class EditSubcuenta extends EditController
         $data['title'] = 'subaccount';
         $data['icon'] = 'fas fa-th-list';
         return $data;
-    }
-
-    /**
-     * Add subaccount ledger report and export.
-     * - Add button
-     * - Add export options
-     * - Set initial values to modal form
-     *
-     * @param string $viewName
-     */
-    protected function addLedgerReport(string $viewName)
-    {
-        $this->addButton($viewName, Ledger::getButton('modal'));
-        $this->setLedgerReportExportOptions($viewName);
-        $this->setLedgerReportValues($viewName);
     }
 
     protected function createDepartureView(string $viewName = 'ListPartidaAsiento')
@@ -139,25 +123,18 @@ class EditSubcuenta extends EditController
         return parent::execPreviousAction($action);
     }
 
-    /**
-     * Exec ledger report from post/get values
-     *
-     * @param int $idSubAccount
-     */
     protected function ledgerReport(int $idSubAccount)
     {
         $subAccount = new Subcuenta();
         $subAccount->loadFromCode($idSubAccount);
         $request = $this->request->request->all();
-        $params = [
+
+        $ledger = new Ledger();
+        $pages = $ledger->generate($subAccount->getExercise()->idempresa, $request['dateFrom'], $request['dateTo'], [
             'grouped' => false,
             'channel' => $request['channel'],
             'subaccount-from' => $subAccount->codsubcuenta
-        ];
-
-        $ledger = new Ledger();
-        $ledger->setExercise($subAccount->codejercicio);
-        $pages = $ledger->generate($request['dateFrom'], $request['dateTo'], $params);
+        ]);
         $title = self::toolBox()::i18n()->trans('ledger') . ' ' . $subAccount->codsubcuenta;
         $this->exportManager->newDoc($request['format'], $title);
 
@@ -196,7 +173,15 @@ class EditSubcuenta extends EditController
                 $where = [new DataBaseWhere('idsubcuenta', $idsubcuenta)];
                 $view->loadData('', $where);
                 if ($view->count > 0) {
-                    $this->addLedgerReport($mainViewName);
+                    $this->addButton($mainViewName, [
+                        'action' => 'ledger',
+                        'color' => 'info',
+                        'icon' => 'fas fa-book fa-fw',
+                        'label' => 'ledger',
+                        'type' => 'modal'
+                    ]);
+                    $this->setLedgerReportExportOptions($mainViewName);
+                    $this->setLedgerReportValues($mainViewName);
                 }
                 break;
 
@@ -245,11 +230,6 @@ class EditSubcuenta extends EditController
         return true;
     }
 
-    /**
-     * Set export options to widget of modal form
-     *
-     * @param string $viewName
-     */
     private function setLedgerReportExportOptions(string $viewName)
     {
         $columnFormat = $this->views[$viewName]->columnModalForName('format');
@@ -262,11 +242,6 @@ class EditSubcuenta extends EditController
         }
     }
 
-    /**
-     * Set initial values to modal fields
-     *
-     * @param string $viewName
-     */
     private function setLedgerReportValues(string $viewName)
     {
         $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');

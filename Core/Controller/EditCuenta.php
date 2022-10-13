@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,30 +29,19 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
 /**
  * Controller to edit a single item from the Cuenta model
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author PC REDNET S.L.               <luismi@pcrednet.com>
- * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author PC REDNET S.L.                <luismi@pcrednet.com>
+ * @author Cristo M. Estévez Hernández   <cristom.estevez@gmail.com>
  */
 class EditCuenta extends EditController
 {
-
-    /**
-     * Returns the class name of the model to use in the editView.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Cuenta';
     }
 
-    /**
-     * Returns basic page attributes.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -61,24 +50,6 @@ class EditCuenta extends EditController
         return $data;
     }
 
-    /**
-     * Add subaccount ledger report and export.
-     * - Add button
-     * - Add export options
-     * - Set initial values to modal form
-     *
-     * @param string $viewName
-     */
-    protected function addLedgerReport(string $viewName)
-    {
-        $this->addButton($viewName, Ledger::getButton('modal'));
-        $this->setLedgerReportExportOptions($viewName);
-        $this->setLedgerReportValues($viewName);
-    }
-
-    /**
-     * @param string $viewName
-     */
     protected function createAccountingView(string $viewName = 'ListCuenta')
     {
         $this->addListView($viewName, 'Cuenta', 'children-accounts', 'fas fa-level-down-alt');
@@ -89,9 +60,6 @@ class EditCuenta extends EditController
         $this->views[$viewName]->disableColumn('parent-account');
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createSubAccountingView(string $viewName = 'ListSubcuenta')
     {
         $this->addListView($viewName, 'Subcuenta', 'subaccounts');
@@ -137,25 +105,18 @@ class EditCuenta extends EditController
         return parent::execPreviousAction($action);
     }
 
-    /**
-     * Exec ledger report from post/get values
-     *
-     * @param int $idAccount
-     */
-    protected function ledgerReport($idAccount)
+    protected function ledgerReport(int $idAccount)
     {
         $account = new Cuenta();
         $account->loadFromCode($idAccount);
         $request = $this->request->request->all();
-        $params = [
+
+        $ledger = new Ledger();
+        $pages = $ledger->generate($account->getExercise()->idempresa, $request['dateFrom'], $request['dateTo'], [
             'grouped' => $request['groupingtype'],
             'channel' => $request['channel'],
             'account-from' => $account->codcuenta
-        ];
-
-        $ledger = new Ledger();
-        $ledger->setExercise($account->codejercicio);
-        $pages = $ledger->generate($request['dateFrom'], $request['dateTo'], $params);
+        ]);
         $title = self::toolBox()::i18n()->trans('ledger') . ' ' . $account->codcuenta;
         $this->exportManager->newDoc($request['format'], $title);
 
@@ -199,7 +160,15 @@ class EditCuenta extends EditController
                 $where = [new DataBaseWhere('idcuenta', $idcuenta)];
                 $view->loadData('', $where);
                 if ($view->count > 0) {
-                    $this->addLedgerReport($mainViewName);
+                    $this->addButton($mainViewName, [
+                        'action' => 'ledger',
+                        'color' => 'info',
+                        'icon' => 'fas fa-book fa-fw',
+                        'label' => 'ledger',
+                        'type' => 'modal'
+                    ]);
+                    $this->setLedgerReportExportOptions($mainViewName);
+                    $this->setLedgerReportValues($mainViewName);
                 }
                 break;
 
@@ -212,10 +181,7 @@ class EditCuenta extends EditController
         }
     }
 
-    /**
-     * @param BaseView $view
-     */
-    protected function prepareCuenta($view)
+    protected function prepareCuenta(BaseView $view)
     {
         $cuenta = new Cuenta();
         $idcuenta = $this->request->query->get('parent_idcuenta', '');
@@ -224,11 +190,6 @@ class EditCuenta extends EditController
         }
     }
 
-    /**
-     * Set export options to widget of modal form
-     *
-     * @param string $viewName
-     */
     private function setLedgerReportExportOptions(string $viewName)
     {
         $columnFormat = $this->views[$viewName]->columnModalForName('format');
@@ -241,11 +202,6 @@ class EditCuenta extends EditController
         }
     }
 
-    /**
-     * Set initial values to modal fields
-     *
-     * @param string $viewName
-     */
     private function setLedgerReportValues(string $viewName)
     {
         $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');
