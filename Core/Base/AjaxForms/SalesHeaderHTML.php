@@ -28,6 +28,7 @@ use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Contacto;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Dinamic\Model\Pais;
 
 /**
@@ -76,7 +77,12 @@ class SalesHeaderHTML
         }
 
         $model->cifnif = $formData['cifnif'] ?? $model->cifnif;
-        $model->codagente = !empty($formData['codagente']) ? $formData['codagente'] : null;
+
+        //$user = Session::get('user');
+        //if ($user->can('Edit' . $model->modelClassName(), 'onlyownerdata')) {
+            $model->codagente = !empty($formData['codagente']) ? $formData['codagente'] : $model->codagente;
+        //}
+
         $model->codalmacen = $formData['codalmacen'] ?? $model->codalmacen;
         $model->codcliente = $formData['codcliente'] ?? $model->codcliente;
         $model->codigoenv = $formData['codigoenv'] ?? $model->codigoenv;
@@ -201,6 +207,12 @@ class SalesHeaderHTML
         }
 
         $attributes = $model->editable ? 'name="codagente"' : 'disabled=""';
+
+        $user = Session::get('user');
+        if (false === $user->admin && $user->can('Edit' . $model->modelClassName(), 'onlyownerdata')) {
+            $attributes = 'disabled=""';
+        }
+
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
             . '<div class="form-group">'
             . '<a href="' . Agentes::get($model->codagente)->url() . '">' . $i18n->trans('agent') . '</a>'
