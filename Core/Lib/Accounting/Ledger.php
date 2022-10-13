@@ -66,7 +66,7 @@ class Ledger
         $debe = $haber = 0.0;
         $ledger = [];
 
-        switch ($params['grouped']) {
+        switch ($params['grouped'] ?? '') {
             case 'C':
                 // group by account
                 $balances = [];
