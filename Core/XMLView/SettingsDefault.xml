@@ -166,6 +166,9 @@
             <column name="enable-updates-beta" order="120">
                 <widget type="checkbox" fieldname="enableupdatesbeta"/>
             </column>
+            <column name="not-disable-plugin-when-updating-core" order="130">
+                <widget type="checkbox" fieldname="nodisablepluginsonupdate"/>
+            </column>
         </group>
     </columns>
 </view>

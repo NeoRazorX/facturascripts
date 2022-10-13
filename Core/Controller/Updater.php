@@ -155,6 +155,11 @@ class Updater extends Controller
             $this->toolBox()->i18nLog()->error('download-error');
         }
 
+        // si hemos marcado el checkbox para no desactivar los plugins al actualizar, terminamos aquí
+        if ($this->toolBox()->appSettings()->get('default', 'nodisablepluginsonupdate', false)) {
+            return;
+        }
+
         // ¿Hay que desactivar algo?
         $disable = $this->request->get('disable', '');
         foreach (explode(',', $disable) as $plugin) {
