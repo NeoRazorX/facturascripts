@@ -1271,6 +1271,7 @@
     "today": "Avui",
     "total": "Total",
     "total-amount": "Suma total",
+    "total-cost": "Cost total",
     "total-purchases": "Total compres",
     "total-sales": "Total vendes",
     "total-value-error": "Import total de %docType% %docCode% incorrecte (%docTotal%). Import correcte: %calcTotal%",

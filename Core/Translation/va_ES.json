@@ -1271,6 +1271,7 @@
     "today": "Hui",
     "total": "Total",
     "total-amount": "Suma total",
+    "total-cost": "total-cost",
     "total-purchases": "total-purchases",
     "total-sales": "total-sales",
     "total-value-error": "La cantitat total en %docType% %docCode% és incorrecta (%docTotal%). La cantitat correcta és: %calcTotal%",

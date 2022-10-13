@@ -1271,6 +1271,7 @@
     "today": "today",
     "total": "Gesamt",
     "total-amount": "total-amount",
+    "total-cost": "total-cost",
     "total-purchases": "total-purchases",
     "total-sales": "total-sales",
     "total-value-error": "Gesamtmenge von 0 1 falsch (2). Richtige Menge: 3",

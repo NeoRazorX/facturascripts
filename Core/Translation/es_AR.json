@@ -1271,6 +1271,7 @@
     "today": "Hoy",
     "total": "Total",
     "total-amount": "Suma total",
+    "total-cost": "Coste total",
     "total-purchases": "Total compras",
     "total-sales": "Total ventas",
     "total-value-error": "Valor total de %docType% %docCode% incorrecto (%docTotal%). Valor correcto: %calcTotal%",
