@@ -78,7 +78,6 @@ class SalesHeaderHTML
 
         $model->cifnif = $formData['cifnif'] ?? $model->cifnif;
 
-        $user = Session::get('user');
         if ($user->admin || false === $user->can('Edit' . $model->modelClassName(), 'onlyownerdata')) {
             $model->codagente = !empty($formData['codagente']) ? $formData['codagente'] : null;
         }
