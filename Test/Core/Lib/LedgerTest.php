@@ -64,6 +64,14 @@ final class LedgerTest extends TestCase
         $pages = $ledger->generate($ejercicio->idempresa, $ejercicio->fechainicio, $ejercicio->fechafin);
         $this->assertNotEmpty($pages, 'ledger-empty');
 
+        // ahora lo agrupamos por cuenta
+        $pages = $ledger->generate($ejercicio->idempresa, $ejercicio->fechainicio, $ejercicio->fechafin, ['grouped' => 'C']);
+        $this->assertNotEmpty($pages, 'ledger-empty');
+
+        // ahora lo agrupamos por subcuenta
+        $pages = $ledger->generate($ejercicio->idempresa, $ejercicio->fechainicio, $ejercicio->fechafin, ['grouped' => 'S']);
+        $this->assertNotEmpty($pages, 'ledger-empty');
+
         // eliminamos
         $this->assertTrue($asiento->delete(), 'asiento-cant-delete');
     }
