@@ -1,0 +1,5 @@
+"name";enabled
+"sendmail-PresupuestoCliente";false
+"sendmail-PedidoCliente";false
+"sendmail-AlbaranCliente";false
+"sendmail-FacturaCliente";false

@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\LogMessage;
 
@@ -43,6 +44,24 @@ final class Migrations
         self::fixClients();
         self::fixSuppliers();
         self::clearLogs();
+        self::addEmailNotifications();
+    }
+
+    private static function addEmailNotifications()
+    {
+        $notificationModel = new EmailNotification();
+        $notifications = ['sendmail-PresupuestoCliente', 'sendmail-PedidoCliente', 'sendmail-AlbaranCliente', 'sendmail-FacturaCliente'];
+
+        foreach ($notifications as $notification) {
+            $where = [new DataBaseWhere('name', $notification)];
+            if ($notificationModel->loadFromCode('', $where)) {
+                continue;
+            }
+            $notificationModel->clear();
+            $notificationModel->name = $notification;
+            $notificationModel->enabled = false;
+            $notificationModel->save();
+        }
     }
 
     private static function clearLogs()
