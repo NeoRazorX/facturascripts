@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\LogMessage;
+use ParseCsv\Csv;
 
 /**
  * Description of Migrations
@@ -49,18 +50,19 @@ final class Migrations
 
     private static function addEmailNotifications()
     {
-        $notificationModel = new EmailNotification();
-        $notifications = ['sendmail-PresupuestoCliente', 'sendmail-PedidoCliente', 'sendmail-AlbaranCliente', 'sendmail-FacturaCliente'];
-
-        foreach ($notifications as $notification) {
-            $where = [new DataBaseWhere('name', $notification)];
-            if ($notificationModel->loadFromCode('', $where)) {
-                continue;
+        $csv = new Csv();
+        $csv->auto(FS_FOLDER . '/Dinamic/Data/Lang/ES/emails_notifications.csv');
+        foreach ($csv->data as $row) {
+            $notification = new EmailNotification();
+            $where = [new DataBaseWhere('name', $row['name'])];
+            if (false === $notification->loadFromCode('', $where)) {
+                // no existe, la creamos
+                $notification->enabled = true;
+                $notification->name = $row['name'];
+                $notification->subject = $row['subject'];
+                $notification->body = $row['body'];
+                $notification->save();
             }
-            $notificationModel->clear();
-            $notificationModel->name = $notification;
-            $notificationModel->enabled = false;
-            $notificationModel->save();
         }
     }
 

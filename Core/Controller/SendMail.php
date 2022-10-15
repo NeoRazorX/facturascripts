@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -42,21 +43,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SendMail extends Controller
 {
-
-    // 30 days
-    const MAX_FILE_AGE = 2592000;
+    const MAX_FILE_AGE = 2592000; // 30 days
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
-    /**
-     * Model to use with select and autocomplete filters.
-     *
-     * @var CodeModel
-     */
+    /** @var CodeModel */
     public $codeModel;
 
-    /**
-     * @var NewMail
-     */
+    /** @var NewMail */
     public $newMail;
 
     public function getPageData(): array
@@ -181,13 +174,6 @@ class SendMail extends Controller
         }
     }
 
-    /**
-     * Get emails from field.
-     *
-     * @param string $field
-     *
-     * @return array
-     */
     protected function getEmails(string $field): array
     {
         return NewMail::splitEmails($this->request->request->get($field, ''));
@@ -195,20 +181,21 @@ class SendMail extends Controller
 
     protected function loadDataDefault($model)
     {
+        // buscamos el texto de la notificación para usar el asunto y el cuerpo
         $notificationModel = new EmailNotification();
         $where = [
             new DataBaseWhere('name', 'sendmail-' . $model->modelClassName()),
             new DataBaseWhere('enabled', true)
         ];
-
         if ($notificationModel->loadFromCode('', $where)) {
-            $shortcodes = ['{code}', '{name}', '{date}', '{total}'];
-            $shortvalues = [$model->codigo, $model->nombrecliente, $model->fecha, $model->total];
-            $this->newMail->title = str_replace($shortcodes, $shortvalues, $notificationModel->subject);
-            $this->newMail->text = str_replace($shortcodes, $shortvalues, $notificationModel->body);
+            $shortCodes = ['{code}', '{name}', '{date}', '{total}'];
+            $shortValues = [$model->codigo, $model->nombrecliente, $model->fecha, $model->total];
+            $this->newMail->title = str_replace($shortCodes, $shortValues, $notificationModel->subject);
+            $this->newMail->text = str_replace($shortCodes, $shortValues, $notificationModel->body);
             return;
         }
 
+        // si no hay notificación, usamos los datos de las traducciones
         switch ($model->modelClassName()) {
             case 'AlbaranCliente':
                 $this->newMail->title = $this->toolBox()->i18n()->trans('delivery-note-email-subject', ['%code%' => $model->codigo]);
@@ -292,7 +279,6 @@ class SendMail extends Controller
 
         $this->newMail->title = $this->request->request->get('subject', '');
         $this->newMail->text = $this->request->request->get('body', '');
-
         $this->newMail->setMailbox($this->request->request->get('email-from', ''));
 
         foreach ($this->getEmails('email') as $email) {
@@ -381,7 +367,7 @@ class SendMail extends Controller
         $model = new $className();
         $modelCode = $this->request->get('modelCode');
         if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
-            $model->femail = date(Cliente::DATE_STYLE);
+            $model->femail = date(ModelCore::DATE_STYLE);
             if (false === $model->save()) {
                 $this->toolBox()->i18nLog()->error('record-save-error');
                 return;
