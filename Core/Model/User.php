@@ -114,9 +114,16 @@ class User extends Base\ModelClass
      */
     public function can(string $pageName, string $type = ''): bool
     {
+        // si está desactivado, no puede acceder a nada
+        if (false === $this->enabled) {
+            return false;
+        }
+
         // si es admin, tiene acceso completo
         if ($this->admin) {
-            return true;
+            // comprobamos si la página existe
+            $page = new DinPage();
+            return $page->loadFromCode($pageName);
         }
 
         // si no es admin, comprobamos si tiene acceso a la página
@@ -144,6 +151,7 @@ class User extends Base\ModelClass
     public function clear()
     {
         parent::clear();
+        $this->admin = false;
         $this->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
         $this->creationdate = date(self::DATE_STYLE);
         $this->enabled = true;
@@ -227,7 +235,7 @@ class User extends Base\ModelClass
             return false;
         }
 
-        $this->email = $this->toolBox()->utils()->noHtml(mb_strtolower($this->email, 'UTF8'));
+        $this->email = $this->toolBox()->utils()->noHtml(mb_strtolower($this->email ?? '', 'UTF8'));
         if ($this->email && false === filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
             $this->email = null;

@@ -20,6 +20,9 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Dinamic\Model\RoleAccess as DinRoleAccess;
+use FacturaScripts\Dinamic\Model\RoleUser as DinRoleUser;
+
 /**
  * Define a permission package to quickly assign users.
  *
@@ -28,22 +31,29 @@ namespace FacturaScripts\Core\Model;
  */
 class Role extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Role code.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codrole;
 
-    /**
-     * Description of the role.
-     *
-     * @var string
-     */
+    /** @var string */
     public $descripcion;
+
+    public function addPage(string $pageName): bool
+    {
+        $rolePage = new DinRoleAccess();
+        $rolePage->codrole = $this->codrole;
+        $rolePage->pagename = $pageName;
+        return $rolePage->save();
+    }
+
+    public function addUser(string $nick): bool
+    {
+        $roleUser = new DinRoleUser();
+        $roleUser->codrole = $this->codrole;
+        $roleUser->nick = $nick;
+        return $roleUser->save();
+    }
 
     public static function primaryColumn(): string
     {
@@ -57,6 +67,9 @@ class Role extends Base\ModelClass
 
     public function test(): bool
     {
+        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
+
+        // comprobamos que el código sea correcto
         if (!empty($this->codrole) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codrole)) {
             $this->toolBox()->i18nLog()->warning(
                 'invalid-alphanumeric-code',
@@ -65,7 +78,6 @@ class Role extends Base\ModelClass
             return false;
         }
 
-        $this->descripcion = $this->toolBox()->utils()->noHtml($this->descripcion);
         return parent::test();
     }
 
@@ -76,6 +88,7 @@ class Role extends Base\ModelClass
 
     protected function saveInsert(array $values = []): bool
     {
+        // si no hay codrole, lo generamos
         if (empty($this->codrole)) {
             $this->codrole = (string)$this->newCode();
         }
