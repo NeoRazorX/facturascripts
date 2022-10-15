@@ -70,21 +70,21 @@
                 <widget type="checkbox" fieldname="lowsecure"/>
             </column>
         </group>
-        <group name="copy" title="email-cc" icon="fas fa-mail-bulk" numcolumns="12">
+        <group name="reply" title="reply" icon="fas fa-reply" numcolumns="3">
+            <column name="replytouseremail" title="email-replies" order="100">
+                <widget type="select" fieldname="replytouseremail" required="true" translate="true">
+                    <values title="default-to-user-email">1</values>
+                    <values title="default-to-company-email">0</values>
+                    <values title="always-to-company-email">-1</values>
+                </widget>
+            </column>
+        </group>
+        <group name="copy" title="email-cc" icon="fas fa-mail-bulk" numcolumns="9">
             <column name="email-cc" description="accepts-emails-commas" order="100">
                 <widget type="text" fieldname="emailcc" icon="fas fa-envelope"/>
             </column>
             <column name="email-bcc" description="accepts-emails-commas" order="110">
                 <widget type="text" fieldname="emailbcc" icon="fas fa-envelope"/>
-            </column>
-        </group>
-        <group name="reply" title="reply" icon="fas fa-reply" numcolumns="12">
-            <column name="replytouseremail" title="reply-to-user" numcolumns="3" order="100">
-                <widget type="select" fieldname="replytouseremail" required="true" translate="true">
-                    <values title="default-yes">1</values>
-                    <values title="default-no">0</values>
-                    <values title="never">-1</values>
-                </widget>
             </column>
         </group>
     </columns>
