@@ -1,5 +1,3 @@
-let waitCounter = 0;
-
 function getValueTypeParent(parent) {
     if (parent.is('select')) {
         return parent.find('option:selected').val();
@@ -15,8 +13,6 @@ function getValueTypeParent(parent) {
 }
 
 function widgetSelectGetData(select, parent) {
-    select.html('');
-
     let data = {
         action: 'select',
         activetab: select.form().find('input[name="activetab"]').val(),
@@ -34,9 +30,10 @@ function widgetSelectGetData(select, parent) {
         data: data,
         dataType: "json",
         success: function (results) {
+            select.html('');
             results.forEach(function (element) {
                 let selected = (element.key == select.attr('value')) ? 'selected' : '';
-                select.append('<option value="'+element.key+'" '+selected+'>'+element.value+'</option>');
+                select.append('<option value="' + element.key + '" ' + selected + '>' + element.value + '</option>');
             });
         },
         error: function (msg) {
@@ -46,7 +43,7 @@ function widgetSelectGetData(select, parent) {
 }
 
 $(document).ready(function () {
-    $('.parentSelect').each(function(){
+    $('.parentSelect').each(function () {
         let parentStr = $(this).attr('parent');
         if (parentStr === 'undefined' || parentStr === false || parentStr === '') {
             return;
@@ -54,25 +51,11 @@ $(document).ready(function () {
 
         let select = $(this);
         let parent = select.form().find('[name="' + parentStr + '"]');
-
-         if (parent.is('select') || ['color', 'datetime-local', 'date', 'time', 'hidden'].includes(parent.attr('type'))) {
-             $(document).on('change', parent, function(){
-                widgetSelectGetData(select, parent);
-            });
-        } else if (parent.is('input') || parent.is('textarea')) {
-             $(document).on('keyup', parent, async function(){
-                // usamos un contador y un temporizador para solamente procesar la última llamada
-                waitCounter++;
-                let waitNum = waitCounter;
-                await new Promise(r => setTimeout(r, 500));
-                if (waitNum < waitCounter) {
-                    return false;
-                }
-
+        if (parent.length > 0) {
+            widgetSelectGetData(select, parent);
+            parent.change(function () {
                 widgetSelectGetData(select, parent);
             });
         }
-
-        widgetSelectGetData(select, parent);
     });
 });
