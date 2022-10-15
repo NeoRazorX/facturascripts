@@ -241,4 +241,72 @@ final class UserTest extends TestCase
         $this->assertTrue($user->delete());
         $this->assertTrue($role->delete());
     }
+
+    public function testPermissionOnMultiRole()
+    {
+        // añadimos una página al menú
+        $page = new Page();
+        $page->name = 'test7';
+        $page->title = 'test7';
+        $page->icon = 'fas fa-test';
+        $page->menu = 'admin';
+        $this->assertTrue($page->save());
+
+        // creamos un usuario
+        $user = new User();
+        $user->nick = 'test7';
+        $user->setPassword('password7');
+        $this->assertTrue($user->save());
+
+        // creamos un rol
+        $role1 = new Role();
+        $role1->codrole = 'test7';
+        $role1->descripcion = 'test7';
+        $this->assertTrue($role1->save());
+
+        // añadimos la página al rol sin permisos para eliminar ni actualizar
+        $access = new RoleAccess();
+        $access->codrole = 'test7';
+        $access->pagename = 'test7';
+        $access->allowdelete = false;
+        $access->allowupdate = false;
+        $this->assertTrue($access->save());
+
+        // asignamos el rol al usuario
+        $this->assertTrue($user->addRole($role1->codrole));
+
+        // comprobamos que tiene permiso para la página
+        $this->assertTrue($user->can('test7'));
+        $this->assertFalse($user->can('test7', 'delete'));
+        $this->assertTrue($user->can('test7', 'export'));
+        $this->assertTrue($user->can('test7', 'import'));
+        $this->assertFalse($user->can('test7', 'update'));
+        $this->assertFalse($user->can('test7', 'only-owner-data'));
+
+        // creamos otro rol
+        $role2 = new Role();
+        $role2->codrole = 'test72';
+        $role2->descripcion = 'test72';
+        $this->assertTrue($role2->save());
+
+        // añadimos la página al rol con los permisos por defecto
+        $this->assertTrue($role2->addPage($page->name));
+
+        // asignamos el rol al usuario
+        $this->assertTrue($user->addRole($role2->codrole));
+
+        // comprobamos que tiene permiso para la página
+        $this->assertTrue($user->can('test7'));
+        $this->assertTrue($user->can('test7', 'delete'));
+        $this->assertTrue($user->can('test7', 'export'));
+        $this->assertTrue($user->can('test7', 'import'));
+        $this->assertTrue($user->can('test7', 'update'));
+        $this->assertFalse($user->can('test7', 'only-owner-data'));
+
+        // eliminamos
+        $this->assertTrue($user->delete());
+        $this->assertTrue($role1->delete());
+        $this->assertTrue($role2->delete());
+        $this->assertTrue($page->delete());
+    }
 }

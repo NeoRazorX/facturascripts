@@ -128,7 +128,9 @@ class User extends Base\ModelClass
 
         // si no es admin, comprobamos si tiene acceso a la página
         foreach (RoleAccess::allFromUser($this->nick, $pageName) as $access) {
-            return $access->can($permission);
+            if ($access->can($permission)) {
+                return true;
+            }
         }
 
         return false;
