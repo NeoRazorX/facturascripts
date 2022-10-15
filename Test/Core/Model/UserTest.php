@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\Page;
 use FacturaScripts\Core\Model\Role;
+use FacturaScripts\Core\Model\RoleAccess;
 use FacturaScripts\Core\Model\User;
 use PHPUnit\Framework\TestCase;
 
@@ -154,6 +155,11 @@ final class UserTest extends TestCase
 
         // comprobamos que tiene permisos sobre la página
         $this->assertTrue($user->can('test5'));
+        $this->assertTrue($user->can('test5', 'delete'));
+        $this->assertTrue($user->can('test5', 'export'));
+        $this->assertTrue($user->can('test5', 'import'));
+        $this->assertTrue($user->can('test5', 'update'));
+        $this->assertFalse($user->can('test5', 'only-owner-data'));
 
         // eliminamos la página
         $this->assertTrue($page->delete());
@@ -195,13 +201,35 @@ final class UserTest extends TestCase
         $this->assertTrue($role->save());
 
         // añadimos la página al rol
-        $this->assertTrue($role->addPage($page->name));
+        $access = new RoleAccess();
+        $access->codrole = 'test6';
+        $access->pagename = 'test6';
+        $this->assertTrue($access->save());
 
         // asignamos el rol al usuario
         $this->assertTrue($user->addRole($role->codrole));
 
         // comprobamos que tiene permiso para la página
         $this->assertTrue($user->can('test6'));
+        $this->assertTrue($user->can('test6', 'delete'));
+        $this->assertTrue($user->can('test6', 'export'));
+        $this->assertTrue($user->can('test6', 'import'));
+        $this->assertTrue($user->can('test6', 'update'));
+        $this->assertFalse($user->can('test6', 'only-owner-data'));
+
+        // cambiamos los permisos de la página
+        $access->allowdelete = false;
+        $access->allowimport = false;
+        $access->onlyownerdata = true;
+        $this->assertTrue($access->save());
+
+        // comprobamos que los permisos se han cambiado
+        $this->assertTrue($user->can('test6'));
+        $this->assertFalse($user->can('test6', 'delete'));
+        $this->assertTrue($user->can('test6', 'export'));
+        $this->assertFalse($user->can('test6', 'import'));
+        $this->assertTrue($user->can('test6', 'update'));
+        $this->assertTrue($user->can('test6', 'only-owner-data'));
 
         // eliminamos la página
         $this->assertTrue($page->delete());

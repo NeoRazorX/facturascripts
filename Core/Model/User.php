@@ -106,13 +106,13 @@ class User extends Base\ModelClass
 
     /**
      * Devuelve true si el usuario tiene acceso a la página $pageName. Para comprobar si el usuario
-     * puede modificar la página, se debe pasar 'allowupdate' como parámetro $type.
+     * tiene permiso para modificar datos en la página, se debe pasar 'update' como parámetro $permission.
      *
      * @param string $pageName
-     * @param string $type
+     * @param string $permission
      * @return bool
      */
-    public function can(string $pageName, string $type = ''): bool
+    public function can(string $pageName, string $permission = 'access'): bool
     {
         // si está desactivado, no puede acceder a nada
         if (false === $this->enabled) {
@@ -121,28 +121,14 @@ class User extends Base\ModelClass
 
         // si es admin, tiene acceso completo
         if ($this->admin) {
-            // comprobamos si la página existe
+            // comprobamos si la página existe y si el permiso a comprobar no es only-owner-data
             $page = new DinPage();
-            return $page->loadFromCode($pageName);
+            return $page->loadFromCode($pageName) && $permission != 'only-owner-data';
         }
 
         // si no es admin, comprobamos si tiene acceso a la página
-        $roleAccess = RoleAccess::allFromUser($this->nick, $pageName);
-        if (empty($roleAccess)) {
-            // no tiene acceso a la página
-            return false;
-        }
-
-        // si no se ha pasado el parámetro $type, solamente comprobamos si tiene acceso a la página
-        if (empty($type)) {
-            return true;
-        }
-
-        // comprobamos si tiene el permiso $type
-        foreach ($roleAccess as $access) {
-            if (isset($access->{$type}) && $access->{$type}) {
-                return true;
-            }
+        foreach (RoleAccess::allFromUser($this->nick, $pageName) as $access) {
+            return $access->can($permission);
         }
 
         return false;
