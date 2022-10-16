@@ -117,7 +117,7 @@
                                     <table class="table table-hover mb-0">
                                         <thead>
                                         <tr>
-                                            <th></th>
+                                            <th><input type="checkbox" onclick="checkAllDoc(this)" class="ml-1"></th>
                                             <th>{{ i18n.trans('code') }}</th>
                                             <th>{{ i18n.trans('observations') }}</th>
                                             <th class="text-right">{{ i18n.trans('total') }}</th>
@@ -175,6 +175,14 @@
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript">
+        function checkAllDoc(input) {
+            if (input.checked) {
+                $('#moreDocsCollapse input[name="newcodes[]"]').prop('checked', true);
+            } else {
+                $('#moreDocsCollapse input[name="newcodes[]"]').prop('checked', false);
+            }
+        }
+
         function selectAll() {
             const inputToServe = document.getElementsByClassName("to_serve");
             const inputToBeServed = document.getElementsByClassName("to_be_served");
