@@ -38,7 +38,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AppController extends App
 {
-
     const USER_UPDATE_ACTIVITY_PERIOD = 3600;
 
     /**
@@ -188,6 +187,8 @@ class AppController extends App
                 $this->controller->publicCore($this->response);
                 $template = $this->controller->getTemplate();
             } elseif ($permissions->allowAccess) {
+                Session::set('controllerName', $controllerName);
+                Session::set('pageName', $pageName);
                 Session::set('user', $this->user);
                 $this->menuManager->selectPage($this->controller->getPageData());
                 $this->controller->privateCore($this->response, $this->user, $permissions);
