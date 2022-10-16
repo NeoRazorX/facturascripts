@@ -76,7 +76,6 @@ class SalesHeaderHTML
         }
 
         $model->cifnif = $formData['cifnif'] ?? $model->cifnif;
-        $model->codagente = !empty($formData['codagente']) ? $formData['codagente'] : null;
         $model->codalmacen = $formData['codalmacen'] ?? $model->codalmacen;
         $model->codcliente = $formData['codcliente'] ?? $model->codcliente;
         $model->codigoenv = $formData['codigoenv'] ?? $model->codigoenv;
@@ -90,7 +89,7 @@ class SalesHeaderHTML
         $model->numero2 = $formData['numero2'] ?? $model->numero2;
         $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
 
-        foreach (['codtrans', 'finoferta'] as $key) {
+        foreach (['codagente', 'codtrans', 'finoferta'] as $key) {
             if (isset($formData[$key])) {
                 $model->{$key} = empty($formData[$key]) ? null : $formData[$key];
             }
