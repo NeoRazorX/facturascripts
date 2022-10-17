@@ -38,6 +38,7 @@ class CopyModel extends Controller
 {
 
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
+    const TEMPLATE_ASIENTO = 'CopyAsiento';
 
     /**
      * @var CodeModel
@@ -59,6 +60,15 @@ class CopyModel extends Controller
      */
     public $modelCode;
 
+    public function getDiaries(): string
+    {
+        $html = '';
+        foreach ($this->codeModel->all('diarios', 'iddiario', 'descripcion') as $value) {
+            $html .= '<option value="' . $value->code . '">' . $value->description . '</option>';
+        }
+        return $html;
+    }
+
     /**
      * @return array
      */
@@ -70,15 +80,6 @@ class CopyModel extends Controller
         $data['icon'] = 'fas fa-cut';
         $data['showonmenu'] = false;
         return $data;
-    }
-
-    public function loadDiaries(): string
-    {
-        $html = '';
-        foreach ($this->codeModel->all('diarios', 'iddiario', 'descripcion') as $value) {
-            $html .= '<option value="' . $value->code . '">' . $value->description . '</option>';
-        }
-        return $html;
     }
 
     /**
@@ -98,6 +99,10 @@ class CopyModel extends Controller
         } elseif (false === $this->loadModel()) {
             $this->toolBox()->i18nLog()->warning('record-not-found');
             return;
+        }
+
+        if ($this->modelClass === 'Asiento') {
+            $this->setTemplate(self::TEMPLATE_ASIENTO);
         }
 
         $this->title .= ' ' . $this->model->primaryDescription();
