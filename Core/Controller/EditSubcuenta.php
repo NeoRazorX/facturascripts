@@ -52,47 +52,53 @@ class EditSubcuenta extends EditController
         return $data;
     }
 
-    protected function createDepartureView(string $viewName = 'ListPartidaAsiento')
-    {
-        $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
-        $this->views[$viewName]->addOrderBy(['fecha', 'numero', 'idpartida'], 'date', 2);
-        $this->views[$viewName]->addSearchFields(['partidas.concepto']);
-
-        $this->views[$viewName]->addFilterPeriod('date', 'date', 'fecha');
-        $this->views[$viewName]->addFilterNumber('debit-major', 'debit', 'debe');
-        $this->views[$viewName]->addFilterNumber('debit-minor', 'debit', 'debe', '<=');
-        $this->views[$viewName]->addFilterNumber('credit-major', 'credit', 'haber');
-        $this->views[$viewName]->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
-
-        $this->addButton($viewName, [
-            'action' => 'dot-accounting-on',
-            'color' => 'info',
-            'icon' => 'fas fa-check-double',
-            'label' => 'checked'
-        ]);
-
-        $this->addButton($viewName, [
-            'action' => 'dot-accounting-off',
-            'color' => 'warning',
-            'icon' => 'far fa-square',
-            'label' => 'unchecked'
-        ]);
-
-        // disable column
-        $this->views[$viewName]->disableColumn('subaccount');
-
-        // disable button
-        $this->setSettings($viewName, 'btnDelete', false);
-    }
-
     /**
      * Load views
      */
     protected function createViews()
     {
         parent::createViews();
-        $this->createDepartureView();
         $this->setTabsPosition('bottom');
+
+        // añadimos las partidas de asientos
+        $this->createViewsLines();
+    }
+
+    protected function createViewsLines(string $viewName = 'ListPartidaAsiento')
+    {
+        $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
+        $this->views[$viewName]->addOrderBy(['fecha', 'numero', 'idpartida'], 'date', 2);
+        $this->views[$viewName]->addSearchFields(['partidas.concepto']);
+
+        // filtros
+        $this->views[$viewName]->addFilterPeriod('date', 'date', 'fecha');
+
+        $iva = $this->codeModel->all('partidas', 'iva', 'iva');
+        $this->views[$viewName]->addFilterSelect('iva', 'vat', 'iva', $iva);
+        $this->views[$viewName]->addFilterCheckbox('no-iva', 'without-taxation', 'iva', 'IS', null);
+
+        $this->views[$viewName]->addFilterNumber('debit-major', 'debit', 'debe');
+        $this->views[$viewName]->addFilterNumber('debit-minor', 'debit', 'debe', '<=');
+        $this->views[$viewName]->addFilterNumber('credit-major', 'credit', 'haber');
+        $this->views[$viewName]->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
+
+        // disable column
+        $this->views[$viewName]->disableColumn('subaccount');
+
+        // botones
+        $this->setSettings($viewName, 'btnDelete', false);
+        $this->addButton($viewName, [
+            'action' => 'dot-accounting-on',
+            'color' => 'info',
+            'icon' => 'fas fa-check-double',
+            'label' => 'checked'
+        ]);
+        $this->addButton($viewName, [
+            'action' => 'dot-accounting-off',
+            'color' => 'warning',
+            'icon' => 'far fa-square',
+            'label' => 'unchecked'
+        ]);
     }
 
     /**
