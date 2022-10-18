@@ -75,7 +75,6 @@ class RegularizacionImpuesto extends Base\ModelClass
     {
         parent::clear();
         $this->bloquear = false;
-        $this->periodo = 'T1';
     }
 
     public function delete(): bool
@@ -141,6 +140,9 @@ class RegularizacionImpuesto extends Base\ModelClass
             return false;
         }
 
+        if (empty($this->periodo)) {
+            $this->periodo = 'T1';
+        }
         if (empty($this->fechainicio) || empty($this->fechafin)) {
             $this->setDates();
         }
