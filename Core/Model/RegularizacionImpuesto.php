@@ -20,10 +20,10 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
 use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
-use FacturaScripts\Dinamic\Model\Partida as DinPartida;
 use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
@@ -34,90 +34,48 @@ use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
  */
 class RegularizacionImpuesto extends Base\ModelClass
 {
-
     use Base\ModelTrait;
     use Base\AccEntryRelationTrait;
     use Base\ExerciseRelationTrait;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $bloquear;
 
-    /**
-     * Code, not ID, of the related subaccount.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codsubcuentaacr;
 
-    /**
-     * Code, not ID, of the related subaccount.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codsubcuentadeu;
 
-    /**
-     * Date of entry.
-     *
-     * @var string
-     */
+    /** @var string */
     public $fechaasiento;
 
-    /**
-     * End date.
-     *
-     * @var string
-     */
+    /** @var string */
     public $fechafin;
 
-    /**
-     * Start date.
-     *
-     * @var string
-     */
+    /** @var string */
     public $fechainicio;
 
-    /**
-     * Foreign Key with Empresas table.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idempresa;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idregiva;
 
-    /**
-     * Related subaccount ID.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idsubcuentaacr;
 
-    /**
-     * Related subaccount ID.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idsubcuentadeu;
 
-    /**
-     * Period of regularization.
-     *
-     * @var string
-     */
+    /** @var string */
     public $periodo;
 
     public function clear()
     {
         parent::clear();
         $this->bloquear = false;
+        $this->periodo = 'T1';
     }
 
     public function delete(): bool
@@ -126,6 +84,7 @@ class RegularizacionImpuesto extends Base\ModelClass
             return false;
         }
 
+        // eliminamos el asiento
         $accEntry = $this->getAccountingEntry();
         if ($accEntry->exists()) {
             $accEntry->delete();
@@ -134,47 +93,9 @@ class RegularizacionImpuesto extends Base\ModelClass
         return true;
     }
 
-    /**
-     * Returns the items per accounting entry.
-     *
-     * @return DinPartida[]
-     */
-    public function getPartidas(): array
-    {
-        return $this->getAccountingEntry()->getLines();
-    }
-
-    /**
-     * Calculate Period data
-     *
-     * @param string $period
-     *
-     * @return array
-     */
-    public function getPeriod(string $period): array
-    {
-        // Calculate year
-        $year = date('Y', strtotime($this->getExercise()->fechainicio));
-
-        // return periods values
-        switch ($period) {
-            case 'T2':
-                return ['start' => date('01-04-' . $year), 'end' => date('30-06-' . $year)];
-
-            case 'T3':
-                return ['start' => date('01-07-' . $year), 'end' => date('30-09-' . $year)];
-
-            case 'T4':
-                return ['start' => date('01-10-' . $year), 'end' => date('31-12-' . $year)];
-
-            default:
-                return ['start' => date('01-01-' . $year), 'end' => date('31-03-' . $year)];
-        }
-    }
-
     public function install(): string
     {
-        // needed dependencies
+        // dependencias
         new DinEjercicio();
         new DinSubcuenta();
         new DinAsiento();
@@ -184,11 +105,10 @@ class RegularizacionImpuesto extends Base\ModelClass
 
     public function loadFechaInside(string $fecha): bool
     {
-        $where = [
+        return $this->loadFromCode('', [
             new DataBaseWhere('fechainicio', $fecha, '<='),
             new DataBaseWhere('fechafin', $fecha, '>=')
-        ];
-        return $this->loadFromCode('', $where);
+        ]);
     }
 
     public static function primaryColumn(): string
@@ -208,15 +128,21 @@ class RegularizacionImpuesto extends Base\ModelClass
 
     public function test(): bool
     {
-        if ($this->periodo) {
-            // calculate dates to selected period
-            $period = $this->getPeriod($this->periodo);
-            $this->fechainicio = $period['start'];
-            $this->fechafin = $period['end'];
+        if (empty($this->codejercicio)) {
+            foreach (Ejercicios::all() as $ejercicio) {
+                $this->codejercicio = $ejercicio->codejercicio;
+                $this->idempresa = $ejercicio->idempresa;
+                break;
+            }
+        } elseif (empty($this->idempresa)) {
+            $this->idempresa = $this->getExercise()->idempresa;
+        } elseif ($this->idempresa !== $this->getExercise()->idempresa) {
+            $this->toolBox()->i18nLog()->warning('exercise-company-mismatch');
+            return false;
         }
 
-        if (empty($this->idempresa)) {
-            $this->idempresa = $this->getExercise()->idempresa;
+        if (empty($this->fechainicio) || empty($this->fechafin)) {
+            $this->setDates();
         }
 
         if (empty($this->codsubcuentaacr) || empty($this->codsubcuentadeu)) {
@@ -226,17 +152,53 @@ class RegularizacionImpuesto extends Base\ModelClass
         return parent::test();
     }
 
-    protected function setDefaultAccounts()
+    protected function setDates(): void
+    {
+        $year = date('Y', strtotime($this->getExercise()->fechainicio));
+
+        // asignamos la fecha en función del periodo
+        switch ($this->periodo) {
+            default:
+            case 'T1':
+                $this->fechainicio = date('01-01-' . $year);
+                $this->fechafin = date('31-03-' . $year);
+                break;
+
+            case 'T2':
+                $this->fechainicio = date('01-04-' . $year);
+                $this->fechafin = date('30-06-' . $year);
+                break;
+
+            case 'T3':
+                $this->fechainicio = date('01-07-' . $year);
+                $this->fechafin = date('30-09-' . $year);
+                break;
+
+            case 'T4':
+                $this->fechainicio = date('01-10-' . $year);
+                $this->fechafin = date('31-12-' . $year);
+                break;
+
+            case 'Y':
+                $this->fechainicio = date('01-01-' . $year);
+                $this->fechafin = date('31-12-' . $year);
+                break;
+        }
+    }
+
+    protected function setDefaultAccounts(): void
     {
         $accounts = new AccountingAccounts();
         $accounts->exercise = $this->getExercise();
 
-        $subcuentaacr = $accounts->getSpecialSubAccount('IVAACR');
-        $this->codsubcuentaacr = $subcuentaacr->codsubcuenta;
-        $this->idsubcuentaacr = $subcuentaacr->primaryColumnValue();
+        // buscamos la subcuenta de acreedores
+        $subcuentaAcr = $accounts->getSpecialSubAccount('IVAACR');
+        $this->codsubcuentaacr = $subcuentaAcr->codsubcuenta;
+        $this->idsubcuentaacr = $subcuentaAcr->primaryColumnValue();
 
-        $subcuentadeu = $accounts->getSpecialSubAccount('IVADEU');
-        $this->codsubcuentadeu = $subcuentadeu->codsubcuenta;
-        $this->idsubcuentadeu = $subcuentadeu->primaryColumnValue();
+        // buscamos la subcuenta de deudores
+        $subcuentaDeu = $accounts->getSpecialSubAccount('IVADEU');
+        $this->codsubcuentadeu = $subcuentaDeu->codsubcuenta;
+        $this->idsubcuentadeu = $subcuentaDeu->primaryColumnValue();
     }
 }
