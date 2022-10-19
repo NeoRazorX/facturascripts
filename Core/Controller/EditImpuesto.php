@@ -52,9 +52,22 @@ class EditImpuesto extends EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->setTabsPosition('bottom');
+
         $this->createViewsZones();
         $this->createViewsProducts();
-        $this->setTabsPosition('bottom');
+        $this->createViewsAccounts();
+    }
+
+    protected function createViewsAccounts(string $viewName = 'ListSubcuenta')
+    {
+        $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-folder-open');
+        $this->views[$viewName]->addOrderBy(['codsubcuenta', 'idsubcuenta'], 'code', 2);
+        $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
+
+        // desactivamos los botones de nuevo y eliminar
+        $this->setSettings($viewName, 'btnNew', false);
+        $this->setSettings($viewName, 'btnDelete', false);
     }
 
     protected function createViewsProducts(string $viewName = 'ListProducto')
@@ -65,7 +78,7 @@ class EditImpuesto extends EditController
         $this->views[$viewName]->addOrderBy(['stockfis'], 'stock');
         $this->views[$viewName]->addSearchFields(['referencia', 'descripcion', 'observaciones']);
 
-        // disable buttons
+        // desactivamos los botones de nuevo y eliminar
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
     }
@@ -98,8 +111,27 @@ class EditImpuesto extends EditController
                 $view->loadData('', $where);
                 break;
 
+            case 'ListSubcuenta':
+                // cargamos la lista de subcuentas del impuesto
+                $codes = [];
+                if ($this->getViewModelValue($this->getMainViewName(), 'codsubcuentarep')) {
+                    $codes[] = $this->getViewModelValue($this->getMainViewName(), 'codsubcuentarep');
+                }
+                if ($this->getViewModelValue($this->getMainViewName(), 'codsubcuentasop')) {
+                    $codes[] = $this->getViewModelValue($this->getMainViewName(), 'codsubcuentasop');
+                }
+                if (empty($codes)) {
+                    // so hay ninguna, desactivamos la pestaña
+                    $view->settings['active'] = false;
+                    break;
+                }
+                $where = [new DataBaseWhere('codsubcuenta', implode(',', $codes), 'IN')];
+                $view->loadData('', $where);
+                break;
+
             default:
                 parent::loadData($viewName, $view);
+                break;
         }
     }
 }
