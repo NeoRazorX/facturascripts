@@ -99,6 +99,9 @@ final class RegularizacionImpuestoTest extends TestCase
 
         // comprobamos que no se puede guardar
         $this->assertFalse($reg->save());
+
+        // eliminamos
+        $this->assertTrue($empresa->delete());
     }
 
     public function testCreateOnClosedExercise()
@@ -122,6 +125,11 @@ final class RegularizacionImpuestoTest extends TestCase
         $reg->codejercicio = $ejercicio->codejercicio;
         $reg->idempresa = $empresa->idempresa;
         $this->assertFalse($reg->save());
+
+        // eliminamos
+        $this->assertTrue($reg->delete());
+        $this->assertTrue($ejercicio->delete());
+        $this->assertTrue($empresa->delete());
     }
 
     protected function tearDown(): void
