@@ -1,3 +1,5 @@
+let waitCounter = 0;
+
 function getValueTypeParent(parent) {
     if (parent.is('select')) {
         return parent.find('option:selected').val();
@@ -13,6 +15,8 @@ function getValueTypeParent(parent) {
 }
 
 function widgetSelectGetData(select, parent) {
+    select.html('');
+
     let data = {
         action: 'select',
         activetab: select.form().find('input[name="activetab"]').val(),
@@ -51,11 +55,27 @@ $(document).ready(function () {
 
         let select = $(this);
         let parent = select.form().find('[name="' + parentStr + '"]');
-        if (parent.length > 0) {
-            widgetSelectGetData(select, parent);
-            parent.change(function () {
+
+        if (parent.is('select') || ['color', 'datetime-local', 'date', 'time', 'hidden'].includes(parent.attr('type'))) {
+            parent.change(function(){
                 widgetSelectGetData(select, parent);
             });
+        } else if (parent.is('input') || parent.is('textarea')) {
+            parent.keyup(async function(){
+                // usamos un contador y un temporizador para solamente procesar la última llamada
+                waitCounter++;
+                let waitNum = waitCounter;
+                await new Promise(r => setTimeout(r, 500));
+                if (waitNum < waitCounter) {
+                    return false;
+                }
+
+                widgetSelectGetData(select, parent);
+            });
+        }
+
+        if (parent.length > 0) {
+            widgetSelectGetData(select, parent);
         }
     });
 });
