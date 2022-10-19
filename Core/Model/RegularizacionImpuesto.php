@@ -135,7 +135,8 @@ class RegularizacionImpuesto extends Base\ModelClass
             }
         } elseif (empty($this->idempresa)) {
             $this->idempresa = $this->getExercise()->idempresa;
-        } elseif ($this->idempresa !== $this->getExercise()->idempresa) {
+        } elseif ($this->idempresa != $this->getExercise()->idempresa) {
+            // no comparar tipos, ya que idempresa, al venir del formulario puede venir como string
             $this->toolBox()->i18nLog()->warning('exercise-company-mismatch');
             return false;
         }

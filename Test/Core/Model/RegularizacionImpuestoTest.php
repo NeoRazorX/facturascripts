@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Ejercicios;
+use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\RegularizacionImpuesto;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -49,6 +50,33 @@ final class RegularizacionImpuestoTest extends TestCase
 
         // eliminamos la regularización
         $this->assertTrue($reg->delete());
+    }
+
+    public function testAnotherCompany()
+    {
+        // creamos una nueva empresa
+        $empresa = $this->getRandomCompany();
+        $this->assertTrue($empresa->save());
+
+        // creamos un ejercicio para la nueva empresa
+        $ejercicio = new Ejercicio();
+        $ejercicio->codejercicio = $ejercicio->nombre = 'T001';
+        $ejercicio->idempresa = $empresa->idempresa;
+        $this->assertTrue($ejercicio->save());
+
+        // creamos una regularización
+        $reg = new RegularizacionImpuesto();
+        $reg->codejercicio = $ejercicio->codejercicio;
+        $reg->idempresa = $empresa->idempresa;
+        $this->assertTrue($reg->save());
+
+        // comprobamos que existe
+        $this->assertTrue($reg->exists());
+
+        // eliminamos
+        $this->assertTrue($reg->delete());
+        $this->assertTrue($ejercicio->delete());
+        $this->assertTrue($empresa->delete());
     }
 
     public function testDifferentCompanyAndExercise()
