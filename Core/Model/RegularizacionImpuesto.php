@@ -141,6 +141,11 @@ class RegularizacionImpuesto extends Base\ModelClass
             return false;
         }
 
+        if ($this->getExercise()->isOpened() === false) {
+            $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->codejercicio]);
+            return false;
+        }
+
         if (empty($this->periodo)) {
             $this->periodo = 'T1';
         }

@@ -101,6 +101,29 @@ final class RegularizacionImpuestoTest extends TestCase
         $this->assertFalse($reg->save());
     }
 
+    public function testCreateOnClosedExercise()
+    {
+        // creamos una empresa
+        $empresa = $this->getRandomCompany();
+        $this->assertTrue($empresa->save());
+
+        // creamos un ejercicio para la empresa
+        $ejercicio = new Ejercicio();
+        $ejercicio->codejercicio = $ejercicio->nombre = 'T002';
+        $ejercicio->idempresa = $empresa->idempresa;
+        $this->assertTrue($ejercicio->save());
+
+        // cerramos el ejercicio
+        $ejercicio->estado = Ejercicio::EXERCISE_STATUS_CLOSED;
+        $this->assertTrue($ejercicio->save());
+
+        // creamos una regularización
+        $reg = new RegularizacionImpuesto();
+        $reg->codejercicio = $ejercicio->codejercicio;
+        $reg->idempresa = $empresa->idempresa;
+        $this->assertFalse($reg->save());
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
