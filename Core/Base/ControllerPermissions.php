@@ -127,26 +127,16 @@ class ControllerPermissions
 
     public function setParams(array $params)
     {
-        if (isset($params['allowAccess']) && is_bool($params['allowAccess'])) {
-            $this->allowAccess = $params['allowAccess'];
-        }
-        if (isset($params['accessMode']) && is_int($params['accessMode'])) {
-            $this->accessMode = $params['accessMode'];
-        }
-        if (isset($params['allowDelete']) && is_bool($params['allowDelete'])) {
-            $this->allowDelete = $params['allowDelete'];
-        }
-        if (isset($params['allowUpdate']) && is_bool($params['allowUpdate'])) {
-            $this->allowUpdate = $params['allowUpdate'];
-        }
-        if (isset($params['onlyOwnerData']) && is_bool($params['onlyOwnerData'])) {
-            $this->onlyOwnerData = $params['onlyOwnerData'];
-        }
-        if (isset($params['allowExport']) && is_bool($params['allowExport'])) {
-            $this->allowExport = $params['allowExport'];
-        }
-        if (isset($params['allowImport']) && is_bool($params['allowImport'])) {
-            $this->allowImport = $params['allowImport'];
+        foreach ($params as $key => $value) {
+            if (false === property_exists($this, $key)) {
+                continue;
+            }
+
+            if ($key === 'accessMode' && false === is_int($value)) {
+                continue;
+            }
+
+            $this->{$key} = $value;
         }
     }
 }
