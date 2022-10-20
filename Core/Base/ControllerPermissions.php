@@ -124,4 +124,29 @@ class ControllerPermissions
         $this->allowUpdate = $update;
         $this->onlyOwnerData = $onlyOwner;
     }
+
+    public function setParams(array $params)
+    {
+        if (isset($params['allowAccess']) && is_bool($params['allowAccess'])) {
+            $this->allowAccess = $params['allowAccess'];
+        }
+        if (isset($params['accessMode']) && is_int($params['accessMode'])) {
+            $this->accessMode = $params['accessMode'];
+        }
+        if (isset($params['allowDelete']) && is_bool($params['allowDelete'])) {
+            $this->allowDelete = $params['allowDelete'];
+        }
+        if (isset($params['allowUpdate']) && is_bool($params['allowUpdate'])) {
+            $this->allowUpdate = $params['allowUpdate'];
+        }
+        if (isset($params['onlyOwnerData']) && is_bool($params['onlyOwnerData'])) {
+            $this->onlyOwnerData = $params['onlyOwnerData'];
+        }
+        if (isset($params['allowExport']) && is_bool($params['allowExport'])) {
+            $this->allowExport = $params['allowExport'];
+        }
+        if (isset($params['allowImport']) && is_bool($params['allowImport'])) {
+            $this->allowImport = $params['allowImport'];
+        }
+    }
 }
