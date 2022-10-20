@@ -130,9 +130,7 @@ class ControllerPermissions
         foreach ($params as $key => $value) {
             if (false === property_exists($this, $key)) {
                 continue;
-            }
-
-            if ($key === 'accessMode' && false === is_int($value)) {
+            } elseif ($key === 'accessMode' && false === is_int($value)) {
                 continue;
             } elseif (is_bool($value)) {
                 continue;
