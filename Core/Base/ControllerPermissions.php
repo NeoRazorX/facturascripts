@@ -134,6 +134,8 @@ class ControllerPermissions
 
             if ($key === 'accessMode' && false === is_int($value)) {
                 continue;
+            } elseif (is_bool($value)) {
+                continue;
             }
 
             $this->{$key} = $value;
