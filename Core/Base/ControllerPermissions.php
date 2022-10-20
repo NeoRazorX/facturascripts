@@ -132,7 +132,7 @@ class ControllerPermissions
                 continue;
             } elseif ($key === 'accessMode' && false === is_int($value)) {
                 continue;
-            } elseif (is_bool($value)) {
+            } elseif (false === is_bool($value)) {
                 continue;
             }
 
