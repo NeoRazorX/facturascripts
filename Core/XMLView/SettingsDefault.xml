@@ -146,7 +146,7 @@
                 </widget>
             </column>
             <column name="item-limit" numcolumns="3" order="120">
-                <widget type="number" fieldname="item_limit" min="10" max="100" icon="fas fa-list" required="true"/>
+                <widget type="number" fieldname="item_limit" min="10" max="250" icon="fas fa-list" required="true"/>
             </column>
             <column name="table-size" numcolumns="3" order="130">
                 <widget type="select" fieldname="tablesize" icon="fas fa-table" required="true" translate="true">
