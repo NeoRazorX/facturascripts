@@ -113,40 +113,43 @@
         <column name="global-dto-2" display="none" order="330">
             <widget type="percentage" fieldname="dtopor2"/>
         </column>
-        <column name="net" display="none" order="340">
+        <column name="total-cost" display="none" order="340">
+            <widget type="money" fieldname="totalcoste" />
+        </column>
+        <column name="net" display="none" order="350">
             <widget type="money" fieldname="neto"/>
         </column>
-        <column name="taxes" display="none" order="350">
+        <column name="taxes" display="none" order="360">
             <widget type="money" fieldname="totaliva"/>
         </column>
-        <column name="surcharge" display="none" order="360">
+        <column name="surcharge" display="none" order="370">
             <widget type="money" fieldname="totalrecargo"/>
         </column>
-        <column name="retention" display="none" order="370">
+        <column name="retention" display="none" order="380">
             <widget type="percentage" fieldname="irpf"/>
         </column>
-        <column name="retentions" display="none" order="380">
+        <column name="retentions" display="none" order="390">
             <widget type="money" fieldname="totalirpf"/>
         </column>
-        <column name="supplied-amount" display="none" order="390">
+        <column name="supplied-amount" display="none" order="400">
             <widget type="money" fieldname="totalsuplidos"/>
         </column>
-        <column name="total" display="right" order="400">
+        <column name="total" display="right" order="410">
             <widget type="money" fieldname="total">
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="currency" display="none" order="410">
+        <column name="currency" display="none" order="420">
             <widget type="select" fieldname="coddivisa" onclick="EditDivisa">
                 <values source="divisas" fieldcode="coddivisa" fieldtitle="coddivisa"/>
             </widget>
         </column>
-        <column name="agent" display="none" order="420">
+        <column name="agent" display="none" order="430">
             <widget type="autocomplete" fieldname="codagente">
                 <values source="agentes" fieldcode="codagente" fieldtitle="nombre"/>
             </widget>
         </column>
-        <column name="date" display="right" order="430">
+        <column name="date" display="right" order="440">
             <widget type="date" fieldname="fecha"/>
         </column>
     </columns>
