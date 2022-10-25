@@ -175,6 +175,9 @@
                             <a class="dropdown-item"
                                href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
                                 <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
+                                {% if view.settings.customized %}
+                                    <i class="fas fa-dot-circle fa-xs text-info"></i>
+                                {% endif %}
                             </a>
                         {% endif %}
                     {% endfor %}
