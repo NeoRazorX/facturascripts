@@ -67,6 +67,11 @@ class RowButton extends VisualItem
     /**
      * @var string
      */
+    public $title;
+
+    /**
+     * @var string
+     */
     public $type;
 
     public function __construct(array $data)
@@ -79,6 +84,7 @@ class RowButton extends VisualItem
         $this->label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
         $this->level = isset($data['level']) ? (int)$data['level'] : 0;
         $this->target = $data['target'] ?? '';
+        $this->title = $data['title'] ?? '';
         $this->type = $data['type'] ?? 'action';
     }
 
@@ -88,41 +94,46 @@ class RowButton extends VisualItem
             return '';
         }
 
+        if (empty($this->icon) && empty($this->label)) {
+            $this->icon = 'far fa-question-circle';
+        }
+
         $cssClass = $small ? 'btn mr-1 ' : 'btn btn-sm mr-1 ';
         $cssClass .= empty($this->color) ? 'btn-light' : $this->colorToClass($this->color, 'btn-');
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
+        $title = empty($this->title) ? $this->label : $this->title;
 
         $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
         if ($small && empty($icon)) {
             $icon = $this->label;
         }
 
-        $label = $this->label;
-        if ($small) {
-            $label = mb_strlen($label) < 8 ? '<span class="d-none d-xl-inline-block">' . $this->label . '</span>' :
+        $label = '';
+        if ($small && $this->label) {
+            $label = mb_strlen($this->label) < 8 ? '<span class="d-none d-xl-inline-block">' . $this->label . '</span>' :
                 '<span class="d-none d-xl-inline-block">' . mb_substr($this->label, 0, 8) . '...</span>';
         }
 
         switch ($this->type) {
             case 'js':
                 return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
-                    . '" title="' . $this->label . '">' . $icon . $label . '</button>';
+                    . '" title="' . $title . '">' . $icon . $label . '</button>';
 
             case 'link':
                 $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
                 return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
-                    . ' title="' . $this->label . '">' . $icon . $label . '</a>';
+                    . ' title="' . $title . '">' . $icon . $label . '</a>';
 
             case 'modal':
                 $modal = 'modal' . $this->action;
                 return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#'
-                    . $modal . '" title="' . $this->label . '" onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
+                    . $modal . '" title="' . $title . '" onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
                     . $icon . $label . '</button>';
 
             default:
                 $onclick = $this->getOnClickValue($viewName, $jsFunction);
                 return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $onclick
-                    . '" title="' . $this->label . '">' . $icon . $label . '</button>';
+                    . '" title="' . $title . '">' . $icon . $label . '</button>';
         }
     }
 
@@ -132,20 +143,30 @@ class RowButton extends VisualItem
             return '';
         }
 
+        if (empty($this->icon) && empty($this->label)) {
+            $this->icon = 'far fa-question-circle';
+        }
+
         $cssClass = 'btn btn-sm ';
         $cssClass .= empty($this->color) ? 'btn-secondary' : $this->colorToClass($this->color, 'btn-');
-        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i> ';
+        $icon = empty($this->icon) ? '' : '<i class="' . $this->icon . ' fa-fw"></i>';
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
+        $title = empty($this->title) ? $this->label : $this->title;
+
+        $label = '';
+        if ($this->label) {
+            $label = ' ' . $this->label;
+        }
 
         switch ($this->type) {
             case 'js':
                 return '<button type="button"' . $divID . ' class="' . $cssClass . '" onclick="' . $this->action
-                    . '" title="' . $this->label . '">' . $icon . $this->label . '</button> ';
+                    . '" title="' . $title . '">' . $icon . $label . '</button> ';
 
             case 'link':
                 $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
                 return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
-                    . ' title="' . $this->label . '">' . $icon . $this->label . '</a> ';
+                    . ' title="' .$title . '">' . $icon . $label . '</a> ';
         }
 
         return '';
