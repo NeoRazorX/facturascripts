@@ -24,9 +24,9 @@ use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\Stock;
-use FacturaScripts\Test\Core\DefaultSettingsTrait;
-use FacturaScripts\Test\Core\LogErrorsTrait;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\DefaultSettingsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class FacturaClienteTest extends TestCase
@@ -95,6 +95,7 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
         $this->assertFalse($dbInvoice->exists(), 'invoice-still-found');
         $this->assertFalse($firstLine->exists(), 'invoice-line-not-deleted');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 
@@ -146,6 +147,7 @@ final class FacturaClienteTest extends TestCase
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
         $this->assertFalse($firstLine->exists(), 'deleted-line-invoice-still-found');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
 
         // comprobamos que se restaura el stock del producto
@@ -202,6 +204,7 @@ final class FacturaClienteTest extends TestCase
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
         $this->assertFalse($updEntry->exists(), 'deleted-accounting-entry-still-found');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 
@@ -250,6 +253,7 @@ final class FacturaClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 
@@ -296,6 +300,7 @@ final class FacturaClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 
@@ -329,6 +334,7 @@ final class FacturaClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 
@@ -372,6 +378,7 @@ final class FacturaClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 

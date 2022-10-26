@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Session;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -180,7 +181,7 @@ abstract class App
     protected function ipWarning()
     {
         $ipFilter = ToolBox::ipFilter();
-        $ipFilter->setAttempt($ipFilter->getClientIp());
+        $ipFilter->setAttempt(Session::getClientIp());
     }
 
     /**
@@ -191,7 +192,7 @@ abstract class App
     protected function isIPBanned(): bool
     {
         $ipFilter = ToolBox::ipFilter();
-        return $ipFilter->isBanned($ipFilter->getClientIp());
+        return $ipFilter->isBanned(Session::getClientIp());
     }
 
     /**

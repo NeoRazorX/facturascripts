@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,12 +26,11 @@ use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
 /**
  * Generic class of access to the database, either MySQL or PostgreSQL.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 final class DataBase
 {
-
     const CHANNEL = 'database';
 
     /**
@@ -87,7 +86,7 @@ final class DataBase
      *
      * @return bool
      */
-    public function beginTransaction()
+    public function beginTransaction(): bool
     {
         if ($this->inTransaction()) {
             return true;
@@ -124,7 +123,7 @@ final class DataBase
      *
      * @return bool
      */
-    public function commit()
+    public function commit(): bool
     {
         $result = self::$engine->commit(self::$link);
         if ($result) {
@@ -171,7 +170,7 @@ final class DataBase
      *
      * @return string
      */
-    public function escapeColumn($name)
+    public function escapeColumn(string $name): string
     {
         return self::$engine->escapeColumn(self::$link, $name);
     }
@@ -199,7 +198,7 @@ final class DataBase
      *
      * @return bool
      */
-    public function exec($sql)
+    public function exec(string $sql): bool
     {
         $result = $this->connected();
         if ($result) {
@@ -240,7 +239,7 @@ final class DataBase
      *
      * @return array
      */
-    public function getColumns($tableName)
+    public function getColumns(string $tableName): array
     {
         $result = [];
         $data = $this->select(self::$engine->getSQL()->sqlColumns($tableName));
@@ -260,9 +259,11 @@ final class DataBase
      *
      * @return array
      */
-    public function getConstraints($tableName, $extended = false)
+    public function getConstraints(string $tableName, bool $extended = false): array
     {
-        $sql = $extended ? self::$engine->getSQL()->sqlConstraintsExtended($tableName) : self::$engine->getSQL()->sqlConstraints($tableName);
+        $sql = $extended ?
+            self::$engine->getSQL()->sqlConstraintsExtended($tableName) :
+            self::$engine->getSQL()->sqlConstraints($tableName);
         $data = $this->select($sql);
         return $data ? array_values($data) : [];
     }
@@ -284,7 +285,7 @@ final class DataBase
      *
      * @return array
      */
-    public function getIndexes($tableName)
+    public function getIndexes(string $tableName): array
     {
         $result = [];
         $data = $this->select(self::$engine->getSQL()->sqlIndexes($tableName));
@@ -302,7 +303,7 @@ final class DataBase
      *
      * @return string
      */
-    public function getOperator($operator)
+    public function getOperator(string $operator): string
     {
         return self::$engine->getOperator($operator);
     }
@@ -312,7 +313,7 @@ final class DataBase
      *
      * @return array
      */
-    public function getTables()
+    public function getTables(): array
     {
         if (false === $this->connected()) {
             return [];
@@ -328,7 +329,7 @@ final class DataBase
      *
      * @return bool
      */
-    public function inTransaction()
+    public function inTransaction(): bool
     {
         return self::$engine->inTransaction(self::$link);
     }
@@ -349,7 +350,7 @@ final class DataBase
      *
      * @return bool
      */
-    public function rollback()
+    public function rollback(): bool
     {
         self::$miniLog->debug('Rollback Transaction');
         return self::$engine->rollback(self::$link);
@@ -363,7 +364,7 @@ final class DataBase
      *
      * @return array
      */
-    public function select($sql)
+    public function select(string $sql): array
     {
         return $this->selectLimit($sql, 0);
     }
@@ -380,7 +381,7 @@ final class DataBase
      *
      * @return array
      */
-    public function selectLimit($sql, $limit = FS_ITEM_LIMIT, $offset = 0)
+    public function selectLimit(string $sql, int $limit = FS_ITEM_LIMIT, int $offset = 0): array
     {
         if (false === $this->connected()) {
             return [];
@@ -415,7 +416,7 @@ final class DataBase
      *
      * @return bool
      */
-    public function tableExists($tableName, array $list = [])
+    public function tableExists(string $tableName, array $list = []): bool
     {
         if (empty($list)) {
             $list = $this->getTables();
@@ -428,7 +429,7 @@ final class DataBase
      * @param string $tableName
      * @param array $fields
      */
-    public function updateSequence($tableName, $fields)
+    public function updateSequence(string $tableName, array $fields)
     {
         self::$engine->updateSequence(self::$link, $tableName, $fields);
     }
@@ -440,7 +441,7 @@ final class DataBase
      *
      * @return string
      */
-    public function var2str($val)
+    public function var2str($val): string
     {
         if ($val === null) {
             return 'NULL';
@@ -468,7 +469,7 @@ final class DataBase
      *
      * @return string
      */
-    public function version()
+    public function version(): string
     {
         return $this->connected() ? self::$engine->version(self::$link) : '';
     }

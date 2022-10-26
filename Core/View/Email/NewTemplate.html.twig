@@ -7,7 +7,7 @@
         <style type="text/css">
             {% block css %}
                 #body {
-                    background-color: #E8EAED;
+                    background-color: #f6f9fc;
                     color: black;
                 }
                 .container {
@@ -58,9 +58,9 @@
     <body>
         <div id="body">
             {% block body %}
-                <table style="width:100%; background-color:#E8EAED; color:black" >
+                <table style="width:100%; background-color:#f6f9fc; color:black" >
                     <tr>
-                        <td></td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
                         <td style="padding:10px">
                             <h3 class="company" style="text-align:center; color:#3D67AC; font-size:2em; font-weight:bold">
                                 {% if empresa.web is empty %}
@@ -72,25 +72,25 @@
                                 {% endif %}
                             </h3>
                         </td>
-                        <td></td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
                     </tr>
                     <tr>
-                        <td></td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
                         <td class="container" style="background-color: #FFFFFF; border-radius: 5px; color: black; font-size: 1em; padding:10px">
                             {% for block in mainBlocks %}
                                 {{ block.render() | raw }}
                             {% endfor %}
                         </td>
-                        <td></td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
                     </tr>
                     <tr>
-                        <td></td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
                         <td class="footer" style="font-size:10px; color:black; padding:10px">
                             {% for block in footerBlocks %}
                                 {{ block.render() | raw }}
                             {% endfor %}
                         </td>
-                        <td></td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
                     </tr>
                 </table>
             {% endblock %}

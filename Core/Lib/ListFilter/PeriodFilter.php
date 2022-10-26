@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,45 +25,31 @@ use Symfony\Component\HttpFoundation\Request;
  * Description of PeriodFilter
  *
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  */
 class PeriodFilter extends BaseFilter
 {
-
-    const ENDDATE_ID = 'end';
+    const END_DATE_ID = 'end';
     const SELECT_ID = 'period';
-    const STARTDATE_ID = 'start';
+    const START_DATE_ID = 'start';
 
-    /**
-     * @var DateFilter
-     */
+    /** @var DateFilter */
     private $endDate;
 
-    /**
-     * @var SelectFilter
-     */
+    /** @var SelectFilter */
     private $select;
 
-    /**
-     * @var DateFilter
-     */
+    /** @var DateFilter */
     private $startDate;
 
-    /**
-     * Class constructor.
-     *
-     * @param string $key
-     * @param string $field date field for where filter
-     * @param string $label label to period select
-     */
     public function __construct(string $key, string $field, string $label)
     {
         parent::__construct($key, $field, $label);
         $values = PeriodTools::getFilterOptions(static::$i18n);
         $this->select = new SelectFilter($key, '', $label, $values);
-        $this->select->icon = 'fas fa-calendar-check';
-        $this->startDate = new DateFilter(self::STARTDATE_ID . $key, $field, 'from-date', '>=');
-        $this->endDate = new DateFilter(self::ENDDATE_ID . $key, $field, 'until-date', '<=');
+        $this->select->icon = 'fas fa-calendar-alt';
+        $this->startDate = new DateFilter(self::START_DATE_ID . $key, $field, 'from-date', '>=');
+        $this->endDate = new DateFilter(self::END_DATE_ID . $key, $field, 'until-date', '<=');
     }
 
     public function getDataBaseWhere(array &$where): bool
@@ -86,10 +72,10 @@ class PeriodFilter extends BaseFilter
     public function getValue(string $option = self::SELECT_ID)
     {
         switch ($option) {
-            case self::STARTDATE_ID:
+            case self::START_DATE_ID:
                 return $this->startDate->getValue();
 
-            case self::ENDDATE_ID:
+            case self::END_DATE_ID:
                 return $this->endDate->getValue();
         }
 
@@ -117,11 +103,11 @@ class PeriodFilter extends BaseFilter
     public function setValue($value, $option = self::SELECT_ID)
     {
         switch ($option) {
-            case self::STARTDATE_ID:
+            case self::START_DATE_ID:
                 $this->startDate->setValue($value);
                 break;
 
-            case self::ENDDATE_ID:
+            case self::END_DATE_ID:
                 $this->endDate->setValue($value);
                 break;
 
@@ -143,11 +129,11 @@ class PeriodFilter extends BaseFilter
         if (empty($selectValue)) {
             // start
             $startValue = $request->request->get($this->startDate->name());
-            $this->setValue($startValue, self::STARTDATE_ID);
+            $this->setValue($startValue, self::START_DATE_ID);
 
             // end
             $endValue = $request->request->get($this->endDate->name());
-            $this->setValue($endValue, self::ENDDATE_ID);
+            $this->setValue($endValue, self::END_DATE_ID);
             return;
         }
 
@@ -172,10 +158,10 @@ class PeriodFilter extends BaseFilter
      */
     private function setPeriodToDates()
     {
-        $startdate = date('d-m-Y');
-        $enddate = date('d-m-Y');
-        PeriodTools::applyPeriod($this->getValue(), $startdate, $enddate);
-        $this->setDateAndDisable($startdate, self::STARTDATE_ID);
-        $this->setDateAndDisable($enddate, self::ENDDATE_ID);
+        $startDate = date('d-m-Y');
+        $endDate = date('d-m-Y');
+        PeriodTools::applyPeriod($this->getValue(), $startDate, $endDate);
+        $this->setDateAndDisable($startDate, self::START_DATE_ID);
+        $this->setDateAndDisable($endDate, self::END_DATE_ID);
     }
 }

@@ -20,8 +20,8 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Contacto;
-use FacturaScripts\Test\Core\LogErrorsTrait;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class ContactoTest extends TestCase
@@ -54,7 +54,7 @@ final class ContactoTest extends TestCase
     {
         // creamos el cliente
         $customer = $this->getRandomCustomer();
-        $customer->save();
+        $this->assertTrue($customer->save(), 'customer-cant-save');
 
         // creamos el contacto
         $contact = new Contacto();
@@ -68,6 +68,7 @@ final class ContactoTest extends TestCase
 
         // eliminamos
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'customer-cant-delete');
     }
 
@@ -89,6 +90,7 @@ final class ContactoTest extends TestCase
 
         // eliminamos
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'supplier-cant-delete');
     }
 

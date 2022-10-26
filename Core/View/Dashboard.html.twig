@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,13 +27,11 @@
                     <h1 class="h4">
                         {% if fsc.getPageData().name == fsc.user.homepage %}
                             <a class="btn btn-sm btn-secondary align-bottom active"
-                               href="{{ fsc.url() }}?defaultPage=FALSE"
-                               title="{{ i18n.trans('marked-as-homepage') }}">
+                               href="{{ fsc.url() }}?defaultPage=FALSE" title="{{ i18n.trans('marked-as-homepage') }}">
                                 <i class="fas fa-bookmark" aria-hidden="true"></i>
                             </a>
                         {% else %}
-                            <a class="btn btn-sm btn-secondary align-bottom"
-                               href="{{ fsc.url() }}?defaultPage=TRUE"
+                            <a class="btn btn-sm btn-secondary align-bottom" href="{{ fsc.url() }}?defaultPage=TRUE"
                                title="{{ i18n.trans('mark-as-homepage') }}">
                                 <i class="far fa-bookmark" aria-hidden="true"></i>
                             </a>
@@ -73,7 +71,7 @@
 
 {% macro drawStatsBox(fsc, i18n, group, color, ismoney) %}
     <div class="card shadow mb-3">
-        <div class="card-body text-white {{ color }}">
+        <div class="card-body p-2 text-white {{ color }}">
             <h2 class="h5 text-center mb-0">
                 {{ i18n.trans(group) }}
             </h2>
@@ -146,8 +144,14 @@
                                target="_blank">Problemas frecuentes</a>
                         </li>
                         <li>
+                            <a href="https://forms.gle/WhGgWWB6EbWjBNna6" rel="nofollow"
+                               target="_blank">Encuesta de uso 2022/23
+                                <i class="fas fa-clipboard-check"></i>
+                            </a>
+                        </li>
+                        <li>
                             <a href="https://facturascripts.com/contacto" rel="nofollow" target="_blank">Soporte
-                                <i class="fas fa-headset"></i></a>
+                                <i class="far fa-comment-dots"></i></a>
                         </li>
                     </ul>
                 </div>
@@ -189,43 +193,6 @@
 {% endmacro %}
 
 {% macro sectionNews(fsc, i18n) %}
-    <div class="row">
-        <div class="col">
-            <div class="card-deck mb-3">
-                <div class="card shadow">
-                    <div class="card-body">
-                        <h2 class="h4">
-                            <i class="fas fa-chart-bar fa-fw"></i> Encuesta de uso 2021
-                        </h2>
-                        <p class="mb-0">
-                            Ayúdanos a conocer mejor tus necesidades y poder centrar el desarrollo de FacturaScripts
-                            2022.
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="https://forms.gle/kk1AvsAaMvjWeKdc9" target="_blank" class="btn btn-primary">Hacer
-                            encuesta</a>
-                    </div>
-                </div>
-                <div class="card shadow">
-                    <div class="card-body">
-                        <h2 class="h4">
-                            <i class="fas fa-donate"></i> Patrocinar FacturaScripts
-                        </h2>
-                        <p class="mb-0">
-                            FacturaScripts avanza más rápido gracias al apoyo financiero de nuestros patrocinadores,
-                            personas que contribuyen a que podamos dedicar más tiempo al desarrollo, testeo y
-                            documentación.
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="https://facturascripts.com/patrocinar" rel="nofollow" target="_blank"
-                           class="btn btn-success">Patrocinar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     {% for news in fsc.news %}
         <div class="row">
             <div class="col">

@@ -118,13 +118,16 @@
                             </div>
                             <div class="row align-items-end">
                                 <div class="col-sm-6">
-                                    <div class="form-check">
-                                        <input type="checkbox" name="replyto" value="1" checked="true"
-                                               class="form-check-input" id="replytoCheck"/>
-                                        <label class="form-check-label" for="replytoCheck">
-                                            {{ i18n.trans('email-replies-to', {'%email%': fsc.user.email}) }}
-                                        </label>
-                                    </div>
+                                    {% if appSettings.get('email', 'replytouseremail', '1') in ['1', '0'] %}
+                                        {% set check = appSettings.get('email', 'replytouseremail') == '1' ? 'checked' : '' %}
+                                        <div class="form-check">
+                                            <input type="checkbox" name="replyto" value="1" {{ check }}
+                                                   class="form-check-input" id="replytoCheck"/>
+                                            <label class="form-check-label" for="replytoCheck">
+                                                {{ i18n.trans('email-replies-to', {'%email%': fsc.user.email}) }}
+                                            </label>
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="col-sm-6 text-right">
                                     <button type="submit" class="btn btn-primary">

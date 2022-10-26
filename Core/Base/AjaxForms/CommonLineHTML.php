@@ -32,7 +32,7 @@ use FacturaScripts\Dinamic\Model\Variante;
 trait CommonLineHTML
 {
     /** @var string */
-    protected static $columnView = 'subtotal';
+    protected static $columnView;
 
     /** @var int */
     protected static $num = 0;

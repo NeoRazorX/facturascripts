@@ -22,9 +22,9 @@ namespace FacturaScripts\Test\Core\Lib;
 use FacturaScripts\Core\Lib\Accounting\AccountingAccounts;
 use FacturaScripts\Core\Lib\Accounting\AccountingCreation;
 use FacturaScripts\Core\Model\Ejercicio;
-use FacturaScripts\Test\Core\DefaultSettingsTrait;
-use FacturaScripts\Test\Core\LogErrorsTrait;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\DefaultSettingsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class AccountingCreationTest extends TestCase
@@ -65,6 +65,7 @@ final class AccountingCreationTest extends TestCase
         }
 
         // eliminamos el cliente
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
     }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,37 +22,38 @@
     <columns>
         <group name="main" numcolumns="12">
             <column name="supplier" order="100">
-                <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor" readonly="dinamic" required="true">
-                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre" />
+                <widget type="autocomplete" fieldname="codproveedor" onclick="EditProveedor" readonly="dinamic"
+                        required="true">
+                    <values source="proveedores" fieldcode="codproveedor" fieldtitle="nombre"/>
                 </widget>
             </column>
             <column name="reference" title="variant" order="110">
                 <widget type="select" fieldname="referencia" readonly="dinamic" required="true">
-                    <values />
+                    <values/>
                 </widget>
             </column>
             <column name="currency" order="120">
-                <widget type="select" fieldname="coddivisa" onclick="EditDivisa" readonly="dinamic" required="true">
+                <widget type="select" fieldname="coddivisa" onclick="EditDivisa" readonly="dinamic">
                     <values source="divisas" fieldcode="coddivisa" fieldtitle="descripcion"/>
                 </widget>
             </column>
             <column name="supplier-reference" order="130">
-                <widget type="text" fieldname="refproveedor" />
+                <widget type="text" fieldname="refproveedor"/>
             </column>
             <column name="price" order="140">
-                <widget type="money" fieldname="precio" />
+                <widget type="money" fieldname="precio"/>
             </column>
             <column name="dto" order="150">
-                <widget type="percentage" fieldname="dtopor" />
+                <widget type="percentage" fieldname="dtopor"/>
             </column>
             <column name="dto-2" display="none" order="160">
-                <widget type="percentage" fieldname="dtopor2" />
+                <widget type="percentage" fieldname="dtopor2"/>
             </column>
             <column name="net" order="170">
-                <widget type="money" fieldname="neto" readonly="true" />
+                <widget type="money" fieldname="neto" readonly="true"/>
             </column>
             <column name="update-time" display="none" order="180">
-                <widget type="datetime" fieldname="actualizado" readonly="true" />
+                <widget type="datetime" fieldname="actualizado" readonly="true"/>
             </column>
         </group>
     </columns>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -57,6 +57,12 @@ class IPFilter
     public function __construct()
     {
         $this->filePath = FS_FOLDER . '/MyFiles/Cache/ip.list';
+
+        // si no existe la carpeta, la creamos
+        if (false === file_exists(FS_FOLDER . '/MyFiles/Cache')) {
+            mkdir(FS_FOLDER . '/MyFiles/Cache', 0777, true);
+        }
+
         $this->ipList = [];
         $this->readFile();
     }
@@ -74,6 +80,7 @@ class IPFilter
      * Returns true client IP address.
      *
      * @return string
+     * @deprecated since version 2022.5
      */
     public static function getClientIp(): string
     {

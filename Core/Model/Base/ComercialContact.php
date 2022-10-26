@@ -114,7 +114,7 @@ abstract class ComercialContact extends Contact
      *
      * @return mixed
      */
-    abstract public function getAdresses();
+    abstract public function getAddresses(): array;
 
     /**
      * Reset the values of all model properties.
@@ -124,6 +124,15 @@ abstract class ComercialContact extends Contact
         parent::clear();
         $this->debaja = false;
         $this->regimeniva = RegimenIVA::defaultValue();
+    }
+
+    /**
+     * @return array
+     * @deprecated since version 2022.5
+     */
+    public function getAdresses(): array
+    {
+        return $this->getAddresses();
     }
 
     public function install(): string

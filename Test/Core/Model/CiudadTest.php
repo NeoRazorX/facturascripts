@@ -22,7 +22,7 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Ciudad;
 use FacturaScripts\Core\Model\Provincia;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CiudadTest extends TestCase

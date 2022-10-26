@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,19 +24,13 @@ use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 /**
  *  Controller to list the items in the AlbaranProveedor model
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author Cristo M. Estévez Hernández   <cristom.estevez@gmail.com>
  */
 class ListAlbaranProveedor extends ListBusinessDocument
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'purchases';
@@ -50,12 +44,19 @@ class ListAlbaranProveedor extends ListBusinessDocument
      */
     protected function createViews()
     {
-        $this->createViewPurchases('ListAlbaranProveedor', 'AlbaranProveedor', 'delivery-notes');
-        $this->addButtonGroupDocument('ListAlbaranProveedor');
-        $this->addButtonApproveDocument('ListAlbaranProveedor');
+        $this->createViewsAlbaranes();
 
         if ($this->permissions->onlyOwnerData === false) {
             $this->createViewLines('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor');
         }
+    }
+
+    protected function createViewsAlbaranes(string $viewName = 'ListAlbaranProveedor')
+    {
+        $this->createViewPurchases($viewName, 'AlbaranProveedor', 'delivery-notes');
+
+        // añadimos botones
+        $this->addButtonGroupDocument($viewName);
+        $this->addButtonApproveDocument($viewName);
     }
 }

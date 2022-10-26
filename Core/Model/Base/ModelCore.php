@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model\Base;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseTools;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\Import\CSVImport;
 
 /**
@@ -131,7 +132,7 @@ abstract class ModelCore
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
 
-            $tables = $this->toolBox()->cache()->get('fs_checked_tables');
+            $tables = Cache::get('fs_checked_tables');
             if (is_array($tables) && !empty($tables)) {
                 self::$checkedTables = $tables;
             }
@@ -140,7 +141,7 @@ abstract class ModelCore
         if (static::tableName() !== '' && false === in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
             $this->toolBox()->i18nLog()->debug('table-checked', ['%tableName%' => static::tableName()]);
             self::$checkedTables[] = static::tableName();
-            $this->toolBox()->cache()->set('fs_checked_tables', self::$checkedTables);
+            Cache::set('fs_checked_tables', self::$checkedTables);
         }
 
         $this->loadModelFields(self::$dataBase, static::tableName());
@@ -297,7 +298,7 @@ abstract class ModelCore
 
         if ($sql !== '' && false === self::$dataBase->exec($sql)) {
             $this->toolBox()->i18nLog()->critical('check-table', ['%tableName%' => static::tableName()]);
-            $this->toolBox()->cache()->clear();
+            Cache::clear();
             return false;
         }
 

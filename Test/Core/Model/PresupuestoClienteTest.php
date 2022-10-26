@@ -25,9 +25,9 @@ use FacturaScripts\Core\Lib\BusinessDocumentGenerator;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PresupuestoCliente;
-use FacturaScripts\Test\Core\DefaultSettingsTrait;
-use FacturaScripts\Test\Core\LogErrorsTrait;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\DefaultSettingsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class PresupuestoClienteTest extends TestCase
@@ -79,6 +79,7 @@ final class PresupuestoClienteTest extends TestCase
         $this->assertEquals($user->nick, $doc->nick, 'presupuesto-usuario-bad-nick');
 
         // eliminamos
+        $this->assertTrue($agent->getContact()->delete(), 'contacto-cant-delete');
         $this->assertTrue($agent->delete(), 'can-not-delete-agent');
         $this->assertTrue($warehouse->delete(), 'can-not-delete-warehouse');
     }
@@ -113,6 +114,7 @@ final class PresupuestoClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-cliente-1');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-1');
     }
 
@@ -120,6 +122,7 @@ final class PresupuestoClienteTest extends TestCase
     {
         $doc = new PresupuestoCliente();
         $this->assertTrue($doc->save(), 'can-not-create-presupuesto-cliente-without-subject');
+        $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-cliente');
     }
 
     public function testCreateOneLine()
@@ -156,6 +159,7 @@ final class PresupuestoClienteTest extends TestCase
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-cliente-2');
         $this->assertFalse($line->exists(), 'linea-presupuesto-cliente-still-exists');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-2');
     }
 
@@ -204,6 +208,7 @@ final class PresupuestoClienteTest extends TestCase
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-cliente-3');
         $this->assertFalse($line->exists(), 'linea-presupuesto-cliente-still-exists-3');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-3');
         $this->assertTrue($product->delete(), 'can-not-delete-product-3');
     }
@@ -237,6 +242,7 @@ final class PresupuestoClienteTest extends TestCase
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-presupuesto-cliente-3');
         $this->assertFalse($line->exists(), 'linea-presupuesto-cliente-still-exists-3');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-cliente-3');
     }
 
@@ -296,6 +302,7 @@ final class PresupuestoClienteTest extends TestCase
             $this->assertTrue($child->delete(), 'pedido-cant-delete');
         }
         $this->assertTrue($doc->delete(), 'presupuesto-cant-delete');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'cliente-cant-delete');
         $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }
@@ -344,6 +351,8 @@ final class PresupuestoClienteTest extends TestCase
         // eliminamos
         $this->assertTrue($pedidos[0]->delete(), 'pedido-cant-delete');
         $this->assertTrue($doc->delete(), 'presupuesto-cant-delete');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
     }
 
     protected function setUp(): void

@@ -20,7 +20,7 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Proveedor;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class ProveedorTest extends TestCase
@@ -40,6 +40,7 @@ final class ProveedorTest extends TestCase
         $this->assertEquals($proveedor->nombre, $proveedor->razonsocial);
 
         // eliminamos
+        $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
@@ -76,6 +77,7 @@ final class ProveedorTest extends TestCase
         $this->assertEquals('&lt;test&gt;', $proveedor->observaciones, 'html-not-escaped-on-observaciones');
 
         // eliminamos
+        $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
@@ -95,6 +97,7 @@ final class ProveedorTest extends TestCase
         $this->assertNotNull($proveedor->observaciones, 'observaciones-is-null');
 
         // eliminamos
+        $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
@@ -114,6 +117,7 @@ final class ProveedorTest extends TestCase
         $this->assertTrue($proveedor->save(), 'proveedor-cant-save');
 
         // eliminamos
+        $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
@@ -141,6 +145,10 @@ final class ProveedorTest extends TestCase
         $proveedor->cifnif = '12345678A';
         $proveedor->web = 'https://www.example.com';
         $this->assertTrue($proveedor->save(), 'cliente-can-save-good-web');
+
+        // eliminamos
+        $this->assertTrue($proveedor->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($proveedor->delete(), 'proveedor-cant-delete');
     }
 
     protected function tearDown(): void

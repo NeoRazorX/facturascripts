@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +32,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AdminPlugins extends Base\Controller
 {
-
     const PLUGIN_LIST_URL = 'https://facturascripts.com/PluginInfoList';
 
     /**
@@ -136,7 +136,7 @@ class AdminPlugins extends Base\Controller
 
         $pluginName = $this->request->get('plugin', '');
         $this->pluginManager->disable($pluginName);
-        $this->toolBox()->cache()->clear();
+        Cache::clear();
     }
 
     private function enablePluginAction(): void
@@ -148,7 +148,7 @@ class AdminPlugins extends Base\Controller
 
         $pluginName = $this->request->get('plugin', '');
         $this->pluginManager->enable($pluginName);
-        $this->toolBox()->cache()->clear();
+        Cache::clear();
     }
 
     /**
@@ -183,7 +183,7 @@ class AdminPlugins extends Base\Controller
                 if (FS_DEBUG) {
                     // On debug mode, always deploy the contents of Dinamic.
                     $this->pluginManager->deploy(true, true);
-                    $this->toolBox()->cache()->clear();
+                    Cache::clear();
                 }
                 break;
         }
@@ -198,7 +198,7 @@ class AdminPlugins extends Base\Controller
             $this->pluginManager->initPlugin($name);
         }
 
-        $this->toolBox()->cache()->clear();
+        Cache::clear();
         $this->toolBox()->i18nLog()->notice('rebuild-completed');
     }
 
@@ -211,7 +211,7 @@ class AdminPlugins extends Base\Controller
 
         $pluginName = $this->request->get('plugin', '');
         $this->pluginManager->remove($pluginName);
-        $this->toolBox()->cache()->clear();
+        Cache::clear();
     }
 
     private function uploadPluginAction(): void
@@ -254,7 +254,7 @@ class AdminPlugins extends Base\Controller
         }
 
         if ($this->pluginManager->deploymentRequired()) {
-            $this->toolBox()->cache()->clear();
+            Cache::clear();
             $this->toolBox()->i18nLog()->notice('reloading');
             $this->redirect($this->url() . '?action=rebuild&init=' . implode(',', $pluginNames), 3);
         }

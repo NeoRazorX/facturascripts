@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib;
 
-use FacturaScripts\Core\Base\Cache;
+use FacturaScripts\Core\Cache;
 
 /**
  * Class to prevent duplicated petitions.
@@ -29,16 +29,10 @@ use FacturaScripts\Core\Base\Cache;
  */
 class MultiRequestProtection
 {
-
     const CACHE_KEY = 'MultiRequestProtection';
     const MAX_TOKEN_AGE = 4;
     const MAX_TOKENS = 500;
     const RANDOM_STRING_LENGTH = 6;
-
-    /**
-     * @var Cache
-     */
-    protected $cache;
 
     /**
      * @var string
@@ -47,8 +41,6 @@ class MultiRequestProtection
 
     public function __construct()
     {
-        $this->cache = new Cache();
-
         // something unique in each installation
         $this->seed = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS . FS_CACHE_PREFIX;
     }
@@ -134,7 +126,7 @@ class MultiRequestProtection
      */
     protected function getTokens(): array
     {
-        $values = $this->cache->get(self::CACHE_KEY);
+        $values = Cache::get(self::CACHE_KEY);
         $tokens = is_array($values) ? $values : [];
         if (count($tokens) < self::MAX_TOKENS) {
             return $tokens;
@@ -157,6 +149,7 @@ class MultiRequestProtection
 
         // save new token
         $tokens[] = $token;
-        return $this->cache->set(self::CACHE_KEY, $tokens);
+        Cache::set(self::CACHE_KEY, $tokens);
+        return true;
     }
 }

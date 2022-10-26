@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,51 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Core\Base\Cache\APCAdapter;
-use FacturaScripts\Core\Base\Cache\FileCache;
-use FacturaScripts\Core\Base\Cache\MemcacheAdapter;
+use FacturaScripts\Core\Cache as NewCache;
 
 /**
  * Cache management class.
+ * @deprecated since version 2022.5
  */
 final class Cache
 {
-
-    /**
-     * The engine used for cache
-     *
-     * @var FileCache|APCAdapter|MemcacheAdapter
-     */
-    private static $engine;
-
-    /**
-     * Default constructor
-     */
-    public function __construct()
+    public function clear(): bool
     {
-        if (self::$engine === null) {
-            if (extension_loaded('apc') && ini_get('apc.enabled') && ini_get('apc.enable_cli')) {
-                self::$engine = new APCAdapter();
-            } elseif (\FS_CACHE_HOST !== '' && \class_exists('Memcache')) {
-                $this->loadMemcache();
-            }
-
-            if (self::$engine === null) {
-                self::$engine = new FileCache();
-            }
-        }
-    }
-
-    /**
-     * Cleans all the cache contents
-     *
-     * @return bool
-     */
-    public function clear()
-    {
-        return self::$engine->clear();
+        NewCache::clear();
+        return true;
     }
 
     /**
@@ -70,9 +40,10 @@ final class Cache
      *
      * @return bool
      */
-    public function delete($key)
+    public function delete($key): bool
     {
-        return self::$engine->delete($key);
+        NewCache::delete($key);
+        return true;
     }
 
     /**
@@ -84,31 +55,21 @@ final class Cache
      */
     public function get($key)
     {
-        return self::$engine->get($key);
+        return NewCache::get($key);
     }
 
     /**
      * Saves contents in the cache and associates them to $key
-     * 
+     *
      * @param string $key
-     * @param mixed  $content
-     * @param int    $expire
-     * 
+     * @param mixed $content
+     * @param int $expire
+     *
      * @return bool
      */
-    public function set($key, $content, $expire = 3600)
+    public function set($key, $content, $expire = 3600): bool
     {
-        return self::$engine->set($key, $content, $expire);
-    }
-
-    /**
-     * Loads memcache engine
-     */
-    private function loadMemcache()
-    {
-        self::$engine = new MemcacheAdapter();
-        if (!self::$engine->isConnected()) {
-            self::$engine = null;
-        }
+        NewCache::set($key, $content);
+        return true;
     }
 }

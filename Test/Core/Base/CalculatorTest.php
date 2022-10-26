@@ -27,7 +27,7 @@ use FacturaScripts\Core\Model\ImpuestoZona;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\PresupuestoProveedor;
 use FacturaScripts\Core\Model\Serie;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CalculatorTest extends TestCase
@@ -83,6 +83,7 @@ final class CalculatorTest extends TestCase
         // segunda línea
         $line2 = $doc->getNewLine();
         $line2->cantidad = 2;
+        $line2->coste = 3;
         $line2->pvpunitario = 10;
         $line2->iva = 4;
 
@@ -97,6 +98,7 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalirpf, 'bad-totalirpf');
         $this->assertEquals(0.0, $doc->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
+        $this->assertEquals(6.0, $doc->totalcoste, 'bad-totalcoste');
 
         // comprobamos la primera línea
         $this->assertEquals(100.0, $lines[0]->pvpsindto, 'bad-line1-pvpsindto');
@@ -229,7 +231,8 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
 
         // eliminamos
-        $subject->delete();
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
     }
 
     public function testSupplierRe()
@@ -262,7 +265,8 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
 
         // eliminamos
-        $subject->delete();
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
     }
 
     public function testSupplied()
@@ -378,7 +382,8 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
 
         // eliminamos
-        $subject->delete();
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'cliente-cant-delete');
     }
 
     public function testSupplierExempt()
@@ -411,7 +416,8 @@ final class CalculatorTest extends TestCase
         $this->assertEquals(0.0, $doc->totalsuplidos, 'bad-totalsuplidos');
 
         // eliminamos
-        $subject->delete();
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($subject->delete(), 'proveedor-cant-delete');
     }
 
     public function testTaxZone()

@@ -76,7 +76,6 @@ class SalesHeaderHTML
         }
 
         $model->cifnif = $formData['cifnif'] ?? $model->cifnif;
-        $model->codagente = !empty($formData['codagente']) ? $formData['codagente'] : null;
         $model->codalmacen = $formData['codalmacen'] ?? $model->codalmacen;
         $model->codcliente = $formData['codcliente'] ?? $model->codcliente;
         $model->codigoenv = $formData['codigoenv'] ?? $model->codigoenv;
@@ -90,7 +89,7 @@ class SalesHeaderHTML
         $model->numero2 = $formData['numero2'] ?? $model->numero2;
         $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
 
-        foreach (['codtrans', 'finoferta'] as $key) {
+        foreach (['codagente', 'codtrans', 'finoferta'] as $key) {
             if (isset($formData[$key])) {
                 $model->{$key} = empty($formData[$key]) ? null : $formData[$key];
             }
@@ -387,7 +386,7 @@ class SalesHeaderHTML
     private static function getAddressOptions(Translator $i18n, $selected, bool $empty): array
     {
         $options = $empty ? ['<option value="">------</option>'] : [];
-        foreach (self::$cliente->getAdresses() as $contact) {
+        foreach (self::$cliente->getAddresses() as $contact) {
             $descripcion = empty($contact->descripcion) ? '(' . $i18n->trans('empty') . ') ' : '(' . $contact->descripcion . ') ';
             $descripcion .= empty($contact->direccion) ? '' : $contact->direccion;
             $options[] = $contact->idcontacto == $selected ?

@@ -91,17 +91,41 @@ abstract class ListBusinessDocument extends ListController
         $this->addSearchFields($viewName, ['referencia', 'descripcion']);
         $this->addOrderBy($viewName, ['referencia'], 'reference');
         $this->addOrderBy($viewName, ['cantidad'], 'quantity');
+        $this->addOrderBy($viewName, ['servido'], 'quantity-served');
         $this->addOrderBy($viewName, ['descripcion'], 'description');
         $this->addOrderBy($viewName, ['pvptotal'], 'amount');
         $this->addOrderBy($viewName, ['idlinea'], 'code', 2);
 
         // filters
         $this->addFilterAutocomplete($viewName, 'idproducto', 'product', 'idproducto', 'productos', 'idproducto', 'referencia');
+        $this->addFilterAutocomplete($viewName, 'referencia', 'variant', 'referencia', 'variantes', 'referencia', 'referencia');
         $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', Impuestos::codeModel());
-        $this->addFilterNumber($viewName, 'cantidad', 'quantity', 'cantidad');
-        $this->addFilterNumber($viewName, 'dtopor', 'discount', 'dtopor');
-        $this->addFilterNumber($viewName, 'pvpunitario', 'pvp', 'pvpunitario');
-        $this->addFilterNumber($viewName, 'pvptotal', 'amount', 'pvptotal');
+
+        $stock = [
+            ['code' => '', 'description' => '------'],
+            ['code' => -2, 'description' => self::toolBox()::i18n()->trans('book')],
+            ['code' => -1, 'description' => self::toolBox()::i18n()->trans('subtract')],
+            ['code' => 0, 'description' => self::toolBox()::i18n()->trans('do-nothing')],
+            ['code' => 1, 'description' => self::toolBox()::i18n()->trans('add')],
+            ['code' => 2, 'description' => self::toolBox()::i18n()->trans('foresee')]
+        ];
+        $this->addFilterSelect($viewName, 'actualizastock', 'stock', 'actualizastock', $stock);
+
+        $this->addFilterNumber($viewName, 'cantidad-gt', 'quantity', 'cantidad');
+        $this->addFilterNumber($viewName, 'cantidad-lt', 'quantity', 'cantidad', '<=');
+
+        $this->addFilterNumber($viewName, 'servido-gt', 'quantity-served', 'servido');
+        $this->addFilterNumber($viewName, 'servido-lt', 'quantity-served', 'servido', '<=');
+
+        $this->addFilterNumber($viewName, 'dtopor-gt', 'discount', 'dtopor');
+        $this->addFilterNumber($viewName, 'dtopor-lt', 'discount', 'dtopor', '<=');
+
+        $this->addFilterNumber($viewName, 'pvpunitario-gt', 'pvp', 'pvpunitario');
+        $this->addFilterNumber($viewName, 'pvpunitario-lt', 'pvp', 'pvpunitario', '<=');
+
+        $this->addFilterNumber($viewName, 'pvptotal-gt', 'amount', 'pvptotal');
+        $this->addFilterNumber($viewName, 'pvptotal-lt', 'amount', 'pvptotal', '<=');
+
         $this->addFilterCheckbox($viewName, 'recargo', 'surcharge', 'recargo', '!=', 0);
         $this->addFilterCheckbox($viewName, 'irpf', 'retention', 'irpf', '!=', 0);
         $this->addFilterCheckbox($viewName, 'suplido', 'supplied', 'suplido');

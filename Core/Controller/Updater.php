@@ -27,6 +27,7 @@ use FacturaScripts\Core\Base\Migrations;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
@@ -38,7 +39,6 @@ use ZipArchive;
  */
 class Updater extends Controller
 {
-
     const CORE_PROJECT_ID = 1;
     const CORE_ZIP_FOLDER = 'facturascripts';
     const UPDATE_CORE_URL = 'https://facturascripts.com/DownloadBuild';
@@ -148,7 +148,7 @@ class Updater extends Controller
             if ($downloader->download($url, FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
                 $this->toolBox()->i18nLog()->notice('download-completed');
                 $this->updaterItems[$key]['downloaded'] = true;
-                $this->toolBox()->cache()->clear();
+                Cache::clear();
                 break;
             }
 
@@ -235,7 +235,7 @@ class Updater extends Controller
             }
         }
 
-        $this->toolBox()->cache()->set('UPDATE_ITEMS', $items);
+        Cache::set('UPDATE_ITEMS', $items);
         return $items;
     }
 
@@ -396,7 +396,7 @@ class Updater extends Controller
         $done = ($idItem == self::CORE_PROJECT_ID) ? $this->updateCore($zip, $fileName) : $this->updatePlugin($zip, $fileName);
         if ($done) {
             $this->pluginManager->deploy(true, false);
-            $this->toolBox()->cache()->clear();
+            Cache::clear();
             $this->toolBox()->i18nLog()->notice('reloading');
             $this->redirect($this->getClassName() . '?action=post-update&init=' . $init, 3);
         }

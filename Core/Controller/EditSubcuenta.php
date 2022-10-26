@@ -31,14 +31,13 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
 /**
  * Controller to edit a single item from the SubCuenta model
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author PC REDNET S.L.               <luismi@pcrednet.com>
- * @author Cristo M. Estévez Hernández  <cristom.estevez@gmail.com>
+ * @author PC REDNET S.L.                <luismi@pcrednet.com>
+ * @author Cristo M. Estévez Hernández   <cristom.estevez@gmail.com>
  */
 class EditSubcuenta extends EditController
 {
-
     public function getModelClassName(): string
     {
         return 'Subcuenta';
@@ -54,61 +53,52 @@ class EditSubcuenta extends EditController
     }
 
     /**
-     * Add subaccount ledger report and export.
-     * - Add button
-     * - Add export options
-     * - Set initial values to modal form
-     *
-     * @param string $viewName
+     * Load views
      */
-    protected function addLedgerReport(string $viewName)
+    protected function createViews()
     {
-        $this->addButton($viewName, Ledger::getButton('modal'));
-        $this->setLedgerReportExportOptions($viewName);
-        $this->setLedgerReportValues($viewName);
+        parent::createViews();
+        $this->setTabsPosition('bottom');
+
+        // añadimos las partidas de asientos
+        $this->createViewsLines();
     }
 
-    protected function createDepartureView(string $viewName = 'ListPartidaAsiento')
+    protected function createViewsLines(string $viewName = 'ListPartidaAsiento')
     {
         $this->addListView($viewName, 'Join\PartidaAsiento', 'accounting-entries', 'fas fa-balance-scale');
         $this->views[$viewName]->addOrderBy(['fecha', 'numero', 'idpartida'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['partidas.concepto']);
 
+        // filtros
         $this->views[$viewName]->addFilterPeriod('date', 'date', 'fecha');
+
+        $iva = $this->codeModel->all('partidas', 'iva', 'iva');
+        $this->views[$viewName]->addFilterSelect('iva', 'vat', 'iva', $iva);
+        $this->views[$viewName]->addFilterCheckbox('no-iva', 'without-taxation', 'iva', 'IS', null);
+
         $this->views[$viewName]->addFilterNumber('debit-major', 'debit', 'debe');
         $this->views[$viewName]->addFilterNumber('debit-minor', 'debit', 'debe', '<=');
         $this->views[$viewName]->addFilterNumber('credit-major', 'credit', 'haber');
         $this->views[$viewName]->addFilterNumber('credit-minor', 'credit', 'haber', '<=');
 
+        // disable column
+        $this->views[$viewName]->disableColumn('subaccount');
+
+        // botones
+        $this->setSettings($viewName, 'btnDelete', false);
         $this->addButton($viewName, [
             'action' => 'dot-accounting-on',
             'color' => 'info',
             'icon' => 'fas fa-check-double',
             'label' => 'checked'
         ]);
-
         $this->addButton($viewName, [
             'action' => 'dot-accounting-off',
             'color' => 'warning',
             'icon' => 'far fa-square',
             'label' => 'unchecked'
         ]);
-
-        // disable column
-        $this->views[$viewName]->disableColumn('subaccount');
-
-        // disable button
-        $this->setSettings($viewName, 'btnDelete', false);
-    }
-
-    /**
-     * Load views
-     */
-    protected function createViews()
-    {
-        parent::createViews();
-        $this->createDepartureView();
-        $this->setTabsPosition('bottom');
     }
 
     /**
@@ -139,25 +129,18 @@ class EditSubcuenta extends EditController
         return parent::execPreviousAction($action);
     }
 
-    /**
-     * Exec ledger report from post/get values
-     *
-     * @param int $idSubAccount
-     */
     protected function ledgerReport(int $idSubAccount)
     {
         $subAccount = new Subcuenta();
         $subAccount->loadFromCode($idSubAccount);
         $request = $this->request->request->all();
-        $params = [
+
+        $ledger = new Ledger();
+        $pages = $ledger->generate($subAccount->getExercise()->idempresa, $request['dateFrom'], $request['dateTo'], [
             'grouped' => false,
             'channel' => $request['channel'],
             'subaccount-from' => $subAccount->codsubcuenta
-        ];
-
-        $ledger = new Ledger();
-        $ledger->setExercise($subAccount->codejercicio);
-        $pages = $ledger->generate($request['dateFrom'], $request['dateTo'], $params);
+        ]);
         $title = self::toolBox()::i18n()->trans('ledger') . ' ' . $subAccount->codsubcuenta;
         $this->exportManager->newDoc($request['format'], $title);
 
@@ -196,7 +179,15 @@ class EditSubcuenta extends EditController
                 $where = [new DataBaseWhere('idsubcuenta', $idsubcuenta)];
                 $view->loadData('', $where);
                 if ($view->count > 0) {
-                    $this->addLedgerReport($mainViewName);
+                    $this->addButton($mainViewName, [
+                        'action' => 'ledger',
+                        'color' => 'info',
+                        'icon' => 'fas fa-book fa-fw',
+                        'label' => 'ledger',
+                        'type' => 'modal'
+                    ]);
+                    $this->setLedgerReportExportOptions($mainViewName);
+                    $this->setLedgerReportValues($mainViewName);
                 }
                 break;
 
@@ -245,11 +236,6 @@ class EditSubcuenta extends EditController
         return true;
     }
 
-    /**
-     * Set export options to widget of modal form
-     *
-     * @param string $viewName
-     */
     private function setLedgerReportExportOptions(string $viewName)
     {
         $columnFormat = $this->views[$viewName]->columnModalForName('format');
@@ -262,11 +248,6 @@ class EditSubcuenta extends EditController
         }
     }
 
-    /**
-     * Set initial values to modal fields
-     *
-     * @param string $viewName
-     */
     private function setLedgerReportValues(string $viewName)
     {
         $codeExercise = $this->getViewModelValue($viewName, 'codejercicio');

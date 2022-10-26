@@ -31,95 +31,45 @@ use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
  */
 class Empresa extends Base\Contact
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Name of the company administrator.
-     *
-     * @var string
-     */
+    /** @var string */
     public $administrador;
 
-    /**
-     * Post office box of the address.
-     *
-     * @var string
-     */
+    /** @var string */
     public $apartado;
 
-    /**
-     * City of the address.
-     *
-     * @var string
-     */
+    /** @var string */
     public $ciudad;
 
-    /**
-     * Country of the address.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codpais;
 
-    /**
-     * Postal code of the address.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codpostal;
 
-    /**
-     * Address.
-     *
-     * @var string
-     */
+    /** @var string */
     public $direccion;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $exceptioniva;
 
-    /**
-     * Primary key. Integer.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idempresa;
 
-    /**
-     *
-     * @var int
-     */
+    /** @var int */
     public $idlogo;
 
-    /**
-     * Short name of the company, to show on the menu.
-     *
-     * @var string Name to show in the menu.
-     */
+    /** @var string */
     public $nombrecorto;
 
-    /**
-     * Province of the address.
-     *
-     * @var string
-     */
+    /** @var string */
     public $provincia;
 
-    /**
-     * Taxation regime of the provider. For now they are only implemented general and exempt.
-     *
-     * @var string
-     */
+    /** @var string */
     public $regimeniva;
 
-    /**
-     * Website of the person.
-     *
-     * @var string
-     */
+    /** @var string */
     public $web;
 
     public function clear()

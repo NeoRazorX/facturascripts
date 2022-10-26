@@ -19,58 +19,50 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
+use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Description of WidgetSelect
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class WidgetSelect extends BaseWidget
 {
-
-    /**
-     * @var CodeModel
-     */
+    /** @var CodeModel */
     protected static $codeModel;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $fieldcode;
 
-    /**
-     * @var string
-     */
+    /** @var string */
+    protected $fieldfilter;
+
+    /** @var string */
     protected $fieldtitle;
 
-    /**
-     * @var string
-     */
+    /** @var string */
+    protected $parent;
+
+    /** @var string */
     protected $source;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $translate;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $values = [];
 
-    /**
-     * @param array $data
-     */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         if (!isset(static::$codeModel)) {
             static::$codeModel = new CodeModel();
         }
 
         parent::__construct($data);
+        $this->parent = $data['parent'] ?? '';
         $this->translate = isset($data['translate']);
 
         foreach ($data['children'] as $child) {
@@ -101,6 +93,7 @@ class WidgetSelect extends BaseWidget
         return [
             'source' => $this->source,
             'fieldcode' => $this->fieldcode,
+            'fieldfilter' => $this->fieldfilter,
             'fieldtitle' => $this->fieldtitle
         ];
     }
@@ -118,7 +111,7 @@ class WidgetSelect extends BaseWidget
     /**
      * Loads the value list from a given array.
      * The array must have one of the two following structures:
-     * - If it's a value array, it must uses the value of each element as title and value
+     * - If it's a value array, it must use the value of each element as title and value
      * - If it's a multidimensional array, the indexes value and title must be set for each element
      *
      * @param array $items
@@ -127,11 +120,11 @@ class WidgetSelect extends BaseWidget
      * @param string $col1
      * @param string $col2
      */
-    public function setValuesFromArray($items, $translate = false, $addEmpty = false, $col1 = 'value', $col2 = 'title')
+    public function setValuesFromArray(array $items, bool $translate = false, bool $addEmpty = false, string $col1 = 'value', string $col2 = 'title')
     {
         $this->values = $addEmpty ? [['value' => null, 'title' => '------']] : [];
         foreach ($items as $item) {
-            if (false === \is_array($item)) {
+            if (false === is_array($item)) {
                 $this->values[] = ['value' => $item, 'title' => $item];
                 continue;
             } elseif (isset($item['tag']) && $item['tag'] !== 'values') {
@@ -141,7 +134,7 @@ class WidgetSelect extends BaseWidget
             if (isset($item[$col1])) {
                 $this->values[] = [
                     'value' => $item[$col1],
-                    'title' => isset($item[$col2]) ? $item[$col2] : $item[$col1]
+                    'title' => $item[$col2] ?? $item[$col1]
                 ];
             }
         }
@@ -151,13 +144,7 @@ class WidgetSelect extends BaseWidget
         }
     }
 
-    /**
-     *
-     * @param array $values
-     * @param bool $translate
-     * @param bool $addEmpty
-     */
-    public function setValuesFromArrayKeys($values, $translate = false, $addEmpty = false)
+    public function setValuesFromArrayKeys(array $values, bool $translate = false, bool $addEmpty = false)
     {
         $this->values = $addEmpty ? [['value' => null, 'title' => '------']] : [];
         foreach ($values as $key => $value) {
@@ -178,7 +165,7 @@ class WidgetSelect extends BaseWidget
      * @param array $rows
      * @param bool $translate
      */
-    public function setValuesFromCodeModel($rows, $translate = false)
+    public function setValuesFromCodeModel(array $rows, bool $translate = false)
     {
         $this->values = [];
         foreach ($rows as $codeModel) {
@@ -198,9 +185,9 @@ class WidgetSelect extends BaseWidget
      * @param int $end
      * @param int $step
      */
-    public function setValuesFromRange($start, $end, $step)
+    public function setValuesFromRange(int $start, int $end, int $step)
     {
-        $values = \range($start, $end, $step);
+        $values = range($start, $end, $step);
         $this->setValuesFromArray($values);
     }
 
@@ -218,6 +205,11 @@ class WidgetSelect extends BaseWidget
         }
     }
 
+    protected function assets()
+    {
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/WidgetSelect.js');
+    }
+
     /**
      * @param string $type
      * @param string $extraClass
@@ -227,14 +219,29 @@ class WidgetSelect extends BaseWidget
     protected function inputHtml($type = 'text', $extraClass = '')
     {
         $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
+        if ($this->parent) {
+            $class = $class . ' parentSelect';
+        }
+
         if ($this->readonly()) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
                 . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>';
         }
 
         $found = false;
-        $id = empty($this->id) ? '' : ' id="' . $this->id . '"';
-        $html = '<select name="' . $this->fieldname . '"' . $id . ' " class="' . $class . '"' . $this->inputHtmlExtraParams() . '>';
+        $html = '<select'
+            . ' name="' . $this->fieldname . '"'
+            . ' id="' . $this->id . '"'
+            . ' class="' . $class . '"'
+            . $this->inputHtmlExtraParams()
+            . ' parent="' . $this->parent . '"'
+            . ' value="' . $this->value . '"'
+            . ' data-field="' . $this->fieldname . '"'
+            . ' data-source="' . $this->source . '"'
+            . ' data-fieldcode="' . $this->fieldcode . '"'
+            . ' data-fieldtitle="' . $this->fieldtitle . '"'
+            . ' data-fieldfilter="' . $this->fieldfilter . '"'
+            . '>';
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
@@ -269,6 +276,7 @@ class WidgetSelect extends BaseWidget
     {
         $this->source = $child['source'];
         $this->fieldcode = $child['fieldcode'] ?? 'id';
+        $this->fieldfilter = $child['fieldfilter'] ?? $this->fieldfilter;
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
         if ($loadData) {
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);

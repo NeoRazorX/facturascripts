@@ -19,10 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
-use FacturaScripts\Core\Base\Cache;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Lib\Widget\RowStatus;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Lib\AssetManager;
@@ -307,13 +307,12 @@ class ListView extends BaseView
         }
 
         // if there are no filters, then read from the cache
-        $cache = new Cache();
         $key = 'sum-' . $tableName . '-' . $fieldName;
-        $sum = $cache->get($key);
+        $sum = Cache::get($key);
         if (is_null($sum)) {
             // empty cache value? Then get the value from the database and store on the cache
             $sum = TotalModel::sum($tableName, $fieldName, $where);
-            $cache->set($key, $sum);
+            Cache::set($key, $sum);
         }
         return $sum;
     }

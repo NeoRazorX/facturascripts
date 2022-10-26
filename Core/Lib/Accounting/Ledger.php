@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,10 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Model\Base\ModelCore;
+use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Partida;
 
 /**
@@ -27,37 +31,42 @@ use FacturaScripts\Dinamic\Model\Partida;
  * @author Carlos García Gómez  <carlos@facturascripts.com>
  * @author nazca                <comercial@nazcanetworks.com>
  */
-class Ledger extends AccountingBase
+class Ledger
 {
+    /** @var DataBase */
+    protected $dataBase;
 
-    /**
-     * Ledger constructor class
-     */
+    /** @var string */
+    protected $dateFrom;
+
+    /** @var string */
+    protected $dateTo;
+
+    /** @var Ejercicio */
+    protected $exercise;
+
     public function __construct()
     {
-        parent::__construct();
+        $this->dataBase = new DataBase();
 
         // needed dependencies
         new Partida();
     }
 
-    /**
-     * Generate the ledger between two dates.
-     *
-     * @param string $dateFrom
-     * @param string $dateTo
-     * @param array $params
-     *
-     * @return array
-     */
-    public function generate(string $dateFrom, string $dateTo, array $params = []): array
+    public function generate(int $idcompany, string $dateFrom, string $dateTo, array $params = []): array
     {
+        $this->exercise = new Ejercicio();
+        $this->exercise->idempresa = $idcompany;
+        if (false === $this->exercise->loadFromDate($dateFrom, true, false)) {
+            return [];
+        }
+
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
         $debe = $haber = 0.0;
         $ledger = [];
 
-        switch ($params['grouped']) {
+        switch ($params['grouped'] ?? '') {
             case 'C':
                 // group by account
                 $balances = [];
@@ -67,9 +76,9 @@ class Ledger extends AccountingBase
                     $haber += (float)$line['haber'];
                 }
                 $ledger['totals'] = [[
-                    'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
-                    'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>',
-                    'saldo' => '<b>' . $this->toolBox()->coins()->format($debe - $haber, FS_NF0, '') . '</b>'
+                    'debe' => '<b>' . ToolBox::coins()->format($debe, FS_NF0, '') . '</b>',
+                    'haber' => '<b>' . ToolBox::coins()->format($haber, FS_NF0, '') . '</b>',
+                    'saldo' => '<b>' . ToolBox::coins()->format($debe - $haber, FS_NF0, '') . '</b>'
                 ]];
                 break;
 
@@ -82,14 +91,15 @@ class Ledger extends AccountingBase
                     $haber += (float)$line['haber'];
                 }
                 $ledger['totals'] = [[
-                    'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
-                    'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>',
-                    'saldo' => '<b>' . $this->toolBox()->coins()->format($debe - $haber, FS_NF0, '') . '</b>'
+                    'debe' => '<b>' . ToolBox::coins()->format($debe, FS_NF0, '') . '</b>',
+                    'haber' => '<b>' . ToolBox::coins()->format($haber, FS_NF0, '') . '</b>',
+                    'saldo' => '<b>' . ToolBox::coins()->format($debe - $haber, FS_NF0, '') . '</b>'
                 ]];
                 break;
 
             default:
                 // do not group data
+                $ledger['lines'] = [];
                 foreach ($this->getData($params) as $line) {
                     $this->processLine($ledger['lines'], $line);
                     $debe += (float)$line['debe'];
@@ -100,8 +110,8 @@ class Ledger extends AccountingBase
                     'fecha' => '',
                     'cuenta' => '',
                     'concepto' => '',
-                    'debe' => '<b>' . $this->toolBox()->coins()->format($debe, FS_NF0, '') . '</b>',
-                    'haber' => '<b>' . $this->toolBox()->coins()->format($haber, FS_NF0, '') . '</b>'
+                    'debe' => '<b>' . ToolBox::coins()->format($debe, FS_NF0, '') . '</b>',
+                    'haber' => '<b>' . ToolBox::coins()->format($haber, FS_NF0, '') . '</b>'
                 ];
                 break;
         }
@@ -109,30 +119,6 @@ class Ledger extends AccountingBase
         return $ledger;
     }
 
-    /**
-     * Config options for create a ledger button
-     *
-     * @param string $type
-     * @param string $action
-     *
-     * @return array
-     */
-    public static function getButton(string $type, string $action = 'ledger'): array
-    {
-        return [
-            'action' => $action,
-            'color' => 'info',
-            'icon' => 'fas fa-book fa-fw',
-            'label' => 'ledger',
-            'type' => $type
-        ];
-    }
-
-    /**
-     * Return the appropriate data from database.
-     *
-     * @return array
-     */
     protected function getData(array $params = []): array
     {
         if (false === $this->dataBase->tableExists('partidas')) {
@@ -152,13 +138,6 @@ class Ledger extends AccountingBase
         return $this->dataBase->select($sql);
     }
 
-    /**
-     * Return the appropriate data from database.
-     *
-     * @param array $params
-     *
-     * @return array
-     */
     protected function getDataGroupedByAccount(array $params = []): array
     {
         if (false === $this->dataBase->tableExists('partidas')) {
@@ -178,13 +157,6 @@ class Ledger extends AccountingBase
         return $this->dataBase->select($sql);
     }
 
-    /**
-     * Return the appropriate data from database.
-     *
-     * @param array $params
-     *
-     * @return array
-     */
     protected function getDataGroupedBySubAccount(array $params = []): array
     {
         if (false === $this->dataBase->tableExists('partidas')) {
@@ -205,11 +177,6 @@ class Ledger extends AccountingBase
         return $this->dataBase->select($sql);
     }
 
-    /**
-     * @param array $params
-     *
-     * @return string
-     */
     protected function getDataWhere(array $params = []): string
     {
         $where = 'asientos.codejercicio = ' . $this->dataBase->var2str($this->exercise->codejercicio)
@@ -245,12 +212,7 @@ class Ledger extends AccountingBase
         return $where;
     }
 
-    /**
-     * @param string $codcuenta
-     *
-     * @return float
-     */
-    protected function getCuentaBalance($codcuenta): float
+    protected function getCuentaBalance(string $codcuenta): float
     {
         $sql = 'SELECT SUM(partidas.debe) as debe, SUM(partidas.haber) as haber'
             . ' FROM partidas'
@@ -267,28 +229,19 @@ class Ledger extends AccountingBase
         return 0.00;
     }
 
-    /**
-     * @param array $ledger
-     * @param array $line
-     */
-    protected function processLine(&$ledger, $line)
+    protected function processLine(array &$ledger, array $line): void
     {
         $ledger[] = [
             'asiento' => $line['numero'],
-            'fecha' => date(Partida::DATE_STYLE, strtotime($line['fecha'])),
+            'fecha' => date(ModelCore::DATE_STYLE, strtotime($line['fecha'])),
             'cuenta' => $line['codsubcuenta'],
-            'concepto' => $this->toolBox()->utils()->fixHtml($line['concepto']),
-            'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),
-            'haber' => $this->toolBox()->coins()->format($line['haber'], FS_NF0, '')
+            'concepto' => ToolBox::utils()->fixHtml($line['concepto']),
+            'debe' => ToolBox::coins()->format($line['debe'], FS_NF0, ''),
+            'haber' => ToolBox::coins()->format($line['haber'], FS_NF0, '')
         ];
     }
 
-    /**
-     * @param array $balances
-     * @param array $ledger
-     * @param array $line
-     */
-    protected function processLineBalanceGroupedByAccount(&$balances, &$ledger, $line)
+    protected function processLineBalanceGroupedByAccount(array &$balances, array &$ledger, array $line)
     {
         $codcuenta = $line['codcuenta'];
         if (!isset($balances[$codcuenta])) {
@@ -298,33 +251,28 @@ class Ledger extends AccountingBase
         if (!isset($ledger[$codcuenta])) {
             $ledger[$codcuenta][] = [
                 'asiento' => '',
-                'fecha' => date(Partida::DATE_STYLE, strtotime($this->dateFrom)),
+                'fecha' => date(ModelCore::DATE_STYLE, strtotime($this->dateFrom)),
                 'cuenta' => $codcuenta,
-                'concepto' => $this->toolBox()->utils()->fixHtml($line['cuentadesc']),
-                'debe' => $this->toolBox()->coins()->format(0, FS_NF0, ''),
-                'haber' => $this->toolBox()->coins()->format(0, FS_NF0, ''),
-                'saldo' => $this->toolBox()->coins()->format($balances[$codcuenta], FS_NF0, '')
+                'concepto' => ToolBox::utils()->fixHtml($line['cuentadesc']),
+                'debe' => ToolBox::coins()->format(0, FS_NF0, ''),
+                'haber' => ToolBox::coins()->format(0, FS_NF0, ''),
+                'saldo' => ToolBox::coins()->format($balances[$codcuenta], FS_NF0, '')
             ];
         }
 
         $balances[$codcuenta] += (float)$line['debe'] - (float)$line['haber'];
         $ledger[$codcuenta][] = [
             'asiento' => $line['numero'],
-            'fecha' => date(Partida::DATE_STYLE, strtotime($line['fecha'])),
+            'fecha' => date(ModelCore::DATE_STYLE, strtotime($line['fecha'])),
             'cuenta' => $codcuenta,
-            'concepto' => $this->toolBox()->utils()->fixHtml($line['concepto']),
-            'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),
-            'haber' => $this->toolBox()->coins()->format($line['haber'], FS_NF0, ''),
-            'saldo' => $this->toolBox()->coins()->format($balances[$codcuenta], FS_NF0, '')
+            'concepto' => ToolBox::utils()->fixHtml($line['concepto']),
+            'debe' => ToolBox::coins()->format($line['debe'], FS_NF0, ''),
+            'haber' => ToolBox::coins()->format($line['haber'], FS_NF0, ''),
+            'saldo' => ToolBox::coins()->format($balances[$codcuenta], FS_NF0, '')
         ];
     }
 
-    /**
-     * @param array $balances
-     * @param array $ledger
-     * @param array $line
-     */
-    protected function processLineBalanceGroupedBySubAccount(&$balances, &$ledger, $line)
+    protected function processLineBalanceGroupedBySubAccount(array &$balances, array &$ledger, array $line)
     {
         $codcuenta = $line['codsubcuenta'];
         if (!isset($balances[$codcuenta])) {
@@ -334,24 +282,24 @@ class Ledger extends AccountingBase
         if (!isset($ledger[$codcuenta])) {
             $ledger[$codcuenta][] = [
                 'asiento' => '',
-                'fecha' => date(Partida::DATE_STYLE, strtotime($this->dateFrom)),
+                'fecha' => date(ModelCore::DATE_STYLE, strtotime($this->dateFrom)),
                 'cuenta' => $codcuenta,
-                'concepto' => $this->toolBox()->utils()->fixHtml($line['cuentadesc']),
-                'debe' => $this->toolBox()->coins()->format(0, FS_NF0, ''),
-                'haber' => $this->toolBox()->coins()->format(0, FS_NF0, ''),
-                'saldo' => $this->toolBox()->coins()->format($balances[$codcuenta], FS_NF0, '')
+                'concepto' => ToolBox::utils()->fixHtml($line['cuentadesc']),
+                'debe' => ToolBox::coins()->format(0, FS_NF0, ''),
+                'haber' => ToolBox::coins()->format(0, FS_NF0, ''),
+                'saldo' => ToolBox::coins()->format($balances[$codcuenta], FS_NF0, '')
             ];
         }
 
         $balances[$codcuenta] += (float)$line['debe'] - (float)$line['haber'];
         $ledger[$codcuenta][] = [
             'asiento' => $line['numero'],
-            'fecha' => date(Partida::DATE_STYLE, strtotime($line['fecha'])),
+            'fecha' => date(ModelCore::DATE_STYLE, strtotime($line['fecha'])),
             'cuenta' => $codcuenta,
-            'concepto' => $this->toolBox()->utils()->fixHtml($line['concepto']),
-            'debe' => $this->toolBox()->coins()->format($line['debe'], FS_NF0, ''),
-            'haber' => $this->toolBox()->coins()->format($line['haber'], FS_NF0, ''),
-            'saldo' => $this->toolBox()->coins()->format($balances[$codcuenta], FS_NF0, '')
+            'concepto' => ToolBox::utils()->fixHtml($line['concepto']),
+            'debe' => ToolBox::coins()->format($line['debe'], FS_NF0, ''),
+            'haber' => ToolBox::coins()->format($line['haber'], FS_NF0, ''),
+            'saldo' => ToolBox::coins()->format($balances[$codcuenta], FS_NF0, '')
         ];
     }
 }

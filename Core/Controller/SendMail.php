@@ -21,10 +21,13 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Contacto;
+use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\Proveedor;
 use FacturaScripts\Dinamic\Model\User;
@@ -40,21 +43,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SendMail extends Controller
 {
-
-    // 30 days
-    const MAX_FILE_AGE = 2592000;
+    const MAX_FILE_AGE = 2592000; // 30 days
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
-    /**
-     * Model to use with select and autocomplete filters.
-     *
-     * @var CodeModel
-     */
+    /** @var CodeModel */
     public $codeModel;
 
-    /**
-     * @var NewMail
-     */
+    /** @var NewMail */
     public $newMail;
 
     public function getPageData(): array
@@ -179,16 +174,49 @@ class SendMail extends Controller
         }
     }
 
-    /**
-     * Get emails from field.
-     *
-     * @param string $field
-     *
-     * @return array
-     */
     protected function getEmails(string $field): array
     {
         return NewMail::splitEmails($this->request->request->get($field, ''));
+    }
+
+    protected function loadDataDefault($model)
+    {
+        // buscamos el texto de la notificación para usar el asunto y el cuerpo
+        $notificationModel = new EmailNotification();
+        $where = [
+            new DataBaseWhere('name', 'sendmail-' . $model->modelClassName()),
+            new DataBaseWhere('enabled', true)
+        ];
+        if ($notificationModel->loadFromCode('', $where)) {
+            $shortCodes = ['{code}', '{name}', '{date}', '{total}'];
+            $shortValues = [$model->codigo, $model->nombrecliente, $model->fecha, $model->total];
+            $this->newMail->title = str_replace($shortCodes, $shortValues, $notificationModel->subject);
+            $this->newMail->text = str_replace($shortCodes, $shortValues, $notificationModel->body);
+            return;
+        }
+
+        // si no hay notificación, usamos los datos de las traducciones
+        switch ($model->modelClassName()) {
+            case 'AlbaranCliente':
+                $this->newMail->title = $this->toolBox()->i18n()->trans('delivery-note-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = $this->toolBox()->i18n()->trans('delivery-note-email-text', ['%code%' => $model->codigo]);
+                break;
+
+            case 'FacturaCliente':
+                $this->newMail->title = $this->toolBox()->i18n()->trans('invoice-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = $this->toolBox()->i18n()->trans('invoice-email-text', ['%code%' => $model->codigo]);
+                break;
+
+            case 'PedidoCliente':
+                $this->newMail->title = $this->toolBox()->i18n()->trans('order-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = $this->toolBox()->i18n()->trans('order-email-text', ['%code%' => $model->codigo]);
+                break;
+
+            case 'PresupuestoCliente':
+                $this->newMail->title = $this->toolBox()->i18n()->trans('estimation-email-subject', ['%code%' => $model->codigo]);
+                $this->newMail->text = $this->toolBox()->i18n()->trans('estimation-email-text', ['%code%' => $model->codigo]);
+                break;
+        }
     }
 
     protected function redirAfter()
@@ -251,7 +279,6 @@ class SendMail extends Controller
 
         $this->newMail->title = $this->request->request->get('subject', '');
         $this->newMail->text = $this->request->request->get('body', '');
-
         $this->newMail->setMailbox($this->request->request->get('email-from', ''));
 
         foreach ($this->getEmails('email') as $email) {
@@ -302,27 +329,7 @@ class SendMail extends Controller
 
         $model = new $className();
         $model->loadFromCode($this->request->get('modelCode', ''));
-        switch ($model->modelClassName()) {
-            case 'AlbaranCliente':
-                $this->newMail->title = $this->toolBox()->i18n()->trans('delivery-note-email-subject', ['%code%' => $model->codigo]);
-                $this->newMail->text = $this->toolBox()->i18n()->trans('delivery-note-email-text', ['%code%' => $model->codigo]);
-                break;
-
-            case 'FacturaCliente':
-                $this->newMail->title = $this->toolBox()->i18n()->trans('invoice-email-subject', ['%code%' => $model->codigo]);
-                $this->newMail->text = $this->toolBox()->i18n()->trans('invoice-email-text', ['%code%' => $model->codigo]);
-                break;
-
-            case 'PedidoCliente':
-                $this->newMail->title = $this->toolBox()->i18n()->trans('order-email-subject', ['%code%' => $model->codigo]);
-                $this->newMail->text = $this->toolBox()->i18n()->trans('order-email-text', ['%code%' => $model->codigo]);
-                break;
-
-            case 'PresupuestoCliente':
-                $this->newMail->title = $this->toolBox()->i18n()->trans('estimation-email-subject', ['%code%' => $model->codigo]);
-                $this->newMail->text = $this->toolBox()->i18n()->trans('estimation-email-text', ['%code%' => $model->codigo]);
-                break;
-        }
+        $this->loadDataDefault($model);
 
         if (property_exists($model, 'email')) {
             $this->newMail->addAddress($model->email);
@@ -360,7 +367,7 @@ class SendMail extends Controller
         $model = new $className();
         $modelCode = $this->request->get('modelCode');
         if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
-            $model->femail = date(Cliente::DATE_STYLE);
+            $model->femail = date(ModelCore::DATE_STYLE);
             if (false === $model->save()) {
                 $this->toolBox()->i18nLog()->error('record-save-error');
                 return;

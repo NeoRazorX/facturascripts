@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,23 +31,12 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditLogMessage extends EditController
 {
-
-    /**
-     * Returns the model name.
-     * 
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'LogMessage';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -61,19 +51,17 @@ class EditLogMessage extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->setTabsPosition('bottom');
 
-        /// disable buttons
+        // desactivamos el botón nuevo
         $this->setSettings($this->getMainViewName(), 'btnNew', false);
 
-        /// related logs tab
+        // añadimos la pestaña de logs
         $this->createViewsOtherLogs();
+
+        // colocamos las pestañas abajo
+        $this->setTabsPosition('bottom');
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
     protected function createViewsOtherLogs(string $viewName = 'ListLogMessage')
     {
         $this->addListView($viewName, 'LogMessage', 'related', 'fas fa-file-medical-alt');
@@ -81,14 +69,14 @@ class EditLogMessage extends EditController
         $this->views[$viewName]->addOrderBy(['time', 'id'], 'date', 2);
         $this->views[$viewName]->addOrderBy(['level'], 'level');
 
-        /// disable buttons
+        // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)

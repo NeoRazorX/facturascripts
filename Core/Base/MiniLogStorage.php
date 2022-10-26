@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\Contract\MiniLogStorageInterface;
-use FacturaScripts\Dinamic\Lib\IPFilter;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Dinamic\Model\LogMessage;
 
 final class MiniLogStorage implements MiniLogStorageInterface
@@ -44,7 +44,7 @@ final class MiniLogStorage implements MiniLogStorageInterface
             $logItem->channel = $item['channel'];
             $logItem->context = json_encode($item['context']);
             $logItem->idcontacto = $item['context']['idcontacto'] ?? null;
-            $logItem->ip = IPFilter::getClientIp();
+            $logItem->ip = Session::getClientIp();
             $logItem->level = $item['level'];
             $logItem->message = $item['message'];
             $logItem->model = $item['context']['model-class'] ?? null;

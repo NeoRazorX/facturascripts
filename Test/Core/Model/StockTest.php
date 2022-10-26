@@ -21,8 +21,8 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Core\Model\Variante;
-use FacturaScripts\Test\Core\LogErrorsTrait;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class StockTest extends TestCase

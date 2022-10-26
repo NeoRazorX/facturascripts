@@ -21,7 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Fabricante;
-use FacturaScripts\Test\Core\LogErrorsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
 final class FabricanteTest extends TestCase
@@ -63,9 +63,15 @@ final class FabricanteTest extends TestCase
         $manufacturer->nombre = 'Test Manufacturer with new code';
         $this->assertTrue($manufacturer->save(), 'manufacturer-cant-save');
 
+        // guardamos el codfabricante original
+        $codfabricante = $manufacturer->codfabricante;
+
         // No se puede añadir un código con espacios
         $manufacturer->codfabricante = 'Te st';
         $this->assertFalse($manufacturer->save(), 'manufacturer-can-save');
+
+        // reestablecemos el código original
+        $manufacturer->codfabricante = $codfabricante;
 
         // eliminamos
         $this->assertTrue($manufacturer->delete(), 'manufacturer-cant-delete');

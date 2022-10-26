@@ -20,8 +20,10 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\LogMessage;
+use ParseCsv\Csv;
 
 /**
  * Description of Migrations
@@ -43,6 +45,25 @@ final class Migrations
         self::fixClients();
         self::fixSuppliers();
         self::clearLogs();
+        self::addEmailNotifications();
+    }
+
+    private static function addEmailNotifications()
+    {
+        $csv = new Csv();
+        $csv->auto(FS_FOLDER . '/Dinamic/Data/Lang/ES/emails_notifications.csv');
+        foreach ($csv->data as $row) {
+            $notification = new EmailNotification();
+            $where = [new DataBaseWhere('name', $row['name'])];
+            if (false === $notification->loadFromCode('', $where)) {
+                // no existe, la creamos
+                $notification->enabled = true;
+                $notification->name = $row['name'];
+                $notification->subject = $row['subject'];
+                $notification->body = $row['body'];
+                $notification->save();
+            }
+        }
     }
 
     private static function clearLogs()

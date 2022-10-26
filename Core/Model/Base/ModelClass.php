@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
@@ -106,11 +107,11 @@ abstract class ModelClass extends ModelCore
         }
 
         $key = 'model-' . $this->modelClassName() . '-count';
-        $count = self::toolBox()::cache()->get($key);
+        $count = Cache::get($key);
         if (is_null($count)) {
             $data = self::$dataBase->select('SELECT COUNT(1) AS total FROM ' . static::tableName());
             $count = empty($data) ? 0 : (int)$data[0]['total'];
-            self::toolBox()::cache()->set($key, $count);
+            Cache::set($key, $count);
         }
         return $count;
     }
@@ -130,7 +131,7 @@ abstract class ModelClass extends ModelCore
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
         if (self::$dataBase->exec($sql)) {
-            self::toolBox()::cache()->delete('model-' . $this->modelClassName() . '-count');
+            Cache::delete('model-' . $this->modelClassName() . '-count');
             return $this->pipeFalse('delete');
         }
 
@@ -263,7 +264,7 @@ abstract class ModelClass extends ModelCore
             return false;
         }
 
-        self::toolBox()::cache()->delete('model-' . $this->modelClassName() . '-count');
+        Cache::delete('model-' . $this->modelClassName() . '-count');
         return $this->pipeFalse('save');
     }
 

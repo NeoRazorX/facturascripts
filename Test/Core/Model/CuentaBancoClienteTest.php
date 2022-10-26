@@ -21,7 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\CuentaBancoCliente;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class CuentaBancoClienteTest extends TestCase
@@ -46,6 +46,7 @@ final class CuentaBancoClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
@@ -82,6 +83,7 @@ final class CuentaBancoClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
@@ -98,6 +100,7 @@ final class CuentaBancoClienteTest extends TestCase
         $this->assertTrue($cuenta->save(), 'cuenta-cant-save');
 
         // eliminamos el cliente
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
 
         // comprobamos que la cuenta se ha eliminado
@@ -130,6 +133,7 @@ final class CuentaBancoClienteTest extends TestCase
 
         // eliminamos
         $this->assertTrue($cuenta->delete(), 'cuenta-cant-delete');
+        $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 }

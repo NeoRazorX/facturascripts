@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Core\Cache;
 
 define("FS_FOLDER", getcwd());
 
@@ -42,9 +45,8 @@ echo "\n" . 'DB Pass: ' . FS_DB_PASS;
 echo "\n" . 'Database: ' . FS_DB_NAME . "\n\n";
 
 // clean cache
-$cache = new FacturaScripts\Core\Base\Cache();
-$cache->clear();
+Cache::clear();
 
 // deploy
-$pluginManager = new FacturaScripts\Core\Base\PluginManager();
+$pluginManager = new PluginManager();
 $pluginManager->deploy();

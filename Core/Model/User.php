@@ -106,34 +106,29 @@ class User extends Base\ModelClass
 
     /**
      * Devuelve true si el usuario tiene acceso a la página $pageName. Para comprobar si el usuario
-     * puede modificar la página, se debe pasar 'allowupdate' como parámetro $type.
+     * tiene permiso para modificar datos en la página, se debe pasar 'update' como parámetro $permission.
      *
      * @param string $pageName
-     * @param string $type
+     * @param string $permission
      * @return bool
      */
-    public function can(string $pageName, string $type = ''): bool
+    public function can(string $pageName, string $permission = 'access'): bool
     {
-        // si es admin, tiene acceso completo
-        if ($this->admin) {
-            return true;
-        }
-
-        // si no es admin, comprobamos si tiene acceso a la página
-        $roleAccess = RoleAccess::allFromUser($this->nick, $pageName);
-        if (empty($roleAccess)) {
-            // no tiene acceso a la página
+        // si está desactivado, no puede acceder a nada
+        if (false === $this->enabled) {
             return false;
         }
 
-        // si no se ha pasado el parámetro $type, solamente comprobamos si tiene acceso a la página
-        if (empty($type)) {
-            return true;
+        // si es admin, tiene acceso completo
+        if ($this->admin) {
+            // comprobamos si la página existe y si el permiso a comprobar no es only-owner-data
+            $page = new DinPage();
+            return $page->loadFromCode($pageName) && $permission != 'only-owner-data';
         }
 
-        // comprobamos si tiene el permiso $type
-        foreach ($roleAccess as $access) {
-            if (isset($access->{$type}) && $access->{$type}) {
+        // si no es admin, comprobamos si tiene acceso a la página
+        foreach (RoleAccess::allFromUser($this->nick, $pageName) as $access) {
+            if ($access->can($permission)) {
                 return true;
             }
         }
@@ -144,6 +139,7 @@ class User extends Base\ModelClass
     public function clear()
     {
         parent::clear();
+        $this->admin = false;
         $this->codalmacen = $this->toolBox()->appSettings()->get('default', 'codalmacen');
         $this->creationdate = date(self::DATE_STYLE);
         $this->enabled = true;
@@ -227,7 +223,7 @@ class User extends Base\ModelClass
             return false;
         }
 
-        $this->email = $this->toolBox()->utils()->noHtml(mb_strtolower($this->email, 'UTF8'));
+        $this->email = $this->toolBox()->utils()->noHtml(mb_strtolower($this->email ?? '', 'UTF8'));
         if ($this->email && false === filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             $this->toolBox()->i18nLog()->warning('not-valid-email', ['%email%' => $this->email]);
             $this->email = null;

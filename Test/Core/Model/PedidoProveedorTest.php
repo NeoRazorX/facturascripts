@@ -25,9 +25,9 @@ use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
 use FacturaScripts\Core\Model\PedidoProveedor;
 use FacturaScripts\Core\Model\Stock;
-use FacturaScripts\Test\Core\DefaultSettingsTrait;
-use FacturaScripts\Test\Core\LogErrorsTrait;
-use FacturaScripts\Test\Core\RandomDataTrait;
+use FacturaScripts\Test\Traits\DefaultSettingsTrait;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
+use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 
 final class PedidoProveedorTest extends TestCase
@@ -92,6 +92,7 @@ final class PedidoProveedorTest extends TestCase
         $this->assertEquals($subject->razonsocial, $doc->nombre, 'pedido-proveedor-bad-nombre-1');
 
         // eliminamos
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-1');
     }
 
@@ -120,6 +121,7 @@ final class PedidoProveedorTest extends TestCase
 
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-pedido-proveedor-1');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-1');
     }
 
@@ -162,6 +164,7 @@ final class PedidoProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-pedido-proveedor-2');
         $this->assertFalse($line->exists(), 'linea-pedido-proveedor-still-exists-2');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-2');
     }
 
@@ -173,7 +176,7 @@ final class PedidoProveedorTest extends TestCase
 
         // creamos un producto
         $product = $this->getRandomProduct();
-        $this->assertTrue($product->save(), 'can-not-save-supplier-3');
+        $this->assertTrue($product->save(), 'can-not-save-product-3');
 
         // creamos un pedido
         $doc = new PedidoProveedor();
@@ -220,6 +223,7 @@ final class PedidoProveedorTest extends TestCase
         // eliminamos
         $this->assertTrue($doc->delete(), 'can-not-delete-pedido-proveedor-3');
         $this->assertFalse($line->exists(), 'linea-pedido-proveedor-still-exists-3');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'can-not-delete-proveedor-3');
 
         // recargamos y comprobamos el stock
@@ -286,6 +290,7 @@ final class PedidoProveedorTest extends TestCase
             $this->assertTrue($child->delete(), 'albarán-cant-delete');
         }
         $this->assertTrue($doc->delete(), 'pedido-cant-delete');
+        $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'cliente-cant-delete');
         $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }
