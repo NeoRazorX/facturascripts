@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,13 +31,7 @@ use FacturaScripts\Dinamic\Model\CronJob;
  */
 class ListLogMessage extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -46,20 +40,12 @@ class ListLogMessage extends ListController
         return $data;
     }
 
-    /**
-     * Load views
-     */
     protected function createViews()
     {
         $this->createLogMessageView();
         $this->createCronJobView();
     }
 
-    /**
-     * Create view to view all information about crons.
-     *
-     * @param string $viewName
-     */
     protected function createCronJobView(string $viewName = 'ListCronJob')
     {
         $this->addView($viewName, 'CronJob', 'crons', 'fas fa-cogs');
@@ -69,21 +55,30 @@ class ListLogMessage extends ListController
         $this->addOrderBy($viewName, ['date'], 'date');
         $this->addOrderBy($viewName, ['duration'], 'duration');
 
-        // filters
+        // filtros
         $plugins = $this->codeModel->all('cronjobs', 'pluginname', 'pluginname');
         $this->addFilterSelect($viewName, 'pluginname', 'plugin', 'pluginname', $plugins);
-
         $this->addFilterPeriod($viewName, 'date', 'period', 'date');
 
-        // settings
+        // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
+
+        // añadimos los botones de activar y desactivar
+        $this->addButton($viewName, [
+            'action' => 'enable-cronjob',
+            'color' => 'success',
+            'icon' => 'fas fa-check-square',
+            'label' => $this->toolBox()->i18n()->trans('enable')
+        ]);
+
+        $this->addButton($viewName, [
+            'action' => 'disable-cronjob',
+            'color' => 'warning',
+            'icon' => 'far fa-square',
+            'label' => $this->toolBox()->i18n()->trans('disable')
+        ]);
     }
 
-    /**
-     * Create view to get information about all logs.
-     *
-     * @param string $viewName
-     */
     protected function createLogMessageView(string $viewName = 'ListLogMessage')
     {
         $this->addView($viewName, 'LogMessage', 'history', 'fas fa-history');
@@ -92,7 +87,7 @@ class ListLogMessage extends ListController
         $this->addOrderBy($viewName, ['level'], 'level');
         $this->addOrderBy($viewName, ['ip'], 'ip');
 
-        // filters
+        // filtros
         $channels = $this->codeModel->all('logs', 'channel', 'channel');
         $this->addFilterSelect($viewName, 'channel', 'channel', 'channel', $channels);
 
@@ -110,24 +105,22 @@ class ListLogMessage extends ListController
 
         $this->addFilterPeriod($viewName, 'time', 'period', 'time');
 
-        // settings
+        // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
     }
 
-    protected function enableCronJob(): bool
+    protected function enableCronJobAction(bool $value): void
     {
         if (false === $this->validateFormToken()) {
-            return true;
-        }
-
-        if (false === $this->user->can('EditCronJob', 'update')) {
+            return;
+        } elseif (false === $this->user->can('EditCronJob', 'update')) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return true;
+            return;
         }
 
         $codes = $this->request->request->get('code', []);
         if (false === is_array($codes)) {
-            return true;
+            return;
         }
 
         foreach ($codes as $code) {
@@ -136,97 +129,32 @@ class ListLogMessage extends ListController
                 continue;
             }
 
-            $cron->enabled = true;
+            $cron->enabled = $value;
             if (false === $cron->save()) {
                 $this->toolBox()->i18nLog()->warning('record-save-error');
-                return true;
+                return;
             }
         }
 
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-        return true;
     }
 
-    protected function disableCronJob(): bool
-    {
-        if (false === $this->validateFormToken()) {
-            return true;
-        }
-
-        if (false === $this->user->can('EditCronJob', 'update')) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return true;
-        }
-
-        $codes = $this->request->request->get('code', []);
-        if (false === is_array($codes)) {
-            return true;
-        }
-
-        foreach ($codes as $code) {
-            $cron = new CronJob();
-            if (false === $cron->loadFromCode($code)) {
-                continue;
-            }
-
-            $cron->enabled = false;
-            if (false === $cron->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
-                return true;
-            }
-        }
-
-        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-        return true;
-    }
-
+    /**
+     * @param string $action
+     * @return bool
+     */
     protected function execPreviousAction($action)
     {
         switch ($action) {
-            case 'enable-cronjob':
-                $this->enableCronJob();
-                break;
-
             case 'disable-cronjob':
-                $this->disableCronJob();
+                $this->enableCronJobAction(false);
                 break;
 
-            default:
-                parent::execPreviousAction($action);
-        }
-    }
-
-    protected function loadBtnCronjob(string $viewName)
-    {
-        $this->addButton($viewName, [
-            'action' => 'enable-cronjob',
-            'color' => 'success',
-            'icon' => 'fas fa-eye',
-            'label' => $this->toolBox()->i18n()->trans('enable'),
-            'type' => 'action'
-        ]);
-
-        $this->addButton($viewName, [
-            'action' => 'disable-cronjob',
-            'color' => 'warning',
-            'icon' => 'fas fa-eye-slash',
-            'label' => $this->toolBox()->i18n()->trans('disable'),
-            'type' => 'action'
-        ]);
-    }
-
-    protected function loadData($viewName, $view)
-    {
-        switch ($viewName) {
-            case 'ListCronJob':
-                parent::loadData($viewName, $view);
-                if ($view->model->count() > 0) {
-                    $this->loadBtnCronjob($viewName);
-                }
+            case 'enable-cronjob':
+                $this->enableCronJobAction(true);
                 break;
-
-            default:
-                parent::loadData($viewName, $view);
         }
+
+        return parent::execPreviousAction($action);
     }
 }
