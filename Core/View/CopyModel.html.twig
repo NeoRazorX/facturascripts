@@ -177,6 +177,32 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        {{ i18n.trans('global-dto') }}
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-percentage"></i>
+                                                    </span>
+                                            </div>
+                                            <input type="number" max="100" min="0" step="any" name="dtopor1" class="form-control" value="{{ fsc.model.dtopor1 }}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        {{ i18n.trans('global-dto-2') }}
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-percentage"></i>
+                                                    </span>
+                                            </div>
+                                            <input type="number" max="100" min="0" step="any" name="dtopor2" class="form-control" value="{{ fsc.model.dtopor2 }}"/>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-row align-items-end">
                                 <div class="col-sm-8">

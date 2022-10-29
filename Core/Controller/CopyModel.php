@@ -176,6 +176,8 @@ class CopyModel extends Controller
         $newDoc->setCurrency($this->model->coddivisa);
         $newDoc->codpago = $this->request->request->get('codpago');
         $newDoc->codserie = $this->request->request->get('codserie');
+        $newDoc->dtopor1 = $this->request->request->get('dtopor1', 0);
+        $newDoc->dtopor2 = $this->request->request->get('dtopor2', 0);
         $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
         $newDoc->numproveedor = $this->request->request->get('numproveedor');
         $newDoc->observaciones = $this->request->request->get('observaciones');
@@ -215,6 +217,8 @@ class CopyModel extends Controller
         $newDoc->setCurrency($this->model->coddivisa);
         $newDoc->codpago = $this->request->request->get('codpago');
         $newDoc->codserie = $this->request->request->get('codserie');
+        $newDoc->dtopor1 = $this->request->request->get('dtopor1', 0);
+        $newDoc->dtopor2 = $this->request->request->get('dtopor2', 0);
         $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
         $newDoc->numero2 = $this->request->request->get('numero2');
         $newDoc->observaciones = $this->request->request->get('observaciones');
