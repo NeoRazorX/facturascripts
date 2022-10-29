@@ -49,14 +49,14 @@ class PurchasesModalHTML
     /** @var string */
     protected static $codproveedor;
 
+    /** @var bool */
+    protected static $comprado;
+
     /** @var array */
     protected static $idatributovalores = [];
 
     /** @var string */
     protected static $orden;
-
-    /** @var bool */
-    protected static $prevpurchase;
 
     /** @var string */
     protected static $query;
@@ -68,7 +68,7 @@ class PurchasesModalHTML
         self::$codfamilia = $formData['fp_codfamilia'] ?? '';
         self::$codproveedor = $model->codproveedor;
         self::$orden = $formData['fp_orden'] ?? 'ref_asc';
-        self::$prevpurchase = (bool)($formData['fp_prevpurchase'] ?? false);
+        self::$comprado = (bool)($formData['fp_comprado'] ?? false);
         self::$query = isset($formData['fp_query']) ?
             ToolBox::utils()->noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
     }
@@ -159,16 +159,16 @@ class PurchasesModalHTML
             . ' LEFT JOIN productosprov pp ON pp.referencia = p.referencia AND pp.codproveedor = ' . $dataBase->var2str(self::$codproveedor)
             . ' WHERE p.secompra = true AND p.bloqueado = false';
 
-        if (self::$prevpurchase) {
-            $sql .= ' AND pp.codproveedor = ' . $dataBase->var2str(self::$codproveedor);
-        }
-
         if (self::$codfabricante) {
             $sql .= ' AND codfabricante = ' . $dataBase->var2str(self::$codfabricante);
         }
 
         if (self::$codfamilia) {
             $sql .= ' AND codfamilia = ' . $dataBase->var2str(self::$codfamilia);
+        }
+
+        if (self::$comprado) {
+            $sql .= ' AND pp.codproveedor = ' . $dataBase->var2str(self::$codproveedor);
         }
 
         if (self::$query) {
@@ -256,8 +256,8 @@ class PurchasesModalHTML
             . '<div class="form-row">'
             . '<div class="col-sm">'
             . '<div class="form-check">'
-            . '<input type="checkbox" name="fp_prevpurchase" value="1" class="form-check-input" id="prevPurchase" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
-            . '<label class="form-check-label" for="prevPurchase">' . $i18n->trans('previously-purchased-from-supplier') . '</label>'
+            . '<input type="checkbox" name="fp_comprado" value="1" class="form-check-input" id="comprado" onchange="return purchasesFormAction(\'find-product\', \'0\');">'
+            . '<label class="form-check-label" for="comprado">' . $i18n->trans('previously-purchased-from-supplier') . '</label>'
             . '</div>'
             . '</div>'
             . '</div>'
