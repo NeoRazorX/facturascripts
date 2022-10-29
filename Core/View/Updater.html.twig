@@ -190,9 +190,20 @@
                     <div class="modal-footer">
                         {% for item in fsc.updaterItems %}
                             {% if item.name == 'CORE' and fsc.coreUpdateWarnings %}
-                                <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&disable={{ fsc.coreUpdateWarnings | keys | join(',') }}"
-                                   class="btn btn-warning">{{ i18n.trans('download') }}
-                                </a>
+                                <div class="btn-group">
+                                    <a href="{{ fsc.url() }}?action=download&item={{ item.id }}&disable={{ fsc.coreUpdateWarnings | keys | join(',') }}"
+                                       class="btn btn-warning">{{ i18n.trans('download') }}
+                                    </a>
+                                    <button type="button" class="btn btn-warning dropdown-toggle dropdown-toggle-split"
+                                            data-toggle="dropdown" aria-expanded="false">
+                                        <span class="sr-only">{{ i18n.trans('options') }}</span>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a href="{{ fsc.url() }}?action=download&item={{ item.id }}"
+                                           class="btn btn-warning">{{ i18n.trans('do-not-disable-plugins') }}
+                                        </a>
+                                    </div>
+                                </div>
                             {% endif %}
                         {% endfor %}
                     </div>
