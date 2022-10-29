@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,6 @@ use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\PluginManager;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\AssetManager;
@@ -39,41 +38,37 @@ use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 
 /**
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 final class Html
 {
-
     /** @var array */
     private static $functions = [];
 
     /** @var FilesystemLoader */
     private static $loader;
 
-    /** @var bool */
-    private static $plugins = true;
-
     /** @var array */
     private static $paths = [];
 
-    /** @var PluginManager */
-    private static $pluginManager;
+    /** @var bool */
+    private static $plugins = true;
 
     /** @var Environment */
     private static $twig;
 
-    public static function addFunction(TwigFunction $function)
+    public static function addFunction(TwigFunction $function): void
     {
         self::$functions[] = $function;
     }
 
-    public static function addPath(string $name, string $path)
+    public static function addPath(string $name, string $path): void
     {
         self::$paths[$name] = $path;
     }
 
-    public static function disablePlugins(bool $disable = true)
+    public static function disablePlugins(bool $disable = true): void
     {
         self::$plugins = !$disable;
     }
@@ -86,60 +81,29 @@ final class Html
     public static function render(string $template, array $params = []): string
     {
         $templateVars = [
-            'appSettings' => ToolBox::appSettings(),
+            'appSettings' => new AppSettings(),
             'assetManager' => new AssetManager(),
             'i18n' => new Translator(),
-            'log' => new MiniLog(),
+            'log' => new MiniLog()
         ];
-
         return self::twig()->render($template, array_merge($params, $templateVars));
-    }
-
-    /**
-     * @throws LoaderError
-     */
-    private static function loadPluginFolders()
-    {
-        // Core namespace
-        self::$loader->addPath(FS_FOLDER . '/Core/View', 'Core');
-
-        foreach (self::$pluginManager->enabledPlugins() as $pluginName) {
-            // Plugin namespace
-            $pluginPath = FS_FOLDER . '/Plugins/' . $pluginName . '/View';
-            $pluginExtensionPath = FS_FOLDER . '/Plugins/' . $pluginName . '/Extension/View';
-
-            if (file_exists($pluginPath)) {
-                self::$loader->addPath($pluginPath, 'Plugin' . $pluginName);
-                if (FS_DEBUG) {
-                    self::$loader->prependPath($pluginPath);
-                }
-            }
-
-            if (file_exists($pluginExtensionPath)) {
-                self::$loader->addPath($pluginExtensionPath, 'PluginExtension' . $pluginName);
-                if (FS_DEBUG) {
-                    self::$loader->prependPath($pluginExtensionPath);
-                }
-            }
-        }
     }
 
     private static function assetFunction(): TwigFunction
     {
         return new TwigFunction('asset', function ($string) {
             $path = FS_ROUTE . '/';
-            if (substr($string, 0, strlen($path)) == $path) {
-                return $string;
-            }
-            return str_replace('//', '/', $path . $string);
+            return substr($string, 0, strlen($path)) == $path ?
+                $string :
+                str_replace('//', '/', $path . $string);
         });
     }
 
     private static function attachedFileFunction(): TwigFunction
     {
-        return new TwigFunction('attachedFile', function ($idfile) {
+        return new TwigFunction('attachedFile', function ($id) {
             $attached = new AttachedFile();
-            $attached->loadFromCode($idfile);
+            $attached->loadFromCode($id);
             return $attached;
         });
     }
@@ -148,10 +112,9 @@ final class Html
     {
         return new TwigFunction('formToken', function (bool $input = true) {
             $tokenClass = new MultiRequestProtection();
-            if ($input) {
-                return '<input type="hidden" name="multireqtoken" value="' . $tokenClass->newToken() . '"/>';
-            }
-            return $tokenClass->newToken();
+            return $input ?
+                '<input type="hidden" name="multireqtoken" value="' . $tokenClass->newToken() . '"/>' :
+                $tokenClass->newToken();
         });
     }
 
@@ -161,8 +124,9 @@ final class Html
             $files = [];
             $fileParentTemp = explode('/', $fileParent);
             $fileParent = str_replace('.html.twig', '', end($fileParentTemp));
+            $pluginManager = new PluginManager();
 
-            foreach (self::$pluginManager->enabledPlugins() as $pluginName) {
+            foreach ($pluginManager->enabledPlugins() as $pluginName) {
                 $path = FS_FOLDER . '/Plugins/' . $pluginName . '/Extension/View/';
                 if (false === file_exists($path)) {
                     continue;
@@ -203,7 +167,6 @@ final class Html
                     $files[] = $arrayFile;
                 }
             }
-
             if (empty($files)) {
                 return $files;
             }
@@ -219,25 +182,41 @@ final class Html
         });
     }
 
-    private static function getOptions(): array
-    {
-        if (self::$plugins) {
-            return [
-                'debug' => FS_DEBUG,
-                'cache' => FS_FOLDER . '/MyFiles/Cache/Twig',
-                'auto_reload' => true
-            ];
-        }
-
-        return ['debug' => FS_DEBUG];
-    }
-
     private static function iconFunction(): TwigFunction
     {
         return new TwigFunction('icon', function (string $icon, string $title = '') {
             $title = empty($title) ? '' : ' title="' . $title . '"';
             return '<i class="' . $icon . '"' . $title . '></i>';
         });
+    }
+
+    /**
+     * @throws LoaderError
+     */
+    private static function loadPluginFolders()
+    {
+        // Core namespace
+        self::$loader->addPath(FS_FOLDER . '/Core/View', 'Core');
+
+        // Plugin namespace
+        $pluginManager = new PluginManager();
+        foreach ($pluginManager->enabledPlugins() as $pluginName) {
+            $pluginPath = FS_FOLDER . '/Plugins/' . $pluginName . '/View';
+            if (file_exists($pluginPath)) {
+                self::$loader->addPath($pluginPath, 'Plugin' . $pluginName);
+                if (FS_DEBUG) {
+                    self::$loader->prependPath($pluginPath);
+                }
+            }
+
+            $pluginExtensionPath = FS_FOLDER . '/Plugins/' . $pluginName . '/Extension/View';
+            if (file_exists($pluginExtensionPath)) {
+                self::$loader->addPath($pluginExtensionPath, 'PluginExtension' . $pluginName);
+                if (FS_DEBUG) {
+                    self::$loader->prependPath($pluginExtensionPath);
+                }
+            }
+        }
     }
 
     private static function moneyFunction(): TwigFunction
@@ -269,10 +248,9 @@ final class Html
     {
         return new TwigFunction('trans', function (string $txt, array $parameters = [], string $langCode = '') {
             $trans = new Translator();
-            if (empty($langCode)) {
-                return $trans->trans($txt, $parameters);
-            }
-            return $trans->customTrans($langCode, $txt, $parameters);
+            return empty($langCode) ?
+                $trans->trans($txt, $parameters) :
+                $trans->customTrans($langCode, $txt, $parameters);
         });
     }
 
@@ -285,14 +263,12 @@ final class Html
             define('FS_DEBUG', true);
         }
 
+        // cargamos las rutas para las plantillas
         $path = FS_DEBUG ? FS_FOLDER . '/Core/View' : FS_FOLDER . '/Dinamic/View';
         self::$loader = new FilesystemLoader($path);
-        self::$pluginManager = new PluginManager();
-
         if (self::$plugins) {
             self::loadPluginFolders();
         }
-
         foreach (self::$paths as $name => $customPath) {
             self::$loader->addPath($customPath, $name);
             if (FS_DEBUG) {
@@ -300,8 +276,15 @@ final class Html
             }
         }
 
-        self::$twig = new Environment(self::$loader, self::getOptions());
+        // cargamos las opciones de twig
+        $options = ['debug' => FS_DEBUG];
+        if (self::$plugins) {
+            $options['cache'] = FS_FOLDER . '/MyFiles/Cache/Twig';
+            $options['auto_reload'] = true;
+        }
+        self::$twig = new Environment(self::$loader, $options);
 
+        // cargamos las funciones de twig
         self::$twig->addFunction(self::assetFunction());
         self::$twig->addFunction(self::attachedFileFunction());
         self::$twig->addFunction(self::formTokenFunction());
@@ -310,7 +293,6 @@ final class Html
         self::$twig->addFunction(self::moneyFunction());
         self::$twig->addFunction(self::settingsFunction());
         self::$twig->addFunction(self::transFunction());
-
         foreach (self::$functions as $function) {
             self::$twig->addFunction($function);
         }
