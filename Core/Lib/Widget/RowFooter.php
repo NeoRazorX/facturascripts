@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Widget;
 
-use FacturaScripts\Core\App\WebRender;
+use FacturaScripts\Core\Html;
 
 /**
  * Description of RowFooter
@@ -121,9 +121,7 @@ class RowFooter extends VisualItem
         }
 
         if (isset($group['html'])) {
-            $webRender = new WebRender();
-            $webRender->loadPluginFolders();
-            $html .= $webRender->render($group['html'], ['fsc' => $controller]);
+            $html .= Html::render($group['html'], ['fsc' => $controller]);
         }
 
         if (isset($group['label'])) {

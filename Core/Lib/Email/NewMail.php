@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\Email;
 
-use FacturaScripts\Core\App\WebRender;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Html;
 use FacturaScripts\Dinamic\Model\EmailSent;
 use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\User;
@@ -362,16 +362,13 @@ class NewMail
 
     protected function renderHTML(): string
     {
-        $webRender = new WebRender();
-        $webRender->loadPluginFolders();
-
         $params = [
             'empresa' => $this->empresa,
             'footerBlocks' => $this->getFooterBlocks(),
             'mainBlocks' => $this->getMainBlocks(),
             'title' => $this->title
         ];
-        return $webRender->render('Email/' . $this->template, $params);
+        return Html::render('Email/' . $this->template, $params);
     }
 
     protected function saveMailSent()

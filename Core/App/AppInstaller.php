@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\App;
 use DateTimeZone;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Html;
 use mysqli;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -171,10 +172,10 @@ final class AppInstaller
         ];
 
         // Load the template engine
-        $webRender = new WebRender();
+        Html::disablePlugins();
 
         // Generate and return the HTML
-        $response = new Response($webRender->render($template, $templateVars), Response::HTTP_OK);
+        $response = new Response(Html::render($template, $templateVars), Response::HTTP_OK);
         $response->send();
     }
 
