@@ -26,52 +26,31 @@ namespace FacturaScripts\Core\Lib\Widget;
  */
 class RowButton extends VisualItem
 {
-
-    /**
-     * @var string
-     */
+    /** @var string */
     public $action;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $color;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $confirm;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $icon;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $label;
 
-    /**
-     * Indicates the security level of the button
-     *
-     * @var int
-     */
+    /** @var int */
     public $level;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $target;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $title;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $type;
 
     public function __construct(array $data)
@@ -108,9 +87,10 @@ class RowButton extends VisualItem
             $icon = $this->label;
         }
 
-        $label = '';
+        $label = $this->label;
         if ($small && $this->label) {
-            $label = mb_strlen($this->label) < 8 ? '<span class="d-none d-xl-inline-block">' . $this->label . '</span>' :
+            $label = mb_strlen($this->label) < 8 ?
+                '<span class="d-none d-xl-inline-block">' . $this->label . '</span>' :
                 '<span class="d-none d-xl-inline-block">' . mb_substr($this->label, 0, 8) . '...</span>';
         }
 
@@ -166,19 +146,12 @@ class RowButton extends VisualItem
             case 'link':
                 $target = empty($this->target) ? '' : ' target="' . $this->target . '"';
                 return '<a ' . $target . $divID . ' class="' . $cssClass . '" href="' . $this->asset($this->action) . '"'
-                    . ' title="' .$title . '">' . $icon . $label . '</a> ';
+                    . ' title="' . $title . '">' . $icon . $label . '</a> ';
         }
 
         return '';
     }
 
-    /**
-     * Fix url.
-     *
-     * @param string $url
-     *
-     * @return string
-     */
     protected function asset(string $url): string
     {
         $path = FS_ROUTE . '/';
