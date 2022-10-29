@@ -40,42 +40,38 @@ use FacturaScripts\Dinamic\Model\RoleAccess;
 class SalesModalHTML
 {
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected static $codalmacen;
 
-    /**
-     * @var string
-     */
+    /** @var string */
+    protected static $codcliente;
+
+    /** @var string */
     protected static $codfabricante;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected static $codfamilia;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected static $idatributovalores = [];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected static $orden;
 
-    /**
-     * @var string
-     */
+    /** @var bool */
+    protected static $prevsold;
+
+    /** @var string */
     protected static $query;
 
     public static function apply(SalesDocument &$model, array $formData)
     {
         self::$codalmacen = $model->codalmacen;
+        self::$codcliente = $model->codcliente;
         self::$codfabricante = $formData['fp_codfabricante'] ?? '';
         self::$codfamilia = $formData['fp_codfamilia'] ?? '';
         self::$orden = $formData['fp_orden'] ?? 'ref_asc';
+        self::$prevsold = (bool)$formData['fp_prevsold'] ?? false;
         self::$query = isset($formData['fp_query']) ?
             ToolBox::utils()->noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
     }
@@ -156,8 +152,18 @@ class SalesModalHTML
             . ' v.idatributovalor4, v.precio, COALESCE(s.disponible, 0) as disponible, p.nostock'
             . ' FROM variantes v'
             . ' LEFT JOIN productos p ON v.idproducto = p.idproducto'
-            . ' LEFT JOIN stocks s ON v.referencia = s.referencia AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen)
-            . ' WHERE p.sevende = true AND p.bloqueado = false';
+            . ' LEFT JOIN stocks s ON v.referencia = s.referencia AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen);
+
+        if (self::$prevsold) {
+            $sql .= ' JOIN lineasfacturascli l ON v.referencia = l.referencia'
+                . ' JOIN facturascli f ON l.idfactura = f.idfactura';
+        }
+
+        $sql .= ' WHERE p.sevende = true AND p.bloqueado = false';
+
+        if (self::$prevsold) {
+            $sql .= ' AND f.codcliente = ' . $dataBase->var2str(self::$codcliente);
+        }
 
         if (self::$codfabricante) {
             $sql .= ' AND codfabricante = ' . $dataBase->var2str(self::$codfabricante);
@@ -293,7 +299,7 @@ class SalesModalHTML
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="form-row">'
-            . '<div class="col-sm">'
+            . '<div class="col-sm mb-3">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans('search')
             . '" onkeyup="return salesFormActionWait(\'find-product\', \'0\', event);"/>'
@@ -303,14 +309,22 @@ class SalesModalHTML
             . '</div>'
             . '</div>'
             . '</div>'
-            . '<div class="col-sm">'
+            . '<div class="col-sm mb-3">'
             . static::fabricantes($i18n)
             . '</div>'
-            . '<div class="col-sm">'
+            . '<div class="col-sm mb-3">'
             . static::familias($i18n)
             . '</div>'
-            . '<div class="col-sm">'
+            . '<div class="col-sm mb-3">'
             . static::orden($i18n)
+            . '</div>'
+            . '</div>'
+            . '<div class="form-row">'
+            . '<div class="col-sm">'
+            . '<div class="form-check">'
+            . '<input type="checkbox" name="fp_prevsold" value="1" class="form-check-input" id="prevSold" onchange="return salesFormAction(\'find-product\', \'0\');">'
+            . '<label class="form-check-label" for="prevSold">' . $i18n->trans('previously-sold-to-customer') . '</label>'
+            . '</div>'
             . '</div>'
             . '</div>'
             . '</div>'
