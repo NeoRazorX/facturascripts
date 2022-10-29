@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\PanelController;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
+use FacturaScripts\Dinamic\Model\EmailNotification;
 
 /**
  * Controller to edit main settings
@@ -30,7 +31,6 @@ use FacturaScripts\Dinamic\Lib\Email\NewMail;
  */
 class ConfigEmail extends PanelController
 {
-
     public function getPageData(): array
     {
         $pageData = parent::getPageData();
@@ -52,7 +52,7 @@ class ConfigEmail extends PanelController
     {
         $this->addEditView($viewName, 'Settings', 'email', 'fas fa-envelope');
 
-        // settings
+        // desactivamos los botones nuevo y eliminar
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
     }
@@ -64,12 +64,27 @@ class ConfigEmail extends PanelController
         $this->views[$viewName]->addOrderBy(['name'], 'name', 1);
         $this->views[$viewName]->addSearchFields(['body', 'name', 'subject']);
 
-        // filters
+        // filtros
         $this->views[$viewName]->addFilterCheckbox('enabled');
 
-        // settings
+        // desactivamos los botones nuevo y eliminar
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
+
+        // añadimos los botones de activar y desactivar
+        $this->addButton($viewName, [
+            'action' => 'enable-notification',
+            'color' => 'success',
+            'icon' => 'fas fa-check-square',
+            'label' => $this->toolBox()->i18n()->trans('enable')
+        ]);
+
+        $this->addButton($viewName, [
+            'action' => 'disable-notification',
+            'color' => 'warning',
+            'icon' => 'far fa-square',
+            'label' => $this->toolBox()->i18n()->trans('disable')
+        ]);
     }
 
     protected function createViewsEmailSent(string $viewName = 'ListEmailSent')
@@ -78,14 +93,44 @@ class ConfigEmail extends PanelController
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
         $this->views[$viewName]->addSearchFields(['addressee', 'body', 'subject']);
 
-        // filters
+        // filtros
         $users = $this->codeModel->all('users', 'nick', 'nick');
         $this->views[$viewName]->addFilterSelect('nick', 'user', 'nick', $users);
         $this->views[$viewName]->addFilterPeriod('date', 'period', 'date');
         $this->views[$viewName]->addFilterCheckbox('opened');
 
-        // settings
+        // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    protected function enableNotificationAction(bool $value): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        } elseif (false === $this->user->can('EditEmailNotification', 'update')) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return;
+        }
+
+        $codes = $this->request->request->get('code', []);
+        if (false === is_array($codes)) {
+            return;
+        }
+
+        foreach ($codes as $code) {
+            $notification = new EmailNotification();
+            if (false === $notification->loadFromCode($code)) {
+                continue;
+            }
+
+            $notification->enabled = $value;
+            if (false === $notification->save()) {
+                $this->toolBox()->i18nLog()->warning('record-save-error');
+                return;
+            }
+        }
+
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
     }
 
     /**
@@ -98,6 +143,25 @@ class ConfigEmail extends PanelController
         if ($action === 'testmail') {
             $this->testMailAction();
         }
+    }
+
+    /**
+     * @param string $action
+     * @return bool
+     */
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'disable-notification':
+                $this->enableNotificationAction(false);
+                break;
+
+            case 'enable-notification':
+                $this->enableNotificationAction(true);
+                break;
+        }
+
+        return parent::execPreviousAction($action);
     }
 
     protected function loadData($viewName, $view)
