@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Dinamic\Model\CronJob;
 
 /**
  * Controller to list the items in the LogMessage model
@@ -111,5 +112,121 @@ class ListLogMessage extends ListController
 
         // settings
         $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    protected function enableCronJob(): bool
+    {
+        if (false === $this->validateFormToken()) {
+            return true;
+        }
+
+        if (false === $this->user->can('EditCronJob', 'update')) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $codes = $this->request->request->get('code', []);
+        if (false === is_array($codes)) {
+            return true;
+        }
+
+        foreach ($codes as $code) {
+            $cron = new CronJob();
+            if (false === $cron->loadFromCode($code)) {
+                continue;
+            }
+
+            $cron->enabled = true;
+            if (false === $cron->save()) {
+                $this->toolBox()->i18nLog()->warning('record-save-error');
+                return true;
+            }
+        }
+
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        return true;
+    }
+
+    protected function disableCronJob(): bool
+    {
+        if (false === $this->validateFormToken()) {
+            return true;
+        }
+
+        if (false === $this->user->can('EditCronJob', 'update')) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return true;
+        }
+
+        $codes = $this->request->request->get('code', []);
+        if (false === is_array($codes)) {
+            return true;
+        }
+
+        foreach ($codes as $code) {
+            $cron = new CronJob();
+            if (false === $cron->loadFromCode($code)) {
+                continue;
+            }
+
+            $cron->enabled = false;
+            if (false === $cron->save()) {
+                $this->toolBox()->i18nLog()->warning('record-save-error');
+                return true;
+            }
+        }
+
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        return true;
+    }
+
+    protected function execPreviousAction($action)
+    {
+        switch ($action) {
+            case 'enable-cronjob':
+                $this->enableCronJob();
+                break;
+
+            case 'disable-cronjob':
+                $this->disableCronJob();
+                break;
+
+            default:
+                parent::execPreviousAction($action);
+        }
+    }
+
+    protected function loadBtnCronjob(string $viewName)
+    {
+        $this->addButton($viewName, [
+            'action' => 'enable-cronjob',
+            'color' => 'success',
+            'icon' => 'fas fa-eye',
+            'label' => $this->toolBox()->i18n()->trans('enable'),
+            'type' => 'action'
+        ]);
+
+        $this->addButton($viewName, [
+            'action' => 'disable-cronjob',
+            'color' => 'warning',
+            'icon' => 'fas fa-eye-slash',
+            'label' => $this->toolBox()->i18n()->trans('disable'),
+            'type' => 'action'
+        ]);
+    }
+
+    protected function loadData($viewName, $view)
+    {
+        switch ($viewName) {
+            case 'ListCronJob':
+                parent::loadData($viewName, $view);
+                if ($view->model->count() > 0) {
+                    $this->loadBtnCronjob($viewName);
+                }
+                break;
+
+            default:
+                parent::loadData($viewName, $view);
+        }
     }
 }
