@@ -37,7 +37,6 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  */
 class PurchasesModalHTML
 {
-
     /** @var string */
     protected static $codalmacen;
 
@@ -69,7 +68,7 @@ class PurchasesModalHTML
         self::$codfamilia = $formData['fp_codfamilia'] ?? '';
         self::$codproveedor = $model->codproveedor;
         self::$orden = $formData['fp_orden'] ?? 'ref_asc';
-        self::$prevpurchase = (bool)$formData['fp_prevpurchase'] ?? false;
+        self::$prevpurchase = (bool)($formData['fp_prevpurchase'] ?? false);
         self::$query = isset($formData['fp_query']) ?
             ToolBox::utils()->noHtml(mb_strtolower($formData['fp_query'], 'UTF8')) : '';
     }
@@ -157,17 +156,11 @@ class PurchasesModalHTML
             . ' FROM variantes v'
             . ' LEFT JOIN productos p ON v.idproducto = p.idproducto'
             . ' LEFT JOIN stocks s ON v.referencia = s.referencia AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen)
-            . ' LEFT JOIN productosprov pp ON pp.referencia = p.referencia AND pp.codproveedor = ' . $dataBase->var2str(self::$codproveedor);
+            . ' LEFT JOIN productosprov pp ON pp.referencia = p.referencia AND pp.codproveedor = ' . $dataBase->var2str(self::$codproveedor)
+            . ' WHERE p.secompra = true AND p.bloqueado = false';
 
         if (self::$prevpurchase) {
-            $sql .= ' JOIN lineasfacturasprov l ON v.referencia = l.referencia'
-                . ' JOIN facturasprov f ON l.idfactura = f.idfactura';
-        }
-
-        $sql .= ' WHERE p.secompra = true AND p.bloqueado = false';
-
-        if (self::$prevpurchase) {
-            $sql .= ' AND f.codproveedor = ' . $dataBase->var2str(self::$codproveedor);
+            $sql .= ' AND pp.codproveedor = ' . $dataBase->var2str(self::$codproveedor);
         }
 
         if (self::$codfabricante) {
@@ -246,7 +239,7 @@ class PurchasesModalHTML
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="form-row">'
-            . '<div class="col-sm mb-3">'
+            . '<div class="col-sm mb-2">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans('search')
             . '" onkeyup="return purchasesFormActionWait(\'find-product\', \'0\', event);"/>'
@@ -256,15 +249,9 @@ class PurchasesModalHTML
             . '</div>'
             . '</div>'
             . '</div>'
-            . '<div class="col-sm mb-3">'
-            . static::fabricantes($i18n)
-            . '</div>'
-            . '<div class="col-sm mb-3">'
-            . static::familias($i18n)
-            . '</div>'
-            . '<div class="col-sm mb-3">'
-            . static::orden($i18n)
-            . '</div>'
+            . '<div class="col-sm mb-2">' . static::fabricantes($i18n) . '</div>'
+            . '<div class="col-sm mb-2">' . static::familias($i18n) . '</div>'
+            . '<div class="col-sm mb-2">' . static::orden($i18n) . '</div>'
             . '</div>'
             . '<div class="form-row">'
             . '<div class="col-sm">'
