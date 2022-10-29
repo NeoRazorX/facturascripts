@@ -12,6 +12,7 @@
                     <input type="hidden" name="action" value="save"/>
                     <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
                     <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
+                    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
                     <div class="card shadow mb-4">
                         <div class="card-body">
                             <div class="form-row">
@@ -102,22 +103,32 @@
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
-                                    <tr>
-                                        <th>{{ i18n.trans('reference') }}</th>
-                                        <th>{{ i18n.trans('description') }}</th>
-                                        <th class="text-right">{{ i18n.trans('quantity') }}</th>
-                                        <th class="text-right">{{ i18n.trans('price') }}</th>
-                                    </tr>
+                                <tr>
+                                    <th>{{ i18n.trans('reference') }}</th>
+                                    <th>{{ i18n.trans('description') }}</th>
+                                    <th class="text-right">{{ i18n.trans('quantity') }}</th>
+                                    <th class="text-right">{{ i18n.trans('price') }}</th>
+                                    <th class="text-right">{{ i18n.trans('dto') }}</th>
+                                    <th class="text-right">{{ i18n.trans('dto-2') }}</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    {% for line in fsc.model.getLines() %}
-                                        <tr>
-                                            <td>{{ line.referencia }}</td>
-                                            <td>{{ line.descripcion | raw | nl2br }}</td>
-                                            <td class="text-right">{{ line.cantidad }}</td>
-                                            <td class="text-right">{{ line.pvpunitario }}</td>
-                                        </tr>
-                                    {% endfor %}
+                                {% for line in fsc.model.getLines() %}
+                                    <tr>
+                                        <td>{{ line.referencia }}</td>
+                                        <td>{{ line.descripcion | raw | nl2br }}</td>
+                                        <td class="text-right">{{ line.cantidad }}</td>
+                                        <td class="text-right">
+                                            {{ fsc.toolBox().numbers().format(line.pvpunitario) }}
+                                        </td>
+                                        <td class="text-right">
+                                            {{ fsc.toolBox().numbers().format(line.dtopor) }}%
+                                        </td>
+                                        <td class="text-right">
+                                            {{ fsc.toolBox().numbers().format(line.dtopor2) }}%
+                                        </td>
+                                    </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -182,11 +193,12 @@
                                         {{ i18n.trans('global-dto') }}
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-percentage"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-percentage"></i>
+                                                </span>
                                             </div>
-                                            <input type="number" max="100" min="0" step="any" name="dtopor1" class="form-control" value="{{ fsc.model.dtopor1 }}"/>
+                                            <input type="number" max="100" min="0" step="any" name="dtopor1"
+                                                   class="form-control" value="{{ fsc.model.dtopor1 }}"/>
                                         </div>
                                     </div>
                                 </div>
@@ -195,30 +207,27 @@
                                         {{ i18n.trans('global-dto-2') }}
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-percentage"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-percentage"></i>
+                                                </span>
                                             </div>
-                                            <input type="number" max="100" min="0" step="any" name="dtopor2" class="form-control" value="{{ fsc.model.dtopor2 }}"/>
+                                            <input type="number" max="100" min="0" step="any" name="dtopor2"
+                                                   class="form-control" value="{{ fsc.model.dtopor2 }}"/>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-sm-12">
+                                    {{ i18n.trans('observations') }}
+                                    <textarea name="observaciones" class="form-control">{{ fsc.model.observaciones }}
+                                    </textarea>
+                                </div>
                             </div>
-                            <div class="form-row align-items-end">
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        {{ i18n.trans('observations') }}
-                                        <textarea name="observaciones"
-                                                  class="form-control">{{ fsc.model.observaciones }}</textarea>
-                                    </div>
-                                </div>
-                                <div class="col-sm text-right">
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-save"></i> {{ i18n.trans('save') }}
-                                        </button>
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> {{ i18n.trans('save') }}
+                                </button>
                             </div>
                         </div>
                     </div>

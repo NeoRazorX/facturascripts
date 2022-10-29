@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -36,42 +37,21 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CopyModel extends Controller
 {
-
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
     const TEMPLATE_ASIENTO = 'CopyAsiento';
 
-    /**
-     * @var CodeModel
-     */
+    /** @var CodeModel */
     public $codeModel;
 
-    /**
-     * @var object
-     */
+    /** @var object */
     public $model;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $modelClass;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $modelCode;
 
-    public function getDiaries(): string
-    {
-        $html = '';
-        foreach ($this->codeModel->all('diarios', 'iddiario', 'descripcion') as $value) {
-            $html .= '<option value="' . $value->code . '">' . $value->description . '</option>';
-        }
-        return $html;
-    }
-
-    /**
-     * @return array
-     */
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -101,6 +81,7 @@ class CopyModel extends Controller
             return;
         }
 
+        // si no es un documento de compra o venta, cargamos su plantilla
         if ($this->modelClass === 'Asiento') {
             $this->setTemplate(self::TEMPLATE_ASIENTO);
         }
@@ -123,7 +104,7 @@ class CopyModel extends Controller
                     break;
 
                 case 'Asiento':
-                    $this->saveAccounting();
+                    $this->saveAccountingEntry();
                     break;
             }
         }
@@ -142,9 +123,6 @@ class CopyModel extends Controller
         $this->response->setContent(json_encode($results));
     }
 
-    /**
-     * @return bool
-     */
     protected function loadModel(): bool
     {
         $this->modelClass = $this->request->get('model');
@@ -158,14 +136,10 @@ class CopyModel extends Controller
         return $this->model->loadFromCode($this->modelCode);
     }
 
-    /**
-     * @param BusinessDocument $newDoc
-     */
-    protected function saveDocumentEnd($newDoc)
+    protected function saveDocumentEnd(BusinessDocument $newDoc)
     {
         $lines = $newDoc->getLines();
-        Calculator::calculate($newDoc, $lines, false);
-        if (false === $newDoc->save()) {
+        if (false === Calculator::calculate($newDoc, $lines, true)) {
             $this->toolBox()->i18nLog()->warning('record-save-error');
             $this->dataBase->rollback();
             return;
@@ -176,26 +150,35 @@ class CopyModel extends Controller
         $this->redirect($newDoc->url() . '&action=save-ok');
     }
 
-    protected function saveAccounting()
+    protected function saveAccountingEntry()
     {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
         $this->dataBase->beginTransaction();
 
-        $className = self::MODEL_NAMESPACE . $this->modelClass;
-        $newAccount = new $className();
-        $newAccount->concepto = $this->request->request->get('concepto');
-        $newAccount->iddiario = $this->request->request->get('iddiario');
-        $newAccount->canal = $this->request->request->get('canal');
-        $newAccount->fecha = $this->request->request->get('fecha');
-        if (false === $newAccount->save()) {
+        // creamos el nuevo asiento
+        $newEntry = new Asiento();
+        $newEntry->canal = $this->request->request->get('canal');
+        $newEntry->concepto = $this->request->request->get('concepto');
+
+        $diario = $this->request->request->get('iddiario');
+        $newEntry->iddiario = empty($diario) ? null : $diario;
+        $newEntry->importe = $this->model->importe;
+
+        $fecha = $this->request->request->get('fecha');
+        if (false === $newEntry->setDate($fecha) || false === $newEntry->save()) {
             $this->toolBox()->i18nLog()->warning('record-save-error');
             $this->dataBase->rollback();
             return;
         }
 
+        // copiamos las líneas del asiento
         foreach ($this->model->getLines() as $line) {
-            $line->idasiento = $newAccount->primaryColumnValue();
-            unset($line->idpartida);
-            if (false === $line->save()) {
+            $newLine = $newEntry->getNewLine();
+            $newLine->loadFromData($line->toArray(), ['idasiento', 'idpartida', 'idsubcuenta']);
+            if (false === $newLine->save()) {
                 $this->toolBox()->i18nLog()->warning('record-save-error');
                 $this->dataBase->rollback();
                 return;
@@ -204,11 +187,16 @@ class CopyModel extends Controller
 
         $this->dataBase->commit();
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-        $this->redirect($newAccount->url() . '&action=save-ok');
+        $this->redirect($newEntry->url() . '&action=save-ok');
     }
 
     protected function savePurchaseDocument()
     {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        // buscamos el proveedor
         $subject = new Proveedor();
         if (false === $subject->loadFromCode($this->request->request->get('codproveedor'))) {
             $this->toolBox()->i18nLog()->warning('record-not-found');
@@ -217,6 +205,7 @@ class CopyModel extends Controller
 
         $this->dataBase->beginTransaction();
 
+        // creamos el nuevo documento
         $className = self::MODEL_NAMESPACE . $this->modelClass;
         $newDoc = new $className();
         $newDoc->setAuthor($this->user);
@@ -236,6 +225,7 @@ class CopyModel extends Controller
             return;
         }
 
+        // copiamos las líneas del documento
         foreach ($this->model->getLines() as $line) {
             $newLine = $newDoc->getNewLine($line->toArray());
             if (false === $newLine->save()) {
@@ -250,6 +240,11 @@ class CopyModel extends Controller
 
     protected function saveSalesDocument()
     {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        // buscamos el cliente
         $subject = new Cliente();
         if (false === $subject->loadFromCode($this->request->request->get('codcliente'))) {
             $this->toolBox()->i18nLog()->warning('record-not-found');
@@ -258,6 +253,7 @@ class CopyModel extends Controller
 
         $this->dataBase->beginTransaction();
 
+        // creamos el nuevo documento
         $className = self::MODEL_NAMESPACE . $this->modelClass;
         $newDoc = new $className();
         $newDoc->setAuthor($this->user);
@@ -277,6 +273,7 @@ class CopyModel extends Controller
             return;
         }
 
+        // copiamos las líneas del documento
         foreach ($this->model->getLines() as $line) {
             $newLine = $newDoc->getNewLine($line->toArray());
             if (false === $newLine->save()) {

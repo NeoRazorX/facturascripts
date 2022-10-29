@@ -12,36 +12,45 @@
                     <input type="hidden" name="action" value="save"/>
                     <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
                     <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
+                    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
                     <div class="card shadow mb-4">
                         <div class="card-body">
                             <div class="form-row">
-                                <div class="col-sm">
-                                    {{ i18n.trans('concept') }}
-                                    <div class="form-group">
-                                        <input type="text" name="concepto" value=""
-                                               class="form-control" required=""/>
-                                    </div>
-                                </div>
-                                <div class="col-sm">
-                                    {{ i18n.trans('daily') }}
-                                    <div class="form-group">
-                                        <select name="iddiario" class="form-control">
-                                            {{ fsc.getDiaries()|raw }}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm">
-                                    {{ i18n.trans('channel') }}
-                                    <div class="form-group">
-                                        <input type="number" name="canal" value=""
-                                               class="form-control"/>
-                                    </div>
-                                </div>
-                                <div class="col-sm">
+                                <div class="col-sm-2">
                                     {{ i18n.trans('date') }}
                                     <div class="form-group">
                                         <input type="date" name="fecha" value="{{ "now" | date('Y-m-d') }}"
                                                class="form-control" required=""/>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    {{ i18n.trans('concept') }}
+                                    <div class="form-group">
+                                        <input type="text" name="concepto" value="{{ fsc.model.concepto }}"
+                                               class="form-control" required=""/>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    {{ i18n.trans('daily') }}
+                                    <div class="form-group">
+                                        <select name="iddiario" class="form-control">
+                                            {% for item in fsc.codeModel.all('diarios','iddiario','descripcion') %}
+                                                {% if item.code == fsc.model.iddiario %}
+                                                    <option value="{{ item.code }}" selected>
+                                                        {{ item.description }}
+                                                    </option>
+                                                {% else %}
+                                                    <option value="{{ item.code }}">{{ item.description }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    {{ i18n.trans('channel') }}
+                                    <div class="form-group">
+                                        <input type="number" name="canal" value="{{ fsc.model.canal }}"
+                                               class="form-control"/>
                                     </div>
                                 </div>
                             </div>
@@ -53,8 +62,8 @@
                                     <th>{{ i18n.trans('subaccount') }}</th>
                                     <th>{{ i18n.trans('counterpart') }}</th>
                                     <th>{{ i18n.trans('concept') }}</th>
-                                    <th>{{ i18n.trans('debit') }}</th>
-                                    <th>{{ i18n.trans('credit') }}</th>
+                                    <th class="text-right">{{ i18n.trans('debit') }}</th>
+                                    <th class="text-right">{{ i18n.trans('credit') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -63,22 +72,18 @@
                                         <td>{{ line.codsubcuenta }}</td>
                                         <td>{{ line.codcontrapartida }}</td>
                                         <td>{{ line.concepto }}</td>
-                                        <td>{{ line.debe }}</td>
-                                        <td>{{ line.haber }}</td>
+                                        <td class="text-right">{{ fsc.toolBox().coins().format(line.debe) }}</td>
+                                        <td class="text-right">{{ fsc.toolBox().coins().format(line.haber) }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
                         </div>
-                        <div class="card-body">
-                            <div class="form-row">
-                                <div class="col-sm text-right">
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-save"></i> {{ i18n.trans('save') }}
-                                        </button>
-                                    </div>
-                                </div>
+                        <div class="card-footer">
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> {{ i18n.trans('save') }}
+                                </button>
                             </div>
                         </div>
                     </div>
