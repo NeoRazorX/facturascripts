@@ -20,9 +20,9 @@
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-search"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-search"></i>
+                                                </span>
                                                 </div>
                                                 <input type="hidden" id="codclienteAutocomplete" name="codcliente"
                                                        value="{{ fsc.model.codcliente }}"/>
@@ -40,9 +40,9 @@
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-search"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-search"></i>
+                                                </span>
                                                 </div>
                                                 <input type="hidden" id="codproveedorAutocomplete" name="codproveedor"
                                                        value="{{ fsc.model.codproveedor }}"/>
@@ -73,9 +73,9 @@
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-hashtag"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-hashtag"></i>
+                                                </span>
                                                 </div>
                                                 <input type="text" name="numero2" class="form-control"
                                                        placeholder="{{ i18n.trans('number2') }}"/>
@@ -87,9 +87,9 @@
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-hashtag"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-hashtag"></i>
+                                                </span>
                                                 </div>
                                                 <input type="text" name="numproveedor" class="form-control"
                                                        placeholder="{{ i18n.trans('numsupplier') }}"/>
@@ -102,22 +102,22 @@
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
-                                <tr>
-                                    <th>{{ i18n.trans('reference') }}</th>
-                                    <th>{{ i18n.trans('description') }}</th>
-                                    <th class="text-right">{{ i18n.trans('quantity') }}</th>
-                                    <th class="text-right">{{ i18n.trans('price') }}</th>
-                                </tr>
+                                    <tr>
+                                        <th>{{ i18n.trans('reference') }}</th>
+                                        <th>{{ i18n.trans('description') }}</th>
+                                        <th class="text-right">{{ i18n.trans('quantity') }}</th>
+                                        <th class="text-right">{{ i18n.trans('price') }}</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                {% for line in fsc.model.getLines() %}
-                                    <tr>
-                                        <td>{{ line.referencia }}</td>
-                                        <td>{{ line.descripcion | raw | nl2br }}</td>
-                                        <td class="text-right">{{ line.cantidad }}</td>
-                                        <td class="text-right">{{ line.pvpunitario }}</td>
-                                    </tr>
-                                {% endfor %}
+                                    {% for line in fsc.model.getLines() %}
+                                        <tr>
+                                            <td>{{ line.referencia }}</td>
+                                            <td>{{ line.descripcion | raw | nl2br }}</td>
+                                            <td class="text-right">{{ line.cantidad }}</td>
+                                            <td class="text-right">{{ line.pvpunitario }}</td>
+                                        </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -238,7 +238,7 @@
     <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
     <script type="text/javascript">
         function businessDocViewAutocompleteGetData(formId, formData, term) {
-            var rawForm = $("form[id=" + formId + "]").serializeArray();
+            let rawForm = $("form[id=" + formId + "]").serializeArray();
             $.each(rawForm, function (i, input) {
                 formData[input.name] = input.value;
             });
@@ -249,13 +249,13 @@
 
         $(document).ready(function () {
             $(".autocomplete-dc").each(function () {
-                var data = {
+                let data = {
                     field: $(this).attr("data-field"),
                     fieldcode: $(this).attr("data-fieldcode"),
                     fieldtitle: $(this).attr("data-fieldtitle"),
                     source: $(this).attr("data-source")
                 };
-                var formName = $(this).closest("form").attr("name");
+                let formName = $(this).closest("form").attr("name");
                 $(this).autocomplete({
                     source: function (request, response) {
                         $.ajax({
@@ -264,7 +264,7 @@
                             data: businessDocViewAutocompleteGetData(formName, data, request.term),
                             dataType: "json",
                             success: function (results) {
-                                var values = [];
+                                let values = [];
                                 results.forEach(function (element) {
                                     if (element.key === null || element.key === element.value) {
                                         values.push(element);
@@ -282,7 +282,7 @@
                     select: function (event, ui) {
                         if (ui.item.key !== null) {
                             $("#" + data.field + "Autocomplete").val(ui.item.key);
-                            var value = ui.item.value.split(" | ");
+                            let value = ui.item.value.split(" | ");
                             if (value.length > 1) {
                                 ui.item.value = value[1];
                             } else {

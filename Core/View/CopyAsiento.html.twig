@@ -1,0 +1,89 @@
+{% extends 'Master/MenuBgTemplate.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h1 class="h3">
+                    <i class="fas fa-cut"></i> {{ fsc.title }}
+                </h1>
+                <p>{{ i18n.trans('copy-p') }}</p>
+                <form method="post">
+                    <input type="hidden" name="action" value="save"/>
+                    <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
+                    <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="col-sm">
+                                    {{ i18n.trans('concept') }}
+                                    <div class="form-group">
+                                        <input type="text" name="concepto" value=""
+                                               class="form-control" required=""/>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    {{ i18n.trans('daily') }}
+                                    <div class="form-group">
+                                        <select name="iddiario" class="form-control">
+                                            {{ fsc.getDiaries()|raw }}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    {{ i18n.trans('channel') }}
+                                    <div class="form-group">
+                                        <input type="number" name="canal" value=""
+                                               class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    {{ i18n.trans('date') }}
+                                    <div class="form-group">
+                                        <input type="date" name="fecha" value="{{ "now" | date('Y-m-d') }}"
+                                               class="form-control" required=""/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>{{ i18n.trans('subaccount') }}</th>
+                                    <th>{{ i18n.trans('counterpart') }}</th>
+                                    <th>{{ i18n.trans('concept') }}</th>
+                                    <th>{{ i18n.trans('debit') }}</th>
+                                    <th>{{ i18n.trans('credit') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for line in fsc.model.getLines() %}
+                                    <tr>
+                                        <td>{{ line.codsubcuenta }}</td>
+                                        <td>{{ line.codcontrapartida }}</td>
+                                        <td>{{ line.concepto }}</td>
+                                        <td>{{ line.debe }}</td>
+                                        <td>{{ line.haber }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="col-sm text-right">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> {{ i18n.trans('save') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
