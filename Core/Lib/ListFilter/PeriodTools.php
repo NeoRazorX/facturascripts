@@ -55,67 +55,68 @@ class PeriodTools
     {
         switch ($period) {
             case 'today':
-                static::applyFormatToPeriod($startDate, $endDate, 'today', 'today');
+                static::applyFormatToPeriod($startDate, $endDate, 'today', 'tomorrow');
                 break;
 
             case 'yesterday':
-                static::applyFormatToPeriod($startDate, $endDate, 'yesterday', 'yesterday');
+                static::applyFormatToPeriod($startDate, $endDate, 'yesterday', 'today');
                 break;
 
             case 'this-week':
-                static::applyFormatToPeriod($startDate, $endDate, 'mon this week', 'sun this week');
+                static::applyFormatToPeriod($startDate, $endDate, 'mon this week', 'mon next week');
                 break;
 
             case 'this-last-week':
-                static::applyFormatToPeriod($startDate, $endDate, '-7 day', '-1 day');
+                static::applyFormatToPeriod($startDate, $endDate, '-6 day', 'tomorrow');
                 break;
 
             case 'last-week':
-                static::applyFormatToPeriod($startDate, $endDate, 'mon last week', 'sun last week');
+                static::applyFormatToPeriod($startDate, $endDate, 'mon last week', 'mon this week');
                 break;
 
             case 'this-last-fortnight':
-                static::applyFormatToPeriod($startDate, $endDate, '-15 day', '-1 day');
+                static::applyFormatToPeriod($startDate, $endDate, '-14 day', 'tomorrow');
                 break;
 
             case 'this-month':
-                static::applyFormatToPeriod($startDate, $endDate, 'first day of', 'last day of');
+                static::applyFormatToPeriod($startDate, $endDate, 'first day of', 'first day of next month');
                 break;
 
             case 'this-last-month':
-                static::applyFormatToPeriod($startDate, $endDate, '-1 month', '-1 day');
+                static::applyFormatToPeriod($startDate, $endDate, '-1 month', 'tomorrow');
                 break;
 
             case 'last-month':
-                static::applyFormatToPeriod($startDate, $endDate, 'first day of last month', 'last day of last month');
+                static::applyFormatToPeriod($startDate, $endDate, 'first day of last month', 'first day of this month');
                 break;
 
             case 'first-quarter':
-                static::applyFormatToPeriod($startDate, $endDate, 'first day of January', 'last day of March');
+                static::applyFormatToPeriod($startDate, $endDate, 'first day of January', 'first day of April');
                 break;
 
             case 'second-quarter':
-                static::applyFormatToPeriod($startDate, $endDate, 'first day of April', 'last day of June');
+                static::applyFormatToPeriod($startDate, $endDate, 'first day of April', 'first day of July');
                 break;
 
             case 'third-quarter':
-                static::applyFormatToPeriod($startDate, $endDate, 'first day of July', 'last day of September');
+                static::applyFormatToPeriod($startDate, $endDate, 'first day of July', 'first day of October');
                 break;
 
             case 'fourth-quarter':
-                static::applyFormatToPeriod($startDate, $endDate, 'first day of October', 'last day of December');
+                static::applyFormatToPeriod($startDate, $endDate, 'first day of October', 'first day of January next year');
                 break;
 
             case 'this-year':
-                static::applyFormatToPeriod($startDate, $endDate, 'first day of january', 'last day of december');
+                static::applyFormatToPeriod($startDate, $endDate, 'first day of january', 'first day of january next year');
                 break;
 
             case 'this-last-year':
-                static::applyFormatToPeriod($startDate, $endDate, '-1 year', '-1 day');
+                static::applyFormatToPeriod($startDate, $endDate, '-1 year', 'tomorrow');
                 break;
 
             case 'last-year':
-                static::applyFormatToPeriod($startDate, $endDate, 'first day of january last year', 'last day of december last year');
+                static::applyFormatToPeriod($startDate, $endDate, 'first day of january last year', 'first day of january this year');
+                break;
         }
     }
 
