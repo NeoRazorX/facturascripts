@@ -30,70 +30,36 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
  */
 class EstadoDocumento extends Base\ModelOnChangeClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Mode in which the stock of purchased or sold products is updated.
-     *
-     * @var int
-     */
+    /** @var int */
     public $actualizastock;
 
-    /**
-     * True to prevent modification of this state.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $bloquear;
 
-    /**
-     * Indicates whether the document will be editable or not.
-     *
-     * @var bool
-     */
+    /** @var string */
+    public $color;
+
+    /** @var bool */
     public $editable;
 
-    /**
-     * Name of the document to generate when this state is selected.
-     *
-     * @var string
-     */
+    /** @var string */
     public $generadoc;
 
-    /**
-     * Icon of EstadoDocumento.
-     *
-     * @var string
-     */
+    /** @var string */
     public $icon;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idestado;
 
-    /**
-     * Name of the state to show the user.
-     *
-     * @var string
-     */
+    /** @var string */
     public $nombre;
 
-    /**
-     * Sets this state as default for tipodoc.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $predeterminado;
 
-    /**
-     * Document type: customer invoice, supplier order, etc...
-     *
-     * @var string
-     */
+    /** @var string */
     public $tipodoc;
 
     public function clear()
@@ -139,6 +105,7 @@ class EstadoDocumento extends Base\ModelOnChangeClass
     public function test(): bool
     {
         // escapamos el html
+        $this->color = self::toolBox()::utils()::noHtml($this->color);
         $this->generadoc = self::toolBox()::utils()::noHtml($this->generadoc);
         $this->icon = self::toolBox()::utils()::noHtml($this->icon);
         $this->nombre = self::toolBox()::utils()::noHtml($this->nombre);

@@ -27,6 +27,7 @@ use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\ExportManager;
 use FacturaScripts\Dinamic\Lib\Widget\ColumnItem;
+use FacturaScripts\Dinamic\Lib\Widget\RowStatus;
 use FacturaScripts\Dinamic\Model\TotalModel;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,44 +35,45 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * View definition for its use in ListController
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListView extends BaseView
 {
-
     use ListViewFiltersTrait;
 
     const DEFAULT_TEMPLATE = 'Master/ListView.html.twig';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $orderKey = '';
 
-    /**
-     * List of fields available to order by.
-     *
-     * @var array
-     */
+    /** @var array */
     public $orderOptions = [];
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $query = '';
 
-    /**
-     * List of fields where to search in when a search is made
-     *
-     * @var array
-     */
+    /** @var array */
     public $searchFields = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $totalAmounts = [];
+
+    public function addColor(string $fieldName, $value, string $color, string $title = '')
+    {
+        if (false === isset($this->rows['status'])) {
+            $this->rows['status'] = new RowStatus([]);
+        }
+
+        $this->rows['status']->options[] = [
+            'tag' => 'option',
+            'children' => [],
+            'color' => $color,
+            'fieldname' => $fieldName,
+            'text' => $value,
+            'title' => $title
+        ];
+    }
 
     /**
      * Adds a field to the Order By list
@@ -116,9 +118,6 @@ class ListView extends BaseView
         }
     }
 
-    /**
-     * @return string
-     */
     public function btnNewUrl(): string
     {
         $url = empty($this->model) ? '' : $this->model->url('new');
@@ -325,9 +324,6 @@ class ListView extends BaseView
         }
     }
 
-    /**
-     * @param Request $request
-     */
     private function processFormDataLoad(Request $request)
     {
         $this->offset = (int)$request->request->get('offset', 0);

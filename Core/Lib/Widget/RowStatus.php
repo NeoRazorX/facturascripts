@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Widget;
 
 /**
@@ -25,34 +26,19 @@ namespace FacturaScripts\Core\Lib\Widget;
  */
 class RowStatus extends VisualItem
 {
-
-    /**
-     *
-     * @var string
-     */
+    /** @var string */
     public $fieldname;
 
-    /**
-     *
-     * @var array
-     */
-    public $options = [];
+    /** @var array */
+    public $options;
 
-    /**
-     *
-     * @param array $data
-     */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         parent::__construct($data);
         $this->fieldname = empty($data['fieldname']) ? '' : $data['fieldname'];
         $this->options = $data['children'];
     }
 
-    /**
-     *
-     * @return string
-     */
     public function legend(): string
     {
         $trs = '';
@@ -68,13 +54,12 @@ class RowStatus extends VisualItem
     }
 
     /**
-     *
      * @param object $model
      * @param string $classPrefix
      *
      * @return string
      */
-    public function trClass($model, $classPrefix = 'table-')
+    public function trClass($model, string $classPrefix = 'table-'): string
     {
         foreach ($this->options as $opt) {
             $fieldname = isset($opt['fieldname']) ? $opt['fieldname'] : $this->fieldname;
@@ -89,12 +74,11 @@ class RowStatus extends VisualItem
     }
 
     /**
-     *
      * @param object $model
      *
      * @return string
      */
-    public function trTitle($model)
+    public function trTitle($model): string
     {
         foreach ($this->options as $opt) {
             $fieldname = isset($opt['fieldname']) ? $opt['fieldname'] : $this->fieldname;

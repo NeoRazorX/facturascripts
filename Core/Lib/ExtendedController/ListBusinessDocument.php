@@ -28,6 +28,7 @@ use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
  * Description of ListBusinessDocument
@@ -38,7 +39,18 @@ abstract class ListBusinessDocument extends ListController
 {
     use ListBusinessActionTrait;
 
-    protected function addCommonViewFilters(string $viewName, string $modelName)
+    protected function addColorStatus(string $viewName, string $modelName): void
+    {
+        $estadoDocumento = new EstadoDocumento();
+        $where = [new DataBaseWhere('tipodoc', $modelName)];
+        foreach ($estadoDocumento->all($where, [], 0, 0) as $status) {
+            if ($status->color) {
+                $this->addColor($viewName, 'idestado', $status->idestado, $status->color, $status->nombre);
+            }
+        }
+    }
+
+    protected function addCommonViewFilters(string $viewName, string $modelName): void
     {
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
         $this->addFilterNumber($viewName, 'min-total', 'total', 'total', '>=');
@@ -96,7 +108,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['pvptotal'], 'amount');
         $this->addOrderBy($viewName, ['idlinea'], 'code', 2);
 
-        // filters
+        // filtros
         $this->addFilterAutocomplete($viewName, 'idproducto', 'product', 'idproducto', 'productos', 'idproducto', 'referencia');
         $this->addFilterAutocomplete($viewName, 'referencia', 'variant', 'referencia', 'variantes', 'referencia', 'referencia');
         $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', Impuestos::codeModel());
@@ -130,14 +142,14 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterCheckbox($viewName, 'irpf', 'retention', 'irpf', '!=', 0);
         $this->addFilterCheckbox($viewName, 'suplido', 'supplied', 'suplido');
 
-        // settings
+        // desactivamos los botones, checkboxes y mega-search
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'checkBoxes', false);
         $this->setSettings($viewName, 'megasearch', false);
     }
 
-    protected function createViewPurchases(string $viewName, string $modelName, string $label)
+    protected function createViewPurchases(string $viewName, string $modelName, string $label): void
     {
         $this->addView($viewName, $modelName, $label, 'fas fa-copy');
         $this->addSearchFields($viewName, ['codigo', 'nombre', 'numproveedor', 'observaciones']);
@@ -148,13 +160,16 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['codproveedor'], 'supplier-code');
         $this->addOrderBy($viewName, ['total'], 'total');
 
-        // filters
+        // filtros
         $this->addCommonViewFilters($viewName, $modelName);
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
+
+        // asignamos los colores
+        $this->addColorStatus($viewName, $modelName);
     }
 
-    protected function createViewSales(string $viewName, string $modelName, string $label)
+    protected function createViewSales(string $viewName, string $modelName, string $label): void
     {
         $this->addView($viewName, $modelName, $label, 'fas fa-copy');
         $this->addSearchFields($viewName, ['codigo', 'codigoenv', 'nombrecliente', 'numero2', 'observaciones']);
@@ -165,7 +180,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addOrderBy($viewName, ['numero2'], 'number2');
         $this->addOrderBy($viewName, ['total'], 'total');
 
-        // filters
+        // filtros
         $this->addCommonViewFilters($viewName, $modelName);
         $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente');
         $this->addFilterAutocomplete($viewName, 'idcontactofact', 'billing-address', 'idcontactofact', 'contactos', 'idcontacto', 'direccion');
@@ -180,8 +195,10 @@ abstract class ListBusinessDocument extends ListController
 
         $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
         $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
-
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
+
+        // asignamos los colores
+        $this->addColorStatus($viewName, $modelName);
     }
 
     /**

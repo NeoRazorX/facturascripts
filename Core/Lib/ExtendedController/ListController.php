@@ -34,7 +34,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class ListController extends BaseController
 {
-
     /**
      * Initializes all the objects and properties.
      *
@@ -81,6 +80,20 @@ abstract class ListController extends BaseController
         // Execute actions after loading data
         $this->execAfterAction($action);
         $this->pipeFalse('execAfterAction', $action);
+    }
+
+    /**
+     * Adds a new color option to the list.
+     *
+     * @param string $viewName
+     * @param string $fieldName
+     * @param mixed $value
+     * @param string $color
+     * @param string $title
+     */
+    protected function addColor(string $viewName, string $fieldName, $value, string $color, string $title = '')
+    {
+        $this->views[$viewName]->addColor($fieldName, $value, $color, $title);
     }
 
     /**

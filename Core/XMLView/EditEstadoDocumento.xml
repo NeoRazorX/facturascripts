@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,10 +23,10 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="id" display="none" order="100">
-                <widget type="text" fieldname="idestado" readonly="dinamic" />
+                <widget type="text" fieldname="idestado" readonly="dinamic"/>
             </column>
             <column name="name" order="110">
-                <widget type="text" fieldname="nombre" required="true" />
+                <widget type="text" fieldname="nombre" required="true"/>
             </column>
             <column name="doc-type" order="120">
                 <widget type="select" fieldname="tipodoc" required="true" translate="true">
@@ -63,17 +63,29 @@
             </column>
         </group>
         <group name="config" valign="bottom" numcolumns="12">
-            <column name="icon" titleurl="https://fontawesome.com/icons?d=gallery" numcolumns="3" order="100">
+            <column name="color" numcolumns="3"
+                    titleurl="https://getbootstrap.com/docs/4.6/utilities/colors/#background-color" order="100">
+                <widget type="select" fieldname="color" translate="true">
+                    <values title="color-primary">primary</values>
+                    <values title="color-secondary">secondary</values>
+                    <values title="color-success">success</values>
+                    <values title="color-danger">danger</values>
+                    <values title="color-warning">warning</values>
+                    <values title="color-info">info</values>
+                    <values title="color-dark">dark</values>
+                </widget>
+            </column>
+            <column name="icon" titleurl="https://fontawesome.com/icons?d=gallery" numcolumns="3" order="110">
                 <widget type="text" fieldname="icon" icon="fas fa-icons"/>
             </column>
-            <column name="editable" order="110">
-                <widget type="checkbox" fieldname="editable" />
+            <column name="editable" order="120">
+                <widget type="checkbox" fieldname="editable"/>
             </column>
-            <column name="locked" display="none" order="120">
-                <widget type="checkbox" fieldname="bloquear" />
+            <column name="locked" display="none" order="130">
+                <widget type="checkbox" fieldname="bloquear"/>
             </column>
-            <column name="default" order="130">
-                <widget type="checkbox" fieldname="predeterminado" />
+            <column name="default" order="140">
+                <widget type="checkbox" fieldname="predeterminado"/>
             </column>
         </group>
     </columns>
