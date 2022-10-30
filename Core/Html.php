@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
@@ -182,14 +181,6 @@ final class Html
         });
     }
 
-    private static function iconFunction(): TwigFunction
-    {
-        return new TwigFunction('icon', function (string $icon, string $title = '') {
-            $title = empty($title) ? '' : ' title="' . $title . '"';
-            return '<i class="' . $icon . '"' . $title . '></i>';
-        });
-    }
-
     /**
      * @throws LoaderError
      */
@@ -221,26 +212,43 @@ final class Html
 
     private static function moneyFunction(): TwigFunction
     {
-        return new TwigFunction('money', function (float $number, string $currency = '') {
-            if (empty($currency)) {
-                return DivisaTools::format($number);
+        return new TwigFunction('money', function (float $number, string $coddivisa = '') {
+            if (empty($coddivisa)) {
+                $coddivisa = AppSettings::get('default', 'coddivisa');
             }
 
-            $divisa = Divisas::get($currency);
-            if (false === $divisa->exists()) {
-                return DivisaTools::format($number);
+            // cargamos la configuración de divisas
+            $symbol = Divisas::get($coddivisa)->simbolo;
+            $decimals = AppSettings::get('default', 'decimals');
+            $decimalSeparator = AppSettings::get('default', 'decimal_separator');
+            $thousandsSeparator = AppSettings::get('default', 'thousands_separator');
+            $currencyPosition = AppSettings::get('default', 'currency_position');
+
+            return $currencyPosition === 'right' ?
+                number_format($number, $decimals, $decimalSeparator, $thousandsSeparator) . ' ' . $symbol :
+                $symbol . ' ' . number_format($number, $decimals, $decimalSeparator, $thousandsSeparator);
+        });
+    }
+
+    private static function numberFunction(): TwigFunction
+    {
+        return new TwigFunction('number', function (float $number, ?int $decimals = null) {
+            if ($decimals === null) {
+                $decimals = AppSettings::get('default', 'decimals');
             }
 
-            $divisaTools = new DivisaTools();
-            $divisaTools->findDivisa($divisa);
-            return DivisaTools::format($number);
+            // cargamos la configuración
+            $decimalSeparator = AppSettings::get('default', 'decimal_separator');
+            $thousandsSeparator = AppSettings::get('default', 'thousands_separator');
+
+            return number_format($number, $decimals, $decimalSeparator, $thousandsSeparator);
         });
     }
 
     private static function settingsFunction(): TwigFunction
     {
-        return new TwigFunction('settings', function (string $name, string $group = 'default') {
-            return AppSettings::get($name, $group);
+        return new TwigFunction('settings', function (string $group, string $property, $default = null) {
+            return AppSettings::get($group, $property, $default);
         });
     }
 
@@ -289,8 +297,8 @@ final class Html
         self::$twig->addFunction(self::attachedFileFunction());
         self::$twig->addFunction(self::formTokenFunction());
         self::$twig->addFunction(self::getIncludeViews());
-        self::$twig->addFunction(self::iconFunction());
         self::$twig->addFunction(self::moneyFunction());
+        self::$twig->addFunction(self::numberFunction());
         self::$twig->addFunction(self::settingsFunction());
         self::$twig->addFunction(self::transFunction());
         foreach (self::$functions as $function) {

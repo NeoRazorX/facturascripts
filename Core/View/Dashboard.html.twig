@@ -27,12 +27,12 @@
                     <h1 class="h4">
                         {% if fsc.getPageData().name == fsc.user.homepage %}
                             <a class="btn btn-sm btn-secondary align-bottom active"
-                               href="{{ fsc.url() }}?defaultPage=FALSE" title="{{ i18n.trans('marked-as-homepage') }}">
+                               href="{{ fsc.url() }}?defaultPage=FALSE" title="{{ trans('marked-as-homepage') }}">
                                 <i class="fas fa-bookmark" aria-hidden="true"></i>
                             </a>
                         {% else %}
                             <a class="btn btn-sm btn-secondary align-bottom" href="{{ fsc.url() }}?defaultPage=TRUE"
-                               title="{{ i18n.trans('mark-as-homepage') }}">
+                               title="{{ trans('mark-as-homepage') }}">
                                 <i class="far fa-bookmark" aria-hidden="true"></i>
                             </a>
                         {% endif %}
@@ -46,44 +46,44 @@
         {% block sectionLinks %}
             <div class="row">
                 <div class="col">
-                    {{ _self.sectionLinks(fsc, i18n) }}
+                    {{ _self.sectionLinks(fsc) }}
                 </div>
             </div>
         {% endblock %}
         {% block sectionStats %}
-            {{ _self.sectionStats(fsc, i18n) }}
+            {{ _self.sectionStats(fsc) }}
         {% endblock %}
         {% block sections %}
             <div class="row">
                 <div class="col">
                     {% if 'receipts' in fsc.sections %}
-                        {{ _self.sectionReceipts(fsc, i18n) }}
+                        {{ _self.sectionReceipts(fsc) }}
                     {% endif %}
                     {% if 'low-stock' in fsc.sections %}
-                        {{ _self.sectionLowStock(fsc, i18n) }}
+                        {{ _self.sectionLowStock(fsc) }}
                     {% endif %}
                 </div>
             </div>
-            {{ _self.sectionNews(fsc, i18n) }}
+            {{ _self.sectionNews(fsc) }}
         {% endblock %}
     </div>
 {% endblock %}
 
-{% macro drawStatsBox(fsc, i18n, group, color, ismoney) %}
+{% macro drawStatsBox(fsc, group, color, ismoney) %}
     <div class="card shadow mb-3">
         <div class="card-body p-2 text-white {{ color }}">
             <h2 class="h5 text-center mb-0">
-                {{ i18n.trans(group) }}
+                {{ trans(group) }}
             </h2>
         </div>
         <div class="table-responsive">
             <table class="table mb-0">
                 {% for key, value in fsc.stats[group] %}
                     <tr>
-                        <td>{{ i18n.trans(key) }}</td>
+                        <td>{{ trans(key) }}</td>
                         {% set color = value < 0 ? ' text-danger' : '' %}
                         {% if ismoney %}
-                            <td class="text-right{{ color }}">{{ fsc.toolBox().coins().format(value) }}</td>
+                            <td class="text-right{{ color }}">{{ money(value) }}</td>
                         {% else %}
                             <td class="text-right">{{ value }}</td>
                         {% endif %}
@@ -94,18 +94,18 @@
     </div>
 {% endmacro %}
 
-{% macro sectionLinks(fsc, i18n) %}
+{% macro sectionLinks(fsc) %}
     <div class="card shadow mb-3">
         <div class="pl-3 pt-1 pr-3 pb-3">
             <div class="form-row">
                 <div class="col-md">
                     <h2 class="h4 mt-3 mb-1">
-                        <i class="fas fa-plus fa-fw"></i> {{ i18n.trans('create') }}
+                        <i class="fas fa-plus fa-fw"></i> {{ trans('create') }}
                     </h2>
                     <ul class="mb-1">
                         {% for link, label in fsc.createLinks %}
                             <li>
-                                <a href="{{ link }}">{{ i18n.trans(label) }}</a>
+                                <a href="{{ link }}">{{ trans(label) }}</a>
                             </li>
                         {% endfor %}
                     </ul>
@@ -113,12 +113,12 @@
                 {% if fsc.openLinks %}
                     <div class="col-md">
                         <h2 class="h4 mt-3 mb-1">
-                            <i class="fas fa-folder-open fa-fw"></i> {{ i18n.trans('open') }}
+                            <i class="fas fa-folder-open fa-fw"></i> {{ trans('open') }}
                         </h2>
                         <ul class="mb-1">
                             {% for link in fsc.openLinks %}
                                 <li>
-                                    {{ i18n.trans(link.type) }}
+                                    {{ trans(link.type) }}
                                     <a href="{{ link.url }}">{{ link.name }}</a>
                                     <span class="text-muted">{{ link.date }}</span>
                                 </li>
@@ -128,7 +128,7 @@
                 {% endif %}
                 <div class="col-md">
                     <h2 class="h4 mt-3 mb-1">
-                        <i class="fas fa-question-circle fa-fw"></i> {{ i18n.trans('help') }}
+                        <i class="fas fa-question-circle fa-fw"></i> {{ trans('help') }}
                     </h2>
                     <ul class="mb-1">
                         <li>
@@ -160,21 +160,21 @@
     </div>
 {% endmacro %}
 
-{% macro sectionLowStock(fsc, i18n) %}
+{% macro sectionLowStock(fsc) %}
     <div class="card shadow mb-3">
         <div class="p-3">
             <h2 class="h4 mb-0">
-                <i class="fas fa-pallet fa-fw"></i> {{ i18n.trans('minimum-stock') }}
+                <i class="fas fa-pallet fa-fw"></i> {{ trans('minimum-stock') }}
             </h2>
         </div>
         <div class="table-responsive">
             <table class="table table-sm table-hover mb-0">
                 <thead>
                 <tr>
-                    <th>{{ i18n.trans('reference') }}</th>
-                    <th>{{ i18n.trans('warehouse') }}</th>
-                    <th class="text-right">{{ i18n.trans('minimum-stock') }}</th>
-                    <th class="text-right">{{ i18n.trans('available') }}</th>
+                    <th>{{ trans('reference') }}</th>
+                    <th>{{ trans('warehouse') }}</th>
+                    <th class="text-right">{{ trans('minimum-stock') }}</th>
+                    <th class="text-right">{{ trans('available') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -182,8 +182,8 @@
                     <tr class="clickableRow table-danger" data-href="{{ stock.url() }}">
                         <td>{{ stock.referencia }}</td>
                         <td>{{ stock.codalmacen }}</td>
-                        <td class="text-right">{{ fsc.toolBox().numbers().format(stock.stockmin) }}</td>
-                        <td class="text-right">{{ fsc.toolBox().numbers().format(stock.disponible) }}</td>
+                        <td class="text-right">{{ number(stock.stockmin) }}</td>
+                        <td class="text-right">{{ number(stock.disponible) }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -192,16 +192,24 @@
     </div>
 {% endmacro %}
 
-{% macro sectionNews(fsc, i18n) %}
+{% macro sectionNews(fsc) %}
     {% for news in fsc.news %}
         <div class="row">
             <div class="col">
                 <div class="card shadow mb-3">
-                    <div class="card-body">
-                        <i class="far fa-newspaper fa-2x float-left pr-2 pb-4"></i>
+                    <div class="card-header">
+                        <span class="float-right">{{ news.fecha }}</span>
                         <a href="{{ news.url }}" target="_blank">{{ news.title | raw }}</a>
-                        {{ news.body | raw }}
-                        <small class="float-right">{{ news.fecha }}</small>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="form-row align-items-center">
+                            <div class="col-auto">
+                                <a href="{{ news.url }}" target="_blank" class="btn btn-outline-secondary">
+                                    <i class="far fa-newspaper fa-3x"></i>
+                                </a>
+                            </div>
+                            <div class="col">{{ news.body | raw }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -209,23 +217,23 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro sectionReceipts(fsc, i18n) %}
+{% macro sectionReceipts(fsc) %}
     <div class="card shadow mb-3">
         <div class="p-3">
-            <span class="float-right badge badge-danger">{{ i18n.trans('unpaid') }}</span>
+            <span class="float-right badge badge-danger">{{ trans('unpaid') }}</span>
             <h2 class="h4 mb-0">
                 <i class="fas fa-dollar-sign fa-fw"></i>
-                {{ i18n.trans('receipts') }}
+                {{ trans('receipts') }}
             </h2>
         </div>
         <div class="table-responsive">
             <table class="table table-sm table-hover mb-0">
                 <thead>
                 <tr>
-                    <th>{{ i18n.trans('customer') }}</th>
-                    <th>{{ i18n.trans('observations') }}</th>
-                    <th class="text-right">{{ i18n.trans('amount') }}</th>
-                    <th class="text-right">{{ i18n.trans('expiration') }}</th>
+                    <th>{{ trans('customer') }}</th>
+                    <th>{{ trans('observations') }}</th>
+                    <th class="text-right">{{ trans('amount') }}</th>
+                    <th class="text-right">{{ trans('expiration') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -233,7 +241,7 @@
                     <tr class="clickableRow table-danger" data-href="{{ receipt.url() }}">
                         <td>{{ receipt.getSubject().nombre | raw }}</td>
                         <td>{{ receipt.observaciones | raw }}</td>
-                        <td class="text-right text-nowrap">{{ fsc.toolBox().coins().format(receipt.importe) }}</td>
+                        <td class="text-right text-nowrap">{{ money(receipt.importe) }}</td>
                         <td class="text-right text-nowrap">{{ receipt.vencimiento }}</td>
                     </tr>
                 {% endfor %}
@@ -243,19 +251,19 @@
     </div>
 {% endmacro %}
 
-{% macro sectionStats(fsc, i18n) %}
+{% macro sectionStats(fsc) %}
     <div class="form-row">
         <div class="col-sm-6 col-lg-3">
-            {{ _self.drawStatsBox(fsc, i18n, 'purchases', 'bg-danger', true) }}
+            {{ _self.drawStatsBox(fsc, 'purchases', 'bg-danger', true) }}
         </div>
         <div class="col-sm-6 col-lg-3">
-            {{ _self.drawStatsBox(fsc, i18n, 'sales', 'bg-success', true) }}
+            {{ _self.drawStatsBox(fsc, 'sales', 'bg-success', true) }}
         </div>
         <div class="col-sm-6 col-lg-3">
-            {{ _self.drawStatsBox(fsc, i18n, 'taxes', 'bg-warning', true) }}
+            {{ _self.drawStatsBox(fsc, 'taxes', 'bg-warning', true) }}
         </div>
         <div class="col-sm-6 col-lg-3">
-            {{ _self.drawStatsBox(fsc, i18n, 'new-customers', 'bg-info', false) }}
+            {{ _self.drawStatsBox(fsc, 'new-customers', 'bg-info', false) }}
         </div>
     </div>
 {% endmacro %}
