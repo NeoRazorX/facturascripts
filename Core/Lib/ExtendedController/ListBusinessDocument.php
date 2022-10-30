@@ -149,7 +149,7 @@ abstract class ListBusinessDocument extends ListController
         $this->setSettings($viewName, 'megasearch', false);
     }
 
-    protected function createViewPurchases(string $viewName, string $modelName, string $label): void
+    protected function createViewPurchases(string $viewName, string $modelName, string $label)
     {
         $this->addView($viewName, $modelName, $label, 'fas fa-copy');
         $this->addSearchFields($viewName, ['codigo', 'nombre', 'numproveedor', 'observaciones']);
@@ -169,7 +169,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addColorStatus($viewName, $modelName);
     }
 
-    protected function createViewSales(string $viewName, string $modelName, string $label): void
+    protected function createViewSales(string $viewName, string $modelName, string $label)
     {
         $this->addView($viewName, $modelName, $label, 'fas fa-copy');
         $this->addSearchFields($viewName, ['codigo', 'codigoenv', 'nombrecliente', 'numero2', 'observaciones']);
