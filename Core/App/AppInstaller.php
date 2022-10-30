@@ -166,7 +166,6 @@ final class AppInstaller
         // HTML template variables
         $templateVars = [
             'license' => file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
-            'memcache_prefix' => ToolBox::utils()->randomString(8),
             'timezones' => DateTimeZone::listIdentifiers(),
             'version' => PluginManager::CORE_VERSION
         ];
@@ -208,8 +207,7 @@ final class AppInstaller
             fwrite($file, "define('FS_MYSQL_COLLATE', 'utf8_bin');\n");
 
             $fields = [
-                'lang', 'timezone', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user',
-                'db_pass', 'cache_host', 'cache_port', 'cache_prefix', 'hidden_plugins'
+                'lang', 'timezone', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user', 'db_pass', 'hidden_plugins'
             ];
             foreach ($fields as $field) {
                 fwrite($file, "define('FS_" . strtoupper($field) . "', '" . $this->request->request->get('fs_' . $field, '') . "');\n");

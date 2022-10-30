@@ -2,8 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>{{ i18n.trans('installer') }}</title>
-    <meta name="description" content="{{ i18n.trans('meta-description') }}"/>
+    <title>{{ trans('installer') }}</title>
+    <meta name="description" content="{{ trans('meta-description') }}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="generator" content="FacturaScripts"/>
     <meta name="robots" content="noindex"/>
@@ -19,6 +19,7 @@
             document.fs_install.fs_timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
             $('#db_type').on('change', function () {
+                let str = '';
                 $('#db_type option:selected').each(function () {
                     str = $(this).val();
                 });
@@ -34,8 +35,8 @@
             });
 
             $('#fs_lang').on('change', function () {
-                var lang = $("#fs_lang option:selected").val();
-                var url = location.pathname + '?fs_lang=' + lang;
+                let lang = $("#fs_lang option:selected").val();
+                let url = location.pathname + '?fs_lang=' + lang;
                 window.location.href = url;
             });
         });
@@ -70,8 +71,8 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
-            <h1 class="h2">{{ i18n.trans('installer') }}</h1>
-            <p>{{ i18n.trans('installer-p') }}</p>
+            <h1 class="h2">{{ trans('installer') }}</h1>
+            <p>{{ trans('installer-p') }}</p>
         </div>
     </div>
     <div class="row">
@@ -82,17 +83,12 @@
                         <li role="presentation" class="nav-item">
                             <a class="nav-link active" href="#preferencias" aria-controls="preferencias" role="tab"
                                data-toggle="tab">
-                                <i class="fas fa-cogs" aria-hidden="true"></i>&nbsp; {{ i18n.trans('preferences') }}
-                            </a>
-                        </li>
-                        <li role="presentation" class="nav-item">
-                            <a class="nav-link" href="#memcache" aria-controls="memcache" role="tab" data-toggle="tab">
-                                <i class="fas fa-flask"></i>&nbsp; {{ i18n.trans('memcache') }}
+                                <i class="fas fa-cogs" aria-hidden="true"></i>&nbsp; {{ trans('preferences') }}
                             </a>
                         </li>
                         <li role="presentation" class="nav-item">
                             <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
-                                <i class="far fa-file-alt"></i>&nbsp; {{ i18n.trans('license') }}
+                                <i class="far fa-file-alt"></i>&nbsp; {{ trans('license') }}
                             </a>
                         </li>
                     </ul>
@@ -104,7 +100,7 @@
                                 <div class="row">
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            {{ i18n.trans('language') }}:
+                                            {{ trans('language') }}:
                                             <div class="input-group">
                                                 <span class="input-group-prepend">
                                                     <span class="input-group-text">
@@ -126,7 +122,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            {{ i18n.trans('timezone') }}:
+                                            {{ trans('timezone') }}:
                                             <div class="input-group">
                                                 <span class="input-group-prepend">
                                                     <span class="input-group-text">
@@ -143,7 +139,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            {{ i18n.trans('db-type') }}:
+                                            {{ trans('db-type') }}:
                                             <select id="db_type" name="fs_db_type" class="form-control">
                                                 <option value="mysql">MySQL</option>
                                                 <option value="postgresql">PostgreSQL</option>
@@ -152,21 +148,21 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            {{ i18n.trans('db-host') }}:
+                                            {{ trans('db-host') }}:
                                             <input type="text" name="fs_db_host" value="localhost" class="form-control"
                                                    required=""/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            {{ i18n.trans('db-port') }}:
+                                            {{ trans('db-port') }}:
                                             <input type="number" id="db_port" name="fs_db_port" value="3306"
                                                    class="form-control" required=""/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            {{ i18n.trans('db-name') }}:
+                                            {{ trans('db-name') }}:
                                             <div class="input-group">
                                                 <span class="input-group-prepend">
                                                     <span class="input-group-text">
@@ -180,14 +176,14 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            {{ i18n.trans('db-user') }}:
+                                            {{ trans('db-user') }}:
                                             <input type="text" id="db_user" name="fs_db_user" value="root"
                                                    class="form-control" required=""/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="form-group">
-                                            {{ i18n.trans('db-password') }}:
+                                            {{ trans('db-password') }}:
                                             <div class="input-group">
                                                 <span class="input-group-prepend">
                                                     <span class="input-group-text">
@@ -200,34 +196,10 @@
                                     </div>
                                     <div id="mysql_socket_div" class="col-sm-4">
                                         <div class="form-group">
-                                            {{ i18n.trans('mysql-socket') }}:
+                                            {{ trans('mysql-socket') }}:
                                             <input type="text" name="mysql_socket" class="form-control"
-                                                   placeholder="{{ i18n.trans('optional') }}"/>
-                                            <small class="form-text text-muted">{{ i18n.trans('mysql-socket-p') }}</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div role="tabpanel" class="tab-pane" id="memcache">
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            {{ i18n.trans('memcache-host') }}:
-                                            <input type="text" name="fs_cache_host" class="form-control"
-                                                   placeholder="{{ i18n.trans('optional') }}"/>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            {{ i18n.trans('memcache-port') }}:
-                                            <input type="number" name="fs_cache_port" class="form-control"/>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            {{ i18n.trans('memcache-prefix') }}:
-                                            <input type="text" name="fs_cache_prefix" value="{{ memcache_prefix }}"
-                                                   class="form-control"/>
+                                                   placeholder="{{ trans('optional') }}"/>
+                                            <small class="form-text text-muted">{{ trans('mysql-socket-p') }}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -247,13 +219,13 @@
                                 <div class="form-check mb-2 mb-sm-0">
                                     <label class="form-check-label">
                                         <input class="form-check-input" type="checkbox" name="fs_debug" value="true"/>
-                                        {{ i18n.trans('debug-mode') }}
+                                        {{ trans('debug-mode') }}
                                     </label>
                                 </div>
                             </div>
                             <div class="col-sm-6 text-right">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-check" aria-hidden="true"></i> {{ i18n.trans('accept') }}
+                                    <i class="fas fa-check" aria-hidden="true"></i> {{ trans('accept') }}
                                 </button>
                             </div>
                         </div>
