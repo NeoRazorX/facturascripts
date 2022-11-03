@@ -28,11 +28,7 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditEmailNotification extends EditController
 {
-
-    /**
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $pageData = parent::getPageData();
         $pageData['title'] = 'email-notification';
@@ -41,10 +37,7 @@ class EditEmailNotification extends EditController
         return $pageData;
     }
 
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'EmailNotification';
     }
@@ -55,8 +48,9 @@ class EditEmailNotification extends EditController
     protected function createViews()
     {
         parent::createViews();
+
+        // desactivamos el botón nuevo
         $viewName = $this->getMainViewName();
         $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnDelete', false);
     }
 }

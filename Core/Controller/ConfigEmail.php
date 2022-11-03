@@ -67,9 +67,8 @@ class ConfigEmail extends PanelController
         // filtros
         $this->views[$viewName]->addFilterCheckbox('enabled');
 
-        // desactivamos los botones nuevo y eliminar
+        // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'btnDelete', false);
 
         // añadimos los botones de activar y desactivar
         $this->addButton($viewName, [
