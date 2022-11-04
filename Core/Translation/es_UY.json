@@ -441,6 +441,7 @@
     "email-not-configured": "Email no configurado. Puedes configurar el email desde el menú administrador, panel de control, preferencias de aplicación.",
     "email-not-sent": "No enviado.",
     "email-notification": "Notificación por email",
+    "email-notification-not-exists": "Notificación de email %name% no encontrada",
     "email-replies": "Respuesta de emails",
     "email-replies-to": "Las respuestas a este email irán a %email%",
     "email-sent": "Email enviado.",

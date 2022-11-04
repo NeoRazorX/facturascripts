@@ -441,6 +441,7 @@
     "email-not-configured": "Les paramètres e-mail ne sont pas configurés. Vous pouvez le faire depuis le menu Administration > Panneau de contrôle > Préférences de l'application",
     "email-not-sent": "Non envoyé",
     "email-notification": "Notificación por email",
+    "email-notification-not-exists": "Notificación de email %name% no encontrada",
     "email-replies": "Respuesta de emails",
     "email-replies-to": "Les réponses à cet e-mail seront envoyées à %email%",
     "email-sent": "Envoyé par email",

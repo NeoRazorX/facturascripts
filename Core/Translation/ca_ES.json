@@ -441,6 +441,7 @@
     "email-not-configured": "Email no configurat. Pots configurar l'email des del menú administrador, panell de control, preferències d'aplicació.",
     "email-not-sent": "No enviat",
     "email-notification": "Notificació per email",
+    "email-notification-not-exists": "Notificació de email %name% no trobada",
     "email-replies": "Respuesta de emails",
     "email-replies-to": "Les respostes a aquest email aniran a %email%",
     "email-sent": "Envio per Mail",

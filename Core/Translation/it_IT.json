@@ -441,6 +441,7 @@
     "email-not-configured": "email-not-configured",
     "email-not-sent": "Non inviato",
     "email-notification": "Notificación por email",
+    "email-notification-not-exists": "Notificación de email %name% no encontrada",
     "email-replies": "risposta e-mail",
     "email-replies-to": "email-replies-to",
     "email-sent": "Inviato via Mail",
