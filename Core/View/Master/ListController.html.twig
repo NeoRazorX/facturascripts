@@ -125,22 +125,20 @@
             if (document.location.hash) {
                 $(".nav-tabs a[href=\\" + document.location.hash + "]").tab('show');
             }
-        }
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
-            $("input[name='query']:visible").focus();
-        }
-        $('.nav-tabs a').click(function (e) {
-            $(this).tab('show');
-            var scrollmem = $('body').scrollTop();
-            window.location.hash = this.hash;
-            $('html,body').scrollTop(scrollmem);
-        });
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
                 $("input[name='query']:visible").focus();
             }
+            $('.nav-tabs a').click(function (e) {
+                $(this).tab('show');
+                var scrollmem = $('body').scrollTop();
+                window.location.hash = this.hash;
+                $('html,body').scrollTop(scrollmem);
+            });
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
+                    $("input[name='query']:visible").focus();
+                }
+            });
         });
-        })
-        ;
     </script>
 {% endblock %}
