@@ -260,7 +260,10 @@ class MysqlQueries implements DataBaseQueries
     {
         $sql = '';
         foreach ($xmlCons as $res) {
-            $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
+            $value = strtolower($res['constraint']);
+            if (false !== strpos($value, 'primary key') || FS_DB_FOREIGN_KEYS) {
+                $sql .= ', CONSTRAINT ' . $res['name'] . ' ' . $res['constraint'];
+            }
         }
 
         return $this->fixPostgresql($sql);

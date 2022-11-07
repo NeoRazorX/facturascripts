@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
@@ -24,12 +25,11 @@ use mysqli;
 /**
  * Class to connect with MySQL.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class MysqlEngine extends DataBaseEngine
 {
-
     /**
      * Open transaction list.
      *
@@ -45,7 +45,7 @@ class MysqlEngine extends DataBaseEngine
     private $utilsSQL;
 
     /**
-     * Contructor and class initialization.
+     * Constructor and class initialization.
      */
     public function __construct()
     {
@@ -100,7 +100,7 @@ class MysqlEngine extends DataBaseEngine
      */
     public function columnFromData($colData)
     {
-        $result = \array_change_key_case($colData);
+        $result = array_change_key_case($colData);
         $result['is_nullable'] = $result['null'];
         $result['name'] = $result['field'];
         unset($result['null'], $result['field']);
@@ -117,7 +117,7 @@ class MysqlEngine extends DataBaseEngine
     public function commit($link)
     {
         $result = $this->exec($link, 'COMMIT;');
-        if ($result && \in_array($link, $this->transactions, false)) {
+        if ($result && in_array($link, $this->transactions, false)) {
             $this->unsetTransaction($link);
         }
 
@@ -138,16 +138,16 @@ class MysqlEngine extends DataBaseEngine
             return true;
         } elseif ($dbType == 'tinyint(1)' && $xmlType == 'boolean') {
             return true;
-        } elseif (\substr($dbType, 0, 3) == 'int' && \strtolower($xmlType) == 'integer') {
+        } elseif (substr($dbType, 0, 3) == 'int' && strtolower($xmlType) == 'integer') {
             return true;
-        } elseif (\substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision') {
+        } elseif (substr($dbType, 0, 6) == 'double' && $xmlType == 'double precision') {
             return true;
-        } elseif (\substr($dbType, 0, 8) == 'varchar(' && \substr($xmlType, 0, 18) == 'character varying(') {
-            /// check length
-            return \substr($dbType, 8, -1) == \substr($xmlType, 18, -1);
-        } elseif (\substr($dbType, 0, 5) == 'char(' && \substr($xmlType, 0, 18) == 'character varying(') {
-            /// check length
-            return \substr($dbType, 5, -1) == \substr($xmlType, 18, -1);
+        } elseif (substr($dbType, 0, 8) == 'varchar(' && substr($xmlType, 0, 18) == 'character varying(') {
+            // check length
+            return substr($dbType, 8, -1) == substr($xmlType, 18, -1);
+        } elseif (substr($dbType, 0, 5) == 'char(' && substr($xmlType, 0, 18) == 'character varying(') {
+            // check length
+            return substr($dbType, 5, -1) == substr($xmlType, 18, -1);
         }
 
         return false;
@@ -162,24 +162,24 @@ class MysqlEngine extends DataBaseEngine
      */
     public function connect(&$error)
     {
-        if (false === \class_exists('mysqli')) {
+        if (false === class_exists('mysqli')) {
             $error = $this->i18n->trans('php-mysql-not-found');
             return null;
         }
 
-        $result = new mysqli(\FS_DB_HOST, \FS_DB_USER, \FS_DB_PASS, \FS_DB_NAME, (int) \FS_DB_PORT);
+        $result = new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int)FS_DB_PORT);
         if ($result->connect_errno) {
             $error = $result->connect_error;
             $this->lastErrorMsg = $error;
             return null;
         }
 
-        $charset = \defined('FS_MYSQL_CHARSET') ? \FS_MYSQL_CHARSET : 'utf8';
+        $charset = defined('FS_MYSQL_CHARSET') ? FS_MYSQL_CHARSET : 'utf8';
         $result->set_charset($charset);
         $result->autocommit(false);
 
-        /// disable foreign keys
-        if (\defined('FS_DB_FOREIGN_KEYS') && false === \FS_DB_FOREIGN_KEYS) {
+        // disable foreign keys
+        if (defined('FS_DB_FOREIGN_KEYS') && false === FS_DB_FOREIGN_KEYS) {
             $this->exec($result, 'SET foreign_key_checks = 0;');
         }
 
@@ -267,7 +267,7 @@ class MysqlEngine extends DataBaseEngine
      */
     public function inTransaction($link)
     {
-        return \in_array($link, $this->transactions, false);
+        return in_array($link, $this->transactions, false);
     }
 
     /**
@@ -281,7 +281,7 @@ class MysqlEngine extends DataBaseEngine
     {
         $tables = [];
         foreach ($this->select($link, 'SHOW TABLES;') as $row) {
-            $key = 'Tables_in_' . \FS_DB_NAME;
+            $key = 'Tables_in_' . FS_DB_NAME;
             if (isset($row[$key])) {
                 $tables[] = $row[$key];
             }
@@ -300,7 +300,7 @@ class MysqlEngine extends DataBaseEngine
     public function rollback($link)
     {
         $result = $this->exec($link, 'ROLLBACK;');
-        if (\in_array($link, $this->transactions, false)) {
+        if (in_array($link, $this->transactions, false)) {
             $this->unsetTransaction($link);
         }
 
@@ -368,7 +368,7 @@ class MysqlEngine extends DataBaseEngine
         $count = 0;
         foreach ($this->transactions as $trans) {
             if ($trans === $link) {
-                \array_splice($this->transactions, $count, 1);
+                array_splice($this->transactions, $count, 1);
                 break;
             }
             ++$count;
