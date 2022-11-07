@@ -441,7 +441,7 @@
     "email-not-configured": "Posta elektronikoa ez dago konfiguratuta. Administratzailea, kontrol panela, aplikazioaren lehentasunak menutik ahal duzu konfiguratu.",
     "email-not-sent": "Bidali gabe",
     "email-notification": "Email Jakinarazpena",
-    "email-notification-not-exists": "Notificación de email %name% no encontrada",
+    "email-notification-not-exists": "%name% mezu elektronikoaren jakinarazpena ez da aurkitu",
     "email-replies": "Posta elektronikoen erantzuna",
     "email-replies-to": "Email honen erantzunak %email% helbidera joango dira",
     "email-sent": "Posta elektronikoz bidalita",
