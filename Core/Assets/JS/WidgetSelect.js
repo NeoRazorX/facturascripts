@@ -1,4 +1,4 @@
-let waitCounter = 0;
+let waitSelectCounter = 0;
 
 function getValueTypeParent(parent) {
     if (parent.is('select')) {
@@ -63,10 +63,10 @@ $(document).ready(function () {
         } else if (parent.is('input') || parent.is('textarea')) {
             parent.keyup(async function(){
                 // usamos un contador y un temporizador para solamente procesar la última llamada
-                waitCounter++;
-                let waitNum = waitCounter;
+                waitSelectCounter++;
+                let waitNum = waitSelectCounter;
                 await new Promise(r => setTimeout(r, 500));
-                if (waitNum < waitCounter) {
+                if (waitNum < waitSelectCounter) {
                     return false;
                 }
 
