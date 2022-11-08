@@ -27,7 +27,6 @@ use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Session;
-use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
@@ -239,8 +238,6 @@ class AppController extends App
     {
         // HTML template variables
         $templateVars = [
-            'appSettings' => ToolBox::appSettings(),
-            'assetManager' => new AssetManager(),
             'controllerName' => $controllerName,
             'debugBarRender' => $this->debugBar(),
             'fsc' => $this->controller,
