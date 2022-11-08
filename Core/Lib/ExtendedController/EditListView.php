@@ -37,6 +37,13 @@ class EditListView extends BaseView
     const INLINE_TEMPLATE = 'Master/EditListViewInLine.html.twig';
 
     /**
+     * Indicates if the view has been selected by the user.
+     *
+     * @var bool
+     */
+    public $selected;
+
+    /**
      * Method to export the view data.
      *
      * @param ExportManager $exportManager
@@ -98,6 +105,7 @@ class EditListView extends BaseView
                 foreach ($this->getColumns() as $group) {
                     $group->processFormData($this->model, $request);
                 }
+                $this->selected = $request->request->get('code');
                 break;
 
             case 'load':

@@ -287,7 +287,9 @@ abstract class PanelController extends BaseController
             case 'delete-document':
                 if ($this->deleteAction() && $this->active === $this->getMainViewName()) {
                     // al eliminar el registro principal, redirigimos al listado para mostrar ahí el mensaje de éxito
-                    $this->redirect($this->views[$this->active]->model->url('list') . '?action=delete-ok');
+                    $listUrl = $this->views[$this->active]->model->url('list');
+                    $redirect = strpos($listUrl, '?') === false ? $listUrl . '?action=delete-ok' : $listUrl . '&action=delete-ok';
+                    $this->redirect($redirect);
                 }
                 break;
 
