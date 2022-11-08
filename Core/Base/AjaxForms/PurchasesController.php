@@ -143,6 +143,15 @@ abstract class PurchasesController extends PanelController
     {
         $this->setTemplate(false);
 
+        // comprobamos los permisos
+        if (false === $this->permissions->allowDelete) {
+            self::toolBox()::i18nLog()->warning('not-allowed-delete');
+            $this->response->setContent(
+                json_encode(['ok' => false, 'messages' => self::toolBox()::log()::read('', $this->logLevels)])
+            );
+            return false;
+        }
+
         $model = $this->getModel();
         if (false === $model->delete()) {
             $this->response->setContent(json_encode(['ok' => false, 'messages' => self::toolBox()::log()::read('', $this->logLevels)]));
@@ -326,6 +335,16 @@ abstract class PurchasesController extends PanelController
     protected function saveDocAction(): bool
     {
         $this->setTemplate(false);
+
+        // comprobamos los permisos
+        if (false === $this->permissions->allowUpdate) {
+            self::toolBox()::i18nLog()->warning('not-allowed-modify');
+            $this->response->setContent(
+                json_encode(['ok' => false, 'messages' => self::toolBox()::log()::read('', $this->logLevels)])
+            );
+            return false;
+        }
+
         $this->dataBase->beginTransaction();
 
         $model = $this->getModel();
@@ -375,6 +394,15 @@ abstract class PurchasesController extends PanelController
     {
         $this->setTemplate(false);
 
+        // comprobamos los permisos
+        if (false === $this->permissions->allowUpdate) {
+            self::toolBox()::i18nLog()->warning('not-allowed-modify');
+            $this->response->setContent(
+                json_encode(['ok' => false, 'messages' => self::toolBox()::log()::read('', $this->logLevels)])
+            );
+            return false;
+        }
+
         $model = $this->getModel();
         $receipts = $model->getReceipts();
         if (empty($receipts)) {
@@ -399,6 +427,16 @@ abstract class PurchasesController extends PanelController
     protected function saveStatusAction(): bool
     {
         $this->setTemplate(false);
+
+        // comprobamos los permisos
+        if (false === $this->permissions->allowUpdate) {
+            self::toolBox()::i18nLog()->warning('not-allowed-modify');
+            $this->response->setContent(
+                json_encode(['ok' => false, 'messages' => self::toolBox()::log()::read('', $this->logLevels)])
+            );
+            return false;
+        }
+
         if ($this->getModel()->editable && false === $this->saveDocAction()) {
             return false;
         }
