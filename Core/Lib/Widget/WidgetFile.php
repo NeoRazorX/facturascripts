@@ -91,7 +91,7 @@ class WidgetFile extends BaseWidget
 
             // exclude php files
             if (in_array($uploadFile->getClientMimeType(), ['application/x-php', 'text/x-php'])) {
-                $logger->error($this->i18n->trans('php-files-blocked'));
+                $logger->error(static::$i18n->trans('php-files-blocked'));
                 continue;
             }
 
