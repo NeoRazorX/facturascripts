@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -25,29 +26,18 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 /**
  * Controller to edit a single item from the Serie model
  *
- * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Francesc Pineda Segarra       <francesc.pineda.segarra@gmail.com>
  */
 class EditSerie extends EditController
 {
-
-    /**
-     * Returns the model name.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Serie';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -56,29 +46,21 @@ class EditSerie extends EditController
         return $data;
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createFormatView(string $viewName = 'ListFormatoDocumento')
     {
         $this->addListView($viewName, 'FormatoDocumento', 'printing-format', 'fas fa-print');
         $this->views[$viewName]->addOrderBy(['tipodoc'], 'doc-type', 2);
 
-        /// disable columns
+        // desactivamos la columna serie
         $this->views[$viewName]->disableColumn('serie');
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createSequenceView(string $viewName = 'ListSecuenciaDocumento')
     {
         $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code');
         $this->views[$viewName]->addOrderBy(['codejercicio', 'tipodoc'], 'exercise', 2);
 
-        /// disable columns
+        // desactivamos la columna serie
         $this->views[$viewName]->disableColumn('serie');
     }
 
@@ -97,7 +79,7 @@ class EditSerie extends EditController
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
