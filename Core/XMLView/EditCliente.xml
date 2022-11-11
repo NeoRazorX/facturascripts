@@ -77,7 +77,7 @@
             </column>
         </group>
         <group name="comercial" title="commercial-terms" numcolumns="12">
-            <column name="agent" titleurl="ListAgente" level="99" numcolumns="2" order="100">
+            <column name="agent" titleurl="ListAgente" numcolumns="2" order="100">
                 <widget type="select" fieldname="codagente" onclick="EditAgente" icon="fas fa-user-tie">
                     <values source="agentes" fieldcode="codagente" fieldtitle="nombre"/>
                 </widget>
