@@ -26,6 +26,8 @@
     <column>
         <name>siniva</name>
         <type>boolean</type>
+        <null>NO</null>
+        <default>false</default>
     </column>
     <constraint>
         <name>series_pkey</name>

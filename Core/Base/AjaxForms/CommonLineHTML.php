@@ -75,7 +75,7 @@ trait CommonLineHTML
         // el sujeto no está exento de impuestos, la serie tiene impuestos
         // y la línea no tiene suplidos
         $editable = $model->editable && self::$regimeniva != RegimenIVA::TAX_SYSTEM_EXEMPT
-            && false === Series::get($model->codserie)->siniva && false === $line->suplido;
+            && false == Series::get($model->codserie)->siniva && false == $line->suplido;
 
         $attributes = $editable ?
             'name="codimpuesto_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
