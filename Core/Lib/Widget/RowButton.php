@@ -63,7 +63,7 @@ class RowButton extends VisualItem
         $this->label = isset($data['label']) ? static::$i18n->trans($data['label']) : '';
         $this->level = isset($data['level']) ? (int)$data['level'] : 0;
         $this->target = $data['target'] ?? '';
-        $this->title = $data['title'] ?? '';
+        $this->title = isset($data['title']) ? static::$i18n->trans($data['title']) : '';
         $this->type = $data['type'] ?? 'action';
     }
 
