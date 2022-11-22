@@ -204,10 +204,16 @@ class Producto extends Base\ModelClass
     /**
      * @return ProductoImagen[]
      */
-    public function getImages(): array
+    public function getImages(bool $imgVariant = true): array
     {
         $image = new DinProductoImagen();
         $where = [new DataBaseWhere('idproducto', $this->idproducto)];
+
+        // solo si queremos lás imágenes del producto y no de las variantes
+        if (false === $imgVariant) {
+            $where[] = new DataBaseWhere('referencia', null);
+        }
+
         $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
         return $image->all($where, $orderBy, 0, 0);
     }
