@@ -215,13 +215,18 @@ class Variante extends Base\ModelClass
     /**
      * @return ProductoImagen[]
      */
-    public function getImages(): array
+    public function getImages(bool $imgProduct = true): array
     {
         // buscamos las imágenes propias de esta variante
         $image = new DinProductoImagen();
         $whereVar = [new DataBaseWhere('referencia', $this->referencia)];
         $orderBy = ['id' => 'ASC'];
         $images = $image->all($whereVar, $orderBy, 0, 0);
+
+        // si solo queremos las imágenes de la variante, terminamos
+        if (false === $imgProduct) {
+            return $images;
+        }
 
         // añadimos las imágenes del producto para todas las variantes
         $whereProd = [
