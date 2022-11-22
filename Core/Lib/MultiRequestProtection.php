@@ -42,7 +42,9 @@ class MultiRequestProtection
     public function __construct()
     {
         // something unique in each installation
-        self::$seed = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS;
+        if (false === isset(self::$seed)) {
+            self::$seed = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS;
+        }
     }
 
     /**
