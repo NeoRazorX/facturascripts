@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Almacen;
+use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Fabricante;
@@ -30,6 +31,7 @@ use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\Producto;
+use FacturaScripts\Core\Model\ProductoImagen;
 use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\Serie;
@@ -445,6 +447,63 @@ final class ProductoTest extends TestCase
         $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cliente-delete-error');
         $this->assertTrue($product->delete(), 'product-cant-delete');
+    }
+
+    public function testDeleteImages()
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // añadimos una variante
+        $variant = new Variante();
+        $variant->idproducto = $product->idproducto;
+        $variant->referencia = 'test';
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        // copiamos una imagen
+        $original = 'xss_img_src_onerror_alert(123).jpeg';
+        $originalPath = FS_FOLDER . '/Test/__files/' . $original;
+        $this->assertTrue(copy($originalPath, FS_FOLDER . '/MyFiles/' . $original), 'File not copied');
+
+        // guardamos la imagen
+        $model = new AttachedFile();
+        $model->path = $original;
+        $this->assertTrue($model->save(), 'can-not-save-file');
+
+        // añadimos una imagen al producto
+        $imageProducto = new ProductoImagen();
+        $imageProducto->idproducto = $product->idproducto;
+        $imageProducto->idfile = $model->idfile;
+        $this->assertTrue($imageProducto->save(), 'can-not-save-image-producto');
+
+        // comprobamos que el producto tiene imágenes
+        $this->assertCount(1, $product->getImages(false), 'product-no-images');
+
+        // añadimos una imagen a la variante
+        $imageVariante = new ProductoImagen();
+        $imageVariante->idproducto = $product->idproducto;
+        $imageVariante->referencia = $variant->referencia;
+        $imageVariante->idfile = $model->idfile;
+        $this->assertTrue($imageVariante->save(), 'can-not-save-image-variante');
+
+        // comprobamos que la variante tiene imágenes
+        $this->assertCount(1, $variant->getImages(false), 'variant-no-images');
+
+        // eliminamos la variante
+        $this->assertTrue($variant->delete(), 'variant-cant-delete');
+
+        // comprobamos que la variante no tiene imágenes
+        $this->assertCount(0, $variant->getImages(false), 'variant-images-not-deleted');
+
+        // eliminamos el producto
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+
+        // comprobamos que el producto no tiene imágenes
+        $this->assertCount(0, $product->getImages(false), 'product-images-not-deleted');
+
+        // eliminamos la imagen subida
+        $this->assertTrue($model->delete(), 'can-not-delete-file');
     }
 
     private function getTestProduct(): Producto

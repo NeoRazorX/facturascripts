@@ -187,6 +187,38 @@ class Producto extends Base\ModelClass
         $this->ventasinstock = (bool)$this->toolBox()->appSettings()->get('default', 'ventasinstock', false);
     }
 
+    public function delete(): bool
+    {
+        $newTransaction = static::$dataBase->inTransaction();
+        if (false === $newTransaction) {
+            $newTransaction = true;
+            static::$dataBase->beginTransaction();
+        }
+
+        // eliminamos el producto
+        if (false === parent::delete()) {
+            if ($newTransaction) {
+                static::$dataBase->rollback();
+            }
+            return false;
+        }
+
+        // eliminamos las imágenes del producto
+        foreach ($this->getImages() as $image) {
+            if (false === $image->delete()) {
+                if ($newTransaction) {
+                    static::$dataBase->rollback();
+                }
+                return false;
+            }
+        }
+
+        if ($newTransaction) {
+            static::$dataBase->commit();
+        }
+        return true;
+    }
+
     public function getFabricante(): Fabricante
     {
         $fabricante = new DinFabricante();

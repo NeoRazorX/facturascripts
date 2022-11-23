@@ -175,12 +175,39 @@ class Variante extends Base\ModelClass
 
     public function delete(): bool
     {
+        $newTransaction = static::$dataBase->inTransaction();
+        if (false === $newTransaction) {
+            $newTransaction = true;
+            static::$dataBase->beginTransaction();
+        }
+
         if ($this->referencia == $this->getProducto()->referencia) {
             $this->toolBox()->i18nLog()->warning('you-cant-delete-primary-variant');
             return false;
         }
 
-        return parent::delete();
+        // eliminamos la variante
+        if (false === parent::delete()) {
+            if ($newTransaction) {
+                static::$dataBase->rollback();
+            }
+            return false;
+        }
+
+        // eliminamos las imágenes de la variante
+        foreach ($this->getImages(false) as $image) {
+            if (false === $image->delete()) {
+                if ($newTransaction) {
+                    static::$dataBase->rollback();
+                }
+                return false;
+            }
+        }
+
+        if ($newTransaction) {
+            static::$dataBase->commit();
+        }
+        return true;
     }
 
     /**
