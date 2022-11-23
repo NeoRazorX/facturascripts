@@ -101,7 +101,23 @@ class AttachedFile extends Base\ModelOnChangeClass
             return false;
         }
 
-        return parent::delete();
+        if (false === parent::delete()) {
+            return false;
+        }
+
+        // obtenemos el nombre del archivo sin la extension
+        $name = pathinfo($this->filename, PATHINFO_FILENAME);
+
+        // buscamos todas las imágenes que empiecen por el mismo nombre y las eliminamos
+        $path = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/';
+        $files = scandir($path);
+        foreach ($files as $file) {
+            if (strpos($file, $name) === 0) {
+                unlink($path . $file);
+            }
+        }
+
+        return true;
     }
 
     public function getExtension(): string

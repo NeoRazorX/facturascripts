@@ -45,6 +45,30 @@ class ProductoImagen extends Base\ModelClass
     /** @var string */
     public $referencia;
 
+    public function delete(): bool
+    {
+        if (false === parent::delete()) {
+            return false;
+        }
+
+        // obtenemos la imagen
+        $image = $this->getFile();
+
+        // obtenemos el nombre de la imagen sin la extension
+        $name = pathinfo($image->filename, PATHINFO_FILENAME);
+
+        // buscamos todas las imágenes que empiecen por el mismo nombre y las eliminamos
+        $path = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/';
+        $files = scandir($path);
+        foreach ($files as $file) {
+            if (strpos($file, $name) === 0) {
+                unlink($path . $file);
+            }
+        }
+
+        return true;
+    }
+
     public function getFile(): AttachedFile
     {
         $file = new DinAttachedFile();
