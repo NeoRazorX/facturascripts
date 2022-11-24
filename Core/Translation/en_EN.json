@@ -788,6 +788,8 @@
     "longitude": "Longitude",
     "lot": "Lot",
     "low-security": "Low security",
+    "machine": "Machine",
+    "machines": "Machines",
     "macro-account-note-info": "Keys for values replacement macro",
     "mail-test-error": "The email test has failed",
     "mail-test-ok": "Satisfactory email proof",
