@@ -37,12 +37,14 @@ class MultiRequestProtection
     /**
      * @var string
      */
-    protected $seed;
+    protected static $seed;
 
     public function __construct()
     {
         // something unique in each installation
-        $this->seed = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS;
+        if (false === isset(self::$seed)) {
+            self::$seed = PHP_VERSION . __FILE__ . FS_DB_NAME . FS_DB_PASS;
+        }
     }
 
     /**
@@ -50,7 +52,7 @@ class MultiRequestProtection
      */
     public function addSeed(string $seed)
     {
-        $this->seed .= $seed;
+        self::$seed .= $seed;
     }
 
     /**
@@ -61,10 +63,10 @@ class MultiRequestProtection
     public function newToken(): string
     {
         // something that changes every hour
-        $num = intval(date('YmdH')) + strlen($this->seed);
+        $num = intval(date('YmdH')) + strlen(self::$seed);
 
         // combine and generate the token
-        $value = $this->seed . $num;
+        $value = self::$seed . $num;
         return sha1($value) . '|' . $this->getRandomStr();
     }
 
@@ -101,12 +103,12 @@ class MultiRequestProtection
         }
 
         // check all valid tokens roots
-        $num = intval(date('YmdH')) + strlen($this->seed);
-        $valid = [sha1($this->seed . $num)];
+        $num = intval(date('YmdH')) + strlen(self::$seed);
+        $valid = [sha1(self::$seed . $num)];
         for ($hour = 1; $hour <= self::MAX_TOKEN_AGE; $hour++) {
             $time = strtotime('-' . $hour . ' hours');
-            $altNum = intval(date('YmdH', $time)) + strlen($this->seed);
-            $valid[] = sha1($this->seed . $altNum);
+            $altNum = intval(date('YmdH', $time)) + strlen(self::$seed);
+            $valid[] = sha1(self::$seed . $altNum);
         }
 
         return in_array($tokenParts[0], $valid);

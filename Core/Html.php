@@ -114,7 +114,10 @@ final class Html
             return $input ?
                 '<input type="hidden" name="multireqtoken" value="' . $tokenClass->newToken() . '"/>' :
                 $tokenClass->newToken();
-        });
+        }, [
+            'is_safe' => ['html'],
+            'is_safe_callback' => ['html']
+        ]);
     }
 
     private static function getIncludeViews(): TwigFunction
