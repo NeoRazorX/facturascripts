@@ -38,7 +38,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Wizard extends Controller
 {
-
     const ITEM_SELECT_LIMIT = 500;
     const NEW_DEFAULT_PAGE = 'Dashboard';
 
@@ -322,6 +321,10 @@ class Wizard extends Controller
 
     private function saveStep1()
     {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
         $codpais = $this->request->request->get('codpais', $this->empresa->codpais);
         $this->preSetAppSettings($codpais);
 
@@ -347,6 +350,10 @@ class Wizard extends Controller
 
     private function saveStep2()
     {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
         $this->empresa->regimeniva = $this->request->request->get('regimeniva');
         $this->empresa->save();
 

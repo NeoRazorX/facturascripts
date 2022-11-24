@@ -109,15 +109,19 @@ final class Html
 
     private static function formTokenFunction(): TwigFunction
     {
-        return new TwigFunction('formToken', function (bool $input = true) {
-            $tokenClass = new MultiRequestProtection();
-            return $input ?
-                '<input type="hidden" name="multireqtoken" value="' . $tokenClass->newToken() . '"/>' :
-                $tokenClass->newToken();
-        }, [
-            'is_safe' => ['html'],
-            'is_safe_callback' => ['html']
-        ]);
+        return new TwigFunction(
+            'formToken',
+            function (bool $input = true) {
+                $tokenClass = new MultiRequestProtection();
+                return $input ?
+                    '<input type="hidden" name="multireqtoken" value="' . $tokenClass->newToken() . '"/>' :
+                    $tokenClass->newToken();
+            },
+            [
+                'is_safe' => ['html'],
+                'is_safe_callback' => ['html']
+            ]
+        );
     }
 
     private static function getIncludeViews(): TwigFunction

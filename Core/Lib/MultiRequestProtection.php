@@ -34,9 +34,7 @@ class MultiRequestProtection
     const MAX_TOKENS = 500;
     const RANDOM_STRING_LENGTH = 6;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected static $seed;
 
     public function __construct()
@@ -47,9 +45,6 @@ class MultiRequestProtection
         }
     }
 
-    /**
-     * @param string $seed
-     */
     public function addSeed(string $seed)
     {
         self::$seed .= $seed;
@@ -88,11 +83,6 @@ class MultiRequestProtection
         return false;
     }
 
-    /**
-     * @param string $token
-     *
-     * @return bool
-     */
     public function validate(string $token): bool
     {
         $tokenParts = explode('|', $token);
@@ -114,18 +104,12 @@ class MultiRequestProtection
         return in_array($tokenParts[0], $valid);
     }
 
-    /**
-     * @return string
-     */
     protected function getRandomStr(): string
     {
         $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         return substr(str_shuffle($chars), 0, self::RANDOM_STRING_LENGTH);
     }
 
-    /**
-     * @return array
-     */
     protected function getTokens(): array
     {
         $values = Cache::get(self::CACHE_KEY);
