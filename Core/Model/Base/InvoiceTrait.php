@@ -56,7 +56,7 @@ trait InvoiceTrait
     private $refunds;
 
     /** @return bool */
-    private $vencida;
+    public $vencida;
 
     abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array;
 

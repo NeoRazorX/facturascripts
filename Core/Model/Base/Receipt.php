@@ -155,22 +155,25 @@ abstract class Receipt extends ModelOnChangeClass
     {
         $this->observaciones = $this->toolBox()->utils()->noHtml($this->observaciones);
 
-        // set invoice code
+        // asignamos el código de la factura
         if (empty($this->codigofactura)) {
             $this->codigofactura = $this->getInvoice()->codigo;
         }
 
-        // check payment date
+        // comprobamos la fecha de pago
         if ($this->pagado === false) {
             $this->fechapago = null;
         } elseif (empty($this->fechapago)) {
             $this->fechapago = date(self::DATE_STYLE);
         }
 
-        // check expiration date
+        // comprobamos la fecha de vencimiento
         if (strtotime($this->vencimiento) < strtotime($this->fecha)) {
             $this->vencimiento = $this->fecha;
         }
+
+        // comprobamos el vencimiento
+        $this->vencido = !$this->pagado && strtotime($this->vencimiento) < time();
 
         return parent::test();
     }

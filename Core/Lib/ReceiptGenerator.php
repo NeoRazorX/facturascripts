@@ -33,7 +33,6 @@ use FacturaScripts\Dinamic\Model\ReciboProveedor;
  */
 class ReceiptGenerator
 {
-
     const MAX_RECEIPTS = 100;
     const PARTIAL_AMOUNT_MULTIPLIER = 1.5;
 
@@ -72,9 +71,12 @@ class ReceiptGenerator
 
         // sumamos los importes pagados
         $paidAmount = 0.0;
+        $invoice->vencida = false;
         foreach ($receipts as $receipt) {
             if ($receipt->pagado) {
                 $paidAmount += $receipt->importe;
+            } elseif ($receipt->vencido) {
+                $invoice->vencida = true;
             }
         }
         // la factura está pagada si el importe pagado es igual o superior al importe total
@@ -83,6 +85,7 @@ class ReceiptGenerator
         // actualizamos la factura por sql
         $dataBase = new DataBase();
         $sql = 'UPDATE ' . $invoice::tableName() . ' SET pagada = ' . $dataBase->var2str($invoice->pagada)
+            . ', vencida = ' . $dataBase->var2str($invoice->vencida)
             . ' WHERE ' . $invoice::primaryColumn() . ' = ' . $dataBase->var2str($invoice->primaryColumnValue()) . ';';
         $dataBase->exec($sql);
     }
