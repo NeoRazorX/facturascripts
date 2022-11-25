@@ -93,7 +93,7 @@ class ListFacturaCliente extends ListBusinessDocument
             ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
             ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
             ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
-            ['label' => $i18n->trans('expired'), 'where' => [new DataBaseWhere('vencido', true)]],
+            ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
         ]);
 
         // botones
@@ -139,7 +139,7 @@ class ListFacturaCliente extends ListBusinessDocument
             ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
             ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
             ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
-            ['label' => $i18n->trans('expired'), 'where' => [new DataBaseWhere('vencida', true)]],
+            ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],
         ]);
         $this->addFilterCheckbox('ListFacturaCliente', 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
 

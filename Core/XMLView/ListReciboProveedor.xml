@@ -60,7 +60,7 @@
     <rows>
         <row type="status">
             <option color="success" fieldname="pagado" title="paid">1</option>
-            <option color="danger" fieldname="vencido" title="expired">1</option>
+            <option color="danger" fieldname="vencido" title="expired-receipt">1</option>
         </row>
     </rows>
     <modals>
