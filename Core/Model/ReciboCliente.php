@@ -32,7 +32,6 @@ use FacturaScripts\Dinamic\Model\PagoCliente as DinPagoCliente;
  */
 class ReciboCliente extends Base\Receipt
 {
-
     use Base\ModelTrait;
 
     /** @var string */

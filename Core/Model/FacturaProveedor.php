@@ -43,6 +43,7 @@ class FacturaProveedor extends Base\PurchaseDocument
     {
         parent::clear();
         $this->pagada = false;
+        $this->vencida = false;
     }
 
     /**

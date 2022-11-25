@@ -69,8 +69,16 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addSearchFields($viewName, ['codigorect']);
 
         // filtros
-        $this->addFilterCheckbox('ListFacturaProveedor', 'pagada', 'unpaid', 'pagada', '=', false);
+        $i18n = $this->toolBox()->i18n();
+        $this->addFilterSelectWhere($viewName, 'status', [
+            ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
+            ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagada', true)]],
+            ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
+            ['label' => $i18n->trans('expired'), 'where' => [new DataBaseWhere('vencida', true)]],
+        ]);
         $this->addFilterCheckbox('ListFacturaProveedor', 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
+
+        // botones
         $this->addButtonLockInvoice('ListFacturaProveedor');
 
         if ($this->user->admin) {
@@ -93,7 +101,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
 
         // filtros
-        $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
+        $this->addFilterPeriod($viewName, 'expiration', 'period', 'vencimiento');
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
@@ -108,7 +116,13 @@ class ListFacturaProveedor extends ListBusinessDocument
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $payMethods);
         }
 
-        $this->addFilterCheckbox($viewName, 'pagado', 'unpaid', '', '!=');
+        $i18n = $this->toolBox()->i18n();
+        $this->addFilterSelectWhere($viewName, 'status', [
+            ['label' => $i18n->trans('paid-or-unpaid'), 'where' => []],
+            ['label' => $i18n->trans('paid'), 'where' => [new DataBaseWhere('pagado', true)]],
+            ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
+            ['label' => $i18n->trans('expired'), 'where' => [new DataBaseWhere('vencido', true)]],
+        ]);
 
         // botones
         $this->addButtonPayReceipt($viewName);

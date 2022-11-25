@@ -31,12 +31,9 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
  */
 class ReciboProveedor extends Base\Receipt
 {
-
     use Base\ModelTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codproveedor;
 
     public function getInvoice(): DinFacturaProveedor

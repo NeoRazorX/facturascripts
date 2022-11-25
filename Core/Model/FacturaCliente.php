@@ -30,7 +30,6 @@ use FacturaScripts\Dinamic\Model\ReciboCliente as DinReciboCliente;
  */
 class FacturaCliente extends Base\SalesDocument
 {
-
     use Base\ModelTrait;
     use Base\InvoiceTrait;
 
@@ -38,6 +37,7 @@ class FacturaCliente extends Base\SalesDocument
     {
         parent::clear();
         $this->pagada = false;
+        $this->vencida = false;
     }
 
     /**

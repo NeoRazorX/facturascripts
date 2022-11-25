@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,26 +21,26 @@
 <view>
     <columns>
         <column name="id" display="none" order="100">
-            <widget type="text" fieldname="idrecibo" />
+            <widget type="text" fieldname="idrecibo"/>
         </column>
         <column name="date" display="none" order="110">
-            <widget type="date" fieldname="fecha" />
+            <widget type="date" fieldname="fecha"/>
         </column>
         <column name="invoice" order="120">
             <widget type="autocomplete" fieldname="idfactura" onclick="EditFacturaCliente" readonly="dinamic">
-                <values source="facturascli" fieldcode="idfactura" fieldtitle="codigo" />
+                <values source="facturascli" fieldcode="idfactura" fieldtitle="codigo"/>
             </widget>
         </column>
         <column name="number" order="130">
-            <widget type="number" fieldname="numero" decimal="0" />
+            <widget type="number" fieldname="numero" decimal="0"/>
         </column>
         <column name="customer" order="140">
             <widget type="autocomplete" fieldname="codcliente">
-                <values source="clientes" fieldcode="codcliente" fieldtitle="nombre" />
+                <values source="clientes" fieldcode="codcliente" fieldtitle="nombre"/>
             </widget>
         </column>
         <column name="observations" order="150">
-            <widget type="textarea" fieldname="observaciones" />
+            <widget type="textarea" fieldname="observaciones"/>
         </column>
         <column name="amount" display="right" order="160">
             <widget type="money" fieldname="importe">
@@ -53,25 +53,25 @@
             </widget>
         </column>
         <column name="paid" display="center" order="180">
-            <widget type="checkbox" fieldname="pagado" />
+            <widget type="checkbox" fieldname="pagado"/>
         </column>
         <column name="payment-date" order="190">
-            <widget type="date" fieldname="fechapago" />
+            <widget type="date" fieldname="fechapago"/>
         </column>
         <column name="expiration" display="right" order="200">
-            <widget type="date" fieldname="vencimiento" />
+            <widget type="date" fieldname="vencimiento"/>
         </column>
     </columns>
     <rows>
         <row type="status">
-            <option color="success" fieldname="pagado">1</option>
-            <option color="warning" fieldname="pagado">0</option>
+            <option color="success" fieldname="pagado" title="paid">1</option>
+            <option color="danger" fieldname="vencido" title="expired">1</option>
         </row>
     </rows>
     <modals>
         <group name="generate-receipts" title="new">
             <column name="receipts" numcolumns="12">
-                <widget type="number" fieldname="number" min="1" max="100" required="true" icon="fas fa-copy" />
+                <widget type="number" fieldname="number" min="1" max="100" required="true" icon="fas fa-copy"/>
             </column>
         </group>
     </modals>

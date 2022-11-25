@@ -32,53 +32,31 @@ use FacturaScripts\Dinamic\Model\Asiento;
  */
 trait InvoiceTrait
 {
-
     use AccEntryRelationTrait;
 
-    /**
-     * Code of the invoice that rectifies.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codigorect;
 
-    /**
-     * Indicates whether the document can be modified
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $editable;
 
-    /**
-     * Date of the document.
-     *
-     * @var string
-     */
+    /** @var string */
     public $fecha;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idfactura;
 
-    /**
-     * ID of the invoice that you rectify.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idfacturarect;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $pagada;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $refunds;
+
+    /** @return bool */
+    private $vencida;
 
     abstract public function all(array $where = [], array $order = [], int $offset = 0, int $limit = 50): array;
 
