@@ -232,8 +232,6 @@ abstract class PurchaseDocument extends TransformerDocument
                 return;
             }
         }
-
-        $newLine->pvpunitario = 0;
     }
 
     protected function setPreviousData(array $fields = [])
