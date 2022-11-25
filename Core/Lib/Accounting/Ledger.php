@@ -57,7 +57,7 @@ class Ledger
     {
         $this->exercise = new Ejercicio();
         $this->exercise->idempresa = $idcompany;
-        if (false === $this->exercise->loadFromDate($dateFrom, true, false)) {
+        if (false === $this->exercise->loadFromDate($dateFrom, false, false)) {
             return [];
         }
 
