@@ -166,10 +166,13 @@ abstract class ComercialContactController extends EditController
         $this->addListView($viewName, $model, 'receipts', 'fas fa-dollar-sign');
 
         // sort options
-        $this->views[$viewName]->addOrderBy(['fecha'], 'date', 2);
+        $this->views[$viewName]->addOrderBy(['fecha'], 'date');
         $this->views[$viewName]->addOrderBy(['fechapago'], 'payment-date');
-        $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration');
+        $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration', 2);
         $this->views[$viewName]->addOrderBy(['importe'], 'amount');
+		
+		// filters
+        $this->views[$viewName]->addFilterPeriod('period','expiration', 'vencimiento');
 
         // search columns
         $this->views[$viewName]->addSearchFields(['codigofactura', 'observaciones']);
