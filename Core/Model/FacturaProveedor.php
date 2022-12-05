@@ -177,4 +177,9 @@ class FacturaProveedor extends Base\PurchaseDocument
         }
         return empty($sql) || self::$dataBase->exec($sql);
     }
+
+    protected function testDate(): bool
+    {
+        return true;
+    }
 }
