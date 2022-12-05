@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -30,8 +31,7 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Contacto extends Base\Contact
-{
+class Contacto extends Base\Contact {
 
     use Base\ModelTrait;
     use Base\PasswordTrait;
@@ -200,10 +200,9 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function alias(): string
-    {
+    public function alias(): string {
         if (empty($this->email) || strpos($this->email, '@') === false) {
-            return (string)$this->idcontacto;
+            return (string) $this->idcontacto;
         }
 
         $aux = explode('@', $this->email);
@@ -218,8 +217,7 @@ class Contacto extends Base\Contact
         }
     }
 
-    public function clear()
-    {
+    public function clear() {
         parent::clear();
         $this->aceptaprivacidad = false;
         $this->admitemarketing = false;
@@ -237,8 +235,7 @@ class Contacto extends Base\Contact
      *
      * @return CodeModel[]
      */
-    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
-    {
+    public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array {
         $results = [];
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
         $fields = 'apellidos|cifnif|descripcion|email|empresa|idcontacto|nombre|observaciones|telefono1|telefono2';
@@ -249,8 +246,7 @@ class Contacto extends Base\Contact
         return $results;
     }
 
-    public function country(): string
-    {
+    public function country(): string {
         $country = new DinPais();
         $where = [new DataBaseWhere('codiso', $this->codpais)];
         if ($country->loadFromCode($this->codpais) || $country->loadFromCode('', $where)) {
@@ -265,8 +261,7 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function fullName(): string
-    {
+    public function fullName(): string {
         return $this->nombre . ' ' . $this->apellidos;
     }
 
@@ -275,8 +270,7 @@ class Contacto extends Base\Contact
      *
      * @return DinCliente
      */
-    public function getCustomer(bool $create = true)
-    {
+    public function getCustomer(bool $create = true) {
         $cliente = new DinCliente();
         if ($this->codcliente && $cliente->loadFromCode($this->codcliente)) {
             return $cliente;
@@ -311,8 +305,7 @@ class Contacto extends Base\Contact
      *
      * @return DinProveedor
      */
-    public function getSupplier(bool $create = true)
-    {
+    public function getSupplier(bool $create = true) {
         $proveedor = new DinProveedor();
         if ($this->codproveedor && $proveedor->loadFromCode($this->codproveedor)) {
             return $proveedor;
@@ -340,8 +333,7 @@ class Contacto extends Base\Contact
         return $proveedor;
     }
 
-    public function install(): string
-    {
+    public function install(): string {
         // we need this models to be checked before
         new DinAgente();
         new DinCliente();
@@ -357,31 +349,26 @@ class Contacto extends Base\Contact
      *
      * @return string
      */
-    public function newLogkey($ipAddress): string
-    {
+    public function newLogkey($ipAddress): string {
         $this->lastactivity = date(self::DATETIME_STYLE);
         $this->lastip = $ipAddress;
         $this->logkey = $this->toolBox()->utils()->randomString(99);
         return $this->logkey;
     }
 
-    public static function primaryColumn(): string
-    {
+    public static function primaryColumn(): string {
         return 'idcontacto';
     }
 
-    public function primaryDescriptionColumn(): string
-    {
+    public function primaryDescriptionColumn(): string {
         return 'descripcion';
     }
 
-    public static function tableName(): string
-    {
+    public static function tableName(): string {
         return 'contactos';
     }
 
-    public function test(): bool
-    {
+    public function test(): bool {
         if (empty($this->nombre) && empty($this->email) && empty($this->direccion)) {
             $this->toolBox()->i18nLog()->warning('empty-contact-data');
             return false;
@@ -403,8 +390,7 @@ class Contacto extends Base\Contact
         return $this->testPassword() && parent::test();
     }
 
-    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string
-    {
+    public function url(string $type = 'auto', string $list = 'ListCliente?activetab=List'): string {
         return parent::url($type, $list);
     }
 
@@ -415,8 +401,53 @@ class Contacto extends Base\Contact
      *
      * @return bool
      */
-    public function verifyLogkey(string $value): bool
-    {
+    public function verifyLogkey(string $value): bool {
         return $this->logkey === $value;
     }
+
+    /**
+     * Remove the model data from the database.
+     *
+     * @return bool
+     */
+    public function delete() {
+        $this->unlinkContact();
+        parent::delete();
+    }
+
+    protected function unlinkContact() {
+        //Clientes
+        $clientes = new \FacturaScripts\Dinamic\Model\Cliente();
+        $whereFact = [new DataBaseWhere('idcontactofact', $this->idcontacto)];
+
+        $clientes = $clientes->all($whereFact);
+        foreach ($clientes as $cliente) {
+            $cliente->idcontactofact = null;
+            $cliente->save();
+        }
+
+        $whereEnv = [new DataBaseWhere('idcontactoenv', $this->idcontacto)];
+        $clientes = $clientes->all($whereEnv);
+        foreach ($clientes as $cliente) {
+            $cliente->idcontactoenv = null;
+            $cliente->save();
+        }
+
+        //Proveedores
+        $proveedores = new \FacturaScripts\Dinamic\Model\Proveedor();
+        $whereContacto = [new DataBaseWhere('idcontacto', $this->idcontacto)];
+        $proveedores = $proveedores->all($whereContacto);
+        foreach ($proveedores as $proveedor) {
+            $proveedor->idcontacto = null;
+            $proveedor->save();
+        }
+        //Agentes
+        $agentes = new \FacturaScripts\Dinamic\Model\Agente();
+        $agentes = $agentes->all($whereContacto);
+        foreach ($agentes as $agente) {
+            $agente->idcontacto = null;
+            $agente->save();
+        }
+    }
+
 }
