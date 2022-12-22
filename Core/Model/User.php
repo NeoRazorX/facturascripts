@@ -180,7 +180,9 @@ class User extends Base\ModelClass
 
         $nick = defined('FS_INITIAL_USER') ? FS_INITIAL_USER : 'admin';
         $pass = defined('FS_INITIAL_PASS') ? FS_INITIAL_PASS : 'admin';
-        $email = filter_var($this->nick, FILTER_VALIDATE_EMAIL) ? $this->nick : '';
+        $email = filter_var($this->nick, FILTER_VALIDATE_EMAIL) ?
+            $this->nick :
+            (defined('FS_INITIAL_EMAIL') ? FS_INITIAL_EMAIL : '');
         $this->toolBox()->i18nLog()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,email,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
             . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT) . "','" . $email
