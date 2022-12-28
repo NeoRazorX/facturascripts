@@ -90,9 +90,6 @@ abstract class App
         $this->response = new Response();
         $this->uri = $uri;
 
-        // timezone
-        date_default_timezone_set(FS_TIMEZONE);
-
         // add security headers
         $this->response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $this->response->headers->set('X-XSS-Protection', '1; mode=block');
