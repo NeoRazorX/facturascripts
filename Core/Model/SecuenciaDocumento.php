@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,59 +27,36 @@ namespace FacturaScripts\Core\Model;
  */
 class SecuenciaDocumento extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codejercicio;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codserie;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $idempresa;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idsecuencia;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $inicio;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $longnumero;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $numero;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $patron;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $tipodoc;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $usarhuecos;
 
     public function clear()
@@ -125,12 +102,46 @@ class SecuenciaDocumento extends Base\ModelClass
             $this->numero = $this->inicio;
         }
 
-        $this->patron = $this->toolBox()->utils()->noHtml($this->patron);
-        return parent::test();
+        return parent::test() && $this->testPatron();
     }
 
     public function url(string $type = 'auto', string $list = 'EditSettings?activetab=List'): string
     {
         return parent::url($type, $list);
+    }
+
+    protected function testPatron(): bool
+    {
+        $this->patron = $this->toolBox()->utils()->noHtml($this->patron);
+        if (empty($this->patron)) {
+            $this->toolBox()->i18nLog()->warning('empty-pattern');
+            return false;
+        }
+
+        // si el patrón no tiene número, mostramos un aviso
+        if (false === strpos($this->patron, '{NUM}') && false === strpos($this->patron, '{0NUM}')) {
+            $this->toolBox()->i18nLog()->warning('pattern-without-number');
+            return false;
+        }
+
+        // si el patrón no tiene ejercicio o fecha, mostramos un aviso
+        $codes = ['{EJE}', '{EJE2}', '{ANYO}', '{FECHA}', '{FECHAHORA}'];
+        $found = false;
+        foreach ($codes as $code) {
+            if (false !== strpos($this->patron, $code)) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            $this->toolBox()->i18nLog()->warning('pattern-without-year');
+        }
+
+        // si el patrón no tiene serie, mostramos un aviso
+        if (false === strpos($this->patron, '{SERIE}')) {
+            $this->toolBox()->i18nLog()->warning('pattern-without-serie');
+        }
+
+        return true;
     }
 }

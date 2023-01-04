@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -56,6 +56,36 @@ final class SecuenciaDocumentoTest extends TestCase
 
         // eliminamos
         $this->assertTrue($sequence->delete(), 'document-sequence-cant-delete');
+        $this->assertTrue($serie->delete(), 'document-sequence-cant-delete');
+        $this->assertTrue($company->delete(), 'document-sequence-cant-delete');
+    }
+
+    public function testCantCreateEmptyOrInvalid()
+    {
+        // creamos una empresa
+        $company = $this->getRandomCompany();
+        $this->assertTrue($company->save(), 'company-cant-save');
+
+        // creamos una serie
+        $serie = $this->getRandomSerie();
+        $this->assertTrue($serie->save(), 'serie-cant-save');
+
+        // intentamos crear una secuencia sin patrón
+        $sequence = new SecuenciaDocumento();
+        $sequence->codserie = $serie->codserie;
+        $sequence->idempresa = $company->idempresa;
+        $sequence->longnumero = 6;
+        $sequence->numero = 1;
+        $sequence->patron = '';
+        $sequence->tipodoc = 'FacturaCliente';
+        $sequence->usarhuecos = false;
+        $this->assertFalse($sequence->save(), 'document-sequence-cant-save');
+
+        // intentamos asignar un patrón inválido
+        $sequence->patron = 'TEST';
+        $this->assertFalse($sequence->save(), 'document-sequence-cant-save');
+
+        // eliminamos
         $this->assertTrue($serie->delete(), 'document-sequence-cant-delete');
         $this->assertTrue($company->delete(), 'document-sequence-cant-delete');
     }
@@ -139,7 +169,7 @@ final class SecuenciaDocumentoTest extends TestCase
         $this->assertEquals(31, $doc->numero, 'document-not-thirty-one');
 
         // comprobamos que el código del presupuesto es PRE{EJE}{SERIE}{0NUM}
-        $this->assertEquals('PRE' . date('Y') . 'A000031', $doc->codigo, 'document-bad-codigo');
+        $this->assertEquals('PRE' . $doc->codejercicio . 'A000031', $doc->codigo, 'document-bad-codigo');
 
         // comprobamos que el siguiente número para la secuencia es 32
         $sequence->loadFromCode('', $where);
