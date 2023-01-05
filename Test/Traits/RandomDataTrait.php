@@ -80,7 +80,7 @@ trait RandomDataTrait
         return $cliente;
     }
 
-    protected function getRandomCustomerInvoice(string $date = ''): FacturaCliente
+    protected function getRandomCustomerInvoice(string $date = '', string $codalmacen = ''): FacturaCliente
     {
         // creamos el cliente
         $subject = $this->getRandomCustomer();
@@ -88,6 +88,9 @@ trait RandomDataTrait
 
         $invoice = new FacturaCliente();
         $invoice->setSubject($subject);
+        if ($codalmacen) {
+            $invoice->codalmacen = $codalmacen;
+        }
         if ($date) {
             $invoice->setDate($date, $invoice->hora);
         }
@@ -140,7 +143,7 @@ trait RandomDataTrait
         return $proveedor;
     }
 
-    protected function getRandomSupplierInvoice(string $date = ''): FacturaProveedor
+    protected function getRandomSupplierInvoice(string $date = '', string $codalmacen = ''): FacturaProveedor
     {
         // creamos el proveedor
         $subject = $this->getRandomSupplier();
@@ -148,6 +151,9 @@ trait RandomDataTrait
 
         $invoice = new FacturaProveedor();
         $invoice->setSubject($subject);
+        if ($codalmacen) {
+            $invoice->codalmacen = $codalmacen;
+        }
         if ($date) {
             $invoice->setDate($date, $invoice->hora);
         }

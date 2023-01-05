@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,29 +30,19 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
 /**
  * Controller to edit a single item from the Ejercicio model
  *
- * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
- * @author Oscar G. Villa González  <ogvilla@gmail.com>
+ * @author Francesc Pineda Segarra       <francesc.pineda.segarra@gmail.com>
+ * @author Oscar G. Villa González       <ogvilla@gmail.com>
  */
 class EditEjercicio extends EditController
 {
-
-    /**
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Ejercicio';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -104,14 +94,7 @@ class EditEjercicio extends EditController
         }
     }
 
-    /**
-     * Check that user allowed modify and load exercise data
-     *
-     * @param string $code
-     *
-     * @return bool
-     */
-    private function checkAndLoad($code): bool
+    private function checkAndLoad(string $code): bool
     {
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
@@ -126,10 +109,6 @@ class EditEjercicio extends EditController
         return true;
     }
 
-    /**
-     *
-     * @return bool
-     */
     protected function closeExerciseAction(): bool
     {
         $code = $this->request->request->get('codejercicio');
@@ -148,7 +127,7 @@ class EditEjercicio extends EditController
         if ($closing->exec($model, $data)) {
             $this->toolBox()->i18nLog()->notice('closing-accounting-completed');
         }
-        /// error message not needed
+        // error message not needed
         return true;
     }
 
@@ -159,7 +138,7 @@ class EditEjercicio extends EditController
     {
         parent::createViews();
 
-        /// disable company column if there is only one company
+        // disable company column if there is only one company
         if ($this->empresa->count() < 2) {
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }
@@ -169,10 +148,6 @@ class EditEjercicio extends EditController
         $this->createViewsAccountingEntries();
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewsAccounting(string $viewName = 'ListCuenta')
     {
         $this->addListView($viewName, 'Cuenta', 'accounts', 'fas fa-book');
@@ -180,15 +155,11 @@ class EditEjercicio extends EditController
         $this->views[$viewName]->searchFields[] = 'codcuenta';
         $this->views[$viewName]->searchFields[] = 'descripcion';
 
-        /// disable columns
+        // disable columns
         $this->views[$viewName]->disableColumn('fiscal-exercise');
         $this->views[$viewName]->disableColumn('parent-account');
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewsAccountingEntries(string $viewName = 'ListAsiento')
     {
         $this->addListView($viewName, 'Asiento', 'special-accounting-entries', 'fas fa-balance-scale');
@@ -196,17 +167,13 @@ class EditEjercicio extends EditController
         $this->views[$viewName]->searchFields[] = 'numero';
         $this->views[$viewName]->searchFields[] = 'concepto';
 
-        /// disable columns
+        // disable columns
         $this->views[$viewName]->disableColumn('exercise');
 
-        /// disable button
+        // disable button
         $this->setSettings($viewName, 'btnNew', false);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewsSubaccounting(string $viewName = 'ListSubcuenta')
     {
         $this->addListView($viewName, 'Subcuenta', 'subaccounts');
@@ -220,7 +187,6 @@ class EditEjercicio extends EditController
     }
 
     /**
-     *
      * @param string $action
      *
      * @return bool
@@ -318,12 +284,6 @@ class EditEjercicio extends EditController
         return true;
     }
 
-    /**
-     *
-     * @param string $codejercicio
-     *
-     * @return bool
-     */
     protected function importDefaultPlan(string $codejercicio): bool
     {
         $filePath = FS_FOLDER . '/Dinamic/Data/Lang/' . FS_LANG . '/defaultPlan.csv';
@@ -401,7 +361,7 @@ class EditEjercicio extends EditController
         if ($closing->delete($model, $data)) {
             $this->toolBox()->i18nLog()->notice('opening-acounting-completed');
         }
-        /// error message not needed
+        // error message not needed
         return true;
     }
 }

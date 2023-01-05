@@ -19,8 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Asiento;
-use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Partida;
 
 /**
@@ -85,6 +85,21 @@ class AccountingClosingClosing extends AccountingClosingBase
      */
     protected function getSQL(): string
     {
+        if (FS_DB_TYPE == 'postgresql') {
+            return "SELECT COALESCE(t1.canal, 0) AS channel,"
+                . "t2.idsubcuenta AS id,"
+                . "t2.codsubcuenta AS code,"
+                . "ROUND(SUM(t2.debe)::numeric, 4) AS debit,"
+                . "ROUND(SUM(t2.haber)::numeric, 4) AS credit"
+                . " FROM asientos t1"
+                . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento AND t2.codsubcuenta BETWEEN '1' AND '599999999999999'"
+                . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
+                . " AND (t1.operacion IS NULL OR t1.operacion <> '" . $this->getOperation() . "')"
+                . " GROUP BY 1, 2, 3"
+                . " HAVING ROUND(SUM(t2.debe)::numeric - SUM(t2.haber)::numeric, 4) <> 0.0000"
+                . " ORDER BY 1, 3, 2";
+        }
+
         return "SELECT COALESCE(t1.canal, 0) AS channel,"
             . "t2.idsubcuenta AS id,"
             . "t2.codsubcuenta AS code,"

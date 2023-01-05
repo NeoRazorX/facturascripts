@@ -20,9 +20,10 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cuenta;
-use FacturaScripts\Dinamic\Model\Ejercicio;
+use FacturaScripts\Dinamic\Model\Ejercicio as DinEjercicio;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
 
@@ -138,6 +139,23 @@ class AccountingClosingOpening extends AccountingClosingBase
      */
     protected function getSQL(): string
     {
+        if (FS_DB_TYPE == 'postgresql') {
+            return "SELECT COALESCE(t1.canal, 0) AS channel,"
+                . "t2.idsubcuenta AS id,"
+                . "t2.codsubcuenta AS code,"
+                . "t3.idsubcuenta AS id_new,"
+                . "ROUND(SUM(t2.debe)::numeric, 4) AS debit,"
+                . "ROUND(SUM(t2.haber)::numeric, 4) AS credit"
+                . " FROM asientos t1"
+                . " INNER JOIN partidas t2 ON t2.idasiento = t1.idasiento AND t2.codsubcuenta BETWEEN '1' AND '599999999999999'"
+                . " LEFT JOIN subcuentas t3 ON t3.codsubcuenta = t2.codsubcuenta AND t3.codejercicio = '" . $this->newExercise->codejercicio . "'"
+                . " WHERE t1.codejercicio = '" . $this->exercise->codejercicio . "'"
+                . " AND (t1.operacion IS NULL OR t1.operacion <> '" . Asiento::OPERATION_CLOSING . "')"
+                . " GROUP BY 1, 2, 3, 4"
+                . " HAVING ROUND(SUM(t2.debe)::numeric - SUM(t2.haber)::numeric, 4) <> 0.0000"
+                . " ORDER BY 1, 3";
+        }
+
         return "SELECT COALESCE(t1.canal, 0) AS channel,"
             . "t2.idsubcuenta AS id,"
             . "t2.codsubcuenta AS code,"
@@ -260,7 +278,7 @@ class AccountingClosingOpening extends AccountingClosingBase
     {
         $date = date('d-m-Y', strtotime($this->exercise->fechainicio . ' +1 year'));
 
-        $this->newExercise = new Ejercicio();
+        $this->newExercise = new DinEjercicio();
         $this->newExercise->idempresa = $this->exercise->idempresa;
         $this->newExercise->loadFromDate($date, true, true);
     }

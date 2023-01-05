@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Dinamic\Lib\Import\CSVImport;
 use FacturaScripts\Dinamic\Model\CuentaEspecial;
-use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
@@ -198,7 +198,7 @@ class ClosingToAcounting
      */
     protected function execCloseInvoices(): bool
     {
-        /// apply to customer invoices
+        // apply to customer invoices
         $customerInvoice = new FacturaCliente();
         $status1 = $customerInvoice->getAvailableStatus();
         $where = [
@@ -219,7 +219,7 @@ class ClosingToAcounting
             break;
         }
 
-        /// apply to supplier invoices
+        // apply to supplier invoices
         $supplierInvoice = new FacturaProveedor();
         $status2 = $supplierInvoice->getAvailableStatus();
         foreach ($status2 as $stat) {
