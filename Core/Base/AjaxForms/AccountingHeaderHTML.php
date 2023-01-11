@@ -44,6 +44,7 @@ class AccountingHeaderHTML
      */
     public static function apply(Asiento &$model, array $formData)
     {
+        $model->idempresa = $formData['idempresa'] ?? $model->idempresa;
         $model->setDate($formData['fecha'] ?? $model->fecha);
         $model->canal = $formData['canal'] ?? $model->canal;
         $model->concepto = $formData['concepto'] ?? $model->concepto;
