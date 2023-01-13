@@ -241,9 +241,11 @@ class PaymentToAccounting extends AccountingClass
      */
     protected function setCommonData(&$accEntry, string $concept)
     {
+        $invoice = $this->receipt->getInvoice();
         $accEntry->codejercicio = $this->exercise->codejercicio;
         $accEntry->concepto = $concept;
-        $accEntry->documento = $this->receipt->getInvoice()->codigo;
+        $accEntry->documento = $invoice->codigo;
+        $accEntry->canal = $invoice->getSerie()->canal;
         $accEntry->fecha = $this->document->fecha;
         $accEntry->idempresa = $this->exercise->idempresa;
         $accEntry->importe = $this->document->importe;
