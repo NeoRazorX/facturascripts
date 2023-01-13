@@ -805,6 +805,7 @@
     "machine": "Máquina",
     "machines": "Máquinas",
     "macro-account-note-info": "Códigos para el reemplazo por valores",
+    "mail-server-error": "Error al conectar al servidor de correo",
     "mail-test-error": "La prueba de email ha fallado",
     "mail-test-ok": "Prueba de correo electrónico satisfactoria",
     "mailer": "Controlador de correo",

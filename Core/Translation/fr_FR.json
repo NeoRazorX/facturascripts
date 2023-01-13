@@ -805,6 +805,7 @@
     "machine": "Machine",
     "machines": "Machines",
     "macro-account-note-info": "Mots-clés à remplacer par des valeurs",
+    "mail-server-error": "Error al conectar al servidor de correo",
     "mail-test-error": "Le test de l'e-mail a échoué",
     "mail-test-ok": "Test de l'email effectué avec succès",
     "mailer": "Contrôleur de courrier",

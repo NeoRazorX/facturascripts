@@ -805,6 +805,7 @@
     "machine": "Machine",
     "machines": "Machines",
     "macro-account-note-info": "Keys for values replacement macro",
+    "mail-server-error": "Error connecting to mail server",
     "mail-test-error": "The email test has failed",
     "mail-test-ok": "Satisfactory email proof",
     "mailer": "Mail controller",
