@@ -229,14 +229,16 @@ abstract class BusinessDocument extends ModelOnChangeClass
         parent::clear();
 
         $appSettings = $this->toolBox()->appSettings();
-        $this->codalmacen = $appSettings->get('default', 'codalmacen');
-        $this->codpago = $appSettings->get('default', 'codpago');
-        $this->codserie = $appSettings->get('default', 'codserie');
+        $this->idempresa = $appSettings->get('default', 'idempresa');
+        $company = $this->getCompany();
+
+        $this->codalmacen = $company->config('default', 'codalmacen');
+        $this->codpago = $company->config('default', 'codpago');
+        $this->codserie = $company->config('default', 'codserie');
         $this->dtopor1 = 0.0;
         $this->dtopor2 = 0.0;
         $this->fecha = date(self::DATE_STYLE);
         $this->hora = date(self::HOUR_STYLE);
-        $this->idempresa = $appSettings->get('default', 'idempresa');
         $this->irpf = 0.0;
         $this->neto = 0.0;
         $this->netosindto = 0.0;

@@ -19,8 +19,10 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\Model\EmpresaSettings;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 
@@ -72,11 +74,42 @@ class Empresa extends Base\Contact
     /** @var string */
     public $web;
 
+    /**
+     *
+     * @var EmpresaSettings[];
+     */
+    private $settings = null;
+
     public function clear()
     {
         parent::clear();
         $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
         $this->regimeniva = RegimenIVA::defaultValue();
+    }
+
+    /**
+     * Return the value of property in group for company.
+     * If there is no default value for the company,
+     * the default value of the application is returned.
+     *
+     * @param string $group
+     * @param string $property
+     * @param mixed $default
+     * @return mixed
+     */
+    public function config(string $group, string $property, $default = null)
+    {
+        if (false === isset($this->settings)) {
+            $settingsModel = new EmpresaSettings();
+            foreach ($settingsModel->all([new DataBaseWhere('idempresa', $this->idempresa)]) as $empresaSettings) {
+                $this->settings[$empresaSettings->name] = $empresaSettings;
+            }
+        }
+
+        $value = isset($this->settings[$group]) ? $this->settings[$group]->__get($property) : '';
+        return empty($value)
+            ? AppSettings::get($group, $property, $default)
+            : $value;
     }
 
     public function delete(): bool
