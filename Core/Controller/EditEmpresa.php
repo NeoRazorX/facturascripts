@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
+use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
@@ -50,6 +51,7 @@ class EditEmpresa extends EditController
     protected function createViews()
     {
         parent::createViews();
+        $this->createViewSettings();
         $this->createViewWarehouse();
         $this->createViewBankAccounts();
         $this->createViewPaymentMethods();
@@ -74,7 +76,15 @@ class EditEmpresa extends EditController
         $this->views[$viewName]->disableColumn('company');
     }
 
-    protected function createViewWarehouse(string $viewName = 'EditAlmacen')
+    protected function createViewSettings(string $viewName = 'EditEmpresaSettings')
+    {
+        if ($this->empresa->count() > 1) {
+            $this->addEditView($viewName, 'EmpresaSettings', 'default', 'fas fa-tools');
+            $this->setSettings($viewName, 'btnDelete', false);
+        }
+    }
+
+    protected function createViewWarehouse(string $viewName = 'ListAlmacen')
     {
         $this->addListView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse');
         $this->views[$viewName]->disableColumn('company');
@@ -91,7 +101,15 @@ class EditEmpresa extends EditController
         $mvn = $this->getMainViewName();
 
         switch ($viewName) {
-            case 'EditAlmacen':
+            case 'EditEmpresaSettings':
+                $idcompany = $this->getViewModelValue($this->getMainViewName(), 'idempresa');
+                $view->loadData('', [new DataBaseWhere('idempresa', $idcompany)]);
+                if ($view->count === 0) {
+                    $view->model->idempresa = $idcompany;
+                }
+                break;
+
+            case 'ListAlmacen':
             case 'ListCuentaBanco':
             case 'ListEjercicio':
             case 'ListFormaPago':
@@ -129,6 +147,14 @@ class EditEmpresa extends EditController
                 new DataBaseWhere('mimetype', 'image/gif,image/jpeg,image/png', 'IN')
             ]);
             $columnLogo->widget->setValuesFromCodeModel($images);
+        }
+
+        $columnWarehouse = $this->views['EditEmpresaSettings']->columnForName('warehouse');
+        if ($columnWarehouse && $columnWarehouse->widget->getType() === 'select') {
+            $warehouse = $this->codeModel->all(Almacen::tableName(), 'codalmacen', 'nombre', true, [
+                new DataBaseWhere('idempresa', $view->model->idempresa),
+            ]);
+            $columnWarehouse->widget->setValuesFromCodeModel($warehouse);
         }
     }
 }
