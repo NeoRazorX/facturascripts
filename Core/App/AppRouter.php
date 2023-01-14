@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -152,7 +152,7 @@ final class AppRouter
     {
         $parts = explode('.', $filePath);
         $safe = [
-            'accdb', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'ico', 'jpeg', 'jpg', 'js',
+            'accdb', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'html', 'ico', 'jpeg', 'jpg', 'js',
             'json', 'map', 'mdb', 'mkv', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf', 'png', 'sql', 'svg',
             'ttf', 'txt', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
         ];
