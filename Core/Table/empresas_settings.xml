@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : empresas_settings.xml
+    Author     : yopli2000@gmail.com
+    Description:
+        Structure for the settings for company table.
+-->
+
+<table>
+    <column>
+        <name>id</name>
+        <type>serial</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>idempresa</name>
+        <type>integer</type>
+        <null>NO</null>
+    </column>    
+    <column>
+        <name>name</name>
+        <type>character varying(50)</type>
+        <null>NO</null>
+    </column>
+    <column>
+        <name>properties</name>
+        <type>text</type>
+    </column>
+    <constraint>
+        <name>empresas_settings_pkey</name>
+        <type>PRIMARY KEY (id)</type>
+    </constraint>
+    <constraint>
+        <name>ca_empresas_settings_empresas</name>
+        <type>FOREIGN KEY (idempresa) REFERENCES empresas (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</type>
+    </constraint>
+    <constraint>
+        <name>uniq_company_empresas_settings</name>
+        <type>UNIQUE (idempresa,name)</type>
+    </constraint>
+</table>
