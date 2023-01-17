@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,52 +34,33 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ReportTaxes extends Controller
 {
-
     const MAX_TOTAL_DIFF = 0.05;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codpais;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codserie;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $datefrom;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $dateto;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $format;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $idempresa;
 
-    /**
-     * @var Pais
-     */
+    /** @var Pais */
     public $pais;
 
-    /**
-     * @var Serie
-     */
+    /** @var Serie */
     public $serie;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $source;
 
     public function getPageData(): array
@@ -116,10 +97,10 @@ class ReportTaxes extends Controller
         }
 
         // prepare lines
-        $lastcode = '';
+        $lastCode = '';
         $lines = [];
         foreach ($data as $row) {
-            $hide = $row['codigo'] === $lastcode && $this->format === 'PDF';
+            $hide = $row['codigo'] === $lastCode && $this->format === 'PDF';
             $lines[] = [
                 'serie' => $hide ? '' : $row['codserie'],
                 'codigo' => $hide ? '' : $row['codigo'],
@@ -138,7 +119,7 @@ class ReportTaxes extends Controller
                 'total' => $hide ? '' : $this->exportFieldFormat('number', $row['total'])
             ];
 
-            $lastcode = $row['codigo'];
+            $lastCode = $row['codigo'];
         }
 
         $totalsData = $this->getTotals($data);
@@ -225,14 +206,14 @@ class ReportTaxes extends Controller
 
         $data = [];
         foreach ($this->dataBase->select($sql) as $row) {
-            $pvptotal = floatval($row['pvptotal']) * (100 - floatval($row['dtopor1'])) * (100 - floatval($row['dtopor2'])) / 10000;
+            $pvpTotal = floatval($row['pvptotal']) * (100 - floatval($row['dtopor1'])) * (100 - floatval($row['dtopor2'])) / 10000;
             $code = $row['codigo'] . '-' . $row['iva'] . '-' . $row['recargo'] . '-' . $row['irpf'] . '-' . $row['suplido'];
             if (isset($data[$code])) {
-                $data[$code]['neto'] += $row['suplido'] ? 0 : $pvptotal;
-                $data[$code]['totaliva'] += (float)$row['iva'] * $pvptotal / 100;
-                $data[$code]['totalrecargo'] += (float)$row['recargo'] * $pvptotal / 100;
-                $data[$code]['totalirpf'] += (float)$row['irpf'] * $pvptotal / 100;
-                $data[$code]['suplidos'] += $row['suplido'] ? $pvptotal : 0;
+                $data[$code]['neto'] += $row['suplido'] ? 0 : $pvpTotal;
+                $data[$code]['totaliva'] += (float)$row['iva'] * $pvpTotal / 100;
+                $data[$code]['totalrecargo'] += (float)$row['recargo'] * $pvpTotal / 100;
+                $data[$code]['totalirpf'] += (float)$row['irpf'] * $pvpTotal / 100;
+                $data[$code]['suplidos'] += $row['suplido'] ? $pvpTotal : 0;
                 continue;
             }
 
@@ -243,14 +224,14 @@ class ReportTaxes extends Controller
                 'fecha' => $row['fecha'],
                 'nombre' => $row['nombre'],
                 'cifnif' => $row['cifnif'],
-                'neto' => $row['suplido'] ? 0 : $pvptotal,
+                'neto' => $row['suplido'] ? 0 : $pvpTotal,
                 'iva' => (float)$row['iva'],
-                'totaliva' => (float)$row['iva'] * $pvptotal / 100,
+                'totaliva' => (float)$row['iva'] * $pvpTotal / 100,
                 'recargo' => (float)$row['recargo'],
-                'totalrecargo' => (float)$row['recargo'] * $pvptotal / 100,
+                'totalrecargo' => (float)$row['recargo'] * $pvpTotal / 100,
                 'irpf' => (float)$row['irpf'],
-                'totalirpf' => (float)$row['irpf'] * $pvptotal / 100,
-                'suplidos' => $row['suplido'] ? $pvptotal : 0,
+                'totalirpf' => (float)$row['irpf'] * $pvpTotal / 100,
+                'suplidos' => $row['suplido'] ? $pvpTotal : 0,
                 'total' => (float)$row['total']
             ];
         }
@@ -341,8 +322,8 @@ class ReportTaxes extends Controller
         $exportManager->addTablePage($headers, $lines, $options);
 
         // add totals table
-        $headtotals = empty($totals) ? [] : array_keys(end($totals));
-        $exportManager->addTablePage($headtotals, $totals, $options);
+        $headTotals = empty($totals) ? [] : array_keys(end($totals));
+        $exportManager->addTablePage($headTotals, $totals, $options);
 
         $exportManager->show($this->response);
     }
@@ -407,15 +388,15 @@ class ReportTaxes extends Controller
     protected function validateTotals(array $totalsData): bool
     {
         // sum totals from the given data
-        $neto = $totaliva = $totalrecargo = 0.0;
+        $neto = $totalIva = $totalRecargo = 0.0;
         foreach ($totalsData as $row) {
             $neto += $row['neto'];
-            $totaliva += $row['totaliva'];
-            $totalrecargo += $row['totalrecargo'];
+            $totalIva += $row['totaliva'];
+            $totalRecargo += $row['totalrecargo'];
         }
 
         // gets totals from the database
-        $neto2 = $totaliva2 = $totalrecargo2 = 0.0;
+        $neto2 = $totalIva2 = $totalRecargo2 = 0.0;
         $tableName = $this->source === 'sales' ? 'facturascli' : 'facturasprov';
         $sql = 'SELECT SUM(neto) as neto, SUM(totaliva) as t1, SUM(totalrecargo) as t2 FROM ' . $tableName
             . ' WHERE idempresa = ' . $this->dataBase->var2str($this->idempresa)
@@ -429,13 +410,13 @@ class ReportTaxes extends Controller
         }
         foreach ($this->dataBase->selectLimit($sql) as $row) {
             $neto2 += (float)$row['neto'];
-            $totaliva2 += (float)$row['t1'];
-            $totalrecargo2 += (float)$row['t2'];
+            $totalIva2 += (float)$row['t1'];
+            $totalRecargo2 += (float)$row['t2'];
         }
 
         // compare
         return abs($neto - $neto2) <= self::MAX_TOTAL_DIFF &&
-            abs($totaliva - $totaliva2) <= self::MAX_TOTAL_DIFF &&
-            abs($totalrecargo - $totalrecargo2) <= self::MAX_TOTAL_DIFF;
+            abs($totalIva - $totalIva2) <= self::MAX_TOTAL_DIFF &&
+            abs($totalRecargo - $totalRecargo2) <= self::MAX_TOTAL_DIFF;
     }
 }
