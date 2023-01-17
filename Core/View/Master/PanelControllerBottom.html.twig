@@ -34,10 +34,12 @@
             <div class="row">
                 <div class="col">
                     <ul class="nav nav-pills mb-3 d-print-none" id="mainTabs" role="tablist">
+                        {% set contActiveTab = 0 %}
                         {% for viewName, view in fsc.views | slice(1, fsc.views | length) %}
                             {% if view.settings.active %}
+                                {% set contActiveTab = contActiveTab + 1 %}
                                 <li class="nav-item">
-                                    {% set active = (viewName == fsc.active) or (fsc.active == firstViewName and loop.index == 1) ? ' active' : '' %}
+                                    {% set active = (viewName == fsc.active) or (fsc.active == firstViewName and contActiveTab == 1) ? ' active' : '' %}
                                     <a href="#{{ viewName }}" class="nav-link{{ active }}{{ disable }}" data-toggle="tab" role="tab" aria-controls="{{ viewName }}">
                                         <i class="{{ view.icon }}" aria-hidden="true"></i>
                                         <span class="d-none d-sm-inline-block">&nbsp;{{ view.title }}</span>
@@ -53,9 +55,11 @@
             </div>
         {% endif %}
         <div class="tab-content" id="mainTabsContent">
+            {% set contActiveTab = 0 %}
             {% for viewName, view in fsc.views | slice(1, fsc.views | length) %}
                 {% if view.settings.active %}
-                    {% set active = (viewName == fsc.active) or (fsc.active == firstViewName and loop.index == 1) ? ' show active' : '' %}
+                    {% set contActiveTab = contActiveTab + 1 %}
+                    {% set active = (viewName == fsc.active) or (fsc.active == firstViewName and contActiveTab == 1) ? ' show active' : '' %}
                     <div class="tab-pane{{ active }}" id="{{ viewName }}" role="tabpanel">
                         {% do fsc.setCurrentView(viewName) %}
                         {{ include(view.template) }}
