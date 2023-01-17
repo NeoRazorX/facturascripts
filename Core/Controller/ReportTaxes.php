@@ -150,6 +150,7 @@ class ReportTaxes extends Controller
         // prepare totals
         $totals = [];
         foreach ($totalsData as $row) {
+            $total = $row['neto'] + $row['totaliva'] + $row['totalrecargo'] - $row['totalirpf'] - $row['suplidos'];
             $totals[] = [
                 'neto' => $this->exportFieldFormat('coins', $row['neto']),
                 'iva' => $this->exportFieldFormat('percentage', $row['iva']),
@@ -158,7 +159,8 @@ class ReportTaxes extends Controller
                 'totalrecargo' => $this->exportFieldFormat('coins', $row['totalrecargo']),
                 'irpf' => $this->exportFieldFormat('percentage', $row['irpf']),
                 'totalirpf' => $this->exportFieldFormat('coins', $row['totalirpf']),
-                'suplidos' => $this->exportFieldFormat('coins', $row['suplidos'])
+                'suplidos' => $this->exportFieldFormat('coins', $row['suplidos']),
+                'total' => $this->exportFieldFormat('coins', $total)
             ];
         }
 
