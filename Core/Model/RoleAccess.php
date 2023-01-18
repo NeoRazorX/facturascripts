@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023  Carlos García Gómez <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson          <joenilson@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -125,9 +125,11 @@ class RoleAccess extends Base\ModelClass
 
             case 'only-owner-data':
                 return $this->onlyownerdata;
-        }
 
-        return false;
+            default:
+                self::toolBox()::i18nLog()->error('invalid-user-can-permission', ['%permission%' => $permission]);
+                return false;
+        }
     }
 
     public function clear()
