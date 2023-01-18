@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\MyFilesToken;
 use finfo;
@@ -105,16 +106,11 @@ class AttachedFile extends Base\ModelOnChangeClass
             return false;
         }
 
-        // obtenemos el nombre del archivo sin la extension
-        $name = pathinfo($this->filename, PATHINFO_FILENAME);
-
-        // buscamos todas las imágenes que empiecen por el mismo nombre y las eliminamos
-        $path = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/';
-        $files = scandir($path);
-        foreach ($files as $file) {
-            if (strpos($file, $name) === 0) {
-                unlink($path . $file);
-            }
+        // buscamos si existen productos con este archivo
+        $productoImageModel = new ProductoImagen();
+        $where = [new DataBaseWhere('idfile', $this->idfile)];
+        foreach ($productoImageModel->all($where, [], 0, 0) as $productoImage) {
+            $productoImage->delete();
         }
 
         return true;
