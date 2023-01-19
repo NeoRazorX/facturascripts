@@ -304,7 +304,7 @@ class AppController extends App
         }
 
         if ($user->loadFromCode($cookieNick) && $user->enabled) {
-            if ($user->verifyLogkey($this->request->cookies->get('fsLogkey'))) {
+            if ($user->verifyLogkey($this->request->cookies->get('fsLogkey', ''))) {
                 $this->updateCookies($user);
                 ToolBox::i18nLog()->debug('login-ok', ['%nick%' => $user->nick]);
                 ToolBox::log()::setContext('nick', $user->nick);
