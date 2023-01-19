@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,9 +62,11 @@ class ProductoImagen extends Base\ModelClass
 
         // buscamos todas las imágenes que empiecen por el mismo nombre y las eliminamos
         $path = FS_FOLDER . self::THUMBNAIL_PATH;
-        foreach (scandir($path) as $file) {
-            if (strpos($file, $name) === 0) {
-                unlink($path . $file);
+        if (file_exists($path)) {
+            foreach (scandir($path) as $file) {
+                if (strpos($file, $name) === 0) {
+                    unlink($path . $file);
+                }
             }
         }
 
