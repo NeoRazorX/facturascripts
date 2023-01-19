@@ -182,7 +182,8 @@ class EditUser extends EditController
         $roleUserModel = new RoleUser();
         foreach ($roleUserModel->all([new DataBaseWhere('nick', $user->nick)]) as $roleUser) {
             foreach ($roleUser->getRoleAccess() as $roleAccess) {
-                if (false === $roleAccess->getPage()->showonmenu) {
+                $page = $roleAccess->getPage();
+                if (false === $page->exist() || false === $page->showonmenu) {
                     continue;
                 }
 
