@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\MyFilesToken;
 use finfo;
@@ -101,7 +102,18 @@ class AttachedFile extends Base\ModelOnChangeClass
             return false;
         }
 
-        return parent::delete();
+        if (false === parent::delete()) {
+            return false;
+        }
+
+        // buscamos si existen productos con este archivo
+        $productoImageModel = new ProductoImagen();
+        $where = [new DataBaseWhere('idfile', $this->idfile)];
+        foreach ($productoImageModel->all($where, [], 0, 0) as $productoImage) {
+            $productoImage->delete();
+        }
+
+        return true;
     }
 
     public function getExtension(): string

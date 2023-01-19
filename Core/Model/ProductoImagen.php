@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinAttachedFile;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -44,11 +45,40 @@ class ProductoImagen extends Base\ModelClass
     /** @var string */
     public $referencia;
 
+    public function delete(): bool
+    {
+        if (false === parent::delete()) {
+            return false;
+        }
+
+        // obtenemos la imagen
+        $image = $this->getFile();
+
+        // obtenemos el nombre de la imagen sin la extension
+        $name = pathinfo($image->filename, PATHINFO_FILENAME);
+
+        // buscamos todas las imágenes que empiecen por el mismo nombre y las eliminamos
+        $path = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/';
+        $files = scandir($path);
+        foreach ($files as $file) {
+            if (strpos($file, $name) === 0) {
+                unlink($path . $file);
+            }
+        }
+
+        return true;
+    }
+
     public function getFile(): AttachedFile
     {
         $file = new DinAttachedFile();
         $file->loadFromCode($this->idfile);
         return $file;
+    }
+
+    public function getMaxFileUpload(): float
+    {
+        return UploadedFile::getMaxFilesize() / 1024 / 1024;
     }
 
     public function getProducto(): Producto
@@ -58,9 +88,73 @@ class ProductoImagen extends Base\ModelClass
         return $producto;
     }
 
-    public function getMaxFileUpload(): float
+    public function getThumbnail(int $width = 100, int $height = 100, bool $token = false, bool $permaToken = false): string
     {
-        return UploadedFile::getMaxFilesize() / 1024 / 1024;
+        // comprobamos si no existe la imagen
+        $file = $this->getFile();
+        if (false === $file->exists()) {
+            return '';
+        }
+
+        $thumbPath = '/MyFiles/Tmp/Thumbnails/';
+
+        // comprobamos si existe el directorio
+        if (false === file_exists(FS_FOLDER . $thumbPath)) {
+            mkdir(FS_FOLDER . $thumbPath, 0755, true);
+        }
+
+        // obtenemos la extension
+        $ext = pathinfo($file->getFullPath(), PATHINFO_EXTENSION);
+
+        // si la extensión no está entre las permitidas terminamos
+        if (false === in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
+            return '';
+        }
+
+        // obtenemos el nombre del archivo sin la extension
+        $fileName = pathinfo($file->filename, PATHINFO_FILENAME);
+
+        // creamos el nuevo nombre del archivo
+        $thumbName = $fileName . '_' . $width . 'x' . $height . '.' . $ext;
+
+        // si el archivo existe lo devolvemos
+        $thumbFile = $thumbPath . $thumbName;
+        if (file_exists(FS_FOLDER . $thumbFile)) {
+            return $this->getThumbnailPath($thumbFile, $token, $permaToken);
+        }
+
+        // redimensionamos la imagen proporcionalmente
+        $image = imagecreatefromstring(file_get_contents($file->getFullPath()));
+        $imageWidth = imagesx($image);
+        $imageHeight = imagesy($image);
+        $ratio = $imageWidth / $imageHeight;
+        if ($width / $height > $ratio) {
+            $width = $height * $ratio;
+        } else {
+            $height = $width / $ratio;
+        }
+        $thumb = imagecreatetruecolor($width, $height);
+        imagecopyresampled($thumb, $image, 0, 0, 0, 0, $width, $height, $imageWidth, $imageHeight);
+
+        // guardamos la imagen según la extensión
+        switch ($ext) {
+            case 'jpg':
+            case 'jpeg':
+                imagejpeg($thumb, FS_FOLDER . $thumbFile);
+                break;
+
+            case 'png':
+                imagepng($thumb, FS_FOLDER . $thumbFile);
+                break;
+
+            case 'gif':
+                imagegif($thumb, FS_FOLDER . $thumbFile);
+                break;
+        }
+
+        imagedestroy($image);
+        imagedestroy($thumb);
+        return $this->getThumbnailPath($thumbFile, $token, $permaToken);
     }
 
     public function install(): string
@@ -95,5 +189,15 @@ class ProductoImagen extends Base\ModelClass
             default:
                 return parent::url($type, $list);
         }
+    }
+
+    protected function getThumbnailPath(string $path, bool $token, bool $parmaToken): string
+    {
+        if ($token && false === $parmaToken) {
+            return $path . '?myft=' . MyFilesToken::get($path, false);
+        } elseif ($token && $parmaToken) {
+            return $path . '?myft=' . MyFilesToken::get($path, true);
+        }
+        return $path;
     }
 }
