@@ -341,6 +341,11 @@ abstract class ComercialContactController extends EditController
         $contact->fax = $subject->fax;
         $contact->telefono1 = $subject->telefono1;
         $contact->telefono2 = $subject->telefono2;
+
+        // Sincronice fiscal data for pass validation
+        $contact->cifnif = $subject->cifnif;
+        $contact->tipoidfiscal = $subject->tipoidfiscal;
+
         $contact->save();
     }
 }
