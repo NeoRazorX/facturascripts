@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -175,39 +175,19 @@ class Variante extends Base\ModelClass
 
     public function delete(): bool
     {
-        $newTransaction = static::$dataBase->inTransaction();
-        if (false === $newTransaction) {
-            $newTransaction = true;
-            static::$dataBase->beginTransaction();
-        }
-
+        // no se puede eliminar la variante principal
         if ($this->referencia == $this->getProducto()->referencia) {
             $this->toolBox()->i18nLog()->warning('you-cant-delete-primary-variant');
             return false;
         }
 
-        // eliminamos la variante
-        if (false === parent::delete()) {
-            if ($newTransaction) {
-                static::$dataBase->rollback();
-            }
-            return false;
-        }
-
         // eliminamos las imágenes de la variante
         foreach ($this->getImages(false) as $image) {
-            if (false === $image->delete()) {
-                if ($newTransaction) {
-                    static::$dataBase->rollback();
-                }
-                return false;
-            }
+            $image->delete();
         }
 
-        if ($newTransaction) {
-            static::$dataBase->commit();
-        }
-        return true;
+        // eliminamos el registro de la base de datos
+        return parent::delete();
     }
 
     /**
@@ -240,6 +220,8 @@ class Variante extends Base\ModelClass
     }
 
     /**
+     * @param bool $imgProduct
+     *
      * @return ProductoImagen[]
      */
     public function getImages(bool $imgProduct = true): array
@@ -290,7 +272,7 @@ class Variante extends Base\ModelClass
     {
         if ($this->margen > 0) {
             $newPrice = $this->coste * (100 + $this->margen) / 100;
-            $this->precio = \round($newPrice, DinProducto::ROUND_DECIMALS);
+            $this->precio = round($newPrice, DinProducto::ROUND_DECIMALS);
         }
 
         if (parent::save()) {

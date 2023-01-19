@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,58 +32,29 @@ use finfo;
  */
 class AttachedFile extends Base\ModelOnChangeClass
 {
-
     use Base\ModelTrait;
 
     const MAX_FILENAME_LEN = 100;
 
-    /**
-     * Date.
-     *
-     * @var string
-     */
+    /** @var string */
     public $date;
 
-    /**
-     * Contains the file name.
-     *
-     * @var string
-     */
+    /** @var string */
     public $filename;
 
-    /**
-     * Hour.
-     *
-     * @var string
-     */
+    /** @var string */
     public $hour;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idfile;
 
-    /**
-     * Content the mime content type.
-     *
-     * @var string
-     */
+    /** @var string */
     public $mimetype;
 
-    /**
-     * Contains the relative path to file.
-     *
-     * @var string
-     */
+    /** @var string */
     public $path;
 
-    /**
-     * The size of the file in bytes.
-     *
-     * @var int
-     */
+    /** @var int */
     public $size;
 
     public function clear()
@@ -96,24 +67,22 @@ class AttachedFile extends Base\ModelOnChangeClass
 
     public function delete(): bool
     {
+        // eliminamos el archivo
         $fullPath = $this->getFullPath();
         if (file_exists($fullPath) && false === unlink($fullPath)) {
             $this->toolBox()->i18nLog()->warning('cant-delete-file', ['%fileName%' => $this->path]);
             return false;
         }
 
-        if (false === parent::delete()) {
-            return false;
-        }
-
-        // buscamos si existen productos con este archivo
+        // eliminamos las relaciones con los productos
         $productoImageModel = new ProductoImagen();
         $where = [new DataBaseWhere('idfile', $this->idfile)];
         foreach ($productoImageModel->all($where, [], 0, 0) as $productoImage) {
             $productoImage->delete();
         }
 
-        return true;
+        // eliminamos el registro de la base de datos
+        return parent::delete();
     }
 
     public function getExtension(): string

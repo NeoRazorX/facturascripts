@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -189,34 +189,13 @@ class Producto extends Base\ModelClass
 
     public function delete(): bool
     {
-        $newTransaction = static::$dataBase->inTransaction();
-        if (false === $newTransaction) {
-            $newTransaction = true;
-            static::$dataBase->beginTransaction();
-        }
-
-        // eliminamos el producto
-        if (false === parent::delete()) {
-            if ($newTransaction) {
-                static::$dataBase->rollback();
-            }
-            return false;
-        }
-
         // eliminamos las imágenes del producto
         foreach ($this->getImages() as $image) {
-            if (false === $image->delete()) {
-                if ($newTransaction) {
-                    static::$dataBase->rollback();
-                }
-                return false;
-            }
+            $image->delete();
         }
 
-        if ($newTransaction) {
-            static::$dataBase->commit();
-        }
-        return true;
+        // eliminamos el resto de la base de datos
+        return parent::delete();
     }
 
     public function getFabricante(): Fabricante

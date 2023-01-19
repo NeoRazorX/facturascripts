@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Dinamic\Model\AttachedFile as DinAttachedFile;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Throwable;
 
 /**
  * Description of ProductoImagen
@@ -32,6 +33,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class ProductoImagen extends Base\ModelClass
 {
     use Base\ModelTrait;
+
+    const THUMBNAIL_PATH = '/MyFiles/Tmp/Thumbnails/';
 
     /** @var int; */
     public $id;
@@ -51,16 +54,15 @@ class ProductoImagen extends Base\ModelClass
             return false;
         }
 
-        // obtenemos la imagen
-        $image = $this->getFile();
-
         // obtenemos el nombre de la imagen sin la extension
-        $name = pathinfo($image->filename, PATHINFO_FILENAME);
+        $name = pathinfo($this->getFile()->filename, PATHINFO_FILENAME);
+        if (empty($name)) {
+            return true;
+        }
 
         // buscamos todas las imágenes que empiecen por el mismo nombre y las eliminamos
-        $path = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/';
-        $files = scandir($path);
-        foreach ($files as $file) {
+        $path = FS_FOLDER . self::THUMBNAIL_PATH;
+        foreach (scandir($path) as $file) {
             if (strpos($file, $name) === 0) {
                 unlink($path . $file);
             }
@@ -96,64 +98,63 @@ class ProductoImagen extends Base\ModelClass
             return '';
         }
 
-        $thumbPath = '/MyFiles/Tmp/Thumbnails/';
-
         // comprobamos si existe el directorio
-        if (false === file_exists(FS_FOLDER . $thumbPath)) {
-            mkdir(FS_FOLDER . $thumbPath, 0755, true);
+        if (false === file_exists(FS_FOLDER . self::THUMBNAIL_PATH)) {
+            mkdir(FS_FOLDER . self::THUMBNAIL_PATH, 0755, true);
         }
 
-        // obtenemos la extension
-        $ext = pathinfo($file->getFullPath(), PATHINFO_EXTENSION);
-
         // si la extensión no está entre las permitidas terminamos
+        $ext = pathinfo($file->getFullPath(), PATHINFO_EXTENSION);
         if (false === in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
             return '';
         }
 
-        // obtenemos el nombre del archivo sin la extension
-        $fileName = pathinfo($file->filename, PATHINFO_FILENAME);
-
         // creamos el nuevo nombre del archivo
-        $thumbName = $fileName . '_' . $width . 'x' . $height . '.' . $ext;
+        $thumbName = pathinfo($file->filename, PATHINFO_FILENAME) . '_' . $width . 'x' . $height . '.' . $ext;
 
         // si el archivo existe lo devolvemos
-        $thumbFile = $thumbPath . $thumbName;
+        $thumbFile = self::THUMBNAIL_PATH . $thumbName;
         if (file_exists(FS_FOLDER . $thumbFile)) {
             return $this->getThumbnailPath($thumbFile, $token, $permaToken);
         }
 
-        // redimensionamos la imagen proporcionalmente
-        $image = imagecreatefromstring(file_get_contents($file->getFullPath()));
-        $imageWidth = imagesx($image);
-        $imageHeight = imagesy($image);
-        $ratio = $imageWidth / $imageHeight;
-        if ($width / $height > $ratio) {
-            $width = $height * $ratio;
-        } else {
-            $height = $width / $ratio;
+        try {
+            // redimensionamos la imagen proporcionalmente
+            $image = imagecreatefromstring(file_get_contents($file->getFullPath()));
+            $imageWidth = imagesx($image);
+            $imageHeight = imagesy($image);
+            $ratio = $imageWidth / $imageHeight;
+            if ($width / $height > $ratio) {
+                $width = $height * $ratio;
+            } else {
+                $height = $width / $ratio;
+            }
+            $thumb = imagecreatetruecolor($width, $height);
+            imagecopyresampled($thumb, $image, 0, 0, 0, 0, $width, $height, $imageWidth, $imageHeight);
+
+            // guardamos la imagen según la extensión
+            switch ($ext) {
+                case 'jpg':
+                case 'jpeg':
+                    imagejpeg($thumb, FS_FOLDER . $thumbFile);
+                    break;
+
+                case 'png':
+                    imagepng($thumb, FS_FOLDER . $thumbFile);
+                    break;
+
+                case 'gif':
+                    imagegif($thumb, FS_FOLDER . $thumbFile);
+                    break;
+            }
+
+            imagedestroy($image);
+            imagedestroy($thumb);
+        } catch (Throwable $th) {
+            self::toolBox()->log()->error($th->getMessage());
+            return '';
         }
-        $thumb = imagecreatetruecolor($width, $height);
-        imagecopyresampled($thumb, $image, 0, 0, 0, 0, $width, $height, $imageWidth, $imageHeight);
 
-        // guardamos la imagen según la extensión
-        switch ($ext) {
-            case 'jpg':
-            case 'jpeg':
-                imagejpeg($thumb, FS_FOLDER . $thumbFile);
-                break;
-
-            case 'png':
-                imagepng($thumb, FS_FOLDER . $thumbFile);
-                break;
-
-            case 'gif':
-                imagegif($thumb, FS_FOLDER . $thumbFile);
-                break;
-        }
-
-        imagedestroy($image);
-        imagedestroy($thumb);
         return $this->getThumbnailPath($thumbFile, $token, $permaToken);
     }
 
