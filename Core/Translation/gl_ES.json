@@ -685,7 +685,7 @@
     "invalid-iban": "IBAN non válido: %iban%",
     "invalid-number": "Número non válido: %number%",
     "invalid-request": "Petición non válida",
-    "invalid-user-can-permission": "Permiso no válido: %permission%. Los permisos disponibles son access, delete, export, import, update y only-owner-data.",
+    "invalid-user-can-permission": "Permiso non válido: %permission%. Os permisos dispoñibles son access, delete, export, import, update e only-owner-data.",
     "invalid-web": "Enderezo web non válido",
     "invoice": "Factura",
     "invoice-email-subject": "A súa factura %code%",
