@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -115,7 +115,6 @@ class APIModel extends APIResourceClass
             return false;
         }
 
-        // TODO: Why don't use $this->modal->loadFromData() ???
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
         }
@@ -140,7 +139,6 @@ class APIModel extends APIResourceClass
             return false;
         }
 
-        // TODO: Why don't use $this->modal->loadFromData() ???
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
         }
@@ -294,16 +292,20 @@ class APIModel extends APIResourceClass
         $operation = $this->getRequestArray('operation');
         $order = $this->getRequestArray('sort');
 
+        // obtenemos los registros
         $where = $this->getWhereValues($filter, $operation);
         $data = $this->model->all($where, $order, $offset, $limit);
+
+        // obtenemos el count y lo ponemos en el header
+        $count = $this->model->count($where);
+        $this->response->headers->set('X-Total-Count', $count);
+
         $this->returnResult($data);
         return true;
     }
 
     /**
      * Convert $text to plural
-     *
-     * TODO: The conversion to the plural is language dependent.
      *
      * @param $text
      *
