@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,13 +31,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  */
 class ListProducto extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
@@ -56,9 +50,6 @@ class ListProducto extends ListController
         $this->createViewStock();
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewProducto(string $viewName = 'ListProducto')
     {
         $this->addView($viewName, 'Producto', 'products', 'fas fa-cubes');
@@ -99,9 +90,6 @@ class ListProducto extends ListController
         $this->addFilterCheckbox($viewName, 'sevende', 'for-sale', 'sevende');
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewVariante(string $viewName = 'ListVariante')
     {
         $this->addView($viewName, 'Join\VarianteProducto', 'variants', 'fas fa-project-diagram');
@@ -129,9 +117,6 @@ class ListProducto extends ListController
         $this->setSettings($viewName, 'btnNew', false);
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewStock(string $viewName = 'ListStock')
     {
         $this->addView($viewName, 'Join\StockProducto', 'stock', 'fas fa-dolly');

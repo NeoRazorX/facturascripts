@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,7 +35,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Controller
 {
-
     /**
      * Name of the class of the controller (although its in inheritance from this class,
      * the name of the final class we will have here)
@@ -134,7 +133,7 @@ class Controller
         AssetManager::clear();
         AssetManager::setAssetsForPage($className);
 
-        $this->checkPHPversion(7.2);
+        $this->checkPHPversion(7.3);
     }
 
     /**
@@ -150,7 +149,7 @@ class Controller
      *
      * @return array
      */
-    public function getPageData()
+    public function getPageData(): array
     {
         return [
             'name' => $this->className,

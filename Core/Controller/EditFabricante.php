@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -26,27 +27,17 @@ use FacturaScripts\Dinamic\Model\Producto;
 /**
  * Controller to edit a single item from the Fabricante model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditFabricante extends EditController
 {
-
-    /**
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Fabricante';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
@@ -58,7 +49,7 @@ class EditFabricante extends EditController
     protected function addProductAction()
     {
         $codes = $this->request->request->get('code', []);
-        if (false === \is_array($codes)) {
+        if (false === is_array($codes)) {
             return;
         }
 
@@ -90,16 +81,12 @@ class EditFabricante extends EditController
         $this->createViewNewProducts();
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewNewProducts(string $viewName = 'ListProducto-new')
     {
         $this->addListView($viewName, 'Producto', 'add', 'fas fa-folder-plus');
         $this->createViewProductsCommon($viewName);
 
-        /// add action button
+        // add action button
         $this->addButton($viewName, [
             'action' => 'add-product',
             'color' => 'success',
@@ -108,16 +95,12 @@ class EditFabricante extends EditController
         ]);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewProducts(string $viewName = 'ListProducto')
     {
         $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
         $this->createViewProductsCommon($viewName);
 
-        /// add action button
+        // add action button
         $this->addButton($viewName, [
             'action' => 'remove-product',
             'color' => 'danger',
@@ -127,10 +110,6 @@ class EditFabricante extends EditController
         ]);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewProductsCommon(string $viewName)
     {
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
@@ -138,14 +117,13 @@ class EditFabricante extends EditController
         $this->views[$viewName]->addOrderBy(['stockfis'], 'stock');
         $this->views[$viewName]->searchFields = ['referencia', 'descripcion'];
 
-        /// disable columns and buttons
+        // disable columns and buttons
         $this->views[$viewName]->disableColumn('manufacturer');
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
     /**
-     *
      * @param string $action
      *
      * @return bool
@@ -169,7 +147,7 @@ class EditFabricante extends EditController
     /**
      * Load data view procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)

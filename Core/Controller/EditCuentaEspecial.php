@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -25,28 +26,17 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 /**
  * Controller to edit a single item from the CuentaEspecial model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class EditCuentaEspecial extends EditController
 {
-
-    /**
-     * Returns the model name.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'CuentaEspecial';
     }
 
-    /**
-     * Returns basic page attributes.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -55,37 +45,29 @@ class EditCuentaEspecial extends EditController
         return $data;
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createAccountsView(string $viewName = 'ListCuenta')
     {
         $this->addListView($viewName, 'Cuenta', 'accounts', 'fas fa-book');
         $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
 
-        /// disable columns
+        // disable columns
         $this->views[$viewName]->disableColumn('special-account');
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'checkBoxes', false);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createSubaccountsView(string $viewName = 'ListSubcuenta')
     {
         $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-th-list');
         $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
 
-        /// disable columns
+        // disable columns
         $this->views[$viewName]->disableColumn('special-account');
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'checkBoxes', false);
@@ -98,7 +80,7 @@ class EditCuentaEspecial extends EditController
     {
         parent::createViews();
 
-        /// disable buttons
+        // disable buttons
         $mainViewName = $this->getMainViewName();
         $this->setSettings($mainViewName, 'btnDelete', false);
         $this->setSettings($mainViewName, 'btnNew', false);
@@ -109,8 +91,7 @@ class EditCuentaEspecial extends EditController
     }
 
     /**
-     *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
@@ -29,13 +30,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  */
 class ListImpuesto extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -53,10 +48,6 @@ class ListImpuesto extends ListController
         $this->createViewsRetention();
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewsRetention(string $viewName = 'ListRetencion')
     {
         $this->addView($viewName, 'Retencion', 'retentions', 'fas fa-plus-square');
@@ -65,10 +56,6 @@ class ListImpuesto extends ListController
         $this->addSearchFields($viewName, ['descripcion', 'codretencion']);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewsTax(string $viewName = 'ListImpuesto')
     {
         $this->addView($viewName, 'Impuesto', 'taxes', 'fas fa-plus-square');

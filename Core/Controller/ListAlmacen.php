@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,18 +25,12 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 /**
  *  Controller to list the items in the Almacen model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListAlmacen extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
@@ -53,9 +47,6 @@ class ListAlmacen extends ListController
         $this->createViewWarehouse();
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewWarehouse(string $viewName = 'ListAlmacen')
     {
         $this->addView($viewName, 'Almacen', 'warehouses', 'fas fa-warehouse');

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,19 +32,12 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditReciboCliente extends EditController
 {
-
-    /**
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'ReciboCliente';
     }
 
-    /**
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -72,9 +65,6 @@ class EditReciboCliente extends EditController
         $this->createViewPayments();
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createViewPayments($viewName = 'ListPagoCliente')
     {
         $this->addListView($viewName, 'PagoCliente', 'payments');
