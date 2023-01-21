@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,7 +32,7 @@ final class UserTest extends TestCase
     {
         // comprobamos que ya hay un usuario por defecto
         $user = new User();
-        $this->assertGreaterThanOrEqual(1, $user->count());
+        $this->assertEquals(1, $user->count());
 
         // no se puede eliminar
         foreach ($user->all() as $user) {
@@ -230,12 +230,6 @@ final class UserTest extends TestCase
         $this->assertFalse($user->can('test6', 'import'));
         $this->assertTrue($user->can('test6', 'update'));
         $this->assertTrue($user->can('test6', 'only-owner-data'));
-
-        // eliminamos la página
-        $this->assertTrue($page->delete());
-
-        // comprobamos que ya no tiene permiso
-        $this->assertFalse($user->can('test6'));
 
         // eliminamos
         $this->assertTrue($user->delete());

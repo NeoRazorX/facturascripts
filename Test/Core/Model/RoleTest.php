@@ -19,16 +19,15 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Model\Page;
 use FacturaScripts\Core\Model\Role;
 use FacturaScripts\Core\Model\RoleAccess;
+use FacturaScripts\Core\Model\RoleUser;
 use FacturaScripts\Core\Model\User;
 use PHPUnit\Framework\TestCase;
 
 final class RoleTest extends TestCase
 {
-
     public function testCreateRole()
     {
         $role = new Role();
@@ -41,6 +40,9 @@ final class RoleTest extends TestCase
 
         // eliminamos
         $this->assertTrue($role->delete());
+
+        // comprobamos que ya no existe
+        $this->assertFalse($role->exists());
     }
 
     public function testCreateRoleWithoutCode()
@@ -54,6 +56,9 @@ final class RoleTest extends TestCase
 
         // eliminamos
         $this->assertTrue($role->delete());
+
+        // comprobamos que ya no existe
+        $this->assertFalse($role->exists());
     }
 
     public function testRoleAccessAfterDelete()
@@ -62,7 +67,6 @@ final class RoleTest extends TestCase
         $role = new Role();
         $role->descripcion = 'test without code';
         $this->assertTrue($role->save());
-        $this->assertTrue($role->exists());
 
         // crear page
         $page = new Page();
@@ -71,7 +75,6 @@ final class RoleTest extends TestCase
         $page->icon = 'fas fa-test';
         $page->menu = 'admin';
         $this->assertTrue($page->save());
-        $this->assertTrue($page->exists());
 
         // crear role access
         $rolePage = new RoleAccess();
@@ -80,16 +83,46 @@ final class RoleTest extends TestCase
         $this->assertTrue($rolePage->save());
         $this->assertTrue($rolePage->exists());
 
-        // borrarmos page
+        // borramos page
         $this->assertTrue($page->delete());
 
-        // comprobamos que sigue existiendo roleaccess
+        // comprobamos que sigue existiendo rolePage
         $this->assertTrue($rolePage->exists());
-
-        // borramos roleacceess
-        $this->assertTrue($rolePage->delete());
 
         // borramos role
         $this->assertTrue($role->delete());
+
+        // comprobamos que ya no existe rolePage
+        $this->assertFalse($rolePage->exists());
+    }
+
+    public function testRoleUser()
+    {
+        // crear role
+        $role = new Role();
+        $role->descripcion = 'test without code';
+        $this->assertTrue($role->save());
+
+        // crear user
+        $user = new User();
+        $user->nick = 'test5';
+        $user->setPassword('test5');
+        $this->assertTrue($user->save());
+
+        // asignamos role al user
+        $roleUser = new RoleUser();
+        $roleUser->codrole = $role->codrole;
+        $roleUser->nick = $user->nick;
+        $this->assertTrue($roleUser->save());
+        $this->assertTrue($roleUser->exists());
+
+        // borramos role
+        $this->assertTrue($role->delete());
+
+        // comprobamos que ya no existe roleUser
+        $this->assertFalse($roleUser->exists());
+
+        // borramos user
+        $this->assertTrue($user->delete());
     }
 }

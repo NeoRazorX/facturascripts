@@ -26,11 +26,11 @@
         <type>PRIMARY KEY (id)</type>
     </constraint>
     <constraint>
-        <name>roles_users_roles</name>
+        <name>ca_roles_users_roles</name>
         <type>FOREIGN KEY (codrole) REFERENCES roles (codrole) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>roles_users_user</name>
+        <name>ca_roles_users_user</name>
         <type>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>

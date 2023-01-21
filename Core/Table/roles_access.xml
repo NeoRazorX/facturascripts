@@ -56,7 +56,7 @@
         <type>PRIMARY KEY (id)</type>
     </constraint>
     <constraint>
-        <name>roles_access_roles</name>
+        <name>ca_roles_access_roles</name>
         <type>FOREIGN KEY (codrole) REFERENCES roles (codrole) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>

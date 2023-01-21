@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022  Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023  Carlos García Gómez <carlos@facturascripts.com>
  * Copyright (C) 2016       Joe Nilson          <joenilson at gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -82,6 +82,7 @@ class RoleUser extends Base\ModelClass
     {
         // needed dependencies
         new Role();
+        new User();
 
         return parent::install();
     }
