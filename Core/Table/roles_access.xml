@@ -60,10 +60,6 @@
         <type>FOREIGN KEY (codrole) REFERENCES roles (codrole) ON DELETE CASCADE ON UPDATE CASCADE</type>
     </constraint>
     <constraint>
-        <name>roles_access_page</name>
-        <type>FOREIGN KEY (pagename) REFERENCES pages (name) ON DELETE CASCADE ON UPDATE CASCADE</type>
-    </constraint>
-    <constraint>
         <name>unique_roles_access</name>
         <type>UNIQUE (codrole,pagename)</type>
     </constraint>
