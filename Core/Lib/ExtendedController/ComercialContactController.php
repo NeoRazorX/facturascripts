@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,12 +29,11 @@ use FacturaScripts\Dinamic\Model\Proveedor;
  * Controller for editing models that are related and show
  * a history of purchase or sale documents.
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class ComercialContactController extends EditController
 {
-
     use ListBusinessActionTrait;
     use DocFilesTrait;
 
@@ -170,9 +169,9 @@ abstract class ComercialContactController extends EditController
         $this->views[$viewName]->addOrderBy(['fechapago'], 'payment-date');
         $this->views[$viewName]->addOrderBy(['vencimiento'], 'expiration', 2);
         $this->views[$viewName]->addOrderBy(['importe'], 'amount');
-		
-		// filters
-        $this->views[$viewName]->addFilterPeriod('period','expiration', 'vencimiento');
+
+        // filters
+        $this->views[$viewName]->addFilterPeriod('period', 'expiration', 'vencimiento');
 
         // search columns
         $this->views[$viewName]->addSearchFields(['codigofactura', 'observaciones']);
