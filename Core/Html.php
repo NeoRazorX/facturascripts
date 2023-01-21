@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -105,6 +105,22 @@ final class Html
             $attached->loadFromCode($id);
             return $attached;
         });
+    }
+
+    private static function fixHtmlFunction(): TwigFunction
+    {
+        return new TwigFunction(
+            'fixHtml',
+            function ($txt) {
+                $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
+                $final = ['<', '>', '"', "'"];
+                return $txt === null ? null : trim(str_replace($original, $final, $txt));
+            },
+            [
+                'is_safe' => ['html'],
+                'is_safe_callback' => ['html']
+            ]
+        );
     }
 
     private static function formTokenFunction(): TwigFunction
@@ -302,6 +318,7 @@ final class Html
         // cargamos las funciones de twig
         self::$twig->addFunction(self::assetFunction());
         self::$twig->addFunction(self::attachedFileFunction());
+        self::$twig->addFunction(self::fixHtmlFunction());
         self::$twig->addFunction(self::formTokenFunction());
         self::$twig->addFunction(self::getIncludeViews());
         self::$twig->addFunction(self::moneyFunction());
