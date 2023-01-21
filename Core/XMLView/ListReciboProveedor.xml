@@ -42,6 +42,11 @@
         <column name="observations" order="150">
             <widget type="textarea" fieldname="observaciones"/>
         </column>
+		<column name="method-payment" order="155">
+            <widget type="autocomplete" fieldname="codpago">
+                <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"/>
+            </widget>
+        </column>
         <column name="amount" display="right" order="160">
             <widget type="money" fieldname="importe">
                 <option color="danger">lt:0</option>
