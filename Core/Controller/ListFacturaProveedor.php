@@ -94,14 +94,14 @@ class ListFacturaProveedor extends ListBusinessDocument
     protected function createViewReceipts(string $viewName = 'ListReciboProveedor')
     {
         $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
-        $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date', 2);
+        $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date');
         $this->addOrderBy($viewName, ['fechapago'], 'payment-date');
-        $this->addOrderBy($viewName, ['vencimiento'], 'expiration');
+        $this->addOrderBy($viewName, ['vencimiento'], 'expiration', 2);
         $this->addOrderBy($viewName, ['importe'], 'amount');
         $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
 
         // filtros
-        $this->addFilterPeriod($viewName, 'expiration', 'period', 'vencimiento');
+        $this->addFilterPeriod($viewName, 'period', 'expiration', 'vencimiento');
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
