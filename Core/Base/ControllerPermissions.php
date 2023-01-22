@@ -124,4 +124,19 @@ class ControllerPermissions
         $this->allowUpdate = $update;
         $this->onlyOwnerData = $onlyOwner;
     }
+
+    public function setParams(array $params)
+    {
+        foreach ($params as $key => $value) {
+            if (false === property_exists($this, $key)) {
+                continue;
+            } elseif ($key === 'accessMode' && false === is_int($value)) {
+                continue;
+            } elseif (false === is_bool($value)) {
+                continue;
+            }
+
+            $this->{$key} = $value;
+        }
+    }
 }
