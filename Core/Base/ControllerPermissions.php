@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,71 +19,38 @@
 
 namespace FacturaScripts\Core\Base;
 
-use FacturaScripts\Dinamic\Model\RoleAccess;
-use FacturaScripts\Dinamic\Model\User;
+use FacturaScripts\Core\Model\RoleAccess;
+use FacturaScripts\Core\Model\User;
 
 /**
- * Description of ControllerPermissions
+ * Description of ControllerPermissionsTest
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class ControllerPermissions
+final class ControllerPermissions
 {
-
-    /**
-     * @var int
-     */
+    /** @var int */
     public $accessMode = 1;
 
-    /**
-     * Have permission to access data.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $allowAccess = false;
 
-    /**
-     * Have permission to delete data.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $allowDelete = false;
 
-    /**
-     * Have permission to export data.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $allowExport = false;
 
-    /**
-     * Have permission to import data.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $allowImport = false;
 
-    /**
-     * Have permission to update data.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $allowUpdate = false;
 
-    /**
-     * Permission for show all or only owner data.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $onlyOwnerData = false;
 
-    /**
-     * ControllerPermissions constructor.
-     *
-     * @param User|false $user
-     * @param string|null $pageName
-     */
-    public function __construct($user = false, $pageName = null)
+    public function __construct(?User $user = null, string $pageName = null)
     {
         if (empty($user) || empty($pageName)) {
             // do nothing
@@ -109,14 +76,7 @@ class ControllerPermissions
         }
     }
 
-    /**
-     * @param bool $access
-     * @param int $accessMode
-     * @param bool $delete
-     * @param bool $update
-     * @param bool $onlyOwner
-     */
-    public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $onlyOwner = false)
+    public function set(bool $access, int $accessMode, bool $delete, bool $update, bool $onlyOwner = false): void
     {
         $this->accessMode = $accessMode;
         $this->allowAccess = $access;
@@ -125,18 +85,17 @@ class ControllerPermissions
         $this->onlyOwnerData = $onlyOwner;
     }
 
-    public function setParams(array $params)
+    public function setParams(array $params): void
     {
         foreach ($params as $key => $value) {
             if (false === property_exists($this, $key)) {
                 continue;
-            } elseif ($key === 'accessMode' && false === is_int($value)) {
-                continue;
-            } elseif (false === is_bool($value)) {
+            } elseif ($key === 'accessMode') {
+                $this->{$key} = (int)$value;
                 continue;
             }
 
-            $this->{$key} = $value;
+            $this->{$key} = (bool)$value;
         }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\Debug\DebugBar;
+use FacturaScripts\Core\Base\Debug\DumbBar;
 
 /**
  * Description of AppDebugController
@@ -27,11 +29,6 @@ use FacturaScripts\Core\Base\Debug\DebugBar;
  */
 final class AppDebugController extends AppController
 {
-
-    /**
-     * @param string $uri
-     * @param string $pageName
-     */
     public function __construct(string $uri = '/', string $pageName = '')
     {
         DebugBar::start();
@@ -40,9 +37,6 @@ final class AppDebugController extends AppController
         DebugBar::end('__construct');
     }
 
-    /**
-     * @return bool
-     */
     public function connect(): bool
     {
         DebugBar::start('connect');
@@ -51,28 +45,18 @@ final class AppDebugController extends AppController
         return $return;
     }
 
-    /**
-     * @return DebugBar
-     */
-    public function debugBar()
+    public function debugBar(): DumbBar
     {
         return new DebugBar();
     }
 
-    /**
-     * @param string $pageName
-     */
-    protected function loadController(string $pageName)
+    protected function loadController(string $pageName): void
     {
         DebugBar::start($pageName);
         parent::loadController($pageName);
     }
 
-    /**
-     * @param string $template
-     * @param string $controllerName
-     */
-    protected function renderHtml(string $template, string $controllerName = '')
+    protected function renderHtml(string $template, string $controllerName = ''): void
     {
         $parts = explode('\\', $controllerName);
         DebugBar::end(end($parts));

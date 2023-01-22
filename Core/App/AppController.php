@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -62,9 +62,9 @@ class AppController extends App
     private $pageName;
 
     /**
-     * @var User|false
+     * @var ?User
      */
-    private $user = false;
+    private $user;
 
     /**
      * Initializes the app.
@@ -79,10 +79,7 @@ class AppController extends App
         $this->pageName = $pageName;
     }
 
-    /**
-     * @return DumbBar
-     */
-    public function debugBar()
+    public function debugBar(): DumbBar
     {
         return new DumbBar();
     }
@@ -116,11 +113,7 @@ class AppController extends App
         return true;
     }
 
-    /**
-     * @param int $status
-     * @param string $message
-     */
-    protected function die(int $status, string $message = '')
+    protected function die(int $status, string $message = ''): void
     {
         $content = ToolBox::i18n()->trans($message);
         foreach (ToolBox::log()::read() as $log) {
@@ -171,7 +164,7 @@ class AppController extends App
      *
      * @param string $pageName
      */
-    protected function loadController(string $pageName)
+    protected function loadController(string $pageName): void
     {
         $controllerName = $this->getControllerFullName($pageName);
         $template = 'Error/ControllerNotFound.html.twig';
@@ -183,7 +176,7 @@ class AppController extends App
             $permissions = new ControllerPermissions($this->user, $pageName);
 
             $this->controller = new $controllerName($pageName, $this->uri);
-            if ($this->user === false) {
+            if (empty($this->user)) {
                 $this->controller->publicCore($this->response);
                 $template = $this->controller->getTemplate();
             } elseif ($permissions->allowAccess) {
@@ -206,7 +199,7 @@ class AppController extends App
         }
     }
 
-    private function newUserPassword()
+    private function newUserPassword(): void
     {
         $user = new User();
         $nick = $this->request->request->get('fsNewUserPasswd');
@@ -234,7 +227,7 @@ class AppController extends App
      * @param string $template
      * @param string $controllerName
      */
-    protected function renderHtml(string $template, string $controllerName = '')
+    protected function renderHtml(string $template, string $controllerName = ''): void
     {
         // HTML template variables
         $templateVars = [
@@ -257,9 +250,9 @@ class AppController extends App
     /**
      * User authentication, returns the user when successful, or false when not.
      *
-     * @return User|false
+     * @return ?User
      */
-    private function userAuth()
+    private function userAuth(): ?User
     {
         $user = new User();
         $nick = $this->request->request->get('fsNick', '');
@@ -281,12 +274,12 @@ class AppController extends App
 
             $this->ipWarning();
             ToolBox::i18nLog()->warning('login-password-fail');
-            return false;
+            return null;
         }
 
         $this->ipWarning();
         ToolBox::i18nLog()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($nick)]);
-        return false;
+        return null;
     }
 
     /**
@@ -294,13 +287,13 @@ class AppController extends App
      *
      * @param User $user
      *
-     * @return User|bool
+     * @return ?User
      */
-    private function cookieAuth(User &$user)
+    private function cookieAuth(User &$user): ?User
     {
         $cookieNick = $this->request->cookies->get('fsNick', '');
         if ($cookieNick === '') {
-            return false;
+            return null;
         }
 
         if ($user->loadFromCode($cookieNick) && $user->enabled) {
@@ -313,11 +306,11 @@ class AppController extends App
 
             ToolBox::i18nLog()->warning('login-cookie-fail');
             $this->response->headers->clearCookie('fsNick');
-            return false;
+            return null;
         }
 
         ToolBox::i18nLog()->warning('login-user-not-found', ['%nick%' => htmlspecialchars($cookieNick)]);
-        return false;
+        return null;
     }
 
     /**
@@ -326,7 +319,7 @@ class AppController extends App
      * @param User $user
      * @param bool $force
      */
-    private function updateCookies(User &$user, bool $force = false)
+    private function updateCookies(User &$user, bool $force = false): void
     {
         if ($force || time() - strtotime($user->lastactivity) > self::USER_UPDATE_ACTIVITY_PERIOD) {
             $ipAddress = Session::getClientIp();
@@ -349,7 +342,7 @@ class AppController extends App
     /**
      * Log out the user.
      */
-    private function userLogout()
+    private function userLogout(): void
     {
         $this->response->headers->clearCookie('fsNick', FS_ROUTE);
         $this->response->headers->clearCookie('fsLogkey', FS_ROUTE);
