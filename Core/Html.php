@@ -207,7 +207,7 @@ final class Html
     /**
      * @throws LoaderError
      */
-    private static function loadPluginFolders()
+    private static function loadPluginFolders(): void
     {
         // Core namespace
         self::$loader->addPath(FS_FOLDER . '/Core/View', 'Core');
