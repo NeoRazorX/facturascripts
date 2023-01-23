@@ -113,13 +113,7 @@ class EditImpuesto extends EditController
 
             case 'ListSubcuenta':
                 // cargamos la lista de subcuentas del impuesto
-                $codes = [];
-                if ($this->getViewModelValue($this->getMainViewName(), 'codsubcuentarep')) {
-                    $codes[] = $this->getViewModelValue($this->getMainViewName(), 'codsubcuentarep');
-                }
-                if ($this->getViewModelValue($this->getMainViewName(), 'codsubcuentasop')) {
-                    $codes[] = $this->getViewModelValue($this->getMainViewName(), 'codsubcuentasop');
-                }
+                $codes = $this->getSubAccountList();
                 if (empty($codes)) {
                     // so hay ninguna, desactivamos la pestaña
                     $view->settings['active'] = false;
@@ -133,5 +127,28 @@ class EditImpuesto extends EditController
                 parent::loadData($viewName, $view);
                 break;
         }
+    }
+
+    /**
+     *
+     * @return array
+     */
+    private function getSubAccountList(): array
+    {
+        $mvn = $this->getMainViewName();
+        $codes = [];
+        if ($this->getViewModelValue($mvn, 'codsubcuentarep')) {
+            $codes[] = $this->getViewModelValue($mvn, 'codsubcuentarep');
+        }
+        if ($this->getViewModelValue($mvn, 'codsubcuentasop')) {
+            $codes[] = $this->getViewModelValue($mvn, 'codsubcuentasop');
+        }
+        if ($this->getViewModelValue($mvn, 'codsubcuentarep_recargo')) {
+            $codes[] = $this->getViewModelValue($mvn, 'codsubcuentarep_recargo');
+        }
+        if ($this->getViewModelValue($mvn, 'codsubcuentasop_recargo')) {
+            $codes[] = $this->getViewModelValue($mvn, 'codsubcuentasop_recargo');
+        }
+        return $codes;
     }
 }

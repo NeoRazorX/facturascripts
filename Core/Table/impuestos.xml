@@ -16,7 +16,15 @@
         <type>character varying(15)</type>
     </column>
     <column>
+        <name>codsubcuentarep_recargo</name>
+        <type>character varying(15)</type>
+    </column>
+    <column>
         <name>codsubcuentasop</name>
+        <type>character varying(15)</type>
+    </column>
+    <column>
+        <name>codsubcuentasop_recargo</name>
         <type>character varying(15)</type>
     </column>
     <column>

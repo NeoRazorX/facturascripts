@@ -52,7 +52,17 @@ class Impuesto extends Base\ModelClass
     /**
      * @var string
      */
+    public $codsubcuentarep_recargo;
+
+    /**
+     * @var string
+     */
     public $codsubcuentasop;
+
+    /**
+     * @var string
+     */
+    public $codsubcuentasop_recargo;
 
     /**
      * Description of the tax.
@@ -175,11 +185,22 @@ class Impuesto extends Base\ModelClass
         }
 
         $this->codsubcuentarep = empty($this->codsubcuentarep) ? null : $this->codsubcuentarep;
+        $this->codsubcuentarep_recargo = empty($this->codsubcuentarep_recargo) ? null : $this->codsubcuentarep_recargo;
         $this->codsubcuentasop = empty($this->codsubcuentasop) ? null : $this->codsubcuentasop;
+        $this->codsubcuentasop_recargo = empty($this->codsubcuentasop_recargo) ? null : $this->codsubcuentasop_recargo;
         $this->descripcion = self::toolBox()::utils()::noHtml($this->descripcion);
         return parent::test();
     }
 
+    protected function saveInsert(array $values = []): bool
+    {
+        if (empty($this->codimpuesto)) {
+            $this->codimpuesto = (string)$this->newCode();
+        }
+
+        return parent::saveInsert($values);
+    }
+    
     /**
      * @param string $field
      * @param string $subAccount
@@ -196,14 +217,5 @@ class Impuesto extends Base\ModelClass
 
         $result->loadFromCode($this->toolBox()->appSettings()->get('default', 'codimpuesto'));
         return $result;
-    }
-
-    protected function saveInsert(array $values = []): bool
-    {
-        if (empty($this->codimpuesto)) {
-            $this->codimpuesto = (string)$this->newCode();
-        }
-
-        return parent::saveInsert($values);
     }
 }
