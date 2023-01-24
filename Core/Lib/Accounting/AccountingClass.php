@@ -101,7 +101,6 @@ abstract class AccountingClass extends AccountingAccounts
         return true;
     }
 
-
     /**
      * Add a line of taxes to the accounting entry based on the sub-account
      * and values reported
@@ -117,7 +116,7 @@ abstract class AccountingClass extends AccountingAccounts
     protected function addTaxLine($accountEntry, $subaccount, $counterpart, $isDebit, $values): bool
     {
         /// add basic data
-        $amount = (float)$values['totaliva'] + (float)$values['totalrecargo'];
+        $amount = (float)$values['totaliva'];
         $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount);
 
         /// counterpart?
