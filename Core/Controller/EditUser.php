@@ -218,6 +218,10 @@ class EditUser extends EditController
                     // prevent user self-destruction
                     $this->setSettings($viewName, 'btnDelete', false);
                 }
+                // is the user is admin, hide the EditRoleUser tab
+                if ($view->model->admin) {
+                    $this->setSettings('EditRoleUser', 'active', false);
+                }
                 break;
         }
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,62 +28,34 @@ namespace FacturaScripts\Core\Model;
  */
 class ApiKey extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
-    /**
-     * API key.
-     *
-     * @var string
-     */
+    /** @var string */
     public $apikey;
 
-    /**
-     * Date of registration.
-     *
-     * @var string
-     */
+    /** @var string */
     public $creationdate;
 
-    /**
-     * Description.
-     *
-     * @var string
-     */
+    /** @var string */
     public $description;
 
-    /**
-     * Enabled/Disabled.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $enabled;
 
-    /**
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $fullaccess;
 
-    /**
-     * Primary key. Id autoincremental
-     *
-     * @var int
-     */
+    /** @var int */
     public $id;
 
-    /**
-     * Nick of the user.
-     *
-     * @var string
-     */
+    /** @var string */
     public $nick;
 
     public function clear()
     {
         parent::clear();
         $this->apikey = $this->toolBox()->utils()->randomString(20);
-        $this->creationdate = \date(self::DATE_STYLE);
+        $this->creationdate = date(self::DATE_STYLE);
         $this->enabled = true;
         $this->fullaccess = false;
     }
