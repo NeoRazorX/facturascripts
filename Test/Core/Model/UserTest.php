@@ -68,6 +68,24 @@ final class UserTest extends TestCase
         $this->assertTrue($user->delete());
     }
 
+    public function testEscapeHtml()
+    {
+        // creamos un usuario con html en lastbrowser y lastip
+        $user = new User();
+        $user->nick = 'test1';
+        $user->setPassword('test1');
+        $user->lastbrowser = '<script>alert("test");</script>';
+        $user->lastip = '<b>123456</b>';
+        $this->assertTrue($user->save());
+
+        // comprobamos que se han escapado los valores
+        $this->assertEquals('&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;', $user->lastbrowser);
+        $this->assertEquals('&lt;b&gt;123456&lt;/b&gt;', $user->lastip);
+
+        // eliminamos
+        $this->assertTrue($user->delete());
+    }
+
     public function testCantUseBadEmail()
     {
         // creamos un usuario con un email incorrecto
