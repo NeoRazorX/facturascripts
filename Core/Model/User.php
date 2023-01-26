@@ -236,10 +236,10 @@ class User extends Base\ModelClass
         }
 
         // escapamos lastbrowser y comprobamos que no excede los 200 caracteres
-        $this->lastbrowser = substr($this->toolBox()->utils()->noHtml($this->lastbrowser), 0, 200);
+        $this->lastbrowser = substr($this->toolBox()->utils()->noHtml($this->lastbrowser ?? ''), 0, 200);
 
         // escapamos el html de lastip y comprobamos que no excede los 40 caracteres
-        $this->lastip = substr($this->toolBox()->utils()->noHtml($this->lastip), 0, 40);
+        $this->lastip = substr($this->toolBox()->utils()->noHtml($this->lastip ?? ''), 0, 40);
 
         if ($this->admin) {
             $this->level = 99;
