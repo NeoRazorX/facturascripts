@@ -183,22 +183,22 @@ class ListFacturaCliente extends ListBusinessDocument
             $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
         }
         $orderBy = strtolower(FS_DB_TYPE) == 'postgresql' ?
-            ['fecha' => 'ASC', 'CAST(numero as integer)' => 'ASC'] :
-            ['fecha' => 'ASC', 'CAST(numero as unsigned)' => 'ASC'];
+            ['CAST(numero as integer)' => 'ASC'] :
+            ['CAST(numero as unsigned)' => 'ASC'];
         foreach ($invoiceModel->all($where, $orderBy, 0, 0) as $invoice) {
-            // si el número es menor que el de la secuencia, saltamos
+            // si el número de la factura es menor que el de la secuencia, saltamos
             if ($invoice->numero < $sequence->inicio) {
                 continue;
             }
 
-            // si el número es el esperado, actualizamos el número
+            // si el número de la factura es el esperado, actualizamos el número esperado
             if ($invoice->numero == $number) {
                 $number++;
                 continue;
             }
 
-            // si el número es mayor que el esperado, añadimos huecos hasta el número
-            while ($number < $invoice->numero) {
+            // si el número de la factura es mayor que el esperado, añadimos huecos hasta el número
+            while ($invoice->numero > $number) {
                 $gaps[] = [
                     'codserie' => $invoice->codserie,
                     'numero' => $number,
@@ -207,6 +207,7 @@ class ListFacturaCliente extends ListBusinessDocument
                 ];
                 $number++;
             }
+            $number++;
         }
 
         return $gaps;
