@@ -264,4 +264,8 @@
         <name>uniq_codigo_facturascli</name>
         <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
+    <constraint>
+        <name>uniq_number_facturascli</name>
+        <type>UNIQUE (codejercicio,codserie,idempresa,numero)</type>
+    </constraint>
 </table>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,7 +32,6 @@ use FacturaScripts\Dinamic\Model\Serie;
  */
 abstract class BusinessDocument extends ModelOnChangeClass
 {
-
     use CompanyRelationTrait;
     use CurrencyRelationTrait;
     use ExerciseRelationTrait;
@@ -366,6 +365,13 @@ abstract class BusinessDocument extends ModelOnChangeClass
         // check number
         if ((int)$this->numero < 1) {
             $this->toolBox()->i18nLog()->error('invalid-number', ['%number%' => $this->numero]);
+            return false;
+        }
+
+        // check exercise and date
+        $exercise = $this->getExercise();
+        if (strtotime($this->fecha) < strtotime($exercise->fechainicio) || strtotime($this->fecha) > strtotime($exercise->fechafin)) {
+            $this->toolBox()->i18nLog()->error('date-out-of-exercise-range', ['%exerciseName%' => $this->codejercicio]);
             return false;
         }
 
