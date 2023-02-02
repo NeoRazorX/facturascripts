@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -42,7 +42,7 @@ echo "\n" . 'PHP: ' . phpversion();
 echo "\n" . 'DB Host: ' . FS_DB_HOST;
 echo "\n" . 'DB User: ' . FS_DB_USER;
 echo "\n" . 'DB Pass: ' . FS_DB_PASS;
-echo "\n" . 'Database: ' . FS_DB_NAME . "\n\n";
+echo "\n" . 'DB Name: ' . FS_DB_NAME . "\n\n";
 
 // clean cache
 Cache::clear();
