@@ -113,12 +113,9 @@ class EditSettings extends PanelController
             return true;
         }
 
-        foreach ($taxModel->all() as $tax) {
-            $appSettings->set('default', 'codimpuesto', $tax->codimpuesto);
-            $appSettings->save();
-            break;
-        }
-
+        // assign no tax
+        $appSettings->set('default', 'codimpuesto', null);
+        $appSettings->save();
         return false;
     }
 
