@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -121,12 +121,17 @@
             <table class="table table-hover mb-0 {{ tableClass }}">
                 <thead>
                 <tr>
-                    {% if (currentView.cursor | length > 0) and currentView.settings.checkBoxes %}
+                    {% if (currentView.cursor | length > 0) %}
                         <th width="50">
-                            <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
-                                <input class="form-check-input listActionCB" type="checkbox"
-                                       onclick="listViewCheckboxes('{{ currentView.getViewName() }}');"/>
-                            </div>
+                            {% if currentView.settings.checkBoxes %}
+                                <div class="form-check form-check-inline m-0 toggle-ext-link">
+                                    <input class="form-check-input listActionCB" type="checkbox"
+                                           onclick="listViewCheckboxes('{{ currentView.getViewName() }}');"/>
+                                </div>
+                            {% endif %}
+                            {% if currentView.settings.clickable %}
+                                <i class="fas fa-external-link-alt toggle-ext-link d-none" title="{{ trans('open-tab') }}"></i>
+                            {% endif %}
                         </th>
                     {% endif %}
                     {% for column in currentView.getColumns() %}
@@ -137,17 +142,22 @@
                 <tbody>
                 {% set rowStatus = currentView.getRow('status') %}
                 {% for model in currentView.cursor %}
-                    {% set trClass = currentView.settings.clickable ? 'clickableRow ' ~ rowStatus.trClass(model) : rowStatus.trClass(model) %}
+                    {% set trClass = currentView.settings.clickable ? 'clickableListRow ' ~ rowStatus.trClass(model) : rowStatus.trClass(model) %}
                     {% set trTitle = rowStatus.trTitle(model) %}
                     <tr class="{{ trClass }}" title="{{ trTitle }}" data-href="{{ asset(model.url()) }}">
-                        {% if currentView.settings.checkBoxes %}
-                            <td class="cancelClickable">
-                                <div class="form-check form-check-inline mb-2 mr-sm-2 mb-sm-0">
+                        <td class="cancelClickable">
+                            {% if currentView.settings.checkBoxes %}
+                                <div class="form-check form-check-inline m-0 toggle-ext-link">
                                     <input class="form-check-input listAction" type="checkbox" name="code[]"
                                            value="{{ model.primaryColumnValue() }}"/>
                                 </div>
-                            </td>
-                        {% endif %}
+                            {% endif %}
+                            {% if currentView.settings.clickable %}
+                                <a href="{{ asset(model.url()) }}" target="_blank" class="toggle-ext-link d-none"
+                                   title="{{ trans('open-tab') }}"><i class="fas fa-external-link-alt"></i>
+                                </a>
+                            {% endif %}
+                        </td>
                         {% for column in currentView.getColumns() %}
                             {{ column.tableCell(model) | raw }}
                         {% endfor %}

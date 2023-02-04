@@ -1,6 +1,6 @@
 /*!
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez  <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez  <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -88,6 +88,30 @@ function listViewShowFilters(viewName) {
 }
 
 $(document).ready(function () {
+    $(".clickableListRow").mousedown(function (event) {
+        if (event.which === 1 || event.which === 2) {
+            var href = $(this).attr("data-href");
+            var target = $(this).attr("data-target");
+            if (typeof href !== typeof undefined && href !== false) {
+                if (typeof target !== typeof undefined && target === "_blank") {
+                    window.open($(this).attr("data-href"));
+                } else if (event.which === 2) {
+                    // buscamos todos los elementos con la clase toggle-ext-link
+                    $(".toggle-ext-link").each(function () {
+                        // si tiene la clase d-none, la quitamos
+                        if ($(this).hasClass("d-none")) {
+                            $(this).removeClass("d-none");
+                        } else {
+                            // si no la tiene, la añadimos
+                            $(this).addClass("d-none");
+                        }
+                    });
+                } else {
+                    parent.document.location = $(this).attr("data-href");
+                }
+            }
+        }
+    });
     // disable enter key press
     $(".noEnterKey").keypress(function (e) {
         return !(e.which == 13 || e.keyCode == 13);
