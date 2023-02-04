@@ -128,7 +128,7 @@
             <table class="table table-hover mb-0 {{ tableClass }}">
                 <thead>
                 <tr>
-                    {% if (currentView.cursor | length > 0) %}
+                    {% if (currentView.cursor | length > 0) and (currentView.settings.checkBoxes or currentView.settings.clickable) %}
                         <th width="50">
                             {% if currentView.settings.checkBoxes %}
                                 <div class="form-check form-check-inline m-0 toggle-ext-link">
@@ -137,7 +137,8 @@
                                 </div>
                             {% endif %}
                             {% if currentView.settings.clickable %}
-                                <i class="fas fa-external-link-alt toggle-ext-link d-none" title="{{ trans('open-tab') }}"></i>
+                                <i class="fas fa-external-link-alt toggle-ext-link d-none"
+                                   title="{{ trans('open-tab') }}"></i>
                             {% endif %}
                         </th>
                     {% endif %}
@@ -152,19 +153,21 @@
                     {% set trClass = currentView.settings.clickable ? 'clickableListRow ' ~ rowStatus.trClass(model) : rowStatus.trClass(model) %}
                     {% set trTitle = rowStatus.trTitle(model) %}
                     <tr class="{{ trClass }}" title="{{ trTitle }}" data-href="{{ asset(model.url()) }}">
-                        <td class="cancelClickable">
-                            {% if currentView.settings.checkBoxes %}
-                                <div class="form-check form-check-inline m-0 toggle-ext-link">
-                                    <input class="form-check-input listAction" type="checkbox" name="code[]"
-                                           value="{{ model.primaryColumnValue() }}"/>
-                                </div>
-                            {% endif %}
-                            {% if currentView.settings.clickable %}
-                                <a href="{{ asset(model.url()) }}" target="_blank" class="toggle-ext-link d-none"
-                                   title="{{ trans('open-tab') }}"><i class="fas fa-external-link-alt"></i>
-                                </a>
-                            {% endif %}
-                        </td>
+                        {% if currentView.settings.checkBoxes or currentView.settings.clickable %}
+                            <td class="cancelClickable">
+                                {% if currentView.settings.checkBoxes %}
+                                    <div class="form-check form-check-inline m-0 toggle-ext-link">
+                                        <input class="form-check-input listAction" type="checkbox" name="code[]"
+                                               value="{{ model.primaryColumnValue() }}"/>
+                                    </div>
+                                {% endif %}
+                                {% if currentView.settings.clickable %}
+                                    <a href="{{ asset(model.url()) }}" target="_blank" class="toggle-ext-link d-none"
+                                       title="{{ trans('open-tab') }}"><i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                {% endif %}
+                            </td>
+                        {% endif %}
                         {% for column in currentView.getColumns() %}
                             {{ column.tableCell(model) | raw }}
                         {% endfor %}
