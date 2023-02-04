@@ -12,7 +12,7 @@
                             {{ _self.loadLogo(idfile) }}
                         </a>
                         <div class="card-body">
-                            <p class="card-text text-center">{{ i18n.trans('login-text') }}</p>
+                            <p class="card-text text-center">{{ trans('login-text') }}</p>
                             <div class="form-group">
                                 <div class="input-group">
                                     <span class="input-group-prepend">
@@ -21,7 +21,7 @@
                                         </span>
                                     </span>
                                     <input type="text" name="fsNick" class="form-control" maxlength="50"
-                                           placeholder="{{ i18n.trans('user') }}" required="" autocomplete="off"
+                                           placeholder="{{ trans('user') }}" required="" autocomplete="off"
                                            autofocus=""/>
                                 </div>
                             </div>
@@ -33,15 +33,15 @@
                                         </span>
                                     </span>
                                     <input type="password" name="fsPassword" class="form-control" maxlength="50"
-                                           placeholder="{{ i18n.trans('password') }}" required="" autocomplete="off"/>
+                                           placeholder="{{ trans('password') }}" required="" autocomplete="off"/>
                                 </div>
                                 <a href="#" class="btn btn-block btn-link" data-toggle="modal"
                                    data-target="#newPasswordModal">
-                                    {{ i18n.trans('i-forgot-password') }}
+                                    {{ trans('i-forgot-password') }}
                                 </a>
                             </div>
                             <button type="submit" class="btn btn-block btn-primary mb-4">
-                                {{ i18n.trans('login') }}
+                                {{ trans('login') }}
                             </button>
                         </div>
                         <div class="card-footer text-center">
@@ -73,7 +73,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="fas fa-user-lock mr-2"></i> {{ i18n.trans('new-password') }}
+                            <i class="fas fa-user-lock mr-2"></i> {{ trans('new-password') }}
                         </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -82,7 +82,7 @@
                     <div class="modal-body">
                         <a href="https://facturascripts.com/publicaciones/he-olvidado-mi-contrasena" rel="nofollow"
                            target="_blank" class="btn btn-block btn-link mb-3">
-                            {{ i18n.trans('need-help-password') }}
+                            {{ trans('need-help-password') }}
                         </a>
                         <div class="form-group">
                             <div class="input-group">
@@ -92,7 +92,7 @@
                                     </span>
                                 </span>
                                 <input type="text" name="fsNewUserPasswd" class="form-control" maxlength="50"
-                                       placeholder="{{ i18n.trans('user') }}" required="" autocomplete="off"/>
+                                       placeholder="{{ trans('user') }}" required="" autocomplete="off"/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -103,7 +103,7 @@
                                     </span>
                                 </span>
                                 <input type="password" name="fsNewPasswd" class="form-control" maxlength="50"
-                                       placeholder="{{ i18n.trans('new-password') }}" required="" autocomplete="off"/>
+                                       placeholder="{{ trans('new-password') }}" required="" autocomplete="off"/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -114,12 +114,12 @@
                                     </span>
                                 </span>
                                 <input type="password" name="fsNewPasswd2" class="form-control" maxlength="50"
-                                       placeholder="{{ i18n.trans('repeat-new-password') }}"
+                                       placeholder="{{ trans('repeat-new-password') }}"
                                        required="" autocomplete="off"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            {{ i18n.trans('database') }}
+                            {{ trans('database') }}
                             <div class="input-group">
                                 <span class="input-group-prepend">
                                     <span class="input-group-text">
@@ -127,12 +127,12 @@
                                     </span>
                                 </span>
                                 <input type="password" name="fsDbPasswd" class="form-control"
-                                       placeholder="{{ i18n.trans('db-password') }}" autocomplete="off"/>
+                                       placeholder="{{ trans('db-password') }}" autocomplete="off"/>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">{{ i18n.trans('save') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ trans('save') }}</button>
                     </div>
                 </div>
             </div>

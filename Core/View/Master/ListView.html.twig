@@ -20,7 +20,7 @@
 {% set currentView = fsc.getCurrentView() %}
 {% set formName = 'form' ~ currentView.getViewName() %}
 
-<script type="text/javascript">
+<script>
     var listViewDeleteCancel = "{{ i18n.trans('cancel') }}";
     var listViewDeleteConfirm = "{{ i18n.trans('confirm') }}";
     var listViewDeleteMessage = "{{ i18n.trans('are-you-sure') }}";

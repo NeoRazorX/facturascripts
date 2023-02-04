@@ -245,7 +245,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
-    <script type="text/javascript">
+    <script>
         function businessDocViewAutocompleteGetData(formId, formData, term) {
             let rawForm = $("form[id=" + formId + "]").serializeArray();
             $.each(rawForm, function (i, input) {
