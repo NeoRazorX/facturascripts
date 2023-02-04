@@ -52,6 +52,19 @@ function listViewDelete(viewName) {
     return false;
 }
 
+function listViewOpenTab(viewName) {
+    // buscamos todos los elementos con la clase toggle-ext-link
+    $("#form" + viewName + " .toggle-ext-link").each(function () {
+        // si tiene la clase d-none, la quitamos
+        if ($(this).hasClass("d-none")) {
+            $(this).removeClass("d-none");
+        } else {
+            // si no la tiene, la añadimos
+            $(this).addClass("d-none");
+        }
+    });
+}
+
 function listViewPrintAction(viewName, option) {
     $("#form" + viewName).attr("target", "_blank");
     $("#form" + viewName + " :input[name=\"action\"]").val('export');
