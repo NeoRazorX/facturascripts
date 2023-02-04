@@ -31,6 +31,9 @@
 .clickable, .clickableRow:hover, .clickableListRow:hover {
     cursor: pointer;
 }
+.cancelClickable {
+    cursor: default;
+}
 .custom-checkbox-control {
     position: relative;
     display: -ms-inline-flexbox;

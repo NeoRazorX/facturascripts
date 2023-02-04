@@ -129,7 +129,7 @@
                 <thead>
                 <tr>
                     {% if (currentView.cursor | length > 0) and (currentView.settings.checkBoxes or currentView.settings.clickable) %}
-                        <th width="50">
+                        <th width="50" class="text-center">
                             {% if currentView.settings.checkBoxes %}
                                 <div class="form-check form-check-inline m-0 toggle-ext-link">
                                     <input class="form-check-input listActionCB" type="checkbox"
@@ -154,7 +154,7 @@
                     {% set trTitle = rowStatus.trTitle(model) %}
                     <tr class="{{ trClass }}" title="{{ trTitle }}" data-href="{{ asset(model.url()) }}">
                         {% if currentView.settings.checkBoxes or currentView.settings.clickable %}
-                            <td class="cancelClickable">
+                            <td class="cancelClickable p-0 text-center align-middle">
                                 {% if currentView.settings.checkBoxes %}
                                     <div class="form-check form-check-inline m-0 toggle-ext-link">
                                         <input class="form-check-input listAction" type="checkbox" name="code[]"
@@ -163,7 +163,8 @@
                                 {% endif %}
                                 {% if currentView.settings.clickable %}
                                     <a href="{{ asset(model.url()) }}" target="_blank" class="toggle-ext-link d-none"
-                                       title="{{ trans('open-tab') }}"><i class="fas fa-external-link-alt"></i>
+                                       onauxclick="$(this).addClass('text-dark');" title="{{ trans('open-tab') }}">
+                                        <i class="fas fa-external-link-alt"></i>
                                     </a>
                                 {% endif %}
                             </td>
