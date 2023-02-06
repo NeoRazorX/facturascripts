@@ -13,13 +13,13 @@
                     <div class="card shadow mb-3">
                         <div class="card-body">
                             <div class="form-group">
-                                <textarea name="observations" class="form-control" placeholder="{{ i18n.trans('observations') }}">{{ docfile.observations }}</textarea>
+                                <textarea name="observations" class="form-control" placeholder="{{ i18n.trans('observations') }}">{{ docfile.observations | raw }}</textarea>
                             </div>
                             <div class="form-row align-items-end">
                                 <div class="col">
                                     {% set file = docfile.getFile() %}
                                     <a href="{{ file.url() }}" class="btn btn-sm btn-outline-primary">
-                                        <i class="far fa-file"></i> {{ file.filename }}
+                                        <i class="far fa-file"></i> {{ file.filename | raw }}
                                     </a>
                                 </div>
                                 <div class="col">
