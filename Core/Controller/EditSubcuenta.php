@@ -112,6 +112,11 @@ class EditSubcuenta extends EditController
     {
         switch ($action) {
             case 'ledger':
+                if (false === $this->permissions->allowExport) {
+                    $this->toolBox()->i18nLog()->warning('no-print-permission');
+                    return true;
+                }
+
                 $code = (int)$this->request->query->get('code');
                 if (!empty($code)) {
                     $this->setTemplate(false);
@@ -137,8 +142,9 @@ class EditSubcuenta extends EditController
 
         $ledger = new Ledger();
         $pages = $ledger->generate($subAccount->getExercise()->idempresa, $request['dateFrom'], $request['dateTo'], [
-            'grouped' => $request['groupingtype'] ?? false,
             'channel' => $request['channel'],
+            'format' => $request['format'],
+            'grouped' => $request['groupingtype'] ?? false,
             'subaccount-from' => $subAccount->codsubcuenta
         ]);
         $title = self::toolBox()::i18n()->trans('ledger') . ' ' . $subAccount->codsubcuenta;
