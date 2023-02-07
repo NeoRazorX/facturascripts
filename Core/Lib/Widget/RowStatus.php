@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,7 +36,7 @@ class RowStatus extends VisualItem
     {
         parent::__construct($data);
         $this->fieldname = empty($data['fieldname']) ? '' : $data['fieldname'];
-        $this->options = $data['children'];
+        $this->options = $data['children'] ?? [];
     }
 
     public function legend(): string
