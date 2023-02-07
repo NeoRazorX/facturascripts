@@ -48,7 +48,9 @@ class EditCuentaEspecial extends EditController
     protected function createAccountsView(string $viewName = 'ListCuenta')
     {
         $this->addListView($viewName, 'Cuenta', 'accounts', 'fas fa-book');
-        $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
+        $this->views[$viewName]->addOrderBy(['codejercicio', 'codcuenta'], 'exercise', 2);
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
+        $this->views[$viewName]->addSearchFields(['codcuenta', 'descripcion']);
 
         // disable columns
         $this->views[$viewName]->disableColumn('special-account');
@@ -62,7 +64,9 @@ class EditCuentaEspecial extends EditController
     protected function createSubaccountsView(string $viewName = 'ListSubcuenta')
     {
         $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-th-list');
-        $this->views[$viewName]->addOrderBy(['codejercicio'], 'exercise', 2);
+        $this->views[$viewName]->addOrderBy(['codejercicio', 'codsubcuenta'], 'exercise', 2);
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
+        $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
 
         // disable columns
         $this->views[$viewName]->disableColumn('special-account');
