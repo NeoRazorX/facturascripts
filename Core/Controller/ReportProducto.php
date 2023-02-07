@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,7 +31,6 @@ use FacturaScripts\Dinamic\Model\LineaFacturaProveedor;
  */
 class ReportProducto extends ListController
 {
-
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -41,78 +40,10 @@ class ReportProducto extends ListController
         return $data;
     }
 
-    protected function createViews()
+    private function addCommonFilters(string $viewName, string $dateField): void
     {
-        // needed dependencies
-        new LineaFacturaCliente();
-        new LineaFacturaProveedor();
+        $this->addFilterPeriod($viewName, 'fecha', 'date', $dateField);
 
-        $this->createViewsSupplierDeliveryNotes();
-        $this->createViewsSupplierInvoices();
-        $this->createViewsCustomerDeliveryNotes();
-        $this->createViewsCustomerInvoices();
-    }
-
-    protected function createViewsCustomerDeliveryNotes(string $viewName = 'FacturaClienteProducto-alb')
-    {
-        $this->addView($viewName, 'Join\AlbaranClienteProducto', 'customer-delivery-notes', 'fas fa-shipping-fast');
-        $this->addOrderBy($viewName, ['cantidad'], 'quantity-sold', 2);
-        $this->addOrderBy($viewName, ['avgbeneficio'], 'unit-profit');
-        $this->addOrderBy($viewName, ['avgprecio'], 'unit-sale-price');
-        $this->addOrderBy($viewName, ['coste'], 'cost-price');
-        $this->addOrderBy($viewName, ['precio'], 'price');
-        $this->addOrderBy($viewName, ['stockfis'], 'stock');
-        $this->addSearchFields($viewName, ['productos.descripcion', 'lineasalbaranescli.referencia']);
-
-        $this->addFilterPeriod($viewName, 'fecha', 'date', 'albaranescli.fecha');
-        $this->addCommonFilters($viewName);
-        $this->disableButtons($viewName);
-    }
-
-    protected function createViewsCustomerInvoices(string $viewName = 'FacturaClienteProducto')
-    {
-        $this->addView($viewName, 'Join\FacturaClienteProducto', 'customer-invoices', 'fas fa-shopping-cart');
-        $this->addOrderBy($viewName, ['cantidad'], 'quantity-sold', 2);
-        $this->addOrderBy($viewName, ['avgbeneficio'], 'unit-profit');
-        $this->addOrderBy($viewName, ['avgprecio'], 'unit-sale-price');
-        $this->addOrderBy($viewName, ['coste'], 'cost-price');
-        $this->addOrderBy($viewName, ['precio'], 'price');
-        $this->addOrderBy($viewName, ['stockfis'], 'stock');
-        $this->addSearchFields($viewName, ['productos.descripcion', 'lineasfacturascli.referencia']);
-
-        $this->addFilterPeriod($viewName, 'fecha', 'date', 'facturascli.fecha');
-        $this->addCommonFilters($viewName);
-        $this->disableButtons($viewName);
-    }
-
-    protected function createViewsSupplierDeliveryNotes(string $viewName = 'FacturaProveedorProducto-alb')
-    {
-        $this->addView($viewName, 'Join\AlbaranProveedorProducto', 'supplier-delivery-notes', 'fas fa-copy');
-        $this->addOrderBy($viewName, ['cantidad'], 'purchased-quantity', 2);
-        $this->addOrderBy($viewName, ['avgcoste'], 'unit-purchase-price');
-        $this->addOrderBy($viewName, ['coste'], 'cost-price');
-        $this->addOrderBy($viewName, ['precio'], 'price');
-        $this->addOrderBy($viewName, ['stockfis'], 'stock');
-        $this->addSearchFields($viewName, ['productos.descripcion', 'lineasalbaranesprov.referencia']);
-
-        $this->addFilterPeriod($viewName, 'fecha', 'date', 'albaranesprov.fecha');
-        $this->addCommonFilters($viewName);
-        $this->disableButtons($viewName);
-    }
-
-    protected function createViewsSupplierInvoices(string $viewName = 'FacturaProveedorProducto')
-    {
-        $this->addView($viewName, 'Join\FacturaProveedorProducto', 'supplier-invoices', 'fas fa-copy');
-        $this->addOrderBy($viewName, ['cantidad'], 'quantity', 2);
-        $this->addSearchFields($viewName, ['productos.descripcion', 'lineasfacturasprov.referencia']);
-
-        $this->addFilterPeriod($viewName, 'fecha', 'date', 'facturasprov.fecha');
-        $this->addCommonFilters($viewName);
-        $this->disableButtons($viewName);
-    }
-
-    private function addCommonFilters(string $viewName)
-    {
         $warehouses = Almacenes::codeModel();
         if (count($warehouses) > 2) {
             $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'codalmacen', $warehouses);
@@ -127,7 +58,89 @@ class ReportProducto extends ListController
         $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
     }
 
-    private function disableButtons(string $viewName)
+    protected function createViews()
+    {
+        // needed dependencies
+        new LineaFacturaCliente();
+        new LineaFacturaProveedor();
+
+        $this->createViewsSupplierDeliveryNotes();
+        $this->createViewsSupplierInvoices();
+        $this->createViewsCustomerDeliveryNotes();
+        $this->createViewsCustomerInvoices();
+    }
+
+    protected function createViewsCustomerDeliveryNotes(string $viewName = 'FacturaClienteProducto-alb'): void
+    {
+        $this->addView($viewName, 'Join\AlbaranClienteProducto', 'customer-delivery-notes', 'fas fa-shipping-fast');
+        $this->addOrderBy($viewName, ['cantidad'], 'quantity-sold', 2);
+        $this->addOrderBy($viewName, ['avgbeneficio'], 'unit-profit');
+        $this->addOrderBy($viewName, ['avgprecio'], 'unit-sale-price');
+        $this->addOrderBy($viewName, ['coste'], 'cost-price');
+        $this->addOrderBy($viewName, ['precio'], 'price');
+        $this->addOrderBy($viewName, ['stockfis'], 'stock');
+        $this->addSearchFields($viewName, ['productos.descripcion', 'lineasalbaranescli.referencia']);
+
+        // filtros
+        $this->addCommonFilters($viewName, 'albaranescli.fecha');
+        $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente', 'codcliente', 'nombre');
+
+        // desactivamos columnas
+        $this->disableButtons($viewName);
+    }
+
+    protected function createViewsCustomerInvoices(string $viewName = 'FacturaClienteProducto'): void
+    {
+        $this->addView($viewName, 'Join\FacturaClienteProducto', 'customer-invoices', 'fas fa-shopping-cart');
+        $this->addOrderBy($viewName, ['cantidad'], 'quantity-sold', 2);
+        $this->addOrderBy($viewName, ['avgbeneficio'], 'unit-profit');
+        $this->addOrderBy($viewName, ['avgprecio'], 'unit-sale-price');
+        $this->addOrderBy($viewName, ['coste'], 'cost-price');
+        $this->addOrderBy($viewName, ['precio'], 'price');
+        $this->addOrderBy($viewName, ['stockfis'], 'stock');
+        $this->addSearchFields($viewName, ['productos.descripcion', 'lineasfacturascli.referencia']);
+
+        // filtros
+        $this->addCommonFilters($viewName, 'facturascli.fecha');
+        $this->addFilterAutocomplete($viewName, 'codcliente', 'customer', 'codcliente', 'Cliente', 'codcliente', 'nombre');
+
+        // desactivamos columnas
+        $this->disableButtons($viewName);
+    }
+
+    protected function createViewsSupplierDeliveryNotes(string $viewName = 'FacturaProveedorProducto-alb'): void
+    {
+        $this->addView($viewName, 'Join\AlbaranProveedorProducto', 'supplier-delivery-notes', 'fas fa-copy');
+        $this->addOrderBy($viewName, ['cantidad'], 'purchased-quantity', 2);
+        $this->addOrderBy($viewName, ['avgcoste'], 'unit-purchase-price');
+        $this->addOrderBy($viewName, ['coste'], 'cost-price');
+        $this->addOrderBy($viewName, ['precio'], 'price');
+        $this->addOrderBy($viewName, ['stockfis'], 'stock');
+        $this->addSearchFields($viewName, ['productos.descripcion', 'lineasalbaranesprov.referencia']);
+
+        // filtros
+        $this->addCommonFilters($viewName, 'albaranesprov.fecha');
+        $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor', 'codproveedor', 'nombre');
+
+        // desactivamos columnas
+        $this->disableButtons($viewName);
+    }
+
+    protected function createViewsSupplierInvoices(string $viewName = 'FacturaProveedorProducto'): void
+    {
+        $this->addView($viewName, 'Join\FacturaProveedorProducto', 'supplier-invoices', 'fas fa-copy');
+        $this->addOrderBy($viewName, ['cantidad'], 'quantity', 2);
+        $this->addSearchFields($viewName, ['productos.descripcion', 'lineasfacturasprov.referencia']);
+
+        // filtros
+        $this->addCommonFilters($viewName, 'facturasprov.fecha');
+        $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor', 'codproveedor', 'nombre');
+
+        // desactivamos columnas
+        $this->disableButtons($viewName);
+    }
+
+    private function disableButtons(string $viewName): void
     {
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
