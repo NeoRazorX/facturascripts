@@ -57,10 +57,17 @@ class EditAlmacen extends EditController
         $this->views[$viewName]->addOrderBy(['productos.descripcion', 'stocks.referencia'], 'product');
         $this->views[$viewName]->addSearchFields(['stocks.referencia', 'productos.descripcion']);
 
-        // disable column
+        // filtros
+        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
+        $this->views[$viewName]->addFilterSelect('manufacturer', 'manufacturer', 'manufacturer', $manufacturers);
+
+        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->views[$viewName]->addFilterSelect('family', 'family', 'family', $families);
+
+        // desactivamos la columna de almacén
         $this->views[$viewName]->disableColumn('warehouse');
 
-        // disable buttons
+        // desactivamos botones
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
     }
@@ -73,7 +80,7 @@ class EditAlmacen extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        // disable company column if there is only one company
+        // desactivamos la columna de empresa, si solo hay una
         if ($this->empresa->count() < 2) {
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }
