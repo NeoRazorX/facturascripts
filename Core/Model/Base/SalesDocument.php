@@ -510,7 +510,7 @@ abstract class SalesDocument extends TransformerDocument
 
     protected function setPreviousData(array $fields = [])
     {
-        $more = ['codagente', 'codcliente', 'direccion', 'fechadevengo', 'idcontactofact'];
+        $more = ['codagente', 'codcliente', 'direccion', 'idcontactofact'];
         parent::setPreviousData(array_merge($more, $fields));
     }
 }

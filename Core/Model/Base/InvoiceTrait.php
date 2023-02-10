@@ -241,4 +241,10 @@ trait InvoiceTrait
 
         return true;
     }
+
+    protected function setPreviousData(array $fields = [])
+    {
+        $more = ['fechadevengo'];
+        parent::setPreviousData(array_merge($more, $fields));
+    }
 }

@@ -236,7 +236,7 @@ abstract class PurchaseDocument extends TransformerDocument
 
     protected function setPreviousData(array $fields = [])
     {
-        $more = ['codproveedor', 'fechadevengo',];
+        $more = ['codproveedor'];
         parent::setPreviousData(array_merge($more, $fields));
     }
 }
