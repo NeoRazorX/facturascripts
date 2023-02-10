@@ -228,6 +228,12 @@ class EditAsiento extends PanelController
 
     protected function exportAction()
     {
+        if (false === $this->views[$this->active]->settings['btnPrint']
+            || false === $this->permissions->allowExport) {
+            $this->toolBox()->i18nLog()->warning('no-print-permission');
+            return;
+        }
+
         $this->setTemplate(false);
         AsientoExport::show(
             $this->getModel(),
