@@ -457,7 +457,7 @@ class InvoiceToAccounting extends AccountingClass
         $entry->codejercicio = $this->document->codejercicio;
         $entry->concepto = $concept;
         $entry->documento = $this->document->codigo;
-        $entry->fecha = $this->document->fecha;
+        $entry->fecha = $this->document->fechadevengo ?? $this->document->fecha;
         $entry->idempresa = $this->document->idempresa;
         $entry->importe = $this->document->total;
 

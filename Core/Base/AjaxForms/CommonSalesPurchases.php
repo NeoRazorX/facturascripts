@@ -250,6 +250,21 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
+    protected static function fechadevengo(Translator $i18n, BusinessDocument $model): string
+    {
+        if (false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
+            return '';
+        }
+
+        $attributes = $model->editable ? 'name="fechadevengo" required=""' : 'disabled=""';
+        $value = empty($model->fechadevengo) ? date('Y-m-d', strtotime($model->fecha)) : date('Y-m-d', strtotime($model->fechadevengo));
+        return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm-6">'
+            . '<div class="form-group">' . $i18n->trans('accrual-date')
+            . '<input type="date" ' . $attributes . ' value="' . $value . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
     protected static function femail(Translator $i18n, BusinessDocument $model): string
     {
         if (empty($model->primaryColumnValue())) {

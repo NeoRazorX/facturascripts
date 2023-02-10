@@ -43,6 +43,9 @@ trait InvoiceTrait
     /** @var string */
     public $fecha;
 
+    /** @var string */
+    public $fechadevengo;
+
     /** @var int */
     public $idfactura;
 
@@ -164,6 +167,14 @@ trait InvoiceTrait
         return 'idfactura';
     }
 
+    public function test(): bool
+    {
+        if (empty($this->fechadevengo)) {
+            $this->fechadevengo = $this->fecha;
+        }
+        return parent::test();
+    }
+
     /**
      * @param string $field
      *
@@ -200,6 +211,7 @@ trait InvoiceTrait
                     return false;
                 }
             // no break
+            case 'fechadevengo':
             case 'total':
                 return $this->onChangeTotal();
         }

@@ -66,6 +66,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>fechadevengo</name>
+        <type>date</type>
+    </column>
+    <column>
         <name>femail</name>
         <type>date</type>
     </column>
