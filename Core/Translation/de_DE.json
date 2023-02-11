@@ -1312,6 +1312,7 @@
     "test-mail-not-implemented": "El test del controlador de correo Mail no está implementado",
     "test-sendmail-not-implemented": "El test del controlador de correo sendmail no está implementado",
     "text-color": "Color de texto",
+    "texts": "texts",
     "third-quarter": "3º trimestre",
     "third-trimester": "Third trimester",
     "this-last-fortnight": "this-last-fortnight",

@@ -1312,6 +1312,7 @@
     "test-mail-not-implemented": "Mail handler test is not implemented",
     "test-sendmail-not-implemented": "Sendmail mail handler test not implemented",
     "text-color": "Text color",
+    "texts": "Texts",
     "third-quarter": "3rd quarter",
     "third-trimester": "Third trimester",
     "this-last-fortnight": "The last 15 days",
