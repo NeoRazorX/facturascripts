@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core;
 
+use FacturaScripts\Core\Model\User;
+
 /**
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -45,5 +47,14 @@ final class Session
     public static function set(string $key, $value): void
     {
         self::$data[$key] = $value;
+    }
+
+    public static function user(): User
+    {
+        if (isset(self::$data['user']) && self::$data['user'] instanceof User) {
+            return self::$data['user'];
+        }
+
+        return new User();
     }
 }
