@@ -513,6 +513,7 @@
     "exercise-date-out-range": "La data no pertany al periodo de l'eixercici.",
     "exercise-date-range-exists": "Ya n'hi ha un eixercici entre les dates (%start% - %end%)",
     "exercise-not-found": "No s'ha trobat l'eixercici.",
+    "exercise-without-accounting-plan": "El ejercicio %exercise% todavía no tiene plan contable",
     "exercises": "Eixercicis",
     "exit": "Eixir",
     "expedient": "Expedient",

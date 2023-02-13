@@ -513,6 +513,7 @@
     "exercise-date-out-range": "La date ne se trouve pas dans la période de l'exercice.",
     "exercise-date-range-exists": "Il existe déjà un exercice dans cette période (%start% - %end%)",
     "exercise-not-found": "Exercice non trouvé.",
+    "exercise-without-accounting-plan": "El ejercicio %exercise% todavía no tiene plan contable",
     "exercises": "Des exercices",
     "exit": "Sortie",
     "expedient": "Expéditeur",
