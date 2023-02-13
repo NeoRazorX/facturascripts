@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,6 @@ use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
  */
 class Ejercicio extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     const EXERCISE_STATUS_OPEN = 'ABIERTO';
@@ -157,14 +156,21 @@ class Ejercicio extends Base\ModelClass
         return $this->fechainicio;
     }
 
+    public function hasAccountingPlan(): bool
+    {
+        $subcuenta = new Subcuenta();
+        $where = [new DataBaseWhere('codejercicio', $this->codejercicio)];
+        return $subcuenta->count($where) > 0;
+    }
+
     public function install(): string
     {
         // needed dependencies
         new DinEmpresa();
 
-        $code = $year = "'" . \date('Y') . "'";
-        $start = self::$dataBase->var2str(\date('01-01-Y'));
-        $end = self::$dataBase->var2str(\date('31-12-Y'));
+        $code = $year = "'" . date('Y') . "'";
+        $start = self::$dataBase->var2str(date('01-01-Y'));
+        $end = self::$dataBase->var2str(date('31-12-Y'));
         $state = "'" . self::EXERCISE_STATUS_OPEN . "'";
         return 'INSERT INTO ' . static::tableName()
             . ' (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,idempresa)'

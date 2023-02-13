@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,11 +19,13 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
-use FacturaScripts\Dinamic\Model\Asiento;
-use FacturaScripts\Dinamic\Model\PagoCliente;
-use FacturaScripts\Dinamic\Model\PagoProveedor;
-use FacturaScripts\Dinamic\Model\ReciboCliente;
-use FacturaScripts\Dinamic\Model\ReciboProveedor;
+use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Model\Asiento;
+use FacturaScripts\Core\Model\PagoCliente;
+use FacturaScripts\Core\Model\PagoProveedor;
+use FacturaScripts\Core\Model\ReciboCliente;
+use FacturaScripts\Core\Model\ReciboProveedor;
+use FacturaScripts\Dinamic\Model\Asiento as DinAsiento;
 
 /**
  * Description of PaymentToAccounting
@@ -32,7 +34,6 @@ use FacturaScripts\Dinamic\Model\ReciboProveedor;
  */
 class PaymentToAccounting extends AccountingClass
 {
-
     /**
      * @var PagoCliente|PagoProveedor
      */
@@ -50,14 +51,18 @@ class PaymentToAccounting extends AccountingClass
     {
         parent::generate($model);
 
-        /// Initial checks
+        // Initial checks
         switch ($model->modelClassName()) {
             case 'PagoCliente':
             case 'PagoProveedor':
                 $this->receipt = $this->document->getReceipt();
                 $this->exercise->idempresa = $this->receipt->idempresa;
                 if (false === $this->exercise->loadFromDate($this->document->fecha)) {
-                    $this->toolBox()->i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->exercise->codejercicio]);
+                    ToolBox::i18nLog()->warning('closed-exercise', ['%exerciseName%' => $this->exercise->codejercicio]);
+                    return;
+                }
+                if (false === $this->exercise->hasAccountingPlan()) {
+                    ToolBox::i18nLog()->warning('exercise-without-accounting-plan', ['%exercise%' => $this->exercise->codejercicio]);
                     return;
                 }
                 break;
@@ -74,14 +79,11 @@ class PaymentToAccounting extends AccountingClass
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function customerPaymentAccountingEntry()
+    protected function customerPaymentAccountingEntry(): bool
     {
-        /// Create account entry header
-        $accEntry = new Asiento();
-        $concept = $this->toolBox()->i18n()->trans('customer-payment-concept', ['%document%' => $this->receipt->getCode()]);
+        // Create account entry header
+        $accEntry = new DinAsiento();
+        $concept = ToolBox::i18n()->trans('customer-payment-concept', ['%document%' => $this->receipt->getCode()]);
 
         $invoice = $this->receipt->getInvoice();
         $concept .= $invoice->numero2 ?
@@ -91,11 +93,11 @@ class PaymentToAccounting extends AccountingClass
         $this->setCommonData($accEntry, $concept);
         $accEntry->importe += $this->document->gastos;
         if (false === $accEntry->save()) {
-            $this->toolBox()->i18nLog()->warning('accounting-entry-error');
+            ToolBox::i18nLog()->warning('accounting-entry-error');
             return false;
         }
 
-        /// Add lines and save accounting entry relation
+        // Add lines and save accounting entry relation
         if ($this->customerPaymentLine($accEntry) &&
             $this->customerPaymentBankLine($accEntry) &&
             $this->customerPaymentExpenseLine($accEntry) &&
@@ -104,75 +106,57 @@ class PaymentToAccounting extends AccountingClass
             return true;
         }
 
-        $this->toolBox()->i18nLog()->warning('accounting-lines-error');
+        ToolBox::i18nLog()->warning('accounting-lines-error');
         $accEntry->delete();
         return false;
     }
 
-    /**
-     * @param Asiento $accEntry
-     *
-     * @return bool
-     */
-    protected function customerPaymentBankLine(&$accEntry)
+    protected function customerPaymentBankLine(Asiento &$accEntry): bool
     {
-        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago ?? '');
-        if (false === $paymentSubaccount->exists()) {
+        $paymentSubAccount = $this->getPaymentAccount($this->document->codpago ?? '');
+        if (false === $paymentSubAccount->exists()) {
             return false;
         }
 
         $newLine = $accEntry->getNewLine();
-        $newLine->setAccount($paymentSubaccount);
+        $newLine->setAccount($paymentSubAccount);
         $newLine->debe = $this->document->importe + $this->document->gastos;
         return $newLine->save();
     }
 
-    /**
-     * @param Asiento $accEntry
-     *
-     * @return bool
-     */
-    protected function customerPaymentExpenseLine(&$accEntry)
+    protected function customerPaymentExpenseLine(Asiento &$accEntry): bool
     {
         if (empty($this->document->gastos)) {
             return true;
         }
 
         $expLine = $accEntry->getNewLine();
-        $subacountExpense = $this->getExpenseAccount($this->document->codpago ?? '');
-        $expLine->setAccount($subacountExpense);
-        $expLine->concepto = $this->toolBox()->i18n()->trans('receipt-expense-account', ['%document%' => $accEntry->documento]);
+        $subAccountExpense = $this->getExpenseAccount($this->document->codpago ?? '');
+        $expLine->setAccount($subAccountExpense);
+        $expLine->concepto = ToolBox::i18n()->trans('receipt-expense-account', ['%document%' => $accEntry->documento]);
         $expLine->haber = $this->document->gastos;
         return $expLine->save();
     }
 
-    /**
-     * @param Asiento $accEntry
-     *
-     * @return bool
-     */
-    protected function customerPaymentLine(&$accEntry)
+    protected function customerPaymentLine(Asiento &$accEntry): bool
     {
         $customer = $this->receipt->getSubject();
-        $customerSubaccount = $this->getCustomerAccount($customer);
-        if (false === $customerSubaccount->exists()) {
+        $customerSubAccount = $this->getCustomerAccount($customer);
+        if (false === $customerSubAccount->exists()) {
             return false;
         }
 
         $newLine = $accEntry->getNewLine();
-        $newLine->setAccount($customerSubaccount);
+        $newLine->setAccount($customerSubAccount);
         $newLine->haber = $this->document->importe;
         return $newLine->save();
     }
 
-    /**
-     * @return bool
-     */
-    protected function supplierPaymentAccountingEntry()
+    protected function supplierPaymentAccountingEntry(): bool
     {
-        /// Create account entry header
-        $accEntry = new Asiento();
-        $concept = $this->toolBox()->i18n()->trans('supplier-payment-concept', ['%document%' => $this->receipt->getCode()]);
+        // Create account entry header
+        $accEntry = new DinAsiento();
+        $concept = ToolBox::i18n()->trans('supplier-payment-concept', ['%document%' => $this->receipt->getCode()]);
 
         $invoice = $this->receipt->getInvoice();
         $concept .= $invoice->numproveedor ?
@@ -181,54 +165,44 @@ class PaymentToAccounting extends AccountingClass
 
         $this->setCommonData($accEntry, $concept);
         if (false === $accEntry->save()) {
-            $this->toolBox()->i18nLog()->warning('accounting-entry-error');
+            ToolBox::i18nLog()->warning('accounting-entry-error');
             return false;
         }
 
-        /// Add lines and save accounting entry relation
+        // Add lines and save accounting entry relation
         if ($this->supplierPaymentLine($accEntry) && $this->supplierPaymentBankLine($accEntry) && $accEntry->isBalanced()) {
             $this->document->idasiento = $accEntry->primaryColumnValue();
             return true;
         }
 
-        $this->toolBox()->i18nLog()->warning('accounting-lines-error');
+        ToolBox::i18nLog()->warning('accounting-lines-error');
         $accEntry->delete();
         return false;
     }
 
-    /**
-     * @param Asiento $accEntry
-     *
-     * @return bool
-     */
-    protected function supplierPaymentBankLine(&$accEntry)
+    protected function supplierPaymentBankLine(Asiento &$accEntry): bool
     {
-        $paymentSubaccount = $this->getPaymentAccount($this->document->codpago ?? '');
-        if (false === $paymentSubaccount->exists()) {
+        $paymentSubAccount = $this->getPaymentAccount($this->document->codpago ?? '');
+        if (false === $paymentSubAccount->exists()) {
             return false;
         }
 
         $newLine = $accEntry->getNewLine();
-        $newLine->setAccount($paymentSubaccount);
+        $newLine->setAccount($paymentSubAccount);
         $newLine->haber = $this->document->importe;
         return $newLine->save();
     }
 
-    /**
-     * @param Asiento $accEntry
-     *
-     * @return bool
-     */
-    protected function supplierPaymentLine(&$accEntry)
+    protected function supplierPaymentLine(Asiento &$accEntry): bool
     {
         $supplier = $this->receipt->getSubject();
-        $supplierSubaccount = $this->getSupplierAccount($supplier);
-        if (false === $supplierSubaccount->exists()) {
+        $supplierSubAccount = $this->getSupplierAccount($supplier);
+        if (false === $supplierSubAccount->exists()) {
             return false;
         }
 
         $newLine = $accEntry->getNewLine();
-        $newLine->setAccount($supplierSubaccount);
+        $newLine->setAccount($supplierSubAccount);
         $newLine->debe = $this->document->importe;
         return $newLine->save();
     }
@@ -239,7 +213,7 @@ class PaymentToAccounting extends AccountingClass
      * @param Asiento $accEntry
      * @param string $concept
      */
-    protected function setCommonData(&$accEntry, string $concept)
+    protected function setCommonData(Asiento &$accEntry, string $concept): void
     {
         $invoice = $this->receipt->getInvoice();
         $accEntry->codejercicio = $this->exercise->codejercicio;
