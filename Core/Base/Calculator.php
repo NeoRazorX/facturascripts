@@ -66,6 +66,11 @@ final class Calculator
         $doc->totalrecargo = $subtotals['totalrecargo'];
         $doc->totalsuplidos = $subtotals['totalsuplidos'];
 
+        // si tiene totalbeneficio, lo asignamos
+        if (property_exists($doc, 'totalbeneficio')) {
+            $doc->totalbeneficio = $subtotals['totalbeneficio'];
+        }
+
         // si tiene totalcoste, lo asignamos
         if (property_exists($doc, 'totalcoste')) {
             $doc->totalcoste = $subtotals['totalcoste'];
@@ -173,6 +178,9 @@ final class Calculator
         $subtotals['totaliva'] = round($subtotals['totaliva'], FS_NF0);
         $subtotals['totalrecargo'] = round($subtotals['totalrecargo'], FS_NF0);
         $subtotals['totalsuplidos'] = round($subtotals['totalsuplidos'], FS_NF0);
+
+        // calculamos el beneficio
+        $subtotals['totalbeneficio'] = round($subtotals['neto'] - $subtotals['totalcoste'], FS_NF0);
 
         // calculamos el total
         $subtotals['total'] = round($subtotals['neto'] + $subtotals['totalsuplidos'] + $subtotals['totaliva']

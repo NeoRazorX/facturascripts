@@ -133,6 +133,12 @@
             <column name="days-until-expiration" numcolumns="3" order="110">
                 <widget type="number" fieldname="finofertadays" min="0" required="true"/>
             </column>
+            <column name="level-cost-sales" numcolumns="3" order="120">
+                <widget type="number" fieldname="levelcostsales" min="0" max="99" decimal="0" step="1" required="true"/>
+            </column>
+            <column name="level-benefit-sales" numcolumns="3" order="130">
+                <widget type="number" fieldname="levelbenefitsales" min="0" max="99" decimal="0" step="1" required="true"/>
+            </column>
         </group>
         <group name="advanced" title="advanced" icon="fas fa-database" numcolumns="12">
             <column name="default-role" titleurl="ListUser?activetab=ListRole" numcolumns="3" order="100">
