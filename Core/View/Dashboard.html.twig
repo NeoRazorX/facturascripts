@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -50,6 +50,30 @@
                 </div>
             </div>
         {% endblock %}
+        {% if fsc.showBackupWarning() %}
+            <div class="row">
+                <div class="col">
+                    <div class="card bg-warning shadow mb-3">
+                        <div class="card-body">
+                            <h2 class="h3">
+                                <i class="fas fa-save"></i> {{ trans('dashboard-backup') }}
+                            </h2>
+                            <p class="card-text">{{ trans('dashboard-backup-p') }}</p>
+                            <ul class="mb-0">
+                                <li>{{ trans('dasboard-backup-li1') }}</li>
+                                <li>{{ trans('dasboard-backup-li2') }}</li>
+                                <li>{{ trans('dasboard-backup-li3') }}</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <a href="https://facturascripts.com/plugins/backup" target="_blank" rel="nofollow"
+                               class="btn btn-secondary"> Backup
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
         {% block sectionStats %}
             {{ _self.sectionStats(fsc) }}
         {% endblock %}

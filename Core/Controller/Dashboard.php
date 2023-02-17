@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\DownloadTools;
+use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
@@ -46,47 +47,27 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Dashboard extends Controller
 {
-
-    /**
-     * @var array
-     */
+    /** @var array */
     public $createLinks = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $lowStock = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $news = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $openLinks = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $receipts = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $sections = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $stats = [];
 
-    /**
-     * Return the basic data for this page.
-     *
-     * @return array
-     */
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -108,6 +89,20 @@ class Dashboard extends Controller
         parent::privateCore($response, $user, $permissions);
         $this->title = $this->toolBox()->i18n()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
         $this->loadExtensions();
+    }
+
+    public function showBackupWarning(): bool
+    {
+        // comprobamos si estamos el localhost
+        if ($_SERVER['REMOTE_ADDR'] == 'localhost' ||
+            substr($_SERVER['REMOTE_ADDR'], 0, 4) == '192.' ||
+            substr($_SERVER['REMOTE_ADDR'], 0, 4) == '172.') {
+            // si el plugin Backup está activo, devolvemos false
+            $manager = new PluginManager();
+            return !in_array('Backup', $manager->enabledPlugins());
+        }
+
+        return false;
     }
 
     /**
