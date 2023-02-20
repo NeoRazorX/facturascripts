@@ -31,7 +31,11 @@ interface PurchasesModInterface
 
     public function assets(): void;
 
+    public function newBtnFields(): array;
+
     public function newFields(): array;
+
+    public function newModalFields(): array;
 
     public function renderField(Translator $i18n, PurchaseDocument $model, string $field): ?string;
 }

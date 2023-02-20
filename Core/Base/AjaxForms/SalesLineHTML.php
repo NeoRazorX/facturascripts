@@ -404,12 +404,12 @@ class SalesLineHTML
             . '</div>';
     }
 
-    private static function renderNewFields(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model): string
+    private static function renderNewModalFields(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
         foreach (self::$mods as $mod) {
-            foreach ($mod->newFields() as $field) {
+            foreach ($mod->newModalFields() as $field) {
                 if (false === in_array($field, $newFields)) {
                     $newFields[] = $field;
                 }
@@ -430,12 +430,12 @@ class SalesLineHTML
         return $html;
     }
 
-    private static function renderNewModalFields(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model): string
+    private static function renderNewFields(Translator $i18n, string $idlinea, SalesDocumentLine $line, SalesDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
         foreach (self::$mods as $mod) {
-            foreach ($mod->newModalFields() as $field) {
+            foreach ($mod->newFields() as $field) {
                 if (false === in_array($field, $newFields)) {
                     $newFields[] = $field;
                 }

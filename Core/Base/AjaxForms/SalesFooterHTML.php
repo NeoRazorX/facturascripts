@@ -29,6 +29,7 @@ use FacturaScripts\Core\Model\User;
  * Description of SalesFooterHTML
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class SalesFooterHTML
 {
@@ -106,6 +107,8 @@ class SalesFooterHTML
             . self::renderField($i18n, $model, '_deleteBtn')
             . '</div>'
             . '<div class="col text-right">'
+            . self::renderNewBtnFields($i18n, $model)
+            . self::renderField($i18n, $model, '_modalFooter')
             . self::renderField($i18n, $model, '_saveBtn')
             . '</div>'
             . '</div>'
@@ -127,6 +130,9 @@ class SalesFooterHTML
 
             case '_fastLineInput':
                 return self::fastLineInput($i18n, $model, 'salesFastLine');
+
+            case '_modalFooter':
+                return self::modalFooter($i18n, $model);
 
             case '_newLineBtn':
                 return self::newLineBtn($i18n, $model, 'salesFormAction');
@@ -177,6 +183,44 @@ class SalesFooterHTML
         return null;
     }
 
+    private static function modalFooterHtml(Translator $i18n, string $htmlModal): string
+    {
+        return '<div class="modal fade" id="footerModal" tabindex="-1" aria-labelledby="footerModalLabel" aria-hidden="true">'
+            . '<div class="modal-dialog modal-dialog-centered modal-lg">'
+            . '<div class="modal-content">'
+            . '<div class="modal-header">'
+            . '<h5 class="modal-title">' . $i18n->trans('detail') . ' ' . $i18n->trans('footer') . '</h5>'
+            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+            . '<span aria-hidden="true">&times;</span>'
+            . '</button>'
+            . '</div>'
+            . '<div class="modal-body">'
+            . '<div class="form-row">'
+            . $htmlModal
+            . '</div>'
+            . '</div>'
+            . '<div class="modal-footer">'
+            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-dismiss="modal">' . $i18n->trans('accept') . '</button>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function modalFooter(Translator $i18n, SalesDocument $model): string
+    {
+        $htmlModal = self::renderNewModalFields($i18n, $model);
+
+        if (empty($htmlModal)) {
+            return '';
+        }
+
+        return '<button class="btn btn-outline-secondary mr-2" type="button" data-toggle="modal" data-target="#footerModal">'
+            . '<i class="fas fa-plus fa-fw" aria-hidden="true"></i></button>'
+            . self::modalFooterHtml($i18n, $htmlModal);
+    }
+
     private static function renderNewFields(Translator $i18n, SalesDocument $model): string
     {
         // cargamos los nuevos campos
@@ -200,6 +244,59 @@ class SalesFooterHTML
                 }
             }
         }
+        return $html;
+    }
+
+    private static function renderNewBtnFields(Translator $i18n, SalesDocument $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newBtnFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
+    }
+
+    private static function renderNewModalFields(Translator $i18n, SalesDocument $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newModalFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+
         return $html;
     }
 }

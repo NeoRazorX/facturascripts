@@ -33,9 +33,9 @@ interface SalesLineModInterface
 
     public function map(array $lines, SalesDocument $model): array;
 
-    public function newModalFields(): array;
-
     public function newFields(): array;
+
+    public function newModalFields(): array;
 
     public function newTitles(): array;
 

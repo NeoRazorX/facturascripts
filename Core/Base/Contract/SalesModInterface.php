@@ -31,7 +31,11 @@ interface SalesModInterface
 
     public function assets(): void;
 
+    public function newBtnFields(): array;
+
     public function newFields(): array;
+
+    public function newModalFields(): array;
 
     public function renderField(Translator $i18n, SalesDocument $model, string $field): ?string;
 }
