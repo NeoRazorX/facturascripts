@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\MyFilesToken;
-use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Core\Plugins;
 
 /**
  * Description of AppRouter
@@ -29,7 +29,6 @@ use FacturaScripts\Core\Base\PluginManager;
  */
 final class AppRouter
 {
-
     /**
      * Path to list of routes stored on file.
      */
@@ -192,8 +191,7 @@ final class AppRouter
     private function deploy()
     {
         if (false === file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic')) {
-            $pluginManager = new PluginManager();
-            $pluginManager->deploy();
+            Plugins::deploy();
         }
     }
 

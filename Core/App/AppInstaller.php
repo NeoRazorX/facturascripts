@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,10 @@
 namespace FacturaScripts\Core\App;
 
 use DateTimeZone;
-use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\Plugins;
 use mysqli;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +35,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 final class AppInstaller
 {
-
     /**
      * Request on which we can get data.
      *
@@ -127,8 +127,7 @@ final class AppInstaller
             }
         }
 
-        $pluginManager = new PluginManager();
-        $pluginManager->deploy();
+        Plugins::deploy();
         return true;
     }
 
@@ -167,7 +166,7 @@ final class AppInstaller
         $templateVars = [
             'license' => file_get_contents(FS_FOLDER . DIRECTORY_SEPARATOR . 'COPYING'),
             'timezones' => DateTimeZone::listIdentifiers(),
-            'version' => PluginManager::CORE_VERSION
+            'version' => Kernel::version()
         ];
 
         // Load the template engine

@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Plugins;
 use Symfony\Component\Translation\Loader\JsonFileLoader;
 use Symfony\Component\Translation\Translator as SymfonyTranslator;
 
@@ -285,8 +286,7 @@ class Translator
             self::$translator->addResource('json', $coreFile, $langCode);
         }
 
-        $pluginManager = new PluginManager();
-        foreach ($pluginManager->enabledPlugins() as $pluginName) {
+        foreach (Plugins::enabled() as $pluginName) {
             $file2 = FS_FOLDER . '/Plugins/' . $pluginName . '/Translation/' . $langCode . '.json';
             if (file_exists($file2)) {
                 self::$translator->addResource('json', $file2, $langCode);
