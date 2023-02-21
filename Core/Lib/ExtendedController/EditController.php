@@ -30,7 +30,7 @@ abstract class EditController extends PanelController
     /**
      * Returns the class name of the model to use in the editView.
      */
-    abstract public function getModelClassName(): string;
+    abstract public function getModelClassName();
 
     /**
      * Pointer to the data model.
@@ -43,7 +43,7 @@ abstract class EditController extends PanelController
         return $this->views[$viewName]->model;
     }
 
-    public function getPageData(): array
+    public function getPageData()
     {
         $data = parent::getPageData();
         $data['showonmenu'] = false;
