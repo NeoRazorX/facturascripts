@@ -299,7 +299,7 @@ class Ledger
                 'asiento' => '',
                 'fecha' => date(ModelCore::DATE_STYLE, strtotime($this->dateFrom)),
                 'cuenta' => $codcuenta,
-                'concepto' => ToolBox::utils()->fixHtml($line['cuentadesc']),
+                'concepto' => ToolBox::utils()->fixHtml($line['subcuentadesc']),
                 'debe' => $this->formatMoney(0, false),
                 'haber' => $this->formatMoney(0, false),
                 'saldo' => $this->formatMoney($balances[$codcuenta], false)
