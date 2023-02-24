@@ -222,9 +222,16 @@ class EditSettings extends PanelController
         $this->views[$viewName]->addOrderBy(['numero'], 'number');
         $this->views[$viewName]->addSearchFields(['patron', 'tipodoc']);
 
+        // disable company column if there is only one company
+        if ($this->empresa->count() < 2) {
+            $this->views[$viewName]->disableColumn('company');
+        } else {
+            // Filters with various companies
+            $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
+        }
+
         // Filters
         $this->createDocTypeFilter($viewName);
-        $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
         $this->views[$viewName]->addFilterSelect('codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
         $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
     }

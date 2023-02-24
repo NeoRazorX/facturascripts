@@ -62,6 +62,11 @@ class EditSerie extends EditController
 
         // desactivamos la columna serie
         $this->views[$viewName]->disableColumn('serie');
+
+        // disable company column if there is only one company
+        if ($this->empresa->count() < 2) {
+            $this->views[$viewName]->disableColumn('company');
+        }
     }
 
     /**
