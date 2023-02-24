@@ -231,9 +231,9 @@ class EditSettings extends PanelController
         }
 
         // Filters
-        $this->createDocTypeFilter($viewName);
         $this->views[$viewName]->addFilterSelect('codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
         $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
+        $this->createDocTypeFilter($viewName);
     }
 
     protected function createViewStates(string $viewName = 'ListEstadoDocumento')

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Ejercicios;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 
@@ -59,14 +60,25 @@ class EditSerie extends EditController
     {
         $this->addListView($viewName, 'SecuenciaDocumento', 'sequences', 'fas fa-code');
         $this->views[$viewName]->addOrderBy(['codejercicio', 'tipodoc'], 'exercise', 2);
+        $this->views[$viewName]->addSearchFields(['patron', 'tipodoc']);
 
         // desactivamos la columna serie
         $this->views[$viewName]->disableColumn('serie');
 
-        // disable company column if there is only one company
+        // desactivamos la columna empresa si solo hay una
         if ($this->empresa->count() < 2) {
             $this->views[$viewName]->disableColumn('company');
         }
+
+        // filtros
+        $types = $this->codeModel->all('estados_documentos', 'tipodoc', 'tipodoc');
+        foreach ($types as $key => $value) {
+            if (!empty($value->code)) {
+                $value->description = $this->toolBox()->i18n()->trans($value->code);
+            }
+        }
+        $this->views[$viewName]->addFilterSelect('tipodoc', 'doc-type', 'tipodoc', $types);
+        $this->views[$viewName]->addFilterSelect('codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
     }
 
     /**
