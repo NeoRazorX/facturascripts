@@ -88,6 +88,7 @@ class ListProducto extends ListController
         $this->addFilterCheckbox($viewName, 'ventasinstock', 'allow-sale-without-stock', 'ventasinstock');
         $this->addFilterCheckbox($viewName, 'secompra', 'for-purchase', 'secompra');
         $this->addFilterCheckbox($viewName, 'sevende', 'for-sale', 'sevende');
+        $this->addFilterCheckbox($viewName, 'publico', 'public', 'publico');
     }
 
     protected function createViewVariante(string $viewName = 'ListVariante')

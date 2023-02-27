@@ -323,10 +323,11 @@ class AppController extends App
     {
         if ($force || time() - strtotime($user->lastactivity) > self::USER_UPDATE_ACTIVITY_PERIOD) {
             $ipAddress = Session::getClientIp();
+            $browser = $this->request->headers->get('User-Agent', '');
             if ($force) {
-                $user->newLogkey($ipAddress);
+                $user->newLogkey($ipAddress, $browser);
             } else {
-                $user->updateActivity($ipAddress);
+                $user->updateActivity($ipAddress, $browser);
             }
 
             $user->save();

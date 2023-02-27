@@ -272,7 +272,7 @@ class ListView extends BaseView
      */
     protected function assets()
     {
-        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/ListView.js');
+        AssetManager::add('js', FS_ROUTE . '/Dinamic/Assets/JS/ListView.js?v=2');
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -36,7 +36,6 @@ use FacturaScripts\Dinamic\Model\Impuesto;
  */
 class EditSettings extends PanelController
 {
-
     const KEY_SETTINGS = 'Settings';
 
     public function getPageData(): array
@@ -113,12 +112,9 @@ class EditSettings extends PanelController
             return true;
         }
 
-        foreach ($taxModel->all() as $tax) {
-            $appSettings->set('default', 'codimpuesto', $tax->codimpuesto);
-            $appSettings->save();
-            break;
-        }
-
+        // assign no tax
+        $appSettings->set('default', 'codimpuesto', null);
+        $appSettings->save();
         return false;
     }
 
@@ -226,11 +222,18 @@ class EditSettings extends PanelController
         $this->views[$viewName]->addOrderBy(['numero'], 'number');
         $this->views[$viewName]->addSearchFields(['patron', 'tipodoc']);
 
+        // disable company column if there is only one company
+        if ($this->empresa->count() < 2) {
+            $this->views[$viewName]->disableColumn('company');
+        } else {
+            // Filters with various companies
+            $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
+        }
+
         // Filters
-        $this->createDocTypeFilter($viewName);
-        $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
         $this->views[$viewName]->addFilterSelect('codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
         $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
+        $this->createDocTypeFilter($viewName);
     }
 
     protected function createViewStates(string $viewName = 'ListEstadoDocumento')

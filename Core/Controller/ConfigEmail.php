@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -75,14 +75,14 @@ class ConfigEmail extends PanelController
             'action' => 'enable-notification',
             'color' => 'success',
             'icon' => 'fas fa-check-square',
-            'label' => $this->toolBox()->i18n()->trans('enable')
+            'label' => 'enable'
         ]);
 
         $this->addButton($viewName, [
             'action' => 'disable-notification',
             'color' => 'warning',
             'icon' => 'far fa-square',
-            'label' => $this->toolBox()->i18n()->trans('disable')
+            'label' => 'disable'
         ]);
     }
 

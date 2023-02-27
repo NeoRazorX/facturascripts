@@ -21,8 +21,12 @@ namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
+use FacturaScripts\Dinamic\Model\FacturaCliente;
+use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
 
 /**
  * Controller to list the items in the FacturaCliente model
@@ -141,9 +145,102 @@ class ListFacturaCliente extends ListBusinessDocument
             ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagada', false)]],
             ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencida', true)]],
         ]);
-        $this->addFilterCheckbox('ListFacturaCliente', 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
+        $this->addFilterCheckbox($viewName, 'idasiento', 'invoice-without-acc-entry', 'idasiento', 'IS', null);
 
-        // botones
-        $this->addButtonLockInvoice('ListFacturaCliente');
+        // añadimos botón de bloquear facturas
+        $this->addButtonLockInvoice($viewName);
+
+        // añadimos botón para buscar huecos en las facturas, si el usuario tiene permiso
+        if (false === $this->permissions->onlyOwnerData) {
+            $this->addButton($viewName, [
+                'action' => 'look-for-gaps',
+                'icon' => 'fas fa-exclamation-triangle',
+                'label' => 'look-for-gaps'
+            ]);
+        }
+    }
+
+    protected function execAfterAction($action)
+    {
+        parent::execAfterAction($action);
+        if ($action === 'look-for-gaps') {
+            $this->lookForGapsAction();
+        }
+    }
+
+    protected function lookForGaps(SecuenciaDocumento $sequence): array
+    {
+        $gaps = [];
+        $number = $sequence->inicio;
+
+        // buscamos todas las facturas de cliente de la secuencia
+        $invoiceModel = new FacturaCliente();
+        $where = [
+            new DataBaseWhere('codserie', $sequence->codserie),
+            new DataBaseWhere('idempresa', $sequence->idempresa)
+        ];
+        if ($sequence->codejercicio) {
+            $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
+        }
+        $orderBy = strtolower(FS_DB_TYPE) == 'postgresql' ?
+            ['CAST(numero as integer)' => 'ASC'] :
+            ['CAST(numero as unsigned)' => 'ASC'];
+        foreach ($invoiceModel->all($where, $orderBy, 0, 0) as $invoice) {
+            // si el número de la factura es menor que el de la secuencia, saltamos
+            if ($invoice->numero < $sequence->inicio) {
+                continue;
+            }
+
+            // si el número de la factura es el esperado, actualizamos el número esperado
+            if ($invoice->numero == $number) {
+                $number++;
+                continue;
+            }
+
+            // si el número de la factura es mayor que el esperado, añadimos huecos hasta el número
+            while ($invoice->numero > $number) {
+                $gaps[] = [
+                    'codserie' => $invoice->codserie,
+                    'numero' => $number,
+                    'fecha' => $invoice->fecha,
+                    'idempresa' => $invoice->idempresa
+                ];
+                $number++;
+            }
+            $number++;
+        }
+
+        return $gaps;
+    }
+
+    protected function lookForGapsAction(): void
+    {
+        $gaps = [];
+
+        // buscamos todas las secuencias de facturas de cliente que usen huecos
+        $sequenceModel = new SecuenciaDocumento();
+        $where = [
+            new DataBaseWhere('tipodoc', 'FacturaCliente'),
+            new DataBaseWhere('usarhuecos', true)
+        ];
+        foreach ($sequenceModel->all($where, [], 0, 0) as $sequence) {
+            $gaps = array_merge($gaps, $this->lookForGaps($sequence));
+        }
+
+        // si no hemos encontrado huecos, mostramos un mensaje
+        if (empty($gaps)) {
+            $this->toolBox()->i18nLog()->notice('no-gaps-found');
+            return;
+        }
+
+        // si hemos encontrado huecos, los mostramos uno a uno
+        foreach ($gaps as $gap) {
+            $this->toolBox()->i18nLog()->warning('gap-found', [
+                '%codserie%' => Series::get($gap['codserie'])->descripcion,
+                '%numero%' => $gap['numero'],
+                '%fecha%' => $gap['fecha'],
+                '%idempresa%' => Empresas::get($gap['idempresa'])->nombrecorto
+            ]);
+        }
     }
 }

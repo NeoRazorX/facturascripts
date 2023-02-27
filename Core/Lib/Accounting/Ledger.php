@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,6 +45,9 @@ class Ledger
     /** @var Ejercicio */
     protected $exercise;
 
+    /** @var string */
+    protected $format;
+
     public function __construct()
     {
         $this->dataBase = new DataBase();
@@ -63,6 +66,7 @@ class Ledger
 
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
+        $this->format = $params['format'] ?? 'csv';
         $debe = $haber = 0.0;
         $ledger = [];
 
@@ -76,9 +80,9 @@ class Ledger
                     $haber += (float)$line['haber'];
                 }
                 $ledger['totals'] = [[
-                    'debe' => '<b>' . ToolBox::coins()->format($debe, FS_NF0, '') . '</b>',
-                    'haber' => '<b>' . ToolBox::coins()->format($haber, FS_NF0, '') . '</b>',
-                    'saldo' => '<b>' . ToolBox::coins()->format($debe - $haber, FS_NF0, '') . '</b>'
+                    'debe' => $this->formatMoney($debe, true),
+                    'haber' => $this->formatMoney($haber, true),
+                    'saldo' => $this->formatMoney($debe - $haber, true)
                 ]];
                 break;
 
@@ -91,9 +95,9 @@ class Ledger
                     $haber += (float)$line['haber'];
                 }
                 $ledger['totals'] = [[
-                    'debe' => '<b>' . ToolBox::coins()->format($debe, FS_NF0, '') . '</b>',
-                    'haber' => '<b>' . ToolBox::coins()->format($haber, FS_NF0, '') . '</b>',
-                    'saldo' => '<b>' . ToolBox::coins()->format($debe - $haber, FS_NF0, '') . '</b>'
+                    'debe' => $this->formatMoney($debe, true),
+                    'haber' => $this->formatMoney($haber, true),
+                    'saldo' => $this->formatMoney($debe - $haber, true)
                 ]];
                 break;
 
@@ -110,13 +114,24 @@ class Ledger
                     'fecha' => '',
                     'cuenta' => '',
                     'concepto' => '',
-                    'debe' => '<b>' . ToolBox::coins()->format($debe, FS_NF0, '') . '</b>',
-                    'haber' => '<b>' . ToolBox::coins()->format($haber, FS_NF0, '') . '</b>'
+                    'debe' => $this->formatMoney($debe, true),
+                    'haber' => $this->formatMoney($haber, true)
                 ];
                 break;
         }
 
         return $ledger;
+    }
+
+    protected function formatMoney(float $value, bool $bold): string
+    {
+        if ($this->format != 'PDF') {
+            return number_format($value, FS_NF0, '.', '');
+        }
+
+        return $bold ?
+            '<b>' . number_format($value, FS_NF0, ',', '&nbsp;') . '</b>' :
+            number_format($value, FS_NF0, ',', '&nbsp;');
     }
 
     protected function getData(array $params = []): array
@@ -236,8 +251,8 @@ class Ledger
             'fecha' => date(ModelCore::DATE_STYLE, strtotime($line['fecha'])),
             'cuenta' => $line['codsubcuenta'],
             'concepto' => ToolBox::utils()->fixHtml($line['concepto']),
-            'debe' => ToolBox::coins()->format($line['debe'], FS_NF0, ''),
-            'haber' => ToolBox::coins()->format($line['haber'], FS_NF0, '')
+            'debe' => $this->formatMoney($line['debe'], false),
+            'haber' => $this->formatMoney($line['haber'], false)
         ];
     }
 
@@ -254,9 +269,9 @@ class Ledger
                 'fecha' => date(ModelCore::DATE_STYLE, strtotime($this->dateFrom)),
                 'cuenta' => $codcuenta,
                 'concepto' => ToolBox::utils()->fixHtml($line['cuentadesc']),
-                'debe' => ToolBox::coins()->format(0, FS_NF0, ''),
-                'haber' => ToolBox::coins()->format(0, FS_NF0, ''),
-                'saldo' => ToolBox::coins()->format($balances[$codcuenta], FS_NF0, '')
+                'debe' => $this->formatMoney(0, false),
+                'haber' => $this->formatMoney(0, false),
+                'saldo' => $this->formatMoney($balances[$codcuenta], false)
             ];
         }
 
@@ -266,9 +281,9 @@ class Ledger
             'fecha' => date(ModelCore::DATE_STYLE, strtotime($line['fecha'])),
             'cuenta' => $codcuenta,
             'concepto' => ToolBox::utils()->fixHtml($line['concepto']),
-            'debe' => ToolBox::coins()->format($line['debe'], FS_NF0, ''),
-            'haber' => ToolBox::coins()->format($line['haber'], FS_NF0, ''),
-            'saldo' => ToolBox::coins()->format($balances[$codcuenta], FS_NF0, '')
+            'debe' => $this->formatMoney($line['debe'], false),
+            'haber' => $this->formatMoney($line['haber'], false),
+            'saldo' => $this->formatMoney($balances[$codcuenta], false)
         ];
     }
 
@@ -284,10 +299,10 @@ class Ledger
                 'asiento' => '',
                 'fecha' => date(ModelCore::DATE_STYLE, strtotime($this->dateFrom)),
                 'cuenta' => $codcuenta,
-                'concepto' => ToolBox::utils()->fixHtml($line['cuentadesc']),
-                'debe' => ToolBox::coins()->format(0, FS_NF0, ''),
-                'haber' => ToolBox::coins()->format(0, FS_NF0, ''),
-                'saldo' => ToolBox::coins()->format($balances[$codcuenta], FS_NF0, '')
+                'concepto' => ToolBox::utils()->fixHtml($line['subcuentadesc']),
+                'debe' => $this->formatMoney(0, false),
+                'haber' => $this->formatMoney(0, false),
+                'saldo' => $this->formatMoney($balances[$codcuenta], false)
             ];
         }
 
@@ -297,9 +312,9 @@ class Ledger
             'fecha' => date(ModelCore::DATE_STYLE, strtotime($line['fecha'])),
             'cuenta' => $codcuenta,
             'concepto' => ToolBox::utils()->fixHtml($line['concepto']),
-            'debe' => ToolBox::coins()->format($line['debe'], FS_NF0, ''),
-            'haber' => ToolBox::coins()->format($line['haber'], FS_NF0, ''),
-            'saldo' => ToolBox::coins()->format($balances[$codcuenta], FS_NF0, '')
+            'debe' => $this->formatMoney($line['debe'], false),
+            'haber' => $this->formatMoney($line['haber'], false),
+            'saldo' => $this->formatMoney($balances[$codcuenta], false)
         ];
     }
 }

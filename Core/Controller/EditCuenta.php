@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -92,14 +92,18 @@ class EditCuenta extends EditController
      */
     protected function execPreviousAction($action)
     {
-        switch ($action) {
-            case 'ledger':
-                $code = $this->request->query->get('code');
-                if (!empty($code)) {
-                    $this->setTemplate(false);
-                    $this->ledgerReport($code);
-                }
+        if ($action == 'ledger') {
+            if (false === $this->permissions->allowExport) {
+                $this->toolBox()->i18nLog()->warning('no-print-permission');
                 return true;
+            }
+
+            $code = $this->request->query->get('code');
+            if (!empty($code)) {
+                $this->setTemplate(false);
+                $this->ledgerReport($code);
+            }
+            return true;
         }
 
         return parent::execPreviousAction($action);
@@ -113,8 +117,9 @@ class EditCuenta extends EditController
 
         $ledger = new Ledger();
         $pages = $ledger->generate($account->getExercise()->idempresa, $request['dateFrom'], $request['dateTo'], [
-            'grouped' => $request['groupingtype'],
             'channel' => $request['channel'],
+            'format' => $request['format'],
+            'grouped' => $request['groupingtype'],
             'account-from' => $account->codcuenta
         ]);
         $title = self::toolBox()::i18n()->trans('ledger') . ' ' . $account->codcuenta;

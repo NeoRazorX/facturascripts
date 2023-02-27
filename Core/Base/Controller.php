@@ -149,7 +149,7 @@ class Controller
      *
      * @return array
      */
-    public function getPageData(): array
+    public function getPageData()
     {
         return [
             'name' => $this->className,

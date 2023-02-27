@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -153,7 +153,7 @@ trait CommonLineHTML
             'name="irpf_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-6">'
-            . '<div class="mb-2">' . $i18n->trans('retention')
+            . '<div class="mb-2"><a href="ListImpuesto?activetab=ListRetencion">' . $i18n->trans('retention') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
@@ -205,7 +205,7 @@ trait CommonLineHTML
             'name="recargo_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-6">'
-            . '<div class="mb-2">' . $i18n->trans('percentage-surcharge')
+            . '<div class="mb-2"><a href="ListImpuesto">' . $i18n->trans('percentage-surcharge') . '</a>'
             . '<input type="number" ' . $attributes . ' value="' . $line->recargo . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -280,7 +280,7 @@ trait CommonLineHTML
 
     private static function titleCodimpuesto(Translator $i18n): string
     {
-        return '<div class="col-lg-1 order-6">' . $i18n->trans('tax') . '</div>';
+        return '<div class="col-lg-1 order-6"><a href="ListImpuesto">' . $i18n->trans('tax') . '</a></div>';
     }
 
     private static function titleDescripcion(Translator $i18n): string
