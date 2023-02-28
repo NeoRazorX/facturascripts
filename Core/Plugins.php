@@ -278,6 +278,10 @@ final class Plugins
 
     private static function loadFromFolder(): void
     {
+        if (false === file_exists(self::folder())) {
+            return;
+        }
+
         // revisamos la carpeta de plugins para añadir los que no estén en el fichero
         $dir = new DirectoryIterator(self::folder());
         foreach ($dir as $file) {
