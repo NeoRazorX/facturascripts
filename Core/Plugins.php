@@ -196,6 +196,11 @@ final class Plugins
         return null;
     }
 
+    public function isEnabled(string $pluginName): bool
+    {
+        return in_array($pluginName, self::enabled());
+    }
+
     public static function list(bool $hidden = false): array
     {
         $list = [];
