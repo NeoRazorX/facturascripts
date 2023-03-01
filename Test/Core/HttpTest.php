@@ -27,14 +27,19 @@ final class HttpTest extends TestCase
     public function testGet(): void
     {
         $url = 'https://facturascripts.com/PluginInfoList';
-        $request = Http::get($url);
+        $request = Http::get($url)->setTimeout(10);
+
+        // saltamos si el estado es 0
+        if ($request->status() === 0) {
+            $this->markTestSkipped('No se puede conectar con el servidor.');
+        }
 
         $this->assertTrue($request->ok());
         $this->assertFalse($request->failed());
         $this->assertEquals(200, $request->status());
         $this->assertEmpty($request->errorMessage());
         $this->assertNotEmpty($request->body());
-        $this->assertEquals('application/json', $request->header('Content-Type'), print_r($request->headers(), true));
+        $this->assertEquals('application/json', $request->header('Content-Type'));
         $this->assertJson($request->body());
         $this->assertIsArray($request->json());
     }
@@ -44,8 +49,32 @@ final class HttpTest extends TestCase
         $url = 'https://facturascripts.com/PluginInfoList404';
         $request = Http::get($url)->setTimeout(10);
 
+        // saltamos si el estado es 0
+        if ($request->status() === 0) {
+            $this->markTestSkipped('No se puede conectar con el servidor.');
+        }
+
         $this->assertFalse($request->ok());
         $this->assertTrue($request->failed());
         $this->assertEquals(404, $request->status());
+    }
+
+    public function testSaveAs(): void
+    {
+        $url = 'https://facturascripts.com/PluginInfoList';
+        $request = Http::get($url)->setTimeout(10);
+
+        // saltamos si el estado es 0
+        if ($request->status() === 0) {
+            $this->markTestSkipped('No se puede conectar con el servidor.');
+        }
+
+        $filePath = FS_FOLDER . '/MyFiles/test-http.json';
+        $this->assertTrue($request->saveAs($filePath));
+        $this->assertFileExists($filePath);
+        $this->assertJson(file_get_contents($filePath));
+
+        // eliminamos
+        unlink($filePath);
     }
 }

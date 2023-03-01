@@ -185,7 +185,7 @@ class Http
 
     public function setHeader(string $key, string $value): self
     {
-        $this->headers[$key] = $value;
+        $this->headers[$key] = $key . ': ' . $value;
         return $this;
     }
 
