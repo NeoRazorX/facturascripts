@@ -45,7 +45,7 @@ trait CommonLineHTML
 
     private static function cantidadRestante(Translator $i18n, BusinessDocumentLine $line, TransformerDocument $model): string
     {
-        if ($line->servido <= 0 || $line->servido == $line->cantidad || false === $model->editable) {
+        if ($line->servido <= 0 || false === $model->editable) {
             return '';
         }
 
