@@ -79,7 +79,7 @@ class Tools
     public static function folder(...$folders): string
     {
         if (empty($folders)) {
-            return self::config('folder');
+            return self::config('folder') ?? '';
         }
 
         array_unshift($folders, self::config('folder'));
