@@ -145,7 +145,7 @@
             <widget type="select" fieldname="servido" translate="true">
                 <values title="pending">0</values>
                 <values title="partial">1</values>
-                <values title="complete">100</values>
+                <values title="completed">100</values>
             </widget>
         </column>
     </columns>

@@ -210,6 +210,7 @@ class DocumentStitcher extends Controller
         }
 
         if ($full) {
+            $this->updateServedStatus($doc, true);
             $doc->setDocumentGeneration(false);
             $doc->idestado = $idestado;
             if (false === $doc->save()) {
@@ -217,6 +218,9 @@ class DocumentStitcher extends Controller
                 $this->toolBox()->i18nLog()->error('record-save-error');
                 return;
             }
+        } elseif ($this->updateServedStatus($doc, false)) {
+            $doc->setDocumentGeneration(false);
+            $doc->save();
         }
 
         // we get the lines again in case they have been updated
@@ -406,5 +410,21 @@ class DocumentStitcher extends Controller
                 $this->moreDocuments[] = $doc;
             }
         }
+    }
+
+    /**
+     *
+     * @param TransformerDocument $doc
+     * @param bool $full
+     * @return bool
+     */
+    protected function updateServedStatus(&$doc, bool $full): bool
+    {
+        if (isset($doc->servido)) {
+            $served = $full || (bool)$this->request->request->get('served_' . $doc->primaryColumnValue(), false);
+            $doc->servido = $served ? 100 : 1;
+            return true;
+        }
+        return false;
     }
 }

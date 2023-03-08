@@ -222,6 +222,12 @@
                         <p>{{ doc.observaciones | raw }}</p>
                     {% endif %}
                 </div>
+                {% if doc.servido %}
+                <div class="col-sm-2">
+                    <input class="form-check-input" type="checkbox" value="true" name="served_{{ doc.primaryColumnValue() }}">
+                    <label class="form-check-label font-weight-bold">{{ i18n.trans('close-pending-order') }}</label>
+                </div>
+                {% endif %}
                 <div class="col-sm-3 text-right">
                     <p class="small mb-0">
                         <i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i> {{ doc.fecha }}
