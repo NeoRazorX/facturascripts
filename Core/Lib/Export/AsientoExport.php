@@ -75,9 +75,9 @@ class AsientoExport
             $i18n->trans('counterpart'),
         ];
         $options = [
-            $header[2] => ['display' => 'right'],
-            $header[3] => ['display' => 'right'],
-            $header[4] => ['display' => 'right'],
+            $header[2] => ['display' => 'right', 'css' => 'nowrap'],
+            $header[3] => ['display' => 'right', 'css' => 'nowrap'],
+            $header[4] => ['display' => 'right', 'css' => 'nowrap'],
         ];
 
         self::$debe = 0.00;
@@ -139,11 +139,11 @@ class AsientoExport
         }
 
         $options = [
-            $header[4] => ['display' => 'right'],
-            $header[5] => ['display' => 'center'],
-            $header[6] => ['display' => 'right'],
-            $header[7] => ['display' => 'center'],
-            $header[8] => ['display' => 'right'],
+            $header[4] => ['display' => 'right', 'css' => 'nowrap'],
+            $header[5] => ['display' => 'center', 'css' => 'nowrap'],
+            $header[6] => ['display' => 'right', 'css' => 'nowrap'],
+            $header[7] => ['display' => 'center', 'css' => 'nowrap'],
+            $header[8] => ['display' => 'right', 'css' => 'nowrap'],
         ];
 
         $title = '<strong>' . $i18n->trans('VAT-register') . '</strong>';
