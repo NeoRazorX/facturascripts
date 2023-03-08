@@ -126,6 +126,11 @@ class PedidoCliente extends Base\SalesDocument
             $this->finoferta = null;
         }
 
+        // force a value to served status
+        if (is_null( $this->servido)) {
+            $this->servido = 0;
+        }
+
         return parent::test();
     }
 }
