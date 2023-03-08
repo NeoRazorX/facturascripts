@@ -141,6 +141,13 @@
         <column name="date" display="right" order="420">
             <widget type="date" fieldname="fecha" />
         </column>
+        <column name="served" display="center" order="430">
+            <widget type="select" fieldname="servido" translate="true">
+                <values title="pending">0</values>
+                <values title="partial">1</values>
+                <values title="complete">100</values>
+            </widget>
+        </column>
     </columns>
     <rows>
         <row type="status">

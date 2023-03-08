@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2022  Carlos Garcia Gomez     <carlos@facturascripts.com>
+ * Copyright (C) 2014-2023  Carlos Garcia Gomez     <carlos@facturascripts.com>
  * Copyright (C) 2014       Francesc Pineda Segarra <shawe.ewahs@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,6 +30,9 @@ use FacturaScripts\Dinamic\Model\LineaPedidoCliente as LineaPedido;
  */
 class PedidoCliente extends Base\SalesDocument
 {
+    const SERVED_NONE = 0;
+    const SERVED_PARTIAL = 1;
+    const SERVED_COMPLETE = 100;
 
     use Base\ModelTrait;
 
@@ -47,9 +50,21 @@ class PedidoCliente extends Base\SalesDocument
      */
     public $idpedido;
 
+    /**
+     * Indicates if the order is:
+     *   - 0 -> Not Served
+     *   - 1 -> Partially served
+     *   - 100 -> Completed
+     *
+     * @var int
+     */
+    public $servido;
+
     public function clear()
     {
         parent::clear();
+
+        $this->servido = self::SERVED_NONE;
 
         // set default expiration
         $expirationDays = $this->toolBox()->appSettings()->get('default', 'finofertadays');

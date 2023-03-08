@@ -197,6 +197,11 @@
         <type>double precision</type>
         <default>0</default>
     </column>
+    <column>
+        <name>servido</name>
+        <type>integer</type>
+        <default>0</default>
+    </column>
     <constraint>
         <name>pedidoscli_pkey</name>
         <type>PRIMARY KEY (idpedido)</type>
