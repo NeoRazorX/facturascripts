@@ -135,6 +135,10 @@ trait CommonSalesPurchases
     {
         $options = [];
         foreach (Series::all() as $row) {
+            if ($row->tipo === 'R') {
+                continue;
+            }
+
             $options[] = ($row->codserie === $model->codserie) ?
                 '<option value="' . $row->codserie . '" selected="">' . $row->descripcion . '</option>' :
                 '<option value="' . $row->codserie . '">' . $row->descripcion . '</option>';

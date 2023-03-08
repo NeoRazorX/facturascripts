@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
@@ -46,6 +47,7 @@ final class Migrations
         self::fixSuppliers();
         self::clearLogs();
         self::addEmailNotifications();
+        self::fixSeries();
     }
 
     private static function addEmailNotifications()
@@ -157,6 +159,17 @@ final class Migrations
                 self::db()->exec($sql);
             }
         }
+    }
+
+    private static function fixSeries()
+    {
+        // actualizamos con el tipo R la serie marcada como rectificativa en el panel de control
+        $serieRectifying = AppSettings::get('default', 'codserierec', '');
+        if (empty($serieRectifying)) {
+            return;
+        }
+        $sqlUpdate = "UPDATE series SET tipo = 'R' WHERE codserie = '" . $serieRectifying . "';";
+        self::db()->exec($sqlUpdate);
     }
 
     private static function fixSuppliers()

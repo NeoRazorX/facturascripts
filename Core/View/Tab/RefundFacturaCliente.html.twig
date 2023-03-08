@@ -86,12 +86,14 @@
                                     {{ i18n.trans('serie') }}
                                     <select name="codserie" class="form-control">
                                         {% for serie in fsc.series() %}
-                                            {% if serie.codserie == appSettings.get('default','codserierec','R') %}
-                                                <option value="{{ serie.codserie }}" selected>
-                                                    {{ serie.descripcion }}
-                                                </option>
-                                            {% else %}
-                                                <option value="{{ serie.codserie }}">{{ serie.descripcion }}</option>
+                                            {% if serie.tipo is same as('R') %}
+                                                {% if serie.codserie == appSettings.get('default','codserierec','R') %}
+                                                    <option value="{{ serie.codserie }}" selected>
+                                                        {{ serie.descripcion }}
+                                                    </option>
+                                                {% else %}
+                                                    <option value="{{ serie.codserie }}">{{ serie.descripcion }}</option>
+                                                {% endif %}
                                             {% endif %}
                                         {% endfor %}
                                     </select>

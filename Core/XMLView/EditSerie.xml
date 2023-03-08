@@ -25,15 +25,21 @@
             <column name="description" order="100">
                 <widget type="text" fieldname="descripcion" maxlength="100" required="true"/>
             </column>
-            <column name="code" description="optional" numcolumns="2" order="110">
+            <column name="type" numcolumns="2" order="110">
+                <widget type="select" fieldname="tipo">
+                    <values title="simplified">S</values>
+                    <values title="rectifying">R</values>
+                </widget>
+            </column>
+            <column name="code" description="optional" numcolumns="2" order="120">
                 <widget type="text" fieldname="codserie" icon="fas fa-hashtag" maxlength="4" readonly="dinamic"/>
             </column>
-            <column name="journal" titleurl="ListAsiento?activetab=ListDiario" display="none" order="120">
+            <column name="journal" titleurl="ListAsiento?activetab=ListDiario" display="none" order="130">
                 <widget type="select" fieldname="iddiario" onclick="EditDiario">
                     <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"/>
                 </widget>
             </column>
-            <column name="channel" display="none" order="130">
+            <column name="channel" display="none" order="140">
                 <widget type="number" fieldname="canal" min="0"/>
             </column>
         </group>
