@@ -55,10 +55,14 @@
                 <widget type="text" fieldname="codpostal" maxlength="10"/>
             </column>
             <column name="city" numcolumns="4" order="130">
-                <widget type="text" fieldname="ciudad"/>
+                <widget type="datalist" fieldname="ciudad">
+                    <values source="ciudades" fieldcode="idciudad" fieldtitle="ciudad" />
+                </widget>
             </column>
             <column name="province" numcolumns="3" order="140">
-                <widget type="text" fieldname="provincia"/>
+                <widget type="datalist" fieldname="provincia">
+                    <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia" />
+                </widget>
             </column>
             <column name="country" titleurl="ListPais" numcolumns="3" order="150">
                 <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
