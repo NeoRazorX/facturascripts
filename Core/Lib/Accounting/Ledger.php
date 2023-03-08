@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\Accounting;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\ModelCore;
@@ -130,8 +131,8 @@ class Ledger
         }
 
         return $bold ?
-            '<b>' . number_format($value, FS_NF0, ',', '&nbsp;') . '</b>' :
-            number_format($value, FS_NF0, ',', '&nbsp;');
+            '<b>' . number_format($value, FS_NF0, AppSettings::get('default', 'decimal_separator', ','), AppSettings::get('default', 'thousands_separator', ' ')) . '</b>' :
+            number_format($value, FS_NF0, AppSettings::get('default', 'decimal_separator', ','), AppSettings::get('default', 'thousands_separator', ' '));
     }
 
     protected function getData(array $params = []): array
