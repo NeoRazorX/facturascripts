@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core;
 
+use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -26,6 +27,11 @@ use PHPUnit\Framework\TestCase;
 final class PluginsTest extends TestCase
 {
     use LogErrorsTrait;
+
+    public static function setUpBeforeClass(): void
+    {
+        MiniLog::clear();
+    }
 
     public function testFolder()
     {
@@ -151,6 +157,35 @@ final class PluginsTest extends TestCase
         // comprobamos que se ha eliminado el plugin
         $this->assertNull(Plugins::get('TestPlugin2'));
         $this->assertEquals($initialList, Plugins::list());
+    }
+
+    public function testUpdatePlugin2()
+    {
+        $zipPath = __DIR__ . '/../__files/TestPlugin2.zip';
+
+        // añadimos el plugin
+        $this->assertTrue(Plugins::add($zipPath));
+
+        // añadimos un archivo al plugin
+        $filePath = Plugins::folder() . '/TestPlugin2/README.md';
+        $this->assertTrue(file_put_contents($filePath, 'Test') !== false);
+
+        // añadimos test = 1 al final del archivo facturascripts.ini
+        $iniPath = Plugins::folder() . '/TestPlugin2/facturascripts.ini';
+        $this->assertTrue(file_put_contents($iniPath, PHP_EOL . 'test = 1', FILE_APPEND) !== false);
+
+        // actualizamos el plugin
+        $this->assertTrue(Plugins::add($zipPath));
+
+        // comprobamos que el archivo se ha eliminado
+        $this->assertFileNotExists($filePath);
+
+        // comprobamos que el archivo facturascripts.ini se ha restaurado
+        $this->assertFileExists($iniPath);
+        $this->assertStringNotContainsString('test = 1', file_get_contents($iniPath));
+
+        // eliminamos el plugin
+        $this->assertTrue(Plugins::remove('TestPlugin2'));
     }
 
     public function testPlugin3()

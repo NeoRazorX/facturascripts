@@ -44,6 +44,9 @@ final class Plugin
     /** @var bool */
     public $hidden = false;
 
+    /** @var bool */
+    public $installed = false;
+
     /** @var float */
     public $min_version = 0;
 
@@ -271,6 +274,7 @@ final class Plugin
         }
 
         $this->version = floatval($data['version'] ?? 0);
+        $this->installed = $this->exists();
 
         $this->hidden = $this->hidden();
         if (!$this->enabled) {

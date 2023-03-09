@@ -70,13 +70,17 @@ final class Plugins
         }
         $zipFile->close();
 
-        // si el plugin está activado, marcamos el post_update
+        // si el plugin no estaba en la lista, lo añadimos
+        if (false === $plugin->installed) {
+            // añadimos el plugin
+            self::$plugins[] = $plugin;
+        }
+
+        // si el plugin estaba activado, marcamos el post_enable
         if ($plugin->enabled) {
             $plugin->post_enable = true;
         }
 
-        // añadimos el plugin
-        self::$plugins[] = $plugin;
         self::save();
 
         // si el plugin está activado, desplegamos los cambios
