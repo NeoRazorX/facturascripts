@@ -52,12 +52,7 @@ final class Plugins
             return false;
         }
         if (!$plugin->compatible) {
-            $errorTag = empty($plugin->min_version) ? 'plugin-unsupported-version' : 'plugin-needs-fs-version';
-            ToolBox::i18nLog()->error($errorTag, [
-                '%pluginName%' => $zipName,
-                '%minVersion%' => $plugin->min_version,
-                '%version%' => Kernel::version()
-            ]);
+            ToolBox::log()->error($plugin->compatibilityDescription());
             return false;
         }
 

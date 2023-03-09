@@ -26,6 +26,11 @@ final class PluginsTest extends TestCase
 {
     public function testFolder()
     {
+        // si no existe la carpeta Plugins, la creamos
+        if (!is_dir(Plugins::folder())) {
+            mkdir(Plugins::folder());
+        }
+
         $this->assertDirectoryExists(Plugins::folder());
     }
 
@@ -36,5 +41,49 @@ final class PluginsTest extends TestCase
 
         // comprobamos que es el mismo número de directorios que de plugins
         $this->assertCount(count($list), glob(Plugins::folder() . '/*', GLOB_ONLYDIR));
+    }
+
+    public function testNoPluginFile()
+    {
+        // obtenemos la lista de plugin
+        $initialList = Plugins::list();
+
+        $this->assertFalse(Plugins::add(__DIR__ . '/../__files/NoPluginFile.zip'));
+
+        // comprobamos que no se ha añadido ningún plugin
+        $this->assertEquals($initialList, Plugins::list());
+    }
+
+    public function testBadPluginStructure()
+    {
+        // obtenemos la lista de plugin
+        $initialList = Plugins::list();
+
+        $this->assertFalse(Plugins::add(__DIR__ . '/../__files/BadPluginStructure.zip'));
+
+        // comprobamos que no se ha añadido ningún plugin
+        $this->assertEquals($initialList, Plugins::list());
+    }
+
+    public function testEmptyPlugin()
+    {
+        // obtenemos la lista de plugin
+        $initialList = Plugins::list();
+
+        $this->assertFalse(Plugins::add(__DIR__ . '/../__files/EmptyPlugin.zip'));
+
+        // comprobamos que no se ha añadido ningún plugin
+        $this->assertEquals($initialList, Plugins::list());
+    }
+
+    public function testPlugin1()
+    {
+        // obtenemos la lista de plugin
+        $initialList = Plugins::list();
+
+        $this->assertFalse(Plugins::add(__DIR__ . '/../__files/Plugin1.zip'));
+
+        // comprobamos que no se ha añadido ningún plugin
+        $this->assertEquals($initialList, Plugins::list());
     }
 }
