@@ -191,7 +191,7 @@ final class Plugins
         return null;
     }
 
-    public function isEnabled(string $pluginName): bool
+    public static function isEnabled(string $pluginName): bool
     {
         return in_array($pluginName, self::enabled());
     }
@@ -263,8 +263,14 @@ final class Plugins
         if (empty($data)) {
             return;
         }
-        foreach ($data as $plugin) {
-            $plugin = new Plugin($plugin);
+        foreach ($data as $item) {
+            // comprobamos si el plugin ya está en la lista
+            $plugin = self::get($item['name']);
+            if ($plugin) {
+                continue;
+            }
+
+            $plugin = new Plugin($item);
             if ($plugin->exists()) {
                 self::$plugins[] = $plugin;
             }

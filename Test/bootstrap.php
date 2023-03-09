@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Plugins;
 
 define("FS_FOLDER", getcwd());
 
@@ -48,5 +48,5 @@ echo "\n" . 'DB Name: ' . FS_DB_NAME . "\n\n";
 Cache::clear();
 
 // deploy
-$pluginManager = new PluginManager();
-$pluginManager->deploy();
+Plugins::load();
+Plugins::deploy();
