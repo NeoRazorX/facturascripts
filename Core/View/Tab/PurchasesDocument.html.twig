@@ -139,8 +139,10 @@
                     break;
             }
 
+            // si la acción no es eliminar la línea y,
             // establecemos el foco si tenemos el name del input donde se estaba escribiendo
-            if (document.activeElement.name === undefined && keyupInputName !== null) {
+            if (document.forms['purchasesForm']['action'].value !== 'rm-line'
+                && document.activeElement.name === undefined && keyupInputName !== null) {
                 let focusInput = $('input[name="' + keyupInputName + '"]');
                 let focusLength = focusInput.val().length;
                 let focusType = focusInput[0].type;

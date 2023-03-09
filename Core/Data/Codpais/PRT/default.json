@@ -3,6 +3,7 @@
         "coddivisa": "EUR",
         "codimpuesto": "IVA23",
         "codserie": "A",
+        "codserierec": "R",
         "codpago": "CONT",
         "tipoidfiscal": "NIF",
         "validate_iban": false

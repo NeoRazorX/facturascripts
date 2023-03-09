@@ -34,7 +34,8 @@
     "ext-dom": "*",
     "ext-mysqli": "*",
     "ext-bcmath": "*",
-    "ext-gd": "*"
+    "ext-gd": "*",
+    "ext-curl": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "8.*",
