@@ -33,6 +33,9 @@ final class Plugin
     public $compatible = false;
 
     /** @var string */
+    private $compatibilityDescription = '';
+
+    /** @var string */
     public $description = 'unknown';
 
     /** @var bool */
@@ -62,6 +65,9 @@ final class Plugin
     /** @var array */
     public $require = [];
 
+    /** @var array */
+    public $require_php = [];
+
     /** @var float */
     public $version = 0.0;
 
@@ -74,6 +80,11 @@ final class Plugin
         $this->post_enable = $data['post_enable'] ?? false;
 
         $this->loadIniFile();
+    }
+
+    public function compatibilityDescription(): string
+    {
+        return $this->compatibilityDescription;
     }
 
     public function delete(): bool
@@ -111,6 +122,17 @@ final class Plugin
             }
             if ($showErrors) {
                 ToolBox::i18nLog()->warning('plugin-needed', ['%pluginName%' => $require]);
+            }
+            return false;
+        }
+
+        // comprobamos que las extensiones de PHP requeridas estén activadas
+        foreach ($this->require_php as $require) {
+            if (extension_loaded($require)) {
+                continue;
+            }
+            if ($showErrors) {
+                ToolBox::i18nLog()->warning('php-extension-needed', ['%extensionName%' => $require]);
             }
             return false;
         }
@@ -187,18 +209,31 @@ final class Plugin
         // si la versión de PHP es menor que la requerida, no es compatible
         if (version_compare(PHP_VERSION, $this->min_php, '<')) {
             $this->compatible = false;
+            $this->compatibilityDescription = ToolBox::i18n()->trans('plugin-phpversion-error', [
+                '%pluginName%' => $this->name,
+                '%php%' => $this->min_php
+            ]);
             return;
         }
 
         // si la versión de FacturaScripts es menor que la requerida, no es compatible
         if (Kernel::version() < $this->min_version) {
             $this->compatible = false;
+            $this->compatibilityDescription = ToolBox::i18n()->trans('plugin-needs-fs-version', [
+                '%pluginName%' => $this->name,
+                '%minVersion%' => $this->min_version,
+                '%version%' => Kernel::version()
+            ]);
             return;
         }
 
         // si la versión requerida es menor que 2021, no es compatible
         if ($this->min_version < 2020) {
             $this->compatible = false;
+            $this->compatibilityDescription = ToolBox::i18n()->trans('plugin-not-compatible', [
+                '%pluginName%' => $this->name,
+                '%version%' => Kernel::version()
+            ]);
             return;
         }
 
@@ -214,14 +249,28 @@ final class Plugin
         return false;
     }
 
-    private function loadIniData(array $iniData): void
+    private function loadIniData(array $data): void
     {
-        $this->description = $iniData['description'] ?? $this->description;
-        $this->min_version = floatval($iniData['min_version']);
-        $this->min_php = floatval($iniData['min_php'] ?? $this->min_php);
-        $this->name = $iniData['name'] ?? $this->name;
-        $this->require = empty($iniData['require'] ?? '') ? [] : explode(',', $iniData['require']);
-        $this->version = floatval($iniData['version']);
+        $this->description = $data['description'] ?? $this->description;
+        $this->min_version = floatval($data['min_version'] ?? 0);
+        $this->min_php = floatval($data['min_php'] ?? $this->min_php);
+        $this->name = $data['name'] ?? $this->name;
+
+        $this->require = [];
+        if ($data['require'] ?? '') {
+            foreach (explode(',', $data['require']) as $item) {
+                $this->require[] = trim($item);
+            }
+        }
+
+        $this->require_php = [];
+        if ($data['require_php'] ?? '') {
+            foreach (explode(',', $data['require_php']) as $item) {
+                $this->require_php[] = trim($item);
+            }
+        }
+
+        $this->version = floatval($data['version'] ?? 0);
 
         $this->hidden = $this->hidden();
         if (!$this->enabled) {

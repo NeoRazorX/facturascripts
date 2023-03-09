@@ -277,9 +277,11 @@
                     </td>
                     <td>
                         {{ plugin.description | nl2br }}
-                        <a href="{{ plugin.forja('url', '') }}" target="_blank" class="ml-2">
-                            {{ trans('more') }} <i class="fas fa-external-link-alt"></i>
-                        </a>
+                        {% if plugin.forja('url', '') %}
+                            <a href="{{ plugin.forja('url', '') }}" target="_blank" class="ml-2">
+                                {{ trans('more') }} <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        {% endif %}
                     </td>
                     <td class="text-right text-nowrap">
                         {% if plugin.hasUpdate() %}
@@ -307,6 +309,8 @@
                                 <i class="fas fa-check" aria-hidden="true"></i>
                                 <span class="d-none d-sm-inline-block">{{ trans('enable') }}</span>
                             </a>
+                        {% else %}
+                            {{ plugin.compatibilityDescription() }}
                         {% endif %}
                     </td>
                 </tr>
