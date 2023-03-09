@@ -133,6 +133,9 @@ final class PluginsTest extends TestCase
         $this->assertContains('TestPlugin2', Plugins::enabled());
         $this->assertTrue(Plugins::isEnabled('TestPlugin2'));
 
+        // comprobamos que no podemos eliminar sin desactivar
+        $this->assertFalse(Plugins::remove('TestPlugin2'));
+
         // desactivamos el plugin
         $this->assertTrue(Plugins::disable('TestPlugin2'));
 
@@ -195,6 +198,43 @@ final class PluginsTest extends TestCase
         // comprobamos que se han eliminado los dos plugins
         $this->assertNull(Plugins::get('TestPlugin2'));
         $this->assertNull(Plugins::get('TestPlugin3'));
+    }
+
+    public function testPluginMinVersion2028()
+    {
+        // comprobamos que no podemos añadir el plugin
+        $this->assertFalse(Plugins::add(__DIR__ . '/../__files/PluginMinVersion2028.zip'));
+    }
+
+    public function testPluginMinPHP8()
+    {
+        // si la versión de PHP es menor que 8, no podemos añadir el plugin
+        if (version_compare(PHP_VERSION, '8.0.0') < 0) {
+            $this->assertFalse(Plugins::add(__DIR__ . '/../__files/PluginMinPHP8.zip'));
+            return;
+        }
+
+        // la versión de PHP es mayor o igual que 8, podemos añadir el plugin
+        $this->assertTrue(Plugins::add(__DIR__ . '/../__files/PluginMinPHP8.zip'));
+
+        // comprobamos que podemos activar el plugin
+        $this->assertTrue(Plugins::enable('PluginMinPHP8'));
+
+        // comprobamos que podemos eliminar el plugin
+        $this->assertTrue(Plugins::disable('PluginMinPHP8'));
+        $this->assertTrue(Plugins::remove('PluginMinPHP8'));
+    }
+
+    public function testPluginRequirePHP()
+    {
+        // comprobamos que podemos añadir el plugin
+        $this->assertTrue(Plugins::add(__DIR__ . '/../__files/PluginRequirePHP.zip'));
+
+        // comprobamos que no podemos activar el plugin
+        $this->assertFalse(Plugins::enable('PluginRequirePHP'));
+
+        // comprobamos que podemos eliminar el plugin
+        $this->assertTrue(Plugins::remove('PluginRequirePHP'));
     }
 
     protected function tearDown(): void
