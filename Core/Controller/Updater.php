@@ -22,11 +22,11 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
-use FacturaScripts\Core\Base\DownloadTools;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\Migrations;
 use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Internal\Forja;
 use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Kernel;
@@ -123,12 +123,10 @@ class Updater extends Controller
                 unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename']);
             }
 
-            $downloader = new DownloadTools();
             $url = $this->telemetryManager->signUrl($item['url']);
-            if ($downloader->download($url, FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
+            if (Http::get($url)->saveAs(FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
                 $this->toolBox()->i18nLog()->notice('download-completed');
                 $this->updaterItems[$key]['downloaded'] = true;
-                Cache::clear();
                 break;
             }
 

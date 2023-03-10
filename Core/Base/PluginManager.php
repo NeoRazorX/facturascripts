@@ -25,13 +25,14 @@ use ZipArchive;
  * FacturaScripts plugins manager.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @deprecated since 2023
  */
 final class PluginManager
 {
     /**
      * FacturaScripts core version.
      */
-    const CORE_VERSION = 2022.6;
+    const CORE_VERSION = 2023;
 
     /**
      * Path to list plugins on file.

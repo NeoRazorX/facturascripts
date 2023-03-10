@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Internal;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Kernel;
 
 final class Forja
@@ -37,8 +38,7 @@ final class Forja
     public static function builds(): array
     {
         if (!isset(self::$builds)) {
-            $json = file_get_contents(self::BUILDS_URL);
-            self::$builds = json_decode($json, true);
+            self::$builds = Http::get(self::BUILDS_URL)->setTimeout(10)->json();
         }
 
         return self::$builds;
@@ -88,8 +88,7 @@ final class Forja
     public static function plugins(): array
     {
         if (!isset(self::$pluginList)) {
-            $json = file_get_contents(self::PLUGIN_LIST_URL);
-            self::$pluginList = json_decode($json, true);
+            self::$pluginList = Http::get(self::PLUGIN_LIST_URL)->setTimeout(10)->json();
         }
 
         return self::$pluginList;
