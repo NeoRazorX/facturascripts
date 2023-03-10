@@ -1,0 +1,297 @@
+<?php
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+namespace FacturaScripts\Core\Internal;
+
+use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\Plugins;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ZipArchive;
+
+final class Plugin
+{
+    /** @var bool */
+    public $compatible = false;
+
+    /** @var string */
+    private $compatibilityDescription = '';
+
+    /** @var string */
+    public $description = 'unknown';
+
+    /** @var bool */
+    public $enabled = false;
+
+    /** @var bool */
+    public $hidden = false;
+
+    /** @var bool */
+    public $installed = false;
+
+    /** @var float */
+    public $min_version = 0;
+
+    /** @var float */
+    public $min_php = 7.2;
+
+    /** @var string */
+    public $name = '-';
+
+    /** @var int */
+    public $order = 0;
+
+    /** @var bool */
+    public $post_disable = false;
+
+    /** @var bool */
+    public $post_enable = false;
+
+    /** @var array */
+    public $require = [];
+
+    /** @var array */
+    public $require_php = [];
+
+    /** @var float */
+    public $version = 0.0;
+
+    public function __construct(array $data = [])
+    {
+        $this->enabled = $data['enabled'] ?? false;
+        $this->name = $data['name'] ?? '-';
+        $this->order = intval($data['order'] ?? 0);
+        $this->post_disable = $data['post_disable'] ?? false;
+        $this->post_enable = $data['post_enable'] ?? false;
+
+        $this->loadIniFile();
+    }
+
+    public function compatibilityDescription(): string
+    {
+        return $this->compatibilityDescription;
+    }
+
+    public function delete(): bool
+    {
+        // si no existe el directorio, devolvemos true
+        if (!file_exists($this->folder())) {
+            return true;
+        }
+
+        // eliminamos el directorio del plugin
+        $dir = new RecursiveDirectoryIterator($this->folder(), FilesystemIterator::SKIP_DOTS);
+        $files = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($files as $file) {
+            if ($file->isDir()) {
+                rmdir($file->getRealPath());
+            } else {
+                unlink($file->getRealPath());
+            }
+        }
+
+        return rmdir($this->folder());
+    }
+
+    public function dependenciesOk(array $enabledPlugins, bool $showErrors = false): bool
+    {
+        // si no es compatible, devolvemos false
+        if (!$this->compatible) {
+            return false;
+        }
+
+        // comprobamos que los plugins requeridos estén activados
+        foreach ($this->require as $require) {
+            if (in_array($require, $enabledPlugins)) {
+                continue;
+            }
+            if ($showErrors) {
+                ToolBox::i18nLog()->warning('plugin-needed', ['%pluginName%' => $require]);
+            }
+            return false;
+        }
+
+        // comprobamos que las extensiones de PHP requeridas estén activadas
+        foreach ($this->require_php as $require) {
+            if (extension_loaded($require)) {
+                continue;
+            }
+            if ($showErrors) {
+                ToolBox::i18nLog()->warning('php-extension-needed', ['%extensionName%' => $require]);
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    public function exists(): bool
+    {
+        return file_exists($this->folder());
+    }
+
+    public function folder(): string
+    {
+        return Plugins::folder() . DIRECTORY_SEPARATOR . $this->name;
+    }
+
+    public function forja(string $field, $default)
+    {
+        foreach (Forja::plugins() as $item) {
+            if ($item['name'] === $this->name) {
+                return $item[$field] ?? $default;
+            }
+        }
+
+        return $default;
+    }
+
+    public static function getFromZip(string $zipPath): ?Plugin
+    {
+        $zip = new ZipArchive();
+        if (true !== $zip->open($zipPath)) {
+            return null;
+        }
+
+        $zipIndex = $zip->locateName('facturascripts.ini', ZipArchive::FL_NODIR);
+        $iniData = parse_ini_string($zip->getFromIndex($zipIndex));
+        $zip->close();
+
+        $plugin = new Plugin();
+        $plugin->loadIniData($iniData);
+        return $plugin;
+    }
+
+    public function hasUpdate(): bool
+    {
+        return $this->version < $this->forja('version', 0.0);
+    }
+
+    public function init(): void
+    {
+        // si el plugin no está activado o no tiene clase Init, no hacemos nada
+        $className = 'FacturaScripts\\Plugins\\' . $this->name . '\\Init';
+        if (!$this->enabled || !class_exists($className)) {
+            return;
+        }
+
+        // ejecutamos los procesos de la clase Init del plugin
+        $init = new $className();
+        if ($this->post_disable) {
+            $init->uninstall();
+        } else if ($this->post_enable) {
+            $init->update();
+        }
+        $init->init();
+
+        // desactivamos los flags de post_enable y post_disable
+        $this->post_disable = false;
+        $this->post_enable = false;
+    }
+
+    private function checkCompatibility(): void
+    {
+        // si la versión de PHP es menor que la requerida, no es compatible
+        if (version_compare(PHP_VERSION, $this->min_php, '<')) {
+            $this->compatible = false;
+            $this->compatibilityDescription = ToolBox::i18n()->trans('plugin-phpversion-error', [
+                '%pluginName%' => $this->name,
+                '%php%' => $this->min_php
+            ]);
+            return;
+        }
+
+        // si la versión de FacturaScripts es menor que la requerida, no es compatible
+        if (Kernel::version() < $this->min_version) {
+            $this->compatible = false;
+            $this->compatibilityDescription = ToolBox::i18n()->trans('plugin-needs-fs-version', [
+                '%pluginName%' => $this->name,
+                '%minVersion%' => $this->min_version,
+                '%version%' => Kernel::version()
+            ]);
+            return;
+        }
+
+        // si la versión requerida es menor que 2021, no es compatible
+        if ($this->min_version < 2020) {
+            $this->compatible = false;
+            $this->compatibilityDescription = ToolBox::i18n()->trans('plugin-not-compatible', [
+                '%pluginName%' => $this->name,
+                '%version%' => Kernel::version()
+            ]);
+            return;
+        }
+
+        $this->compatible = true;
+    }
+
+    private function hidden(): bool
+    {
+        if (defined('FS_HIDDEN_PLUGINS') && FS_HIDDEN_PLUGINS !== '') {
+            return in_array($this->name, explode(',', FS_HIDDEN_PLUGINS));
+        }
+
+        return false;
+    }
+
+    private function loadIniData(array $data): void
+    {
+        $this->description = $data['description'] ?? $this->description;
+        $this->min_version = floatval($data['min_version'] ?? 0);
+        $this->min_php = floatval($data['min_php'] ?? $this->min_php);
+        $this->name = $data['name'] ?? $this->name;
+
+        $this->require = [];
+        if ($data['require'] ?? '') {
+            foreach (explode(',', $data['require']) as $item) {
+                $this->require[] = trim($item);
+            }
+        }
+
+        $this->require_php = [];
+        if ($data['require_php'] ?? '') {
+            foreach (explode(',', $data['require_php']) as $item) {
+                $this->require_php[] = trim($item);
+            }
+        }
+
+        $this->version = floatval($data['version'] ?? 0);
+        $this->installed = $this->exists();
+
+        $this->hidden = $this->hidden();
+        if (!$this->enabled) {
+            $this->order = 0;
+        }
+
+        $this->checkCompatibility();
+    }
+
+    private function loadIniFile(): void
+    {
+        $iniPath = Plugins::folder() . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'facturascripts.ini';
+        if (!file_exists($iniPath)) {
+            return;
+        }
+
+        $iniData = parse_ini_file($iniPath);
+        $this->loadIniData($iniData);
+    }
+}

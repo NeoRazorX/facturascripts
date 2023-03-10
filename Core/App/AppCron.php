@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\App;
 
 use DateTime;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Plugins;
 
 /**
  * App description
@@ -98,7 +99,7 @@ END;
      */
     private function runPlugins()
     {
-        foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
+        foreach (Plugins::enabled() as $pluginName) {
             $cronClass = '\\FacturaScripts\\Plugins\\' . $pluginName . '\\Cron';
             if (class_exists($cronClass)) {
                 ToolBox::i18nLog()->notice('running-plugin-cron', ['%pluginName%' => $pluginName]);

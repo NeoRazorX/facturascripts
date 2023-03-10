@@ -1026,6 +1026,7 @@
     "plugin-needed": "Le plugin %pluginName% est nécessaire.",
     "plugin-needs-fs-version": "Le module %pluginName% nécessite la version %minVersion% de FacturaScripts, alors que vous utilisez la version %version% de FacturaScripts.",
     "plugin-not-compatible": "Le module %pluginName% n'est pas compatible avec FacturaScripts 2018.",
+    "plugin-order": "Orden: %num%",
     "plugin-phpversion-error": "El plugin %pluginName% requiere PHP %php% o superior",
     "plugin-removal-disabled": "La suppression de modules est désactivée sur ce serveur",
     "plugin-unsupported-version": "Le module %pluginName% est adapté pour FacturaScripts 2017 ou plus ancien, alors que vous utilisez la version %version% de FacturaScripts.",

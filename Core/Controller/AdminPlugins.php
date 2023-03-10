@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,8 +19,11 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base;
+use FacturaScripts\Core\Base\Controller;
+use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Internal\Forja;
+use FacturaScripts\Core\Plugins;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,52 +33,15 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class AdminPlugins extends Base\Controller
+class AdminPlugins extends Controller
 {
-    const PLUGIN_LIST_URL = 'https://facturascripts.com/PluginInfoList';
+    /** @var array */
+    public $pluginList = [];
 
-    /**
-     * Plugin Manager.
-     *
-     * @var Base\PluginManager
-     */
-    public $pluginManager;
+    /** @var array */
+    public $remotePluginList = [];
 
-    public function getAllPlugins(): array
-    {
-        if (FS_DISABLE_ADD_PLUGINS) {
-            return [];
-        }
-
-        $downloadTools = new Base\DownloadTools();
-        $json = json_decode($downloadTools->getContents(self::PLUGIN_LIST_URL, 3), true);
-        if (empty($json)) {
-            return [];
-        }
-
-        $list = [];
-        foreach ($json as $item) {
-            // plugin is already installed?
-            $item['installed'] = false;
-            foreach ($this->getPlugins() as $plug) {
-                if ($plug['name'] == $item['name']) {
-                    $item['installed'] = true;
-                    break;
-                }
-            }
-
-            $list[] = $item;
-        }
-
-        return $list;
-    }
-
-    /**
-     * Return the max file size that can be uploaded.
-     *
-     * @return float
-     */
-    public function getMaxFileUpload()
+    public function getMaxFileUpload(): float
     {
         return UploadedFile::getMaxFilesize() / 1024 / 1024;
     }
@@ -90,74 +56,17 @@ class AdminPlugins extends Base\Controller
     }
 
     /**
-     * Return installed plugins without hidden ones.
-     *
-     * @return array
-     */
-    public function getPlugins(): array
-    {
-        $installedPlugins = $this->pluginManager->installedPlugins();
-        if (false === defined('FS_HIDDEN_PLUGINS')) {
-            return $installedPlugins;
-        }
-
-        // exclude hidden plugins
-        $hiddenPlugins = explode(',', FS_HIDDEN_PLUGINS);
-        foreach ($installedPlugins as $key => $plugin) {
-            if (in_array($plugin['name'], $hiddenPlugins, false)) {
-                unset($installedPlugins[$key]);
-            }
-        }
-        return $installedPlugins;
-    }
-
-    /**
      * Runs the controller's private logic.
      *
      * @param Response $response
      * @param User $user
-     * @param Base\ControllerPermissions $permissions
+     * @param ControllerPermissions $permissions
      */
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        $this->pluginManager = new Base\PluginManager();
 
         $action = $this->request->get('action', '');
-        $this->execAction($action);
-    }
-
-    private function disablePluginAction(): void
-    {
-        if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return;
-        }
-
-        $pluginName = $this->request->get('plugin', '');
-        $this->pluginManager->disable($pluginName);
-        Cache::clear();
-    }
-
-    private function enablePluginAction(): void
-    {
-        if (false === $this->permissions->allowUpdate) {
-            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
-            return;
-        }
-
-        $pluginName = $this->request->get('plugin', '');
-        $this->pluginManager->enable($pluginName);
-        Cache::clear();
-    }
-
-    /**
-     * Execute main actions.
-     *
-     * @param string $action
-     */
-    private function execAction(string $action)
-    {
         switch ($action) {
             case 'disable':
                 $this->disablePluginAction();
@@ -182,22 +91,79 @@ class AdminPlugins extends Base\Controller
             default:
                 if (FS_DEBUG) {
                     // On debug mode, always deploy the contents of Dinamic.
-                    $this->pluginManager->deploy(true, true);
+                    Plugins::deploy(true, true);
                     Cache::clear();
                 }
                 break;
+        }
+
+        $this->pluginList = Plugins::list();
+        $this->loadRemotePluginList();
+    }
+
+    private function disablePluginAction(): void
+    {
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $pluginName = $this->request->get('plugin', '');
+        if (Plugins::disable($pluginName)) {
+            $this->toolBox()->i18nLog()->notice('reloading');
+            $this->redirect($this->url(), 3);
+        }
+        Cache::clear();
+    }
+
+    private function enablePluginAction(): void
+    {
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-modify');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $pluginName = $this->request->get('plugin', '');
+        if (Plugins::enable($pluginName)) {
+            $this->toolBox()->i18nLog()->notice('reloading');
+            $this->redirect($this->url(), 3);
+        }
+        Cache::clear();
+    }
+
+    private function loadRemotePluginList(): void
+    {
+        if (defined('FS_DISABLE_ADD_PLUGINS') && FS_DISABLE_ADD_PLUGINS) {
+            return;
+        }
+
+        $installedPlugins = Plugins::list();
+        foreach (Forja::plugins() as $item) {
+            // plugin is already installed?
+            foreach ($installedPlugins as $plugin) {
+                if ($plugin->name == $item['name']) {
+                    continue 2;
+                }
+            }
+
+            $this->remotePluginList[] = $item;
         }
     }
 
     private function rebuildAction(): void
     {
-        $this->pluginManager->deploy(true, true);
-
-        $init = $this->request->query->get('init', '');
-        foreach (explode(',', $init) as $name) {
-            $this->pluginManager->initPlugin($name);
+        if (false === $this->permissions->allowUpdate) {
+            $this->toolBox()->i18nLog()->warning('not-allowed-update');
+            return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
         }
 
+        Plugins::deploy(true, true);
         Cache::clear();
         $this->toolBox()->i18nLog()->notice('rebuild-completed');
     }
@@ -207,35 +173,25 @@ class AdminPlugins extends Base\Controller
         if (false === $this->permissions->allowDelete) {
             $this->toolBox()->i18nLog()->warning('not-allowed-delete');
             return;
+        } elseif (false === $this->validateFormToken()) {
+            return;
         }
 
         $pluginName = $this->request->get('plugin', '');
-        $this->pluginManager->remove($pluginName);
+        Plugins::remove($pluginName);
         Cache::clear();
     }
 
     private function uploadPluginAction(): void
     {
-        // check user permissions
         if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-update');
             return;
-        }
-
-        // valid request?
-        $token = $this->request->request->get('multireqtoken', '');
-        if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
-            $this->toolBox()->i18nLog()->warning('invalid-request');
+        } elseif (false === $this->validateFormToken()) {
             return;
         }
 
-        // duplicated request?
-        if ($this->multiRequestProtection->tokenExist($token)) {
-            $this->toolBox()->i18nLog()->warning('duplicated-request');
-            return;
-        }
-
-        $pluginNames = [];
+        $ok = true;
         $uploadFiles = $this->request->files->get('plugin', []);
         foreach ($uploadFiles as $uploadFile) {
             if (false === $uploadFile->isValid()) {
@@ -248,15 +204,16 @@ class AdminPlugins extends Base\Controller
                 continue;
             }
 
-            $this->pluginManager->install($uploadFile->getPathname(), $uploadFile->getClientOriginalName());
-            $pluginNames[] = $this->pluginManager->getLastPluginName();
+            if (false === Plugins::add($uploadFile->getPathname(), $uploadFile->getClientOriginalName())) {
+                $ok = false;
+            }
             unlink($uploadFile->getPathname());
         }
 
-        if ($this->pluginManager->deploymentRequired()) {
-            Cache::clear();
+        Cache::clear();
+        if ($ok) {
             $this->toolBox()->i18nLog()->notice('reloading');
-            $this->redirect($this->url() . '?action=rebuild&init=' . implode(',', $pluginNames), 3);
+            $this->redirect($this->url(), 3);
         }
     }
 }

@@ -21,7 +21,6 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\AssetManager;
@@ -146,9 +145,8 @@ final class Html
             $files = [];
             $fileParentTemp = explode('/', $fileParent);
             $fileParent = str_replace('.html.twig', '', end($fileParentTemp));
-            $pluginManager = new PluginManager();
 
-            foreach ($pluginManager->enabledPlugins() as $pluginName) {
+            foreach (Plugins::enabled() as $pluginName) {
                 $path = FS_FOLDER . '/Plugins/' . $pluginName . '/Extension/View/';
                 if (false === file_exists($path)) {
                     continue;
@@ -213,8 +211,7 @@ final class Html
         self::$loader->addPath(FS_FOLDER . '/Core/View', 'Core');
 
         // Plugin namespace
-        $pluginManager = new PluginManager();
-        foreach ($pluginManager->enabledPlugins() as $pluginName) {
+        foreach (Plugins::enabled() as $pluginName) {
             $pluginPath = FS_FOLDER . '/Plugins/' . $pluginName . '/View';
             if (file_exists($pluginPath)) {
                 self::$loader->addPath($pluginPath, 'Plugin' . $pluginName);

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,8 @@
 
 namespace FacturaScripts\Core\Base\Debug;
 
-use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\Plugins;
 
 /**
  * Description of ProductionErrorHandler
@@ -73,8 +74,7 @@ class ProductionErrorHandler
 
     private function getPlugins(): string
     {
-        $pluginManager = new PluginManager();
-        return implode(',', $pluginManager->enabledPlugins());
+        return implode(',', Plugins::enabled());
     }
 
     /**
@@ -111,7 +111,7 @@ class ProductionErrorHandler
             . "<ul>"
             . "<li><b>File:</b> " . $error["file"] . " (<b>Line " . $error["line"] . "</b>)</li>"
             . "<li><b>Message:</b> " . $this->cleanMessage($error) . "</li>"
-            . "<li><b>FacturaScripts:</b> " . PluginManager::CORE_VERSION . "</li>"
+            . "<li><b>FacturaScripts:</b> " . Kernel::version() . "</li>"
             . "<li><b>PHP:</b> " . PHP_VERSION . "</li>"
             . "</ul>"
             . "<div class='text-center'>"
@@ -120,7 +120,7 @@ class ProductionErrorHandler
             . "<input type='hidden' name='errtype' value='" . $error["type"] . "' />"
             . "<input type='hidden' name='errfile' value='" . $error["file"] . "' />"
             . "<input type='hidden' name='errline' value='" . $error["line"] . "' />"
-            . "<input type='hidden' name='errversion' value='" . PluginManager::CORE_VERSION . "' />"
+            . "<input type='hidden' name='errversion' value='" . Kernel::version() . "' />"
             . "<input type='hidden' name='errplugins' value='" . $this->getPlugins() . "' />"
             . "<input type='hidden' name='errphp' value='" . PHP_VERSION . "' />"
             . "<button type='submit' class='btn1'>REPORT / INFORMAR</button>"

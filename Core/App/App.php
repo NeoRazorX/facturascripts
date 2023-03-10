@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\TelemetryManager;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Session;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,20 +35,12 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class App
 {
-
     /**
      * Database access manager.
      *
      * @var DataBase
      */
     protected $dataBase;
-
-    /**
-     * Plugin manager.
-     *
-     * @var PluginManager
-     */
-    protected $pluginManager;
 
     /**
      * Gives us access to the HTTP request parameters.
@@ -86,7 +78,6 @@ abstract class App
         }
 
         $this->dataBase = new DataBase();
-        $this->pluginManager = new PluginManager();
         $this->response = new Response();
         $this->uri = $uri;
 
@@ -197,12 +188,6 @@ abstract class App
      */
     private function loadPlugins()
     {
-        foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
-            $initClass = '\\FacturaScripts\\Plugins\\' . $pluginName . '\\Init';
-            if (class_exists($initClass)) {
-                $initObject = new $initClass();
-                $initObject->init();
-            }
-        }
+        Plugins::load();
     }
 }
