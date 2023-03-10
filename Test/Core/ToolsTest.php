@@ -36,6 +36,10 @@ final class ToolsTest extends TestCase
         $this->assertEquals(FS_FOLDER, Tools::config('FOLDER'));
         $this->assertEquals(FS_FOLDER, Tools::config('FS_FOLDER'));
         $this->assertEquals(FS_LANG, Tools::config('lang'));
+
+        // comprobamos el default
+        $this->assertEquals('default', Tools::config('test123', 'default'));
+        $this->assertNull(Tools::config('test1234'));
     }
 
     public function testFolderFunctions()
@@ -76,39 +80,6 @@ final class ToolsTest extends TestCase
 
         // comprobamos que no existen los archivos
         $this->assertFalse(file_exists(Tools::folder('MyFiles', 'Test')));
-    }
-
-    public function testIsValidEmail()
-    {
-        $this->assertTrue(Tools::isValidEmail('carlos@facturascripts.com'));
-        $this->assertFalse(Tools::isValidEmail('carlos'));
-        $this->assertFalse(Tools::isValidEmail('carlos@'));
-        $this->assertFalse(Tools::isValidEmail('@facturascripts.com'));
-    }
-
-    public function testIsValidString()
-    {
-        $this->assertTrue(Tools::isValidString('test'));
-        $this->assertFalse(Tools::isValidString(''));
-        $this->assertTrue(Tools::isValidString('', 0));
-        $this->assertFalse(Tools::isValidString('test', 5));
-        $this->assertTrue(Tools::isValidString('test', 4));
-        $this->assertTrue(Tools::isValidString('test', 4, 5));
-        $this->assertTrue(Tools::isValidString('test', 4, 4));
-        $this->assertFalse(Tools::isValidString('test', 1, 3));
-    }
-
-    public function testIsValidUrl()
-    {
-        $this->assertTrue(Tools::isValidUrl('http://facturascripts.com'));
-        $this->assertTrue(Tools::isValidUrl('https://facturascripts.com'));
-        $this->assertTrue(Tools::isValidUrl('ftp://facturascripts.com'));
-        $this->assertTrue(Tools::isValidUrl('ftps://facturascripts.com'));
-        $this->assertTrue(Tools::isValidUrl('www.facturascripts.com'));
-        $this->assertFalse(Tools::isValidUrl('javascript:alert("test")'));
-        $this->assertFalse(Tools::isValidUrl('javascript://alert("test")'));
-        $this->assertFalse(Tools::isValidUrl('jAvAsCriPt://alert("test")'));
-        $this->assertFalse(Tools::isValidUrl('data:text/html;base64,PHNjcmlwdD5hbGVydCgiVGVzdCIpOzwvc2NyaXB0Pg=='));
     }
 
     public function testHtmlFunctions()

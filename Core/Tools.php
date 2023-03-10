@@ -47,7 +47,7 @@ class Tools
         return strtr($text, self::ASCII);
     }
 
-    public static function config(string $key)
+    public static function config(string $key, $default = null)
     {
         $constants = [$key, strtoupper($key), 'FS_' . strtoupper($key)];
         foreach ($constants as $constant) {
@@ -56,7 +56,7 @@ class Tools
             }
         }
 
-        return null;
+        return $default;
     }
 
     public static function date(?string $date = null): string
@@ -131,31 +131,6 @@ class Tools
     public static function hour(?string $date = null): string
     {
         return empty($date) ? date('H:i:s') : date('H:i:s', strtotime($date));
-    }
-
-    public static function isValidEmail(string $email): bool
-    {
-        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
-    }
-
-    public static function isValidString(string $text, int $min = 1, $max = 99): bool
-    {
-        return strlen($text) >= $min && strlen($text) <= $max;
-    }
-
-    public static function isValidUrl(string $url): bool
-    {
-        // si la url está vacía o comienza por javascript: entonces no es una url válida
-        if (empty($url) || stripos($url, 'javascript:') === 0) {
-            return false;
-        }
-
-        // si la url comienza por www, entonces se añade https://
-        if (stripos($url, 'www.') === 0) {
-            $url = 'https://' . $url;
-        }
-
-        return filter_var($url, FILTER_VALIDATE_URL) !== false;
     }
 
     public static function lang(string $lang = ''): Translator
