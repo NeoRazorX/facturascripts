@@ -200,6 +200,10 @@ final class Plugins
         return in_array($pluginName, self::enabled());
     }
 
+    /**
+     * @param bool $hidden
+     * @return Plugin[]
+     */
     public static function list(bool $hidden = false): array
     {
         $list = [];

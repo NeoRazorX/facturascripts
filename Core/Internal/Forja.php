@@ -19,12 +19,71 @@
 
 namespace FacturaScripts\Core\Internal;
 
+use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Kernel;
+
 final class Forja
 {
+    const BUILDS_URL = 'https://facturascripts.com/DownloadBuild';
+    const CORE_PROJECT_ID = 1;
     const PLUGIN_LIST_URL = 'https://facturascripts.com/PluginInfoList';
 
     /** @var array */
+    public static $builds;
+
+    /** @var array */
     private static $pluginList;
+
+    public static function builds(): array
+    {
+        if (!isset(self::$builds)) {
+            $json = file_get_contents(self::BUILDS_URL);
+            self::$builds = json_decode($json, true);
+        }
+
+        return self::$builds;
+    }
+
+    public static function canUpdateCore(): bool
+    {
+        foreach (self::getBuilds(self::CORE_PROJECT_ID) as $build) {
+            if ($build['stable'] && $build['version'] > Kernel::version()) {
+                return true;
+            }
+
+            if (false === AppSettings::get('default', 'enableupdatesbeta', false)) {
+                continue;
+            }
+
+            if ($build['beta'] && $build['version'] > Kernel::version()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function getBuilds(int $id): array
+    {
+        foreach (self::builds() as $project) {
+            if ($project['project'] == $id) {
+                return $project['builds'];
+            }
+        }
+
+        return [];
+    }
+
+    public static function getBuildsByName(string $pluginName): array
+    {
+        foreach (self::builds() as $project) {
+            if ($project['name'] == $pluginName) {
+                return $project['builds'];
+            }
+        }
+
+        return [];
+    }
 
     public static function plugins(): array
     {

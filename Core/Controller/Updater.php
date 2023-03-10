@@ -19,15 +19,18 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DownloadTools;
 use FacturaScripts\Core\Base\FileManager;
 use FacturaScripts\Core\Base\Migrations;
-use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\TelemetryManager;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Internal\Forja;
+use FacturaScripts\Core\Internal\Plugin;
+use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\Plugins;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 use ZipArchive;
@@ -39,33 +42,16 @@ use ZipArchive;
  */
 class Updater extends Controller
 {
-    const CORE_PROJECT_ID = 1;
     const CORE_ZIP_FOLDER = 'facturascripts';
     const UPDATE_CORE_URL = 'https://facturascripts.com/DownloadBuild';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $coreUpdateWarnings = [];
 
-    /**
-     * @var array
-     */
-    private $forjaJson = [];
-
-    /**
-     * @var PluginManager
-     */
-    private $pluginManager;
-
-    /**
-     * @var TelemetryManager
-     */
+    /** @var TelemetryManager */
     public $telemetryManager;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $updaterItems = [];
 
     public function getPageData(): array
@@ -77,14 +63,9 @@ class Updater extends Controller
         return $data;
     }
 
-    /**
-     * Returns FacturaScripts core version.
-     *
-     * @return float
-     */
     public function getCoreVersion(): float
     {
-        return PluginManager::CORE_VERSION;
+        return Kernel::version();
     }
 
     /**
@@ -95,7 +76,6 @@ class Updater extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        $this->pluginManager = new PluginManager();
         $this->telemetryManager = new TelemetryManager();
 
         // Folders writable?
@@ -158,7 +138,7 @@ class Updater extends Controller
         // ¿Hay que desactivar algo?
         $disable = $this->request->get('disable', '');
         foreach (explode(',', $disable) as $plugin) {
-            $this->pluginManager->disable($plugin);
+            Plugins::disable($plugin);
         }
     }
 
@@ -214,36 +194,31 @@ class Updater extends Controller
 
     private function getUpdateItems(): array
     {
-        $downloader = new DownloadTools();
-        $this->forjaJson = json_decode($downloader->getContents(self::UPDATE_CORE_URL), true);
-        if (empty($this->forjaJson)) {
-            return [];
-        }
-
         $items = [];
-        foreach ($this->forjaJson as $projectData) {
-            if ($projectData['project'] === self::CORE_PROJECT_ID) {
-                $this->getUpdateItemsCore($items, $projectData);
-                continue;
-            }
 
-            foreach ($this->pluginManager->installedPlugins() as $installed) {
-                if ($projectData['name'] === $installed['name']) {
-                    $this->getUpdateItemsPlugin($items, $projectData, $installed['version']);
-                    break;
-                }
+        // comprobamos si se puede actualizar el core
+        if (Forja::canUpdateCore()) {
+            $item = $this->getUpdateItemsCore();
+            if (!empty($item)) {
+                $items[] = $item;
             }
         }
 
-        Cache::set('UPDATE_ITEMS', $items);
+        // comprobamos si se puede actualizar algún plugin
+        foreach (Plugins::list() as $plugin) {
+            $item = $this->getUpdateItemsPlugin($plugin);
+            if (!empty($item)) {
+                $items[] = $item;
+            }
+        }
+
         return $items;
     }
 
-    private function getUpdateItemsCore(array &$items, array $projectData)
+    private function getUpdateItemsCore(): array
     {
-        $beta = [];
-        $fileName = 'update-' . $projectData['project'] . '.zip';
-        foreach ($projectData['builds'] as $build) {
+        $fileName = 'update-' . Forja::CORE_PROJECT_ID . '.zip';
+        foreach (Forja::getBuilds(Forja::CORE_PROJECT_ID) as $build) {
             if ($build['version'] <= $this->getCoreVersion()) {
                 continue;
             }
@@ -252,79 +227,74 @@ class Updater extends Controller
                 'description' => $this->toolBox()->i18n()->trans('core-update', ['%version%' => $build['version']]),
                 'downloaded' => file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
                 'filename' => $fileName,
-                'id' => $projectData['project'],
-                'name' => $projectData['name'],
+                'id' => Forja::CORE_PROJECT_ID,
+                'name' => 'CORE',
                 'stable' => $build['stable'],
-                'url' => self::UPDATE_CORE_URL . '/' . $projectData['project'] . '/' . $build['version'],
+                'url' => self::UPDATE_CORE_URL . '/' . Forja::CORE_PROJECT_ID . '/' . $build['version'],
                 'version' => $build['version'],
                 'mincore' => 0,
                 'maxcore' => 0
             ];
 
             if ($build['stable']) {
-                $items[] = $item;
-                return;
+                return $item;
             }
 
-            if (empty($beta) && $build['beta'] && ToolBox::appSettings()->get('default', 'enableupdatesbeta', false)) {
-                $beta = $item;
+            if ($build['beta'] && AppSettings::get('default', 'enableupdatesbeta', false)) {
+                return $item;
             }
         }
 
-        if (!empty($beta)) {
-            $items[] = $beta;
-        }
+        return [];
     }
 
-    private function getUpdateItemsPlugin(array &$items, array $pluginUpdate, float $installedVersion)
+    private function getUpdateItemsPlugin(Plugin $plugin): array
     {
-        $beta = [];
-        $fileName = 'update-' . $pluginUpdate['project'] . '.zip';
-        foreach ($pluginUpdate['builds'] as $build) {
-            if ($build['version'] <= $installedVersion) {
+        $id = $plugin->forja('idplugin', 0);
+        $fileName = 'update-' . $id . '.zip';
+        foreach (Forja::getBuilds($id) as $build) {
+            if ($build['version'] <= $plugin->version) {
                 continue;
             }
 
             $item = [
-                'description' => $this->toolBox()->i18n()->trans('plugin-update', ['%pluginName%' => $pluginUpdate['name'], '%version%' => $build['version']]),
+                'description' => $this->toolBox()->i18n()->trans('plugin-update', [
+                    '%pluginName%' => $plugin->name,
+                    '%version%' => $build['version']
+                ]),
                 'downloaded' => file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName),
                 'filename' => $fileName,
-                'id' => $pluginUpdate['project'],
-                'name' => $pluginUpdate['name'],
+                'id' => $id,
+                'name' => $plugin->name,
                 'stable' => $build['stable'],
-                'url' => self::UPDATE_CORE_URL . '/' . $pluginUpdate['project'] . '/' . $build['version'],
+                'url' => self::UPDATE_CORE_URL . '/' . $id . '/' . $build['version'],
                 'version' => $build['version'],
                 'mincore' => $build['mincore'],
                 'maxcore' => $build['maxcore']
             ];
 
             if ($build['stable']) {
-                $items[] = $item;
-                return;
+                return $item;
             }
 
-            if (empty($beta) && $build['beta'] && ToolBox::appSettings()->get('default', 'enableupdatesbeta', false)) {
-                $beta = $item;
+            if ($build['beta'] && AppSettings::get('default', 'enableupdatesbeta', false)) {
+                return $item;
             }
         }
 
-        if (!empty($beta)) {
-            $items[] = $beta;
-        }
+        return [];
     }
 
     private function postUpdateAction()
     {
         $plugName = $this->request->get('init', '');
         if ($plugName) {
-            // run Init::update() when plugin is updated
-            $this->pluginManager->initPlugin($plugName);
-            $this->pluginManager->deploy(true, true);
+            Plugins::deploy(true, true);
             return;
         }
 
         Migrations::run();
-        $this->pluginManager->deploy(true, true);
+        Plugins::deploy(true, true);
     }
 
     private function setCoreWarnings()
@@ -332,7 +302,7 @@ class Updater extends Controller
         // comprobamos si hay actualización del core
         $newCore = 0;
         foreach ($this->updaterItems as $item) {
-            if ($item['id'] === self::CORE_PROJECT_ID) {
+            if ($item['id'] === Forja::CORE_PROJECT_ID) {
                 $newCore = $item['version'];
                 break;
             }
@@ -342,9 +312,9 @@ class Updater extends Controller
         }
 
         // comprobamos los plugins instalados
-        foreach ($this->pluginManager->installedPlugins() as $plugin) {
+        foreach (Plugins::list() as $plugin) {
             // ¿El plugin está activo?
-            if (false === $plugin['enabled']) {
+            if (false === $plugin->enabled) {
                 continue;
             }
 
@@ -354,12 +324,12 @@ class Updater extends Controller
             }
 
             // ¿Hay actualización para el nuevo core?
-            if ($this->willPluginNeedUpdate($plugin, $newCore)) {
-                $this->coreUpdateWarnings[$plugin['name']] = self::toolBox()::i18n()->trans('plugin-need-update', ['%plugin%' => $plugin['name']]);
+            if ($plugin->forja('maxcore', 0) >= $newCore) {
+                $this->coreUpdateWarnings[$plugin->name] = self::toolBox()::i18n()->trans('plugin-need-update', ['%plugin%' => $plugin->name]);
                 continue;
             }
 
-            $this->coreUpdateWarnings[$plugin['name']] = self::toolBox()::i18n()->trans('plugin-need-update-but', ['%plugin%' => $plugin['name']]);
+            $this->coreUpdateWarnings[$plugin->name] = self::toolBox()::i18n()->trans('plugin-need-update-but', ['%plugin%' => $plugin->name]);
         }
     }
 
@@ -382,20 +352,20 @@ class Updater extends Controller
         // get the name of the plugin to init after update (if the plugin is enabled)
         $init = '';
         foreach ($this->getUpdateItems() as $item) {
-            if ($idItem == self::CORE_PROJECT_ID) {
+            if ($idItem == Forja::CORE_PROJECT_ID) {
                 break;
             }
 
-            if ($item['id'] == $idItem && in_array($item['name'], $this->pluginManager->enabledPlugins())) {
+            if ($item['id'] == $idItem && Plugins::isEnabled($item['name'])) {
                 $init = $item['name'];
                 break;
             }
         }
 
         // extract core/plugin zip file
-        $done = ($idItem == self::CORE_PROJECT_ID) ? $this->updateCore($zip, $fileName) : $this->updatePlugin($zip, $fileName);
+        $done = ($idItem == Forja::CORE_PROJECT_ID) ? $this->updateCore($zip, $fileName) : $this->updatePlugin($zip, $fileName);
         if ($done) {
-            $this->pluginManager->deploy(true, false);
+            Plugins::deploy(true, false);
             Cache::clear();
             $this->toolBox()->i18nLog()->notice('reloading');
             $this->redirect($this->getClassName() . '?action=post-update&init=' . $init, 3);
@@ -446,40 +416,20 @@ class Updater extends Controller
         $zip->close();
 
         // use plugin manager to update
-        $return = $this->pluginManager->install($fileName, 'plugin.zip', true);
+        $return = Plugins::add($fileName, 'plugin.zip', true);
 
         // remove zip file
         unlink(FS_FOLDER . DIRECTORY_SEPARATOR . $fileName);
         return $return;
     }
 
-    private function willItWorkOnNewCore(array $plugin, float $newCore): bool
+    private function willItWorkOnNewCore(Plugin $plugin, float $newCore): bool
     {
         // buscamos información del plugin en la forja
-        foreach ($this->forjaJson as $item) {
-            if ($item['name'] != $plugin['name']) {
-                continue;
-            }
-
-            // buscamos la versión que hay instalada
-            foreach ($item['builds'] as $build) {
-                if ($build['version'] == $plugin['version']) {
-                    // si soporta un core mayor o igual al que estamos actualizando, entonces funcionará
-                    return $build['maxcore'] >= $newCore;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private function willPluginNeedUpdate(array $plugin, float $newCore): bool
-    {
-        // buscamos información del plugin en la forja
-        foreach ($this->forjaJson as $item) {
-            if ($item['name'] === $plugin['name']) {
+        foreach (Forja::getBuildsByName($plugin->name) as $build) {
+            if ($build['version'] == $plugin->version) {
                 // si soporta un core mayor o igual al que estamos actualizando, entonces funcionará
-                return $item['maxcore'] >= $newCore;
+                return $build['maxcore'] >= $newCore;
             }
         }
 
