@@ -2,7 +2,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -18,8 +18,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Plugins;
 
 define("FS_FOLDER", getcwd());
 
@@ -33,19 +34,19 @@ if (!file_exists($config)) {
 require_once $config;
 
 // connect to database
-$db = new FacturaScripts\Core\Base\DataBase();
+$db = new DataBase();
 $db->connect();
 
 // clean cache
 Cache::clear();
 
 // deploy
-$pluginManager = new PluginManager();
-$pluginManager->deploy();
+Plugins::load();
+Plugins::deploy();
 
 // disable all plugins
-foreach ($pluginManager->enabledPlugins() as $plugin) {
-    $pluginManager->disable($plugin);
+foreach (Plugins::enabled() as $plugin) {
+    Plugins::disable($plugin);
 }
 
 // get the list of plugins to install
@@ -54,7 +55,7 @@ if (file_exists($listPath)) {
     $content = file_get_contents($listPath);
     $list = explode(',', $content);
     foreach ($list as $plugin) {
-        if ($pluginManager->enable($plugin)) {
+        if (Plugins::enable($plugin)) {
             echo 'Plugin ' . $plugin . ' enabled.' . PHP_EOL . PHP_EOL;
             continue;
         }

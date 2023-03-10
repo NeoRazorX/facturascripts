@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Plugins;
 
 define("FS_FOLDER", getcwd());
 
@@ -39,11 +40,4 @@ $db->connect();
 Cache::clear();
 
 // load Init file for every plugin
-$pluginManager = new FacturaScripts\Core\Base\PluginManager();
-foreach ($pluginManager->enabledPlugins() as $plugin) {
-    $initClass = '\\FacturaScripts\\Plugins\\' . $plugin . '\\Init';
-    if (class_exists($initClass)) {
-        $initObject = new $initClass();
-        $initObject->init();
-    }
-}
+Plugins::load();
