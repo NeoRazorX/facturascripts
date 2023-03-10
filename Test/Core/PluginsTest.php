@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
+use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -99,10 +100,15 @@ final class PluginsTest extends TestCase
         // obtenemos la lista de plugin
         $initialList = Plugins::list();
 
-        $this->assertFalse(Plugins::add(__DIR__ . '/../__files/TestPlugin1.zip'));
+        $zipPath = __DIR__ . '/../__files/TestPlugin1.zip';
+        $this->assertFalse(Plugins::add($zipPath));
 
         // comprobamos que no se ha añadido ningún plugin
         $this->assertEquals($initialList, Plugins::list());
+
+        // cargamos los datos
+        $plugin = Plugin::getFromZip($zipPath);
+        $this->assertEquals('TestPlugin1', $plugin->name);
     }
 
     public function testPlugin2()
@@ -204,6 +210,7 @@ final class PluginsTest extends TestCase
         $this->assertEquals('Test Plugin 3 description', $plugin->description);
         $this->assertEquals(1.1, $plugin->version);
         $this->assertEquals(2023, $plugin->min_version);
+        $this->assertIsArray($plugin->require);
         $this->assertContains('TestPlugin2', $plugin->require);
 
         // comprobamos que no podemos activar el plugin porque no tenemos activado el plugin TestPlugin2
@@ -238,19 +245,37 @@ final class PluginsTest extends TestCase
     public function testPluginMinVersion2028()
     {
         // comprobamos que no podemos añadir el plugin
-        $this->assertFalse(Plugins::add(__DIR__ . '/../__files/PluginMinVersion2028.zip'));
+        $zipPath = __DIR__ . '/../__files/PluginMinVersion2028.zip';
+        $this->assertFalse(Plugins::add($zipPath));
+
+        // leemos los datos del plugin
+        $plugin = Plugin::getFromZip($zipPath);
+        $this->assertEquals('PluginMinVersion2028', $plugin->name);
+        $this->assertEquals('Plugin with min_version = 2028', $plugin->description);
+        $this->assertEquals(2, $plugin->version);
+        $this->assertEquals(2028, $plugin->min_version);
     }
 
     public function testPluginMinPHP8()
     {
+        $zipPath = __DIR__ . '/../__files/PluginMinPHP8.zip';
+
         // si la versión de PHP es menor que 8, no podemos añadir el plugin
         if (version_compare(PHP_VERSION, '8.0.0') < 0) {
-            $this->assertFalse(Plugins::add(__DIR__ . '/../__files/PluginMinPHP8.zip'));
+            $this->assertFalse(Plugins::add($zipPath));
+
+            // leemos los datos del plugin
+            $plugin = Plugin::getFromZip($zipPath);
+            $this->assertEquals('PluginMinPHP8', $plugin->name);
+            $this->assertEquals('Plugin with min_php = 8', $plugin->description);
+            $this->assertEquals(3, $plugin->version);
+            $this->assertEquals(2023, $plugin->min_version);
+            $this->assertEquals('8', $plugin->min_php);
             return;
         }
 
         // la versión de PHP es mayor o igual que 8, podemos añadir el plugin
-        $this->assertTrue(Plugins::add(__DIR__ . '/../__files/PluginMinPHP8.zip'));
+        $this->assertTrue(Plugins::add($zipPath));
 
         // comprobamos que podemos activar el plugin
         $this->assertTrue(Plugins::enable('PluginMinPHP8'));
@@ -263,7 +288,18 @@ final class PluginsTest extends TestCase
     public function testPluginRequirePHP()
     {
         // comprobamos que podemos añadir el plugin
-        $this->assertTrue(Plugins::add(__DIR__ . '/../__files/PluginRequirePHP.zip'));
+        $zipPath = __DIR__ . '/../__files/PluginRequirePHP.zip';
+        $this->assertTrue(Plugins::add($zipPath));
+
+        // comprobamos los datos del plugin
+        $plugin = Plugins::get('PluginRequirePHP');
+        $this->assertEquals('PluginRequirePHP', $plugin->name);
+        $this->assertEquals("Plugin with require_php = 'yolo,yolo2'", $plugin->description);
+        $this->assertEquals(1.3, $plugin->version);
+        $this->assertEquals(2023, $plugin->min_version);
+        $this->assertIsArray($plugin->require_php);
+        $this->assertContains('yolo', $plugin->require_php);
+        $this->assertContains('yolo2', $plugin->require_php);
 
         // comprobamos que no podemos activar el plugin
         $this->assertFalse(Plugins::enable('PluginRequirePHP'));
