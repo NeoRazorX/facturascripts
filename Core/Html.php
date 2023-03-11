@@ -41,6 +41,9 @@ use Twig\TwigFunction;
  */
 final class Html
 {
+    const HTML_CHARS = ['<', '>', '"', "'"];
+    const HTML_REPLACEMENTS = ['&lt;', '&gt;', '&quot;', '&#39;'];
+
     /** @var array */
     private static $functions = [];
 
@@ -111,9 +114,9 @@ final class Html
         return new TwigFunction(
             'fixHtml',
             function ($txt) {
-                $original = ['&lt;', '&gt;', '&quot;', '&#39;'];
-                $final = ['<', '>', '"', "'"];
-                return $txt === null ? null : trim(str_replace($original, $final, $txt));
+                return $txt === null ?
+                    null :
+                    str_replace(self::HTML_REPLACEMENTS, self::HTML_CHARS, $txt);
             },
             [
                 'is_safe' => ['html'],
