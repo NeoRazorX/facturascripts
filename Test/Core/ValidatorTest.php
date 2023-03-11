@@ -24,7 +24,109 @@ use PHPUnit\Framework\TestCase;
 
 class ValidatorTest extends TestCase
 {
-    public function testIsValidEmail()
+    public function testAlphaNumeric()
+    {
+        $this->assertTrue(Validator::alphaNumeric('test'));
+        $this->assertTrue(Validator::alphaNumeric('test123'));
+
+        $this->assertFalse(Validator::alphaNumeric('test 123'));
+        $this->assertTrue(Validator::alphaNumeric('test 123', ' '));
+
+        $this->assertFalse(Validator::alphaNumeric('test-123'));
+        $this->assertTrue(Validator::alphaNumeric('test-123', '-'));
+
+        $this->assertFalse(Validator::alphaNumeric('test_123'));
+        $this->assertTrue(Validator::alphaNumeric('test_123', '_'));
+
+        $this->assertFalse(Validator::alphaNumeric('test.123'));
+        $this->assertTrue(Validator::alphaNumeric('test.123', '.'));
+
+        $this->assertFalse(Validator::alphaNumeric('test,123'));
+        $this->assertTrue(Validator::alphaNumeric('test,123', ','));
+
+        $this->assertFalse(Validator::alphaNumeric('test/123'));
+        $this->assertTrue(Validator::alphaNumeric('test/123', '/'));
+
+        $this->assertFalse(Validator::alphaNumeric('test\123'));
+        $this->assertTrue(Validator::alphaNumeric('test\123', '\\'));
+
+        $this->assertFalse(Validator::alphaNumeric('test:123'));
+        $this->assertTrue(Validator::alphaNumeric('test:123', ':'));
+
+        $this->assertFalse(Validator::alphaNumeric('test;123'));
+        $this->assertTrue(Validator::alphaNumeric('test;123', ';'));
+
+        $this->assertFalse(Validator::alphaNumeric('test@123'));
+        $this->assertTrue(Validator::alphaNumeric('test@123', '@'));
+
+        $this->assertFalse(Validator::alphaNumeric('test#123'));
+        $this->assertTrue(Validator::alphaNumeric('test#123', '#'));
+
+        $this->assertFalse(Validator::alphaNumeric('test$123'));
+        $this->assertTrue(Validator::alphaNumeric('test$123', '$'));
+
+        $this->assertFalse(Validator::alphaNumeric('test%123'));
+        $this->assertTrue(Validator::alphaNumeric('test%123', '%'));
+
+        $this->assertFalse(Validator::alphaNumeric('test&123'));
+        $this->assertTrue(Validator::alphaNumeric('test&123', '&'));
+
+        $this->assertFalse(Validator::alphaNumeric('test*123'));
+        $this->assertTrue(Validator::alphaNumeric('test*123', '*'));
+
+        $this->assertFalse(Validator::alphaNumeric('test+123'));
+        $this->assertTrue(Validator::alphaNumeric('test+123', '+'));
+
+        $this->assertFalse(Validator::alphaNumeric('test(123)'));
+        $this->assertTrue(Validator::alphaNumeric('test(123)', '()'));
+
+        $this->assertFalse(Validator::alphaNumeric('test[123]'));
+        $this->assertTrue(Validator::alphaNumeric('test[123]', '[]'));
+
+        $this->assertFalse(Validator::alphaNumeric('test{123}'));
+        $this->assertTrue(Validator::alphaNumeric('test{123}', '{}'));
+
+        $this->assertFalse(Validator::alphaNumeric('test<123>'));
+        $this->assertTrue(Validator::alphaNumeric('test<123>', '<>'));
+
+        $this->assertFalse(Validator::alphaNumeric('test=123'));
+        $this->assertTrue(Validator::alphaNumeric('test=123', '='));
+
+        $this->assertFalse(Validator::alphaNumeric('test¿123?'));
+        $this->assertTrue(Validator::alphaNumeric('test¿123?', '¿?'));
+
+        $this->assertFalse(Validator::alphaNumeric('test¡123!'));
+        $this->assertTrue(Validator::alphaNumeric('test¡123!', '¡!'));
+
+        $this->assertFalse(Validator::alphaNumeric('test|123'));
+        $this->assertTrue(Validator::alphaNumeric('test|123', '|'));
+
+        $this->assertFalse(Validator::alphaNumeric('test^123'));
+        $this->assertTrue(Validator::alphaNumeric('test^123', '^'));
+
+        $this->assertFalse(Validator::alphaNumeric('test~123'));
+        $this->assertTrue(Validator::alphaNumeric('test~123', '~'));
+
+        $this->assertFalse(Validator::alphaNumeric('test`123'));
+        $this->assertTrue(Validator::alphaNumeric('test`123', '`'));
+
+        $this->assertFalse(Validator::alphaNumeric('test"123'));
+        $this->assertTrue(Validator::alphaNumeric('test"123', '"'));
+
+        $this->assertFalse(Validator::alphaNumeric("test'123"));
+        $this->assertTrue(Validator::alphaNumeric("test'123", "'"));
+
+        $this->assertFalse(Validator::alphaNumeric('test-456+Y'));
+        $this->assertTrue(Validator::alphaNumeric('test-456+Y', '-_.+\\'));
+
+        $this->assertFalse(Validator::alphaNumeric('test-456+Y', '-_.+\\', 20));
+        $this->assertTrue(Validator::alphaNumeric('test-456+Y', '-_.+\\', 10));
+        $this->assertTrue(Validator::alphaNumeric('test-456+Y', '-_.+\\', 10, 20));
+        $this->assertTrue(Validator::alphaNumeric('test-456+Y', '-_.+\\', 10, 10));
+        $this->assertFalse(Validator::alphaNumeric('test-456+Y', '-_.+\\', 1, 9));
+    }
+
+    public function testEmail()
     {
         $this->assertTrue(Validator::email('carlos@facturascripts.com'));
         $this->assertFalse(Validator::email('carlos'));
@@ -32,7 +134,7 @@ class ValidatorTest extends TestCase
         $this->assertFalse(Validator::email('@facturascripts.com'));
     }
 
-    public function testIsValidString()
+    public function testString()
     {
         $this->assertTrue(Validator::string('test'));
         $this->assertFalse(Validator::string(''));
@@ -44,13 +146,16 @@ class ValidatorTest extends TestCase
         $this->assertFalse(Validator::string('test', 1, 3));
     }
 
-    public function testIsValidUrl()
+    public function testUrl()
     {
         $this->assertTrue(Validator::url('http://facturascripts.com'));
         $this->assertTrue(Validator::url('https://facturascripts.com'));
         $this->assertTrue(Validator::url('ftp://facturascripts.com'));
         $this->assertTrue(Validator::url('ftps://facturascripts.com'));
+
         $this->assertTrue(Validator::url('www.facturascripts.com'));
+        $this->assertFalse(Validator::url('www.facturascripts.com', true));
+
         $this->assertFalse(Validator::url('javascript:alert("test")'));
         $this->assertFalse(Validator::url('javascript://alert("test")'));
         $this->assertFalse(Validator::url('jAvAsCriPt://alert("test")'));
