@@ -21,7 +21,6 @@ namespace FacturaScripts\Core;
 
 use DirectoryIterator;
 use FacturaScripts\Core\Base\PluginDeploy;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Internal\Plugin;
 use ZipArchive;
 
@@ -34,8 +33,8 @@ final class Plugins
 
     public static function add(string $zipPath, string $zipName = 'plugin.zip', bool $force = false): bool
     {
-        if (defined('FS_DISABLE_ADD_PLUGINS') && FS_DISABLE_ADD_PLUGINS && !$force) {
-            ToolBox::i18nLog()->warning('plugin-installation-disabled');
+        if (Tools::config('disable_add_plugins', false) && false === $force) {
+            Tools::log()->warning('plugin-installation-disabled');
             return false;
         }
 
@@ -48,23 +47,23 @@ final class Plugins
         // comprobamos el facturascripts.ini del zip
         $plugin = Plugin::getFromZip($zipPath);
         if (null === $plugin) {
-            ToolBox::i18nLog()->error('plugin-ini-file-not-found', ['%pluginName%' => $zipName]);
+            Tools::log()->error('plugin-ini-file-not-found', ['%pluginName%' => $zipName]);
             return false;
         }
-        if (!$plugin->compatible) {
-            ToolBox::log()->error($plugin->compatibilityDescription());
+        if (false === $plugin->compatible) {
+            Tools::log()->error($plugin->compatibilityDescription());
             return false;
         }
 
         // eliminamos la versión anterior
-        if (!$plugin->delete()) {
-            ToolBox::i18nLog()->error('plugin-delete-error', ['%pluginName%' => $plugin->name]);
+        if (false === $plugin->delete()) {
+            Tools::log()->error('plugin-delete-error', ['%pluginName%' => $plugin->name]);
             return false;
         }
 
         // descomprimimos el zip
         if (false === $zipFile->extractTo(self::folder())) {
-            ToolBox::log()->error('ZIP EXTRACT ERROR: ' . $zipName);
+            Tools::log()->error('ZIP EXTRACT ERROR: ' . $zipName);
             $zipFile->close();
             return false;
         }
@@ -88,8 +87,8 @@ final class Plugins
             self::deploy(true, true);
         }
 
-        ToolBox::i18nLog()->notice('plugin-installed', ['%pluginName%' => $plugin->name]);
-        ToolBox::i18nLog('core')->notice('plugin-installed', ['%pluginName%' => $plugin->name]);
+        Tools::log()->notice('plugin-installed', ['%pluginName%' => $plugin->name]);
+        Tools::log('core')->notice('plugin-installed', ['%pluginName%' => $plugin->name]);
         return true;
     }
 
@@ -111,7 +110,7 @@ final class Plugins
     {
         // si el plugin no existe o ya está desactivado, no hacemos nada
         $plugin = self::get($pluginName);
-        if (null === $plugin || !$plugin->enabled) {
+        if (null === $plugin || false === $plugin->enabled) {
             return true;
         }
 
@@ -128,8 +127,8 @@ final class Plugins
         // desplegamos los cambios
         self::deploy(true, true);
 
-        ToolBox::i18nLog()->notice('plugin-disabled', ['%pluginName%' => $pluginName]);
-        ToolBox::i18nLog('core')->notice('plugin-disabled', ['%pluginName%' => $pluginName]);
+        Tools::log()->notice('plugin-disabled', ['%pluginName%' => $pluginName]);
+        Tools::log('core')->notice('plugin-disabled', ['%pluginName%' => $pluginName]);
         return true;
     }
 
@@ -142,7 +141,7 @@ final class Plugins
         }
 
         // si no se cumplen las dependencias, no se activa
-        if (!$plugin->dependenciesOk(self::enabled(), true)) {
+        if (false === $plugin->dependenciesOk(self::enabled(), true)) {
             return false;
         }
 
@@ -160,8 +159,8 @@ final class Plugins
         // desplegamos los cambios
         self::deploy(false, true);
 
-        ToolBox::i18nLog()->notice('plugin-enabled', ['%pluginName%' => $pluginName]);
-        ToolBox::i18nLog('core')->notice('plugin-enabled', ['%pluginName%' => $pluginName]);
+        Tools::log()->notice('plugin-enabled', ['%pluginName%' => $pluginName]);
+        Tools::log('core')->notice('plugin-enabled', ['%pluginName%' => $pluginName]);
         return true;
     }
 
@@ -208,7 +207,7 @@ final class Plugins
     {
         $list = [];
         foreach (self::$plugins as $plugin) {
-            if ($hidden || !$plugin->hidden) {
+            if ($hidden || false === $plugin->hidden) {
                 $list[] = $plugin;
             }
         }
@@ -229,7 +228,7 @@ final class Plugins
 
     public static function remove(string $pluginName): bool
     {
-        if (defined('FS_DISABLE_RM_PLUGINS') && FS_DISABLE_RM_PLUGINS) {
+        if (Tools::config('disable_rm_plugins', false)) {
             return false;
         }
 
@@ -240,7 +239,7 @@ final class Plugins
         }
 
         // eliminamos el directorio
-        if (!$plugin->delete()) {
+        if (false === $plugin->delete()) {
             return false;
         }
 
@@ -253,15 +252,15 @@ final class Plugins
         }
         self::save();
 
-        ToolBox::i18nLog()->notice('plugin-deleted', ['%pluginName%' => $pluginName]);
-        ToolBox::i18nLog('core')->notice('plugin-deleted', ['%pluginName%' => $pluginName]);
+        Tools::log()->notice('plugin-deleted', ['%pluginName%' => $pluginName]);
+        Tools::log('core')->notice('plugin-deleted', ['%pluginName%' => $pluginName]);
         return true;
     }
 
     private static function loadFromFile(): void
     {
         $filePath = FS_FOLDER . DIRECTORY_SEPARATOR . 'MyFiles' . DIRECTORY_SEPARATOR . self::FILE_NAME;
-        if (!file_exists($filePath)) {
+        if (false === file_exists($filePath)) {
             return;
         }
 
@@ -294,7 +293,7 @@ final class Plugins
         // revisamos la carpeta de plugins para añadir los que no estén en el fichero
         $dir = new DirectoryIterator(self::folder());
         foreach ($dir as $file) {
-            if (!$file->isDir() || $file->isDot()) {
+            if (false === $file->isDir() || $file->isDot()) {
                 continue;
             }
 
@@ -327,7 +326,7 @@ final class Plugins
         // repasamos todos los plugins activos para asegurarnos de que cumplen las dependencias
         while (true) {
             foreach (self::$plugins as $key => $plugin) {
-                if ($plugin->enabled && !$plugin->dependenciesOk(self::enabled())) {
+                if ($plugin->enabled && false === $plugin->dependenciesOk(self::enabled())) {
                     self::$plugins[$key]->enabled = false;
                     continue 2;
                 }
@@ -343,14 +342,14 @@ final class Plugins
     {
         $result = $zipFile->open($zipPath, ZipArchive::CHECKCONS);
         if (true !== $result) {
-            ToolBox::log()->error('ZIP error: ' . $result);
+            Tools::log()->error('ZIP error: ' . $result);
             return false;
         }
 
         // comprobamos que el plugin tiene un fichero facturascripts.ini
         $zipIndex = $zipFile->locateName('facturascripts.ini', ZipArchive::FL_NODIR);
         if (false === $zipIndex) {
-            ToolBox::i18nLog()->error(
+            Tools::log()->error(
                 'plugin-not-compatible',
                 ['%pluginName%' => $zipName, '%version%' => Kernel::version()]
             );
@@ -360,7 +359,7 @@ final class Plugins
         // y que el archivo está en el directorio raíz
         $pathIni = $zipFile->getNameIndex($zipIndex);
         if (count(explode('/', $pathIni)) !== 2) {
-            ToolBox::i18nLog()->error('zip-error-wrong-structure');
+            Tools::log()->error('zip-error-wrong-structure');
             return false;
         }
 
@@ -376,7 +375,7 @@ final class Plugins
 
         // si hay más de uno, devolvemos false
         if (count($folders) != 1) {
-            ToolBox::i18nLog()->error('zip-error-wrong-structure');
+            Tools::log()->error('zip-error-wrong-structure');
             return false;
         }
 

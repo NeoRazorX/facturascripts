@@ -112,7 +112,7 @@ class Tools
 
     public static function folderDelete(string $folder): bool
     {
-        if (is_dir($folder) && !is_link($folder)) {
+        if (is_dir($folder) && false === is_link($folder)) {
             $files = array_diff(scandir($folder), ['.', '..']);
             foreach ($files as $file) {
                 self::folderDelete($folder . DIRECTORY_SEPARATOR . $file);
@@ -127,14 +127,14 @@ class Tools
     public static function folderScan(string $folder, bool $recursive = true, array $exclude = ['.DS_Store', '.well-known']): array
     {
         $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
-        if (!is_array($scan)) {
+        if (false === is_array($scan)) {
             return [];
         }
 
         $exclude[] = '.';
         $exclude[] = '..';
         $rootFolder = array_diff($scan, $exclude);
-        if (!$recursive) {
+        if (false === $recursive) {
             return $rootFolder;
         }
 
