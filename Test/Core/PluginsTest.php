@@ -308,6 +308,45 @@ final class PluginsTest extends TestCase
         $this->assertTrue(Plugins::remove('PluginRequirePHP'));
     }
 
+    public function testPluginsOrder()
+    {
+        // añadimos los plugins TestPlugin3, TestPlugin2 y TestPlugin4
+        $this->assertTrue(Plugins::add(__DIR__ . '/../__files/TestPlugin3.zip'));
+        $this->assertTrue(Plugins::add(__DIR__ . '/../__files/TestPlugin2.zip'));
+        $this->assertTrue(Plugins::add(__DIR__ . '/../__files/TestPlugin4.zip'));
+
+        // activamos los plugins TestPlugin2, TestPlugin4 y TestPlugin3
+        $this->assertTrue(Plugins::enable('TestPlugin2'));
+        $this->assertTrue(Plugins::enable('TestPlugin4'));
+        $this->assertTrue(Plugins::enable('TestPlugin3'));
+
+        // comprobamos que los plugins están en el orden correcto
+        $this->assertEquals(['TestPlugin2', 'TestPlugin4', 'TestPlugin3'], Plugins::enabled());
+
+        // desactivamos todos los plugins
+        foreach (Plugins::enabled() as $pluginName) {
+            $this->assertTrue(Plugins::disable($pluginName));
+        }
+
+        // activamos los plugins TestPlugin4, TestPlugin2 y TestPlugin3
+        $this->assertTrue(Plugins::enable('TestPlugin4'));
+        $this->assertTrue(Plugins::enable('TestPlugin2'));
+        $this->assertTrue(Plugins::enable('TestPlugin3'));
+
+        // comprobamos que los plugins están en el orden correcto
+        $this->assertEquals(['TestPlugin4', 'TestPlugin2', 'TestPlugin3'], Plugins::enabled());
+
+        // desactivamos todos los plugins
+        foreach (Plugins::enabled() as $pluginName) {
+            $this->assertTrue(Plugins::disable($pluginName));
+        }
+
+        // eliminamos los plugins
+        $this->assertTrue(Plugins::remove('TestPlugin2'));
+        $this->assertTrue(Plugins::remove('TestPlugin3'));
+        $this->assertTrue(Plugins::remove('TestPlugin4'));
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
