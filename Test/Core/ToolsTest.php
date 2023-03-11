@@ -49,9 +49,7 @@ final class ToolsTest extends TestCase
 
         // creamos la carpeta MyFiles/Test/Folder1
         $folder1 = Tools::folder('MyFiles', 'Test', 'Folder1');
-        if (false === file_exists($folder1)) {
-            mkdir($folder1, 0777, true);
-        }
+        $this->assertTrue(Tools::folderCheckOrCreate($folder1));
 
         // creamos 3 archivos en la carpeta MyFiles/Test
         file_put_contents(Tools::folder('MyFiles', 'Test', 'file1.txt'), 'test');
@@ -74,6 +72,12 @@ final class ToolsTest extends TestCase
         $fileList = ['Folder1', 'file2.txt', 'file3.txt'];
         $results2 = Tools::folderScan('MyFiles/Test', false, ['file1.txt']);
         $this->assertEquals($fileList, array_values($results2));
+
+        // copiamos la carpeta Test a Test2
+        $this->assertTrue(Tools::folderCopy('MyFiles/Test', 'MyFiles/Test2'));
+
+        // comprobamos que existen los archivos
+        $this->assertEquals($fileListRecursive, Tools::folderScan('MyFiles/Test2'));
 
         // eliminamos la carpeta MyFiles/Test
         $this->assertTrue(Tools::folderDelete('MyFiles/Test'));

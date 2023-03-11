@@ -86,6 +86,30 @@ class Tools
         return implode(DIRECTORY_SEPARATOR, $folders);
     }
 
+    public static function folderCheckOrCreate(string $folder): bool
+    {
+        return is_dir($folder) || mkdir($folder, 0777, true);
+    }
+
+    public static function folderCopy(string $src, string $dst): bool
+    {
+        static::folderCheckOrCreate($dst);
+
+        $folder = opendir($src);
+        while (false !== ($file = readdir($folder))) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            } elseif (is_dir($src . DIRECTORY_SEPARATOR . $file)) {
+                static::folderCopy($src . DIRECTORY_SEPARATOR . $file, $dst . DIRECTORY_SEPARATOR . $file);
+            } else {
+                copy($src . DIRECTORY_SEPARATOR . $file, $dst . DIRECTORY_SEPARATOR . $file);
+            }
+        }
+
+        closedir($folder);
+        return true;
+    }
+
     public static function folderDelete(string $folder): bool
     {
         if (is_dir($folder) && !is_link($folder)) {
