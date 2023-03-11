@@ -109,6 +109,20 @@ final class Html
         });
     }
 
+    private static function configFunction(): TwigFunction
+    {
+        return new TwigFunction('config', function (string $key, $default = null) {
+            $constants = [$key, strtoupper($key), 'FS_' . strtoupper($key)];
+            foreach ($constants as $constant) {
+                if (defined($constant)) {
+                    return constant($constant);
+                }
+            }
+
+            return $default;
+        });
+    }
+
     private static function fixHtmlFunction(): TwigFunction
     {
         return new TwigFunction(
@@ -318,6 +332,7 @@ final class Html
         // cargamos las funciones de twig
         self::$twig->addFunction(self::assetFunction());
         self::$twig->addFunction(self::attachedFileFunction());
+        self::$twig->addFunction(self::configFunction());
         self::$twig->addFunction(self::fixHtmlFunction());
         self::$twig->addFunction(self::formTokenFunction());
         self::$twig->addFunction(self::getIncludeViews());

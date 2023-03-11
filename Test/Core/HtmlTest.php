@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 use Twig\TwigFunction;
 
@@ -36,8 +37,15 @@ final class HtmlTest extends TestCase
 
     public function testTemplate()
     {
+        $expected = "testTemplate\n"
+            . Tools::config('lang') . "\n"
+            . Tools::config('test123', '123') . "\n"
+            . Tools::money(123.45) . "\n"
+            . Tools::number(123.45) . "\n"
+            . Tools::lang()->trans('save');
+
         $html = Html::render('@Test/testTemplate.html.twig');
-        $this->assertEquals('testTemplate', $html, 'html-not-equal-for-testTemplate');
+        $this->assertEquals($expected, $html, 'html-not-equal-for-testTemplate');
     }
 
     public function testCustomFunction()
