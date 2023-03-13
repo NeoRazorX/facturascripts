@@ -41,7 +41,6 @@ $db->connect();
 Cache::clear();
 
 // deploy
-Plugins::load();
 Plugins::deploy();
 
 // disable all plugins

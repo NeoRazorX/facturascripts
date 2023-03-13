@@ -40,4 +40,4 @@ $db->connect();
 Cache::clear();
 
 // load Init file for every plugin
-Plugins::load();
+Plugins::init();

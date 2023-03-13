@@ -48,5 +48,4 @@ echo "\n" . 'DB Name: ' . FS_DB_NAME . "\n\n";
 Cache::clear();
 
 // deploy
-Plugins::load();
 Plugins::deploy();

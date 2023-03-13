@@ -188,6 +188,6 @@ abstract class App
      */
     private function loadPlugins()
     {
-        Plugins::load();
+        Plugins::init();
     }
 }

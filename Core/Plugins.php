@@ -29,7 +29,7 @@ final class Plugins
     const FILE_NAME = 'plugins.json';
 
     /** @var Plugin[] */
-    private static $plugins = [];
+    private static $plugins;
 
     public static function add(string $zipPath, string $zipName = 'plugin.zip', bool $force = false): bool
     {
@@ -72,6 +72,7 @@ final class Plugins
         // si el plugin no estaba en la lista, lo añadimos
         if (false === $plugin->installed) {
             // añadimos el plugin
+            self::load();
             self::$plugins[] = $plugin;
         }
 
@@ -167,6 +168,8 @@ final class Plugins
     public static function enabled(): array
     {
         $enabled = [];
+
+        self::load();
         foreach (self::$plugins as $plugin) {
             if ($plugin->enabled) {
                 $enabled[$plugin->name] = $plugin->order;
@@ -185,6 +188,7 @@ final class Plugins
 
     public static function get(string $pluginName): ?Plugin
     {
+        self::load();
         foreach (self::$plugins as $plugin) {
             if ($plugin->name === $pluginName) {
                 return $plugin;
@@ -192,6 +196,14 @@ final class Plugins
         }
 
         return null;
+    }
+
+    public static function init(): void
+    {
+        // ejecutamos los procesos init de los plugins
+        foreach (self::enabled() as $pluginName) {
+            self::get($pluginName)->init();
+        }
     }
 
     public static function isEnabled(string $pluginName): bool
@@ -206,6 +218,8 @@ final class Plugins
     public static function list(bool $hidden = false): array
     {
         $list = [];
+
+        self::load();
         foreach (self::$plugins as $plugin) {
             if ($hidden || false === $plugin->hidden) {
                 $list[] = $plugin;
@@ -222,12 +236,10 @@ final class Plugins
 
     public static function load(): void
     {
-        self::loadFromFile();
-        self::loadFromFolder();
-
-        // ejecutamos los procesos init de los plugins
-        foreach (self::enabled() as $pluginName) {
-            self::get($pluginName)->init();
+        if (null === self::$plugins) {
+            self::$plugins = [];
+            self::loadFromFile();
+            self::loadFromFolder();
         }
     }
 
