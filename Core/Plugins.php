@@ -212,6 +212,11 @@ final class Plugins
             }
         }
 
+        // ordenamos por name
+        usort($list, function ($a, $b) {
+            return strcasecmp($a->name, $b->name);
+        });
+
         return $list;
     }
 
