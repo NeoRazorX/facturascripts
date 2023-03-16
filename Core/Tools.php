@@ -36,6 +36,9 @@ class Tools
         'î' => 'i', 'ï' => 'i', 'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o',
         'ø' => 'o', 'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y', 'Ŕ' => 'R', 'ŕ' => 'r'
     ];
+    const DATE_STYLE = 'd-m-Y';
+    const DATETIME_STYLE = 'd-m-Y H:i:s';
+    const HOUR_STYLE = 'H:i:s';
     const HTML_CHARS = ['<', '>', '"', "'"];
     const HTML_REPLACEMENTS = ['&lt;', '&gt;', '&quot;', '&#39;'];
 
@@ -61,12 +64,12 @@ class Tools
 
     public static function date(?string $date = null): string
     {
-        return empty($date) ? date('d-m-Y') : date('d-m-Y', strtotime($date));
+        return empty($date) ? date(self::DATE_STYLE) : date(self::DATE_STYLE, strtotime($date));
     }
 
     public static function dateTime(?string $date = null): string
     {
-        return empty($date) ? date('d-m-Y H:i:s') : date('d-m-Y H:i:s', strtotime($date));
+        return empty($date) ? date(self::DATETIME_STYLE) : date(self::DATETIME_STYLE, strtotime($date));
     }
 
     public static function fixHtml(?string $text = null): ?string
@@ -154,7 +157,7 @@ class Tools
 
     public static function hour(?string $date = null): string
     {
-        return empty($date) ? date('H:i:s') : date('H:i:s', strtotime($date));
+        return empty($date) ? date(self::HOUR_STYLE) : date(self::HOUR_STYLE, strtotime($date));
     }
 
     public static function lang(string $lang = ''): Translator
@@ -273,5 +276,15 @@ class Tools
         }
 
         return $result;
+    }
+
+    public static function timeToDate(int $time): string
+    {
+        return date(self::DATE_STYLE, $time);
+    }
+
+    public static function timeToDateTime(int $time): string
+    {
+        return date(self::DATETIME_STYLE, $time);
     }
 }

@@ -42,6 +42,33 @@ final class ToolsTest extends TestCase
         $this->assertNull(Tools::config('test1234'));
     }
 
+    public function testDateFunctions()
+    {
+        $date = '01-01-2019';
+        $time = strtotime($date);
+
+        $dateTime = '01-01-2019 12:00:00';
+        $time2 = strtotime($dateTime);
+
+        $date3 = '2020-10-07';
+        $tim3 = strtotime($date3);
+
+        $dateTime2 = '2020-05-17 12:00:00';
+        $time4 = strtotime($dateTime2);
+
+        $this->assertEquals($date, Tools::date($date));
+        $this->assertEquals($date, Tools::timeToDate($time));
+        $this->assertEquals($date, Tools::date($dateTime));
+        $this->assertEquals($date, Tools::timeToDate($time2));
+        $this->assertEquals('07-10-2020', Tools::date($date3));
+        $this->assertEquals('07-10-2020', Tools::timeToDate($tim3));
+
+        $this->assertEquals($dateTime, Tools::dateTime($dateTime));
+        $this->assertEquals($dateTime, Tools::timeToDateTime($time2));
+        $this->assertEquals('17-05-2020 12:00:00', Tools::dateTime($dateTime2));
+        $this->assertEquals('17-05-2020 12:00:00', Tools::timeToDateTime($time4));
+    }
+
     public function testFolderFunctions()
     {
         $this->assertEquals(FS_FOLDER, Tools::folder());
