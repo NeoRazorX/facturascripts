@@ -99,11 +99,12 @@ class SalesModalHTML
                 . '<td><b>' . $row['referencia'] . '</b> ' . $description . '</td>'
                 . '<td class="text-right">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($row['precio'])) . '</td>'
                 . '<td class="text-right">' . $row['disponible'] . '</td>'
+                . (self::$vendido? '<td class="text-right">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($row['lastpvpunitario'])) . '</td>':'')
                 . '</tr>';
         }
 
         if (empty($tbody)) {
-            $tbody .= '<tr class="table-warning"><td colspan="3">' . $i18n->trans('no-data') . '</td></tr>';
+            $tbody .= '<tr class="table-warning"><td colspan='. (self::$vendido? '4' :'3').'>' . $i18n->trans('no-data') . '</td></tr>';
         }
 
         return '<table class="table table-hover mb-0">'
@@ -112,6 +113,7 @@ class SalesModalHTML
             . '<th>' . $i18n->trans('product') . '</th>'
             . '<th class="text-right">' . $i18n->trans('price') . '</th>'
             . '<th class="text-right">' . $i18n->trans('stock') . '</th>'
+            . (self::$vendido? '<th class="text-right">' . $i18n->trans('last-price-sale') . '</th>':'')
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $tbody . '</tbody>'
@@ -147,11 +149,19 @@ class SalesModalHTML
     protected static function getProducts(): array
     {
         $dataBase = new DataBase();
-        $sql = 'SELECT v.referencia, p.descripcion, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3,'
+
+        if (self::$vendido) {
+            $sql = 'SELECT * FROM (';
+        }else{
+            $sql="";
+        }
+        $sql.= 'SELECT v.referencia, p.descripcion, v.idatributovalor1, v.idatributovalor2, v.idatributovalor3,'
             . ' v.idatributovalor4, v.precio, COALESCE(s.disponible, 0) as disponible, p.nostock'
+            . (self::$vendido?', l.pvpunitario as lastpvpunitario, l.idlinea, f.codcliente':'')    
             . ' FROM variantes v'
             . ' LEFT JOIN productos p ON v.idproducto = p.idproducto'
             . ' LEFT JOIN stocks s ON v.referencia = s.referencia AND s.codalmacen = ' . $dataBase->var2str(self::$codalmacen)
+            . (self::$vendido?'LEFT JOIN lineasfacturascli as l ON l.referencia = v.referencia LEFT JOIN facturascli AS f ON f.idfactura = l.idfactura AND f.codcliente = ' . $dataBase->var2str(self::$codcliente) . '':'')
             . ' WHERE p.sevende = true AND p.bloqueado = false';
 
         if (self::$codfabricante) {
@@ -160,12 +170,6 @@ class SalesModalHTML
 
         if (self::$codfamilia) {
             $sql .= ' AND codfamilia = ' . $dataBase->var2str(self::$codfamilia);
-        }
-
-        if (self::$vendido) {
-            $sql .= ' AND v.referencia IN (SELECT referencia FROM lineasfacturascli'
-                . ' LEFT JOIN facturascli ON lineasfacturascli.idfactura = facturascli.idfactura'
-                . ' WHERE codcliente = ' . $dataBase->var2str(self::$codcliente) . ')';
         }
 
         if (self::$query) {
@@ -203,6 +207,11 @@ class SalesModalHTML
                 break;
         }
 
+        if (self::$vendido) {
+            $sql .= ') AS subQuery WHERE subQuery.idlinea = ( SELECT MAX(idlinea) FROM lineasfacturascli l INNER JOIN facturascli AS f
+            ON f.idfactura = l.idfactura AND f.codcliente = ' . $dataBase->var2str(self::$codcliente) . ' WHERE subQuery.referencia=l.referencia)';
+        }
+        
         return $dataBase->selectLimit($sql);
     }
 
