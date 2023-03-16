@@ -162,9 +162,14 @@ class EditSubcuenta extends EditController
         }
 
         // tablas con los listados
+        $options = [
+            'debe' => ['display' => 'right', 'css' => 'nowrap'],
+            'haber' => ['display' => 'right', 'css' => 'nowrap'],
+            'saldo' => ['display' => 'right', 'css' => 'nowrap'],
+        ];
         foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);
-            $this->exportManager->addTablePage($headers, $data);
+            $this->exportManager->addTablePage($headers, $data, $options);
         }
         $this->exportManager->show($this->response);
     }
