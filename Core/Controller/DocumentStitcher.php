@@ -116,7 +116,6 @@ class DocumentStitcher extends Controller
         parent::privateCore($response, $user, $permissions);
         $action = $this->request->request->get('action', '');
         $status = (int)$this->request->request->get('status', '');
-        print $action;
 
         $this->codes = $this->getCodes($action);
         $this->modelName = $this->getModelName();
