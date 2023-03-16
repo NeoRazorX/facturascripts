@@ -140,6 +140,7 @@ class EditCuenta extends EditController
         $options = [
             'debe' => ['display' => 'right', 'css' => 'nowrap'],
             'haber' => ['display' => 'right', 'css' => 'nowrap'],
+            'saldo' => ['display' => 'right', 'css' => 'nowrap'],
         ];
         foreach ($pages as $data) {
             $headers = empty($data) ? [] : array_keys($data[0]);

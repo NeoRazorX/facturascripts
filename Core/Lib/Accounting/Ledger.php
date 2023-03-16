@@ -68,7 +68,7 @@ class Ledger
         $this->dateFrom = $dateFrom;
         $this->dateTo = $dateTo;
         $this->format = $params['format'] ?? 'csv';
-        $debe = $haber = 0.0;
+        $debe = $haber = $saldo = 0.0;
         $ledger = [];
 
         switch ($params['grouped'] ?? '') {
@@ -79,11 +79,12 @@ class Ledger
                     $this->processLineBalanceGroupedByAccount($balances, $ledger, $line);
                     $debe += (float)$line['debe'];
                     $haber += (float)$line['haber'];
+                    $saldo += (float)$line['saldo'];
                 }
                 $ledger['totals'] = [[
                     'debe' => $this->formatMoney($debe, true),
                     'haber' => $this->formatMoney($haber, true),
-                    'saldo' => $this->formatMoney($debe - $haber, true)
+                    'saldo' => $this->formatMoney($saldo, true)
                 ]];
                 break;
 
@@ -94,11 +95,12 @@ class Ledger
                     $this->processLineBalanceGroupedBySubAccount($balances, $ledger, $line);
                     $debe += (float)$line['debe'];
                     $haber += (float)$line['haber'];
+                    $saldo += (float)$line['saldo'];
                 }
                 $ledger['totals'] = [[
                     'debe' => $this->formatMoney($debe, true),
                     'haber' => $this->formatMoney($haber, true),
-                    'saldo' => $this->formatMoney($debe - $haber, true)
+                    'saldo' => $this->formatMoney($saldo, true)
                 ]];
                 break;
 
@@ -109,6 +111,7 @@ class Ledger
                     $this->processLine($ledger['lines'], $line);
                     $debe += (float)$line['debe'];
                     $haber += (float)$line['haber'];
+                    $saldo += (float)$line['saldo'];
                 }
                 $ledger['lines'][] = [
                     'asiento' => '',
@@ -116,7 +119,8 @@ class Ledger
                     'cuenta' => '',
                     'concepto' => '',
                     'debe' => $this->formatMoney($debe, true),
-                    'haber' => $this->formatMoney($haber, true)
+                    'haber' => $this->formatMoney($haber, true),
+                    'saldo' => $this->formatMoney($saldo, true)
                 ];
                 break;
         }
@@ -142,7 +146,7 @@ class Ledger
         }
 
         $sql = 'SELECT asientos.numero, asientos.fecha, partidas.codsubcuenta,'
-            . ' partidas.concepto, partidas.debe, partidas.haber,'
+            . ' partidas.concepto, partidas.debe, partidas.haber, partidas.saldo,'
             . ' subcuentas.codcuenta, subcuentas.descripcion as subcuentadesc,'
             . ' cuentas.descripcion as cuentadesc'
             . ' FROM partidas'
@@ -161,7 +165,7 @@ class Ledger
         }
 
         $sql = 'SELECT asientos.numero, asientos.fecha, partidas.codsubcuenta,'
-            . ' partidas.concepto, partidas.debe, partidas.haber,'
+            . ' partidas.concepto, partidas.debe, partidas.haber, partidas.saldo,'
             . ' subcuentas.codcuenta, subcuentas.descripcion as subcuentadesc,'
             . ' cuentas.descripcion as cuentadesc'
             . ' FROM partidas'
@@ -253,7 +257,8 @@ class Ledger
             'cuenta' => $line['codsubcuenta'],
             'concepto' => ToolBox::utils()->fixHtml($line['concepto']),
             'debe' => $this->formatMoney($line['debe'], false),
-            'haber' => $this->formatMoney($line['haber'], false)
+            'haber' => $this->formatMoney($line['haber'], false),
+            'saldo' => $this->formatMoney($line['saldo'], false)
         ];
     }
 
