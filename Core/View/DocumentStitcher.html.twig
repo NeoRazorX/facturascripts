@@ -95,24 +95,49 @@
         </div>
     </form>
 
-    {% if fsc.moreDocuments %}
+    {% if fsc.moreDocuments or fsc.showFilters is same as(true) %}
         <div class="container-fluid">
             <div class="row">
                 <div class="col mt-3">
                     <div class="card border-success shadow mb-2">
                         <div class="card-body p-2">
                             <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse"
-                                    data-target="#moreDocsCollapse" aria-expanded="false">
+                                    data-target="#moreDocsCollapse" aria-expanded="{{ fsc.showFilters is same as(true) ? 'true' : 'false' }}">
                                 <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
                                 {{ i18n.trans('more') }}
                             </button>
                             &nbsp;
                             {{ i18n.trans('group-more-docs-p') }}
                         </div>
-                        <div class="collapse" id="moreDocsCollapse">
+                        <div class="collapse {{ fsc.showFilters is same as(true) ? 'show' : '' }}" id="moreDocsCollapse">
+                            <div class="card-body">
+                                <form action="{{ fsc.url() }}" method="post">
+                                    <input type="hidden" name="model" value="{{ fsc.modelName }}">
+                                    <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
+                                    <input type="hidden" name="action" value="search">
+                                    <div id="form{{ fsc.getViewName() }}Filters"
+                                     class="form-row align-items-center border-bottom mb-3"
+                                     style="{{ divFiltersStyle }}">
+
+                                        {% for filterName, filter in fsc.filters %}
+                                            {{ filter.render() | raw }}
+                                        {% endfor %}
+                                        {% if fsc.filters|length > 0 %}
+                                            <div class="col-auto">
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-lg btn-secondary" title="{{ trans('search') }}">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </form>
+                            </div>
                             <form action="{{ fsc.url() }}" method="post">
                                 <input type="hidden" name="model" value="{{ fsc.modelName }}">
                                 <input type="hidden" name="codes" value="{{ fsc.codes | join(',') }}">
+                                <input type="hidden" name="action" value="add">
                                 <div class="table-responsive">
                                     <table class="table table-hover mb-0">
                                         <thead>
@@ -120,6 +145,7 @@
                                             <th><input type="checkbox" onclick="checkAllDoc(this)" class="ml-1"></th>
                                             <th>{{ i18n.trans('code') }}</th>
                                             <th>{{ i18n.trans('observations') }}</th>
+                                            <th>{{ i18n.trans('payment-method') }}</th>
                                             <th class="text-right">{{ i18n.trans('total') }}</th>
                                             <th class="text-right">{{ i18n.trans('date') }}</th>
                                         </tr>
@@ -137,13 +163,14 @@
                                                     <a href="{{ doc.url() }}">{{ doc.codigo }}</a>
                                                 </td>
                                                 <td>{{ doc.observaciones | slice(0, 60) | raw }}</td>
+                                                <td>{{ doc.getPaymentMethod().descripcion }}</td>
                                                 <td class="text-right text-nowrap">{{ fsc.toolBox().coins().format(doc.total) }}</td>
                                                 <td class="text-right text-nowrap">{{ doc.fecha }}</td>
                                             </tr>
                                         {% else %}
                                             <tr class="table-warning">
                                                 <td></td>
-                                                <td colspan="4">{{ i18n.trans('no-data') }}</td>
+                                                <td colspan="5">{{ i18n.trans('no-data') }}</td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>
