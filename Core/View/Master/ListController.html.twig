@@ -66,10 +66,12 @@
                         <div class="dropdown-menu">
                             <h6 class="dropdown-header">{{ i18n.trans('options-button-header') }}</h6>
                             {% for viewName, view in fsc.views %}
+                                {% if view.settings.btnOptions %}
                                 <a class="dropdown-item"
                                    href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}">
                                     <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
                                 </a>
+                                {% endif %}
                             {% endfor %}
                         </div>
                     </div>
