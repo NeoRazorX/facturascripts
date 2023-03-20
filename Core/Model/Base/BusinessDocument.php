@@ -345,6 +345,26 @@ abstract class BusinessDocument extends ModelOnChangeClass
     }
 
     /**
+     * Sets warehouse and company for this document.
+     *
+     * @param string $codalmacen
+     *
+     * @return bool
+     */
+    public function setWarehouse(string $codalmacen): bool
+    {
+        $almacen = new Almacen();
+        if ($almacen->loadFromCode($codalmacen)) {
+            $this->codalmacen = $almacen->codalmacen;
+            $this->idempresa = $almacen->idempresa ?? $this->idempresa;
+            return true;
+        }
+
+        $this->toolBox()->i18nLog()->warning('warehouse-not-found');
+        return false;
+    }
+
+    /**
      * @return string
      */
     public function subjectColumnValue()
@@ -465,25 +485,5 @@ abstract class BusinessDocument extends ModelOnChangeClass
     {
         $more = ['codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'numero', 'total'];
         parent::setPreviousData(array_merge($more, $fields));
-    }
-
-    /**
-     * Sets warehouse and company for this document.
-     *
-     * @param string $codalmacen
-     *
-     * @return bool
-     */
-    protected function setWarehouse(string $codalmacen): bool
-    {
-        $almacen = new Almacen();
-        if ($almacen->loadFromCode($codalmacen)) {
-            $this->codalmacen = $almacen->codalmacen;
-            $this->idempresa = $almacen->idempresa ?? $this->idempresa;
-            return true;
-        }
-
-        $this->toolBox()->i18nLog()->warning('warehouse-not-found');
-        return false;
     }
 }

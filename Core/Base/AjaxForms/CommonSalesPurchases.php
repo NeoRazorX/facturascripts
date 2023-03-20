@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
@@ -75,16 +76,24 @@ trait CommonSalesPurchases
             . self::modalDocList($i18n, $children, 'documents-generated', 'childrenModal');
     }
 
-    protected static function codalmacen(Translator $i18n, BusinessDocument $model): string
+    protected static function codalmacen(Translator $i18n, BusinessDocument $model, string $jsFunc): string
     {
         $options = [];
-        foreach (Almacenes::all() as $row) {
-            $options[] = ($row->codalmacen === $model->codalmacen) ?
-                '<option value="' . $row->codalmacen . '" selected="">' . $row->nombre . '</option>' :
-                '<option value="' . $row->codalmacen . '">' . $row->nombre . '</option>';
+        foreach (Empresas::all() as $company) {
+            if ($company->idempresa != $model->idempresa && $model->exists()) {
+                continue;
+            }
+            $options[] = '<optgroup label="' . $company->nombrecorto . '">';
+            foreach ($company->getWarehouse() as $row) {
+                $options[] = ($row->codalmacen === $model->codalmacen) ?
+                    '<option value="' . $row->codalmacen . '" selected="">' . $row->nombre . '</option>' :
+                    '<option value="' . $row->codalmacen . '">' . $row->nombre . '</option>';
+            }
+            $options[] = '</optgroup>';
         }
-
-        $attributes = $model->editable ? 'name="codalmacen" required=""' : 'disabled=""';
+        $attributes = $model->editable ?
+            'name="codalmacen" onchange="return ' . $jsFunc . '(\'recalculate\', \'0\');" required=""' :
+            'disabled=""';
         return empty($model->subjectColumnValue()) || count($options) <= 1 ? '' : '<div class="col-sm-2 col-lg">'
             . '<div class="form-group">'
             . '<a href="' . Almacenes::get($model->codalmacen)->url() . '">' . $i18n->trans('warehouse') . '</a>'
@@ -117,6 +126,9 @@ trait CommonSalesPurchases
     {
         $options = [];
         foreach (FormasPago::all() as $row) {
+            if ($row->idempresa != $model->idempresa) {
+                continue;
+            }
             $options[] = ($row->codpago === $model->codpago) ?
                 '<option value="' . $row->codpago . '" selected="">' . $row->descripcion . '</option>' :
                 '<option value="' . $row->codpago . '">' . $row->descripcion . '</option>';

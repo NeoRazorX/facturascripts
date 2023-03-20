@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 use FacturaScripts\Core\Base\Contract\SalesModInterface;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Agentes;
+use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\AgenciaTransporte;
 use FacturaScripts\Core\Model\Base\ModelCore;
@@ -76,8 +77,8 @@ class SalesHeaderHTML
             return;
         }
 
+        $model->setWarehouse($formData['codalmacen'] ?? $model->codalmacen);
         $model->cifnif = $formData['cifnif'] ?? $model->cifnif;
-        $model->codalmacen = $formData['codalmacen'] ?? $model->codalmacen;
         $model->codcliente = $formData['codcliente'] ?? $model->codcliente;
         $model->codigoenv = $formData['codigoenv'] ?? $model->codigoenv;
         $model->coddivisa = $formData['coddivisa'] ?? $model->coddivisa;
@@ -493,7 +494,7 @@ class SalesHeaderHTML
                 return self::codagente($i18n, $model);
 
             case 'codalmacen':
-                return self::codalmacen($i18n, $model);
+                return self::codalmacen($i18n, $model, 'salesFormAction');
 
             case 'codcliente':
                 return self::codcliente($i18n, $model);
