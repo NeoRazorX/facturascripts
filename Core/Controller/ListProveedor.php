@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,6 +25,7 @@ use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to list the items in the Proveedor model
@@ -34,7 +35,6 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  */
 class ListProveedor extends ListController
 {
-
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -68,8 +68,12 @@ class ListProveedor extends ListController
         // filters
         $values = [
             [
-                'label' => $this->toolBox()->i18n()->trans('suppliers'),
+                'label' => Tools::lang()->trans('suppliers'),
                 'where' => [new DataBaseWhere('codproveedor', null, 'IS NOT')]
+            ],
+            [
+                'label' => Tools::lang()->trans('all'),
+                'where' => []
             ]
         ];
         $this->addFilterSelectWhere($viewName, 'type', $values);
@@ -102,16 +106,15 @@ class ListProveedor extends ListController
         $this->addOrderBy($viewName, ['fechaalta'], 'creation-date');
 
         // filters
-        $i18n = $this->toolBox()->i18n();
         $this->addFilterSelectWhere($viewName, 'status', [
-            ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
-            ['label' => $i18n->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
-            ['label' => $i18n->trans('all'), 'where' => []]
+            ['label' => Tools::lang()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
+            ['label' => Tools::lang()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
+            ['label' => Tools::lang()->trans('all'), 'where' => []]
         ]);
         $this->addFilterSelectWhere($viewName, 'type', [
-            ['label' => $i18n->trans('all'), 'where' => []],
-            ['label' => $i18n->trans('is-creditor'), 'where' => [new DataBaseWhere('acreedor', true)]],
-            ['label' => $i18n->trans('supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
+            ['label' => Tools::lang()->trans('all'), 'where' => []],
+            ['label' => Tools::lang()->trans('is-creditor'), 'where' => [new DataBaseWhere('acreedor', true)]],
+            ['label' => Tools::lang()->trans('supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
         ]);
 
         $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', Series::codeModel());
