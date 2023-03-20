@@ -1134,6 +1134,8 @@
     "reject": "Rechazar",
     "rejected": "abgelehnt",
     "related": "verbunden",
+    "related-subaccount-bank-charges": "Subcuenta relacionada para gastos bancarios (comisiones, etc)",
+    "related-subaccount-purchases-sales": "Subcuenta relacionada para compras y ventas",
     "reloading": "Neuladen",
     "remove-filter": "Filter löschen",
     "remove-from-list": "Löschen",
