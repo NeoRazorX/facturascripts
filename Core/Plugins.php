@@ -200,9 +200,17 @@ final class Plugins
 
     public static function init(): void
     {
+        $save = false;
+
         // ejecutamos los procesos init de los plugins
         foreach (self::enabled() as $pluginName) {
-            self::get($pluginName)->init();
+            if (self::get($pluginName)->init()) {
+                $save = true;
+            }
+        }
+
+        if ($save) {
+            self::save();
         }
     }
 
