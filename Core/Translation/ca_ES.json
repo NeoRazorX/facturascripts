@@ -677,7 +677,7 @@
     "import-accounting-plan-p": "Deixi aquest camp en blanc per a usar el pla comptable predeterminat. O bé seleccioni un arxiu amb el seu pla comptable personalitzat.",
     "in-stock": "En estoc",
     "inactive": "Inactiu",
-    "income-and-expenses": "Ingressos i Despeses",
+    "income-and-expenses": "income and expenses",
     "incompatible-document": "Document incompatible: %code%. Diferent client, proveïdor o divisa.",
     "incompatible-with-facturascripts": "Incompatible amb la versió %versio% de FacturaScripts",
     "incorrect-accounting-amount": "L'import del assentament és incorrecte.",
