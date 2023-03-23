@@ -30,9 +30,9 @@ use FacturaScripts\Dinamic\Model\LineaPedidoCliente as LineaPedido;
  */
 class PedidoCliente extends Base\SalesDocument
 {
-    const SERVED_NONE = 0;
-    const SERVED_PARTIAL = 1;
-    const SERVED_COMPLETE = 100;
+    public const SERVED_NONE = 0;
+    public const SERVED_PARTIAL = 1;
+    public const SERVED_COMPLETE = 100;
 
     use Base\ModelTrait;
 
