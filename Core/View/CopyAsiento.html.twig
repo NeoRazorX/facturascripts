@@ -16,6 +16,19 @@
                     <div class="card shadow mb-4">
                         <div class="card-body">
                             <div class="form-row">
+                                {% if fsc.model.count() > 1 %}
+                                <div class="col-sm-2">
+                                    {{ i18n.trans('company') }}
+                                    <div class="form-group">
+                                        <select name="idempresa" class="form-control">
+                                            {% for item in fsc.codeModel.all('empresas','idempresa','nombrecorto') %}
+                                                {% set selected = item.code == fsc.model.idempresa ? ' selected' : '' %}
+                                                <option value="{{ item.code }}"{{ selected }}>{{ item.description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                {% endif %}
                                 <div class="col-sm-2">
                                     {{ i18n.trans('date') }}
                                     <div class="form-group">
