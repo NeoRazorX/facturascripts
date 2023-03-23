@@ -231,7 +231,7 @@ class AccountingLineHTML
      * @param Asiento $model
      * @param Partida[] $lines
      */
-    private static function calculateUnbalance(Asiento &$model, array $lines)
+    public static function calculateUnbalance(Asiento &$model, array $lines)
     {
         $model->debe = 0.0;
         $model->haber = 0.0;
