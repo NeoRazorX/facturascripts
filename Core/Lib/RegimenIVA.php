@@ -40,6 +40,14 @@ class RegimenIVA
     const TAX_SYSTEM_SURCHARGE = 'Recargo';
     const TAX_SYSTEM_ESPECIAL_AGP = 'Especial_AGP';
 
+    /** @var array */
+    private static $exceptions = [];
+
+    public static function addException(string $key, string $value)
+    {
+        self::$exceptions[$key] = $value;
+    }
+
     public static function all(): array
     {
         return [
@@ -53,7 +61,7 @@ class RegimenIVA
 
     public static function allExceptions(): array
     {
-        return [
+        $defaultExceptions = [
             self::ES_TAX_EXCEPTION_E1 => 'es-tax-exception-e1',
             self::ES_TAX_EXCEPTION_E2 => 'es-tax-exception-e2',
             self::ES_TAX_EXCEPTION_E3 => 'es-tax-exception-e3',
@@ -61,6 +69,8 @@ class RegimenIVA
             self::ES_TAX_EXCEPTION_E5 => 'es-tax-exception-e5',
             self::ES_TAX_EXCEPTION_E6 => 'es-tax-exception-e6',
         ];
+
+        return array_merge($defaultExceptions, self::$exceptions);
     }
 
     public static function defaultValue(): string
