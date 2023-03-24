@@ -98,7 +98,7 @@ final class Plugins
         $pluginDeploy = new PluginDeploy();
         $pluginDeploy->deploy(
             self::folder() . DIRECTORY_SEPARATOR,
-            array_reverse(self::enabled()),
+            self::enabled(),
             $clean
         );
 

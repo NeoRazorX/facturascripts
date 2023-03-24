@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Internal\Plugin;
 use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -124,8 +125,9 @@ final class PluginsTest extends TestCase
         // comprobamos que se ha creado el directorio del plugin
         $this->assertDirectoryExists(Plugins::folder() . '/TestPlugin2');
 
-        // comprobamos que se ha creado el archivo del plugin
+        // comprobamos que se han copiado los archivos del plugin
         $this->assertFileExists(Plugins::folder() . '/TestPlugin2/facturascripts.ini');
+        $this->assertFileExists(Plugins::folder() . '/TestPlugin2/XMLView/TestFile.xml');
 
         // comprobamos la información del plugin
         $plugin = Plugins::get('TestPlugin2');
@@ -144,6 +146,9 @@ final class PluginsTest extends TestCase
         $this->assertTrue($plugin->enabled);
         $this->assertContains('TestPlugin2', Plugins::enabled());
         $this->assertTrue(Plugins::isEnabled('TestPlugin2'));
+
+        // comprobamos que el archivo se ha copiado a Dinamic
+        $this->assertFileExists(Tools::folder() . '/Dinamic/XMLView/TestFile.xml');
 
         // comprobamos que no podemos eliminar sin desactivar
         $this->assertFalse(Plugins::remove('TestPlugin2'));
@@ -223,9 +228,13 @@ final class PluginsTest extends TestCase
         // comprobamos que ahora podemos activar el plugin TestPlugin3
         $this->assertTrue(Plugins::enable('TestPlugin3'));
 
-        // comprobamos que se has activado los dos plugins
+        // comprobamos que se han activado los dos plugins
         $this->assertContains('TestPlugin2', Plugins::enabled());
         $this->assertContains('TestPlugin3', Plugins::enabled());
+
+        // comprobamos el hash md5 del archivo Dinamic/XMLView/TestFile.xml
+        // para ver que es el del plugin TestPlugin3 y no el del plugin TestPlugin2
+        $this->assertEquals('a0e5e1f1959a473c5f125d425f240ca2', md5_file(Tools::folder() . '/Dinamic/XMLView/TestFile.xml'));
 
         // desactivamos el plugin TestPlugin2
         $this->assertTrue(Plugins::disable('TestPlugin2'));
