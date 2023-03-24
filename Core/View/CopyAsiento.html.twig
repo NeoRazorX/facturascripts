@@ -7,44 +7,44 @@
                 <h1 class="h3">
                     <i class="fas fa-cut"></i> {{ fsc.title }}
                 </h1>
-                <p>{{ i18n.trans('copy-p') }}</p>
+                <p>{{ trans('copy-p') }}</p>
                 <form method="post">
+                    {{ formToken() }}
                     <input type="hidden" name="action" value="save"/>
                     <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
                     <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
-                    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
                     <div class="card shadow mb-4">
                         <div class="card-body">
                             <div class="form-row">
-                                {% if fsc.model.count() > 1 %}
-                                <div class="col-sm-2">
-                                    {{ i18n.trans('company') }}
-                                    <div class="form-group">
-                                        <select name="idempresa" class="form-control">
-                                            {% for item in fsc.codeModel.all('empresas','idempresa','nombrecorto') %}
-                                                {% set selected = item.code == fsc.model.idempresa ? ' selected' : '' %}
-                                                <option value="{{ item.code }}"{{ selected }}>{{ item.description }}</option>
-                                            {% endfor %}
-                                        </select>
+                                {% if fsc.empresa.count() > 1 %}
+                                    <div class="col-sm-2">
+                                        {{ trans('company') }}
+                                        <div class="form-group">
+                                            <select name="idempresa" class="form-control" required>
+                                                {% for item in fsc.codeModel.all('empresas','idempresa','nombrecorto',false) %}
+                                                    {% set selected = item.code == fsc.model.idempresa ? ' selected' : '' %}
+                                                    <option value="{{ item.code }}"{{ selected }}>{{ item.description }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
                                 {% endif %}
                                 <div class="col-sm-2">
-                                    {{ i18n.trans('date') }}
+                                    {{ trans('date') }}
                                     <div class="form-group">
                                         <input type="date" name="fecha" value="{{ "now" | date('Y-m-d') }}"
-                                               class="form-control" required=""/>
+                                               class="form-control" required/>
                                     </div>
                                 </div>
                                 <div class="col-sm">
-                                    {{ i18n.trans('concept') }}
+                                    {{ trans('concept') }}
                                     <div class="form-group">
                                         <input type="text" name="concepto" value="{{ fsc.model.concepto }}"
-                                               class="form-control" required=""/>
+                                               class="form-control" required/>
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
-                                    {{ i18n.trans('daily') }}
+                                    {{ trans('daily') }}
                                     <div class="form-group">
                                         <select name="iddiario" class="form-control">
                                             {% for item in fsc.codeModel.all('diarios','iddiario','descripcion') %}
@@ -60,7 +60,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
-                                    {{ i18n.trans('channel') }}
+                                    {{ trans('channel') }}
                                     <div class="form-group">
                                         <input type="number" name="canal" value="{{ fsc.model.canal }}"
                                                class="form-control"/>
@@ -72,11 +72,11 @@
                             <table class="table table-hover">
                                 <thead>
                                 <tr>
-                                    <th>{{ i18n.trans('subaccount') }}</th>
-                                    <th>{{ i18n.trans('counterpart') }}</th>
-                                    <th>{{ i18n.trans('concept') }}</th>
-                                    <th class="text-right">{{ i18n.trans('debit') }}</th>
-                                    <th class="text-right">{{ i18n.trans('credit') }}</th>
+                                    <th>{{ trans('subaccount') }}</th>
+                                    <th>{{ trans('counterpart') }}</th>
+                                    <th>{{ trans('concept') }}</th>
+                                    <th class="text-right">{{ trans('debit') }}</th>
+                                    <th class="text-right">{{ trans('credit') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -95,7 +95,7 @@
                         <div class="card-footer">
                             <div class="text-right">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> {{ i18n.trans('save') }}
+                                    <i class="fas fa-save"></i> {{ trans('save') }}
                                 </button>
                             </div>
                         </div>
