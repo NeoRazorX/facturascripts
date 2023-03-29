@@ -111,10 +111,7 @@ class AdminPlugins extends Controller
         }
 
         $pluginName = $this->request->get('plugin', '');
-        if (Plugins::disable($pluginName)) {
-            $this->toolBox()->i18nLog()->notice('reloading');
-            $this->redirect($this->url(), 3);
-        }
+        Plugins::disable($pluginName);
         Cache::clear();
     }
 
@@ -128,10 +125,7 @@ class AdminPlugins extends Controller
         }
 
         $pluginName = $this->request->get('plugin', '');
-        if (Plugins::enable($pluginName)) {
-            $this->toolBox()->i18nLog()->notice('reloading');
-            $this->redirect($this->url(), 3);
-        }
+        Plugins::enable($pluginName);
         Cache::clear();
     }
 
