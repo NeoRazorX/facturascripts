@@ -125,11 +125,41 @@ class Translator
     public function getAvailableLanguages(): array
     {
         $languages = [];
-        $dir = FS_FOLDER . '/Core/Translation';
-        foreach (scandir($dir, SCANDIR_SORT_ASCENDING) as $fileName) {
+
+        // obtenemos los idiomas del core
+        $dirCore = FS_FOLDER . '/Core/Translation';
+        foreach (scandir($dirCore, SCANDIR_SORT_ASCENDING) as $fileName) {
             if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
                 $key = substr($fileName, 0, -5);
                 $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
+            }
+        }
+
+        // obtenemos los idiomas de los plugins activos
+        foreach (Plugins::list() as $plugin) {
+            if (!$plugin->enabled) {
+                continue;
+            }
+
+            $dirPlugin = FS_FOLDER . '/Plugins/' . $plugin->name . '/Translation';
+            foreach (scandir($dirPlugin, SCANDIR_SORT_ASCENDING) as $fileName) {
+                if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
+                    $key = substr($fileName, 0, -5);
+                    if (!in_array($key, $languages)) {
+                        $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
+                    }
+                }
+            }
+        }
+
+        // obtenemos los idiomas personalizados
+        $dirCustom = FS_FOLDER . '/MyFiles/Translation';
+        foreach (scandir($dirCustom, SCANDIR_SORT_ASCENDING) as $fileName) {
+            if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
+                $key = substr($fileName, 0, -5);
+                if (!in_array($key, $languages)) {
+                    $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
+                }
             }
         }
 
