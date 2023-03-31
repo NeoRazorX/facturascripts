@@ -136,16 +136,12 @@ class Translator
         }
 
         // obtenemos los idiomas de los plugins activos
-        foreach (Plugins::list() as $plugin) {
-            if (!$plugin->enabled) {
-                continue;
-            }
-
+        foreach (Plugins::enabled() as $plugin) {
             $dirPlugin = FS_FOLDER . '/Plugins/' . $plugin->name . '/Translation';
             foreach (scandir($dirPlugin, SCANDIR_SORT_ASCENDING) as $fileName) {
                 if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
                     $key = substr($fileName, 0, -5);
-                    if (!in_array($key, $languages)) {
+                    if (!isset($languages[$key])) {
                         $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
                     }
                 }
@@ -157,7 +153,7 @@ class Translator
         foreach (scandir($dirCustom, SCANDIR_SORT_ASCENDING) as $fileName) {
             if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
                 $key = substr($fileName, 0, -5);
-                if (!in_array($key, $languages)) {
+                if (!isset($languages[$key])) {
                     $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
                 }
             }
