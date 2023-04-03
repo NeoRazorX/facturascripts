@@ -124,36 +124,24 @@ class Translator
      */
     public function getAvailableLanguages(): array
     {
+        $directories = [FS_FOLDER . '/Core/Translation', FS_FOLDER . '/MyFiles/Translation'];
         $languages = [];
 
-        // obtenemos los idiomas del core
-        $dirCore = FS_FOLDER . '/Core/Translation';
-        foreach (scandir($dirCore, SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
-                $key = substr($fileName, 0, -5);
-                $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
-            }
-        }
-
-        // obtenemos los idiomas de los plugins activos
+        // obtenemos los directorios de los plugins
         foreach (Plugins::enabled() as $plugin) {
             $dirPlugin = FS_FOLDER . '/Plugins/' . $plugin->name . '/Translation';
-            foreach (scandir($dirPlugin, SCANDIR_SORT_ASCENDING) as $fileName) {
-                if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
-                    $key = substr($fileName, 0, -5);
-                    if (!isset($languages[$key])) {
-                        $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
-                    }
-                }
-            }
+            $directories[] = $dirPlugin;
         }
 
-        // obtenemos los idiomas personalizados
-        $dirCustom = FS_FOLDER . '/MyFiles/Translation';
-        foreach (scandir($dirCustom, SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
-                $key = substr($fileName, 0, -5);
-                if (!isset($languages[$key])) {
+        // obtenemos los idiomas según los directorios
+        foreach ($directories as $directory) {
+            if (false === file_exists($directory) || false === is_dir($directory)) {
+                continue;
+            }
+
+            foreach (scandir($directory, SCANDIR_SORT_ASCENDING) as $fileName) {
+                if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
+                    $key = substr($fileName, 0, -5);
                     $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
                 }
             }
