@@ -124,12 +124,26 @@ class Translator
      */
     public function getAvailableLanguages(): array
     {
+        $directories = [FS_FOLDER . '/Core/Translation', FS_FOLDER . '/MyFiles/Translation'];
         $languages = [];
-        $dir = FS_FOLDER . '/Core/Translation';
-        foreach (scandir($dir, SCANDIR_SORT_ASCENDING) as $fileName) {
-            if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
-                $key = substr($fileName, 0, -5);
-                $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
+
+        // obtenemos los directorios de los plugins
+        foreach (Plugins::enabled() as $plugin) {
+            $dirPlugin = FS_FOLDER . '/Plugins/' . $plugin->name . '/Translation';
+            $directories[] = $dirPlugin;
+        }
+
+        // obtenemos los idiomas según los directorios
+        foreach ($directories as $directory) {
+            if (false === file_exists($directory) || false === is_dir($directory)) {
+                continue;
+            }
+
+            foreach (scandir($directory, SCANDIR_SORT_ASCENDING) as $fileName) {
+                if ($fileName !== '.' && $fileName !== '..' && !is_dir($fileName) && substr($fileName, -5) === '.json') {
+                    $key = substr($fileName, 0, -5);
+                    $languages[$key] = $this->trans('languages-' . substr($fileName, 0, -5));
+                }
             }
         }
 
