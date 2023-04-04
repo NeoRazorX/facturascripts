@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,6 @@ use Symfony\Component\Translation\Translator as SymfonyTranslator;
  */
 class Translator
 {
-
     const FALLBACK_LANG = 'es_ES';
 
     /**
@@ -124,17 +123,15 @@ class Translator
      */
     public function getAvailableLanguages(): array
     {
-        $directories = [FS_FOLDER . '/Core/Translation', FS_FOLDER . '/MyFiles/Translation'];
-        $languages = [];
-
-        // obtenemos los directorios de los plugins
+        // obtenemos los directorios donde comprobar
+        $folders = [FS_FOLDER . '/Core/Translation', FS_FOLDER . '/MyFiles/Translation'];
         foreach (Plugins::enabled() as $plugin) {
-            $dirPlugin = FS_FOLDER . '/Plugins/' . $plugin->name . '/Translation';
-            $directories[] = $dirPlugin;
+            $folders[] = Plugins::folder() . '/' . $plugin . '/Translation';
         }
 
         // obtenemos los idiomas según los directorios
-        foreach ($directories as $directory) {
+        $languages = [];
+        foreach ($folders as $directory) {
             if (false === file_exists($directory) || false === is_dir($directory)) {
                 continue;
             }
@@ -146,6 +143,9 @@ class Translator
                 }
             }
         }
+
+        // ordenamos preservando las claves
+        asort($languages);
 
         return $languages;
     }
