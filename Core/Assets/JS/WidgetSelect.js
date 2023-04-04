@@ -19,7 +19,7 @@ function widgetSelectGetData(select, parent) {
 
     let data = {
         action: 'select',
-        activetab: select.form().find('input[name="activetab"]').val(),
+        activetab: select.closest('form').find('input[name="activetab"]').val(),
         term: getValueTypeParent(parent),
         field: select.attr("data-field"),
         fieldcode: select.attr("data-fieldcode"),
@@ -54,7 +54,7 @@ $(document).ready(function () {
         }
 
         let select = $(this);
-        let parent = select.form().find('[name="' + parentStr + '"]');
+        let parent = select.closest('form').find('[name="' + parentStr + '"]');
 
         if (parent.is('select') || ['color', 'datetime-local', 'date', 'time', 'hidden'].includes(parent.attr('type'))) {
             parent.change(function(){
