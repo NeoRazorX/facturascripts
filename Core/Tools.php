@@ -127,7 +127,7 @@ class Tools
         return unlink($folder);
     }
 
-    public static function folderScan(string $folder, bool $recursive = true, array $exclude = ['.DS_Store', '.well-known']): array
+    public static function folderScan(string $folder, bool $recursive = false, array $exclude = ['.DS_Store', '.well-known']): array
     {
         $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
         if (false === is_array($scan)) {

@@ -88,11 +88,11 @@ final class ToolsTest extends TestCase
 
         // comprobamos que existen los archivos
         $fileListRecursive = ['Folder1', 'Folder1/file4.txt', 'file1.txt', 'file2.txt', 'file3.txt'];
-        $this->assertEquals($fileListRecursive, Tools::folderScan('MyFiles/Test'));
+        $this->assertEquals($fileListRecursive, Tools::folderScan('MyFiles/Test', true));
 
         // sin recursividad
         $fileList = ['Folder1', 'file1.txt', 'file2.txt', 'file3.txt'];
-        $results1 = Tools::folderScan('MyFiles/Test', false);
+        $results1 = Tools::folderScan('MyFiles/Test');
         $this->assertEquals($fileList, array_values($results1));
 
         // excluyendo file1.txt
@@ -104,7 +104,7 @@ final class ToolsTest extends TestCase
         $this->assertTrue(Tools::folderCopy('MyFiles/Test', 'MyFiles/Test2'));
 
         // comprobamos que existen los archivos
-        $this->assertEquals($fileListRecursive, Tools::folderScan('MyFiles/Test2'));
+        $this->assertEquals($fileListRecursive, Tools::folderScan('MyFiles/Test2', true));
 
         // eliminamos la carpeta MyFiles/Test
         $this->assertTrue(Tools::folderDelete('MyFiles/Test'));
