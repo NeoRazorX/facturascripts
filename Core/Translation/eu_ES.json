@@ -22,7 +22,7 @@
     "account-dot-code": "Puntua zeroak automatikoki osatzeko. Adibidez: 11.1 = 1100000001",
     "account-length": "Azpikontuaren luzera",
     "account-length-error": "Azpikontuaren luzera okerra. %code% azpikontuaren luzera ekitaldian zehaztutakoa izan behar du.",
-    "account-missing-in-balance": "%codcuenta% kontuak saldoa du baina ez dago saldoetan sartzen. Kontsideratu sartzea oreka desorekatuta badago.",
+    "account-missing-in-balance": "%codcuenta% kontuak saldoa du baina ez dago saldoetan sartuta. Kontuan hartu hau sartzea oreka desorekatuta badago.",
     "account-parent-error": "'guraso' kontua ez da zuzena edo ez da ekitaldikoa",
     "accounting": "Kontabilitatea",
     "accounting-accounts": "Kontabilitate kontuak",
