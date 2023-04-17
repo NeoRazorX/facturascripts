@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
@@ -134,6 +135,7 @@ class Controller
         AssetManager::setAssetsForPage($className);
 
         $this->checkPHPversion(7.3);
+        $this->loadFlashMessages();
     }
 
     /**
@@ -307,6 +309,47 @@ class Controller
     protected function getClassName(): string
     {
         return $this->className;
+    }
+
+    /**
+     * Pinta los mensajes flash guardados en la caché
+     *
+     * @return void
+     */
+    private function loadFlashMessages()
+    {
+        // obtenemos los mensajes flash que existan
+        $flashMessages = Cache::get('flash_messages') ?? [];
+        if (empty($flashMessages)) {
+            return;
+        }
+
+        // los eliminamos de la cache
+        Cache::delete('flash_messages');
+
+        // recorremos los mensajes flash y los pintamos
+        foreach ($flashMessages as $message) {
+            switch ($message['type']) {
+                case 'critical':
+                    $this->toolBox()->i18nLog($message['channel'])->critical($message['message'], $message['context']);
+                    break;
+                case 'debug':
+                    $this->toolBox()->i18nLog($message['channel'])->debug($message['message'], $message['context']);
+                    break;
+                case 'error':
+                    $this->toolBox()->i18nLog($message['channel'])->error($message['message'], $message['context']);
+                    break;
+                case 'info':
+                    $this->toolBox()->i18nLog($message['channel'])->info($message['message'], $message['context']);
+                    break;
+                case 'notice':
+                    $this->toolBox()->i18nLog($message['channel'])->notice($message['message'], $message['context']);
+                    break;
+                case 'warning':
+                    $this->toolBox()->i18nLog($message['channel'])->warning($message['message'], $message['context']);
+                    break;
+            }
+        }
     }
 
     /**

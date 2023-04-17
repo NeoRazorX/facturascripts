@@ -79,6 +79,26 @@ class Tools
             str_replace(self::HTML_REPLACEMENTS, self::HTML_CHARS, trim($text));
     }
 
+    public static function flashMessage(string $message, string $type, array $context = [], string $channel = '')
+    {
+        // obtenemos los mensajes flash que existan
+        $flashMessages = Cache::get('flash_messages') ?? [];
+
+        // el type debe ser uno de los permitidos
+        $type = in_array($type, ['critical', 'debug', 'error', 'info', 'notice', 'warning']) ? $type : 'info';
+
+        // añadimos el nuevo mensaje
+        $flashMessages[] = [
+            'message' => $message,
+            'type' => $type,
+            'context' => $context,
+            'channel' => $channel
+        ];
+
+        // guardamos los mensajes flash
+        Cache::set('flash_messages', $flashMessages);
+    }
+
     public static function folder(...$folders): string
     {
         if (empty($folders)) {
