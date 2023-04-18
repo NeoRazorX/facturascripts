@@ -86,6 +86,21 @@ class EditFabricante extends EditController
         $this->addListView($viewName, 'Producto', 'add', 'fas fa-folder-plus');
         $this->createViewProductsCommon($viewName);
 
+        // filters
+        $this->views[$viewName]->addFilterAutocomplete('family', 'family', 'codfamilia', 'familias', 'codfamilia', 'descripcion');
+        $i18n = $this->toolBox()->i18n();
+        $this->views[$viewName]->addFilterSelectWhere('for-sale', [
+            ['label' => $i18n->trans('all'), 'where' => []],
+            ['label' => $i18n->trans('for-purchase'), 'where' => [new DataBaseWhere('secompra', true)]],
+            ['label' => $i18n->trans('not-for-purchase'), 'where' => [new DataBaseWhere('secompra', false)]],
+        ]);
+
+        $this->views[$viewName]->addFilterSelectWhere('blocked', [
+            ['label' => $i18n->trans('not-blocked'), 'where' => [new DataBaseWhere('bloqueado', false)]],
+            ['label' => $i18n->trans('blocked'), 'where' => [new DataBaseWhere('bloqueado', true)]],
+            ['label' => $i18n->trans('all'), 'where' => []],
+        ]);
+
         // add action button
         $this->addButton($viewName, [
             'action' => 'add-product',
