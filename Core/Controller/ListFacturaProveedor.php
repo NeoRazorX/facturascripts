@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 
 /**
@@ -182,15 +183,12 @@ class ListFacturaProveedor extends ListBusinessDocument
             return;
         }
 
-        $this->dataBase->beginTransaction();
         $codejercicio = $this->request->request->get('exercise');
-        if ($this->views['ListFacturaProveedor']->model->renumber($codejercicio)) {
+        if (FacturaProveedorRenumber::run($codejercicio)) {
             self::toolBox()->i18nLog()->notice('record-updated-correctly');
-            $this->dataBase->commit();
             return;
         }
 
-        $this->dataBase->rollback();
         self::toolBox()->i18nLog()->warning('record-save-error');
     }
 }
