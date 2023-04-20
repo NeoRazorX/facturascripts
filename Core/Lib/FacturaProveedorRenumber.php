@@ -23,7 +23,7 @@ use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Tools;
-use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
+use FacturaScripts\Dinamic\Lib\BusinessDocumentCode as DinBusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 use FacturaScripts\Dinamic\Model\SecuenciaDocumento;
@@ -73,7 +73,7 @@ class FacturaProveedorRenumber
             }
 
             // obtenemos la secuencia para saber en qué número comenzar
-            $sequence = BusinessDocumentCode::getSequence($sample);
+            $sequence = DinBusinessDocumentCode::getSequence($sample);
             $number = $sequence->inicio;
 
             while (!empty($rows)) {
@@ -104,7 +104,7 @@ class FacturaProveedorRenumber
                 }
 
                 $document->numero = $number;
-                $codigo = BusinessDocumentCode::getNewCode($sequence, $document);
+                $codigo = DinBusinessDocumentCode::getNewCode($sequence, $document);
                 $altNumber = $document->newCode('numero') + intval($document->numero);
 
                 // modificamos la factura que pueda tener ya el número y código que vamos a asignar
