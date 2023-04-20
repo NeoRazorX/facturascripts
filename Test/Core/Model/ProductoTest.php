@@ -398,6 +398,31 @@ final class ProductoTest extends TestCase
         $this->assertFalse($variant->exists(), 'variant-still-exists');
     }
 
+    public function testVarianteWithRef()
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // añadimos una variante con referencia
+        $variant = new Variante();
+        $variant->idproducto = $product->idproducto;
+        $variant->referencia = '0' . $product->referencia;
+        $this->assertTrue($variant->save(), 'variant-cant-save-with-ref');
+
+        // eliminamos variante
+        $this->assertTrue($variant->delete(), 'variant-cant-delete');
+
+        // comprobamos que no podemos eliminar la única variante
+        $where = [ new DataBaseWhere('referencia', $product->referencia) ];
+        $this->assertTrue($variant->loadFromCode('', $where), 'cant-reload-variant');
+        $this->assertFalse($variant->delete(), 'can-delete-only-variant');
+
+        // eliminamos el producto
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertFalse($variant->exists(), 'variant-still-exists');
+    }
+
     public function testNegativePrice()
     {
         // creamos un producto con precio negativo
