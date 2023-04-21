@@ -328,6 +328,13 @@ class Ejercicio extends Base\ModelClass
         $this->fechafin = date('31-12-Y', $date2);
         $this->nombre = date('Y', $date2);
 
+        // if there are more than one company, we add the company name
+        $company = new DinEmpresa();
+        if ($company->count() > 1) {
+            $company->loadFromCode($this->idempresa);
+            $this->nombre = $company->nombrecorto . ' ' . $this->nombre;
+        }
+
         // for non-default companies we try to use range from 0001 to 9999
         if ($this->idempresa != $this->toolBox()->appSettings()->get('default', 'idempresa')) {
             $new = new static();
