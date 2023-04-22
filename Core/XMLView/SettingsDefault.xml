@@ -114,6 +114,7 @@
                     <values title="last-purchase-price">last-price</values>
                     <values title="average-purchase-price">average-price</values>
                     <values title="actual-cost-price">actual-price</values>
+                    <values title="high-purchase-price">high-price</values>
                 </widget>
             </column>
             <column name="update-supplier-prices" numcolumns="3" order="110">

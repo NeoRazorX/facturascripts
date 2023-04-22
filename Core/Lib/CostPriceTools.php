@@ -54,6 +54,9 @@ class CostPriceTools
             case 'last-price':
                 static::updateLastPrice($variant);
                 break;
+            case 'high-price':
+                static::updateHighPrice($variant);
+                break;
         }
     }
 
@@ -150,6 +153,21 @@ class CostPriceTools
         $supplierProduct = new ProductoProveedor();
         $where = [new DataBaseWhere('referencia', $variant->referencia)];
         foreach ($supplierProduct->all($where, ['actualizado' => 'DESC'], 0, 1) as $prod) {
+            $variant->coste = \round($prod->neto, Producto::ROUND_DECIMALS);
+            $variant->save();
+            break;
+        }
+    }
+
+    /**
+     * Returns the high price to buy this product.
+     *
+     * @param Variante $variant
+     */
+    protected static function updateHighPrice($variant) {
+        $supplierProduct = new ProductoProveedor();
+        $where = [new DataBaseWhere('referencia', $variant->referencia)];
+        foreach ($supplierProduct->all($where, ['precio' => 'DESC'], 0, 1) as $prod) {
             $variant->coste = \round($prod->neto, Producto::ROUND_DECIMALS);
             $variant->save();
             break;

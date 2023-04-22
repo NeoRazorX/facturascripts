@@ -252,6 +252,54 @@ final class ProductoTest extends TestCase
         $this->assertTrue($supplier2->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier2->delete(), 'supplier-cant-delete');
     }
+    public function testCostPricePolicyHighPrice() {
+        // asignamos la política de precio de coste último precio
+        $settings = new AppSettings();
+        $settings->set('default', 'costpricepolicy', 'high-price');
+
+        // creamos un producto con coste 50
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+        $variant = $product->getVariants()[0];
+        $variant->coste = 50;
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        // creamos el proveedor 1
+        $supplier1 = $this->getTestSupplier();
+        $this->assertTrue($supplier1->save(), 'supplier-1-cant-save');
+
+        // creamos un producto de proveedor con este proveedor y este producto
+        $supplierProduct1 = new ProductoProveedor();
+        $supplierProduct1->codproveedor = $supplier1->codproveedor;
+        $supplierProduct1->referencia = $product->referencia;
+        $supplierProduct1->idproducto = $product->idproducto;
+        $supplierProduct1->precio = 200;
+        $supplierProduct1->actualizado = date(ModelCore::DATETIME_STYLE, strtotime("- 1 days"));
+        $this->assertTrue($supplierProduct1->save(), 'supplier-product-1-cant-save');
+
+        // creamos el proveedor 2
+        $supplier2 = $this->getTestSupplier();
+        $this->assertTrue($supplier2->save(), 'supplier-2-cant-save');
+
+        // creamos un producto de proveedor con este proveedor y este producto
+        $supplierProduct2 = new ProductoProveedor();
+        $supplierProduct2->codproveedor = $supplier2->codproveedor;
+        $supplierProduct2->referencia = $product->referencia;
+        $supplierProduct2->idproducto = $product->idproducto;
+        $supplierProduct2->precio = 100;
+        $this->assertTrue($supplierProduct2->save(), 'supplier-product-2-cant-save');
+
+        // recargamos la variante para comprobar que SI se ha actualizado el coste
+        $variant->loadFromCode($variant->primaryColumnValue());
+        $this->assertTrue($variant->coste == 200, 'variant-cost-not-last');
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($supplier1->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($supplier1->delete(), 'supplier-cant-delete');
+        $this->assertTrue($supplier2->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($supplier2->delete(), 'supplier-cant-delete');
+    }
 
     public function testCostPricePolicyAveragePrice()
     {
