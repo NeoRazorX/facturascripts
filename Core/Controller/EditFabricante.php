@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Dinamic\Model\Producto;
@@ -46,7 +47,7 @@ class EditFabricante extends EditController
         return $data;
     }
 
-    protected function addProductAction()
+    protected function addProductAction(): void
     {
         $codes = $this->request->request->get('code', []);
         if (false === is_array($codes)) {
@@ -81,12 +82,12 @@ class EditFabricante extends EditController
         $this->createViewNewProducts();
     }
 
-    protected function createViewNewProducts(string $viewName = 'ListProducto-new')
+    protected function createViewNewProducts(string $viewName = 'ListProducto-new'): void
     {
         $this->addListView($viewName, 'Producto', 'add', 'fas fa-folder-plus');
         $this->createViewProductsCommon($viewName);
 
-        // add action button
+        // botón añadir producto
         $this->addButton($viewName, [
             'action' => 'add-product',
             'color' => 'success',
@@ -95,12 +96,12 @@ class EditFabricante extends EditController
         ]);
     }
 
-    protected function createViewProducts(string $viewName = 'ListProducto')
+    protected function createViewProducts(string $viewName = 'ListProducto'): void
     {
         $this->addListView($viewName, 'Producto', 'products', 'fas fa-cubes');
         $this->createViewProductsCommon($viewName);
 
-        // add action button
+        // botón quitar producto
         $this->addButton($viewName, [
             'action' => 'remove-product',
             'color' => 'danger',
@@ -110,14 +111,40 @@ class EditFabricante extends EditController
         ]);
     }
 
-    protected function createViewProductsCommon(string $viewName)
+    protected function createViewProductsCommon(string $viewName): void
     {
+        $this->views[$viewName]->addSearchFields(['descripcion', 'referencia']);
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
         $this->views[$viewName]->addOrderBy(['precio'], 'price');
         $this->views[$viewName]->addOrderBy(['stockfis'], 'stock');
-        $this->views[$viewName]->searchFields = ['referencia', 'descripcion'];
 
-        // disable columns and buttons
+        // filtros
+        $i18n = $this->toolBox()->i18n();
+        $this->views[$viewName]->addFilterSelectWhere('status', [
+            ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
+            ['label' => $i18n->trans('blocked'), 'where' => [new DataBaseWhere('bloqueado', true)]],
+            ['label' => $i18n->trans('public'), 'where' => [new DataBaseWhere('publico', true)]],
+            ['label' => $i18n->trans('all'), 'where' => []]
+        ]);
+
+        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->views[$viewName]->addFilterSelect('codfamilia', 'family', 'codfamilia', $families);
+
+        $this->views[$viewName]->addFilterNumber('min-price', 'price', 'precio', '<=');
+        $this->views[$viewName]->addFilterNumber('max-price', 'price', 'precio', '>=');
+        $this->views[$viewName]->addFilterNumber('min-stock', 'stock', 'stockfis', '<=');
+        $this->views[$viewName]->addFilterNumber('max-stock', 'stock', 'stockfis', '>=');
+
+        $taxes = Impuestos::codeModel();
+        $this->views[$viewName]->addFilterSelect('codimpuesto', 'tax', 'codimpuesto', $taxes);
+
+        $this->views[$viewName]->addFilterCheckbox('nostock', 'no-stock', 'nostock');
+        $this->views[$viewName]->addFilterCheckbox('ventasinstock', 'allow-sale-without-stock', 'ventasinstock');
+        $this->views[$viewName]->addFilterCheckbox('secompra', 'for-purchase', 'secompra');
+        $this->views[$viewName]->addFilterCheckbox('sevende', 'for-sale', 'sevende');
+        $this->views[$viewName]->addFilterCheckbox('publico', 'public', 'publico');
+
+        // ocultamos la columna fabricante y los botones de nuevo y eliminar
         $this->views[$viewName]->disableColumn('manufacturer');
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
@@ -170,10 +197,10 @@ class EditFabricante extends EditController
         }
     }
 
-    protected function removeProductAction()
+    protected function removeProductAction(): void
     {
         $codes = $this->request->request->get('code', []);
-        if (false === \is_array($codes)) {
+        if (false === is_array($codes)) {
             return;
         }
 
