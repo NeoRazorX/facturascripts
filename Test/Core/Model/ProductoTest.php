@@ -178,7 +178,7 @@ final class ProductoTest extends TestCase
         $product = $this->getTestProduct();
         $this->assertTrue($product->save(), 'product-cant-save');
         $variant = $product->getVariants()[0];
-        $variant->coste = 100;
+        $variant->coste = 66;
         $this->assertTrue($variant->save(), 'variant-cant-save');
 
         // creamos un proveedor
@@ -195,7 +195,7 @@ final class ProductoTest extends TestCase
 
         // recargamos la variante para comprobar que NO se ha actualizado el coste, ya que no hay política asignada
         $variant->loadFromCode($variant->primaryColumnValue());
-        $this->assertTrue($variant->coste == 100, 'variant-cost-should-not-change');
+        $this->assertEquals(66, $variant->coste, 'variant-cost-should-not-change');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -243,7 +243,7 @@ final class ProductoTest extends TestCase
 
         // recargamos la variante para comprobar que SI se ha actualizado el coste
         $variant->loadFromCode($variant->primaryColumnValue());
-        $this->assertTrue($variant->coste == 200, 'variant-cost-not-last');
+        $this->assertEquals(200, $variant->coste, 'variant-cost-not-last');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -252,8 +252,10 @@ final class ProductoTest extends TestCase
         $this->assertTrue($supplier2->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier2->delete(), 'supplier-cant-delete');
     }
-    public function testCostPricePolicyHighPrice() {
-        // asignamos la política de precio de coste último precio
+
+    public function testCostPricePolicyHighPrice()
+    {
+        // asignamos la política de precio de coste precio más alto
         $settings = new AppSettings();
         $settings->set('default', 'costpricepolicy', 'high-price');
 
@@ -291,7 +293,7 @@ final class ProductoTest extends TestCase
 
         // recargamos la variante para comprobar que SI se ha actualizado el coste
         $variant->loadFromCode($variant->primaryColumnValue());
-        $this->assertTrue($variant->coste == 200, 'variant-cost-not-last');
+        $this->assertEquals(200, $variant->coste, 'variant-cost-not-last');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -303,7 +305,7 @@ final class ProductoTest extends TestCase
 
     public function testCostPricePolicyAveragePrice()
     {
-        // asignamos la política de precio de coste último precio
+        // asignamos la política de precio de coste precio medio
         $settings = new AppSettings();
         $settings->set('default', 'costpricepolicy', 'average-price');
 
@@ -340,7 +342,7 @@ final class ProductoTest extends TestCase
 
         // recargamos la variante para comprobar que SI se ha actualizado el coste
         $variant->loadFromCode($variant->primaryColumnValue());
-        $this->assertTrue($variant->coste == 150, 'variant-cost-not-average');
+        $this->assertEquals(150, $variant->coste, 'variant-cost-not-average');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
