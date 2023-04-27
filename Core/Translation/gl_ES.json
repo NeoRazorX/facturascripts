@@ -985,6 +985,7 @@
     "parent-group-cant-be-the-same-group": "O Grupo Pai non pode ser o mesmo grupo",
     "parent-group-loop": "O Grupo Pai %parentGroup% está causando unha relación circular.",
     "partnumber": "Número de peza",
+    "passenger": "Pasaxeiro",
     "password": "Contrasinal",
     "pattern": "Patrón",
     "pattern-without-number": "O patrón elixido non inclúe número, polo que é moi probable que xere códigos duplicados.",

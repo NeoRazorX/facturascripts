@@ -985,6 +985,7 @@
     "parent-group-cant-be-the-same-group": "El grup pare no pot ser el grup mateix",
     "parent-group-loop": "El Grup Pare %parentGroup% està causant una relació circular.",
     "partnumber": "Número de peça",
+    "passenger": "Pasajero",
     "password": "Contrasenya",
     "pattern": "Patró",
     "pattern-without-number": "El patrón elegido no incluye número, por lo que es muy probable que genere códigos duplicados.",

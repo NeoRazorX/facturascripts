@@ -985,6 +985,7 @@
     "parent-group-cant-be-the-same-group": "Le groupe parent ne peut pas être le même groupe",
     "parent-group-loop": "Groupe parent %parentGroup% provoquant une relation circulaire.",
     "partnumber": "Numéro d'article",
+    "passenger": "Pasajero",
     "password": "Mot de passe",
     "pattern": "Structure",
     "pattern-without-number": "El patrón elegido no incluye número, por lo que es muy probable que genere códigos duplicados.",

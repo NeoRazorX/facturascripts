@@ -985,6 +985,7 @@
     "parent-group-cant-be-the-same-group": "Parent group can't be the same group",
     "parent-group-loop": "Parent group %parentGroup% causing circular relation.",
     "partnumber": "Numero di parte",
+    "passenger": "Pasajero",
     "password": "Contraseña",
     "pattern": "pattern",
     "pattern-without-number": "El patrón elegido no incluye número, por lo que es muy probable que genere códigos duplicados.",

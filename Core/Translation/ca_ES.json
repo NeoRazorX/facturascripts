@@ -985,6 +985,7 @@
     "parent-group-cant-be-the-same-group": "El Grup Pare no pot ser el mateix grup",
     "parent-group-loop": "Grup pare %parentGroup% està causant relació circular.",
     "partnumber": "Part Number",
+    "passenger": "Passatger",
     "password": "Clau",
     "pattern": "Patró",
     "pattern-without-number": "El patró triat no inclou número, per la qual cosa és molt probable que generi codis duplicats.",

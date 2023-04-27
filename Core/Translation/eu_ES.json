@@ -985,6 +985,7 @@
     "parent-group-cant-be-the-same-group": "Talde gurasoa ezin du talde berdina izan",
     "parent-group-loop": "%parentGroup% talde gurasoak harreman zirkularra sortzen du.",
     "partnumber": "Pieza zenbakia",
+    "passenger": "Bidaiaria",
     "password": "Pasahitza",
     "pattern": "Patroi",
     "pattern-without-number": "Aukeratutako ereduak ez du zenbakirik barne, beraz, oso gertagarria da kode bikoiztuak sortzea.",
