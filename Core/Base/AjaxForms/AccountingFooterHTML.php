@@ -112,7 +112,7 @@ class AccountingFooterHTML
 
         return '<div class="col-sm-3 col-md-2 mb-3">'
             . '<div class="input-group">'
-            . '<div class="input-group-prepend"><span class="input-group-text text-danger">' . $i18n->trans('unbalance') . '</span></div>'
+            . '<span class="input-group-text text-danger">' . $i18n->trans('unbalance') . '</span>'
             . '<input type="number" value="' . $unbalance . '" class="form-control" step="any" readonly>'
             . '</div></div>';
     }
@@ -129,7 +129,7 @@ class AccountingFooterHTML
     {
         return '<div class="col-sm-3 col-md-2 mb-3">'
             . '<div class="input-group">'
-            . '<div class="input-group-prepend"><span class="input-group-text">' . $i18n->trans('amount') . '</span></div>'
+            . '<span class="input-group-text">' . $i18n->trans('amount') . '</span>'
             . '<input type="number" value="' . $model->importe . '" class="form-control" step="any" tabindex="-1" readonly>'
             . '</div></div>';
     }

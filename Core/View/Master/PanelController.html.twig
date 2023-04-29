@@ -116,7 +116,7 @@
                                 <i class="{{ view.icon }} fa-fw me-1 d-none d-xl-inline-block"
                                    aria-hidden="true"></i>{{ view.title }}
                                 {% if view.count >= 1 and viewName != firstView.getViewName() %}
-                                    <span class='badge bg-secondary mt-lg-1 mb-lg-1 float-lg-right'>{{ view.count }}</span>
+                                    <span class='badge bg-secondary mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
                                 {% endif %}
                             </a>
                         {% endfor %}
@@ -195,7 +195,7 @@
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="sr-only">{{ i18n.trans('more') }}</span>
         </button>
-        <div class="dropdown-menu dropdown-menu-right">
+        <div class="dropdown-menu dropdown-menu-end">
             {% for key, option in fsc.exportManager.options() %}
                 {% if key != fsc.exportManager.defaultOption() %}
                     <a href="{{ firstView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">

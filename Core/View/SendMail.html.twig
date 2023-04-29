@@ -39,9 +39,9 @@
                             </h1>
                             <div class="form-group">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
+                                    
                                         <span class="input-group-text">{{ i18n.trans('from') }}</span>
-                                    </div>
+                                    
                                     <select class="custom-select" name="email-from">
                                         {% for emailFrom in fsc.newMail.getAvailableMailboxes() %}
                                             <option value="{{ emailFrom }}">{{ emailFrom }}</option>
@@ -51,9 +51,9 @@
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
+                                    
                                         <span class="input-group-text">{{ i18n.trans('to') }}</span>
-                                    </div>
+                                    
                                     {% set emails = fsc.newMail.getToAddresses() is empty ? '' : fsc.newMail.getToAddresses() | join(',') ~ ', ' %}
                                     <input type="text" id="email" name="email" value="{{ emails }}" class="form-control"
                                            required="" placeholder="{{ i18n.trans('email-to') }}"/>

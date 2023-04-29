@@ -109,9 +109,7 @@ class AccountingHeaderHTML
             return '<div class="col-sm-3 col-md-2">'
                 . '<div class="form-group">' . $i18n->trans('document')
                 . '<div class="input-group">'
-                . '<div class="input-group-prepend">'
                 . '<a class="btn btn-outline-primary" href="' . $link . '"><i class="far fa-eye"></i></a>'
-                . '</div>'
                 . '<input type="text" value="' . $model->documento . '" class="form-control" readonly/>'
                 . '</div>'
                 . '</div>'

@@ -350,7 +350,7 @@
                         aria-expanded="false">
                     <i class="fas fa-fill-drip fa-fw" aria-hidden="true"></i>
                 </button>
-                <div class="dropdown-menu dropdown-menu-right pb-0">
+                <div class="dropdown-menu dropdown-menu-end pb-0">
                     <h6 class="dropdown-header">
                         {{ trans('colors') }}
                     </h6>
@@ -414,7 +414,7 @@
                 <span class="d-none d-lg-inline">{{ currentView.orderOptions[currentView.orderKey]['label'] }}</span>
                 <span class="caret"></span>
             </button>
-            <div class="dropdown-menu dropdown-menu-right">
+            <div class="dropdown-menu dropdown-menu-end">
                 {% for key, orderby in currentView.orderOptions %}
                     {% set activeClass = (currentView.orderKey == key) ? ' active' : '' %}
                     {% set icon = (orderby.type == 'ASC') ? 'fas fa-sort-amount-down-alt' : 'fas fa-sort-amount-down' %}

@@ -68,10 +68,10 @@ class SelectFilter extends BaseFilter
         return '<div class="col-sm-3 col-lg-2">'
             . '<div class="form-group">'
             . '<div class="input-group" title="' . static::$i18n->trans($this->label) . '">'
-            . '<span class="input-group-prepend">'
+            
             . '<span class="input-group-text">'
             . '<i class="' . $this->icon . ' fa-fw" aria-hidden="true"></i>'
-            . '</span>'
+            
             . '</span>'
             . '<select name="' . $this->name() . '" class="form-control"' . $this->onChange() . $this->readonly() . '>'
             . $this->getHtmlOptions()
