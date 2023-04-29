@@ -135,8 +135,8 @@ class AccountingLineHTML
         $i18n = new Translator();
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $cssClass = static::$num % 2 == 0 ? 'bg-white border-top' : 'bg-light border-top';
-        return '<div class="' . $cssClass . ' line pl-2 pr-2">'
-            . '<div class="form-row align-items-end">'
+        return '<div class="' . $cssClass . ' line ps-2 pe-2">'
+            . '<div class="row align-items-end">'
             . static::subcuenta($i18n, $line, $model)
             . static::debe($i18n, $line, $model)
             . static::haber($i18n, $line, $model)
@@ -155,28 +155,28 @@ class AccountingLineHTML
             . '<h5 class="modal-title">'
             . $line->codsubcuenta
             . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+            . '<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . static::iva($i18n, $line, $model)
             . static::recargo($i18n, $line, $model)
             . '</div>'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . static::baseimponible($i18n, $line, $model)
             . static::cifnif($i18n, $line, $model)
             . '</div>'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . static::documento($i18n, $line, $model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
             . $i18n->trans('close')
             . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">'
             . $i18n->trans('accept')
             . '</button>'
             . '</div>'
@@ -438,15 +438,15 @@ class AccountingLineHTML
     {
         if ($model->editable) {
             return '<div class="col-sm-auto pb-1">'
-                . '<button type="button" data-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
+                . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
                 . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button>'
-                . '<button class="btn btn-outline-danger btn-spin-action ml-2 mb-1" type="button" title="' . $i18n->trans('delete') . '"'
+                . '<button class="btn btn-outline-danger btn-spin-action ms-2 mb-1" type="button" title="' . $i18n->trans('delete') . '"'
                 . ' onclick="return accEntryFormAction(\'rm-line\', \'' . $idlinea . '\');">'
                 . '<i class="fas fa-trash-alt"></i></button></div>';
         }
 
         return '<div class="col-sm-auto pb-1">'
-            . '<button type="button" data-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
+            . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-outline-secondary mb-1" title="'
             . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
     }
 

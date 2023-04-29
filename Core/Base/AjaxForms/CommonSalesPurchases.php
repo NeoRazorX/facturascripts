@@ -68,7 +68,7 @@ trait CommonSalesPurchases
         return '<div class="col-sm-auto">'
             . '<div class="form-group">'
             . '<button class="btn btn-block btn-info" type="button" title="' . $i18n->trans('documents-generated')
-            . '" data-toggle="modal" data-target="#childrenModal"><i class="fas fa-forward fa-fw" aria-hidden="true"></i> '
+            . '" data-bs-toggle="modal" data-bs-target="#childrenModal"><i class="fas fa-forward fa-fw" aria-hidden="true"></i> '
             . count($children) . ' </button>'
             . '</div>'
             . '</div>'
@@ -161,7 +161,7 @@ trait CommonSalesPurchases
     protected static function deleteBtn(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         return $model->primaryColumnValue() && $model->editable ?
-            '<button type="button" class="btn btn-danger mb-3" data-toggle="modal" data-target="#deleteDocModal">'
+            '<button type="button" class="btn btn-danger mb-3" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
             . '<i class="fas fa-trash-alt fa-fw"></i> ' . $i18n->trans('delete')
             . '</button>'
             . '<div class="modal fade" id="deleteDocModal" tabindex="-1" aria-hidden="true">'
@@ -169,7 +169,7 @@ trait CommonSalesPurchases
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"></h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+            . '<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
             . '</div>'
@@ -179,7 +179,7 @@ trait CommonSalesPurchases
             . '<p class="mb-0">' . $i18n->trans('are-you-sure') . '</p>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('cancel') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . $i18n->trans('cancel') . '</button>'
             . '<button type="button" class="btn btn-danger" onclick="return ' . $jsName . '(\'delete-doc\', \'0\');">' . $i18n->trans('delete') . '</button>'
             . '</div>'
             . '</div>'
@@ -226,7 +226,7 @@ trait CommonSalesPurchases
         return empty($model->femail) ? '' : '<div class="col-sm-auto">'
             . '<div class="form-group">'
             . '<button class="btn btn-outline-info" type="button" title="' . $i18n->trans('email-sent')
-            . '" data-toggle="modal" data-target="#headerModal"><i class="fas fa-envelope fa-fw" aria-hidden="true"></i> '
+            . '" data-bs-toggle="modal" data-bs-target="#headerModal"><i class="fas fa-envelope fa-fw" aria-hidden="true"></i> '
             . $model->femail . ' </button></div></div>';
     }
 
@@ -322,7 +322,7 @@ trait CommonSalesPurchases
         return '<div class="col-sm-auto">'
             . '<div class="form-group statusButton">'
             . '<div class="dropdown">'
-            . '<button class="' . $btnClass . ' dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+            . '<button class="' . $btnClass . ' dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
             . '<i class="' . static::idestadoIcon($status) . ' fa-fw"></i> ' . $status->nombre
             . '</button>'
             . '<div class="dropdown-menu dropdown-menu-right">' . implode('', $options) . '</div>'
@@ -358,8 +358,8 @@ trait CommonSalesPurchases
             $list .= '<tr>'
                 . '<td><a href="' . $doc->url() . '">' . $i18n->trans($doc->modelClassName()) . ' ' . $doc->codigo . '</a></td>'
                 . '<td>' . $doc->observaciones . '</td>'
-                . '<td class="text-right text-nowrap">' . ToolBox::coins()::format($doc->total) . '</td>'
-                . '<td class="text-right text-nowrap">' . $doc->fecha . ' ' . $doc->hora . '</td>'
+                . '<td class="text-end text-nowrap">' . ToolBox::coins()::format($doc->total) . '</td>'
+                . '<td class="text-end text-nowrap">' . $doc->fecha . ' ' . $doc->hora . '</td>'
                 . '</tr>';
         }
 
@@ -368,7 +368,7 @@ trait CommonSalesPurchases
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"><i class="fas fa-copy fa-fw" aria-hidden="true"></i> ' . $i18n->trans($title) . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="' . $i18n->trans('close') . '">'
+            . '<button type="button" class="close" data-bs-dismiss="modal" aria-label="' . $i18n->trans('close') . '">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
             . '</div>'
@@ -378,8 +378,8 @@ trait CommonSalesPurchases
             . '<tr>'
             . '<th>' . $i18n->trans('document') . '</th>'
             . '<th>' . $i18n->trans('observations') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('total') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('date') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('total') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('date') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $list . '</tbody>'
@@ -427,7 +427,7 @@ trait CommonSalesPurchases
         if ($model->paid()) {
             return '<div class="col-sm-auto">'
                 . '<div class="form-group">'
-                . '<button class="btn btn-outline-success dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">'
+                . '<button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
                 . '<i class="fas fa-check-square fa-fw"></i> ' . $i18n->trans('paid') . '</button>'
                 . '<div class="dropdown-menu"><a class="dropdown-item text-danger" href="#" onclick="return ' . $jsName . '(\'save-paid\', \'0\');">'
                 . '<i class="fas fa-times fa-fw"></i> ' . $i18n->trans('unpaid') . '</a></div>'
@@ -437,7 +437,7 @@ trait CommonSalesPurchases
 
         return '<div class="col-sm-auto">'
             . '<div class="form-group">'
-            . '<button class="btn btn-outline-danger dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">'
+            . '<button class="btn btn-outline-danger dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">'
             . '<i class="fas fa-times fa-fw"></i> ' . $i18n->trans('unpaid') . '</button>'
             . '<div class="dropdown-menu"><a class="dropdown-item text-success" href="#" onclick="return ' . $jsName . '(\'save-paid\', \'1\');">'
             . '<i class="fas fa-check-square fa-fw"></i> ' . $i18n->trans('paid') . '</a></div>'
@@ -470,7 +470,7 @@ trait CommonSalesPurchases
         return '<div class="col-sm-auto">'
             . '<div class="form-group">'
             . '<button class="btn btn-block btn-warning" type="button" title="' . $i18n->trans('previous-documents')
-            . '" data-toggle="modal" data-target="#parentsModal"><i class="fas fa-backward fa-fw" aria-hidden="true"></i> '
+            . '" data-bs-toggle="modal" data-bs-target="#parentsModal"><i class="fas fa-backward fa-fw" aria-hidden="true"></i> '
             . count($parents) . ' </button>'
             . '</div>'
             . '</div>'

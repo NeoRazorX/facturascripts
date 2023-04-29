@@ -15,7 +15,7 @@
                     <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
                     <div class="card shadow mb-4">
                         <div class="card-body">
-                            <div class="form-row">
+                            <div class="row">
                                 {% if fsc.empresa.count() > 1 %}
                                     <div class="col-sm-2">
                                         {{ trans('company') }}
@@ -75,8 +75,8 @@
                                     <th>{{ trans('subaccount') }}</th>
                                     <th>{{ trans('counterpart') }}</th>
                                     <th>{{ trans('concept') }}</th>
-                                    <th class="text-right">{{ trans('debit') }}</th>
-                                    <th class="text-right">{{ trans('credit') }}</th>
+                                    <th class="text-end">{{ trans('debit') }}</th>
+                                    <th class="text-end">{{ trans('credit') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -85,15 +85,15 @@
                                         <td>{{ line.codsubcuenta }}</td>
                                         <td>{{ line.codcontrapartida }}</td>
                                         <td>{{ line.concepto }}</td>
-                                        <td class="text-right">{{ fsc.toolBox().coins().format(line.debe) }}</td>
-                                        <td class="text-right">{{ fsc.toolBox().coins().format(line.haber) }}</td>
+                                        <td class="text-end">{{ fsc.toolBox().coins().format(line.debe) }}</td>
+                                        <td class="text-end">{{ fsc.toolBox().coins().format(line.haber) }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                         <div class="card-footer">
-                            <div class="text-right">
+                            <div class="text-end">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save"></i> {{ trans('save') }}
                                 </button>

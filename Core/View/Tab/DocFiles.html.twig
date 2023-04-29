@@ -16,7 +16,7 @@
                                 <textarea name="observations" class="form-control"
                                           placeholder="{{ trans('observations') }}">{{ docfile.observations | raw }}</textarea>
                             </div>
-                            <div class="form-row align-items-end">
+                            <div class="row align-items-end">
                                 <div class="col">
                                     {% set file = docfile.getFile() %}
                                     <a href="{{ asset(file.url()) }}" class="btn btn-sm btn-outline-primary">
@@ -28,19 +28,19 @@
                                         {% if docfile.nick %}
                                             <i class="fas fa-user"></i> {{ docfile.nick }}
                                         {% endif %}
-                                        <i class="fas fa-calendar-alt ml-2"></i> {{ docfile.creationdate }}
+                                        <i class="fas fa-calendar-alt ms-2"></i> {{ docfile.creationdate }}
                                     </p>
                                 </div>
-                                <div class="col text-right">
+                                <div class="col text-end">
                                     <button type="submit" name="action" value="edit-file"
                                             class="btn btn-sm btn-primary">
                                         <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>
                                     {% if fsc.permissions.allowDelete %}
-                                        <div class="btn-group ml-2">
+                                        <div class="btn-group ms-2">
                                             <div class="dropdown">
                                                 <button class="btn btn-sm btn-danger dropdown-toggle" type="button"
-                                                        data-toggle="dropdown" aria-haspopup="true"
+                                                        data-bs-toggle="dropdown" aria-haspopup="true"
                                                         aria-expanded="false">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
@@ -77,14 +77,14 @@
                                 <textarea name="observations" class="form-control"
                                           placeholder="{{ trans('observations') }}"></textarea>
                             </div>
-                            <div class="form-row align-items-end">
+                            <div class="row align-items-end">
                                 <div class="col">
                                     <input type="file" name="new-file" class="form-control-file" required/>
                                     <p class="text-muted mb-0">
                                         {{ trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}
                                     </p>
                                 </div>
-                                <div class="col text-right">
+                                <div class="col text-end">
                                     <button type="submit" class="btn btn-sm btn-success">
                                         <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ trans('save') }}
                                     </button>

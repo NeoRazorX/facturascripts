@@ -35,8 +35,8 @@
                                     <input type="password" name="fsPassword" class="form-control" maxlength="50"
                                            placeholder="{{ trans('password') }}" required="" autocomplete="off"/>
                                 </div>
-                                <a href="#" class="btn btn-block btn-link" data-toggle="modal"
-                                   data-target="#newPasswordModal">
+                                <a href="#" class="btn btn-block btn-link" data-bs-toggle="modal"
+                                   data-bs-target="#newPasswordModal">
                                     {{ trans('i-forgot-password') }}
                                 </a>
                             </div>
@@ -50,7 +50,7 @@
                                 No dude en consultar la web oficial o las cuentas de facebook, twitter o youtube.
                             </p>
                             <a href="https://facturascripts.com" rel="nofollow" class="btn btn-secondary">
-                                <i class="fas fa-question-circle mr-1"></i> facturascripts.com
+                                <i class="fas fa-question-circle me-1"></i> facturascripts.com
                             </a>
                             <a href="https://www.facebook.com/facturascripts/" rel="nofollow" class="btn btn-primary"
                                title="facebook"> <i class="fab fa-facebook"></i>
@@ -73,10 +73,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="fas fa-user-lock mr-2"></i> {{ trans('new-password') }}
+                            <i class="fas fa-user-lock me-2"></i> {{ trans('new-password') }}
                         </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            
                         </button>
                     </div>
                     <div class="modal-body">

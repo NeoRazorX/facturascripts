@@ -51,9 +51,9 @@
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
                     {% for key, result in fsc.results %}
                         {% set active = (loop.index == 1) ? 'nav-link active' : 'nav-link' %}
-                        <a class="{{ active }}" data-toggle="pill" href="#v-pills-{{ key }}" role="tab"
+                        <a class="{{ active }}" data-bs-toggle="pill" href="#v-pills-{{ key }}" role="tab"
                            aria-controls="v-pills-{{ key }}" aria-expanded="true">
-                            <span class="badge badge-secondary float-right">{{ result.results | length }}</span>
+                            <span class="badge badge-secondary float-end">{{ result.results | length }}</span>
                             <i class="{{ result.icon }} fa-fw"></i>
                             {{ i18n.trans(result.title) }}
                         </a>
@@ -97,7 +97,7 @@
             <tbody>
             {% for line in result.results %}
                 {% set link = line.link ? line.link : '#' %}
-                <tr class="clickableRow" data-href="{{ link }}" data-target="_blank">
+                <tr class="clickableRow" data-bs-href="{{ link }}" data-bs-target="_blank">
                     {% for key, column in result.columns %}
                         {% if key == 'icon' %}
                             <td class="text-center">

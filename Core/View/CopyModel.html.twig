@@ -15,7 +15,7 @@
                     <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
                     <div class="card shadow mb-4">
                         <div class="card-body">
-                            <div class="form-row">
+                            <div class="row">
                                 {% if fsc.model.codcliente %}
                                     <div class="col-sm">
                                         <div class="form-group">
@@ -106,10 +106,10 @@
                                 <tr>
                                     <th>{{ trans('reference') }}</th>
                                     <th>{{ trans('description') }}</th>
-                                    <th class="text-right">{{ trans('quantity') }}</th>
-                                    <th class="text-right">{{ trans('price') }}</th>
-                                    <th class="text-right">{{ trans('dto') }}</th>
-                                    <th class="text-right">{{ trans('dto-2') }}</th>
+                                    <th class="text-end">{{ trans('quantity') }}</th>
+                                    <th class="text-end">{{ trans('price') }}</th>
+                                    <th class="text-end">{{ trans('dto') }}</th>
+                                    <th class="text-end">{{ trans('dto-2') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -117,14 +117,14 @@
                                     <tr>
                                         <td>{{ line.referencia }}</td>
                                         <td>{{ line.descripcion | raw | nl2br }}</td>
-                                        <td class="text-right">{{ line.cantidad }}</td>
-                                        <td class="text-right">
+                                        <td class="text-end">{{ line.cantidad }}</td>
+                                        <td class="text-end">
                                             {{ fsc.toolBox().numbers().format(line.pvpunitario) }}
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             {{ fsc.toolBox().numbers().format(line.dtopor) }}%
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             {{ fsc.toolBox().numbers().format(line.dtopor2) }}%
                                         </td>
                                     </tr>
@@ -133,7 +133,7 @@
                             </table>
                         </div>
                         <div class="card-body">
-                            <div class="form-row">
+                            <div class="row">
                                 <div class="col-sm">
                                     <div class="form-group">
                                         {{ trans('warehouse') }}
@@ -224,7 +224,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <div class="text-right">
+                            <div class="text-end">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save"></i> {{ trans('save') }}
                                 </button>

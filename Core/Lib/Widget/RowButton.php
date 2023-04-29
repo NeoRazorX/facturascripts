@@ -77,7 +77,7 @@ class RowButton extends VisualItem
             $this->icon = 'far fa-question-circle';
         }
 
-        $cssClass = $small ? 'btn mr-1 ' : 'btn btn-sm mr-1 ';
+        $cssClass = $small ? 'btn me-1 ' : 'btn btn-sm me-1 ';
         $cssClass .= empty($this->color) ? 'btn-light' : $this->colorToClass($this->color, 'btn-');
         $divID = empty($this->id) ? '' : ' id="' . $this->id . '"';
         $title = empty($this->title) ? $this->label : $this->title;
@@ -106,7 +106,7 @@ class RowButton extends VisualItem
 
             case 'modal':
                 $modal = 'modal' . $this->action;
-                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-toggle="modal" data-target="#'
+                return '<button type="button"' . $divID . ' class="' . $cssClass . '" data-bs-toggle="modal" data-bs-target="#'
                     . $modal . '" title="' . $title . '" onclick="setModalParentForm(\'' . $modal . '\', this.form)">'
                     . $icon . $label . '</button>';
 

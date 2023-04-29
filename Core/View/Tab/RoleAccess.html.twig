@@ -18,7 +18,7 @@
     <input type="hidden" name="activetab" value="{{ fsc.getCurrentView().getViewName() }}"/>
     <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
     <div class="card shadow">
-        <div class="card-body text-right">
+        <div class="card-body text-end">
             <button type="submit" class="btn btn-sm btn-primary">
                 <i class="fas fa-save fa-fw"></i> {{ i18n.trans('save') }}
             </button>
@@ -87,7 +87,7 @@
                         <td>
                             {{ rule.menu }}
                             {% if 'List' in pageName %}
-                                <span class="badge badge-info ml-1">{{ i18n.trans('list') }}</span>
+                                <span class="badge badge-info ms-1">{{ i18n.trans('list') }}</span>
                             {% endif %}
                         </td>
                         <td class="text-center">
@@ -192,7 +192,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="card-body text-right">
+        <div class="card-body text-end">
             <button type="submit" class="btn btn-sm btn-primary">
                 <i class="fas fa-save fa-fw"></i> {{ i18n.trans('save') }}
             </button>

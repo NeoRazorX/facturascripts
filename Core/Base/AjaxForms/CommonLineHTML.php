@@ -239,7 +239,7 @@ trait CommonLineHTML
     {
         if ($model->editable) {
             return '<div class="col-auto order-9">'
-                . '<button type="button" data-toggle="modal" data-target="#lineModal-' . $idlinea . '" class="btn btn-sm btn-light mr-2" title="'
+                . '<button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-' . $idlinea . '" class="btn btn-sm btn-light me-2" title="'
                 . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button>'
                 . '<button class="btn btn-sm btn-danger btn-spin-action" type="button" title="' . $i18n->trans('delete') . '"'
                 . ' onclick="return ' . $jsName . '(\'rm-line\', \'' . $idlinea . '\');">'
@@ -247,7 +247,7 @@ trait CommonLineHTML
                 . '</div>';
         }
 
-        return '<div class="col-auto order-9"><button type="button" data-toggle="modal" data-target="#lineModal-'
+        return '<div class="col-auto order-9"><button type="button" data-bs-toggle="modal" data-bs-target="#lineModal-'
             . $idlinea . '" class="btn btn-sm btn-outline-secondary" title="'
             . $i18n->trans('more') . '"><i class="fas fa-ellipsis-h"></i></button></div>';
     }
@@ -275,7 +275,7 @@ trait CommonLineHTML
 
     private static function titleCantidad(Translator $i18n): string
     {
-        return '<div class="col-lg-1 text-right order-3">' . $i18n->trans('quantity') . '</div>';
+        return '<div class="col-lg-1 text-end order-3">' . $i18n->trans('quantity') . '</div>';
     }
 
     private static function titleCodimpuesto(Translator $i18n): string
@@ -295,7 +295,7 @@ trait CommonLineHTML
 
     private static function titlePrecio(Translator $i18n): string
     {
-        return '<div class="col-lg-1 text-right order-4">' . $i18n->trans('price') . '</div>';
+        return '<div class="col-lg-1 text-end order-4">' . $i18n->trans('price') . '</div>';
     }
 
     private static function titleReferencia(Translator $i18n): string
@@ -313,7 +313,7 @@ trait CommonLineHTML
             $cssNeto = '';
         }
 
-        return '<div class="col-lg-1 text-right order-7 columSubtotal ' . $cssSubtotal . '">' . $i18n->trans('subtotal') . '</div>'
-            . '<div class="col-lg-1 text-right order-7 columNeto ' . $cssNeto . '">' . $i18n->trans('net') . '</div>';
+        return '<div class="col-lg-1 text-end order-7 columSubtotal ' . $cssSubtotal . '">' . $i18n->trans('subtotal') . '</div>'
+            . '<div class="col-lg-1 text-end order-7 columNeto ' . $cssNeto . '">' . $i18n->trans('net') . '</div>';
     }
 }

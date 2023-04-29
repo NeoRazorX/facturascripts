@@ -153,7 +153,7 @@ class SalesHeaderHTML
     {
         $i18n = new Translator();
         return '<div class="container-fluid">'
-            . '<div class="form-row align-items-end">'
+            . '<div class="row align-items-end">'
             . self::renderField($i18n, $model, 'codcliente')
             . self::renderField($i18n, $model, 'codalmacen')
             . self::renderField($i18n, $model, 'codserie')
@@ -163,7 +163,7 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'finoferta')
             . self::renderField($i18n, $model, 'total')
             . '</div>'
-            . '<div class="form-row align-items-end">'
+            . '<div class="row align-items-end">'
             . self::renderField($i18n, $model, '_detail')
             . self::renderField($i18n, $model, '_parents')
             . self::renderField($i18n, $model, '_children')
@@ -307,7 +307,7 @@ class SalesHeaderHTML
         $css = $new ? 'col-sm-auto' : 'col-sm';
         return '<div class="' . $css . '">'
             . '<div class="form-group">'
-            . '<button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#headerModal">'
+            . '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#headerModal">'
             . '<i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . ' </button>'
             . '</div>'
             . '</div>'
@@ -321,12 +321,12 @@ class SalesHeaderHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"><i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
+            . '<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . self::renderField($i18n, $model, 'nombrecliente')
             . self::renderField($i18n, $model, 'cifnif')
             . self::renderField($i18n, $model, 'idcontactofact')
@@ -350,8 +350,8 @@ class SalesHeaderHTML
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('close') . '</button>'
-            . '<button type="button" class="btn btn-primary" data-dismiss="modal">' . $i18n->trans('accept') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . $i18n->trans('close') . '</button>'
+            . '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' . $i18n->trans('accept') . '</button>'
             . '</div>'
             . '</div>'
             . '</div>'

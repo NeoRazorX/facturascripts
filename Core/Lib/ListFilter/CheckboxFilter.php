@@ -76,7 +76,7 @@ class CheckboxFilter extends BaseFilter
         return '<div class="col-sm-auto">'
             . '<div class="form-group">'
             . '<div class="form-check mb-2 mb-sm-0">'
-            . '<label class="form-check-label mr-3">'
+            . '<label class="form-check-label me-3">'
             . '<input class="form-check-input" type="checkbox" name="' . $this->name() . '" value="TRUE"' . $extra . $this->onChange() . $this->readonly() . '/>'
             . static::$i18n->trans($this->label)
             . '</label>'

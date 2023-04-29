@@ -35,7 +35,7 @@
                     <i class="fas fa-redo" aria-hidden="true"></i>
                 </a>
             </div>
-            <div class="col text-right">
+            <div class="col text-end">
                 <h1 class="h4">
                     {{ fsc.title }} <i class="{{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
                 </h1>
@@ -95,7 +95,7 @@
                                     <th>{{ i18n.trans('readonly') }}</th>
                                     <th width="150">{{ i18n.trans('decimals') }}</th>
                                     <th>{{ i18n.trans('width') }}</th>
-                                    <th class="text-right" width="130">{{ i18n.trans('sort') }}</th>
+                                    <th class="text-end" width="130">{{ i18n.trans('sort') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -118,7 +118,7 @@
                                         </button>
                                     </div>
                                 {% endif %}
-                                <div class="col text-right">
+                                <div class="col text-end">
                                     <button class="btn btn-sm btn btn-secondary" type="reset">
                                         <i class="fas fa-undo fa-fw" aria-hidden="true"></i> {{ i18n.trans('undo') }}
                                     </button>
@@ -212,13 +212,13 @@
                 {}) }}
         </td>
         <td title="{{ i18n.trans('sort') }}">
-            <input type="number" name="{{ col.name }}-order" value="{{ col.order }}" class="form-control text-right"/>
+            <input type="number" name="{{ col.name }}-order" value="{{ col.order }}" class="form-control text-end"/>
         </td>
     </tr>
 {% endmacro %}
 
 {% macro editGroupColumnDisplay(col, i18n) %}
-    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <div class="btn-group btn-group-toggle" data-bs-toggle="buttons">
         {% if col.display == 'left' %}
             <label class="btn btn-outline-secondary active" title="{{ i18n.trans('left') }}">
                 <input type="radio" name="{{ col.name }}-display" value="left" checked="">

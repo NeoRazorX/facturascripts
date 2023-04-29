@@ -48,8 +48,8 @@
         <img src="Core/Assets/Images/logo.png" width="30" height="30" class="align-top" alt="FacturaScripts"/>
         FacturaScripts {{ version }}
     </a>
-    <ul class="nav navbar-nav mr-auto"></ul>
-    <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+    <ul class="nav navbar-nav me-auto"></ul>
+    <ul class="navbar-nav flex-row ms-md-auto d-none d-md-flex">
         <li class="nav-item">
             <a class="nav-link" href="?phpinfo=TRUE">
                 <i class="fas fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
@@ -82,12 +82,12 @@
                     <ul class="nav nav-tabs card-header-tabs" role="tablist">
                         <li role="presentation" class="nav-item">
                             <a class="nav-link active" href="#preferencias" aria-controls="preferencias" role="tab"
-                               data-toggle="tab">
+                               data-bs-toggle="tab">
                                 <i class="fas fa-cogs" aria-hidden="true"></i>&nbsp; {{ trans('preferences') }}
                             </a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
+                            <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab" data-bs-toggle="tab">
                                 <i class="far fa-file-alt"></i>&nbsp; {{ trans('license') }}
                             </a>
                         </li>
@@ -223,7 +223,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="col-sm-6 text-right">
+                            <div class="col-sm-6 text-end">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-check" aria-hidden="true"></i> {{ trans('accept') }}
                                 </button>

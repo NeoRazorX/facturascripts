@@ -56,7 +56,7 @@
                 <form method="post" class="form" id="formWizard">
                     <input type="hidden" name="action" value="step1"/>
                     {{ formToken() }}
-                    <div class="form-row">
+                    <div class="row">
                         <div class="col-sm-3">
                             <div class="form-group">
                                 {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombre, 'text',
@@ -152,7 +152,7 @@
                         </div>
                     </div>
                     {% if fsc.user.verifyPassword('admin') %}
-                        <div class="form-row">
+                        <div class="row">
                             <div class="col mt-3">
                                 <h3 class="h4 text-info">
                                     <i class="fas fa-key"
@@ -160,7 +160,7 @@
                                 </h3>
                             </div>
                         </div>
-                        <div class="form-row">
+                        <div class="row">
                             <div class="col-sm-4">
                                 {{ forms.simpleInput('user', 'user', fsc.user.nick, 'text', i18n.trans('user'), 'fas fa-user', {'readonly': ''}) }}
                             </div>
@@ -178,7 +178,7 @@
                             </div>
                         </div>
                     {% endif %}
-                    <div class="text-right">
+                    <div class="text-end">
                         <button type="submit" class="btn btn-primary" id="btnWizard">
                             {{ i18n.trans('continue') }}
                         </button>

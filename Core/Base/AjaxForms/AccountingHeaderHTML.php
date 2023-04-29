@@ -52,7 +52,7 @@ class AccountingHeaderHTML
     {
         $i18n = new Translator();
         return '<div class="container-fluid">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . static::idempresa($i18n, $model)
             . static::fecha($i18n, $model)
             . static::concepto($i18n, $model)

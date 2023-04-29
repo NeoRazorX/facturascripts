@@ -23,8 +23,8 @@
     {% set messages = log.read('master', levels) | merge(log.read('database', levels)) %}
     {% if messages | length > 0 %}
         <div class="alert alert-{{ style }}" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                
             </button>
             {% for item in messages %}
                 <div>{{ item.message | raw }}</div>
@@ -38,8 +38,8 @@
     {% for item in log.read() %}
         {% if item.level in levels and item.channel == 'master' %}
             <div class="alert alert-{{ style }}" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                    
                 </button>
                 <div>{{ item.message | raw }}</div>
             </div>
@@ -49,5 +49,5 @@
 
 {# Muestra los parámetros necesarios para el popover #}
 {% macro popoverTitle(msg, position = 'auto') %}
-    {% if msg | length > 0 %}data-toggle="popover" data-placement="{{ position }}" data-trigger="hover" data-content="{{ msg }}"{% endif %}
+    {% if msg | length > 0 %}data-bs-toggle="popover" data-bs-placement="{{ position }}" data-trigger="hover" data-content="{{ msg }}"{% endif %}
 {% endmacro %}

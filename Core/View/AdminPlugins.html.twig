@@ -41,8 +41,8 @@
                     {% endif %}
                 </div>
                 {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
-                    <button class="btn btn-sm btn-success" type="button" data-toggle="modal"
-                            data-target="#modalAddPlugin">
+                    <button class="btn btn-sm btn-success" type="button" data-bs-toggle="modal"
+                            data-bs-target="#modalAddPlugin">
                         <i class="fas fa-plus fa-fw" aria-hidden="true"></i>
                         <span class="d-none d-sm-inline-block">{{ trans('add') }}</span>
                     </button>
@@ -55,7 +55,7 @@
                     </a>
                 </div>
             </div>
-            <div class="col-sm text-right">
+            <div class="col-sm text-end">
                 <h1 class="h3">
                     {{ trans(fsc.getPageData()['title']) | capitalize }}
                     <i class="{{ fsc.getPageData()['icon'] }}" aria-hidden="true"></i>
@@ -65,7 +65,7 @@
     </div>
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="installedPluginsTab" data-toggle="tab" href="#installed" role="tab">
+            <a class="nav-link active" id="installedPluginsTab" data-bs-toggle="tab" href="#installed" role="tab">
                 <i class="fas fa-box-open fa-fw" aria-hidden="true"></i> {{ trans('installed-plugins') }}
                 {% if fsc.pluginList | length > 0 %}
                     <span class="badge badge-secondary">{{ fsc.pluginList | length }}</span>
@@ -74,7 +74,7 @@
         </li>
         {% if not constant('FS_DISABLE_ADD_PLUGINS') %}
             <li class="nav-item">
-                <a class="nav-link" id="allPluginsTab" data-toggle="tab" href="#all" role="tab">
+                <a class="nav-link" id="allPluginsTab" data-bs-toggle="tab" href="#all" role="tab">
                     <i class="fas fa-boxes fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">{{ trans('more-plugins') }}</span>
                     {% if fsc.remotePluginList | length > 0 %}
@@ -109,10 +109,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">{{ trans('add-new-plugin') }}</h5>
-                            <button type="button" class="close" data-dismiss="modal"
-                                    aria-label="{{ trans('close') }}">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                            <button type="button" class="btn-close" aria-label="Close"></button>
                         </div>
                         {% if fsc.getMaxFileUpload() < 99 %}
                             <div class="alert alert-warning mb-0">
@@ -129,9 +126,9 @@
                                     </small>
                                 {% endif %}
                             </div>
-                            <div class="text-right mt-5">
+                            <div class="text-end mt-5">
                                 <button type="button" class="btn btn-secondary"
-                                        data-dismiss="modal">{{ trans('cancel') }}</button>
+                                        data-bs-dismiss="modal">{{ trans('cancel') }}</button>
                                 <button type="submit" class="btn btn-primary">{{ trans('continue') }}</button>
                             </div>
                         </div>
@@ -225,10 +222,10 @@
             <tbody>
             {% for plugin in fsc.remotePluginList %}
                 {% set extraClass = plugin.health > 2 ? 'table-success' : plugin.health == 0 ? 'table-danger' : 'table-warning' %}
-                <tr class="clickableRow {{ extraClass }}" data-href="{{ plugin.url }}" data-target="_blank">
+                <tr class="clickableRow {{ extraClass }}" data-bs-href="{{ plugin.url }}" data-bs-target="_blank">
                     <td>
                         <div class="h6">{{ plugin.name }}</div>
-                        <span class="mr-1 text-secondary" title="{{ trans('health') }}">
+                        <span class="me-1 text-secondary" title="{{ trans('health') }}">
                             {{ _self.healthStatus(plugin.health) }}
                         </span>
                         v{{ plugin.version }}
@@ -251,9 +248,9 @@
             <thead>
             <tr>
                 <th>{{ trans('name') }}</th>
-                <th class="text-right">{{ trans('version') }}</th>
+                <th class="text-end">{{ trans('version') }}</th>
                 <th>{{ trans('description') }}</th>
-                <th class="text-right pr-3">{{ trans('actions') }}</th>
+                <th class="text-end pe-3">{{ trans('actions') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -266,7 +263,7 @@
                 {% endif %}
                 <tr class="{{ trClass }}">
                     <td>{{ plugin.name }}</td>
-                    <td class="text-right">
+                    <td class="text-end">
                         {% if plugin.version == 0 %}
                             <span class="text-danger">v{{ plugin.version }}</span>
                         {% elseif plugin.version < 1 %}
@@ -278,14 +275,14 @@
                     <td>
                         {{ plugin.description | nl2br }}
                         {% if plugin.forja('url', '') %}
-                            <a href="{{ plugin.forja('url', '') }}" target="_blank" class="ml-2">
+                            <a href="{{ plugin.forja('url', '') }}" target="_blank" class="ms-2">
                                 {{ trans('more') }} <i class="fas fa-external-link-alt"></i>
                             </a>
                         {% endif %}
                     </td>
-                    <td class="text-right text-nowrap">
+                    <td class="text-end text-nowrap">
                         {% if plugin.hasUpdate() %}
-                            <a href="Updater" class="btn btn-sm btn-info mr-1" title="{{ trans('updater') }}">
+                            <a href="Updater" class="btn btn-sm btn-info me-1" title="{{ trans('updater') }}">
                                 <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
                             </a>
                         {% endif %}
@@ -299,7 +296,7 @@
                             <small>{{ trans('plugin-order', {'%num%': plugin.order}) }}</small>
                         {% elseif plugin.compatible %}
                             {% if not constant('FS_DISABLE_RM_PLUGINS') %}
-                                <a class="btn btn-sm btn-danger mr-1 btn-spin-action" href="#"
+                                <a class="btn btn-sm btn-danger me-1 btn-spin-action" href="#"
                                    title="{{ trans('delete') }}" onclick="deletePlugin('{{ plugin.name }}');">
                                     <i class="fas fa-trash-alt" aria-hidden="true"></i>
                                 </a>

@@ -23,7 +23,7 @@
                 <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
                 <div class="card border-success shadow mb-2">
                     <div class="card-body p-2">
-                        <button class="btn btn-sm btn-outline-success" type="button" data-toggle="collapse" data-target="#NewFileCollapse" aria-expanded="false">
+                        <button class="btn btn-sm btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#NewFileCollapse" aria-expanded="false">
                             <i class="fas fa-plus-square fa-fw" aria-hidden="true"></i>
                             {{ i18n.trans('add') }}
                         </button>
@@ -33,12 +33,12 @@
                     <div class="collapse" id="NewFileCollapse">
                         <div class="card-body border-top">
                             {{ _self.inputTextArea('', i18n) }}
-                            <div class="form-row align-items-end">
+                            <div class="row align-items-end">
                                 <div class="col">
                                     <input type="file" name="new-file" class="form-control-file" required="" />
                                     <p class="text-muted mb-0">{{ i18n.trans('help-server-accepts-filesize', {'%size%': currentView.model.getMaxFileUpload()}) }}</p>
                                 </div>
-                                <div class="col text-right">
+                                <div class="col text-end">
                                     <button type="submit" class="btn btn-sm btn-success">
                                         <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
                                     </button>
@@ -64,11 +64,11 @@
                     <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
                     <div class="card shadow mb-3">
                         <div class="card-body">
-                            <div class="form-row">
+                            <div class="row">
                                 <div class="col-md-9">
                                     <h5 class="card-title"><i class="far fa-file-image mb-3"></i> &nbsp;{{ file.filename }}</h5>
                                     {{ _self.inputTextArea(docfile.observations, i18n) }}
-                                    <div class="form-row">
+                                    <div class="row">
                                         <div class="col">
                                             {{ _self.buttonDelete(formName, i18n) }}
                                         </div>
@@ -78,7 +78,7 @@
                                                 <i class="fas fa-calendar-alt"></i> {{ docfile.creationdate }}
                                             </small>
                                         </div>
-                                        <div class="col text-right">
+                                        <div class="col text-end">
                                             <a class="btn btn-sm btn-outline-info" target="_blank" href="{{ asset(urlDownload) }}">
                                                 <i class="fas fa-cloud-download-alt"></i>
                                                 <span class="d-none d-sm-inline-block">{{ i18n.trans('download') }}</span>

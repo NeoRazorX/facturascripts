@@ -82,14 +82,14 @@ class PurchasesFooterHTML
 
         $i18n = new Translator();
         return '<div class="container-fluid mt-3">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . self::renderField($i18n, $model, '_productBtn')
             . self::renderField($i18n, $model, '_newLineBtn')
             . self::renderField($i18n, $model, '_sortableBtn')
             . self::renderField($i18n, $model, '_fastLineInput')
             . self::renderField($i18n, $model, '_subtotalNetoBtn')
             . '</div>'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . self::renderField($i18n, $model, 'observaciones')
             . self::renderNewFields($i18n, $model)
             . self::renderField($i18n, $model, 'netosindto')
@@ -101,11 +101,11 @@ class PurchasesFooterHTML
             . self::renderField($i18n, $model, 'totalirpf')
             . self::renderField($i18n, $model, 'total')
             . '</div>'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-auto">'
             . self::renderField($i18n, $model, '_deleteBtn')
             . '</div>'
-            . '<div class="col text-right">'
+            . '<div class="col text-end">'
             . self::renderField($i18n, $model, '_saveBtn')
             . '</div>'
             . '</div>'
