@@ -22,13 +22,11 @@
 {% macro message(log, levels, style) %}
     {% set messages = log.read('master', levels) | merge(log.read('database', levels)) %}
     {% if messages | length > 0 %}
-        <div class="alert alert-{{ style }}" role="alert">
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                
-            </button>
+        <div class="alert alert-{{ style }} alert-dismissible fade show" role="alert">
             {% for item in messages %}
                 <div>{{ item.message | raw }}</div>
             {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {% endif %}
 {% endmacro %}
@@ -37,11 +35,9 @@
 {% macro messageCompat(log, levels, style) %}
     {% for item in log.read() %}
         {% if item.level in levels and item.channel == 'master' %}
-            <div class="alert alert-{{ style }}" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                    
-                </button>
+            <div class="alert alert-{{ style }} alert-dismissible fade show" role="alert">
                 <div>{{ item.message | raw }}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endif %}
     {% endfor %}
