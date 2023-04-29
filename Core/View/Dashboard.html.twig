@@ -129,7 +129,7 @@
                     <ul class="mb-1">
                         {% for link, label in fsc.createLinks %}
                             <li>
-                                <a href="{{ link }}">{{ trans(label) }}</a>
+                                <a class="text-decoration-none" href="{{ link }}">{{ trans(label) }}</a>
                             </li>
                         {% endfor %}
                     </ul>
@@ -156,25 +156,25 @@
                     </h2>
                     <ul class="mb-1">
                         <li>
-                            <a href="https://facturascripts.com/publicaciones/configuracion-15" rel="nofollow"
+                            <a class="text-decoration-none" href="https://facturascripts.com/publicaciones/configuracion-15" rel="nofollow"
                                target="_blank">Configuración</a>
                         </li>
                         <li>
-                            <a href="https://facturascripts.com/publicaciones/primeros-pasos-303" rel="nofollow"
+                            <a class="text-decoration-none" href="https://facturascripts.com/publicaciones/primeros-pasos-303" rel="nofollow"
                                target="_blank">Primeros pasos</a>
                         </li>
                         <li>
-                            <a href="https://facturascripts.com/publicaciones/problemas-frecuentes-469" rel="nofollow"
+                            <a class="text-decoration-none" href="https://facturascripts.com/publicaciones/problemas-frecuentes-469" rel="nofollow"
                                target="_blank">Problemas frecuentes</a>
                         </li>
                         <li>
-                            <a href="https://forms.gle/WhGgWWB6EbWjBNna6" rel="nofollow"
+                            <a class="text-decoration-none" href="https://forms.gle/WhGgWWB6EbWjBNna6" rel="nofollow"
                                target="_blank">Encuesta de uso 2022/23
                                 <i class="fas fa-clipboard-check"></i>
                             </a>
                         </li>
                         <li>
-                            <a href="https://facturascripts.com/contacto" rel="nofollow" target="_blank">Soporte
+                            <a class="text-decoration-none" href="https://facturascripts.com/contacto" rel="nofollow" target="_blank">Soporte
                                 <i class="far fa-comment-dots"></i></a>
                         </li>
                     </ul>
@@ -244,7 +244,7 @@
 {% macro sectionReceipts(fsc) %}
     <div class="card shadow mb-3">
         <div class="p-3">
-            <span class="float-end badge badge-danger">{{ trans('unpaid') }}</span>
+            <span class="float-end badge bg-danger">{{ trans('unpaid') }}</span>
             <h2 class="h4 mb-0">
                 <i class="fas fa-dollar-sign fa-fw"></i>
                 {{ trans('receipts') }}

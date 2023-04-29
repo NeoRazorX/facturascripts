@@ -68,7 +68,7 @@
             <a class="nav-link active" id="installedPluginsTab" data-bs-toggle="tab" href="#installed" role="tab">
                 <i class="fas fa-box-open fa-fw" aria-hidden="true"></i> {{ trans('installed-plugins') }}
                 {% if fsc.pluginList | length > 0 %}
-                    <span class="badge badge-secondary">{{ fsc.pluginList | length }}</span>
+                    <span class="badge bg-secondary">{{ fsc.pluginList | length }}</span>
                 {% endif %}
             </a>
         </li>
@@ -78,7 +78,7 @@
                     <i class="fas fa-boxes fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-sm-inline-block">{{ trans('more-plugins') }}</span>
                     {% if fsc.remotePluginList | length > 0 %}
-                        <span class="badge badge-secondary">{{ fsc.remotePluginList | length }}</span>
+                        <span class="badge bg-secondary">{{ fsc.remotePluginList | length }}</span>
                     {% endif %}
                 </a>
             </li>

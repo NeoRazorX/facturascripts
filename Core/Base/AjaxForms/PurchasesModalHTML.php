@@ -90,7 +90,7 @@ class PurchasesModalHTML
             $cost = $row['neto'] ?? $row['coste'];
             $label = empty($row['refproveedor']) || $row['refproveedor'] === $row['referencia'] ?
                 '<b>' . $row['referencia'] . '</b>' :
-                '<b>' . $row['referencia'] . '</b> <span class="badge badge-light">' . $row['refproveedor'] . '</span>';
+                '<b>' . $row['referencia'] . '</b> <span class="badge bg-light">' . $row['refproveedor'] . '</span>';
             $description = ToolBox::utils()->trueTextBreak($row['descripcion'], 120)
                 . static::idatributovalor($row['idatributovalor1'])
                 . static::idatributovalor($row['idatributovalor2'])

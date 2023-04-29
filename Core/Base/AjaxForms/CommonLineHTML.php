@@ -181,11 +181,11 @@ trait CommonLineHTML
         return '<div class="col col-lg-1 order-7 columSubtotal ' . $cssSubtotal . '">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
             . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($subtotal, FS_NF0, '.', '')
-            . '" class="form-control form-control-sm text-lg-right border-0"' . $onclickSubtotal . ' readonly/></div>'
+            . '" class="form-control form-control-sm text-lg-end border-0"' . $onclickSubtotal . ' readonly/></div>'
             . '<div class="col col-lg-1 order-7 columNeto ' . $cssNeto . '">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('net') . '</div>'
             . '<input type="number" name="lineneto_' . $idlinea . '"  value="' . number_format($line->pvptotal, FS_NF0, '.', '')
-            . '" class="form-control form-control-sm text-lg-right border-0"' . $onclickNeto . ' readonly/></div>';
+            . '" class="form-control form-control-sm text-lg-end border-0"' . $onclickNeto . ' readonly/></div>';
     }
 
     private static function recargo(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string

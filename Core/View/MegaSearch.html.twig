@@ -53,7 +53,7 @@
                         {% set active = (loop.index == 1) ? 'nav-link active' : 'nav-link' %}
                         <a class="{{ active }}" data-bs-toggle="pill" href="#v-pills-{{ key }}" role="tab"
                            aria-controls="v-pills-{{ key }}" aria-expanded="true">
-                            <span class="badge badge-secondary float-end">{{ result.results | length }}</span>
+                            <span class="badge bg-secondary float-end">{{ result.results | length }}</span>
                             <i class="{{ result.icon }} fa-fw"></i>
                             {{ i18n.trans(result.title) }}
                         </a>

@@ -152,7 +152,7 @@
                 {% for model in currentView.cursor %}
                     {% set trClass = currentView.settings.clickable ? 'clickableListRow ' ~ rowStatus.trClass(model) : rowStatus.trClass(model) %}
                     {% set trTitle = rowStatus.trTitle(model) %}
-                    <tr class="{{ trClass }}" title="{{ trTitle }}" data-bs-href="{{ asset(model.url()) }}">
+                    <tr class="{{ trClass }}" title="{{ trTitle }}" data-href="{{ asset(model.url()) }}">
                         {% if currentView.settings.checkBoxes or currentView.settings.clickable %}
                             <td class="cancelClickable p-0 text-center align-middle">
                                 {% if currentView.settings.checkBoxes %}
