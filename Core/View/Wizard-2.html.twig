@@ -57,21 +57,21 @@
                     {{ formToken() }}
                     <div class="row">
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleSelect('regimeniva', 'regimeniva', fsc.empresa.regimeniva,
                                     fsc.getRegimenIva(), i18n.trans('vat-regime')) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleSelect('codimpuesto', 'codimpuesto', codimpuesto,
                                     fsc.getSelectValues('Impuesto', true), i18n.trans('default-tax')) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label class="mb-1">{{ i18n.trans('cost-price-policy') }}</label>
-                                <select name="costpricepolicy" class="form-control">
+                                <select name="costpricepolicy" class="form-select">
                                     <option value="">------</option>
                                     <option value="last-price">{{ i18n.trans('last-purchase-price') }}</option>
                                     <option value="average-price">{{ i18n.trans('average-purchase-price') }}</option>
@@ -82,14 +82,14 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-auto">
-                            <div class="form-group form-check pe-3">
+                            <div class="mb-3 form-check pe-3">
                                 <input type="checkbox" name="defaultplan" value="1" id="checkboxPlan"
                                        class="form-check-input" checked=""/>
                                 <label for="checkboxPlan">{{ i18n.trans('load-def-acc-plan') }}</label>
                             </div>
                         </div>
                         <div class="col-sm-auto">
-                            <div class="form-group form-check pe-3">
+                            <div class="mb-3 form-check pe-3">
                                 {% if appSettings.get('default', 'ventasinstock') %}
                                     <input type="checkbox" name="ventasinstock" value="1" id="cbNoStock"
                                            class="form-check-input" checked=""/>
@@ -101,7 +101,7 @@
                             </div>
                         </div>
                         <div class="col-sm-auto">
-                            <div class="form-group form-check">
+                            <div class="mb-3 form-check">
                                 {% if appSettings.get('default', 'updatesupplierprices') %}
                                     <input type="checkbox" name="updatesupplierprices" value="1"
                                            id="cbUpdateSupplierPrices" class="form-check-input" checked=""/>

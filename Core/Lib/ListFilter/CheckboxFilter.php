@@ -74,7 +74,7 @@ class CheckboxFilter extends BaseFilter
     {
         $extra = is_null($this->value) ? '' : ' checked=""';
         return '<div class="col-sm-auto">'
-            . '<div class="form-group">'
+            . '<div class="mb-3">'
             . '<div class="form-check mb-2 mb-sm-0">'
             . '<label class="form-check-label me-3">'
             . '<input class="form-check-input" type="checkbox" name="' . $this->name() . '" value="TRUE"' . $extra . $this->onChange() . $this->readonly() . '/>'

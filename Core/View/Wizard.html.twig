@@ -58,15 +58,15 @@
                     {{ formToken() }}
                     <div class="row">
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('empresa', 'empresa', fsc.empresa.nombre, 'text',
                                     i18n.trans('company-name'), '', {'autofocus': '', 'maxlength': '100', 'required': ''}) }}
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label class="mb-1">{{ i18n.trans('type') }}</label>
-                                <select name="personafisica" class="form-control">
+                                <select name="personafisica" class="form-select">
                                     {% if fsc.empresa.personafisica %}
                                         <option value="1" selected>{{ i18n.trans('is-person') }}</option>
                                         <option value="0">{{ i18n.trans('company') }}</option>
@@ -78,49 +78,49 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleSelect('tipoidfiscal', 'tipoidfiscal', fsc.empresa.tipoidfiscal,
                                     fsc.getSelectValues('IdentificadorFiscal', true), i18n.trans('fiscal-id')) }}
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('cifnif', 'cifnif', fsc.empresa.cifnif, 'text', i18n.trans('fiscal-number'),
                                     '', {'maxlength': '30'}) }}
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('direccion', 'direccion', fsc.empresa.direccion, 'text', i18n.trans('address'),
                                     'fas fa-map-marked', {'maxlength': '100'}) }}
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('apartado', 'apartado', fsc.empresa.apartado, 'text', i18n.trans('post-office-box'),
                                     NULL, {'maxlength': '10', 'placeholder': i18n.trans('optional')}) }}
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('codpostal', 'codpostal', fsc.empresa.codpostal, 'text', i18n.trans('zip-code'),
                                     NULL, {'maxlength': '10'}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('ciudad', 'ciudad', ciudad, 'text', i18n.trans('city'), '',
                                     {'maxlength': '100'}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('provincia', 'provincia', provincia, 'text', i18n.trans('province'),
                                     '', {'maxlength': '100'}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {% if constant('FS_INITIAL_CODPAIS') is defined %}
                                     {{ forms.simpleSelect('codpais', 'codpais', codpais, fsc.getSelectValues('Pais'),
                                         i18n.trans('country'), 'fas fa-globe-americas', {'disabled': ''}) }}
@@ -132,20 +132,20 @@
                         </div>
                         {% if fsc.empresa.email is empty or fsc.user.email is empty %}
                             <div class="col-sm-4">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ forms.simpleInput('email', 'email', fsc.empresa.email, 'email', i18n.trans('email'),
                                         'fas fa-envelope', {'required': '', 'class': 'form-control'}) }}
                                 </div>
                             </div>
                         {% endif %}
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('telefono1', 'telefono1', fsc.empresa.telefono1, 'text', i18n.trans('phone'),
                                     'fas fa-phone', {'maxlength': '30'}) }}
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ forms.simpleInput('telefono2', 'telefono2', fsc.empresa.telefono2, 'text', i18n.trans('phone2'),
                                     'fas fa-mobile-alt', {'maxlength': '30'}) }}
                             </div>
@@ -165,13 +165,13 @@
                                 {{ forms.simpleInput('user', 'user', fsc.user.nick, 'text', i18n.trans('user'), 'fas fa-user', {'readonly': ''}) }}
                             </div>
                             <div class="col-sm-4">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ forms.simpleInput('password', 'password', '', 'password', i18n.trans('new-password'), 'fas fa-key',
                                         {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
                                 </div>
                             </div>
                             <div class="col-sm-4">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ forms.simpleInput('repassword', 'repassword', '', 'password', i18n.trans('repeat-new-password'),
                                         'fas fa-key', {'class': 'form-control', 'placeholder': i18n.trans('optional')}) }}
                                 </div>

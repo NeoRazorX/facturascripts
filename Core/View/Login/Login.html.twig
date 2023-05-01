@@ -13,24 +13,20 @@
                         </a>
                         <div class="card-body">
                             <p class="card-text text-center">{{ trans('login-text') }}</p>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <span class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="fas fa-user fa-fw" aria-hidden="true"></i>
-                                        </span>
+                                    <span class="input-group-text">
+                                        <i class="fas fa-user fa-fw" aria-hidden="true"></i>
                                     </span>
                                     <input type="text" name="fsNick" class="form-control" maxlength="50"
                                            placeholder="{{ trans('user') }}" required="" autocomplete="off"
                                            autofocus=""/>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <span class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="fas fa-key fa-fw" aria-hidden="true"></i>
-                                        </span>
+                                    <span class="input-group-text">
+                                        <i class="fas fa-key fa-fw" aria-hidden="true"></i>
                                     </span>
                                     <input type="password" name="fsPassword" class="form-control" maxlength="50"
                                            placeholder="{{ trans('password') }}" required="" autocomplete="off"/>
@@ -84,47 +80,39 @@
                            target="_blank" class="btn btn-block btn-link mb-3">
                             {{ trans('need-help-password') }}
                         </a>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <div class="input-group">
-                                <span class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-user fa-fw" aria-hidden="true"></i>
-                                    </span>
+                                <span class="input-group-text">
+                                    <i class="fas fa-user fa-fw" aria-hidden="true"></i>
                                 </span>
                                 <input type="text" name="fsNewUserPasswd" class="form-control" maxlength="50"
                                        placeholder="{{ trans('user') }}" required="" autocomplete="off"/>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <div class="input-group">
-                                <span class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-key fa-fw" aria-hidden="true"></i>
-                                    </span>
+                                <span class="input-group-text">
+                                    <i class="fas fa-key fa-fw" aria-hidden="true"></i>
                                 </span>
                                 <input type="password" name="fsNewPasswd" class="form-control" maxlength="50"
                                        placeholder="{{ trans('new-password') }}" required="" autocomplete="off"/>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <div class="input-group">
-                                <span class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-eye fa-fw" aria-hidden="true"></i>
-                                    </span>
+                                <span class="input-group-text">
+                                    <i class="fas fa-eye fa-fw" aria-hidden="true"></i>
                                 </span>
                                 <input type="password" name="fsNewPasswd2" class="form-control" maxlength="50"
                                        placeholder="{{ trans('repeat-new-password') }}"
                                        required="" autocomplete="off"/>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             {{ trans('database') }}
                             <div class="input-group">
-                                <span class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-database fa-fw" aria-hidden="true"></i>
-                                    </span>
+                                <span class="input-group-text">
+                                    <i class="fas fa-database fa-fw" aria-hidden="true"></i>
                                 </span>
                                 <input type="password" name="fsDbPasswd" class="form-control"
                                        placeholder="{{ trans('db-password') }}" autocomplete="off"/>

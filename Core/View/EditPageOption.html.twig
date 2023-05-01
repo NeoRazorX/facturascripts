@@ -62,11 +62,9 @@
                                 </div>
                                 <div class="col-3">
                                     <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
                                             <span class="input-group-text">
                                                 <i class="fas fa-users"></i>
                                             </span>
-                                        </div>
                                         {% set userList = {'': i18n.trans('all')} | merge(fsc.getUserList()) %}
                                         {{ simpleSelect(
                                             'nick',

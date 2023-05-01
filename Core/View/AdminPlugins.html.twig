@@ -117,7 +117,7 @@
                             </div>
                         {% endif %}
                         <div class="modal-body">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {{ trans('select-plugin-zip-file') }}
                                 <input type="file" name="plugin[]" multiple="" accept="application/zip" required=""/>
                                 {% if fsc.getMaxFileUpload() >= 99 %}

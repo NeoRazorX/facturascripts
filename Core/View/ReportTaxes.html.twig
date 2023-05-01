@@ -38,9 +38,9 @@
                             </h1>
                             <div class="row">
                                 <div class="col-sm-3">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         {{ i18n.trans('company') }}
-                                        <select name="idempresa" class="form-control">
+                                        <select name="idempresa" class="form-select">
                                             {% for empresa in fsc.empresa.all() %}
                                                 {% if empresa.idempresa == fsc.idempresa %}
                                                     <option value="{{ empresa.idempresa }}"
@@ -53,9 +53,9 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         {{ i18n.trans('invoices') }}
-                                        <select name="source" class="form-control">
+                                        <select name="source" class="form-select">
                                             {% if fsc.source == 'purchases' %}
                                                 <option value="sales">{{ i18n.trans('sales') }}</option>
                                                 <option value="purchases"
@@ -68,14 +68,14 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         {{ i18n.trans('from-date') }}
                                         <input type="date" name="datefrom" value="{{ fsc.datefrom }}"
                                                class="form-control" required=""/>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         {{ i18n.trans('until-date') }}
                                         <input type="date" name="dateto" value="{{ fsc.dateto }}" class="form-control"
                                                required=""/>
@@ -84,9 +84,9 @@
                             </div>
                             <div class="row align-items-end">
                                 <div class="col-sm-3">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         {{ i18n.trans('serie') }}
-                                        <select name="codserie" class="form-control">
+                                        <select name="codserie" class="form-select">
                                             <option value="">{{ i18n.trans('all') }}</option>
                                             <option value="">------</option>
                                             {% for serie in fsc.serie.all({}, {'descripcion': 'ASC'}, 0, 0) %}
@@ -101,9 +101,9 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         {{ i18n.trans('country') }}
-                                        <select name="codpais" class="form-control">
+                                        <select name="codpais" class="form-select">
                                             <option value="">{{ i18n.trans('all') }}</option>
                                             <option value="">------</option>
                                             {% for pais in fsc.pais.all({}, {'nombre': 'ASC'}, 0, 0) %}
@@ -118,9 +118,9 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         {{ i18n.trans('format') }}
-                                        <select name="format" class="form-control">
+                                        <select name="format" class="form-select">
                                             <option value="PDF">PDF</option>
                                             <option value="CSV">CSV</option>
                                             <option value="XLS">Excel</option>
@@ -128,7 +128,7 @@
                                     </div>
                                 </div>
                                 <div class="col-sm">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <button type="submit" class="btn btn-primary">
                                             {{ i18n.trans('generate') }}
                                         </button>

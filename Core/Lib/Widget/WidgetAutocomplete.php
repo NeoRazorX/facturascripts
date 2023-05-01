@@ -69,12 +69,10 @@ class WidgetAutocomplete extends WidgetSelect
 
         if ('' === $this->value || null === $this->value) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-                . '<div class="form-group mb-2">'
+                . '<div class="mb-3 mb-2">'
                 . $labelHtml
                 . '<div class="input-group">'
-                . '<div class="' . $this->css('input-group-prepend') . '">'
                 . '<span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>'
-                . '</div>'
                 . $inputHtml
                 . '</div>'
                 . $descriptionHtml
@@ -82,7 +80,7 @@ class WidgetAutocomplete extends WidgetSelect
         }
 
         return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-            . '<div class="form-group mb-2">'
+            . '<div class="mb-3 mb-2">'
             . $labelHtml
             . '<div class="input-group">'
             . $this->inputGroupClearBtn()
@@ -128,16 +126,12 @@ class WidgetAutocomplete extends WidgetSelect
     protected function inputGroupClearBtn()
     {
         if ($this->readonly()) {
-            return '<div class="' . $this->css('input-group-prepend') . '">'
-                . '<span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>'
-                . '</div>';
+            return '<span class="input-group-text"><i class="fas fa-search fa-fw"></i></span>';
         }
 
-        return '<div class="' . $this->css('input-group-prepend') . '">'
-            . '<button class="btn btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.submit();">'
+        return '<button class="btn btn-warning" type="button" onclick="this.form.' . $this->fieldname . '.value = \'\'; this.form.submit();">'
             . '<i class="fas fa-times" aria-hidden="true"></i>'
-            . '</button>'
-            . '</div>';
+            . '</button>';
     }
 
     /**

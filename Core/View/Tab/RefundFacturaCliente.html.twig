@@ -82,9 +82,9 @@
                         <p>{{ i18n.trans('rectified-invoice-p') }}</p>
                         <div class="row align-items-end">
                             <div class="col-sm">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ i18n.trans('serie') }}
-                                    <select name="codserie" class="form-control">
+                                    <select name="codserie" class="form-select">
                                         {% for serie in fsc.series() %}
                                             {% if serie.codserie == appSettings.get('default','codserierec','R') %}
                                                 <option value="{{ serie.codserie }}" selected>
@@ -98,7 +98,7 @@
                                 </div>
                             </div>
                             <div class="col-sm">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ i18n.trans('date') }}
                                     <input type="date" name="fecha" value="{{ task.end | date('Y-m-d') }}"
                                            class="form-control" required>
@@ -175,7 +175,7 @@
                         </table>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <textarea name="observaciones" class="form-control"
                                       placeholder="{{ i18n.trans('observations') }}"></textarea>
                         </div>

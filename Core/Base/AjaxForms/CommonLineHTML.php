@@ -82,7 +82,7 @@ trait CommonLineHTML
             'disabled=""';
         return '<div class="col-sm col-lg-1 order-6">'
             . '<div class="d-lg-none mt-3 small">' . $i18n->trans('tax') . '</div>'
-            . '<select ' . $attributes . ' class="form-control form-control-sm border-0">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select form-control-sm border-0">' . implode('', $options) . '</select>'
             . '<input type="hidden" name="iva_' . $idlinea . '" value="' . $line->iva . '"/>'
             . '</div>';
     }
@@ -135,7 +135,7 @@ trait CommonLineHTML
             ['<option value="0" selected="">' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
         return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans($label)
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -154,7 +154,7 @@ trait CommonLineHTML
             'disabled=""';
         return '<div class="col-6">'
             . '<div class="mb-2"><a href="ListImpuesto?activetab=ListRetencion">' . $i18n->trans('retention') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }
@@ -262,7 +262,7 @@ trait CommonLineHTML
             ['<option value="0" selected="">' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
         return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans('supplied')
-            . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
+            . '<select ' . $attributes . ' class="form-select">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }

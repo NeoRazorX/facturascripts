@@ -126,8 +126,7 @@ class AccountingModalHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"><i class="fas fa-book fa-fw"></i> ' . $i18n->trans('subaccounts') . '</h5>'
-            . '<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
@@ -136,10 +135,8 @@ class AccountingModalHTML
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="findSubaccountInput" placeholder="' . $i18n->trans('search')
             . '" onkeyup="return findSubaccountSearch(\'find-subaccount\', \'0\', this);"/>'
-            . '<div class="input-group-apend">'
             . '<button class="btn btn-primary" type="button" onclick="return accEntryFormAction(\'find-subaccount\', \'0\');"'
             . ' data-loading-text="<span class=\'spinner-border spinner-border-sm\' role=\'status\' aria-hidden=\'true\'></span>"><i class="fas fa-search"></i></button>'
-            . '</div>'
             . '</div>'
             . '</div>'
             . static::orden($i18n)
@@ -154,9 +151,9 @@ class AccountingModalHTML
     protected static function orden(Translator $i18n): string
     {
         return '<div class="col-sm">'
-            . '<div class="input-group">'
-            . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span></div>'
-            . '<select name="fp_orden" class="form-control" onchange="return accEntryFormAction(\'find-subaccount\', \'0\');">'
+            . '< class="input-group">'
+            . '<span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span>'
+            . '<select name="fp_orden" class="form-select" onchange="return accEntryFormAction(\'find-subaccount\', \'0\');">'
             . '<option value="code_asc">' . $i18n->trans('code') . '</option>'
             . '<option value="desc_asc">' . $i18n->trans('description') . '</option>'
             . '<option value="saldo_desc">' . $i18n->trans('balance') . '</option>'

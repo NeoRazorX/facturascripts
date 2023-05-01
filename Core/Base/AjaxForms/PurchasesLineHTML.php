@@ -165,7 +165,7 @@ class PurchasesLineHTML
             $html .= self::renderLine($i18n, $line, $model);
         }
         if (empty($html)) {
-            $html .= '<div class="container-fluid"><div class="row table-warning"><div class="col p-3 text-center">'
+            $html .= '<div class="container-fluid"><div class="row bg-warning"><div class="col p-3 text-center">'
                 . $i18n->trans('new-invoice-line-p') . '</div></div></div>';
         }
         return empty($model->codproveedor) ? '' : self::renderTitles($i18n, $model) . $html;
@@ -328,8 +328,7 @@ class PurchasesLineHTML
             . '<h5 class="modal-title">'
             . $line->referencia
             . '</h5>'
-            . '<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'

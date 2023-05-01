@@ -38,7 +38,7 @@
                         <div class="row">
                             <div class="col-sm-2">
                                 {{ i18n.trans('variant') }}
-                                <select name="referencia" class="form-control mb-2">
+                                <select name="referencia" class="form-select mb-2">
                                     <option value="">{{ i18n.trans('all-variants') }}</option>
                                     <option value="">------</option>
                                     {% for variant in product.getVariants() %}

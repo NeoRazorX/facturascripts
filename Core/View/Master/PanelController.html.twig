@@ -236,16 +236,16 @@
                         </button>
                     </div>
                     <div class="modal-body text-start">
-                        <div class="form-group">
-                            <select name="option" class="form-control">
+                        <div class="mb-3">
+                            <select name="option" class="form-select">
                                 {% for key, option in fsc.exportManager.options() %}
                                     <option value="{{ key }}">{{ i18n.trans(option.description) }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             {{ i18n.trans('format') }}
-                            <select name="idformat" class="form-control">
+                            <select name="idformat" class="form-select">
                                 <option value="">{{ i18n.trans('default') }}</option>
                                 <option value="">------</option>
                                 {% for format in fsc.exportManager.getFormats(firstView.model) %}
@@ -253,9 +253,9 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             {{ i18n.trans('language') }}
-                            <select name="langcode" class="form-control">
+                            <select name="langcode" class="form-select">
                                 <option value="">{{ i18n.trans('default') }}</option>
                                 <option value="">------</option>
                                 {% for code, lang in i18n.getAvailableLanguages() %}

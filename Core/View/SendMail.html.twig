@@ -37,19 +37,19 @@
                             <h1 class="h3 mb-3">
                                 <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ i18n.trans('send-mail') }}
                             </h1>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
                                     
                                         <span class="input-group-text">{{ i18n.trans('from') }}</span>
                                     
-                                    <select class="custom-select" name="email-from">
+                                    <select class="form-select" name="email-from">
                                         {% for emailFrom in fsc.newMail.getAvailableMailboxes() %}
                                             <option value="{{ emailFrom }}">{{ emailFrom }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
                                     
                                         <span class="input-group-text">{{ i18n.trans('to') }}</span>
@@ -57,58 +57,50 @@
                                     {% set emails = fsc.newMail.getToAddresses() is empty ? '' : fsc.newMail.getToAddresses() | join(',') ~ ', ' %}
                                     <input type="text" id="email" name="email" value="{{ emails }}" class="form-control"
                                            required="" placeholder="{{ i18n.trans('email-to') }}"/>
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-outline-secondary"
-                                                title="{{ i18n.trans('email-cc') }}" onclick="$('#fgCC').show();
-                                                $(this).hide();">
-                                            {{ i18n.trans('cc') }}
-                                        </button>
-                                        <button type="button" class="btn btn-outline-secondary"
-                                                title="{{ i18n.trans('email-bcc') }}" onclick="$('#fgBCC').show();
-                                                $(this).hide();">
-                                            {{ i18n.trans('bcc') }}
-                                        </button>
-                                    </div>
+                                    <button type="button" class="btn btn-outline-secondary"
+                                            title="{{ i18n.trans('email-cc') }}" onclick="$('#fgCC').show();
+                                            $(this).hide();">
+                                        {{ i18n.trans('cc') }}
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary"
+                                            title="{{ i18n.trans('email-bcc') }}" onclick="$('#fgBCC').show();
+                                            $(this).hide();">
+                                        {{ i18n.trans('bcc') }}
+                                    </button>
                                 </div>
                             </div>
-                            <div id="fgCC" class="form-group" style="display: none;">
+                            <div id="fgCC" class="mb-3" style="display: none;">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
                                         <span class="input-group-text">{{ i18n.trans('cc') }}</span>
-                                    </div>
                                     <input type="text" id="email-cc" name="email-cc" class="form-control"
                                            placeholder="{{ i18n.trans('email-cc') }}"/>
                                 </div>
                             </div>
-                            <div id="fgBCC" class="form-group" style="display: none;">
+                            <div id="fgBCC" class="mb-3" style="display: none;">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ i18n.trans('bcc') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ i18n.trans('bcc') }}</span>
                                     <input type="text" id="email-bcc" name="email-bcc" class="form-control"
                                            placeholder="{{ i18n.trans('email-bcc') }}"/>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ i18n.trans('subject') }}</span>
-                                    </div>
+                                    <span class="input-group-text">{{ i18n.trans('subject') }}</span>
                                     <input type="text" name="subject" value="{{ fsc.newMail.title }}"
                                            class="form-control" required="" placeholder="{{ i18n.trans('subject') }}"/>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <textarea name="body" rows="5" class="form-control">{{ fsc.newMail.text }}</textarea>
                             </div>
                             {% if fsc.newMail.signature %}
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ i18n.trans('email-signature') }}
                                     <textarea rows="3" class="form-control"
                                               readonly="true">{{ fsc.newMail.signature }}</textarea>
                                 </div>
                             {% endif %}
-                            <div class="form-group">
+                            <div class="mb-3">
                                 {% for name in fsc.newMail.getAttachmentNames() %}
                                     <p>
                                         <i class="fas fa-paperclip fa-fw" aria-hidden="true"></i> {{ name }}

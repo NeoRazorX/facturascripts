@@ -318,7 +318,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label>{{ trans('description') }}</label>
                                 <input type="text" name="filter-description" class="form-control noEnterKey"
                                        autofocus=""/>
@@ -390,7 +390,7 @@
 
 {% macro searchControl(currentView) %}
     {% if currentView.searchFields is not empty %}
-        <div class="form-group">
+        <div class="mb-3">
             <div class="input-group">
                 <input class="form-control" type="text" name="query" value="{{ currentView.query }}" autocomplete="off"
                        placeholder="{{ trans('search') }}"/>
