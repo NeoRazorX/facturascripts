@@ -81,7 +81,7 @@ class WidgetDate extends BaseWidget
 
         // is today? is the future?
         if ($this->value && strtotime($this->value) >= strtotime(date('Y-m-d'))) {
-            $alternativeClass = 'font-weight-bold';
+            $alternativeClass = 'fw-bold';
         }
 
         return parent::tableCellClass($initialClass, $alternativeClass);

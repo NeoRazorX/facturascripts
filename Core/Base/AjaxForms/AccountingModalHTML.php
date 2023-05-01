@@ -151,7 +151,7 @@ class AccountingModalHTML
     protected static function orden(Translator $i18n): string
     {
         return '<div class="col-sm">'
-            . '< class="input-group">'
+            . '<div class="input-group">'
             . '<span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span>'
             . '<select name="fp_orden" class="form-select" onchange="return accEntryFormAction(\'find-subaccount\', \'0\');">'
             . '<option value="code_asc">' . $i18n->trans('code') . '</option>'
