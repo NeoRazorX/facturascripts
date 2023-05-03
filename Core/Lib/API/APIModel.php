@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,7 +33,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class APIModel extends APIResourceClass
 {
-
     /**
      * ModelClass object.
      *
@@ -89,7 +88,7 @@ class APIModel extends APIResourceClass
         }
 
         // record not found
-        if (!$this->model->loadFromCode($this->params[0])) {
+        if (false === $this->model->loadFromCode($this->params[0])) {
             $this->setError($this->toolBox()->i18n()->trans('record-not-found'));
             return false;
         }
@@ -113,9 +112,11 @@ class APIModel extends APIResourceClass
         if ($this->model->loadFromCode($code)) {
             $this->setError($this->toolBox()->i18n()->trans('duplicate-record'), $this->model->toArray());
             return false;
+        } elseif (empty($values)) {
+            $this->setError($this->toolBox()->i18n()->trans('no-data-received-form'));
+            return false;
         }
 
-        // TODO: Why don't use $this->modal->loadFromData() ???
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
         }
@@ -135,12 +136,14 @@ class APIModel extends APIResourceClass
 
         $param0 = empty($this->params) ? '' : $this->params[0];
         $code = $values[$field] ?? $param0;
-        if (!$this->model->loadFromCode($code)) {
+        if (false === $this->model->loadFromCode($code)) {
             $this->setError($this->toolBox()->i18n()->trans('record-not-found'));
+            return false;
+        } elseif (empty($values)) {
+            $this->setError($this->toolBox()->i18n()->trans('no-data-received-form'));
             return false;
         }
 
-        // TODO: Why don't use $this->modal->loadFromData() ???
         foreach ($values as $key => $value) {
             $this->model->{$key} = $value;
         }
@@ -294,16 +297,20 @@ class APIModel extends APIResourceClass
         $operation = $this->getRequestArray('operation');
         $order = $this->getRequestArray('sort');
 
+        // obtenemos los registros
         $where = $this->getWhereValues($filter, $operation);
         $data = $this->model->all($where, $order, $offset, $limit);
+
+        // obtenemos el count y lo ponemos en el header
+        $count = $this->model->count($where);
+        $this->response->headers->set('X-Total-Count', $count);
+
         $this->returnResult($data);
         return true;
     }
 
     /**
      * Convert $text to plural
-     *
-     * TODO: The conversion to the plural is language dependent.
      *
      * @param $text
      *

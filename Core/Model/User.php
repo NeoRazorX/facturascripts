@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -64,6 +64,9 @@ class User extends Base\ModelClass
 
     /** @var string */
     public $lastactivity;
+
+    /** @var string */
+    public $lastbrowser;
 
     /** @var string */
     public $lastip;
@@ -180,24 +183,18 @@ class User extends Base\ModelClass
 
         $nick = defined('FS_INITIAL_USER') ? FS_INITIAL_USER : 'admin';
         $pass = defined('FS_INITIAL_PASS') ? FS_INITIAL_PASS : 'admin';
-        $email = filter_var($this->nick, FILTER_VALIDATE_EMAIL) ? $this->nick : '';
+        $email = filter_var($this->nick, FILTER_VALIDATE_EMAIL) ?
+            $this->nick :
+            (defined('FS_INITIAL_EMAIL') ? FS_INITIAL_EMAIL : '');
         $this->toolBox()->i18nLog()->notice('created-default-admin-account', ['%nick%' => $nick, '%pass%' => $pass]);
         return 'INSERT INTO ' . static::tableName() . ' (nick,password,email,admin,enabled,idempresa,codalmacen,langcode,homepage,level)'
             . " VALUES ('" . $nick . "','" . password_hash($pass, PASSWORD_DEFAULT) . "','" . $email
             . "',TRUE,TRUE,'1','1','" . FS_LANG . "','Wizard','99');";
     }
 
-    /**
-     * Generates a new login key for the user. It also updates lastactivity
-     * and last IP.
-     *
-     * @param string $ipAddress
-     *
-     * @return string
-     */
-    public function newLogkey(string $ipAddress): string
+    public function newLogkey(string $ipAddress, string $browser = ''): string
     {
-        $this->updateActivity($ipAddress);
+        $this->updateActivity($ipAddress, $browser);
         $this->logkey = $this->toolBox()->utils()->randomString(99);
         return $this->logkey;
     }
@@ -238,6 +235,12 @@ class User extends Base\ModelClass
             $this->lastactivity = null;
         }
 
+        // escapamos lastbrowser y comprobamos que no excede los 200 caracteres
+        $this->lastbrowser = substr($this->toolBox()->utils()->noHtml($this->lastbrowser ?? ''), 0, 200);
+
+        // escapamos el html de lastip y comprobamos que no excede los 40 caracteres
+        $this->lastip = substr($this->toolBox()->utils()->noHtml($this->lastip ?? ''), 0, 40);
+
         if ($this->admin) {
             $this->level = 99;
         } elseif ($this->level === null) {
@@ -247,15 +250,11 @@ class User extends Base\ModelClass
         return $this->testPassword() && $this->testAgent() && $this->testWarehouse() && parent::test();
     }
 
-    /**
-     * Updates last ip address and last activity property.
-     *
-     * @param string $ipAddress
-     */
-    public function updateActivity(string $ipAddress)
+    public function updateActivity(string $ipAddress, string $browser = '')
     {
         $this->lastactivity = date(self::DATETIME_STYLE);
         $this->lastip = $ipAddress;
+        $this->lastbrowser = $browser;
     }
 
     /**

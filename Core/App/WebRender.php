@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,10 +20,10 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Model\AttachedFile;
+use FacturaScripts\Core\Plugins;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Extension\DebugExtension;
@@ -39,7 +39,6 @@ use Twig\TwigFunction;
  */
 final class WebRender
 {
-
     /**
      * FALSE if FacturaScripts is not installed already.
      *
@@ -55,13 +54,6 @@ final class WebRender
     private $loader;
 
     /**
-     * Plugin manager.
-     *
-     * @var PluginManager
-     */
-    private $pluginManager;
-
-    /**
      * WebRender constructor.
      */
     public function __construct()
@@ -74,7 +66,6 @@ final class WebRender
 
         $path = FS_DEBUG ? FS_FOLDER . '/Core/View' : FS_FOLDER . '/Dinamic/View';
         $this->loader = new FilesystemLoader($path);
-        $this->pluginManager = new PluginManager();
     }
 
     /**
@@ -111,7 +102,7 @@ final class WebRender
         // Core namespace
         $this->loader->addPath(FS_FOLDER . '/Core/View', 'Core');
 
-        foreach ($this->pluginManager->enabledPlugins() as $pluginName) {
+        foreach (Plugins::enabled() as $pluginName) {
             $pluginPath = FS_FOLDER . '/Plugins/' . $pluginName . '/View';
             if (false === file_exists($pluginPath)) {
                 continue;

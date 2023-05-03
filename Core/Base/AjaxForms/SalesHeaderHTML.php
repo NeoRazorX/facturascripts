@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\AgenciaTransporte;
+use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Contacto;
@@ -82,7 +83,7 @@ class SalesHeaderHTML
         $model->coddivisa = $formData['coddivisa'] ?? $model->coddivisa;
         $model->codpago = $formData['codpago'] ?? $model->codpago;
         $model->codserie = $formData['codserie'] ?? $model->codserie;
-        $model->fecha = $formData['fecha'] ?? $model->fecha;
+        $model->fecha = empty($formData['fecha']) ? $model->fecha : date(ModelCore::DATE_STYLE, strtotime($formData['fecha']));
         $model->femail = isset($formData['femail']) && !empty($formData['femail']) ? $formData['femail'] : $model->femail;
         $model->hora = $formData['hora'] ?? $model->hora;
         $model->nombrecliente = $formData['nombrecliente'] ?? $model->nombrecliente;
@@ -319,7 +320,7 @@ class SalesHeaderHTML
             . '<div class="modal-dialog modal-dialog-centered modal-lg">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">' . $i18n->trans('detail') . '</h5>'
+            . '<h5 class="modal-title"><i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'

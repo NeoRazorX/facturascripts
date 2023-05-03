@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,23 +31,12 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditRetencion extends EditController
 {
-
-    /**
-     * Returns the model name.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Retencion';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'accounting';
@@ -66,32 +56,24 @@ class EditRetencion extends EditController
         $this->createViewsSuppliers();
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
     protected function createViewsCustomers(string $viewName = 'ListCliente')
     {
         $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
         $this->views[$viewName]->addSearchFields(['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
     protected function createViewsSuppliers(string $viewName = 'ListProveedor')
     {
         $this->addListView($viewName, 'Proveedor', 'suppliers', 'fas fa-users');
         $this->views[$viewName]->addSearchFields(['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'btnDelete', false);
     }
@@ -99,7 +81,7 @@ class EditRetencion extends EditController
     /**
      * Loads the data to display.
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)

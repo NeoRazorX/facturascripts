@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,6 +31,7 @@ use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\Proveedor;
+use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Model\User;
 
 trait RandomDataTrait
@@ -79,7 +80,7 @@ trait RandomDataTrait
         return $cliente;
     }
 
-    protected function getRandomCustomerInvoice(string $date = ''): FacturaCliente
+    protected function getRandomCustomerInvoice(string $date = '', string $codalmacen = ''): FacturaCliente
     {
         // creamos el cliente
         $subject = $this->getRandomCustomer();
@@ -87,6 +88,9 @@ trait RandomDataTrait
 
         $invoice = new FacturaCliente();
         $invoice->setSubject($subject);
+        if ($codalmacen) {
+            $invoice->codalmacen = $codalmacen;
+        }
         if ($date) {
             $invoice->setDate($date, $invoice->hora);
         }
@@ -110,6 +114,8 @@ trait RandomDataTrait
             return $ejercicio;
         }
 
+        // no hemos encontrado ninguno, creamos uno
+        $model->loadFromDate(date('d-m-Y'));
         return $model;
     }
 
@@ -122,6 +128,14 @@ trait RandomDataTrait
         return $product;
     }
 
+    protected function getRandomSerie(): Serie
+    {
+        $serie = new Serie();
+        $serie->codserie = 'T';
+        $serie->descripcion = 'Test Serie';
+        return $serie;
+    }
+
     protected function getRandomSupplier(): Proveedor
     {
         $proveedor = new Proveedor();
@@ -131,7 +145,7 @@ trait RandomDataTrait
         return $proveedor;
     }
 
-    protected function getRandomSupplierInvoice(string $date = ''): FacturaProveedor
+    protected function getRandomSupplierInvoice(string $date = '', string $codalmacen = ''): FacturaProveedor
     {
         // creamos el proveedor
         $subject = $this->getRandomSupplier();
@@ -139,6 +153,9 @@ trait RandomDataTrait
 
         $invoice = new FacturaProveedor();
         $invoice->setSubject($subject);
+        if ($codalmacen) {
+            $invoice->codalmacen = $codalmacen;
+        }
         if ($date) {
             $invoice->setDate($date, $invoice->hora);
         }

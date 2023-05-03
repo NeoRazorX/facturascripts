@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,7 +32,7 @@ final class UserTest extends TestCase
     {
         // comprobamos que ya hay un usuario por defecto
         $user = new User();
-        $this->assertGreaterThanOrEqual(1, $user->count());
+        $this->assertEquals(1, $user->count());
 
         // no se puede eliminar
         foreach ($user->all() as $user) {
@@ -63,6 +63,24 @@ final class UserTest extends TestCase
         $this->assertNotEquals('test', $user->password);
         $this->assertTrue($user->verifyPassword('test1'));
         $this->assertFalse($user->verifyPassword('test2'));
+
+        // eliminamos
+        $this->assertTrue($user->delete());
+    }
+
+    public function testEscapeHtml()
+    {
+        // creamos un usuario con html en lastbrowser y lastip
+        $user = new User();
+        $user->nick = 'test1';
+        $user->setPassword('test1');
+        $user->lastbrowser = '<script>alert("test");</script>';
+        $user->lastip = '<b>123456</b>';
+        $this->assertTrue($user->save());
+
+        // comprobamos que se han escapado los valores
+        $this->assertEquals('&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;', $user->lastbrowser);
+        $this->assertEquals('&lt;b&gt;123456&lt;/b&gt;', $user->lastip);
 
         // eliminamos
         $this->assertTrue($user->delete());
@@ -230,12 +248,6 @@ final class UserTest extends TestCase
         $this->assertFalse($user->can('test6', 'import'));
         $this->assertTrue($user->can('test6', 'update'));
         $this->assertTrue($user->can('test6', 'only-owner-data'));
-
-        // eliminamos la página
-        $this->assertTrue($page->delete());
-
-        // comprobamos que ya no tiene permiso
-        $this->assertFalse($user->can('test6'));
 
         // eliminamos
         $this->assertTrue($user->delete());

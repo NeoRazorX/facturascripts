@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -382,15 +382,30 @@ class AccountingLineHTML
      */
     protected static function iva(Translator $i18n, Partida $line, Asiento $model): string
     {
+        // preseleccionamos el impuesto que corresponda
+        $codimpuesto = null;
+        foreach (Impuestos::all() as $imp) {
+            if ($imp->codsubcuentarep || $imp->codsubcuentasop) {
+                if (in_array($line->codsubcuenta, [$imp->codsubcuentarep, $imp->codsubcuentasop])) {
+                    $codimpuesto = $imp->codimpuesto;
+                    break;
+                }
+            }
+
+            if ($imp->iva === $line->iva) {
+                $codimpuesto = $imp->codimpuesto;
+            }
+        }
+
         $options = ['<option value="">------</option>'];
-        foreach (Impuestos::all() as $row) {
-            $selected = ($row->iva === $line->iva) ? ' selected' : '';
-            $options[] = '<option value="' . $row->iva . '"' . $selected . '>' . $row->descripcion . '</option>';
+        foreach (Impuestos::all() as $imp) {
+            $selected = $imp->codimpuesto === $codimpuesto ? ' selected' : '';
+            $options[] = '<option value="' . $imp->iva . '"' . $selected . '>' . $imp->descripcion . '</option>';
         }
 
         $idlinea = $line->idpartida ?? 'n' . static::$num;
         $attributes = $model->editable ? 'name="iva_' . $idlinea . '"' : 'disabled';
-        return '<div class="col pb-2 small">' . $i18n->trans('vat')
+        return '<div class="col pb-2 small"><a href="ListImpuesto">' . $i18n->trans('vat') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>';
     }

@@ -119,6 +119,10 @@ abstract class TransformerDocument extends BusinessDocument
      */
     public function delete()
     {
+        if (false === $this->exists()) {
+            return true;
+        }
+
         if (count($this->childrenDocuments()) > 0) {
             $this->toolBox()->i18nLog()->warning('non-editable-document');
             return false;

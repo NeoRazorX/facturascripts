@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Almacen;
+use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Fabricante;
@@ -30,6 +31,7 @@ use FacturaScripts\Core\Model\FormaPago;
 use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\PresupuestoCliente;
 use FacturaScripts\Core\Model\Producto;
+use FacturaScripts\Core\Model\ProductoImagen;
 use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
 use FacturaScripts\Core\Model\Serie;
@@ -176,7 +178,7 @@ final class ProductoTest extends TestCase
         $product = $this->getTestProduct();
         $this->assertTrue($product->save(), 'product-cant-save');
         $variant = $product->getVariants()[0];
-        $variant->coste = 100;
+        $variant->coste = 66;
         $this->assertTrue($variant->save(), 'variant-cant-save');
 
         // creamos un proveedor
@@ -193,7 +195,7 @@ final class ProductoTest extends TestCase
 
         // recargamos la variante para comprobar que NO se ha actualizado el coste, ya que no hay política asignada
         $variant->loadFromCode($variant->primaryColumnValue());
-        $this->assertTrue($variant->coste == 100, 'variant-cost-should-not-change');
+        $this->assertEquals(66, $variant->coste, 'variant-cost-should-not-change');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -241,7 +243,57 @@ final class ProductoTest extends TestCase
 
         // recargamos la variante para comprobar que SI se ha actualizado el coste
         $variant->loadFromCode($variant->primaryColumnValue());
-        $this->assertTrue($variant->coste == 200, 'variant-cost-not-last');
+        $this->assertEquals(200, $variant->coste, 'variant-cost-not-last');
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($supplier1->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($supplier1->delete(), 'supplier-cant-delete');
+        $this->assertTrue($supplier2->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($supplier2->delete(), 'supplier-cant-delete');
+    }
+
+    public function testCostPricePolicyHighPrice()
+    {
+        // asignamos la política de precio de coste precio más alto
+        $settings = new AppSettings();
+        $settings->set('default', 'costpricepolicy', 'high-price');
+
+        // creamos un producto con coste 50
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+        $variant = $product->getVariants()[0];
+        $variant->coste = 50;
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        // creamos el proveedor 1
+        $supplier1 = $this->getTestSupplier();
+        $this->assertTrue($supplier1->save(), 'supplier-1-cant-save');
+
+        // creamos un producto de proveedor con este proveedor y este producto
+        $supplierProduct1 = new ProductoProveedor();
+        $supplierProduct1->codproveedor = $supplier1->codproveedor;
+        $supplierProduct1->referencia = $product->referencia;
+        $supplierProduct1->idproducto = $product->idproducto;
+        $supplierProduct1->precio = 200;
+        $supplierProduct1->actualizado = date(ModelCore::DATETIME_STYLE, strtotime("- 1 days"));
+        $this->assertTrue($supplierProduct1->save(), 'supplier-product-1-cant-save');
+
+        // creamos el proveedor 2
+        $supplier2 = $this->getTestSupplier();
+        $this->assertTrue($supplier2->save(), 'supplier-2-cant-save');
+
+        // creamos un producto de proveedor con este proveedor y este producto
+        $supplierProduct2 = new ProductoProveedor();
+        $supplierProduct2->codproveedor = $supplier2->codproveedor;
+        $supplierProduct2->referencia = $product->referencia;
+        $supplierProduct2->idproducto = $product->idproducto;
+        $supplierProduct2->precio = 100;
+        $this->assertTrue($supplierProduct2->save(), 'supplier-product-2-cant-save');
+
+        // recargamos la variante para comprobar que SI se ha actualizado el coste
+        $variant->loadFromCode($variant->primaryColumnValue());
+        $this->assertEquals(200, $variant->coste, 'variant-cost-not-last');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -253,7 +305,7 @@ final class ProductoTest extends TestCase
 
     public function testCostPricePolicyAveragePrice()
     {
-        // asignamos la política de precio de coste último precio
+        // asignamos la política de precio de coste precio medio
         $settings = new AppSettings();
         $settings->set('default', 'costpricepolicy', 'average-price');
 
@@ -290,7 +342,7 @@ final class ProductoTest extends TestCase
 
         // recargamos la variante para comprobar que SI se ha actualizado el coste
         $variant->loadFromCode($variant->primaryColumnValue());
-        $this->assertTrue($variant->coste == 150, 'variant-cost-not-average');
+        $this->assertEquals(150, $variant->coste, 'variant-cost-not-average');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -445,6 +497,63 @@ final class ProductoTest extends TestCase
         $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cliente-delete-error');
         $this->assertTrue($product->delete(), 'product-cant-delete');
+    }
+
+    public function testDeleteImages()
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // añadimos una variante
+        $variant = new Variante();
+        $variant->idproducto = $product->idproducto;
+        $variant->referencia = 'test';
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        // copiamos una imagen
+        $original = 'xss_img_src_onerror_alert(123).jpeg';
+        $originalPath = FS_FOLDER . '/Test/__files/' . $original;
+        $this->assertTrue(copy($originalPath, FS_FOLDER . '/MyFiles/' . $original), 'File not copied');
+
+        // guardamos la imagen
+        $model = new AttachedFile();
+        $model->path = $original;
+        $this->assertTrue($model->save(), 'can-not-save-file');
+
+        // añadimos una imagen al producto
+        $imageProducto = new ProductoImagen();
+        $imageProducto->idproducto = $product->idproducto;
+        $imageProducto->idfile = $model->idfile;
+        $this->assertTrue($imageProducto->save(), 'can-not-save-image-producto');
+
+        // comprobamos que el producto tiene imágenes
+        $this->assertCount(1, $product->getImages(false), 'product-no-images');
+
+        // añadimos una imagen a la variante
+        $imageVariante = new ProductoImagen();
+        $imageVariante->idproducto = $product->idproducto;
+        $imageVariante->referencia = $variant->referencia;
+        $imageVariante->idfile = $model->idfile;
+        $this->assertTrue($imageVariante->save(), 'can-not-save-image-variante');
+
+        // comprobamos que la variante tiene imágenes
+        $this->assertCount(1, $variant->getImages(false), 'variant-no-images');
+
+        // eliminamos la variante
+        $this->assertTrue($variant->delete(), 'variant-cant-delete');
+
+        // comprobamos que la variante no tiene imágenes
+        $this->assertCount(0, $variant->getImages(false), 'variant-images-not-deleted');
+
+        // eliminamos el producto
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+
+        // comprobamos que el producto no tiene imágenes
+        $this->assertCount(0, $product->getImages(false), 'product-images-not-deleted');
+
+        // eliminamos la imagen subida
+        $this->assertTrue($model->delete(), 'can-not-delete-file');
     }
 
     private function getTestProduct(): Producto

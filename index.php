@@ -58,6 +58,9 @@ require_once __DIR__ . '/config.php';
 @set_time_limit(0);
 ignore_user_abort(true);
 
+// timezone
+date_default_timezone_set(FS_TIMEZONE);
+
 // Register error handler
 if (FS_DEBUG) {
     $whoops = new Run;

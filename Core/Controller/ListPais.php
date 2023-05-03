@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
@@ -23,18 +24,12 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
 /**
  * Controller to list the items in the Pais model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class ListPais extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -54,10 +49,6 @@ class ListPais extends ListController
         $this->createViewCities();
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewCities(string $viewName = 'ListCiudad')
     {
         $this->addView($viewName, 'Ciudad', 'cities', 'fas fa-city');
@@ -66,10 +57,6 @@ class ListPais extends ListController
         $this->addSearchFields($viewName, ['ciudad']);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewCountries(string $viewName = 'ListPais')
     {
         $this->addView($viewName, 'Pais', 'countries', 'fas fa-globe-americas');
@@ -79,10 +66,6 @@ class ListPais extends ListController
         $this->addSearchFields($viewName, ['nombre', 'codiso', 'codpais']);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewsDivisas(string $viewName = 'ListDivisa')
     {
         $this->addView($viewName, 'Divisa', 'currency', 'fas fa-money-bill-alt');
@@ -92,10 +75,6 @@ class ListPais extends ListController
         $this->addSearchFields($viewName, ['descripcion', 'coddivisa']);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createViewProvinces(string $viewName = 'ListProvincia')
     {
         $this->addView($viewName, 'Provincia', 'province', 'fas fa-map-signs');

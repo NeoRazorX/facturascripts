@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,7 +32,6 @@ use FacturaScripts\Dinamic\Model\ApiAccess;
  */
 class EditApiKey extends EditController
 {
-
     public function getAccessRules(): array
     {
         $rules = [];
@@ -77,8 +76,9 @@ class EditApiKey extends EditController
     protected function createViews()
     {
         parent::createViews();
-        $this->createViewsAccess();
         $this->setTabsPosition('bottom');
+
+        $this->createViewsAccess();
     }
 
     protected function createViewsAccess(string $viewName = 'ApiAccess')
@@ -201,6 +201,9 @@ class EditApiKey extends EditController
                 parent::loadData($viewName, $view);
                 if (false === $view->model->exists()) {
                     $view->model->nick = $this->user->nick;
+                } elseif ($view->model->fullaccess) {
+                    // si la clave es de acceso total, no se muestran los permisos
+                    $this->setSettings('ApiAccess', 'active', false);
                 }
                 break;
         }

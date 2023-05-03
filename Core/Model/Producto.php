@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2012-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2012-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -187,6 +187,17 @@ class Producto extends Base\ModelClass
         $this->ventasinstock = (bool)$this->toolBox()->appSettings()->get('default', 'ventasinstock', false);
     }
 
+    public function delete(): bool
+    {
+        // eliminamos las imágenes del producto
+        foreach ($this->getImages() as $image) {
+            $image->delete();
+        }
+
+        // eliminamos el resto de la base de datos
+        return parent::delete();
+    }
+
     public function getFabricante(): Fabricante
     {
         $fabricante = new DinFabricante();
@@ -204,10 +215,16 @@ class Producto extends Base\ModelClass
     /**
      * @return ProductoImagen[]
      */
-    public function getImages(): array
+    public function getImages(bool $imgVariant = true): array
     {
         $image = new DinProductoImagen();
         $where = [new DataBaseWhere('idproducto', $this->idproducto)];
+
+        // solo si queremos lás imágenes del producto y no de las variantes
+        if (false === $imgVariant) {
+            $where[] = new DataBaseWhere('referencia', null);
+        }
+
         $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
         return $image->all($where, $orderBy, 0, 0);
     }

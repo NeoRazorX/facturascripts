@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
 use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Model\Base\ModelCore;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Dinamic\Model\Proveedor;
@@ -74,7 +75,7 @@ class PurchasesHeaderHTML
         $model->codpago = $formData['codpago'] ?? $model->codpago;
         $model->codproveedor = $formData['codproveedor'] ?? $model->codproveedor;
         $model->codserie = $formData['codserie'] ?? $model->codserie;
-        $model->fecha = $formData['fecha'] ?? $model->fecha;
+        $model->fecha = empty($formData['fecha']) ? $model->fecha : date(ModelCore::DATE_STYLE, strtotime($formData['fecha']));
         $model->femail = isset($formData['femail']) && !empty($formData['femail']) ? $formData['femail'] : $model->femail;
         $model->hora = $formData['hora'] ?? $model->hora;
         $model->nombre = $formData['nombre'] ?? $model->nombre;

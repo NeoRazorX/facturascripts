@@ -49,7 +49,7 @@ class PeriodFilter extends BaseFilter
         $this->select = new SelectFilter($key, '', $label, $values);
         $this->select->icon = 'fas fa-calendar-alt';
         $this->startDate = new DateFilter(self::START_DATE_ID . $key, $field, 'from-date', '>=');
-        $this->endDate = new DateFilter(self::END_DATE_ID . $key, $field, 'until-date', '<');
+        $this->endDate = new DateFilter(self::END_DATE_ID . $key, $field, 'until-date', '<=');
     }
 
     public function getDataBaseWhere(array &$where): bool

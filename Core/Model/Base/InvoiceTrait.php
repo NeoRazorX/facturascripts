@@ -62,6 +62,8 @@ trait InvoiceTrait
 
     abstract public function getReceipts(): array;
 
+    abstract public function testDate(): bool;
+
     /**
      * @return bool
      */
@@ -194,6 +196,10 @@ trait InvoiceTrait
                 }
             // no break
             case 'fecha':
+                if (false === $this->testDate()) {
+                    return false;
+                }
+            // no break
             case 'total':
                 return $this->onChangeTotal();
         }

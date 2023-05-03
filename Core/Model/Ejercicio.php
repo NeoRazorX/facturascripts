@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 
 /**
@@ -30,7 +31,6 @@ use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
  */
 class Ejercicio extends Base\ModelClass
 {
-
     use Base\ModelTrait;
 
     const EXERCISE_STATUS_OPEN = 'ABIERTO';
@@ -157,14 +157,21 @@ class Ejercicio extends Base\ModelClass
         return $this->fechainicio;
     }
 
+    public function hasAccountingPlan(): bool
+    {
+        $subcuenta = new Subcuenta();
+        $where = [new DataBaseWhere('codejercicio', $this->codejercicio)];
+        return $subcuenta->count($where) > 0;
+    }
+
     public function install(): string
     {
         // needed dependencies
         new DinEmpresa();
 
-        $code = $year = "'" . \date('Y') . "'";
-        $start = self::$dataBase->var2str(\date('01-01-Y'));
-        $end = self::$dataBase->var2str(\date('31-12-Y'));
+        $code = $year = "'" . date('Y') . "'";
+        $start = self::$dataBase->var2str(date('01-01-Y'));
+        $end = self::$dataBase->var2str(date('31-12-Y'));
         $state = "'" . self::EXERCISE_STATUS_OPEN . "'";
         return 'INSERT INTO ' . static::tableName()
             . ' (codejercicio,nombre,fechainicio,fechafin,estado,longsubcuenta,idempresa)'
@@ -321,6 +328,11 @@ class Ejercicio extends Base\ModelClass
         $this->fechainicio = date('1-1-Y', $date2);
         $this->fechafin = date('31-12-Y', $date2);
         $this->nombre = date('Y', $date2);
+
+        // if there are more than one company, we add the company name
+        if (count(Empresas::all()) > 1) {
+            $this->nombre = Empresas::get($this->idempresa)->nombrecorto . ' ' . $this->nombre;
+        }
 
         // for non-default companies we try to use range from 0001 to 9999
         if ($this->idempresa != $this->toolBox()->appSettings()->get('default', 'idempresa')) {

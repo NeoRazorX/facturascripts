@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,22 +32,12 @@ use FacturaScripts\Dinamic\Model\Contacto;
  */
 class EditEmailSent extends EditController
 {
-
-    /**
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'EmailSent';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -79,7 +70,7 @@ class EditEmailSent extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        /// buttons
+        // buttons
         $mainView = $this->getMainViewName();
         $this->addButton($mainView, [
             'action' => 'contact',
@@ -89,29 +80,24 @@ class EditEmailSent extends EditController
             'type' => 'button'
         ]);
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($mainView, 'btnNew', false);
 
-        /// other view
+        // other view
         $this->createViewOtherEmails();
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
     protected function createViewOtherEmails(string $viewName = 'ListEmailSent')
     {
         $this->addListView($viewName, 'EmailSent', 'emails', 'fas fa-paper-plane');
         $this->views[$viewName]->addOrderBy(['date'], 'date', 2);
         $this->views[$viewName]->searchFields = ['body', 'subject'];
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
-     * 
      * @param string $action
      */
     protected function execAfterAction($action)
@@ -129,7 +115,7 @@ class EditEmailSent extends EditController
     /**
      * Load view data procedure
      *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)

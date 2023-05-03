@@ -212,4 +212,8 @@
         <name>uniq_codigo_facturasprov</name>
         <type>UNIQUE (codigo,idempresa)</type>
     </constraint>
+    <constraint>
+        <name>uniq_numero_facturasprov</name>
+        <type>UNIQUE (codejercicio,codserie,idempresa,numero)</type>
+    </constraint>
 </table>

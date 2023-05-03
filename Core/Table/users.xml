@@ -51,6 +51,10 @@
         <type>timestamp</type>
     </column>
     <column>
+        <name>lastbrowser</name>
+        <type>character varying(200)</type>
+    </column>
+    <column>
         <name>lastip</name>
         <type>character varying(40)</type>
     </column>

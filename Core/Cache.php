@@ -99,7 +99,7 @@ final class Cache
         // guardamos el contenido
         $data = serialize($value);
         $fileName = self::filename($key);
-        file_put_contents($fileName, $data);
+        @file_put_contents($fileName, $data);
     }
 
     private static function filename(string $key): string
