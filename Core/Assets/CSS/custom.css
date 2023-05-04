@@ -101,7 +101,7 @@
     height: 2px;
 }
 
-.form-control[readonly] {
+.form-control[readonly], .form-select[readonly] {
     background-color: #e9ecef;
     opacity: 1;
 }
@@ -136,4 +136,8 @@
 
 a {
     text-decoration: none;
+}
+
+.table-warning {
+    background-color: #ffeeba;
 }

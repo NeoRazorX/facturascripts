@@ -165,7 +165,7 @@ class PurchasesLineHTML
             $html .= self::renderLine($i18n, $line, $model);
         }
         if (empty($html)) {
-            $html .= '<div class="container-fluid"><div class="row bg-warning"><div class="col p-3 text-center">'
+            $html .= '<div class="container-fluid"><div class="row table-warning"><div class="col p-3 text-center">'
                 . $i18n->trans('new-invoice-line-p') . '</div></div></div>';
         }
         return empty($model->codproveedor) ? '' : self::renderTitles($i18n, $model) . $html;

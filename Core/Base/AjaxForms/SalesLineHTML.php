@@ -269,19 +269,18 @@ class SalesLineHTML
             case -1:
             case -2:
                 $html = $stock->disponible > 0 ?
-                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-success">' . $stock->disponible . '</a>' :
-                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-danger">' . $stock->disponible . '</a>';
+                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-success" title="' . $i18n->trans('stock') . '">' . $stock->disponible . '</a>' :
+                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-danger" title="' . $i18n->trans('stock') . '">' . $stock->disponible . '</a>';
                 break;
 
             default:
                 $html = $line->cantidad <= $stock->cantidad ?
-                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-success">' . $stock->cantidad . '</a>' :
-                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-danger">' . $stock->cantidad . '</a>';
+                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-success" title="' . $i18n->trans('stock') . '">' . $stock->cantidad . '</a>' :
+                    '<a href="' . $stock->url() . '" target="_Blank" class="btn btn-outline-danger" title="' . $i18n->trans('stock') . '">' . $stock->cantidad . '</a>';
                 break;
         }
 
-        return empty($html) ? $html :
-            '<div class="input-group-prepend" title="' . $i18n->trans('stock') . '">' . $html . '</div>';
+        return $html;
     }
 
     private static function getFastLine(SalesDocument $model, array $formData): ?SalesDocumentLine

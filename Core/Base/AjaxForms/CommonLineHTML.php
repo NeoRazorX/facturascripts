@@ -50,10 +50,8 @@ trait CommonLineHTML
         }
 
         $restante = $line->cantidad - $line->servido;
-        return '<div class="input-group-prepend" title="' . $i18n->trans('quantity-remaining') . '">'
-            . '<a href="DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $model->primaryColumnValue()
-            . '" class="btn btn-outline-secondary" type="button">' . $restante . '</a>'
-            . '</div>';
+        return '<a href="DocumentStitcher?model=' . $model->modelClassName() . '&codes=' . $model->primaryColumnValue()
+            . '" class="btn btn-outline-secondary" type="button" title="' . $i18n->trans('quantity-remaining') . '">' . $restante . '</a>';
     }
 
     private static function codimpuesto(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
