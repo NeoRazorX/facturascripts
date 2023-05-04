@@ -134,7 +134,7 @@ class AccountingModalHTML
             . '<div class="col-sm">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="findSubaccountInput" placeholder="' . $i18n->trans('search')
-            . '" onkeyup="return findSubaccountSearch(\'find-subaccount\', \'0\', this);"/>'
+            . '" onkeyup="return findSubaccountSearch(\'find-subaccount\', \'0\', this);" autofocus/>'
             . '<button class="btn btn-primary" type="button" onclick="return accEntryFormAction(\'find-subaccount\', \'0\');"'
             . ' data-loading-text="<span class=\'spinner-border spinner-border-sm\' role=\'status\' aria-hidden=\'true\'></span>"><i class="fas fa-search"></i></button>'
             . '</div>'

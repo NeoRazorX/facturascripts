@@ -241,7 +241,7 @@ class PurchasesModalHTML
             . '<div class="col-sm mb-2">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans('search')
-            . '" onkeyup="return purchasesFormActionWait(\'find-product\', \'0\', event);"/>'
+            . '" onkeyup="return purchasesFormActionWait(\'find-product\', \'0\', event);" autofocus/>'
             . '<button class="btn btn-primary btn-spin-action" type="button" onclick="return purchasesFormAction(\'find-product\', \'0\');">'
             . '<i class="fas fa-search"></i></button>'
             . '</div>'

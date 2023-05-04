@@ -144,7 +144,7 @@ class AccountingFooterHTML
             . '<input type="text" class="form-control" maxlength="15" autocomplete="off" placeholder="' . $i18n->trans('subaccount')
             . '" id="new_subaccount" name="new_subaccount" onchange="return newLineAction(this.value);"/>'
             . '<button class="btn btn-info" type="button" title="' . $i18n->trans('subaccounts') . '"'
-            . ' onclick="$(\'#findSubaccountModal\').modal(); $(\'#findSubaccountInput\').focus();"><i class="fas fa-book"></i></button>'
+            . ' data-bs-toggle="modal" data-bs-target="#findSubaccountModal"><i class="fas fa-book"></i></button>'
             . '</div>'
             . '</div>'
             . '<div class="col-sm">'

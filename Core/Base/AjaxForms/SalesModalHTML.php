@@ -263,13 +263,13 @@ class SalesModalHTML
             . '<div class="modal-body p-0">'
             . '<div class="p-3">'
             . '<div class="input-group">'
-            . '<input type="text" id="findCustomerInput" class="form-control" placeholder="' . $i18n->trans('search') . '" />'
+            . '<input type="text" id="findCustomerInput" class="form-control" placeholder="' . $i18n->trans('search') . '"  autofocus/>'
             . '<button type="button" class="btn btn-primary"><i class="fas fa-search"></i></button>'
             . '</div>'
             . '</div>'
             . '<table class="table table-hover mb-0">' . $trs . '</table></div>'
             . '<div class="modal-footer bg-light">'
-            . '<a href="EditCliente?return=' . urlencode($url) . $linkAgent . '" class="btn btn-block btn-success">'
+            . '<a href="EditCliente?return=' . urlencode($url) . $linkAgent . '" class="btn btn-success w-100">'
             . '<i class="fas fa-plus fa-fw"></i> ' . $i18n->trans('new')
             . '</a>'
             . '</div>'
@@ -293,7 +293,7 @@ class SalesModalHTML
             . '<div class="col-sm mb-2">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans('search')
-            . '" onkeyup="return salesFormActionWait(\'find-product\', \'0\', event);"/>'
+            . '" onkeyup="return salesFormActionWait(\'find-product\', \'0\', event);" autofocus/>'
             . '<button class="btn btn-primary btn-spin-action" type="button" onclick="return salesFormAction(\'find-product\', \'0\');">'
             . '<i class="fas fa-search"></i></button>'
             . '</div>'
@@ -319,7 +319,7 @@ class SalesModalHTML
 
     protected static function orden(Translator $i18n): string
     {
-        return '< class="input-group">'
+        return '<div class="input-group">'
             . '<span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span>'
             . '<select name="fp_orden" class="form-select" onchange="return salesFormAction(\'find-product\', \'0\');">'
             . '<option value="">' . $i18n->trans('sort') . '</option>'

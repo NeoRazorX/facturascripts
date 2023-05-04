@@ -214,19 +214,17 @@ class SalesHeaderHTML
         self::$cliente = new Cliente();
         if (empty($model->codcliente) || false === self::$cliente->loadFromCode($model->codcliente)) {
             return '<div class="col-sm-3">'
-                . '<div class="mb-3">' . $i18n->trans('customer')
+                . '<div class="mb-3 d-grid">' . $i18n->trans('customer')
                 . '<input type="hidden" name="codcliente"/>'
-                . '<a href="#" id="btnFindCustomerModal" class="btn btn-block btn-primary" onclick="$(\'#findCustomerModal\').modal();'
-                . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-users fa-fw"></i> '
-                . $i18n->trans('select') . '</a>'
+                . '<a href="#" id="btnFindCustomerModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#findCustomerModal"><i class="fas fa-users fa-fw"></i>'
+                . ' ' . $i18n->trans('select') . '</a>'
                 . '</div>'
                 . '</div>'
                 . self::detailModal($i18n, $model);
         }
 
         $btnCliente = $model->editable ?
-            '<button class="btn btn-outline-secondary" type="button" onclick="$(\'#findCustomerModal\').modal();'
-            . ' $(\'#findCustomerInput\').focus(); return false;"><i class="fas fa-pen"></i></button>' :
+            '<button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#findCustomerModal"><i class="fas fa-pen"></i></button>' :
             '<button class="btn btn-outline-secondary" type="button"><i class="fas fa-lock"></i></button>';
 
         $html = '<div class="col-sm-3 col-lg">'
