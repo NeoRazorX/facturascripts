@@ -34,7 +34,7 @@ class MailNotifierTest extends TestCase
         $appSettings->set('email', 'port', '1025');
         $appSettings->set('email', 'user', 'facturascripts');
         $appSettings->set('email', 'password', 'password');
-        $appSettings->set('email', 'lowsecure', true);
+        $appSettings->set('email', 'lowsecure', 'true');
         $appSettings->save();
     }
 
