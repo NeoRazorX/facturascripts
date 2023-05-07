@@ -102,7 +102,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
 
         // filtros
-        $this->addFilterPeriod($viewName, 'period', 'expiration', 'vencimiento');
+        $this->addFilterPeriod($viewName, 'expiration', 'expiration', 'vencimiento');
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
@@ -124,6 +124,7 @@ class ListFacturaProveedor extends ListBusinessDocument
             ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
             ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
         ]);
+        $this->addFilterPeriod($viewName, 'payment-date', 'payment-date', 'fechapago');
 
         // botones
         $this->addButtonPayReceipt($viewName);
