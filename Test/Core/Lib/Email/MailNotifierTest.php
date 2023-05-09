@@ -66,6 +66,8 @@ class MailNotifierTest extends TestCase
 
     public function testPuedeEnviarNotificacionesPorEmail()
     {
+        $this->markTestSkipped('Aún no es posible testear el envio de Correos. Hay que crear Mock, IOC, ...');
+
         $params = [];
         $adjuntos = [
             FS_FOLDER . '/Test/__files/' . 'xss_img_src_onerror_alert(123).jpeg',
