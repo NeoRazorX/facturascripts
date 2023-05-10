@@ -144,6 +144,8 @@ final class PluginsTest extends TestCase
         // comprobamos que se ha activado el plugin
         $plugin = Plugins::get('TestPlugin2');
         $this->assertTrue($plugin->enabled);
+        $this->assertTrue($plugin->post_enable);
+        $this->assertFalse($plugin->post_disable);
         $this->assertContains('TestPlugin2', Plugins::enabled());
         $this->assertTrue(Plugins::isEnabled('TestPlugin2'));
 
@@ -159,6 +161,8 @@ final class PluginsTest extends TestCase
         // comprobamos que se ha desactivado el plugin
         $plugin = Plugins::get('TestPlugin2');
         $this->assertFalse($plugin->enabled);
+        $this->assertFalse($plugin->post_enable);
+        $this->assertTrue($plugin->post_disable);
         $this->assertNotContains('TestPlugin2', Plugins::enabled());
         $this->assertFalse(Plugins::isEnabled('TestPlugin2'));
 
