@@ -88,4 +88,37 @@ final class CacheTest extends TestCase
             $this->assertNull(Cache::get($key));
         }
     }
+
+    public function testCacheRememberKeyNotExist(): void
+    {
+        Cache::clear();
+
+        $key = 'test-key';
+        $value = 1;
+
+        $cacheValue = Cache::remember($key, function () use ($value) {
+            return $value + 1;
+        });
+
+        $this->assertEquals(Cache::get($key), $cacheValue, 'cache-value-not-found');
+        $this->assertNotEquals(Cache::get($key), $value, 'cache-value-not-found');
+    }
+
+    public function testCacheRememberKeyExist(): void
+    {
+        Cache::clear();
+
+        $key = 'test-key';
+        $value = '1234';
+        $closureValue = '5678';
+
+        Cache::set($key, $value);
+
+        $cacheValue = Cache::remember($key, function () use ($closureValue) {
+            return $closureValue;
+        });
+
+        $this->assertEquals(Cache::get($key), $cacheValue, 'cache-value-not-found');
+        $this->assertNotEquals(Cache::get($key), $closureValue, 'cache-value-not-found');
+    }
 }
