@@ -39,6 +39,9 @@ class PurchasesHeaderHTML
     /** @var PurchasesModInterface[] */
     private static $mods = [];
 
+    /** @var array */
+    private static $newFields = [];
+
     public static function addMod(PurchasesModInterface $mod)
     {
         self::$mods[] = $mod;
@@ -111,6 +114,7 @@ class PurchasesHeaderHTML
             . '</div>'
             . '<div class="form-row align-items-end">'
             . self::renderField($i18n, $model, '_detail')
+            . self::renderNewHeaderFields($i18n, $model)
             . self::renderField($i18n, $model, '_parents')
             . self::renderField($i18n, $model, '_children')
             . self::renderField($i18n, $model, '_email')
@@ -196,7 +200,7 @@ class PurchasesHeaderHTML
             . self::renderField($i18n, $model, 'hora')
             . self::renderField($i18n, $model, 'femail')
             . self::renderField($i18n, $model, 'user')
-            . self::renderNewFields($i18n, $model)
+            . self::renderNewModalFields($i18n, $model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
@@ -306,21 +310,83 @@ class PurchasesHeaderHTML
         return null;
     }
 
-    private static function renderNewFields(Translator $i18n, PurchaseDocument $model): string
+    /**
+     * Conservamos esta función para que sea compatible
+     * con versiones anteriores, pero ya no renderiza nada.
+     */
+    private static function renderNewFields(): void
     {
-        // cargamos los nuevos campos
-        $newFields = [];
+        self::getNewFields();
+    }
+
+    /**
+     * Cargamos los nuevos campos agrupandolos por la posición donde
+     * deben aparecer.
+     */
+    private static function getNewFields(): void
+    {
         foreach (self::$mods as $mod) {
-            foreach ($mod->newFields() as $field) {
-                if (false === in_array($field, $newFields)) {
-                    $newFields[] = $field;
+            foreach ($mod->newFields() as $field => $position) {
+
+                $positions = [
+                    PurchasesModInterface::HEADER_POSITION, 
+                    PurchasesModInterface::MODAL_POSITION
+                ];
+
+                // Este if es para conservar la compatibilidad con versiones anteriores
+                // donde solo se pasaba el nombre del campo sin la posición.
+                if(in_array($position, $positions)){
+                    // $field => $position
+                    if (false === in_array($field, self::$newFields[$position] ?? [])) {
+                        self::$newFields[$position][] = $field;
+                    }
+                }else{
+                    // Al no pasar una posición la variable $field es la $key del array 
+                    // y la variable $position es el nombre del campo.
+                    // $arrayKey => $position(field) -> 0 => field
+                    if (false === in_array($position, self::$newFields[PurchasesModInterface::MODAL_POSITION] ?? [])) {
+                        self::$newFields[PurchasesModInterface::MODAL_POSITION][] = $position;
+                    }
                 }
             }
         }
+    }
 
-        // renderizamos los campos
+    /**
+     * Renderiza los campos dentro del Modal Detalles
+     */
+    private static function renderNewModalFields(Translator $i18n, PurchaseDocument $model): string
+    {
+        // Cargamos los campos
+        self::renderNewFields();
+
+        // Renderizamos los campos
+        return self::renderNF(self::$newFields[PurchasesModInterface::MODAL_POSITION], $i18n, $model);       
+    }
+
+    /**
+     * Renderiza los campos dentro del PurchasesHeader
+     */
+    private static function renderNewHeaderFields(Translator $i18n, PurchaseDocument $model): string
+    {
+        // Cargamos los campos
+        self::renderNewFields();
+
+        // Renderizamos los campos
+        return self::renderNF(self::$newFields[PurchasesModInterface::HEADER_POSITION], $i18n, $model);
+    }
+    
+    /**
+     * Renderiza los nuevos campos pasador en el array.
+     * Creamos esta function con este nombre para conservar
+     * la compatibilidad con versiones anteriores, pero en realidad
+     * la funcion renderNewFields deberia llamarse getNewFields
+     * y esta función deberia llamarse renderNewFields
+     */
+    private static function renderNF(array $fields, Translator $i18n, PurchaseDocument $model): string
+    {
         $html = '';
-        foreach ($newFields as $field) {
+        foreach ($fields as $field) {
             foreach (self::$mods as $mod) {
                 $fieldHtml = $mod->renderField($i18n, $model, $field);
                 if ($fieldHtml !== null) {

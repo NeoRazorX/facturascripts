@@ -25,6 +25,9 @@ use FacturaScripts\Core\Model\User;
 
 interface PurchasesModInterface
 {
+    const HEADER_POSITION = 'header_position';
+    const MODAL_POSITION = 'modal_position';
+    
     public function apply(PurchaseDocument &$model, array $formData, User $user);
 
     public function applyBefore(PurchaseDocument &$model, array $formData, User $user);
