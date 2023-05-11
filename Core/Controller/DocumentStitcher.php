@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -91,6 +92,11 @@ class DocumentStitcher extends Controller
         $data['title'] = 'group-or-split';
         $data['icon'] = 'fas fa-magic';
         return $data;
+    }
+
+    public function getSeries(): array
+    {
+        return CodeModel::all('series', 'codserie', 'descripcion', false);
     }
 
     /**
@@ -249,6 +255,7 @@ class DocumentStitcher extends Controller
 
             if (null === $prototype) {
                 $prototype = clone $doc;
+                $prototype->codserie = $this->request->request->get('codserie', $doc->codserie);
             } elseif ('true' === $this->request->request->get('extralines', '') && !empty($lines)) {
                 $this->addBlankLine($newLines, $doc);
             }

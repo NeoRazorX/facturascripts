@@ -41,6 +41,17 @@
                            autocomplete="off"/>
                 </div>
                 <div class="col-lg-2 col-sm-6 mb-2">
+                    <select name="codserie" class="form-control">
+                        {% for item in fsc.getSeries() %}
+                            {% if item.code is same as(fsc.documents[0].codserie) %}
+                                <option value="{{ item.code }}" selected>{{ item.description }}</option>
+                            {% else %}
+                                <option value="{{ item.code }}">{{ item.description }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-2 col-sm-6 mb-2">
                     <select name="extralines" class="form-control">
                         <option value="true">{{ i18n.trans('add-extra-lines') }}</option>
                         <option value="false">{{ i18n.trans('no-extra-lines') }}</option>
