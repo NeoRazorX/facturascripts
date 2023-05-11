@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,38 +38,20 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class DocumentStitcher extends Controller
 {
-
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
 
-    /**
-     * Array of document primary keys.
-     *
-     * @var array
-     */
+    /** @var array */
     public $codes = [];
 
-    /**
-     * @var TransformerDocument[]
-     */
+    /** @var TransformerDocument[] */
     public $documents = [];
 
-    /**
-     * Model name source.
-     *
-     * @var string
-     */
+    /** @var string */
     public $modelName;
 
-    /**
-     * @var TransformerDocument[]
-     */
+    /** @var TransformerDocument[] */
     public $moreDocuments = [];
 
-    /**
-     * Returns available status to group this model.
-     *
-     * @return array
-     */
     public function getAvailableStatus(): array
     {
         $status = [];
@@ -124,14 +106,7 @@ class DocumentStitcher extends Controller
         $status = (int)$this->request->request->get('status', '');
         if ($status) {
             // validate form request?
-            $token = $this->request->request->get('multireqtoken', '');
-            if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
-                $this->toolBox()->i18nLog()->warning('invalid-request');
-                return;
-            }
-
-            if ($this->multiRequestProtection->tokenExist($token)) {
-                $this->toolBox()->i18nLog()->warning('duplicated-request');
+            if (false === $this->validateFormToken()) {
                 return;
             }
 
@@ -143,7 +118,7 @@ class DocumentStitcher extends Controller
      * @param array $newLines
      * @param TransformerDocument $doc
      */
-    protected function addBlankLine(array &$newLines, $doc)
+    protected function addBlankLine(array &$newLines, $doc): void
     {
         $blankLine = $doc->getNewLine([
             'cantidad' => 0,
@@ -180,7 +155,7 @@ class DocumentStitcher extends Controller
      * @param array $newLines
      * @param TransformerDocument $doc
      */
-    protected function addInfoLine(array &$newLines, $doc)
+    protected function addInfoLine(array &$newLines, $doc): void
     {
         $infoLine = $doc->getNewLine([
             'cantidad' => 0,
@@ -198,7 +173,7 @@ class DocumentStitcher extends Controller
      * @param array $quantities
      * @param int $idestado
      */
-    protected function breakDownLines(&$doc, &$docLines, &$newLines, &$quantities, $idestado)
+    protected function breakDownLines(&$doc, &$docLines, &$newLines, &$quantities, $idestado): void
     {
         $full = true;
         foreach ($docLines as $line) {
@@ -241,7 +216,7 @@ class DocumentStitcher extends Controller
      *
      * @param int $idestado
      */
-    protected function generateNewDocument(int $idestado)
+    protected function generateNewDocument(int $idestado): void
     {
         $this->dataBase->beginTransaction();
 
@@ -367,7 +342,7 @@ class DocumentStitcher extends Controller
     /**
      * Loads selected documents.
      */
-    protected function loadDocuments()
+    protected function loadDocuments(): void
     {
         if (empty($this->codes) || empty($this->modelName)) {
             return;
@@ -393,7 +368,7 @@ class DocumentStitcher extends Controller
         });
     }
 
-    protected function loadMoreDocuments()
+    protected function loadMoreDocuments(): void
     {
         if (empty($this->documents) || empty($this->modelName)) {
             return;
