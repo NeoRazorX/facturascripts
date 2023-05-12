@@ -172,8 +172,6 @@ abstract class ComercialContactController extends EditController
 
         // filters
         $this->views[$viewName]->addFilterPeriod('expiration', 'expiration', 'vencimiento');
-		$this->views[$viewName]->addFilterPeriod('payment-date', 'payment-date', 'fechapago');
-
         // search columns
         $this->views[$viewName]->addSearchFields(['codigofactura', 'observaciones']);
 
