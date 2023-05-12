@@ -106,6 +106,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
+		$this->views[$viewName]->addFilterPeriod('payment-date', 'payment-date', 'fechapago');
 
         $currencies = Divisas::codeModel();
         if (count($currencies) > 2) {
