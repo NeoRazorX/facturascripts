@@ -195,10 +195,11 @@ final class Plugin
 
         // ejecutamos los procesos de la clase Init del plugin
         $init = new $className();
+        if ($this->post_enable) {
+            $init->update();
+        }
         if ($this->post_disable) {
             $init->uninstall();
-        } else if ($this->post_enable) {
-            $init->update();
         }
         $init->init();
 
