@@ -45,6 +45,7 @@ class PurchasesHeaderHTML
     public static function addMod(PurchasesModInterface $mod)
     {
         self::$mods[] = $mod;
+        self::getNewFields();
     }
 
     public static function apply(PurchaseDocument &$model, array $formData, User $user)
@@ -311,15 +312,6 @@ class PurchasesHeaderHTML
     }
 
     /**
-     * Conservamos esta función para que sea compatible
-     * con versiones anteriores, pero ya no renderiza nada.
-     */
-    private static function renderNewFields(): void
-    {
-        self::getNewFields();
-    }
-
-    /**
      * Cargamos los nuevos campos agrupandolos por la posición donde
      * deben aparecer.
      */
@@ -355,33 +347,33 @@ class PurchasesHeaderHTML
     /**
      * Renderiza los campos dentro del Modal Detalles
      */
-    private static function renderNewModalFields(Translator $i18n, PurchaseDocument $model): string
+    private static function renderNewModalFields(Translator $i18n, PurchaseDocument $model): ?string
     {
-        // Cargamos los campos
-        self::renderNewFields();
+        $fields = self::$newFields[PurchasesModInterface::MODAL_POSITION] ?? null;
 
-        // Renderizamos los campos
-        return self::renderNF(self::$newFields[PurchasesModInterface::MODAL_POSITION], $i18n, $model);       
+        if($fields && count($fields) > 0){
+            return self::renderNF($fields, $i18n, $model);
+        }
+        
+        return null;
     }
 
     /**
      * Renderiza los campos dentro del PurchasesHeader
      */
-    private static function renderNewHeaderFields(Translator $i18n, PurchaseDocument $model): string
+    private static function renderNewHeaderFields(Translator $i18n, PurchaseDocument $model): ?string
     {
-        // Cargamos los campos
-        self::renderNewFields();
-
-        // Renderizamos los campos
-        return self::renderNF(self::$newFields[PurchasesModInterface::HEADER_POSITION], $i18n, $model);
+        $fields = self::$newFields[PurchasesModInterface::HEADER_POSITION] ?? null;
+        
+        if($fields && count($fields) > 0){
+            return self::renderNF($fields, $i18n, $model);
+        }
+        
+        return null;
     }
     
     /**
-     * Renderiza los nuevos campos pasador en el array.
-     * Creamos esta function con este nombre para conservar
-     * la compatibilidad con versiones anteriores, pero en realidad
-     * la funcion renderNewFields deberia llamarse getNewFields
-     * y esta función deberia llamarse renderNewFields
+     * Renderiza los nuevos campos pasados en el array.
      */
     private static function renderNF(array $fields, Translator $i18n, PurchaseDocument $model): string
     {
