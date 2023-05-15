@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\App;
 
 use FacturaScripts\Core\Base\MyFilesToken;
-use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Core\Plugins;
 
 /**
  * Description of AppRouter
@@ -29,7 +29,6 @@ use FacturaScripts\Core\Base\PluginManager;
  */
 final class AppRouter
 {
-
     /**
      * Path to list of routes stored on file.
      */
@@ -152,8 +151,8 @@ final class AppRouter
     {
         $parts = explode('.', $filePath);
         $safe = [
-            'accdb', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'ico', 'jpeg', 'jpg', 'js',
-            'json', 'map', 'mdb', 'mkv', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf', 'png', 'sql', 'svg',
+            'accdb', 'avi', 'cdr', 'css', 'csv', 'doc', 'docx', 'eot', 'gif', 'gz', 'html', 'ico', 'jpeg', 'jpg', 'js',
+            'json', 'map', 'mdb', 'mkv', 'mp3', 'mp4', 'ndg', 'ods', 'odt', 'ogg', 'pdf', 'png', 'pptx', 'sql', 'svg',
             'ttf', 'txt', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
         ];
         return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
@@ -192,8 +191,7 @@ final class AppRouter
     private function deploy()
     {
         if (false === file_exists(FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic')) {
-            $pluginManager = new PluginManager();
-            $pluginManager->deploy();
+            Plugins::deploy();
         }
     }
 

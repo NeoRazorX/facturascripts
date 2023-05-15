@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2019 Carlos García Gómez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos García Gómez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,22 +32,12 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 class EditProvincia extends EditController
 {
 
-    /**
-     * Returns the model name.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Provincia';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -66,23 +57,18 @@ class EditProvincia extends EditController
         $this->createCityView();
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
-    protected function createCityView($viewName = 'ListCiudad')
+    protected function createCityView(string $viewName = 'ListCiudad')
     {
         $this->addListView($viewName, 'Ciudad', 'cities');
         $this->views[$viewName]->addOrderBy(['ciudad'], 'name', 1);
         $this->views[$viewName]->searchFields = ['ciudad'];
 
-        /// disable column
+        // disable column
         $this->views[$viewName]->disableColumn('province');
     }
 
     /**
-     *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)

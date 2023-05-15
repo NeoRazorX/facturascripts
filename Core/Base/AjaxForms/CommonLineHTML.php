@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -45,7 +45,7 @@ trait CommonLineHTML
 
     private static function cantidadRestante(Translator $i18n, BusinessDocumentLine $line, TransformerDocument $model): string
     {
-        if ($line->servido <= 0 || $line->servido == $line->cantidad || false === $model->editable) {
+        if ($line->servido <= 0 || false === $model->editable) {
             return '';
         }
 
@@ -67,7 +67,7 @@ trait CommonLineHTML
         $options = ['<option value="">------</option>'];
         foreach (Impuestos::all() as $imp) {
             $options[] = $line->codimpuesto == $imp->codimpuesto ?
-                '<option value="' . $imp->codimpuesto . '" selected="">' . $imp->descripcion . '</option>' :
+                '<option value="' . $imp->codimpuesto . '" selected>' . $imp->descripcion . '</option>' :
                 '<option value="' . $imp->codimpuesto . '">' . $imp->descripcion . '</option>';
         }
 
@@ -131,8 +131,8 @@ trait CommonLineHTML
     {
         $attributes = $model->editable ? 'name="' . $field . '_' . $idlinea . '"' : 'disabled=""';
         $options = $line->{$field} ?
-            ['<option value="0">' . $i18n->trans('no') . '</option>', '<option value="1" selected="">' . $i18n->trans('yes') . '</option>'] :
-            ['<option value="0" selected="">' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
+            ['<option value="0">' . $i18n->trans('no') . '</option>', '<option value="1" selected>' . $i18n->trans('yes') . '</option>'] :
+            ['<option value="0" selected>' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
         return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans($label)
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
@@ -145,15 +145,15 @@ trait CommonLineHTML
         $options = ['<option value="">------</option>'];
         foreach (Retenciones::all() as $ret) {
             $options[] = $line->irpf === $ret->porcentaje ?
-                '<option value="' . $ret->porcentaje . '" selected="">' . $ret->descripcion . '</option>' :
+                '<option value="' . $ret->porcentaje . '" selected>' . $ret->descripcion . '</option>' :
                 '<option value="' . $ret->porcentaje . '">' . $ret->descripcion . '</option>';
         }
 
         $attributes = $model->editable && false === $line->suplido ?
-            'name="irpf_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
+            'name="irpf_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-6">'
-            . '<div class="mb-2">' . $i18n->trans('retention')
+            . '<div class="mb-2"><a href="ListImpuesto?activetab=ListRetencion">' . $i18n->trans('retention') . '</a>'
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
@@ -205,7 +205,7 @@ trait CommonLineHTML
             'name="recargo_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-6">'
-            . '<div class="mb-2">' . $i18n->trans('percentage-surcharge')
+            . '<div class="mb-2"><a href="ListImpuesto">' . $i18n->trans('percentage-surcharge') . '</a>'
             . '<input type="number" ' . $attributes . ' value="' . $line->recargo . '" class="form-control"/>'
             . '</div>'
             . '</div>';
@@ -255,11 +255,11 @@ trait CommonLineHTML
     private static function suplido(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $attributes = $model->editable ?
-            'name="suplido_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
+            'name="suplido_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         $options = $line->suplido ?
-            ['<option value="0">' . $i18n->trans('no') . '</option>', '<option value="1" selected="">' . $i18n->trans('yes') . '</option>'] :
-            ['<option value="0" selected="">' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
+            ['<option value="0">' . $i18n->trans('no') . '</option>', '<option value="1" selected>' . $i18n->trans('yes') . '</option>'] :
+            ['<option value="0" selected>' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
         return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans('supplied')
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
@@ -280,7 +280,7 @@ trait CommonLineHTML
 
     private static function titleCodimpuesto(Translator $i18n): string
     {
-        return '<div class="col-lg-1 order-6">' . $i18n->trans('tax') . '</div>';
+        return '<div class="col-lg-1 order-6"><a href="ListImpuesto">' . $i18n->trans('tax') . '</a></div>';
     }
 
     private static function titleDescripcion(Translator $i18n): string

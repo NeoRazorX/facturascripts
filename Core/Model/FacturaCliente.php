@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -113,7 +113,10 @@ class FacturaCliente extends Base\SalesDocument
         ];
         foreach ($this->all($whereOld, ['fecha' => 'DESC'], 0, 1) as $old) {
             if (strtotime($old->fecha) > strtotime($this->fecha)) {
-                self::toolBox()::i18nLog()->error('invalid-date-there-are-invoices-after', ['%date%' => $this->fecha]);
+                self::toolBox()::i18nLog()->error(
+                    'invalid-date-there-are-invoices-before',
+                    ['%date%' => $this->fecha, '%other-date%' => $old->fecha, '%other%' => $old->codigo]
+                );
                 return false;
             }
         }
@@ -126,7 +129,10 @@ class FacturaCliente extends Base\SalesDocument
         ];
         foreach ($this->all($whereNew, ['fecha' => 'ASC'], 0, 1) as $old) {
             if (strtotime($old->fecha) < strtotime($this->fecha)) {
-                self::toolBox()::i18nLog()->error('invalid-date-there-are-invoices-before', ['%date%' => $this->fecha]);
+                self::toolBox()::i18nLog()->error(
+                    'invalid-date-there-are-invoices-after',
+                    ['%date%' => $this->fecha, '%other-date%' => $old->fecha, '%other%' => $old->codigo]
+                );
                 return false;
             }
         }

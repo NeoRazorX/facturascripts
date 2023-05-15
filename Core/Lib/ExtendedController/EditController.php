@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,11 +27,10 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
  */
 abstract class EditController extends PanelController
 {
-
     /**
      * Returns the class name of the model to use in the editView.
      */
-    abstract public function getModelClassName();
+    abstract public function getModelClassName(): string;
 
     /**
      * Pointer to the data model.
@@ -44,12 +43,7 @@ abstract class EditController extends PanelController
         return $this->views[$viewName]->model;
     }
 
-    /**
-     * Return the basic data for this page.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['showonmenu'] = false;

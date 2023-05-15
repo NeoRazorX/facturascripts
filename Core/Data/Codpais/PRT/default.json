@@ -1,0 +1,17 @@
+{
+    "default": {
+        "coddivisa": "EUR",
+        "codimpuesto": "IVA23",
+        "codserie": "A",
+        "codserierec": "R",
+        "codpago": "CONT",
+        "tipoidfiscal": "NIF",
+        "validate_iban": false
+    },
+    "email": {
+        "enc": "ssl",
+        "host": "smtp.gmail.com",
+        "mailer": "smtp",
+        "port": "465"
+    }
+}

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Test\Core\Model;
 use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\Stock;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
@@ -103,6 +104,88 @@ final class FacturaClienteTest extends TestCase
     {
         $invoice = new FacturaCliente();
         $this->assertFalse($invoice->save(), 'can-create-invoice-without-customer');
+    }
+
+    public function testCanNotCreateInvoiceWithBadExercise()
+    {
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos la factura
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+
+        // asignamos una fecha de 2019
+        $this->assertTrue($invoice->setDate('11-01-2019', '00:00:00'));
+        $oldExercise = $invoice->getExercise();
+
+        // creamos un ejercicio para 2020
+        $exercise = new Ejercicio();
+        $exercise->codejercicio = '2020';
+        $exercise->nombre = '2020';
+        $exercise->fechainicio = '01-01-2020';
+        $exercise->fechafin = '31-12-2020';
+        $this->assertTrue($exercise->save());
+
+        // asignamos el ejercicio a la factura
+        $invoice->codejercicio = $exercise->codejercicio;
+
+        // intentamos guardar la factura, no debe permitirlo
+        $this->assertFalse($invoice->save(), 'can-create-invoice-with-bad-exercise');
+
+        // eliminamos
+        $this->assertTrue($exercise->delete());
+        $this->assertTrue($oldExercise->delete());
+        $this->assertTrue($customer->getDefaultAddress()->delete());
+        $this->assertTrue($customer->delete());
+    }
+
+    public function testCanNotCreateInvoiceWithDuplicatedCode()
+    {
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos la factura
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // creamos otra factura con el mismo código
+        $invoice2 = new FacturaCliente();
+        $invoice2->setSubject($customer);
+        $invoice2->codigo = $invoice->codigo;
+        $this->assertFalse($invoice2->save(), 'can-create-invoice-with-duplicated-code');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete());
+        $this->assertTrue($customer->getDefaultAddress()->delete());
+        $this->assertTrue($customer->delete());
+    }
+
+    public function testCanNotCreateInvoiceWithDuplicatedNumber()
+    {
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos la factura
+        $invoice = new FacturaCliente();
+        $invoice->setSubject($customer);
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // creamos otra factura con el mismo número
+        $invoice2 = new FacturaCliente();
+        $invoice2->setSubject($customer);
+        $invoice2->codigo = $invoice->codigo . '-2';
+        $invoice2->numero = $invoice->numero;
+        $this->assertFalse($invoice2->save(), 'can-create-invoice-with-duplicated-number');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete());
+        $this->assertTrue($customer->getDefaultAddress()->delete());
+        $this->assertTrue($customer->delete());
     }
 
     public function testInvoiceLineUpdateStock()

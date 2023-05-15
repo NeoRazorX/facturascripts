@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -152,7 +152,7 @@ abstract class ListBusinessDocument extends ListController
     protected function createViewPurchases(string $viewName, string $modelName, string $label)
     {
         $this->addView($viewName, $modelName, $label, 'fas fa-copy');
-        $this->addSearchFields($viewName, ['codigo', 'nombre', 'numproveedor', 'observaciones']);
+        $this->addSearchFields($viewName, ['cifnif', 'codigo', 'nombre', 'numproveedor', 'observaciones']);
         $this->addOrderBy($viewName, ['codigo'], 'code');
         $this->addOrderBy($viewName, ['fecha', $this->tableColToNumber('numero')], 'date', 2);
         $this->addOrderBy($viewName, [$this->tableColToNumber('numero')], 'number');
@@ -172,7 +172,7 @@ abstract class ListBusinessDocument extends ListController
     protected function createViewSales(string $viewName, string $modelName, string $label)
     {
         $this->addView($viewName, $modelName, $label, 'fas fa-copy');
-        $this->addSearchFields($viewName, ['codigo', 'codigoenv', 'nombrecliente', 'numero2', 'observaciones']);
+        $this->addSearchFields($viewName, ['cifnif', 'codigo', 'codigoenv', 'nombrecliente', 'numero2', 'observaciones']);
         $this->addOrderBy($viewName, ['codigo'], 'code');
         $this->addOrderBy($viewName, ['codcliente'], 'customer-code');
         $this->addOrderBy($viewName, ['fecha', $this->tableColToNumber('numero')], 'date', 2);

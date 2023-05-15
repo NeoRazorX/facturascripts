@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core;
 
+use Closure;
+
 /**
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
@@ -99,7 +101,7 @@ final class Cache
         // guardamos el contenido
         $data = serialize($value);
         $fileName = self::filename($key);
-        file_put_contents($fileName, $data);
+        @file_put_contents($fileName, $data);
     }
 
     private static function filename(string $key): string
@@ -107,5 +109,23 @@ final class Cache
         // reemplazamos / y \ por _
         $name = str_replace(['/', '\\'], '_', $key);
         return FS_FOLDER . self::FILE_PATH . '/' . $name . '.cache';
+    }
+
+    /**
+     * Obtenemos el valor almacenado si existe o por el contrario almacenamos lo que devuelva la funcion callback.
+     *
+     * @param  string  $key
+     * @param  \Closure  $callback
+     * @return mixed
+     */
+    public static function remember($key, Closure $callback)
+    {
+        if (! is_null($value = self::get($key))) {
+            return $value;
+        }
+
+        $value = $callback();
+        self::set($key, $value);
+        return $value;
     }
 }

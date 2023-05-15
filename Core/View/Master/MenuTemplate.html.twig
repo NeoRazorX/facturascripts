@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,7 +24,7 @@
     {% block meta %}
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <title>{{ fsc.title | raw }}</title>
-        <meta name="description" content="{{ i18n.trans('meta-description') }}"/>
+        <meta name="description" content="{{ trans('meta-description') }}"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta name="generator" content="FacturaScripts"/>
         <meta name="robots" content="noindex"/>
@@ -37,7 +37,7 @@
     {% block css %}
         <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}"/>
         <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}"/>
-        <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}?v=3"/>
+        <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}?v=6"/>
     {% endblock %}
     {# Adds custom CSS assets #}
     {% for css in assetManager.get('css') %}
@@ -49,7 +49,7 @@
         <script src="{{ asset('node_modules/bootbox/dist/bootbox.min.js') }}"></script>
         <script src="{{ asset('node_modules/bootbox/dist/bootbox.locales.min.js') }}"></script>
         <script src="{{ asset('node_modules/pace-js/pace.min.js') }}"></script>
-        <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}?v=5"></script>
+        <script src="{{ asset('Dinamic/Assets/JS/Custom.js') }}?v=6"></script>
     {% endblock %}
     {# Adds custom JS assets #}
     {% for js in assetManager.get('js') %}
@@ -62,7 +62,7 @@
     {% block navbar %}
         <nav class="navbar navbar-expand navbar-dark bg-primary sticky-top d-print-none">
             {% block navbarContent %}
-                <a class="navbar-brand d-none d-sm-inline" href="{{ asset('') }}" title="{{ i18n.trans('homepage') }}">
+                <a class="navbar-brand d-none d-sm-inline" href="{{ asset('') }}" title="{{ trans('homepage') }}">
                     <img src="{{ asset('Dinamic/Assets/Images/logo-white.png') }}" width="30" height="30"
                          class="d-inline-block align-top" alt="FacturaScripts"/>
                     <span class="d-none d-xl-inline-block">{{ fsc.empresa.nombrecorto | raw }}</span>
@@ -76,17 +76,17 @@
                     </ul>
                     <ul class="navbar-nav flex-row ml-auto">
                         <li class="nav-item{{ template == 'MegaSearch.html.twig' ? ' active' : '' }}"
-                            title="{{ i18n.trans('search') }}">
+                            title="{{ trans('search') }}">
                             <a class="nav-link" href="MegaSearch">
                                 <i class="fas fa-search" aria-hidden="true"></i>
                             </a>
                         </li>
-                        <li class="nav-item" title="{{ i18n.trans('help') }}">
+                        <li class="nav-item" title="{{ trans('help') }}">
                             <a class="nav-link" href="https://facturascripts.com/ayuda" rel="nofollow" target="_blank">
                                 <i class="fas fa-question-circle" aria-hidden="true"></i>
                             </a>
                         </li>
-                        <li class="nav-item dropdown" title="{{ i18n.trans('user') }}">
+                        <li class="nav-item dropdown" title="{{ trans('user') }}">
                             <a class="nav-link dropdown-toggle mr-md-2" href="#" data-toggle="dropdown"
                                aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>
@@ -97,7 +97,7 @@
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="?logout=TRUE">
-                                    <i class="fas fa-door-open fa-fw" aria-hidden="true"></i> {{ i18n.trans('logout') }}
+                                    <i class="fas fa-door-open fa-fw" aria-hidden="true"></i> {{ trans('logout') }}
                                 </a>
                             </div>
                         </li>

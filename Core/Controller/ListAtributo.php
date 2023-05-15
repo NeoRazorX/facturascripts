@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2019 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
@@ -27,13 +28,7 @@ use FacturaScripts\Core\Lib\ExtendedController\ListController;
  */
 class ListAtributo extends ListController
 {
-
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
@@ -47,14 +42,23 @@ class ListAtributo extends ListController
      */
     protected function createViews()
     {
-        $this->addView('ListAtributo', 'Atributo', 'attributes', 'fas fa-tshirt');
-        $this->addSearchFields('ListAtributo', ['nombre', 'codatributo']);
-        $this->addOrderBy('ListAtributo', ['codatributo'], 'code');
-        $this->addOrderBy('ListAtributo', ['nombre'], 'name');
+        $this->createViewsAttributes();
+        $this->createViewsValues();
+    }
 
-        $this->addView('ListAtributoValor', 'AtributoValor', 'values', 'fas fa-list');
-        $this->addSearchFields('ListAtributoValor', ['valor', 'codatributo']);
-        $this->addOrderBy('ListAtributoValor', ['codatributo', 'orden', 'valor'], 'sort', 2);
-        $this->addOrderBy('ListAtributoValor', ['codatributo', 'valor'], 'value');
+    protected function createViewsAttributes(string $viewName = 'ListAtributo'): void
+    {
+        $this->addView($viewName, 'Atributo', 'attributes', 'fas fa-tshirt');
+        $this->addSearchFields($viewName, ['nombre', 'codatributo']);
+        $this->addOrderBy($viewName, ['codatributo'], 'code');
+        $this->addOrderBy($viewName, ['nombre'], 'name');
+    }
+
+    protected function createViewsValues(string $viewName = 'ListAtributoValor'): void
+    {
+        $this->addView($viewName, 'AtributoValor', 'values', 'fas fa-list');
+        $this->addSearchFields($viewName, ['valor', 'codatributo']);
+        $this->addOrderBy($viewName, ['codatributo', 'orden', 'valor'], 'sort', 2);
+        $this->addOrderBy($viewName, ['codatributo', 'valor'], 'value');
     }
 }

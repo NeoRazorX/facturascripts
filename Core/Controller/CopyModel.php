@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -163,6 +163,9 @@ class CopyModel extends Controller
         $newEntry->canal = $this->request->request->get('canal');
         $newEntry->concepto = $this->request->request->get('concepto');
 
+        $company = $this->request->request->get('idempresa');
+        $newEntry->idempresa = empty($company) ? $newEntry->idempresa : $company;
+
         $diario = $this->request->request->get('iddiario');
         $newEntry->iddiario = empty($diario) ? null : $diario;
         $newEntry->importe = $this->model->importe;
@@ -214,8 +217,8 @@ class CopyModel extends Controller
         $newDoc->setCurrency($this->model->coddivisa);
         $newDoc->codpago = $this->request->request->get('codpago');
         $newDoc->codserie = $this->request->request->get('codserie');
-        $newDoc->dtopor1 = $this->request->request->get('dtopor1', 0);
-        $newDoc->dtopor2 = $this->request->request->get('dtopor2', 0);
+        $newDoc->dtopor1 = (float)$this->request->request->get('dtopor1', 0);
+        $newDoc->dtopor2 = (float)$this->request->request->get('dtopor2', 0);
         $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
         $newDoc->numproveedor = $this->request->request->get('numproveedor');
         $newDoc->observaciones = $this->request->request->get('observaciones');
@@ -262,8 +265,8 @@ class CopyModel extends Controller
         $newDoc->setCurrency($this->model->coddivisa);
         $newDoc->codpago = $this->request->request->get('codpago');
         $newDoc->codserie = $this->request->request->get('codserie');
-        $newDoc->dtopor1 = $this->request->request->get('dtopor1', 0);
-        $newDoc->dtopor2 = $this->request->request->get('dtopor2', 0);
+        $newDoc->dtopor1 = (float)$this->request->request->get('dtopor1', 0);
+        $newDoc->dtopor2 = (float)$this->request->request->get('dtopor2', 0);
         $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
         $newDoc->numero2 = $this->request->request->get('numero2');
         $newDoc->observaciones = $this->request->request->get('observaciones');

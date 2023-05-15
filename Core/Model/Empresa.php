@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Model\EmpresaSettings;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 
@@ -83,7 +84,7 @@ class Empresa extends Base\Contact
     public function clear()
     {
         parent::clear();
-        $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
+        $this->codpais = Tools::settings('default', 'codpais');
         $this->regimeniva = RegimenIVA::defaultValue();
     }
 
@@ -115,7 +116,7 @@ class Empresa extends Base\Contact
     public function delete(): bool
     {
         if ($this->isDefault()) {
-            $this->toolBox()->i18nLog()->warning('cant-delete-default-company');
+            Tools::log()->warning('cant-delete-default-company');
             return false;
         }
 
@@ -148,10 +149,10 @@ class Empresa extends Base\Contact
         $num = mt_rand(1, 9999);
         $name = defined('FS_INITIAL_EMPRESA') ? FS_INITIAL_EMPRESA : 'E-' . $num;
         $codpais = defined('FS_INITIAL_CODPAIS') ? FS_INITIAL_CODPAIS : 'ESP';
-        return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,'
-            . 'direccion,administrador,cifnif,nombre,nombrecorto,personafisica,regimeniva)'
-            . "VALUES (1,'','" . $codpais . "','','','00000014Z','" . $name . "','" . $name . "','0',"
-            . "'" . RegimenIVA::defaultValue() . "');";
+        return 'INSERT INTO ' . static::tableName() . ' (idempresa,web,codpais,direccion,administrador,cifnif,nombre,'
+            . 'nombrecorto,personafisica,regimeniva) '
+            . "VALUES (1,'','" . $codpais . "','','','00000014Z','" . Tools::textBreak($name, 100)
+            . "','" . Tools::textBreak($name, 32) . "','0'," . "'" . RegimenIVA::defaultValue() . "');";
     }
 
     /**
@@ -161,7 +162,7 @@ class Empresa extends Base\Contact
      */
     public function isDefault(): bool
     {
-        return $this->idempresa === (int)$this->toolBox()->appSettings()->get('default', 'idempresa');
+        return $this->idempresa === (int)Tools::settings('default', 'idempresa');
     }
 
     public static function primaryColumn(): string
@@ -192,15 +193,14 @@ class Empresa extends Base\Contact
 
     public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->administrador = $utils->noHtml($this->administrador);
-        $this->apartado = $utils->noHtml($this->apartado);
-        $this->ciudad = $utils->noHtml($this->ciudad);
-        $this->codpostal = $utils->noHtml($this->codpostal);
-        $this->direccion = $utils->noHtml($this->direccion);
-        $this->nombrecorto = $utils->noHtml($this->nombrecorto);
-        $this->provincia = $utils->noHtml($this->provincia);
-        $this->web = $utils->noHtml($this->web);
+        $this->administrador = Tools::noHtml($this->administrador);
+        $this->apartado = Tools::noHtml($this->apartado);
+        $this->ciudad = Tools::noHtml($this->ciudad);
+        $this->codpostal = Tools::noHtml($this->codpostal);
+        $this->direccion = Tools::noHtml($this->direccion);
+        $this->nombrecorto = Tools::noHtml($this->nombrecorto);
+        $this->provincia = Tools::noHtml($this->provincia);
+        $this->web = Tools::noHtml($this->web);
 
         return parent::test();
     }
@@ -209,7 +209,7 @@ class Empresa extends Base\Contact
     {
         $formaPago = new FormaPago();
         $formaPago->codpago = $formaPago->newCode();
-        $formaPago->descripcion = $this->toolBox()->i18n()->trans('default');
+        $formaPago->descripcion = Tools::lang()->trans('default');
         $formaPago->idempresa = $this->idempresa;
         return $formaPago->save();
     }

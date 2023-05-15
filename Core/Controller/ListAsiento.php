@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,7 +32,6 @@ use FacturaScripts\Core\Model\Asiento;
  */
 class ListAsiento extends ListController
 {
-
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -91,30 +90,11 @@ class ListAsiento extends ListController
         $this->addOrderBy($viewName, ['importe', 'idasiento'], 'amount');
         $this->addSearchFields($viewName, ['concepto', 'documento', 'CAST(numero AS char(255))']);
 
-        // filters
+        // filtros
         $this->addFilterPeriod($viewName, 'date', 'period', 'fecha');
-
-        $selectExercise = Ejercicios::codeModel();
-        if (count($selectExercise) > 2) {
-            $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
-        }
-
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
         $this->addFilterCheckbox($viewName, 'editable');
-
-        $selectCompany = Empresas::codeModel();
-        if (count($selectCompany) > 2) {
-            $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $selectCompany);
-        }
-
-        $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
-        $this->addFilterSelect($viewName, 'iddiario', 'journals', 'iddiario', $selectJournals);
-
-        $selectChannel = $this->codeModel->all('asientos', 'canal', 'canal');
-        if (count($selectChannel) > 2) {
-            $this->addFilterSelect($viewName, 'canal', 'channel', 'canal', $selectChannel);
-        }
 
         // filtro de operación
         $operaciones = [
@@ -125,9 +105,27 @@ class ListAsiento extends ListController
         ];
         $this->addFilterSelect($viewName, 'operacion', 'operation', 'operacion', $operaciones);
 
-        // buttons
-        $this->addLockButton($viewName);
-        if ($this->user->admin) {
+        $selectCompany = Empresas::codeModel();
+        if (count($selectCompany) > 2) {
+            $this->addFilterSelect($viewName, 'idempresa', 'company', 'idempresa', $selectCompany);
+        }
+
+        $selectExercise = Ejercicios::codeModel();
+        if (count($selectExercise) > 2) {
+            $this->addFilterSelect($viewName, 'codejercicio', 'exercise', 'codejercicio', $selectExercise);
+        }
+
+        $selectJournals = $this->codeModel->all('diarios', 'iddiario', 'descripcion');
+        $this->addFilterSelect($viewName, 'iddiario', 'journals', 'iddiario', $selectJournals);
+
+        $selectChannel = $this->codeModel->all('asientos', 'canal', 'canal');
+        if (count($selectChannel) > 2) {
+            $this->addFilterSelect($viewName, 'canal', 'channel', 'canal', $selectChannel);
+        }
+
+        // botones
+        if ($this->permissions->allowUpdate) {
+            $this->addLockButton($viewName);
             $this->addRenumberButton($viewName);
         }
     }
@@ -236,7 +234,7 @@ class ListAsiento extends ListController
 
     protected function renumberAction(): void
     {
-        if (false === $this->user->admin) {
+        if (false === $this->permissions->allowUpdate) {
             $this->toolBox()->i18nLog()->warning('not-allowed-modify');
             return;
         } elseif (false === $this->validateFormToken()) {

@@ -7,12 +7,12 @@
                 <h1 class="h3">
                     <i class="fas fa-cut"></i> {{ fsc.title }}
                 </h1>
-                <p>{{ i18n.trans('copy-p') }}</p>
+                <p>{{ trans('copy-p') }}</p>
                 <form method="post">
+                    {{ formToken() }}
                     <input type="hidden" name="action" value="save"/>
                     <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
                     <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
-                    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
                     <div class="card shadow mb-4">
                         <div class="card-body">
                             <div class="form-row">
@@ -32,7 +32,7 @@
                                                        class="form-control autocomplete-dc"
                                                        data-field="codcliente" data-source="Cliente"
                                                        data-fieldcode="codcliente" data-fieldtitle="nombre"
-                                                       placeholder="{{ i18n.trans('customer') }}" autocomplete="off"/>
+                                                       placeholder="{{ trans('customer') }}" autocomplete="off"/>
                                             </div>
                                         </div>
                                     </div>
@@ -52,7 +52,7 @@
                                                        class="form-control autocomplete-dc"
                                                        data-field="codproveedor" data-source="Proveedor"
                                                        data-fieldcode="codproveedor" data-fieldtitle="nombre"
-                                                       placeholder="{{ i18n.trans('supplier') }}" autocomplete="off"/>
+                                                       placeholder="{{ trans('supplier') }}" autocomplete="off"/>
                                             </div>
                                         </div>
                                     </div>
@@ -79,7 +79,7 @@
                                                 </span>
                                                 </div>
                                                 <input type="text" name="numero2" class="form-control"
-                                                       placeholder="{{ i18n.trans('number2') }}"/>
+                                                       placeholder="{{ trans('number2') }}"/>
                                             </div>
                                         </div>
                                     </div>
@@ -93,7 +93,7 @@
                                                 </span>
                                                 </div>
                                                 <input type="text" name="numproveedor" class="form-control"
-                                                       placeholder="{{ i18n.trans('numsupplier') }}"/>
+                                                       placeholder="{{ trans('numsupplier') }}"/>
                                             </div>
                                         </div>
                                     </div>
@@ -104,12 +104,12 @@
                             <table class="table table-hover">
                                 <thead>
                                 <tr>
-                                    <th>{{ i18n.trans('reference') }}</th>
-                                    <th>{{ i18n.trans('description') }}</th>
-                                    <th class="text-right">{{ i18n.trans('quantity') }}</th>
-                                    <th class="text-right">{{ i18n.trans('price') }}</th>
-                                    <th class="text-right">{{ i18n.trans('dto') }}</th>
-                                    <th class="text-right">{{ i18n.trans('dto-2') }}</th>
+                                    <th>{{ trans('reference') }}</th>
+                                    <th>{{ trans('description') }}</th>
+                                    <th class="text-right">{{ trans('quantity') }}</th>
+                                    <th class="text-right">{{ trans('price') }}</th>
+                                    <th class="text-right">{{ trans('dto') }}</th>
+                                    <th class="text-right">{{ trans('dto-2') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -136,7 +136,7 @@
                             <div class="form-row">
                                 <div class="col-sm">
                                     <div class="form-group">
-                                        {{ i18n.trans('warehouse') }}
+                                        {{ trans('warehouse') }}
                                         <select name="codalmacen" class="form-control" required="">
                                             {% for item in fsc.codeModel.all('almacenes', 'codalmacen', 'nombre', false) %}
                                                 {% if item.code == fsc.model.codalmacen %}
@@ -154,7 +154,7 @@
                                 </div>
                                 <div class="col-sm">
                                     <div class="form-group">
-                                        {{ i18n.trans('serie') }}
+                                        {{ trans('serie') }}
                                         <select name="codserie" class="form-control" required="">
                                             {% for item in fsc.codeModel.all('series', 'codserie', 'descripcion', false) %}
                                                 {% if item.code == fsc.model.codserie %}
@@ -172,7 +172,7 @@
                                 </div>
                                 <div class="col-sm">
                                     <div class="form-group">
-                                        {{ i18n.trans('payment-method') }}
+                                        {{ trans('payment-method') }}
                                         <select name="codpago" class="form-control" required="">
                                             {% for item in fsc.codeModel.all('formaspago', 'codpago', 'descripcion', false) %}
                                                 {% if item.code == fsc.model.codpago %}
@@ -190,7 +190,7 @@
                                 </div>
                                 <div class="col-sm">
                                     <div class="form-group">
-                                        {{ i18n.trans('global-dto') }}
+                                        {{ trans('global-dto') }}
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">
@@ -204,7 +204,7 @@
                                 </div>
                                 <div class="col-sm">
                                     <div class="form-group">
-                                        {{ i18n.trans('global-dto-2') }}
+                                        {{ trans('global-dto-2') }}
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">
@@ -217,16 +217,16 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
-                                    {{ i18n.trans('observations') }}
-                                    <textarea name="observaciones" class="form-control">{{ fsc.model.observaciones }}
-                                    </textarea>
+                                    {{ trans('observations') }}
+                                    <textarea name="observaciones"
+                                              class="form-control">{{ fsc.model.observaciones }}</textarea>
                                 </div>
                             </div>
                         </div>
                         <div class="card-footer">
                             <div class="text-right">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> {{ i18n.trans('save') }}
+                                    <i class="fas fa-save"></i> {{ trans('save') }}
                                 </button>
                             </div>
                         </div>
@@ -245,7 +245,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('node_modules/jquery-ui-dist/jquery-ui.min.js') }}"></script>
-    <script type="text/javascript">
+    <script>
         function businessDocViewAutocompleteGetData(formId, formData, term) {
             let rawForm = $("form[id=" + formId + "]").serializeArray();
             $.each(rawForm, function (i, input) {

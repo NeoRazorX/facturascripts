@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -27,29 +28,18 @@ use FacturaScripts\Dinamic\Model\GrupoClientes;
 /**
  * Controller to edit a single item from the Tarifa model
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author jhonsmall            <juancarloschico0@gmail.com>
+ * @author jhonsmall                     <juancarloschico0@gmail.com>
  */
 class EditTarifa extends EditController
 {
-
-    /**
-     * Returns the model name.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Tarifa';
     }
 
-    /**
-     * Returns basic page attributes
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'sales';
@@ -69,14 +59,14 @@ class EditTarifa extends EditController
         $this->views[$viewName]->addOrderBy(['codgrupo'], 'code');
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
 
-        /// disable column
+        // disable column
         $this->views[$viewName]->disableColumn('rate');
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
 
-        /// add custom buttons
+        // add custom buttons
         $this->addButton($viewName, [
             'action' => 'setgrouprate',
             'color' => 'success',
@@ -93,10 +83,6 @@ class EditTarifa extends EditController
         ]);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createCustomerView(string $viewName = 'ListCliente')
     {
         $this->addListView($viewName, 'Cliente', 'customers', 'fas fa-users');
@@ -105,7 +91,7 @@ class EditTarifa extends EditController
         $this->views[$viewName]->addOrderBy(['nombre'], 'name', 1);
         $this->views[$viewName]->addOrderBy(['fechaalta', 'codcliente'], 'date');
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
 
@@ -125,10 +111,6 @@ class EditTarifa extends EditController
         ]);
     }
 
-    /**
-     *
-     * @param string $viewName
-     */
     protected function createProductView(string $viewName = 'ListTarifaProducto')
     {
         $this->addListView($viewName, 'Join\TarifaProducto', 'products', 'fas fa-cubes');
@@ -138,7 +120,7 @@ class EditTarifa extends EditController
         $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 1);
         $this->views[$viewName]->addSearchFields(['variantes.referencia', 'descripcion']);
 
-        /// disable buttons
+        // disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
         $this->setSettings($viewName, 'checkBoxes', false);
@@ -158,8 +140,7 @@ class EditTarifa extends EditController
     }
 
     /**
-     *
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)
@@ -180,7 +161,6 @@ class EditTarifa extends EditController
     }
 
     /**
-     *
      * @param string $action
      *
      * @return bool

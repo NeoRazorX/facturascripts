@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,6 @@ namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\PluginManager;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\AssetManager;
@@ -42,6 +41,9 @@ use Twig\TwigFunction;
  */
 final class Html
 {
+    const HTML_CHARS = ['<', '>', '"', "'"];
+    const HTML_REPLACEMENTS = ['&lt;', '&gt;', '&quot;', '&#39;'];
+
     /** @var array */
     private static $functions = [];
 
@@ -107,6 +109,36 @@ final class Html
         });
     }
 
+    private static function configFunction(): TwigFunction
+    {
+        return new TwigFunction('config', function (string $key, $default = null) {
+            $constants = [$key, strtoupper($key), 'FS_' . strtoupper($key)];
+            foreach ($constants as $constant) {
+                if (defined($constant)) {
+                    return constant($constant);
+                }
+            }
+
+            return $default;
+        });
+    }
+
+    private static function fixHtmlFunction(): TwigFunction
+    {
+        return new TwigFunction(
+            'fixHtml',
+            function ($txt) {
+                return $txt === null ?
+                    null :
+                    str_replace(self::HTML_REPLACEMENTS, self::HTML_CHARS, $txt);
+            },
+            [
+                'is_safe' => ['html'],
+                'is_safe_callback' => ['html']
+            ]
+        );
+    }
+
     private static function formTokenFunction(): TwigFunction
     {
         return new TwigFunction(
@@ -130,9 +162,8 @@ final class Html
             $files = [];
             $fileParentTemp = explode('/', $fileParent);
             $fileParent = str_replace('.html.twig', '', end($fileParentTemp));
-            $pluginManager = new PluginManager();
 
-            foreach ($pluginManager->enabledPlugins() as $pluginName) {
+            foreach (Plugins::enabled() as $pluginName) {
                 $path = FS_FOLDER . '/Plugins/' . $pluginName . '/Extension/View/';
                 if (false === file_exists($path)) {
                     continue;
@@ -191,14 +222,13 @@ final class Html
     /**
      * @throws LoaderError
      */
-    private static function loadPluginFolders()
+    private static function loadPluginFolders(): void
     {
         // Core namespace
         self::$loader->addPath(FS_FOLDER . '/Core/View', 'Core');
 
         // Plugin namespace
-        $pluginManager = new PluginManager();
-        foreach ($pluginManager->enabledPlugins() as $pluginName) {
+        foreach (Plugins::enabled() as $pluginName) {
             $pluginPath = FS_FOLDER . '/Plugins/' . $pluginName . '/View';
             if (file_exists($pluginPath)) {
                 self::$loader->addPath($pluginPath, 'Plugin' . $pluginName);
@@ -302,6 +332,8 @@ final class Html
         // cargamos las funciones de twig
         self::$twig->addFunction(self::assetFunction());
         self::$twig->addFunction(self::attachedFileFunction());
+        self::$twig->addFunction(self::configFunction());
+        self::$twig->addFunction(self::fixHtmlFunction());
         self::$twig->addFunction(self::formTokenFunction());
         self::$twig->addFunction(self::getIncludeViews());
         self::$twig->addFunction(self::moneyFunction());

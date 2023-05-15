@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 
 /**
@@ -94,14 +95,14 @@ class ListFacturaProveedor extends ListBusinessDocument
     protected function createViewReceipts(string $viewName = 'ListReciboProveedor')
     {
         $this->addView($viewName, 'ReciboProveedor', 'receipts', 'fas fa-dollar-sign');
-        $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date', 2);
+        $this->addOrderBy($viewName, ['fecha', 'idrecibo'], 'date');
         $this->addOrderBy($viewName, ['fechapago'], 'payment-date');
-        $this->addOrderBy($viewName, ['vencimiento'], 'expiration');
+        $this->addOrderBy($viewName, ['vencimiento'], 'expiration', 2);
         $this->addOrderBy($viewName, ['importe'], 'amount');
         $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
 
         // filtros
-        $this->addFilterPeriod($viewName, 'expiration', 'period', 'vencimiento');
+        $this->addFilterPeriod($viewName, 'expiration', 'expiration', 'vencimiento');
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
@@ -123,6 +124,7 @@ class ListFacturaProveedor extends ListBusinessDocument
             ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
             ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
         ]);
+        $this->addFilterPeriod($viewName, 'payment-date', 'payment-date', 'fechapago');
 
         // botones
         $this->addButtonPayReceipt($viewName);
@@ -182,15 +184,12 @@ class ListFacturaProveedor extends ListBusinessDocument
             return;
         }
 
-        $this->dataBase->beginTransaction();
         $codejercicio = $this->request->request->get('exercise');
-        if ($this->views['ListFacturaProveedor']->model->renumber($codejercicio)) {
+        if (FacturaProveedorRenumber::run($codejercicio)) {
             self::toolBox()->i18nLog()->notice('record-updated-correctly');
-            $this->dataBase->commit();
             return;
         }
 
-        $this->dataBase->rollback();
         self::toolBox()->i18nLog()->warning('record-save-error');
     }
 }

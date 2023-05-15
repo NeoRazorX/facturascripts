@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -26,29 +26,18 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
 /**
  * Controller to edit a single item from the Almacen model
  *
- * @author Carlos García Gómez      <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Francesc Pineda Segarra  <francesc.pineda.segarra@gmail.com>
+ * @author Francesc Pineda Segarra       <francesc.pineda.segarra@gmail.com>
  */
 class EditAlmacen extends EditController
 {
-
-    /**
-     * Returns the model name.
-     *
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'Almacen';
     }
 
-    /**
-     * Returns basic page attributes.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'warehouse';
@@ -57,9 +46,6 @@ class EditAlmacen extends EditController
         return $data;
     }
 
-    /**
-     * @param string $viewName
-     */
     protected function createStockView(string $viewName = 'ListStock')
     {
         $this->addListView($viewName, 'Join\StockProducto', 'stock', 'fas fa-dolly');
@@ -71,10 +57,17 @@ class EditAlmacen extends EditController
         $this->views[$viewName]->addOrderBy(['productos.descripcion', 'stocks.referencia'], 'product');
         $this->views[$viewName]->addSearchFields(['stocks.referencia', 'productos.descripcion']);
 
-        // disable column
+        // filtros
+        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
+        $this->views[$viewName]->addFilterSelect('manufacturer', 'manufacturer', 'manufacturer', $manufacturers);
+
+        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->views[$viewName]->addFilterSelect('family', 'family', 'family', $families);
+
+        // desactivamos la columna de almacén
         $this->views[$viewName]->disableColumn('warehouse');
 
-        // disable buttons
+        // desactivamos botones
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
     }
@@ -87,7 +80,7 @@ class EditAlmacen extends EditController
         parent::createViews();
         $this->setTabsPosition('bottom');
 
-        // disable company column if there is only one company
+        // desactivamos la columna de empresa, si solo hay una
         if ($this->empresa->count() < 2) {
             $this->views[$this->getMainViewName()]->disableColumn('company');
         }

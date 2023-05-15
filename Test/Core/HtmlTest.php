@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,11 +20,12 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 use Twig\TwigFunction;
 
 /**
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 final class HtmlTest extends TestCase
@@ -36,8 +37,15 @@ final class HtmlTest extends TestCase
 
     public function testTemplate()
     {
+        $expected = "testTemplate\n"
+            . Tools::config('lang') . "\n"
+            . Tools::config('test123', '123') . "\n"
+            . Tools::money(123.45) . "\n"
+            . Tools::number(123.45) . "\n"
+            . Tools::lang()->trans('save');
+
         $html = Html::render('@Test/testTemplate.html.twig');
-        $this->assertEquals('testTemplate', $html, 'html-not-equal-for-testTemplate');
+        $this->assertEquals($expected, $html, 'html-not-equal-for-testTemplate');
     }
 
     public function testCustomFunction()

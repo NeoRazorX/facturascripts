@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -30,23 +31,12 @@ use FacturaScripts\Core\Lib\ExtendedController\EditController;
  */
 class EditAttachedFile extends EditController
 {
-
-    /**
-     * Returns the model name.
-     * 
-     * @return string
-     */
-    public function getModelClassName()
+    public function getModelClassName(): string
     {
         return 'AttachedFile';
     }
 
-    /**
-     * Returns basic page attributes.
-     *
-     * @return array
-     */
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['menu'] = 'admin';
@@ -63,32 +53,23 @@ class EditAttachedFile extends EditController
         $this->setTabsPosition('bottom');
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
     protected function createViewsPreview(string $viewName = 'preview')
     {
         $this->addHtmlView($viewName, 'Tab/AttachedFilePreview', 'AttachedFile', 'file', 'fas fa-eye');
     }
 
-    /**
-     * 
-     * @param string $viewName
-     */
     protected function createViewsRelations(string $viewName = 'ListAttachedFileRelation')
     {
         $this->addListView($viewName, 'AttachedFileRelation', 'related', 'fas fa-copy');
         $this->views[$viewName]->addSearchFields(['observations']);
         $this->views[$viewName]->addOrderBy(['creationdate'], 'date', 2);
 
-        /// disable button
+        // disable button
         $this->setSettings($viewName, 'btnNew', false);
     }
 
     /**
-     * 
-     * @param string   $viewName
+     * @param string $viewName
      * @param BaseView $view
      */
     protected function loadData($viewName, $view)

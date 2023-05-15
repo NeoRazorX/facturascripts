@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,86 +32,14 @@ use FacturaScripts\Dinamic\Model\SecuenciaDocumento as DinSecuenciaDocumento;
  */
 class BusinessDocumentCode
 {
-
     const GAP_LIMIT = 1000;
 
-    /**
-     * @param SecuenciaDocumento $sequence
-     * @param BusinessDocument $document
-     *
-     * @return string
-     */
     public static function getNewCode(SecuenciaDocumento &$sequence, BusinessDocument &$document): string
     {
         return CodePatterns::trans($sequence->patron, $document, ['long' => $sequence->longnumero]);
     }
 
-    /**
-     * @param SecuenciaDocumento $sequence
-     * @param BusinessDocument $document
-     *
-     * @return string
-     */
-    protected static function getNewNumber(SecuenciaDocumento &$sequence, BusinessDocument &$document): string
-    {
-        $previous = static::getPrevious($sequence, $document);
-
-        // find maximum number for this sequence data
-        foreach ($previous as $lastDoc) {
-            $lastNumber = (int)$lastDoc->numero;
-            if ($lastNumber >= $sequence->numero || $sequence->usarhuecos) {
-                $sequence->numero = $lastNumber + 1;
-            }
-            break;
-        }
-
-        // use gaps?
-        if ($sequence->usarhuecos) {
-            // we look for holes back
-            $expectedNumber = $sequence->numero - 1;
-            $preDate = $document->fecha;
-            $preHour = $document->hora;
-            foreach ($previous as $preDoc) {
-                if ($expectedNumber != $preDoc->numero && $expectedNumber >= $sequence->inicio) {
-                    // hole found
-                    $document->fecha = $preDate;
-                    $document->hora = $preHour;
-                    return (string)$expectedNumber;
-                }
-
-                $expectedNumber--;
-                $preDate = $preDoc->fecha;
-                $preHour = $preDoc->hora;
-            }
-
-            if (empty($previous)) {
-                // no previous document, then use initial number
-                $sequence->numero = $sequence->inicio;
-            } elseif ($expectedNumber >= $sequence->inicio && $expectedNumber >= $sequence->numero - self::GAP_LIMIT) {
-                // the gap is in the first positions of the range
-                $document->fecha = $preDate;
-                $document->hora = $preHour;
-                return (string)$expectedNumber;
-            }
-        }
-
-        $newNumber = $sequence->numero;
-
-        // update sequence
-        $sequence->numero++;
-        $sequence->save();
-
-        return (string)$newNumber;
-    }
-
-    /**
-     * Finds sequence for this document.
-     *
-     * @param BusinessDocument $document
-     *
-     * @return SecuenciaDocumento
-     */
-    public static function getSequence(BusinessDocument &$document): SecuenciaDocumento
+    public static function getSequence(BusinessDocument $document): SecuenciaDocumento
     {
         $selectedSequence = new DinSecuenciaDocumento();
         $patron = substr(strtoupper($document->modelClassName()), 0, 3) . '{EJE}{SERIE}{NUM}';
@@ -153,12 +81,6 @@ class BusinessDocumentCode
         return $selectedSequence;
     }
 
-    /**
-     * Assign a new unique code for the document.
-     *
-     * @param BusinessDocument $document
-     * @param bool $newNumber
-     */
     public static function setNewCode(BusinessDocument &$document, bool $newNumber = true): void
     {
         $sequence = static::getSequence($document);
@@ -169,15 +91,74 @@ class BusinessDocumentCode
         $document->codigo = static::getNewCode($sequence, $document);
     }
 
-    /**
-     * @param SecuenciaDocumento $sequence
-     * @param BusinessDocument $document
-     *
-     * @return BusinessDocument[]
-     */
-    protected static function getPrevious(SecuenciaDocumento &$sequence, BusinessDocument &$document): array
+    public static function setNewNumber(BusinessDocument &$document): void
     {
-        $order = strtolower(FS_DB_TYPE) == 'postgresql' ? ['CAST(numero as integer)' => 'DESC'] : ['CAST(numero as unsigned)' => 'DESC'];
+        $sequence = static::getSequence($document);
+        $document->numero = static::getNewNumber($sequence, $document);
+    }
+
+    protected static function getNewNumber(SecuenciaDocumento &$sequence, BusinessDocument &$document): string
+    {
+        $previous = static::getPrevious($sequence, $document);
+
+        // find maximum number for this sequence data
+        foreach ($previous as $lastDoc) {
+            $lastNumber = (int)$lastDoc->numero;
+            if ($lastNumber >= $sequence->numero || $sequence->usarhuecos) {
+                $sequence->numero = $lastNumber + 1;
+            }
+            break;
+        }
+
+        // use gaps?
+        if ($sequence->usarhuecos) {
+            // we look for holes back
+            $expectedNumber = $sequence->numero - 1;
+            $preCodejercicio = $document->codejercicio;
+            $preDate = $document->fecha;
+            $preHour = $document->hora;
+            foreach ($previous as $preDoc) {
+                if ($expectedNumber != $preDoc->numero &&
+                    $expectedNumber >= $sequence->inicio &&
+                    $document->codejercicio == $preCodejercicio) {
+                    // hole found
+                    $document->fecha = $preDate;
+                    $document->hora = $preHour;
+                    $sequence->save();
+                    return (string)$expectedNumber;
+                }
+
+                $expectedNumber--;
+                $preCodejercicio = $preDoc->codejercicio;
+                $preDate = $preDoc->fecha;
+                $preHour = $preDoc->hora;
+            }
+
+            if (empty($previous)) {
+                // no previous document, then use initial number
+                $sequence->numero = $sequence->inicio;
+            } elseif ($expectedNumber >= $sequence->inicio &&
+                $expectedNumber >= $sequence->numero - self::GAP_LIMIT &&
+                $document->codejercicio == $preCodejercicio) {
+                // the gap is in the first positions of the range
+                $document->fecha = $preDate;
+                $document->hora = $preHour;
+                $sequence->save();
+                return (string)$expectedNumber;
+            }
+        }
+
+        $newNumber = $sequence->numero;
+
+        // update sequence
+        $sequence->numero++;
+        $sequence->save();
+
+        return (string)$newNumber;
+    }
+
+    protected static function getPrevious(SecuenciaDocumento $sequence, BusinessDocument $document): array
+    {
         $where = [
             new DataBaseWhere('codserie', $sequence->codserie),
             new DataBaseWhere('idempresa', $sequence->idempresa)
@@ -185,6 +166,9 @@ class BusinessDocumentCode
         if ($sequence->codejercicio) {
             $where[] = new DataBaseWhere('codejercicio', $sequence->codejercicio);
         }
-        return $document->all($where, $order, 0, self::GAP_LIMIT);
+        $orderBy = strtolower(FS_DB_TYPE) == 'postgresql' ?
+            ['CAST(numero as integer)' => 'DESC'] :
+            ['CAST(numero as unsigned)' => 'DESC'];
+        return $document->all($where, $orderBy, 0, self::GAP_LIMIT);
     }
 }
