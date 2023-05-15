@@ -292,7 +292,7 @@ class BaseWidget extends VisualItem
      */
     protected function setValue($model)
     {
-        $this->value = @$model->{$this->fieldname};
+        $this->value = $model->{$this->fieldname} ?? null;
     }
 
     /**

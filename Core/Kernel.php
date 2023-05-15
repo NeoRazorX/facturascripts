@@ -109,6 +109,8 @@ final class Kernel
 
             echo '<h1 style="margin: 50px auto 5px auto">Error ' . $error['type'] . '</h1>';
             echo '<p style="margin: 0 auto 0 auto">' . nl2br($error['message']) . '</p>';
+            echo '<p style="margin: 0 auto 0 auto">File: ' . $error['file'] . '</p>';
+            echo '<p style="margin: 0 auto 0 auto">Line: ' . $error['line'] . '</p>';
         }
     }
 
