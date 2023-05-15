@@ -77,7 +77,7 @@
                     <ul class="navbar-nav flex-row ml-auto">
                         <li class="nav-item{{ template == 'MegaSearch.html.twig' ? ' active' : '' }}"
                             title="{{ trans('search') }}">
-                            <a class="nav-link" href="MegaSearch">
+                            <a class="nav-link" href="{{ asset('MegaSearch') }}">
                                 <i class="fas fa-search" aria-hidden="true"></i>
                             </a>
                         </li>
@@ -96,7 +96,7 @@
                                     <i class="fas fa-user-circle fa-fw" aria-hidden="true"></i> {{ fsc.user.nick }}
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="?logout=TRUE">
+                                <a class="dropdown-item" href="{{ asset('login') }}?action=logout&multireqtoken={{ formToken(false) }}">
                                     <i class="fas fa-door-open fa-fw" aria-hidden="true"></i> {{ trans('logout') }}
                                 </a>
                             </div>

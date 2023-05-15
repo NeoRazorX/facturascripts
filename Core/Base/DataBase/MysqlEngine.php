@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base\DataBase;
 
 use Exception;
+use FacturaScripts\Core\KernelException;
 use mysqli;
 
 /**
@@ -164,14 +165,14 @@ class MysqlEngine extends DataBaseEngine
     {
         if (false === class_exists('mysqli')) {
             $error = $this->i18n->trans('php-mysql-not-found');
-            return null;
+            throw new KernelException('DataBaseError', $error);
         }
 
         $result = new mysqli(FS_DB_HOST, FS_DB_USER, FS_DB_PASS, FS_DB_NAME, (int)FS_DB_PORT);
         if ($result->connect_errno) {
             $error = $result->connect_error;
             $this->lastErrorMsg = $error;
-            return null;
+            throw new KernelException('DataBaseError', $error);
         }
 
         $charset = defined('FS_MYSQL_CHARSET') ? FS_MYSQL_CHARSET : 'utf8';

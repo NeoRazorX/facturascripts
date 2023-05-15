@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use Exception;
+use FacturaScripts\Core\Kernel;
 use SimpleXMLElement;
 
 /**
@@ -104,6 +105,8 @@ final class PluginDeploy
             }
 
             try {
+                Kernel::addRoute('/' . $controllerName, $controllerNamespace);
+
                 $controller = new $controllerNamespace($controllerName);
                 $menuManager->selectPage($controller->getPageData());
                 $pageNames[] = $controllerName;
@@ -112,6 +115,8 @@ final class PluginDeploy
                 ToolBox::log()->critical($exc->getMessage());
             }
         }
+
+        Kernel::saveRoutes();
 
         $menuManager->removeOld($pageNames);
         $menuManager->reload();
