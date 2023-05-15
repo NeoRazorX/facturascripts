@@ -127,8 +127,6 @@ class Controller
         Session::set('pageName', $this->className);
 
         $this->dataBase = new DataBase();
-        $this->dataBase->connect();
-
         $this->empresa = new Empresa();
         $this->multiRequestProtection = new MultiRequestProtection();
         $this->request = Request::createFromGlobals();
@@ -288,13 +286,15 @@ class Controller
         $menu->selectPage($this->getPageData());
 
         // renderizamos la plantilla
-        $response->setContent(Html::render($this->template, [
-            'controllerName' => $this->className,
-            'debugBarRender' => false,
-            'fsc' => $this,
-            'menuManager' => $menu,
-            'template' => $this->template,
-        ]));
+        if ($this->template) {
+            $response->setContent(Html::render($this->template, [
+                'controllerName' => $this->className,
+                'debugBarRender' => false,
+                'fsc' => $this,
+                'menuManager' => $menu,
+                'template' => $this->template,
+            ]));
+        }
         $response->send();
     }
 

@@ -131,6 +131,7 @@ abstract class ModelCore
     {
         if (self::$dataBase === null) {
             self::$dataBase = new DataBase();
+            self::$dataBase->connect();
 
             $tables = Cache::get('fs_checked_tables');
             if (is_array($tables) && !empty($tables)) {

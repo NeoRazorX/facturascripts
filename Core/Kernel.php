@@ -50,12 +50,6 @@ final class Kernel
                 define($key, Tools::settings('default', $value['property'], $value['default']));
             }
         }
-
-        // asignamos algunos valores por defecto
-        Tools::settings('default', 'coddivisa', 'EUR');
-        Tools::settings('default', 'homepage', 'Wizard');
-        Tools::settings('default', 'updatesupplierprices', true);
-        Tools::settings('default', 'ventasinstock', false);
     }
 
     public static function run(string $url): void
