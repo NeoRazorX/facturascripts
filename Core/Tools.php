@@ -219,10 +219,7 @@ class Tools
     {
         // cargamos las opciones si no están cargadas
         if (empty(self::$settings)) {
-            $settingsModel = new Settings();
-            foreach ($settingsModel->all([], [], 0, 0) as $item) {
-                self::$settings[$item->name] = $item->properties;
-            }
+            self::settingsLoad();
         }
 
         // si no tenemos la clave, añadimos el valor predeterminado
@@ -233,14 +230,19 @@ class Tools
         return self::$settings[$group][$key];
     }
 
+    public static function settingsClear(): void
+    {
+        Cache::delete('tools-settings');
+    }
+
     public static function settingsSave(): bool
     {
         if (empty(self::$settings)) {
             return true;
         }
 
-        $settingsModel = new Settings();
-        foreach ($settingsModel->all([], [], 0, 0) as $item) {
+        $model = new Settings();
+        foreach ($model->all([], [], 0, 0) as $item) {
             if (!isset(self::$settings[$item->name])) {
                 continue;
             }
@@ -258,10 +260,7 @@ class Tools
     {
         // cargamos las opciones si no están cargadas
         if (empty(self::$settings)) {
-            $settingsModel = new Settings();
-            foreach ($settingsModel->all([], [], 0, 0) as $item) {
-                self::$settings[$item->name] = $item->properties;
-            }
+            self::settingsLoad();
         }
 
         // asignamos el valor
@@ -321,5 +320,19 @@ class Tools
     public static function timeToDateTime(int $time): string
     {
         return date(self::DATETIME_STYLE, $time);
+    }
+
+    private static function settingsLoad(): void
+    {
+        self::$settings = Cache::remember('tools-settings', function () {
+            $settings = [];
+
+            $model = new Settings();
+            foreach ($model->all([], [], 0, 0) as $item) {
+                $settings[$item->name] = $item->properties;
+            }
+
+            return $settings;
+        });
     }
 }
