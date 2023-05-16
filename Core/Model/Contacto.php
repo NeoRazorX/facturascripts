@@ -291,6 +291,7 @@ class Contacto extends Base\Contact
             $cliente->fax = $this->fax;
             $cliente->idcontactoenv = $this->idcontacto;
             $cliente->idcontactofact = $this->idcontacto;
+            $cliente->langcode = $this->langcode;
             $cliente->nombre = $this->fullName();
             $cliente->observaciones = $this->observaciones;
             $cliente->personafisica = $this->personafisica;
@@ -325,6 +326,7 @@ class Contacto extends Base\Contact
             $proveedor->email = $this->email;
             $proveedor->fax = $this->fax;
             $proveedor->idcontacto = $this->idcontacto;
+            $proveedor->langcode = $this->langcode;
             $proveedor->nombre = $this->fullName();
             $proveedor->observaciones = $this->observaciones;
             $proveedor->personafisica = $this->personafisica;

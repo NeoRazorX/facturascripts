@@ -58,6 +58,9 @@ abstract class Contact extends ModelClass
      */
     public $fechaalta;
 
+    /** @var string */
+    public $langcode;
+
     /**
      * Name by which we know the contact, not necessarily the official.
      *
