@@ -19,11 +19,11 @@
 
 namespace FacturaScripts\Core\Contract;
 
-use FacturaScripts\Core\KernelException;
+use Exception;
 
 interface ErrorControllerInterface
 {
-    public function __construct(KernelException $exception);
+    public function __construct(Exception $exception, string $url = '');
 
     public function run(): void;
 }

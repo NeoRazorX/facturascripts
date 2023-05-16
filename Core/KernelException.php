@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core;
 
 use Exception;
-use FacturaScripts\Core\Contract\ErrorControllerInterface;
 use Throwable;
 
 class KernelException extends Exception
@@ -28,25 +27,9 @@ class KernelException extends Exception
     /** @var string */
     public $handler = '';
 
-    /** @var string */
-    public $url = '';
-
     public function __construct(string $handler, string $message, int $code = 0, ?Throwable $previous = null)
     {
         $this->handler = $handler;
         parent::__construct($message, $code, $previous);
-    }
-
-    public function getHandler(string $url): ErrorControllerInterface
-    {
-        $this->url = $url;
-
-        $dynClass = '\\FacturaScripts\\Dinamic\\Error\\' . $this->handler;
-        if (class_exists($dynClass)) {
-            return new $dynClass($this);
-        }
-
-        $mainClass = '\\FacturaScripts\\Core\\Error\\' . $this->handler;
-        return new $mainClass($this);
     }
 }

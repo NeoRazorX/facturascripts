@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Error;
 
 use FacturaScripts\Core\Template\ErrorController;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class DefaultError extends ErrorController
 {
@@ -27,7 +30,28 @@ class DefaultError extends ErrorController
     {
         http_response_code(500);
 
-        echo '<h1>Internal error</h1>';
+        if ($this->exception instanceof SyntaxError) {
+            echo '<h1>Twig syntax error</h1>';
+            echo '<p>' . $this->exception->getRawMessage() . '</p>';
+            echo '<p>File: ' . $this->exception->getFile() . ':' . $this->exception->getLine() . '</p>';
+            return;
+        }
+
+        if ($this->exception instanceof RuntimeError) {
+            echo '<h1>Twig runtime error</h1>';
+            echo '<p>' . $this->exception->getRawMessage() . '</p>';
+            echo '<p>File: ' . $this->exception->getFile() . ':' . $this->exception->getLine() . '</p>';
+            return;
+        }
+
+        if ($this->exception instanceof LoaderError) {
+            echo '<h1>Twig loader error</h1>';
+            echo '<p>' . $this->exception->getRawMessage() . '</p>';
+            echo '<p>File: ' . $this->exception->getFile() . ':' . $this->exception->getLine() . '</p>';
+            return;
+        }
+
+        echo '<h1>Internal error ' . $this->exception->getCode() . '</h1>';
         echo '<p>' . $this->exception->getMessage() . '</p>';
         echo '<p>File: ' . $this->exception->getFile() . ':' . $this->exception->getLine() . '</p>';
     }

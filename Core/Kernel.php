@@ -21,6 +21,8 @@ namespace FacturaScripts\Core;
 
 use Closure;
 use Exception;
+use FacturaScripts\Core\Contract\ErrorControllerInterface;
+use FacturaScripts\Core\Error\DefaultError;
 
 final class Kernel
 {
@@ -122,14 +124,10 @@ final class Kernel
         try {
             self::loadRoutes();
             self::runController($relativeUrl);
-        } catch (KernelException $exception) {
-            error_clear_last();
-            $handler = $exception->getHandler($relativeUrl);
-            $handler->run();
         } catch (Exception $exception) {
             error_clear_last();
-            $exception = new KernelException('DefaultError', $exception->getMessage(), $exception->getCode());
-            $handler = $exception->getHandler($relativeUrl);
+
+            $handler = self::getErrorHandler($exception);
             $handler->run();
         }
     }
@@ -169,6 +167,21 @@ final class Kernel
     public static function version(): float
     {
         return 2023.02;
+    }
+
+    private static function getErrorHandler(Exception $exception): ErrorControllerInterface
+    {
+        if ($exception instanceof KernelException) {
+            $dynClass = '\\FacturaScripts\\Dinamic\\Error\\' . $exception->handler;
+            if (class_exists($dynClass)) {
+                return new $dynClass($exception);
+            }
+
+            $mainClass = '\\FacturaScripts\\Core\\Error\\' . $exception->handler;
+            return new $mainClass($exception);
+        }
+
+        return new DefaultError($exception);
     }
 
     private static function loadDefaultRoutes(): void

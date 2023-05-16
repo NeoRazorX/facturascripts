@@ -19,16 +19,20 @@
 
 namespace FacturaScripts\Core\Template;
 
+use Exception;
 use FacturaScripts\Core\Contract\ErrorControllerInterface;
-use FacturaScripts\Core\KernelException;
 
 abstract class ErrorController implements ErrorControllerInterface
 {
-    /** @var KernelException */
+    /** @var Exception */
     protected $exception;
 
-    public function __construct(KernelException $exception)
+    /** @var string */
+    protected $url;
+
+    public function __construct(Exception $exception, string $url = '')
     {
         $this->exception = $exception;
+        $this->url = $url;
     }
 }
