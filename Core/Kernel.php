@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core;
 
+use Closure;
 use Exception;
 
 final class Kernel
@@ -26,12 +27,31 @@ final class Kernel
     /** @var array */
     private static $routes = [];
 
-    public static function addRoute(string $route, string $controller, int $position = 0): void
+    /** @var Closure[] */
+    private static $routesCallbacks = [];
+
+    public static function addRoute(string $route, string $controller, int $position = 0, string $customId = ''): void
     {
+        // si el customId ya existe, eliminamos la ruta anterior
+        if (!empty($customId)) {
+            foreach (self::$routes as $key => $value) {
+                if ($value['customId'] === $customId) {
+                    unset(self::$routes[$key]);
+                }
+            }
+        }
+
+        // añadimos la nueva ruta
         self::$routes[$route] = [
             'controller' => $controller,
+            'customId' => $customId,
             'position' => $position,
         ];
+    }
+
+    public static function addRoutes(Closure $closure): void
+    {
+        self::$routesCallbacks[] = $closure;
     }
 
     public static function init(): void
@@ -50,6 +70,35 @@ final class Kernel
                 define($key, Tools::settings('default', $value['property'], $value['default']));
             }
         }
+    }
+
+    public static function rebuildRoutes(): void
+    {
+        self::$routes = [];
+        self::loadDefaultRoutes();
+
+        // recorremos toda la lista de archivos de la carpeta Dinamic/Controller
+        $dir = Tools::folder('Dinamic', 'Controller');
+        foreach (Tools::folderScan($dir) as $file) {
+            // si no es un archivo php, lo ignoramos
+            if ('.php' !== substr($file, -4)) {
+                continue;
+            }
+
+            $route = substr($file, 0, -4);
+            $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . $route;
+            self::addRoute('/' . $route, $controller);
+        }
+
+        // ejecutamos los callbacks para añadir rutas
+        foreach (self::$routesCallbacks as $callback) {
+            $callback(self::$routes);
+        }
+
+        // ordenamos colocando primero las que tienen una posición menor
+        uasort(self::$routes, function ($a, $b) {
+            return $a['position'] <=> $b['position'];
+        });
     }
 
     public static function run(string $url): void
@@ -113,18 +162,24 @@ final class Kernel
         return 2023.02;
     }
 
+    private static function loadDefaultRoutes(): void
+    {
+        // añadimos las rutas por defecto
+        self::addRoute('/', '\\FacturaScripts\\Core\\Controller\\Dashboard', 1);
+        self::addRoute('/AdminPlugins', '\\FacturaScripts\\Core\\Controller\\AdminPlugins', 1);
+        self::addRoute('/api/*', '\\FacturaScripts\\Core\\Controller\\ApiRoot', 1);
+        self::addRoute('/deploy', '\\FacturaScripts\\Core\\Controller\\Deploy', 1);
+        self::addRoute('/Dinamic/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
+        self::addRoute('/install', '\\FacturaScripts\\Core\\Controller\\Installer', 1);
+        self::addRoute('/login', '\\FacturaScripts\\Core\\Controller\\Login', 1);
+        self::addRoute('/MyFiles/*', '\\FacturaScripts\\Core\\Controller\\Myfiles', 1);
+        self::addRoute('/node_modules/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
+        self::addRoute('/Plugins/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
+    }
+
     private static function loadRoutes(): void
     {
-        self::addRoute('/', '\\FacturaScripts\\Core\\Controller\\Dashboard');
-        self::addRoute('/AdminPlugins', '\\FacturaScripts\\Core\\Controller\\AdminPlugins');
-        self::addRoute('/api/*', '\\FacturaScripts\\Core\\Controller\\ApiRoot');
-        self::addRoute('/deploy', '\\FacturaScripts\\Core\\Controller\\Deploy');
-        self::addRoute('/Dinamic/*', '\\FacturaScripts\\Core\\Controller\\Files');
-        self::addRoute('/install', '\\FacturaScripts\\Core\\Controller\\Installer');
-        self::addRoute('/login', '\\FacturaScripts\\Core\\Controller\\Login');
-        self::addRoute('/MyFiles/*', '\\FacturaScripts\\Core\\Controller\\Myfiles');
-        self::addRoute('/node_modules/*', '\\FacturaScripts\\Core\\Controller\\Files');
-        self::addRoute('/Plugins/*', '\\FacturaScripts\\Core\\Controller\\Files');
+        self::loadDefaultRoutes();
 
         // añadimos las rutas del archivo MyFiles/routes.json file
         $routesFile = Tools::folder('MyFiles', 'routes.json');

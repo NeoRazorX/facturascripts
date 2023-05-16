@@ -103,6 +103,9 @@ final class Plugins
             $clean
         );
 
+        Kernel::rebuildRoutes();
+        Kernel::saveRoutes();
+
         if ($initControllers) {
             $pluginDeploy->initControllers();
         }

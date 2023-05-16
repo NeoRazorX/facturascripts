@@ -114,13 +114,13 @@ final class Cache
     /**
      * Obtenemos el valor almacenado si existe o por el contrario almacenamos lo que devuelva la funcion callback.
      *
-     * @param  string  $key
-     * @param  \Closure  $callback
+     * @param string $key
+     * @param Closure $callback
      * @return mixed
      */
-    public static function remember($key, Closure $callback)
+    public static function remember(string $key, Closure $callback)
     {
-        if (! is_null($value = self::get($key))) {
+        if (!is_null($value = self::get($key))) {
             return $value;
         }
 
