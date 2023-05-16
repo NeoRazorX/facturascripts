@@ -19,7 +19,6 @@
 
 namespace FacturaScripts\Core\Controller;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Html;
@@ -38,8 +37,6 @@ class Login implements ControllerInterface
 
     public function __construct(string $className, string $url = '')
     {
-        $db = new DataBase();
-        $db->connect();
     }
 
     public function getPageData(): array
@@ -265,6 +262,15 @@ class Login implements ControllerInterface
         if (false === $user->verifyPassword($password)) {
             Tools::log()->warning('login-password-fail');
             $this->saveIncident($userName);
+            return;
+        }
+
+        // update user data
+        $ip = Session::getClientIp();
+        $browser = $request->headers->get('User-Agent');
+        $user->newLogkey($ip, $browser);
+        if (false === $user->save()) {
+            Tools::log()->warning('login-user-not-saved');
             return;
         }
 

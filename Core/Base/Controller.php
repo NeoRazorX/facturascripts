@@ -350,6 +350,14 @@ class Controller
             return false;
         }
 
+        // actualizamos la actividad del usuario
+        if (time() - strtotime($user->lastactivity) > User::UPDATE_ACTIVITY_PERIOD) {
+            $ip = Session::getClientIp();
+            $browser = $this->request->headers->get('User-Agent');
+            $user->updateActivity($ip, $browser);
+            $user->save();
+        }
+
         Session::set('user', $user);
         return true;
     }
