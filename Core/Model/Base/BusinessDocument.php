@@ -19,6 +19,9 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Model\LogAudit;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Divisa;
@@ -444,15 +447,26 @@ abstract class BusinessDocument extends ModelOnChangeClass
             return false;
         }
 
-        // add audit log
-        self::toolBox()::i18nLog(self::AUDIT_CHANNEL)->info('updated-model', [
+        $context = [
             '%model%' => $this->modelClassName(),
             '%key%' => $this->primaryColumnValue(),
             '%desc%' => $this->primaryDescription(),
             'model-class' => $this->modelClassName(),
             'model-code' => $this->primaryColumnValue(),
             'model-data' => $this->toArray()
-        ]);
+        ];
+        $logAudit = new LogAudit();
+        $logAudit->context = json_encode($context);
+        $logAudit->idcontacto = null;
+        $logAudit->ip = Session::getClientIp();
+        $logAudit->level = 'info';
+        $logAudit->message = (new Translator())->trans('updated-model', $context);
+        $logAudit->model = $this->modelClassName();
+        $logAudit->modelcode = $this->primaryColumnValue();
+        $logAudit->nick = $this->nick;
+        $logAudit->uri = self::toolBox()::i18nLog()::getContext('uri');
+        $logAudit->save();
+
         return true;
     }
 
