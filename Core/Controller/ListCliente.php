@@ -121,12 +121,15 @@ class ListCliente extends ListController
     protected function createViewCustomers(string $viewName = 'ListCliente')
     {
         $this->addView($viewName, 'Cliente', 'customers', 'fas fa-users');
-        $this->addSearchFields($viewName, ['cifnif', 'codcliente', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->addOrderBy($viewName, ['codcliente'], 'code');
         $this->addOrderBy($viewName, ['LOWER(nombre)'], 'name', 1);
         $this->addOrderBy($viewName, ['cifnif'], 'fiscal-number');
         $this->addOrderBy($viewName, ['fechaalta', 'codcliente'], 'creation-date');
         $this->addOrderBy($viewName, ['riesgoalcanzado'], 'current-risk');
+        $this->addSearchFields($viewName, [
+            'cifnif', 'codcliente', 'codsubcuenta', 'email', 'nombre', 'observaciones', 'razonsocial',
+            'telefono1', 'telefono2'
+        ]);
 
         // filters
         $this->addFilterSelectWhere($viewName, 'status', [

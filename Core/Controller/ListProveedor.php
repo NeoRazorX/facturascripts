@@ -99,11 +99,14 @@ class ListProveedor extends ListController
     protected function createViewSuppliers(string $viewName = 'ListProveedor')
     {
         $this->addView($viewName, 'Proveedor', 'suppliers', 'fas fa-users');
-        $this->addSearchFields($viewName, ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->addOrderBy($viewName, ['codproveedor'], 'code');
         $this->addOrderBy($viewName, ['cifnif'], 'fiscal-number');
         $this->addOrderBy($viewName, ['LOWER(nombre)'], 'name', 1);
         $this->addOrderBy($viewName, ['fechaalta'], 'creation-date');
+        $this->addSearchFields($viewName, [
+            'cifnif', 'codproveedor', 'codsubcuenta', 'email', 'nombre', 'observaciones', 'razonsocial',
+            'telefono1', 'telefono2'
+        ]);
 
         // filters
         $this->addFilterSelectWhere($viewName, 'status', [
