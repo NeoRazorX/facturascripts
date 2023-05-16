@@ -213,6 +213,10 @@ class EditCliente extends ComercialContactController
                 parent::loadData($viewName, $view);
                 $this->loadLanguageValues($viewName);
                 break;
+
+            default:
+                parent::loadData($viewName, $view);
+                break;
         }
     }
 
