@@ -17,18 +17,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Error;
+namespace FacturaScripts\Core\Template;
 
-use FacturaScripts\Core\Template\ErrorController;
+use FacturaScripts\Core\Contract\ErrorControllerInterface;
+use FacturaScripts\Core\KernelException;
 
-class DataBaseError extends ErrorController
+abstract class ErrorController implements ErrorControllerInterface
 {
-    public function run(): void
-    {
-        ob_clean();
-        http_response_code(500);
+    /** @var KernelException */
+    protected $exception;
 
-        echo '<h1>Database error</h1>';
-        echo '<p>' . $this->exception->getMessage() . '</p>';
+    public function __construct(KernelException $exception)
+    {
+        $this->exception = $exception;
     }
 }

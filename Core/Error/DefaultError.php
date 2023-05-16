@@ -19,17 +19,16 @@
 
 namespace FacturaScripts\Core\Error;
 
-use FacturaScripts\Core\Contract\ErrorControllerInterface;
-use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Template\ErrorController;
 
-class DefaultError implements ErrorControllerInterface
+class DefaultError extends ErrorController
 {
-    public function __construct(KernelException $exception)
-    {
-    }
-
     public function run(): void
     {
-        // TODO: Implement run() method.
+        http_response_code(500);
+
+        echo '<h1>Internal error</h1>';
+        echo '<p>' . $this->exception->getMessage() . '</p>';
+        echo '<p>File: ' . $this->exception->getFile() . ':' . $this->exception->getLine() . '</p>';
     }
 }

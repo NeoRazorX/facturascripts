@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Html;
+use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Tools;
@@ -214,6 +215,10 @@ class Controller
         $this->permissions = $permissions;
         $this->response = &$response;
         $this->user = $user;
+
+        if (false === $this->permissions->allowAccess) {
+            throw new KernelException('AccessDenied', Tools::lang()->trans('access-denied'));
+        }
 
         // Select the default company for the user
         $this->empresa = Empresas::get($this->user->idempresa);

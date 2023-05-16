@@ -20,15 +20,14 @@
 namespace FacturaScripts\Core\Error;
 
 use FacturaScripts\Core\Template\ErrorController;
+use FacturaScripts\Core\Tools;
 
-class DataBaseError extends ErrorController
+class AccessDenied extends ErrorController
 {
     public function run(): void
     {
-        ob_clean();
-        http_response_code(500);
+        http_response_code(403);
 
-        echo '<h1>Database error</h1>';
-        echo '<p>' . $this->exception->getMessage() . '</p>';
+        echo '<h1>' . Tools::lang()->trans('access-denied') . '</h1>';
     }
 }

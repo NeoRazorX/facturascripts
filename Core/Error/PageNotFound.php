@@ -19,19 +19,15 @@
 
 namespace FacturaScripts\Core\Error;
 
-use FacturaScripts\Core\Contract\ErrorControllerInterface;
-use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Template\ErrorController;
+use FacturaScripts\Core\Tools;
 
-class PageNotFound implements ErrorControllerInterface
+class PageNotFound extends ErrorController
 {
-    public function __construct(KernelException $exception)
-    {
-    }
-
     public function run(): void
     {
         http_response_code(404);
 
-        echo 'Page not found!';
+        echo '<h1>' . Tools::lang()->trans('page-not-found') . '</h1>';
     }
 }
