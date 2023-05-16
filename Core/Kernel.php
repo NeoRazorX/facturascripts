@@ -77,6 +77,9 @@ final class Kernel
         self::$routes = [];
         self::loadDefaultRoutes();
 
+        // cargamos la página por defecto
+        $homePage = Tools::settings('default', 'homepage', 'Dashboard');
+
         // recorremos toda la lista de archivos de la carpeta Dinamic/Controller
         $dir = Tools::folder('Dinamic', 'Controller');
         foreach (Tools::folderScan($dir) as $file) {
@@ -85,9 +88,15 @@ final class Kernel
                 continue;
             }
 
+            // añadimos la ruta
             $route = substr($file, 0, -4);
             $controller = '\\FacturaScripts\\Dinamic\\Controller\\' . $route;
             self::addRoute('/' . $route, $controller);
+
+            // si la ruta coincide con homepage, la añadimos como raíz
+            if ($route === $homePage) {
+                self::addRoute('/', $controller);
+            }
         }
 
         // ejecutamos los callbacks para añadir rutas
