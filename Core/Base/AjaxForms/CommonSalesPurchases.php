@@ -351,6 +351,7 @@ trait CommonSalesPurchases
     public static function modalDocList(Translator $i18n, array $documents, string $title, string $id): string
     {
         $list = '';
+        $sum = 0;
         foreach ($documents as $doc) {
             $list .= '<tr>'
                 . '<td><a href="' . $doc->url() . '">' . $i18n->trans($doc->modelClassName()) . ' ' . $doc->codigo . '</a></td>'
@@ -358,7 +359,15 @@ trait CommonSalesPurchases
                 . '<td class="text-end text-nowrap">' . ToolBox::coins()::format($doc->total) . '</td>'
                 . '<td class="text-end text-nowrap">' . $doc->fecha . ' ' . $doc->hora . '</td>'
                 . '</tr>';
+            $sum += $doc->total;
         }
+
+        // añadimos el total
+        $list .= '<tr class="table-warning">'
+            . '<td class="text-right text-nowrap" colspan="3">'
+            . $i18n->trans('total') . ' <b>' . ToolBox::coins()::format($sum) . '</b></td>'
+            . '<td></td>'
+            . '</tr>';
 
         return '<div class="modal fade" tabindex="-1" id="' . $id . '">'
             . '<div class="modal-dialog modal-xl">'

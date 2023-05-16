@@ -20,6 +20,7 @@
 namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Model\Settings;
 use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
 
@@ -121,9 +122,45 @@ final class ToolsTest extends TestCase
         $this->assertEquals($html, Tools::fixHtml($noHtml));
     }
 
+    public function testRandomString()
+    {
+        $this->assertEquals(10, strlen(Tools::randomString(10)));
+        $this->assertEquals(20, strlen(Tools::randomString(20)));
+        $this->assertEquals(30, strlen(Tools::randomString(30)));
+        $this->assertEquals(40, strlen(Tools::randomString(40)));
+        $this->assertEquals(50, strlen(Tools::randomString(50)));
+    }
+
     public function testSettings()
     {
         $this->assertEquals(AppSettings::get('default', 'codpais'), Tools::settings('default', 'codpais'));
+
+        // nos guardamos el valor actual
+        $value = Tools::settings('default', 'codpais');
+
+        // cambiamos el valor
+        Tools::settingsSet('default', 'codpais', '222');
+
+        // comprobamos que se ha cambiado
+        $this->assertEquals('222', Tools::settings('default', 'codpais'));
+
+        // guardamos los cambios
+        $this->assertTrue(Tools::settingsSave());
+
+        // comprobamos que se ha cambiado
+        $settings = new Settings();
+        $this->assertTrue($settings->loadFromCode('default'));
+        $this->assertEquals('222', $settings->properties['codpais']);
+
+        // volvemos a poner el valor original
+        Tools::settingsSet('default', 'codpais', $value);
+
+        // guardamos los cambios
+        $this->assertTrue(Tools::settingsSave());
+
+        // comprobamos que se ha cambiado
+        $settings->loadFromCode('default');
+        $this->assertEquals($value, $settings->properties['codpais']);
     }
 
     public function testSlug()
