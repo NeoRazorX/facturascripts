@@ -42,9 +42,19 @@ class Files implements ControllerInterface
 
         $this->filePath = Tools::folder() . $url;
 
-        // Not a file? Not a safe file?
-        if (false === is_file($this->filePath) || false === $this->isFileSafe($this->filePath)) {
-            throw new KernelException('FileNotFound', 'File not found or not safe: ' . $this->filePath);
+        if (false === is_file($this->filePath)) {
+            throw new KernelException(
+                'FileNotFound',
+                Tools::lang()->trans('file-not-found', ['%fileName%' => $this->filePath])
+            );
+        }
+
+        if (false === $this->isFolderSafe($url)) {
+            throw new KernelException('UnsafeFolder', 'Folder not safe: ' . $url);
+        }
+
+        if (false === $this->isFileSafe($this->filePath)) {
+            throw new KernelException('UnsafeFile', 'File not safe: ' . $this->filePath);
         }
     }
 
@@ -62,6 +72,18 @@ class Files implements ControllerInterface
             'ttf', 'txt', 'webm', 'woff', 'woff2', 'xls', 'xlsx', 'xml', 'xsig', 'zip'
         ];
         return empty($parts) || count($parts) === 1 || in_array(end($parts), $safe, true);
+    }
+
+    public static function isFolderSafe(string $filePath): bool
+    {
+        $safeFolders = ['node_modules', 'vendor', 'Dinamic', 'Core', 'Plugins', 'MyFiles/Public'];
+        foreach ($safeFolders as $folder) {
+            if ('/' . $folder === substr($filePath, 0, 1 + strlen($folder))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function run(): void
