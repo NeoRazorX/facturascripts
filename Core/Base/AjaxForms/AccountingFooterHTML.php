@@ -39,13 +39,13 @@ class AccountingFooterHTML
     {
         $i18n = new Translator();
         return '<div class="container-fluid">'
-            . '<div class="form-row align-items-center mt-3">'
+            . '<div class="row align-items-center mt-3">'
             . static::newSubaccount($i18n, $model)
             . static::moveBtn($i18n, $model)
             . static::importe($i18n, $model)
             . static::descuadre($i18n, $model)
             . '</div>'
-            . '<div class="form-row mt-3">'
+            . '<div class="row mt-3">'
             . static::deleteBtn($i18n, $model)
             . '<div class="col-sm"></div>'
             . static::saveBtn($i18n, $model)
@@ -61,14 +61,14 @@ class AccountingFooterHTML
 
         $lockBtn = '';
         if ($model->editable) {
-            $lockBtn .= '<div class="col-sm-3 col-md-2">'
-                . '<button type="button" class="btn btn-block btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'lock-doc\', \'0\');">'
+            $lockBtn .= '<div class="col-sm-3 col-md-2 d-grid">'
+                . '<button type="button" class="btn btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'lock-doc\', \'0\');">'
                 . '<i class="fas fa-lock fa-fw"></i> ' . $i18n->trans('lock-entry') . '</button>'
                 . '</div>';
         }
 
-        return '<div class="col-sm-3 col-md-2">'
-            . '<button type="button" class="btn btn-block btn-danger btn-spin-action mb-3" data-toggle="modal" data-target="#deleteDocModal">'
+        return '<div class="col-sm-3 col-md-2 d-grid">'
+            . '<button type="button" class="btn btn-danger btn-spin-action mb-3" data-bs-toggle="modal" data-bs-target="#deleteDocModal">'
             . '<i class="fas fa-trash-alt fa-fw"></i> ' . $i18n->trans('delete') . '</button>'
             . '</div>'
             . $lockBtn
@@ -77,8 +77,7 @@ class AccountingFooterHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"></h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . '</button>'
             . '</div>'
             . '<div class="modal-body text-center">'
@@ -87,7 +86,7 @@ class AccountingFooterHTML
             . '<p class="mb-0">' . $i18n->trans('are-you-sure') . '</p>'
             . '</div>'
             . '<div class="modal-footer">'
-            . '<button type="button" class="btn btn-secondary" data-dismiss="modal">' . $i18n->trans('cancel') . '</button>'
+            . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . $i18n->trans('cancel') . '</button>'
             . '<button type="button" class="btn btn-danger btn-spin-action" onclick="return accEntryFormSave(\'delete-doc\', \'0\');">' . $i18n->trans('delete') . '</button>'
             . '</div>'
             . '</div>'
@@ -112,7 +111,7 @@ class AccountingFooterHTML
 
         return '<div class="col-sm-3 col-md-2 mb-3">'
             . '<div class="input-group">'
-            . '<div class="input-group-prepend"><span class="input-group-text text-danger">' . $i18n->trans('unbalance') . '</span></div>'
+            . '<span class="input-group-text text-danger">' . $i18n->trans('unbalance') . '</span>'
             . '<input type="number" value="' . $unbalance . '" class="form-control" step="any" readonly>'
             . '</div></div>';
     }
@@ -129,7 +128,7 @@ class AccountingFooterHTML
     {
         return '<div class="col-sm-3 col-md-2 mb-3">'
             . '<div class="input-group">'
-            . '<div class="input-group-prepend"><span class="input-group-text">' . $i18n->trans('amount') . '</span></div>'
+            . '<span class="input-group-text">' . $i18n->trans('amount') . '</span>'
             . '<input type="number" value="' . $model->importe . '" class="form-control" step="any" tabindex="-1" readonly>'
             . '</div></div>';
     }
@@ -144,8 +143,8 @@ class AccountingFooterHTML
             . '<div class="input-group">'
             . '<input type="text" class="form-control" maxlength="15" autocomplete="off" placeholder="' . $i18n->trans('subaccount')
             . '" id="new_subaccount" name="new_subaccount" onchange="return newLineAction(this.value);"/>'
-            . '<div class="input-group-append"><button class="btn btn-info" type="button" title="' . $i18n->trans('subaccounts') . '"'
-            . ' onclick="$(\'#findSubaccountModal\').modal(); $(\'#findSubaccountInput\').focus();"><i class="fas fa-book"></i></button></div>'
+            . '<button class="btn btn-info" type="button" title="' . $i18n->trans('subaccounts') . '"'
+            . ' data-bs-toggle="modal" data-bs-target="#findSubaccountModal"><i class="fas fa-book"></i></button>'
             . '</div>'
             . '</div>'
             . '<div class="col-sm">'
@@ -156,14 +155,14 @@ class AccountingFooterHTML
     protected static function saveBtn(Translator $i18n, Asiento $model): string
     {
         if (false === $model->editable) {
-            return '<div class="col-sm-3 col-md-2">'
-                . '<button type="button" class="btn btn-block btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\');">'
+            return '<div class="col-sm-3 col-md-2 d-grid">'
+                . '<button type="button" class="btn btn-warning btn-spin-action mb-3" onclick="return accEntryFormSave(\'unlock-doc\', \'0\');">'
                 . '<i class="fas fa-lock-open fa-fw"></i> ' . $i18n->trans('unlock-entry') . '</button>'
                 . '</div>';
         }
 
-        return '<div class="col-sm-3 col-md-2">'
-            . '<button type="button" class="btn btn-block btn-primary btn-spin-action mb-3" load-after="true" onclick="return accEntryFormSave(\'save-doc\', \'0\');">'
+        return '<div class="col-sm-3 col-md-2 d-grid">'
+            . '<button type="button" class="btn btn-primary btn-spin-action mb-3" load-after="true" onclick="return accEntryFormSave(\'save-doc\', \'0\');">'
             . '<i class="fas fa-save fa-fw"></i> ' . $i18n->trans('save') . '</button>'
             . '</div>';
     }

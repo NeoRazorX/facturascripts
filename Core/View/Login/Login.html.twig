@@ -11,36 +11,32 @@
                             {% set idfile = appSettings.get('default','idloginimage', 0) %}
                             {{ _self.loadLogo(idfile) }}
                         </a>
-                        <div class="card-body">
+                        <div class="card-body d-grid">
                             <p class="card-text text-center">{{ trans('login-text') }}</p>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <div class="input-group">
-                                    <span class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="fas fa-user fa-fw" aria-hidden="true"></i>
-                                        </span>
+                                    <span class="input-group-text">
+                                        <i class="fas fa-user fa-fw" aria-hidden="true"></i>
                                     </span>
                                     <input type="text" name="fsNick" class="form-control" maxlength="50"
                                            placeholder="{{ trans('user') }}" required="" autocomplete="off"
                                            autofocus=""/>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3 d-grid">
                                 <div class="input-group">
-                                    <span class="input-group-prepend">
-                                        <span class="input-group-text">
-                                            <i class="fas fa-key fa-fw" aria-hidden="true"></i>
-                                        </span>
+                                    <span class="input-group-text">
+                                        <i class="fas fa-key fa-fw" aria-hidden="true"></i>
                                     </span>
                                     <input type="password" name="fsPassword" class="form-control" maxlength="50"
                                            placeholder="{{ trans('password') }}" required="" autocomplete="off"/>
                                 </div>
-                                <a href="#" class="btn btn-block btn-link" data-toggle="modal"
-                                   data-target="#newPasswordModal">
+                                <a href="#" class="btn btn-link" data-bs-toggle="modal"
+                                   data-bs-target="#newPasswordModal">
                                     {{ trans('i-forgot-password') }}
                                 </a>
                             </div>
-                            <button type="submit" class="btn btn-block btn-primary mb-4">
+                            <button type="submit" class="btn btn-primary mb-4">
                                 {{ trans('login') }}
                             </button>
                         </div>
@@ -50,7 +46,7 @@
                                 No dude en consultar la web oficial o las cuentas de facebook, twitter o youtube.
                             </p>
                             <a href="https://facturascripts.com" rel="nofollow" class="btn btn-secondary">
-                                <i class="fas fa-question-circle mr-1"></i> facturascripts.com
+                                <i class="fas fa-question-circle me-1"></i> facturascripts.com
                             </a>
                             <a href="https://www.facebook.com/facturascripts/" rel="nofollow" class="btn btn-primary"
                                title="facebook"> <i class="fab fa-facebook"></i>
@@ -73,58 +69,50 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">
-                            <i class="fas fa-user-lock mr-2"></i> {{ trans('new-password') }}
+                            <i class="fas fa-user-lock me-2"></i> {{ trans('new-password') }}
                         </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            
                         </button>
                     </div>
                     <div class="modal-body">
                         <a href="https://facturascripts.com/publicaciones/he-olvidado-mi-contrasena" rel="nofollow"
-                           target="_blank" class="btn btn-block btn-link mb-3">
+                           target="_blank" class="btn btn-link mb-3">
                             {{ trans('need-help-password') }}
                         </a>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <div class="input-group">
-                                <span class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-user fa-fw" aria-hidden="true"></i>
-                                    </span>
+                                <span class="input-group-text">
+                                    <i class="fas fa-user fa-fw" aria-hidden="true"></i>
                                 </span>
                                 <input type="text" name="fsNewUserPasswd" class="form-control" maxlength="50"
                                        placeholder="{{ trans('user') }}" required="" autocomplete="off"/>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <div class="input-group">
-                                <span class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-key fa-fw" aria-hidden="true"></i>
-                                    </span>
+                                <span class="input-group-text">
+                                    <i class="fas fa-key fa-fw" aria-hidden="true"></i>
                                 </span>
                                 <input type="password" name="fsNewPasswd" class="form-control" maxlength="50"
                                        placeholder="{{ trans('new-password') }}" required="" autocomplete="off"/>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <div class="input-group">
-                                <span class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-eye fa-fw" aria-hidden="true"></i>
-                                    </span>
+                                <span class="input-group-text">
+                                    <i class="fas fa-eye fa-fw" aria-hidden="true"></i>
                                 </span>
                                 <input type="password" name="fsNewPasswd2" class="form-control" maxlength="50"
                                        placeholder="{{ trans('repeat-new-password') }}"
                                        required="" autocomplete="off"/>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             {{ trans('database') }}
                             <div class="input-group">
-                                <span class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-database fa-fw" aria-hidden="true"></i>
-                                    </span>
+                                <span class="input-group-text">
+                                    <i class="fas fa-database fa-fw" aria-hidden="true"></i>
                                 </span>
                                 <input type="password" name="fsDbPasswd" class="form-control"
                                        placeholder="{{ trans('db-password') }}" autocomplete="off"/>

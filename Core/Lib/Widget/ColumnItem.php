@@ -86,7 +86,7 @@ class ColumnItem extends VisualItem
     {
         parent::__construct($data);
         $this->description = $data['description'] ?? '';
-        $this->display = $data['display'] ?? 'left';
+        $this->display = $this->setDisplay($data['display'] ?? 'start');
         $this->level = isset($data['level']) ? (int)$data['level'] : 0;
         $this->numcolumns = isset($data['numcolumns']) ? (int)$data['numcolumns'] : 0;
         $this->order = isset($data['order']) ? (int)$data['order'] : 0;
@@ -195,5 +195,14 @@ class ColumnItem extends VisualItem
             $this->widget = new $defaultWidget($child);
             break;
         }
+    }
+
+    private function setDisplay($display)
+    {
+        if($display === 'right'){
+            return 'end';
+        }
+        
+        return $display;
     }
 }

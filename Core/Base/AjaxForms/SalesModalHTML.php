@@ -97,8 +97,8 @@ class SalesModalHTML
             $tbody .= '<tr class="' . $cssClass . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return salesFormAction(\'add-product\', \'' . $row['referencia'] . '\');">'
                 . '<td><b>' . $row['referencia'] . '</b> ' . $description . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($row['precio'])) . '</td>'
-                . '<td class="text-right">' . $row['disponible'] . '</td>'
+                . '<td class="text-end">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($row['precio'])) . '</td>'
+                . '<td class="text-end">' . $row['disponible'] . '</td>'
                 . '</tr>';
         }
 
@@ -110,8 +110,8 @@ class SalesModalHTML
             . '<thead>'
             . '<tr>'
             . '<th>' . $i18n->trans('product') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('price') . '</th>'
-            . '<th class="text-right">' . $i18n->trans('stock') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('price') . '</th>'
+            . '<th class="text-end">' . $i18n->trans('stock') . '</th>'
             . '</tr>'
             . '</thead>'
             . '<tbody>' . $tbody . '</tbody>'
@@ -127,7 +127,7 @@ class SalesModalHTML
             $options .= '<option value="' . $man->codfabricante . '">' . $man->nombre . '</option>';
         }
 
-        return '<select name="fp_codfabricante" class="form-control" onchange="return salesFormAction(\'find-product\', \'0\');">'
+        return '<select name="fp_codfabricante" class="form-select" onchange="return salesFormAction(\'find-product\', \'0\');">'
             . $options . '</select>';
     }
 
@@ -140,7 +140,7 @@ class SalesModalHTML
             $options .= '<option value="' . $fam->codfamilia . '">' . $fam->descripcion . '</option>';
         }
 
-        return '<select name="fp_codfamilia" class="form-control" onchange="return salesFormAction(\'find-product\', \'0\');">'
+        return '<select name="fp_codfamilia" class="form-select" onchange="return salesFormAction(\'find-product\', \'0\');">'
             . $options . '</select>';
     }
 
@@ -257,22 +257,19 @@ class SalesModalHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"><i class="fas fa-users fa-fw"></i> ' . $i18n->trans('customers') . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . '</button>'
             . '</div>'
             . '<div class="modal-body p-0">'
             . '<div class="p-3">'
             . '<div class="input-group">'
-            . '<input type="text" id="findCustomerInput" class="form-control" placeholder="' . $i18n->trans('search') . '" />'
-            . '<div class="input-group-apend">'
+            . '<input type="text" id="findCustomerInput" class="form-control" placeholder="' . $i18n->trans('search') . '"  autofocus/>'
             . '<button type="button" class="btn btn-primary"><i class="fas fa-search"></i></button>'
-            . '</div>'
             . '</div>'
             . '</div>'
             . '<table class="table table-hover mb-0">' . $trs . '</table></div>'
             . '<div class="modal-footer bg-light">'
-            . '<a href="EditCliente?return=' . urlencode($url) . $linkAgent . '" class="btn btn-block btn-success">'
+            . '<a href="EditCliente?return=' . urlencode($url) . $linkAgent . '" class="btn btn-success w-100">'
             . '<i class="fas fa-plus fa-fw"></i> ' . $i18n->trans('new')
             . '</a>'
             . '</div>'
@@ -288,27 +285,24 @@ class SalesModalHTML
             . '<div class="modal-content">'
             . '<div class="modal-header">'
             . '<h5 class="modal-title"><i class="fas fa-cubes fa-fw"></i> ' . $i18n->trans('products') . '</h5>'
-            . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
-            . '<span aria-hidden="true">&times;</span>'
+            . '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">'
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-sm mb-2">'
             . '<div class="input-group">'
             . '<input type="text" name="fp_query" class="form-control" id="productModalInput" placeholder="' . $i18n->trans('search')
-            . '" onkeyup="return salesFormActionWait(\'find-product\', \'0\', event);"/>'
-            . '<div class="input-group-append">'
+            . '" onkeyup="return salesFormActionWait(\'find-product\', \'0\', event);" autofocus/>'
             . '<button class="btn btn-primary btn-spin-action" type="button" onclick="return salesFormAction(\'find-product\', \'0\');">'
             . '<i class="fas fa-search"></i></button>'
-            . '</div>'
             . '</div>'
             . '</div>'
             . '<div class="col-sm mb-2">' . static::fabricantes($i18n) . '</div>'
             . '<div class="col-sm mb-2">' . static::familias($i18n) . '</div>'
             . '<div class="col-sm mb-2">' . static::orden($i18n) . '</div>'
             . '</div>'
-            . '<div class="form-row">'
+            . '<div class="row">'
             . '<div class="col-sm">'
             . '<div class="form-check">'
             . '<input type="checkbox" name="fp_vendido" value="1" class="form-check-input" id="vendido" onchange="return salesFormAction(\'find-product\', \'0\');">'
@@ -326,8 +320,8 @@ class SalesModalHTML
     protected static function orden(Translator $i18n): string
     {
         return '<div class="input-group">'
-            . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span></div>'
-            . '<select name="fp_orden" class="form-control" onchange="return salesFormAction(\'find-product\', \'0\');">'
+            . '<span class="input-group-text"><i class="fas fa-sort-amount-down-alt"></i></span>'
+            . '<select name="fp_orden" class="form-select" onchange="return salesFormAction(\'find-product\', \'0\');">'
             . '<option value="">' . $i18n->trans('sort') . '</option>'
             . '<option value="">------</option>'
             . '<option value="ref_asc">' . $i18n->trans('reference') . '</option>'

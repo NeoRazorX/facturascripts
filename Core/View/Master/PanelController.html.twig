@@ -81,12 +81,12 @@
                 {% endif %}
             </div>
             {# -- Top right text -- #}
-            <div class="col-md d-none d-md-inline-block text-right">
+            <div class="col-md d-none d-md-inline-block text-end">
                 {% set image = fsc.getImageUrl() %}
                 {% if image is empty %}
-                    <i class="{{ pageData.icon }} fa-3x pl-3 float-right" aria-hidden="true"></i>
+                    <i class="{{ pageData.icon }} fa-3x ps-3 float-end" aria-hidden="true"></i>
                 {% else %}
-                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail ml-3 mb-2 float-right"/>
+                    <img src="{{ image }}" alt="{{ fsc.title }}" class="img-thumbnail ms-3 mb-2 float-end"/>
                 {% endif %}
                 <h1 class="h5 mb-0">{{ i18n.trans(pageData.title) }}</h1>
                 {% if fsc.hasData %}
@@ -111,12 +111,12 @@
                         {% for viewName, view in fsc.views %}
                             {% set active = (viewName == fsc.active) ? ' active' : '' %}
                             {% set disable = view.settings.active ? '' : ' disabled' %}
-                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-toggle="pill"
+                            <a class="nav-link{{ active }}{{ disable }}" id="{{ viewName }}-tab" data-bs-toggle="pill"
                                href="#{{ viewName }}" role="tab" aria-controls="{{ viewName }}" aria-expanded="true">
-                                <i class="{{ view.icon }} fa-fw mr-1 d-none d-xl-inline-block"
+                                <i class="{{ view.icon }} fa-fw me-1 d-none d-xl-inline-block"
                                    aria-hidden="true"></i>{{ view.title }}
                                 {% if view.count >= 1 and viewName != firstView.getViewName() %}
-                                    <span class='badge badge-secondary mt-lg-1 mb-lg-1 float-lg-right'>{{ view.count }}</span>
+                                    <span class='badge bg-secondary mt-lg-1 mb-lg-1 float-lg-end'>{{ view.count }}</span>
                                 {% endif %}
                             </a>
                         {% endfor %}
@@ -163,7 +163,7 @@
     {% if show %}
         <div class="btn-group">
             <div class="dropdown">
-                <button class="btn btn-sm btn-secondary mr-3 dropdown-toggle" type="button" data-toggle="dropdown"
+                <button class="btn btn-sm btn-secondary me-3 dropdown-toggle" type="button" data-bs-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-wrench fa-fw" aria-hidden="true"></i>
                     <span class="d-none d-lg-inline-block">{{ i18n.trans('options') }}</span>
@@ -192,10 +192,10 @@
             <span class="d-none d-lg-inline-block">{{ i18n.trans('print') }}</span>
         </a>
         <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="sr-only">{{ i18n.trans('more') }}</span>
         </button>
-        <div class="dropdown-menu dropdown-menu-right">
+        <div class="dropdown-menu dropdown-menu-end">
             {% for key, option in fsc.exportManager.options() %}
                 {% if key != fsc.exportManager.defaultOption() %}
                     <a href="{{ firstView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
@@ -205,7 +205,7 @@
                 {% endif %}
             {% endfor %}
             <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item" data-toggle="modal" data-target="#advancedExportModal">
+            <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#advancedExportModal">
                 <i class="fas fa-tools fa-fw" aria-hidden="true"></i>
                 {{ i18n.trans('advanced') }}
             </a>
@@ -231,21 +231,21 @@
                             <i class="fas fa-tools fa-fw" aria-hidden="true"></i>
                             {{ i18n.trans('advanced') }}
                         </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            
                         </button>
                     </div>
-                    <div class="modal-body text-left">
-                        <div class="form-group">
-                            <select name="option" class="form-control">
+                    <div class="modal-body text-start">
+                        <div class="mb-3">
+                            <select name="option" class="form-select">
                                 {% for key, option in fsc.exportManager.options() %}
                                     <option value="{{ key }}">{{ i18n.trans(option.description) }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             {{ i18n.trans('format') }}
-                            <select name="idformat" class="form-control">
+                            <select name="idformat" class="form-select">
                                 <option value="">{{ i18n.trans('default') }}</option>
                                 <option value="">------</option>
                                 {% for format in fsc.exportManager.getFormats(firstView.model) %}
@@ -253,9 +253,9 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             {{ i18n.trans('language') }}
-                            <select name="langcode" class="form-control">
+                            <select name="langcode" class="form-select">
                                 <option value="">{{ i18n.trans('default') }}</option>
                                 <option value="">------</option>
                                 {% for code, lang in i18n.getAvailableLanguages() %}
@@ -263,7 +263,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="text-right">
+                        <div class="text-end">
                             <button type="submit" class="btn btn-primary">
                                 {{ i18n.trans('accept') }}
                             </button>

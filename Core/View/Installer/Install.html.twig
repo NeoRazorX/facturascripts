@@ -47,8 +47,8 @@
         <img src="Core/Assets/Images/logo.png" width="30" height="30" class="align-top" alt="FacturaScripts"/>
         FacturaScripts {{ version }}
     </a>
-    <ul class="nav navbar-nav mr-auto"></ul>
-    <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+    <ul class="nav navbar-nav me-auto"></ul>
+    <ul class="navbar-nav flex-row ms-md-auto d-none d-md-flex">
         <li class="nav-item">
             <a class="nav-link" href="?phpinfo=TRUE">
                 <i class="fas fa-info-circle fa-fw" aria-hidden="true"></i> phpinfo
@@ -81,12 +81,12 @@
                     <ul class="nav nav-tabs card-header-tabs" role="tablist">
                         <li role="presentation" class="nav-item">
                             <a class="nav-link active" href="#preferencias" aria-controls="preferencias" role="tab"
-                               data-toggle="tab">
+                               data-bs-toggle="tab">
                                 <i class="fas fa-cogs" aria-hidden="true"></i>&nbsp; {{ trans('preferences') }}
                             </a>
                         </li>
                         <li role="presentation" class="nav-item">
-                            <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab" data-toggle="tab">
+                            <a class="nav-link" href="#licencia" aria-controls="licencia" role="tab" data-bs-toggle="tab">
                                 <i class="far fa-file-alt"></i>&nbsp; {{ trans('license') }}
                             </a>
                         </li>
@@ -98,15 +98,13 @@
                             <div role="tabpanel" class="tab-pane active" id="preferencias">
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('language') }}:
                                             <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-language"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-language"></i>
                                                 </span>
-                                                <select id="fs_lang" name="fs_lang" class="form-control">
+                                                <select id="fs_lang" name="fs_lang" class="form-select">
                                                     {% for langCode, langName in i18n.getAvailableLanguages() %}
                                                         {% if langCode == i18n.getLang() %}
                                                             <option value="{{ langCode }}"
@@ -120,15 +118,13 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('timezone') }}:
                                             <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="far fa-clock"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                    <i class="far fa-clock"></i>
                                                 </span>
-                                                <select name="fs_timezone" class="form-control">
+                                                <select name="fs_timezone" class="form-select">
                                                     {% for tz in timezones %}
                                                         <option value="{{ tz }}">{{ tz }}</option>
                                                     {% endfor %}
@@ -137,36 +133,34 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('db-type') }}:
-                                            <select id="db_type" name="fs_db_type" class="form-control">
+                                            <select id="db_type" name="fs_db_type" class="form-select">
                                                 <option value="mysql">MySQL</option>
                                                 <option value="postgresql">PostgreSQL</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('db-host') }}:
                                             <input type="text" name="fs_db_host" value="localhost" class="form-control"
                                                    required=""/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('db-port') }}:
                                             <input type="number" id="db_port" name="fs_db_port" value="3306"
                                                    class="form-control" required=""/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('db-name') }}:
                                             <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-database"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-database"></i>
                                                 </span>
                                                 <input type="text" name="fs_db_name" value="facturascripts"
                                                        class="form-control" required=""/>
@@ -174,27 +168,25 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('db-user') }}:
                                             <input type="text" id="db_user" name="fs_db_user" value="root"
                                                    class="form-control" required=""/>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('db-password') }}:
                                             <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-key"></i>
-                                                    </span>
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-key"></i>
                                                 </span>
                                                 <input type="password" name="fs_db_pass" class="form-control"/>
                                             </div>
                                         </div>
                                     </div>
                                     <div id="mysql_socket_div" class="col-sm-4">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             {{ trans('mysql-socket') }}:
                                             <input type="text" name="mysql_socket" class="form-control"
                                                    placeholder="{{ trans('optional') }}"/>
@@ -206,7 +198,7 @@
                             <div role="tabpanel" class="tab-pane" id="licencia">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <div class="form-group">
+                                        <div class="mb-3">
                                             <pre>{{ license }}</pre>
                                         </div>
                                     </div>
@@ -222,7 +214,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="col-sm-6 text-right">
+                            <div class="col-sm-6 text-end">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-check" aria-hidden="true"></i> {{ trans('accept') }}
                                 </button>

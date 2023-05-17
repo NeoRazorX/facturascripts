@@ -22,13 +22,11 @@
 {% macro message(log, levels, style) %}
     {% set messages = log.read('master', levels) | merge(log.read('database', levels)) %}
     {% if messages | length > 0 %}
-        <div class="alert alert-{{ style }}" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+        <div class="alert alert-{{ style }} alert-dismissible fade show" role="alert">
             {% for item in messages %}
                 <div>{{ item.message | raw }}</div>
             {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {% endif %}
 {% endmacro %}
@@ -37,11 +35,9 @@
 {% macro messageCompat(log, levels, style) %}
     {% for item in log.read() %}
         {% if item.level in levels and item.channel == 'master' %}
-            <div class="alert alert-{{ style }}" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="alert alert-{{ style }} alert-dismissible fade show" role="alert">
                 <div>{{ item.message | raw }}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endif %}
     {% endfor %}
@@ -49,5 +45,5 @@
 
 {# Muestra los parámetros necesarios para el popover #}
 {% macro popoverTitle(msg, position = 'auto') %}
-    {% if msg | length > 0 %}data-toggle="popover" data-placement="{{ position }}" data-trigger="hover" data-content="{{ msg }}"{% endif %}
+    {% if msg | length > 0 %}data-bs-toggle="popover" data-bs-placement="{{ position }}" data-trigger="hover" data-content="{{ msg }}"{% endif %}
 {% endmacro %}

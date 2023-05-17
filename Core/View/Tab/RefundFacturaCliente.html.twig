@@ -47,18 +47,18 @@
                 <th>{{ i18n.trans('rectified-invoice') }}</th>
                 <th>{{ i18n.trans('number2') }}</th>
                 <th>{{ i18n.trans('observations') }}</th>
-                <th class="text-right">{{ i18n.trans('total') }}</th>
-                <th class="text-right">{{ i18n.trans('date') }}</th>
+                <th class="text-end">{{ i18n.trans('total') }}</th>
+                <th class="text-end">{{ i18n.trans('date') }}</th>
             </tr>
             </thead>
             <tbody>
             {% for rectified in currentView.cursor %}
-                <tr class="table-danger clickableRow" data-href="{{ rectified.url() }}">
+                <tr class="table-danger clickableRow" data-bs-href="{{ rectified.url() }}">
                     <td>{{ rectified.codigo }}</td>
                     <td>{{ rectified.numero2 | raw }}</td>
                     <td>{{ rectified.observaciones | raw }}</td>
-                    <td class="text-right">{{ fsc.toolBox().coins().format(rectified.total) }}</td>
-                    <td class="text-right">{{ rectified.fecha }}</td>
+                    <td class="text-end">{{ fsc.toolBox().coins().format(rectified.total) }}</td>
+                    <td class="text-end">{{ rectified.fecha }}</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -80,11 +80,11 @@
                     </div>
                     <div class="card-body">
                         <p>{{ i18n.trans('rectified-invoice-p') }}</p>
-                        <div class="form-row align-items-end">
+                        <div class="row align-items-end">
                             <div class="col-sm">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ i18n.trans('serie') }}
-                                    <select name="codserie" class="form-control">
+                                    <select name="codserie" class="form-select">
                                         {% for serie in fsc.series() %}
                                             {% if serie.codserie == appSettings.get('default','codserierec','R') %}
                                                 <option value="{{ serie.codserie }}" selected>
@@ -98,20 +98,20 @@
                                 </div>
                             </div>
                             <div class="col-sm">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     {{ i18n.trans('date') }}
                                     <input type="date" name="fecha" value="{{ task.end | date('Y-m-d') }}"
                                            class="form-control" required>
                                 </div>
                             </div>
-                            <div class="col-sm text-right">
+                            <div class="col-sm text-end">
                                 <div class="btn-group mb-3">
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="fas fa-check-square fa-fw"></i> {{ i18n.trans('select') }}
                                         </button>
-                                        <div class="dropdown-menu dropdown-menu-right">
+                                        <div class="dropdown-menu dropdown-menu-end">
                                             <a class="dropdown-item" href="#" onClick="return refundNone();">
                                                 <i class="far fa-square fa-fw"></i> {{ i18n.trans('select-none') }}
                                             </a>
@@ -121,7 +121,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="btn-group mb-3 ml-3">
+                                <div class="btn-group mb-3 ms-3">
                                     <button type="submit" class="btn btn-warning">
                                         <i class="fas fa-save fa-fw" aria-hidden="true"></i> {{ i18n.trans('save') }}
                                     </button>
@@ -134,9 +134,9 @@
                             <thead>
                             <tr>
                                 <th>{{ i18n.trans('description') }}</th>
-                                <th class="text-right">{{ i18n.trans('quantity') }}</th>
-                                <th class="text-right">{{ i18n.trans('to-refund') }}</th>
-                                <th class="text-right">{{ i18n.trans('refund-amount') }}</th>
+                                <th class="text-end">{{ i18n.trans('quantity') }}</th>
+                                <th class="text-end">{{ i18n.trans('to-refund') }}</th>
+                                <th class="text-end">{{ i18n.trans('refund-amount') }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -147,7 +147,7 @@
                                         <a href="{{ line.getProducto().url() }}">{{ line.referencia }}</a>
                                         {{ line.descripcion | raw }}
                                     </td>
-                                    <td class="align-middle text-right">
+                                    <td class="align-middle text-end">
                                         {{ fsc.toolBox().numbers().format(line.cantidad) }}
                                     </td>
                                     <td class="table-warning">
@@ -155,14 +155,14 @@
                                         {% if line.cantidad > 0 %}
                                             <input type="number" name="refund_{{ line.primaryColumnValue() }}"
                                                    value="0" min="0" max="{{ line.cantidad - refunded }}" step="any"
-                                                   class="form-control text-right to_refund" autocomplete="off"/>
+                                                   class="form-control text-end to_refund" autocomplete="off"/>
                                         {% else %}
                                             <input type="number" name="refund_{{ line.primaryColumnValue() }}"
-                                                   value="0" step="any" class="form-control text-right to_refund"
+                                                   value="0" step="any" class="form-control text-end to_refund"
                                                    autocomplete="off"/>
                                         {% endif %}
                                     </td>
-                                    <td class="align-middle table-warning text-right">
+                                    <td class="align-middle table-warning text-end">
                                         {% if refunded == 0 %}
                                             -
                                         {% else %}
@@ -175,7 +175,7 @@
                         </table>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <textarea name="observaciones" class="form-control"
                                       placeholder="{{ i18n.trans('observations') }}"></textarea>
                         </div>

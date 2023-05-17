@@ -15,12 +15,12 @@
                     <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
                     <div class="card shadow mb-4">
                         <div class="card-body">
-                            <div class="form-row">
+                            <div class="row">
                                 {% if fsc.empresa.count() > 1 %}
                                     <div class="col-sm-2">
                                         {{ trans('company') }}
-                                        <div class="form-group">
-                                            <select name="idempresa" class="form-control" required>
+                                        <div class="mb-3">
+                                            <select name="idempresa" class="form-select" required>
                                                 {% for item in fsc.codeModel.all('empresas','idempresa','nombrecorto',false) %}
                                                     {% set selected = item.code == fsc.model.idempresa ? ' selected' : '' %}
                                                     <option value="{{ item.code }}"{{ selected }}>{{ item.description }}</option>
@@ -31,22 +31,22 @@
                                 {% endif %}
                                 <div class="col-sm-2">
                                     {{ trans('date') }}
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <input type="date" name="fecha" value="{{ "now" | date('Y-m-d') }}"
                                                class="form-control" required/>
                                     </div>
                                 </div>
                                 <div class="col-sm">
                                     {{ trans('concept') }}
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <input type="text" name="concepto" value="{{ fsc.model.concepto }}"
                                                class="form-control" required/>
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
                                     {{ trans('daily') }}
-                                    <div class="form-group">
-                                        <select name="iddiario" class="form-control">
+                                    <div class="mb-3">
+                                        <select name="iddiario" class="form-select">
                                             {% for item in fsc.codeModel.all('diarios','iddiario','descripcion') %}
                                                 {% if item.code == fsc.model.iddiario %}
                                                     <option value="{{ item.code }}" selected>
@@ -61,7 +61,7 @@
                                 </div>
                                 <div class="col-sm-2">
                                     {{ trans('channel') }}
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <input type="number" name="canal" value="{{ fsc.model.canal }}"
                                                class="form-control"/>
                                     </div>
@@ -75,8 +75,8 @@
                                     <th>{{ trans('subaccount') }}</th>
                                     <th>{{ trans('counterpart') }}</th>
                                     <th>{{ trans('concept') }}</th>
-                                    <th class="text-right">{{ trans('debit') }}</th>
-                                    <th class="text-right">{{ trans('credit') }}</th>
+                                    <th class="text-end">{{ trans('debit') }}</th>
+                                    <th class="text-end">{{ trans('credit') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -85,15 +85,15 @@
                                         <td>{{ line.codsubcuenta }}</td>
                                         <td>{{ line.codcontrapartida }}</td>
                                         <td>{{ line.concepto }}</td>
-                                        <td class="text-right">{{ fsc.toolBox().coins().format(line.debe) }}</td>
-                                        <td class="text-right">{{ fsc.toolBox().coins().format(line.haber) }}</td>
+                                        <td class="text-end">{{ fsc.toolBox().coins().format(line.debe) }}</td>
+                                        <td class="text-end">{{ fsc.toolBox().coins().format(line.haber) }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                         <div class="card-footer">
-                            <div class="text-right">
+                            <div class="text-end">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save"></i> {{ trans('save') }}
                                 </button>

@@ -218,7 +218,7 @@ class WidgetSelect extends BaseWidget
      */
     protected function inputHtml($type = 'text', $extraClass = '')
     {
-        $class = $this->combineClasses($this->css('form-control'), $this->class, $extraClass);
+        $class = $this->combineClasses($this->css('form-select'), $this->class, $extraClass);
         if ($this->parent) {
             $class = $class . ' parentSelect';
         }
