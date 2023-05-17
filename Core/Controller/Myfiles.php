@@ -19,11 +19,12 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Tools;
 
-class Files implements ControllerInterface
+class Myfiles implements ControllerInterface
 {
     /** @var string */
     private $filePath = '';
@@ -34,17 +35,24 @@ class Files implements ControllerInterface
             return;
         }
 
-        // favicon.ico
-        if ('/favicon.ico' == $url) {
-            $this->filePath = Tools::folder('Core', 'Assets', 'Images', 'favicon.ico');
+        // url starts with /MyFiles/ ?
+        if (strpos($url, '/MyFiles/') !== 0) {
             return;
         }
 
+        // separate url from parameters
         $this->filePath = Tools::folder() . $url;
 
         // Not a file? Not a safe file?
         if (false === is_file($this->filePath) || false === $this->isFileSafe($this->filePath)) {
             throw new KernelException('FileNotFound', 'File not found or not safe: ' . $this->filePath);
+        }
+
+        // get the myft parameter
+        $fixedFilePath = substr(urldecode($url), 1);
+        $token = filter_input(INPUT_GET, 'myft', FILTER_SANITIZE_STRING);
+        if (empty($token) || false === MyFilesToken::validate($fixedFilePath, $token)) {
+            throw new KernelException('MyfilesTokenError', 'Invalid token for file: ' . $fixedFilePath);
         }
     }
 
