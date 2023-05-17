@@ -112,7 +112,7 @@ class PostgresqlEngine extends DataBaseEngine
     {
         if (!function_exists('pg_connect')) {
             $error = $this->i18n->trans('php-postgresql-not-found');
-            throw new KernelException('DataBaseError', $error);
+            throw new KernelException('DatabaseError', $error);
         }
 
         $string = 'host=' . \FS_DB_HOST . ' dbname=' . \FS_DB_NAME . ' port=' . \FS_DB_PORT
@@ -120,7 +120,7 @@ class PostgresqlEngine extends DataBaseEngine
         $result = pg_connect($string);
         if (!$result) {
             $error = pg_last_error();
-            throw new KernelException('DataBaseError', $error);
+            throw new KernelException('DatabaseError', $error);
         }
 
         /// set datestyle

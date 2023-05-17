@@ -21,7 +21,7 @@ namespace FacturaScripts\Core\Error;
 
 use FacturaScripts\Core\Template\ErrorController;
 
-class DataBaseError extends ErrorController
+class DatabaseError extends ErrorController
 {
     public function run(): void
     {

@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Base;
 use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
 use FacturaScripts\Core\Base\DataBase\MysqlEngine;
 use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
+use FacturaScripts\Core\KernelException;
 
 /**
  * Generic class of access to the database, either MySQL or PostgreSQL.
@@ -449,6 +450,16 @@ final class DataBase
 
         if (is_bool($val)) {
             return $val ? 'TRUE' : 'FALSE';
+        }
+
+        // If it's an array
+        if (is_array($val)) {
+            throw new KernelException('DatabaseError', 'Array not allowed in var2str function');
+        }
+
+        // If it's an object
+        if (is_object($val)) {
+            throw new KernelException('DatabaseError', 'Object not allowed in var2str function');
         }
 
         // If it's a date
