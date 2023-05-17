@@ -45,7 +45,7 @@ class Files implements ControllerInterface
         if (false === is_file($this->filePath)) {
             throw new KernelException(
                 'FileNotFound',
-                Tools::lang()->trans('file-not-found', ['%fileName%' => $this->filePath])
+                Tools::lang()->trans('file-not-found', ['%fileName%' => $url])
             );
         }
 
@@ -54,7 +54,7 @@ class Files implements ControllerInterface
         }
 
         if (false === $this->isFileSafe($this->filePath)) {
-            throw new KernelException('UnsafeFile', 'File not safe: ' . $this->filePath);
+            throw new KernelException('UnsafeFile', 'File not safe: ' . $url);
         }
     }
 

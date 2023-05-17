@@ -40,12 +40,22 @@ class Myfiles implements ControllerInterface
             return;
         }
 
-        // separate url from parameters
         $this->filePath = Tools::folder() . $url;
 
-        // Not a file? Not a safe file?
-        if (false === is_file($this->filePath) || false === $this->isFileSafe($this->filePath)) {
-            throw new KernelException('FileNotFound', 'File not found or not safe: ' . $this->filePath);
+        if (false === is_file($this->filePath)) {
+            throw new KernelException(
+                'FileNotFound',
+                Tools::lang()->trans('file-not-found', ['%fileName%' => $url])
+            );
+        }
+
+        if (false === $this->isFileSafe($this->filePath)) {
+            throw new KernelException('UnsafeFile', 'File not safe: ' . $url);
+        }
+
+        // if the folder is MyFiles/Public, then we don't need to check the token
+        if (strpos($url, '/MyFiles/Public/') === 0) {
+            return;
         }
 
         // get the myft parameter
