@@ -32,6 +32,8 @@ final class Kernel
     /** @var Closure[] */
     private static $routesCallbacks = [];
 
+    private static $startTime;
+
     public static function addRoute(string $route, string $controller, int $position = 0, string $customId = ''): void
     {
         // si el customId ya existe, eliminamos la ruta anterior
@@ -56,8 +58,16 @@ final class Kernel
         self::$routesCallbacks[] = $closure;
     }
 
+    public static function getExecutionTime(int $decimals = 5): float
+    {
+        $diff = microtime(true) - self::$startTime;
+        return round($diff, $decimals);
+    }
+
     public static function init(): void
     {
+        self::$startTime = microtime(true);
+
         // cargamos algunas constantes para dar soporte a versiones antiguas
         $constants = [
             'FS_CODPAIS' => ['property' => 'codpais', 'default' => 'ESP'],
@@ -189,6 +199,7 @@ final class Kernel
         self::addRoute('/', '\\FacturaScripts\\Core\\Controller\\Dashboard', 1);
         self::addRoute('/AdminPlugins', '\\FacturaScripts\\Core\\Controller\\AdminPlugins', 1);
         self::addRoute('/api/*', '\\FacturaScripts\\Core\\Controller\\ApiRoot', 1);
+        self::addRoute('/cron', '\\FacturaScripts\\Core\\Controller\\Cron', 1);
         self::addRoute('/deploy', '\\FacturaScripts\\Core\\Controller\\Deploy', 1);
         self::addRoute('/Dinamic/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
         self::addRoute('/install', '\\FacturaScripts\\Core\\Controller\\Installer', 1);
