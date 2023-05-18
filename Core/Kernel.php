@@ -82,6 +82,10 @@ final class Kernel
                 define($key, Tools::settings('default', $value['property'], $value['default']));
             }
         }
+
+        // cargamos el idioma almacenado en la cookie o el predeterminado
+        $lang = $_COOKIE['fsLang'] ?? Tools::config('lang', 'es_ES');
+        Tools::lang()->setDefaultLang($lang);
     }
 
     public static function rebuildRoutes(): void
@@ -124,10 +128,6 @@ final class Kernel
 
     public static function run(string $url): void
     {
-        // cargamos el idioma almacenado en la cookie o el predeterminado
-        $lang = $_COOKIE['fsLang'] ?? Tools::config('lang', 'es_ES');
-        Tools::lang()->setDefaultLang($lang);
-
         $route = Tools::config('route', '');
         $relativeUrl = substr($url, strlen($route));
 
@@ -198,6 +198,7 @@ final class Kernel
         // añadimos las rutas por defecto
         self::addRoute('/', '\\FacturaScripts\\Core\\Controller\\Dashboard', 1);
         self::addRoute('/AdminPlugins', '\\FacturaScripts\\Core\\Controller\\AdminPlugins', 1);
+        self::addRoute('/api', '\\FacturaScripts\\Core\\Controller\\ApiRoot', 1);
         self::addRoute('/api/*', '\\FacturaScripts\\Core\\Controller\\ApiRoot', 1);
         self::addRoute('/cron', '\\FacturaScripts\\Core\\Controller\\Cron', 1);
         self::addRoute('/deploy', '\\FacturaScripts\\Core\\Controller\\Deploy', 1);
