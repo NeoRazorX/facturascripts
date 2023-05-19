@@ -167,15 +167,64 @@ final class Kernel
                 return;
             }
 
-            echo '<h1 style="margin: 50px auto 5px auto">Fatal error ' . $error['type'] . '</h1>';
-            echo '<p style="margin: 0 auto 0 auto">' . nl2br($error['message']) . '</p>';
-            echo '<p style="margin: 0 auto 0 auto">File: ' . $error['file'] . ' Line: ' . $error['line'] . '</p>';
+            echo <<<END
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  </head>
+  <body class="bg-danger">
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-6">
+                <div class="card shadow mb-5">
+END;
+
+            echo '<div class="card-body">';
+            echo '<h1 class="mt-0">Fatal error ' . $error['type'] . '</h1>';
+            echo '<p>' . nl2br($error['message']) . '</p>';
+            echo '<p class="mb-0">File: ' . $error['file'] . ' Line: ' . $error['line'] . '</p>';
+            echo '</div>';
+            echo '<div class="card-footer">';
+
+            // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
+            $errorMessage = self::cleanErrorMessage($error);
+            $code = $error["type"] . substr($error["file"], strlen(FS_FOLDER)) . $error["line"] . $errorMessage;
+            $hash = md5($code);
+            $url = 'https://facturascripts.com/errores/' . $hash;
+
+            echo '<a class="btn btn-secondary" href="' . $url . '">Read more / Leer más</a>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+            echo '<div class="row justify-content-center">';
+            echo '<div class="col-4">';
+            echo '<div class="card shadow">';
+            echo '<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($url) . '" alt="">';
+
+            echo <<<END
+            </div>
+        </div>
+    </body>
+</html>
+END;
+
         }
     }
 
     public static function version(): float
     {
         return 2023.02;
+    }
+
+    private static function cleanErrorMessage(array $error): string
+    {
+        $parts = explode(' in ' . $error['file'], $error['message']);
+        return $parts[0];
     }
 
     private static function getErrorHandler(Exception $exception): ErrorControllerInterface
