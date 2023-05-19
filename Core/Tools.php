@@ -43,7 +43,7 @@ class Tools
     const HTML_REPLACEMENTS = ['&lt;', '&gt;', '&quot;', '&#39;'];
 
     /** @var array */
-    private static $settings = [];
+    private static $settings;
 
     public static function ascii(string $text): string
     {
@@ -218,7 +218,7 @@ class Tools
     public static function settings(string $group, string $key, $default = null)
     {
         // cargamos las opciones si no están cargadas
-        if (empty(self::$settings)) {
+        if (null === self::$settings) {
             self::settingsLoad();
         }
 
@@ -237,8 +237,8 @@ class Tools
 
     public static function settingsSave(): bool
     {
-        if (empty(self::$settings)) {
-            return true;
+        if (self::$settings) {
+            return false;
         }
 
         $model = new Settings();
@@ -259,7 +259,7 @@ class Tools
     public static function settingsSet(string $group, string $key, $value): void
     {
         // cargamos las opciones si no están cargadas
-        if (empty(self::$settings)) {
+        if (null === self::$settings) {
             self::settingsLoad();
         }
 
@@ -324,6 +324,11 @@ class Tools
 
     private static function settingsLoad(): void
     {
+        if ('' === Tools::config('db_name', '')) {
+            self::$settings = [];
+            return;
+        }
+
         self::$settings = Cache::remember('tools-settings', function () {
             $settings = [];
 

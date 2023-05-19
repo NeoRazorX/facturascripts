@@ -167,7 +167,7 @@ final class Kernel
                 return;
             }
 
-            echo '<h1 style="margin: 50px auto 5px auto">Error ' . $error['type'] . '</h1>';
+            echo '<h1 style="margin: 50px auto 5px auto">Fatal error ' . $error['type'] . '</h1>';
             echo '<p style="margin: 0 auto 0 auto">' . nl2br($error['message']) . '</p>';
             echo '<p style="margin: 0 auto 0 auto">File: ' . $error['file'] . ' Line: ' . $error['line'] . '</p>';
         }
@@ -200,10 +200,10 @@ final class Kernel
         self::addRoute('/AdminPlugins', '\\FacturaScripts\\Core\\Controller\\AdminPlugins', 1);
         self::addRoute('/api', '\\FacturaScripts\\Core\\Controller\\ApiRoot', 1);
         self::addRoute('/api/*', '\\FacturaScripts\\Core\\Controller\\ApiRoot', 1);
+        self::addRoute('/Core/Assets/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
         self::addRoute('/cron', '\\FacturaScripts\\Core\\Controller\\Cron', 1);
         self::addRoute('/deploy', '\\FacturaScripts\\Core\\Controller\\Deploy', 1);
-        self::addRoute('/Dinamic/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
-        self::addRoute('/install', '\\FacturaScripts\\Core\\Controller\\Installer', 1);
+        self::addRoute('/Dinamic/Assets/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
         self::addRoute('/login', '\\FacturaScripts\\Core\\Controller\\Login', 1);
         self::addRoute('/MyFiles/*', '\\FacturaScripts\\Core\\Controller\\Myfiles', 1);
         self::addRoute('/node_modules/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
@@ -212,6 +212,13 @@ final class Kernel
 
     private static function loadRoutes(): void
     {
+        if ('' === Tools::config('db_name', '')) {
+            self::addRoute('/', '\\FacturaScripts\\Core\\Controller\\Installer', 1);
+            self::addRoute('/Core/Assets/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
+            self::addRoute('/node_modules/*', '\\FacturaScripts\\Core\\Controller\\Files', 1);
+            return;
+        }
+
         self::loadDefaultRoutes();
 
         // añadimos las rutas del archivo MyFiles/routes.json file

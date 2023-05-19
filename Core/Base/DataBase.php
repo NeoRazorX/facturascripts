@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseEngine;
 use FacturaScripts\Core\Base\DataBase\MysqlEngine;
 use FacturaScripts\Core\Base\DataBase\PostgresqlEngine;
 use FacturaScripts\Core\KernelException;
+use FacturaScripts\Core\Tools;
 
 /**
  * Generic class of access to the database, either MySQL or PostgreSQL.
@@ -67,7 +68,7 @@ final class DataBase
      */
     public function __construct()
     {
-        if (self::$link === null) {
+        if (Tools::config('db_name') && self::$link === null) {
             self::$miniLog = new MiniLog(self::CHANNEL);
 
             switch (strtolower(FS_DB_TYPE)) {
