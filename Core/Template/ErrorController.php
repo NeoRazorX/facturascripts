@@ -35,4 +35,20 @@ abstract class ErrorController implements ErrorControllerInterface
         $this->exception = $exception;
         $this->url = $url;
     }
+
+    protected function html(string $title, string $bodyHtml, string $bodyCss): string
+    {
+        return '<!doctype html>' . PHP_EOL
+            . '<html lang="en">' . PHP_EOL
+            . '<head>' . PHP_EOL
+            . '<meta charset="utf-8">' . PHP_EOL
+            . '<meta name="viewport" content="width=device-width, initial-scale=1">' . PHP_EOL
+            . '<title>' . $title . '</title>' . PHP_EOL
+            . '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">' . PHP_EOL
+            . '</head>' . PHP_EOL
+            . '<body class="' . $bodyCss . '">' . PHP_EOL
+            . $bodyHtml
+            . '</body>' . PHP_EOL
+            . '</html>';
+    }
 }

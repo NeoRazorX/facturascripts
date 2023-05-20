@@ -28,6 +28,25 @@ class PageNotFound extends ErrorController
     {
         http_response_code(404);
 
-        echo '<h1>' . Tools::lang()->trans('page-not-found') . '</h1>';
+        $title = Tools::lang()->trans('page-not-found');
+        $bodyCss = 'bg-info';
+        $bodyHtml = '<div class="container">'
+            . '<div class="row justify-content-center">'
+            . '<div class="col-sm-6">'
+            . '<div class="card shadow mt-5 mb-5">'
+            . '<div class="card-body text-center">'
+            . '<div class="display-1 text-info">404</div>'
+            . '<h1 class="card-title">' . $title . '</h1>'
+            . '<p class="mb-0">' . Tools::lang()->trans('page-not-found-p') . '</p>'
+            . '</div>'
+            . '<div class="card-footer">'
+            . '<a href="/" class="btn btn-secondary">' . Tools::lang()->trans('homepage') . '</a>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>';
+
+        echo $this->html($title, $bodyHtml, $bodyCss);
     }
 }

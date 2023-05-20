@@ -209,7 +209,7 @@ final class Kernel
             . '<body class="bg-danger">' . PHP_EOL
             . '<div class="container mt-5 mb-5">' . PHP_EOL
             . '<div class="row justify-content-center">' . PHP_EOL
-            . '<div class="col-6">' . PHP_EOL
+            . '<div class="col-sm-6">' . PHP_EOL
             . '<div class="card shadow">' . PHP_EOL
             . '<div class="card-body">' . PHP_EOL
             . '<img src="' . $info['report_qr'] . '" alt="' . $info['hash'] . '" class="float-end">' . PHP_EOL
