@@ -76,6 +76,18 @@ class Login implements ControllerInterface
         }
 
         $username = $request->request->get('fsNewUserPasswd');
+        if ($this->userHasManyIncidents($username)) {
+            Tools::log()->warning('login-incident-count-exceeded');
+            return;
+        }
+
+        $dbPassword = $request->request->get('fsDbPasswd');
+        if ($dbPassword !== Tools::config('db_pass')) {
+            Tools::log()->warning('login-invalid-db-password');
+            $this->saveIncident($username);
+            return;
+        }
+
         $password = $request->request->get('fsNewPasswd');
         $password2 = $request->request->get('fsNewPasswd2');
         if (empty($username) || empty($password) || empty($password2)) {
@@ -84,12 +96,7 @@ class Login implements ControllerInterface
         }
 
         if ($password !== $password2) {
-            Tools::log()->warning('login-passwords-not-match');
-            return;
-        }
-
-        if ($this->userHasManyIncidents($username)) {
-            Tools::log()->warning('login-incident-count-exceeded');
+            Tools::log()->warning('different-passwords', ['%userNick%' => $username]);
             return;
         }
 
