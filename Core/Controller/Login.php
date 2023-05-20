@@ -77,7 +77,7 @@ class Login implements ControllerInterface
 
         $username = $request->request->get('fsNewUserPasswd');
         if ($this->userHasManyIncidents($username)) {
-            Tools::log()->warning('login-incident-count-exceeded');
+            Tools::log()->warning('ip-banned');
             return;
         }
 
@@ -217,7 +217,7 @@ class Login implements ControllerInterface
         ];
 
         // save the list in cache
-        Cache::set('login-ip-list', $ipList);
+        Cache::set(self::IP_LIST, $ipList);
 
         // if the user is not empty, save the incident
         if (empty($user)) {
@@ -232,7 +232,7 @@ class Login implements ControllerInterface
         ];
 
         // save the list in cache
-        Cache::set('login-user-list', $userList);
+        Cache::set(self::USER_LIST, $userList);
     }
 
     private function loginAction(Request $request): void
@@ -250,7 +250,7 @@ class Login implements ControllerInterface
 
         // check if the user is in the incident list
         if ($this->userHasManyIncidents($userName)) {
-            Tools::log()->warning('login-error-many-incidents');
+            Tools::log()->warning('ip-banned');
             return;
         }
 
