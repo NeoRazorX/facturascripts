@@ -58,6 +58,32 @@ final class Kernel
         self::$routesCallbacks[] = $closure;
     }
 
+    public static function getErrorInfo(int $code, string $message, string $file, int $line): array
+    {
+        // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
+        $errorUrl = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+        $errorMessage = self::cleanErrorMessage($file, $message);
+        $errorFile = str_replace(FS_FOLDER, '', $file);
+        $errorHash = md5($code . $errorFile . $line . $errorMessage . $errorUrl);
+        $reportUrl = 'https://facturascripts.com/errores/' . $errorHash;
+        $reportQr = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($reportUrl);
+
+        return [
+            'code' => $code,
+            'message' => $errorMessage,
+            'file' => $errorFile,
+            'line' => $line,
+            'hash' => $errorHash,
+            'url' => $errorUrl,
+            'report_url' => $reportUrl,
+            'report_qr' => $reportQr,
+            'core_version' => self::version(),
+            'php_version' => phpversion(),
+            'os' => PHP_OS,
+            'plugin_list' => implode(',', Plugins::enabled()),
+        ];
+    }
+
     public static function getExecutionTime(int $decimals = 5): float
     {
         $diff = microtime(true) - self::$startTime;
@@ -152,68 +178,78 @@ final class Kernel
     public static function shutdown(): void
     {
         $error = error_get_last();
-        if (isset($error)) {
-            // limpiamos el buffer si es necesario
-            if (ob_get_length() > 0) {
-                ob_end_clean();
-            }
-
-            http_response_code(500);
-
-            // comprobamos si el content-type es json
-            if (isset($_SERVER['CONTENT_TYPE']) && 'application/json' === $_SERVER['CONTENT_TYPE']) {
-                header('Content-Type: application/json');
-                echo json_encode(['error' => $error['message']]);
-                return;
-            }
-
-            echo <<<END
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-  </head>
-  <body class="bg-danger">
-    <div class="container mt-5 mb-5">
-        <div class="row justify-content-center">
-            <div class="col-6">
-                <div class="card shadow mb-5">
-END;
-
-            echo '<div class="card-body">';
-            echo '<h1 class="mt-0">Fatal error ' . $error['type'] . '</h1>';
-            echo '<p>' . nl2br($error['message']) . '</p>';
-            echo '<p class="mb-0">File: ' . $error['file'] . ' Line: ' . $error['line'] . '</p>';
-            echo '</div>';
-            echo '<div class="card-footer">';
-
-            // calculamos un hash para el error, de forma que en la web podamos dar respuesta automáticamente
-            $errorMessage = self::cleanErrorMessage($error);
-            $code = $error["type"] . substr($error["file"], strlen(FS_FOLDER)) . $error["line"] . $errorMessage;
-            $hash = md5($code);
-            $url = 'https://facturascripts.com/errores/' . $hash;
-
-            echo '<a class="btn btn-secondary" href="' . $url . '">Read more / Leer más</a>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-            echo '</div>';
-            echo '<div class="row justify-content-center">';
-            echo '<div class="col-4">';
-            echo '<div class="card shadow">';
-            echo '<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($url) . '" alt="">';
-
-            echo <<<END
-            </div>
-        </div>
-    </body>
-</html>
-END;
-
+        if (!isset($error)) {
+            return;
         }
+
+        // limpiamos el buffer si es necesario
+        if (ob_get_length() > 0) {
+            ob_end_clean();
+        }
+
+        http_response_code(500);
+
+        $info = self::getErrorInfo($error['type'], $error['message'], $error['file'], $error['line']);
+
+        // comprobamos si el content-type es json
+        if (isset($_SERVER['CONTENT_TYPE']) && 'application/json' === $_SERVER['CONTENT_TYPE']) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => $error['message'], 'info' => $info]);
+            return;
+        }
+
+        echo '<!doctype html>' . PHP_EOL
+            . '<html lang="en">' . PHP_EOL
+            . '<head>' . PHP_EOL
+            . '<meta charset="utf-8">' . PHP_EOL
+            . '<meta name="viewport" content="width=device-width, initial-scale=1">' . PHP_EOL
+            . '<title>Fatal error #' . $info['code'] . '</title>' . PHP_EOL
+            . '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">' . PHP_EOL
+            . '</head>' . PHP_EOL
+            . '<body class="bg-danger">' . PHP_EOL
+            . '<div class="container mt-5 mb-5">' . PHP_EOL
+            . '<div class="row justify-content-center">' . PHP_EOL
+            . '<div class="col-6">' . PHP_EOL
+            . '<div class="card shadow">' . PHP_EOL
+            . '<div class="card-body">' . PHP_EOL
+            . '<img src="' . $info['report_qr'] . '" alt="' . $info['hash'] . '" class="float-end">' . PHP_EOL
+            . '<h1 class="mt-0">Fatal error #' . $info['code'] . '</h1>' . PHP_EOL
+            . '<p>' . nl2br($info['message']) . '</p>' . PHP_EOL
+            . '<p class="mb-0">Url: ' . $info['url'] . '</p>' . PHP_EOL;
+
+        if (Tools::config('debug', false)) {
+            echo '<p class="mb-0">File: ' . $info['file'] . ', line: ' . $info['line'] . '</p>' . PHP_EOL;
+        }
+
+        echo '<p class="mb-0">Hash: ' . $info['hash'] . '</p>' . PHP_EOL;
+
+        if (Tools::config('debug', false)) {
+            echo '<p class="mb-0">Core: ' . $info['core_version'] . ', plugins: ' . $info['plugin_list'] . '</p>' . PHP_EOL
+                . '<p class="mb-0">PHP: ' . $info['php_version'] . ', OS: ' . $info['os'] . '</p>' . PHP_EOL;
+        }
+
+        echo '</div>' . PHP_EOL
+            . '<div class="card-footer">' . PHP_EOL
+            . '<form method="post" action="' . $info['report_url'] . '" target="_blank">' . PHP_EOL
+            . '<input type="hidden" name="error_code" value="' . $info['code'] . '">' . PHP_EOL
+            . '<input type="hidden" name="error_message" value="' . $info['message'] . '">' . PHP_EOL
+            . '<input type="hidden" name="error_file" value="' . $info['file'] . '">' . PHP_EOL
+            . '<input type="hidden" name="error_line" value="' . $info['line'] . '">' . PHP_EOL
+            . '<input type="hidden" name="error_hash" value="' . $info['hash'] . '">' . PHP_EOL
+            . '<input type="hidden" name="error_url" value="' . $info['url'] . '">' . PHP_EOL
+            . '<input type="hidden" name="error_core_version" value="' . $info['core_version'] . '">' . PHP_EOL
+            . '<input type="hidden" name="error_plugin_list" value="' . $info['plugin_list'] . '">' . PHP_EOL
+            . '<input type="hidden" name="error_php_version" value="' . $info['php_version'] . '">' . PHP_EOL
+            . '<input type="hidden" name="error_os" value="' . $info['os'] . '">' . PHP_EOL
+            . '<button type="submit" class="btn btn-secondary">Read more / Leer más</button>' . PHP_EOL
+            . '</form>' . PHP_EOL
+            . '</div>' . PHP_EOL
+            . '</div>' . PHP_EOL
+            . '</div>' . PHP_EOL
+            . '</div>' . PHP_EOL
+            . '</div>' . PHP_EOL
+            . '</body>' . PHP_EOL
+            . '</html>';
     }
 
     public static function version(): float
@@ -221,9 +257,9 @@ END;
         return 2023.02;
     }
 
-    private static function cleanErrorMessage(array $error): string
+    private static function cleanErrorMessage(string $file, string $message): string
     {
-        $parts = explode(' in ' . $error['file'], $error['message']);
+        $parts = explode(' in ' . $file, $message);
         return $parts[0];
     }
 
