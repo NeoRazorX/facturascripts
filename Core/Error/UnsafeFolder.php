@@ -28,7 +28,10 @@ class UnsafeFolder extends ErrorController
     {
         http_response_code(403);
 
-        echo '<h1>' . Tools::lang()->trans('unsafe-folder') . '</h1>';
-        echo '<p>' . $this->exception->getMessage() . '</p>';
+        $title = Tools::lang()->trans('unsafe-folder');
+        $html = '<h1>' . $title . '</h1>'
+            . '<p>' . $this->exception->getMessage() . '</p>';
+
+        echo $this->htmlCard($title, $html, 'bg-danger');
     }
 }
