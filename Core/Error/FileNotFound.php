@@ -28,7 +28,10 @@ class FileNotFound extends ErrorController
     {
         http_response_code(404);
 
-        echo '<h1>' . Tools::lang()->trans('file-not-found', ['%fileName%' => '']) . '</h1>';
-        echo '<p>' . $this->exception->getMessage() . '</p>';
+        $title = Tools::lang()->trans('file-not-found', ['%fileName%' => '']);
+        $cardBody = '<h1>' . $title . '</h1>'
+            . '<p>' . $this->exception->getMessage() . '</p>';
+
+        echo $this->htmlCard($title, $cardBody, 'bg-danger');
     }
 }
