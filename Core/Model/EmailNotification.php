@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Model\Base;
+use FacturaScripts\Core\Tools;
 
 /**
  * Description of EmailNotification
@@ -83,5 +84,13 @@ class EmailNotification extends Base\ModelClass
     public function url(string $type = 'auto', string $list = 'ConfigEmail?activetab=List'): string
     {
         return parent::url($type, $list);
+    }
+
+    public function isEnabled()
+    {
+        if (false === $this->enabled) {
+            Tools::log()->warning('email-notification-disabled', ['%name%' => $this->name]);
+        }
+        return $this->enabled;
     }
 }

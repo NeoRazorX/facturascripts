@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core\Contract;
 
 use FacturaScripts\Core\Mailer;
+use FacturaScripts\Core\Model\Empresa;
+use FacturaScripts\Core\Model\User;
 
 interface MailerInterface
 {
@@ -27,9 +29,9 @@ interface MailerInterface
 
     public function canSend(string $mailBox): bool;
 
-    public function getMailBoxFromCompany(int $idempresa): string;
+    public function getMailBoxFromCompany(Empresa $empresa): string;
 
-    public function getMailBoxFromUser(string $nick): string;
+    public function getMailBoxFromUser(User $usuario): string;
 
     public function send(Mailer $mailer): bool;
 

@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Contract\MailerInterface;
+use FacturaScripts\Core\Model\Empresa;
+use FacturaScripts\Core\Model\User;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -77,19 +79,19 @@ final class Mailer
         self::$mods[] = $mod;
     }
 
-    public function attach(string $path, string $name = ''): self
+    public function attach(Archivo $archivo): self
     {
         $this->attachments[] = [
-            'name' => $name,
-            'path' => $path
+            'name' => $archivo->name,
+            'path' => $archivo->path
         ];
 
         return $this;
     }
 
-    public function bcc(string $email, string $name = ''): self
+    public function bcc(Address $address): self
     {
-        $this->bcc[$email] = $name;
+        $this->bcc[$address->email] = $address->name;
 
         return $this;
     }
@@ -113,9 +115,9 @@ final class Mailer
         return true;
     }
 
-    public function cc(string $email, string $name = ''): self
+    public function cc(Address $address): self
     {
-        $this->cc[$email] = $name;
+        $this->cc[$address->email] = $address->name;
 
         return $this;
     }
@@ -125,11 +127,11 @@ final class Mailer
         return new self($mailBox);
     }
 
-    public static function fromCompany(int $idempresa): self
+    public static function fromCompany(Empresa $empresa): self
     {
         $mailBox = '';
         foreach (self::$mods as $mod) {
-            $mailBox = $mod->getMailBoxFromCompany($idempresa);
+            $mailBox = $mod->getMailBoxFromCompany($empresa);
             if (!empty($mailBox)) {
                 break;
             }
@@ -138,11 +140,11 @@ final class Mailer
         return new self($mailBox);
     }
 
-    public static function fromUser(int $iduser): self
+    public static function fromUser(User $user): self
     {
         $mailBox = '';
         foreach (self::$mods as $mod) {
-            $mailBox = $mod->getMailBoxFromUser($iduser);
+            $mailBox = $mod->getMailBoxFromUser($user);
             if (!empty($mailBox)) {
                 break;
             }
@@ -158,27 +160,18 @@ final class Mailer
         return self::$mailBoxes;
     }
 
-    public function notify(string $notificationName, string $email, string $name = '', array $params = []): self
+    public function notify(EmailNotification $notification, Address $address, array $params = []): self
     {
-        // buscamos la notificación
-        $notification = new EmailNotification();
-        if (false === $notification->loadFromCode($notificationName)) {
-            Tools::log()->warning('email-notification-not-exists', ['%name%' => $notificationName]);
-            return $this;
-        }
-
-        // está desactivada?
-        if (false === $notification->enabled) {
-            Tools::log()->warning('email-notification-disabled', ['%name%' => $notificationName]);
-            return $this;
-        }
+        if(!$notification->isEnabled()){
+            // TODO
+        };
 
         // añadimos algunos campos más a los parámetros
         if (!isset($params['email'])) {
-            $params['email'] = $email;
+            $params['email'] = $address->email;
         }
         if (!isset($params['name'])) {
-            $params['name'] = $name;
+            $params['name'] = $address->name;
         }
         if (!isset($params['verificode'])) {
             $params['verificode'] = Tools::randomString(20);
@@ -196,9 +189,9 @@ final class Mailer
         return true;
     }
 
-    public function replyTo(string $email, string $name = ''): self
+    public function replyTo(Address $address): self
     {
-        $this->replyTo[$email] = $name;
+        $this->replyTo[$address->email] = $address->name;
 
         return $this;
     }
@@ -269,9 +262,9 @@ final class Mailer
         return true;
     }
 
-    public function to(string $email, string $name = ''): self
+    public function to(Address $address): self
     {
-        $this->to[$email] = $name;
+        $this->to[$address->email] = $address->name;
 
         return $this;
     }
@@ -311,5 +304,29 @@ final class Mailer
         }
 
         return $return;
+    }
+}
+
+class Archivo
+{
+    public $path;
+    public $name;
+
+    public function __construct(string $path, string $name = '')
+    {
+        $this->path = $this->validarPath($path);
+        $this->name = $this->validarNombre($name);
+    }
+}
+
+class Address
+{
+    public $email;
+    public $name;
+
+    public function __construct(string $email, string $name = '')
+    {
+        $this->email = $this->validarEmail($email);
+        $this->name = $this->validarNombre($name);
     }
 }
