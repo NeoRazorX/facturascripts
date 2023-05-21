@@ -19,15 +19,37 @@
 
 namespace FacturaScripts\Core\Error;
 
+use FacturaScripts\Core\Base\MenuManager;
+use FacturaScripts\Core\Html;
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Template\ErrorController;
-use FacturaScripts\Core\Tools;
+use Symfony\Component\HttpFoundation\Response;
 
 class AccessDenied extends ErrorController
 {
     public function run(): void
     {
-        http_response_code(403);
+        // creamos la respuesta
+        $response = new Response();
+        $response->setStatusCode(Response::HTTP_FORBIDDEN);
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+        $response->headers->set('X-XSS-Protection', '1; mode=block');
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('Strict-Transport-Security', 'max-age=31536000');
 
-        echo '<h1>' . Tools::lang()->trans('access-denied') . '</h1>';
+        // carga el menú
+        $menu = new MenuManager();
+        $menu->setUser(Session::user());
+        $menu->selectPage([]);
+
+        // renderizamos la plantilla
+        $response->setContent(Html::render('Error/AccessDenied.html.twig', [
+            'controllerName' => 'AccessDenied',
+            'debugBarRender' => false,
+            'fsc' => $this,
+            'menuManager' => $menu,
+            'template' => 'Error/AccessDenied.html.twig'
+        ]));
+        $response->send();
     }
 }

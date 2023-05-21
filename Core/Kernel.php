@@ -198,57 +198,58 @@ final class Kernel
             return;
         }
 
-        echo '<!doctype html>' . PHP_EOL
-            . '<html lang="en">' . PHP_EOL
-            . '<head>' . PHP_EOL
-            . '<meta charset="utf-8">' . PHP_EOL
-            . '<meta name="viewport" content="width=device-width, initial-scale=1">' . PHP_EOL
-            . '<title>Fatal error #' . $info['code'] . '</title>' . PHP_EOL
-            . '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">' . PHP_EOL
-            . '</head>' . PHP_EOL
-            . '<body class="bg-danger">' . PHP_EOL
-            . '<div class="container mt-5 mb-5">' . PHP_EOL
-            . '<div class="row justify-content-center">' . PHP_EOL
-            . '<div class="col-sm-6">' . PHP_EOL
-            . '<div class="card shadow">' . PHP_EOL
-            . '<div class="card-body">' . PHP_EOL
-            . '<img src="' . $info['report_qr'] . '" alt="' . $info['hash'] . '" class="float-end">' . PHP_EOL
-            . '<h1 class="mt-0">Fatal error #' . $info['code'] . '</h1>' . PHP_EOL
-            . '<p>' . nl2br($info['message']) . '</p>' . PHP_EOL
-            . '<p class="mb-0">Url: ' . $info['url'] . '</p>' . PHP_EOL;
+        echo '<!doctype html>'
+            . '<html lang="en">'
+            . '<head>'
+            . '<meta charset="utf-8">'
+            . '<meta name="viewport" content="width=device-width, initial-scale=1">'
+            . '<title>Fatal error #' . $info['code'] . '</title>'
+            . '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"'
+            . ' integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">'
+            . '</head>'
+            . '<body class="bg-danger">'
+            . '<div class="container mt-5 mb-5">'
+            . '<div class="row justify-content-center">'
+            . '<div class="col-sm-6">'
+            . '<div class="card shadow">'
+            . '<div class="card-body">'
+            . '<img src="' . $info['report_qr'] . '" alt="' . $info['hash'] . '" class="float-end">'
+            . '<h1 class="mt-0">Fatal error #' . $info['code'] . '</h1>'
+            . '<p>' . nl2br($info['message']) . '</p>'
+            . '<p class="mb-0">Url: ' . $info['url'] . '</p>';
 
         if (Tools::config('debug', false)) {
-            echo '<p class="mb-0">File: ' . $info['file'] . ', line: ' . $info['line'] . '</p>' . PHP_EOL;
+            echo '<p class="mb-0">File: ' . $info['file'] . ', line: ' . $info['line'] . '</p>';
         }
 
-        echo '<p class="mb-0">Hash: ' . $info['hash'] . '</p>' . PHP_EOL;
+        echo '<p class="mb-0">Hash: ' . $info['hash'] . '</p>';
 
         if (Tools::config('debug', false)) {
-            echo '<p class="mb-0">Core: ' . $info['core_version'] . ', plugins: ' . $info['plugin_list'] . '</p>' . PHP_EOL
-                . '<p class="mb-0">PHP: ' . $info['php_version'] . ', OS: ' . $info['os'] . '</p>' . PHP_EOL;
+            echo '<p class="mb-0">Core: ' . $info['core_version'] . ', plugins: ' . $info['plugin_list'] . '</p>'
+                . '<p class="mb-0">PHP: ' . $info['php_version'] . ', OS: ' . $info['os'] . '</p>';
         }
 
-        echo '</div>' . PHP_EOL
-            . '<div class="card-footer">' . PHP_EOL
-            . '<form method="post" action="' . $info['report_url'] . '" target="_blank">' . PHP_EOL
-            . '<input type="hidden" name="error_code" value="' . $info['code'] . '">' . PHP_EOL
-            . '<input type="hidden" name="error_message" value="' . $info['message'] . '">' . PHP_EOL
-            . '<input type="hidden" name="error_file" value="' . $info['file'] . '">' . PHP_EOL
-            . '<input type="hidden" name="error_line" value="' . $info['line'] . '">' . PHP_EOL
-            . '<input type="hidden" name="error_hash" value="' . $info['hash'] . '">' . PHP_EOL
-            . '<input type="hidden" name="error_url" value="' . $info['url'] . '">' . PHP_EOL
-            . '<input type="hidden" name="error_core_version" value="' . $info['core_version'] . '">' . PHP_EOL
-            . '<input type="hidden" name="error_plugin_list" value="' . $info['plugin_list'] . '">' . PHP_EOL
-            . '<input type="hidden" name="error_php_version" value="' . $info['php_version'] . '">' . PHP_EOL
-            . '<input type="hidden" name="error_os" value="' . $info['os'] . '">' . PHP_EOL
-            . '<button type="submit" class="btn btn-secondary">Read more / Leer más</button>' . PHP_EOL
-            . '</form>' . PHP_EOL
-            . '</div>' . PHP_EOL
-            . '</div>' . PHP_EOL
-            . '</div>' . PHP_EOL
-            . '</div>' . PHP_EOL
-            . '</div>' . PHP_EOL
-            . '</body>' . PHP_EOL
+        echo '</div>'
+            . '<div class="card-footer">'
+            . '<form method="post" action="' . $info['report_url'] . '" target="_blank">'
+            . '<input type="hidden" name="error_code" value="' . $info['code'] . '">'
+            . '<input type="hidden" name="error_message" value="' . $info['message'] . '">'
+            . '<input type="hidden" name="error_file" value="' . $info['file'] . '">'
+            . '<input type="hidden" name="error_line" value="' . $info['line'] . '">'
+            . '<input type="hidden" name="error_hash" value="' . $info['hash'] . '">'
+            . '<input type="hidden" name="error_url" value="' . $info['url'] . '">'
+            . '<input type="hidden" name="error_core_version" value="' . $info['core_version'] . '">'
+            . '<input type="hidden" name="error_plugin_list" value="' . $info['plugin_list'] . '">'
+            . '<input type="hidden" name="error_php_version" value="' . $info['php_version'] . '">'
+            . '<input type="hidden" name="error_os" value="' . $info['os'] . '">'
+            . '<button type="submit" class="btn btn-secondary">Read more / Leer más</button>'
+            . '</form>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</div>'
+            . '</body>'
             . '</html>';
     }
 
