@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,6 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 use FacturaScripts\Core\Base\Contract\SalesModInterface;
 use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Agentes;
-use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Model\AgenciaTransporte;
 use FacturaScripts\Core\Model\Base\ModelCore;
@@ -371,14 +370,13 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'idcontactoenv')
             . self::renderField($i18n, $model, 'codtrans')
             . self::renderField($i18n, $model, 'codigoenv')
-            . self::renderField($i18n, $model, 'coddivisa')
-            . self::renderField($i18n, $model, 'tasaconv')
-            . self::renderField($i18n, $model, '_fecha')
+            . self::renderField($i18n, $model, 'fechadevengo')
             . self::renderField($i18n, $model, 'hora')
             . self::renderField($i18n, $model, 'femail')
             . self::renderField($i18n, $model, 'user')
+            . self::renderField($i18n, $model, 'coddivisa')
+            . self::renderField($i18n, $model, 'tasaconv')
             . self::renderField($i18n, $model, 'codagente')
-            . self::renderField($i18n, $model, 'fechadevengo')
             . self::renderNewFields($i18n, $model)
             . '</div>'
             . '</div>'
