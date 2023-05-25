@@ -40,7 +40,6 @@ use FacturaScripts\Dinamic\Model\Partida;
  */
 class EditAsiento extends PanelController
 {
-
     use DocFilesTrait;
     use LogAuditTrait;
 
@@ -299,6 +298,12 @@ class EditAsiento extends PanelController
                 $action = $this->request->request->get('action', '');
                 if ('' === $action && false === $view->model->exists()) {
                     $this->toolBox()->i18nLog()->warning('record-not-found');
+                    break;
+                }
+
+                // unbalanced?
+                if (false === $view->model->isBalanced()) {
+                    $this->toolBox()->i18nLog()->warning('unbalanced-entry');
                     break;
                 }
 
