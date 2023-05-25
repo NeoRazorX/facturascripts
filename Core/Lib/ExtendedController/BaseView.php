@@ -179,6 +179,7 @@ abstract class BaseView
             'card' => true,
             'checkBoxes' => true,
             'clickable' => true,
+            'customized' => false,
             'megasearch' => false
         ];
         $this->template = static::DEFAULT_TEMPLATE;
@@ -356,7 +357,9 @@ abstract class BaseView
 
         $orderby = ['nick' => 'ASC'];
         $where = $this->getPageWhere($user);
-        if (false === $this->pageOption->loadFromCode('', $where, $orderby)) {
+        if ($this->pageOption->loadFromCode('', $where, $orderby)) {
+            $this->settings['customized'] = true;
+        } else {
             $viewName = explode('-', $this->name)[0];
             VisualItemLoadEngine::installXML($viewName, $this->pageOption);
         }
