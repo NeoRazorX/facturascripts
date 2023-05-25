@@ -160,7 +160,7 @@
             {% set show = true %}
         {% endif %}
     {% endfor %}
-    {% if show %}
+    {% if show and firstView.settings.btnOptions %}
         <div class="btn-group">
             <div class="dropdown">
                 <button class="btn btn-sm btn-secondary mr-3 dropdown-toggle" type="button" data-toggle="dropdown"
@@ -171,16 +171,14 @@
                 <div class="dropdown-menu">
                     <h6 class="dropdown-header">{{ trans('options-button-header') }}</h6>
                     {% for viewName, view in fsc.views %}
-                        {% if view.settings.active and view.settings.btnOptions %}
-                            {% if view.columns is not empty %}
-                                <a class="dropdown-item"
-                                   href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
-                                    <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
+                        {% if view.settings.active and view.columns is not empty %}
+                            <a class="dropdown-item"
+                               href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
+                                <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
                                 {% if view.settings.customized %}
                                     <i class="fas fa-user-pen ml-2" title="{{ trans('personalized') }}"></i>
                                 {% endif %}
-                                </a>
-                            {% endif %}
+                            </a>
                         {% endif %}
                     {% endfor %}
                 </div>

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
@@ -31,12 +32,11 @@ use FacturaScripts\Dinamic\Model\User;
 /**
  * Base definition for the views used in ExtendedControllers
  *
- * @author Carlos García Gómez  <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 abstract class BaseView
 {
-
     const DEFAULT_TEMPLATE = 'Master/BaseView.html.twig';
 
     /**
@@ -299,7 +299,7 @@ abstract class BaseView
              * We discard everything except the first page, the last one, the middle one,
              * the current one, the 5 previous and 5 following ones.
              */
-            if (($key2 > 1 && $key2 < $current - 5 && $key2 != $middle) || ( $key2 > $current + 5 && $key2 < $key1 - 1 && $key2 != $middle)) {
+            if (($key2 > 1 && $key2 < $current - 5 && $key2 != $middle) || ($key2 > $current + 5 && $key2 < $key1 - 1 && $key2 != $middle)) {
                 unset($pages[$key2]);
             }
         }
@@ -379,7 +379,7 @@ abstract class BaseView
      * Gets the column by the column name from source group
      *
      * @param string $columnName
-     * @param array  $source
+     * @param array $source
      *
      * @return ColumnItem
      */

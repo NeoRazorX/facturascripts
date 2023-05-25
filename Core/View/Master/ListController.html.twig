@@ -22,6 +22,7 @@
 {% block bodyHeaderOptions %}
     {{ parent() }}
     {% set pageData = fsc.getPageData() %}
+    {% set firstView = fsc.views | first %}
     <div class="container-fluid mb-3 d-print-none">
         <div class="row">
             <div class="col-md-7">
@@ -57,28 +58,28 @@
                     {% endif %}
                 </div>
                 {# -- Options button -- #}
-                <div class="btn-group">
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ trans('options') }}
-                        </button>
-                        <div class="dropdown-menu">
-                            <h6 class="dropdown-header">{{ trans('options-button-header') }}</h6>
-                            {% for viewName, view in fsc.views %}
-                                {% if view.settings.btnOptions %}
-                                <a class="dropdown-item"
-                                   href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}">
-                                    <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
-                                    {% if view.settings.customized %}
-                                        <i class="fas fa-user-pen ml-2" title="{{ trans('personalized') }}"></i>
-                                    {% endif %}
-                                </a>
-                                {% endif %}
-                            {% endfor %}
+                {% if firstView.settings.btnOptions %}
+                    <div class="btn-group">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-wrench fa-fw" aria-hidden="true"></i> {{ trans('options') }}
+                            </button>
+                            <div class="dropdown-menu">
+                                <h6 class="dropdown-header">{{ trans('options-button-header') }}</h6>
+                                {% for viewName, view in fsc.views %}
+                                    <a class="dropdown-item"
+                                       href="EditPageOption?code={{ viewName }}&url={{ view.model.url() | url_encode }}">
+                                        <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
+                                        {% if view.settings.customized %}
+                                            <i class="fas fa-user-pen ml-2" title="{{ trans('personalized') }}"></i>
+                                        {% endif %}
+                                    </a>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             </div>
             <div class="col-md-5 text-right">
                 <h1 class="h4 mb-0 d-none d-md-inline-block">
@@ -129,21 +130,23 @@
         $(document).ready(function () {
             if (document.location.hash) {
                 $(".nav-tabs a[href=\\" + document.location.hash + "]").tab('show');
-            }}
+            }
+        }
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
+            $("input[name='query']:visible").focus();
+        }
+        $('.nav-tabs a').click(function (e) {
+            $(this).tab('show');
+            var scrollmem = $('body').scrollTop();
+            window.location.hash = this.hash;
+            $('html,body').scrollTop(scrollmem);
+        });
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
                 $("input[name='query']:visible").focus();
             }
-            $('.nav-tabs a').click(function (e) {
-                $(this).tab('show');
-                var scrollmem = $('body').scrollTop();
-                window.location.hash = this.hash;
-                $('html,body').scrollTop(scrollmem);
-            });
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
-                    $("input[name='query']:visible").focus();
-                }
-            });
         });
+        })
+        ;
     </script>
 {% endblock %}
