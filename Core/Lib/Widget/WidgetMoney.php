@@ -81,6 +81,11 @@ class WidgetMoney extends WidgetNumber
      */
     protected function show()
     {
-        return is_null($this->value) ? '-' : static::$divisaTools->format($this->value, $this->decimal);
+        if (is_null($this->value)) {
+            return '-';
+        }
+        return (false === strpos(strtolower($this->fieldname), 'euros'))
+            ? static::$divisaTools->format($this->value, $this->decimal)
+            : static::$divisaTools->format($this->value, $this->decimal, '€');
     }
 }

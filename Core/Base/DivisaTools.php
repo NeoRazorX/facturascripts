@@ -102,8 +102,7 @@ class DivisaTools extends NumberTools
             case 'coddivisa':
                 return isset(self::$selectedDivisa) ? $txt . ' ' . self::$selectedDivisa->coddivisa : $txt . ' ???';
         }
-
-        return $txt;
+        return empty($decoration) ? $txt : $txt . ' ' . $decoration;
     }
 
     /**
