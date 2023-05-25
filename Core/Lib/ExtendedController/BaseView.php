@@ -176,6 +176,7 @@ abstract class BaseView
             'btnPrint' => false,
             'btnSave' => true,
             'btnUndo' => true,
+            'btnOptions' => true,
             'card' => true,
             'checkBoxes' => true,
             'clickable' => true,

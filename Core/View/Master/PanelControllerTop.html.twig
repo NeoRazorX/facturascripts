@@ -155,11 +155,13 @@
                 </button>
                 <div class="dropdown-menu">
                     {% for viewName, view in fsc.views %}
-                        {% if view.settings.active and view.columns is not empty %}
-                            <a class="dropdown-item"
-                               href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
-                                <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
-                            </a>
+                        {% if view.settings.active and currentView.settings.btnOptions %}
+                            {% if view.columns is not empty %}
+                                <a class="dropdown-item"
+                                   href="EditPageOption?code={{ viewName }}&url={{ firstView.model.url() | url_encode }}">
+                                    <i class="{{ view.icon }} fa-fw" aria-hidden="true"></i> {{ view.title }}
+                                </a>
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
                 </div>
