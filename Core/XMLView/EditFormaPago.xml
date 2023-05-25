@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -24,13 +24,13 @@
     <columns>
         <group name="data" numcolumns="12">
             <column name="code" description="optional" display="none" order="100">
-                <widget type="text" fieldname="codpago" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" required="true" />
+                <widget type="text" fieldname="codpago" icon="fas fa-hashtag" maxlength="10" readonly="dinamic" required="true"/>
             </column>
             <column name="description" order="110">
-                <widget type="text" fieldname="descripcion" required="true" maxlength="100" />
+                <widget type="text" fieldname="descripcion" required="true" maxlength="100"/>
             </column>
             <column name="expiration" numcolumns="2" order="120">
-                <widget type="number" fieldname="plazovencimiento" decimal="0" min="0" />
+                <widget type="number" fieldname="plazovencimiento" decimal="0" min="0"/>
             </column>
             <column name="expiration-type" numcolumns="2" order="130">
                 <widget type="select" fieldname="tipovencimiento" translate="true" required="true">
@@ -44,22 +44,22 @@
         <group name="advanced" numcolumns="12" valign="bottom">
             <column name="company" titleurl="ListEmpresa" numcolumns="2" order="100">
                 <widget type="select" fieldname="idempresa" icon="fas fa-building" onclick="EditEmpresa" readonly="dinamic" required="true">
-                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto" />
+                    <values source="empresas" fieldcode="idempresa" fieldtitle="nombrecorto"/>
                 </widget>
             </column>
             <column name="bank-account" numcolumns="3" titleurl="ListFormaPago?activetab=ListCuentaBanco" order="110">
                 <widget type="select" fieldname="codcuentabanco" onclick="EditCuentaBanco">
-                    <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion" />
+                    <values source="cuentasbanco" fieldcode="codcuenta" fieldtitle="descripcion"/>
                 </widget>
             </column>
             <column name="domiciled" numcolumns="2" order="120">
-                <widget type="checkbox" fieldname="domiciliado" />
+                <widget type="checkbox" fieldname="domiciliado"/>
             </column>
             <column name="paid" numcolumns="2" order="130">
-                <widget type="checkbox" fieldname="pagado" />
+                <widget type="checkbox" fieldname="pagado"/>
             </column>
-            <column name="print" numcolumns="2" order="140">
-                <widget type="checkbox" fieldname="imprimir" />
+            <column name="print-bank-data" numcolumns="2" order="140">
+                <widget type="checkbox" fieldname="imprimir"/>
             </column>
         </group>
     </columns>
