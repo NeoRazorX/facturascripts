@@ -84,9 +84,9 @@ trait CommonSalesPurchases
                 continue;
             }
             $options[] = '<optgroup label="' . $company->nombrecorto . '">';
-            foreach ($company->getWarehouse() as $row) {
+            foreach ($company->getWarehouses() as $row) {
                 $options[] = ($row->codalmacen === $model->codalmacen) ?
-                    '<option value="' . $row->codalmacen . '" selected="">' . $row->nombre . '</option>' :
+                    '<option value="' . $row->codalmacen . '" selected>' . $row->nombre . '</option>' :
                     '<option value="' . $row->codalmacen . '">' . $row->nombre . '</option>';
             }
             $options[] = '</optgroup>';
@@ -108,7 +108,7 @@ trait CommonSalesPurchases
         $options = [];
         foreach (Divisas::all() as $row) {
             $options[] = ($row->coddivisa === $model->coddivisa) ?
-                '<option value="' . $row->coddivisa . '" selected="">' . $row->descripcion . '</option>' :
+                '<option value="' . $row->coddivisa . '" selected>' . $row->descripcion . '</option>' :
                 '<option value="' . $row->coddivisa . '">' . $row->descripcion . '</option>';
         }
 
@@ -130,7 +130,7 @@ trait CommonSalesPurchases
                 continue;
             }
             $options[] = ($row->codpago === $model->codpago) ?
-                '<option value="' . $row->codpago . '" selected="">' . $row->descripcion . '</option>' :
+                '<option value="' . $row->codpago . '" selected>' . $row->descripcion . '</option>' :
                 '<option value="' . $row->codpago . '">' . $row->descripcion . '</option>';
         }
 
@@ -148,7 +148,7 @@ trait CommonSalesPurchases
         $options = [];
         foreach (Series::all() as $row) {
             $options[] = ($row->codserie === $model->codserie) ?
-                '<option value="' . $row->codserie . '" selected="">' . $row->descripcion . '</option>' :
+                '<option value="' . $row->codserie . '" selected>' . $row->descripcion . '</option>' :
                 '<option value="' . $row->codserie . '">' . $row->descripcion . '</option>';
         }
 

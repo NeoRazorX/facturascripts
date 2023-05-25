@@ -114,7 +114,7 @@ class Empresa extends Base\Contact
      *
      * @return DinAlmacen[]
      */
-    public function getWarehouse(): array
+    public function getWarehouses(): array
     {
         $warehouse = new DinAlmacen();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
