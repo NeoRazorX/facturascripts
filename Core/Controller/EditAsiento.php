@@ -99,6 +99,7 @@ class EditAsiento extends PanelController
      */
     public function renderAccEntryForm(Asiento $model, array $lines): string
     {
+        AccountingLineHTML::calculateUnbalance($model, $lines);
         return '<div id="accEntryFormHeader">' . AccountingHeaderHTML::render($model) . '</div>'
             . '<div id="accEntryFormLines">' . AccountingLineHTML::render($lines, $model) . '</div>'
             . '<div id="accEntryFormFooter">' . AccountingFooterHTML::render($model) . '</div>'
