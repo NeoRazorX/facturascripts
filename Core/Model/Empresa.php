@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\Almacen as DinAlmacen;
 use FacturaScripts\Dinamic\Model\CuentaBanco as DinCuentaBanco;
 
 /**
@@ -106,6 +107,18 @@ class Empresa extends Base\Contact
         $companyAccounts = new DinCuentaBanco();
         $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
         return $companyAccounts->all($where, [], 0, 0);
+    }
+
+    /**
+     * Returns the warehouses associated with the company.
+     *
+     * @return DinAlmacen[]
+     */
+    public function getWarehouse(): array
+    {
+        $warehouse = new DinAlmacen();
+        $where = [new DataBaseWhere($this->primaryColumn(), $this->primaryColumnValue())];
+        return $warehouse->all($where, [], 0, 0);
     }
 
     public function install(): string
