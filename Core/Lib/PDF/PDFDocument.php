@@ -101,7 +101,7 @@ abstract class PDFDocument extends PDFCore
     protected function getBankData($receipt): string
     {
         $payMethod = new FormaPago();
-        if (false === $payMethod->loadFromCode($receipt->codpago)) {
+        if (false === $payMethod->loadFromCode($receipt->codpago) || false === $payMethod->imprimir) {
             return '-';
         }
 
