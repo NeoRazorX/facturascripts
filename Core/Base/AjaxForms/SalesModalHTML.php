@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -97,20 +97,29 @@ class SalesModalHTML
             $tbody .= '<tr class="' . $cssClass . '" onclick="$(\'#findProductModal\').modal(\'hide\');'
                 . ' return salesFormAction(\'add-product\', \'' . $row['referencia'] . '\');">'
                 . '<td><b>' . $row['referencia'] . '</b> ' . $description . '</td>'
-                . '<td class="text-right">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($row['precio'])) . '</td>'
-                . '<td class="text-right">' . $row['disponible'] . '</td>'
+                . '<td class="text-right">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($row['precio'])) . '</td>';
+
+            if (self::$vendido) {
+                $tbody .= '<td class="text-right">' . str_replace(' ', '&nbsp;', ToolBox::coins()->format($row['ultimo_precio'])) . '</td>';
+            }
+
+            $tbody .= '<td class="text-right">' . $row['disponible'] . '</td>'
                 . '</tr>';
         }
 
         if (empty($tbody)) {
-            $tbody .= '<tr class="table-warning"><td colspan="3">' . $i18n->trans('no-data') . '</td></tr>';
+            $tbody .= '<tr class="table-warning"><td colspan="4">' . $i18n->trans('no-data') . '</td></tr>';
         }
 
+        $extraTh = self::$vendido ?
+            '<th class="text-right">' . $i18n->trans('last-price-sale') . '</th>' :
+            '';
         return '<table class="table table-hover mb-0">'
             . '<thead>'
             . '<tr>'
             . '<th>' . $i18n->trans('product') . '</th>'
             . '<th class="text-right">' . $i18n->trans('price') . '</th>'
+            . $extraTh
             . '<th class="text-right">' . $i18n->trans('stock') . '</th>'
             . '</tr>'
             . '</thead>'
@@ -203,7 +212,12 @@ class SalesModalHTML
                 break;
         }
 
-        return $dataBase->selectLimit($sql);
+        $results = $dataBase->selectLimit($sql);
+        if (self::$vendido) {
+            static::setProductsLastPrice($dataBase, $results);
+        }
+
+        return $results;
     }
 
     protected static function idatributovalor(?int $id): string
@@ -336,5 +350,24 @@ class SalesModalHTML
             . '<option value="stock_desc">' . $i18n->trans('stock') . '</option>'
             . '</select>'
             . '</div>';
+    }
+
+    protected static function setProductsLastPrice(DataBase $db, array &$items): void
+    {
+        foreach ($items as $key => $item) {
+            // obtenemos el último precio en facturas de este cliente
+            $sql = 'SELECT pvpunitario FROM lineasfacturascli'
+                . ' LEFT JOIN facturascli ON facturascli.idfactura = lineasfacturascli.idfactura'
+                . ' WHERE codcliente = ' . $db->var2str(self::$codcliente)
+                . ' AND referencia = ' . $db->var2str($item['referencia'])
+                . ' ORDER BY fecha DESC';
+            foreach ($db->selectLimit($sql, 1) as $row) {
+                $items[$key]['ultimo_precio'] = $row['pvpunitario'];
+                continue 2;
+            }
+
+            // no hay facturas, asignamos el último precio de venta
+            $items[$key]['ultimo_precio'] = $item['precio'];
+        }
     }
 }
