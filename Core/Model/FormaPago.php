@@ -67,6 +67,9 @@ class FormaPago extends Base\ModelClass
      */
     public $idempresa;
 
+    /** @var bool */
+    public $imprimir;
+
     /**
      * Indicate if pay or not
      *
@@ -92,6 +95,7 @@ class FormaPago extends Base\ModelClass
     {
         parent::clear();
         $this->domiciliado = false;
+        $this->imprimir = true;
         $this->plazovencimiento = 0;
         $this->tipovencimiento = 'days';
     }

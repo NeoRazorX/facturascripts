@@ -82,28 +82,37 @@
             </column>
         </group>
         <group name="address" title="address" numcolumns="12">
-            <column name="address" numcolumns="4" order="100">
+            <column name="address" numcolumns="8" order="100">
                 <widget type="text" fieldname="direccion" maxlength="100" icon="fas fa-map-marked"/>
             </column>
-            <column name="post-office-box" numcolumns="1" order="110">
+            <column name="post-office-box" numcolumns="2" order="110">
                 <widget type="text" fieldname="apartado" maxlength="10"/>
             </column>
-            <column name="zip-code" numcolumns="1" order="120">
+            <column name="zip-code" numcolumns="2" order="120">
                 <widget type="text" fieldname="codpostal" maxlength="10"/>
             </column>
-            <column name="city" numcolumns="2" order="130">
-                <widget type="text" fieldname="ciudad"/>
+            <column name="city" numcolumns="4" order="130">
+                <widget type="datalist" fieldname="ciudad">
+                    <values source="ciudades" fieldcode="idciudad" fieldtitle="ciudad" />
+                </widget>
             </column>
-            <column name="province" numcolumns="2" order="140">
-                <widget type="text" fieldname="provincia"/>
+            <column name="province" numcolumns="4" order="140">
+                <widget type="datalist" fieldname="provincia">
+                    <values source="provincias" fieldcode="provincia" fieldtitle="provincia" />
+                </widget>
             </column>
-            <column name="country" titleurl="ListPais" numcolumns="2" order="150">
+            <column name="country" titleurl="ListPais" numcolumns="4" order="150">
                 <widget type="select" fieldname="codpais" onclick="EditPais" required="true">
                     <values source="paises" fieldcode="codpais" fieldtitle="nombre"/>
                 </widget>
             </column>
         </group>
         <group name="other" title="other-data" valign="bottom" numcolumns="12">
+            <column name="language" numcolumns="3" order="90">
+                <widget type="select" fieldname="langcode" icon="fas fa-language">
+                    <values/>
+                </widget>
+            </column>
             <column name="creation-date" display="none" numcolumns="2" order="100">
                 <widget type="date" fieldname="fechaalta" readonly="true"/>
             </column>
@@ -119,19 +128,19 @@
             <column name="level" display="none" numcolumns="2" order="140">
                 <widget type="number" step="1" min="1" max="99" fieldname="level" icon="fas fa-low-vision"/>
             </column>
-            <column name="is-person" numcolumns="3" order="150">
+            <column name="is-person" order="150">
                 <widget type="checkbox" fieldname="personafisica"/>
             </column>
-            <column name="enabled" display="none" numcolumns="2" order="160">
+            <column name="enabled" display="none" order="160">
                 <widget type="checkbox" fieldname="habilitado"/>
             </column>
-            <column name="verified" numcolumns="2" order="170">
+            <column name="verified" order="170">
                 <widget type="checkbox" fieldname="verificado"/>
             </column>
-            <column name="accept-privacy-policy" display="none" numcolumns="3" order="180">
+            <column name="accept-privacy-policy" display="none" order="180">
                 <widget type="checkbox" fieldname="aceptaprivacidad"/>
             </column>
-            <column name="allow-marketing" numcolumns="2" order="190">
+            <column name="allow-marketing" order="190">
                 <widget type="checkbox" fieldname="admitemarketing"/>
             </column>
         </group>

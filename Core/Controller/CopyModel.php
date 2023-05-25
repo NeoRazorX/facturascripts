@@ -163,6 +163,9 @@ class CopyModel extends Controller
         $newEntry->canal = $this->request->request->get('canal');
         $newEntry->concepto = $this->request->request->get('concepto');
 
+        $company = $this->request->request->get('idempresa');
+        $newEntry->idempresa = empty($company) ? $newEntry->idempresa : $company;
+
         $diario = $this->request->request->get('iddiario');
         $newEntry->iddiario = empty($diario) ? null : $diario;
         $newEntry->importe = $this->model->importe;

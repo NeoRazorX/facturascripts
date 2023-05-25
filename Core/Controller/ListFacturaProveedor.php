@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\FormasPago;
+use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
 use FacturaScripts\Dinamic\Lib\ExtendedController\ListBusinessDocument;
 
 /**
@@ -101,7 +102,7 @@ class ListFacturaProveedor extends ListBusinessDocument
         $this->addSearchFields($viewName, ['codigofactura', 'observaciones']);
 
         // filtros
-        $this->addFilterPeriod($viewName, 'period', 'expiration', 'vencimiento');
+        $this->addFilterPeriod($viewName, 'expiration', 'expiration', 'vencimiento');
         $this->addFilterAutocomplete($viewName, 'codproveedor', 'supplier', 'codproveedor', 'Proveedor');
         $this->addFilterNumber($viewName, 'min-total', 'amount', 'importe', '>=');
         $this->addFilterNumber($viewName, 'max-total', 'amount', 'importe', '<=');
@@ -123,6 +124,7 @@ class ListFacturaProveedor extends ListBusinessDocument
             ['label' => $i18n->trans('unpaid'), 'where' => [new DataBaseWhere('pagado', false)]],
             ['label' => $i18n->trans('expired-receipt'), 'where' => [new DataBaseWhere('vencido', true)]],
         ]);
+        $this->addFilterPeriod($viewName, 'payment-date', 'payment-date', 'fechapago');
 
         // botones
         $this->addButtonPayReceipt($viewName);
@@ -182,15 +184,12 @@ class ListFacturaProveedor extends ListBusinessDocument
             return;
         }
 
-        $this->dataBase->beginTransaction();
         $codejercicio = $this->request->request->get('exercise');
-        if ($this->views['ListFacturaProveedor']->model->renumber($codejercicio)) {
+        if (FacturaProveedorRenumber::run($codejercicio)) {
             self::toolBox()->i18nLog()->notice('record-updated-correctly');
-            $this->dataBase->commit();
             return;
         }
 
-        $this->dataBase->rollback();
         self::toolBox()->i18nLog()->warning('record-save-error');
     }
 }

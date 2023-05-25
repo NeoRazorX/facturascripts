@@ -79,6 +79,7 @@ final class Plugins
         // si el plugin estaba activado, marcamos el post_enable
         if ($plugin->enabled) {
             $plugin->post_enable = true;
+            $plugin->post_disable = false;
         }
 
         self::save();
@@ -98,7 +99,7 @@ final class Plugins
         $pluginDeploy = new PluginDeploy();
         $pluginDeploy->deploy(
             self::folder() . DIRECTORY_SEPARATOR,
-            array_reverse(self::enabled()),
+            self::enabled(),
             $clean
         );
 
@@ -119,6 +120,7 @@ final class Plugins
         foreach (self::$plugins as $key => $value) {
             if ($value->name === $pluginName) {
                 self::$plugins[$key]->enabled = false;
+                self::$plugins[$key]->post_enable = false;
                 self::$plugins[$key]->post_disable = true;
                 break;
             }
@@ -152,6 +154,7 @@ final class Plugins
                 self::$plugins[$key]->enabled = true;
                 self::$plugins[$key]->order = self::maxOrder() + 1;
                 self::$plugins[$key]->post_enable = true;
+                self::$plugins[$key]->post_disable = false;
                 break;
             }
         }
@@ -200,9 +203,17 @@ final class Plugins
 
     public static function init(): void
     {
+        $save = false;
+
         // ejecutamos los procesos init de los plugins
-        foreach (self::enabled() as $pluginName) {
-            self::get($pluginName)->init();
+        foreach (self::list(true) as $plugin) {
+            if ($plugin->init()) {
+                $save = true;
+            }
+        }
+
+        if ($save) {
+            self::save();
         }
     }
 

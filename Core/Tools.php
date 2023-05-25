@@ -127,7 +127,7 @@ class Tools
         return unlink($folder);
     }
 
-    public static function folderScan(string $folder, bool $recursive = true, array $exclude = ['.DS_Store', '.well-known']): array
+    public static function folderScan(string $folder, bool $recursive = false, array $exclude = ['.DS_Store', '.well-known']): array
     {
         $scan = scandir($folder, SCANDIR_SORT_ASCENDING);
         if (false === is_array($scan)) {
@@ -231,6 +231,41 @@ class Tools
         }
 
         return self::$settings[$group][$key];
+    }
+
+    public static function settingsSave(): bool
+    {
+        if (empty(self::$settings)) {
+            return true;
+        }
+
+        $settingsModel = new Settings();
+        foreach ($settingsModel->all([], [], 0, 0) as $item) {
+            if (!isset(self::$settings[$item->name])) {
+                continue;
+            }
+
+            $item->properties = self::$settings[$item->name];
+            if (false === $item->save()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static function settingsSet(string $group, string $key, $value): void
+    {
+        // cargamos las opciones si no están cargadas
+        if (empty(self::$settings)) {
+            $settingsModel = new Settings();
+            foreach ($settingsModel->all([], [], 0, 0) as $item) {
+                self::$settings[$item->name] = $item->properties;
+            }
+        }
+
+        // asignamos el valor
+        self::$settings[$group][$key] = $value;
     }
 
     public static function slug(string $text, string $separator = '-', int $maxLength = 0): string

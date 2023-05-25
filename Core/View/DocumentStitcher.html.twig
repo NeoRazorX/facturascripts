@@ -22,8 +22,8 @@
 
 {% block body %}
     <form action="{{ fsc.url() }}" method="post" name="formDocStitcher">
+        {{ formToken() }}
         <input type="hidden" name="model" value="{{ fsc.modelName }}"/>
-        <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
         <input type="hidden" name="status"/>
         <div class="container-fluid">
             <div class="row">
@@ -35,7 +35,20 @@
                     <p>{{ i18n.trans('group-or-split-p') }}</p>
                 </div>
             </div>
-            <div class="row">
+            <div class="form-row">
+                <div class="col-lg-2 col-sm-6 mb-2">
+                    <select name="codserie" class="form-control">
+                        <option value="">{{ i18n.trans('serie') }}</option>
+                        <option value="">------</option>
+                        {% for item in fsc.getSeries() %}
+                            {% if item.code is same as(fsc.documents[0].codserie) %}
+                                <option value="{{ item.code }}" selected>{{ item.description }}</option>
+                            {% else %}
+                                <option value="{{ item.code }}">{{ item.description }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
                 <div class="col-lg-2 col-sm-6 mb-2">
                     <input type="date" name="fecha" value="{{ task.end | date('Y-m-d') }}" class="form-control"
                            autocomplete="off"/>

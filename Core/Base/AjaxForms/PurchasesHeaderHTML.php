@@ -69,8 +69,8 @@ class PurchasesHeaderHTML
             return;
         }
 
+        $model->setWarehouse($formData['codalmacen'] ?? $model->codalmacen);
         $model->cifnif = $formData['cifnif'] ?? $model->cifnif;
-        $model->codalmacen = $formData['codalmacen'] ?? $model->codalmacen;
         $model->coddivisa = $formData['coddivisa'] ?? $model->coddivisa;
         $model->codpago = $formData['codpago'] ?? $model->codpago;
         $model->codproveedor = $formData['codproveedor'] ?? $model->codproveedor;
@@ -261,7 +261,7 @@ class PurchasesHeaderHTML
                 return self::cifnif($i18n, $model);
 
             case 'codalmacen':
-                return self::codalmacen($i18n, $model);
+                return self::codalmacen($i18n, $model, 'purchasesFormAction');
 
             case 'coddivisa':
                 return self::coddivisa($i18n, $model);

@@ -23,6 +23,6 @@ final class Kernel
 {
     public static function version(): float
     {
-        return 2023.0;
+        return 2023.02;
     }
 }

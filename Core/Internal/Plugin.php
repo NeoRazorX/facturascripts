@@ -185,26 +185,31 @@ final class Plugin
         return $this->version < $this->forja('version', 0.0);
     }
 
-    public function init(): void
+    public function init(): bool
     {
         // si el plugin no está activado o no tiene clase Init, no hacemos nada
         $className = 'FacturaScripts\\Plugins\\' . $this->name . '\\Init';
         if (!$this->enabled || !class_exists($className)) {
-            return;
+            return false;
         }
 
         // ejecutamos los procesos de la clase Init del plugin
         $init = new $className();
-        if ($this->post_disable) {
-            $init->uninstall();
-        } else if ($this->post_enable) {
+        if ($this->post_enable) {
             $init->update();
         }
+        if ($this->post_disable) {
+            $init->uninstall();
+        }
         $init->init();
+
+        $done = $this->post_disable || $this->post_enable;
 
         // desactivamos los flags de post_enable y post_disable
         $this->post_disable = false;
         $this->post_enable = false;
+
+        return $done;
     }
 
     private function checkCompatibility(): void
