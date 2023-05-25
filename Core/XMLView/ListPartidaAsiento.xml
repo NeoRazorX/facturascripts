@@ -40,6 +40,9 @@
         <column name="tax" display="none" order="150">
             <widget type="percentage" fieldname="iva"/>
         </column>
+        <column name="channel" display="none" order="155">
+            <widget type="text" fieldname="canal"/>
+        </column>
         <column name="debit" display="right" order="160">
             <widget type="money" fieldname="debe">
                 <option color="danger">lt:0</option>
