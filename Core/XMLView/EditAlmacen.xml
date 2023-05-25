@@ -47,7 +47,7 @@
             </column>
             <column name="province" numcolumns="2" order="170">
                 <widget type="datalist" fieldname="provincia">
-                    <values source="provincias" fieldcode="idprovincia" fieldtitle="provincia"/>
+                    <values source="provincias" fieldcode="provincia" fieldtitle="provincia"/>
                 </widget>
             </column>
             <column name="country" titleurl="ListPais" numcolumns="2" order="180">
