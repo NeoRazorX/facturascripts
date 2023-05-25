@@ -24,12 +24,15 @@ use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Dinamic\Model\DocTransformation;
+use FacturaScripts\Dinamic\Model\AttachedFileRelation;
+use FacturaScripts\Core\Base\Database\DataBaseWhere;
 
 /**
  * Description of BusinessDocumentGenerator
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
+ * @author Raúl Jiménez             <raljopa@gmail.com>
  */
 class BusinessDocumentGenerator
 {
@@ -98,7 +101,7 @@ class BusinessDocumentGenerator
         foreach ($properties as $key => $value) {
             $newDoc->{$key} = $value;
         }
-
+   
         $protoLines = empty($lines) ? $prototype->getLines() : $lines;
         if ($newDoc->save() && $this->cloneLines($prototype, $newDoc, $protoLines, $quantity)) {
             // recalculate totals on new document
@@ -106,6 +109,7 @@ class BusinessDocumentGenerator
             if (Calculator::calculate($newDoc, $newLines, true)) {
                 // add to last doc list
                 $this->lastDocs[] = $newDoc;
+                $this->translateRelFiles($prototype);
                 return true;
             }
         }
@@ -189,4 +193,52 @@ class BusinessDocumentGenerator
 
         return true;
     }
+    /**
+     * Translate links of related files to new Documento
+     * @param  BusinessDocument $prototype
+     * @return bool
+     */
+    public function translateRelFiles($prototype): bool {
+
+        $docsRels = new AttachedFileRelation();
+        $docRelsNewDoc = new AttachedFileRelation();
+        $docsOfChildren = new AttachedFileRelation();
+
+        $originClassname = substr(strrchr(get_class($prototype), "\\"), 1);
+        $primaryField = $prototype->primaryColumn();
+
+        $childs = $prototype->childrenDocuments();
+        $whereDocs = [
+            New DatabaseWhere('model', $originClassname)
+            , new DataBaseWhere('modelid', $prototype->{$primaryField})
+        ];
+        $docsRels = $docsRels->all($whereDocs, ['id' => 'ASC']);
+
+        foreach ($docsRels as $doc) {
+            foreach ($childs as $child) {
+
+                $whereDocsChildren = [
+                    new DataBaseWhere('model', $originClassname)
+                    , new DataBaseWhere('modelid', $primaryField)
+                    , new DataBaseWhere('idfile', $doc->idfile)
+                ];
+                if ($docsOfChildren->cocunt($whereDocsChildren) == 0) {
+                    $modelName = substr(strrchr(get_class($child), "\\"), 1);
+                    $docRelsNewDoc->clear();
+                    $docRelsNewDoc->creationdate = $doc->creationdate;
+                    $docRelsNewDoc->idfile = $doc->idfile;
+                    $docRelsNewDoc->model = $modelName;
+                    $docRelsNewDoc->modelid = $child->{$child->primaryColumn()};
+                    $docRelsNewDoc->nick = $doc->nick;
+                    $docRelsNewDoc->observations = $doc->observations;
+                    $docRelsNewDoc->modelcode = $child->codigo;
+                    if (!$docRelsNewDoc->save()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
 }
