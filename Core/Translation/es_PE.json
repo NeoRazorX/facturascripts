@@ -690,7 +690,7 @@
     "insert-update": "Añadir o modificar",
     "installed": "Instalado",
     "installed-plugins": "Instalados",
-    "installer": "Instalador de FacturaScripts",
+    "installer": "Instalador",
     "installer-p": "Bienvenido al instalador de FacturaScripts. Rellena los campos necesarios para conectar a la base de datos.",
     "installer-requirements": "Las siguientes extensiones y funciones son necesarias en FacturaScripts:",
     "integrity-check": "Verificación de integridad",

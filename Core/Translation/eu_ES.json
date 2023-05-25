@@ -690,7 +690,7 @@
     "insert-update": "Gehitu edo aldatu",
     "installed": "Instalatua",
     "installed-plugins": "Instalatuak",
-    "installer": "FacturaScripts instalatzailea",
+    "installer": "Instalatzailea",
     "installer-p": "Ongi etorri FacturaScripts instalatzailera. Datu-basearekin konektatzeko behar diren eremuak bete.",
     "installer-requirements": "Ondorengo gehigarriak eta funtzioak FacturaScriptsentzat beharrezkoak dira:",
     "integrity-check": "Integritate egiaztatzea",
