@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\DataSrc\Divisas;
-use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Divisa;
 
 /**
@@ -48,7 +48,7 @@ class DivisaTools extends NumberTools
         }
 
         if (!isset(self::$selectedDivisa)) {
-            $coddivisa = AppSettings::get('default', 'coddivisa');
+            $coddivisa = Tools::settings('default', 'coddivisa');
             self::$selectedDivisa = Divisas::get($coddivisa);
         }
     }
@@ -103,7 +103,7 @@ class DivisaTools extends NumberTools
                 return isset(self::$selectedDivisa) ? $txt . ' ' . self::$selectedDivisa->coddivisa : $txt . ' ???';
         }
 
-        return $txt;
+        return empty($decoration) ? $txt : $txt . ' ' . $decoration;
     }
 
     /**

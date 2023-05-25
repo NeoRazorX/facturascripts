@@ -86,6 +86,10 @@
         <null>NO</null>
     </column>
     <column>
+        <name>langcode</name>
+        <type>character varying(10)</type>
+    </column>
+    <column>
         <name>lastactivity</name>
         <type>timestamp</type>
     </column>

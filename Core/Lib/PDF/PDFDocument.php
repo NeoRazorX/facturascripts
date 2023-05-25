@@ -102,21 +102,30 @@ abstract class PDFDocument extends PDFCore
     {
         $payMethod = new FormaPago();
         if (false === $payMethod->loadFromCode($receipt->codpago)) {
+            // forma de pago no encontrada
             return '-';
         }
 
+        if (false === $payMethod->imprimir) {
+            // no imprimir información bancaria
+            return $payMethod->descripcion;
+        }
+
+        // Domiciliado. Mostramos la cuenta bancaria del cliente
         $cuentaBcoCli = new CuentaBancoCliente();
         $where = [new DataBaseWhere('codcliente', $receipt->codcliente)];
         if ($payMethod->domiciliado && $cuentaBcoCli->loadFromCode('', $where, ['principal' => 'DESC'])) {
             return $payMethod->descripcion . ' : ' . $cuentaBcoCli->getIban(true, true);
         }
 
+        // cuenta bancaria de la empresa
         $cuentaBco = new CuentaBanco();
-        if (empty($payMethod->codcuentabanco) || false === $cuentaBco->loadFromCode($payMethod->codcuentabanco) || empty($cuentaBco->iban)) {
-            return $payMethod->descripcion;
+        if ($payMethod->codcuentabanco && $cuentaBco->loadFromCode($payMethod->codcuentabanco) && $cuentaBco->iban) {
+            return $payMethod->descripcion . ' : ' . $cuentaBco->getIban(true);
         }
 
-        return $payMethod->descripcion . ' : ' . $cuentaBco->getIban(true);
+        // no hay información bancaria
+        return $payMethod->descripcion;
     }
 
     /**

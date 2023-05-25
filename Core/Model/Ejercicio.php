@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Ejercicios;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Dinamic\Model\Empresa as DinEmpresa;
 
 /**
@@ -327,6 +328,11 @@ class Ejercicio extends Base\ModelClass
         $this->fechainicio = date('1-1-Y', $date2);
         $this->fechafin = date('31-12-Y', $date2);
         $this->nombre = date('Y', $date2);
+
+        // if there are more than one company, we add the company name
+        if (count(Empresas::all()) > 1) {
+            $this->nombre = Empresas::get($this->idempresa)->nombrecorto . ' ' . $this->nombre;
+        }
 
         // for non-default companies we try to use range from 0001 to 9999
         if ($this->idempresa != $this->toolBox()->appSettings()->get('default', 'idempresa')) {

@@ -146,10 +146,10 @@ class AttachedFile extends Base\ModelOnChangeClass
     {
         switch ($type) {
             case 'download':
-                return $this->path . '?myft=' . MyFilesToken::get($this->path, false);
+                return $this->path . '?myft=' . MyFilesToken::get($this->path ?? '', false);
 
             case 'download-permanent':
-                return $this->path . '?myft=' . MyFilesToken::get($this->path, true);
+                return $this->path . '?myft=' . MyFilesToken::get($this->path ?? '', true);
 
             default:
                 return parent::url($type, $list);

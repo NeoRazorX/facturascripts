@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,7 +20,9 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Retenciones;
+use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
@@ -367,6 +369,71 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
         $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
+    }
+
+    public function testRenumber()
+    {
+        // creamos un proveedor
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
+
+        // fecha inicial del 2 de enero
+        $date = date('02-01-Y');
+
+        // creamos una serie
+        $serie = $this->getRandomSerie();
+        $this->assertTrue($serie->save(), 'cant-create-serie');
+
+        // creamos 10 facturas
+        for ($i = 11; $i > 1; $i--) {
+            $invoice = new FacturaProveedor();
+            $invoice->setSubject($supplier);
+            $invoice->codserie = $serie->codserie;
+            $invoice->setDate($date, $invoice->hora);
+            $invoice->numero = $i;
+            $invoice->codigo = $date . '-' . $i;
+            $this->assertTrue($invoice->save(), 'cant-create-invoice-' . $i);
+
+            // recargamos la factura
+            $invoice->loadFromCode($invoice->primaryColumnValue());
+
+            // comprobamos que el código y número son correctos
+            $this->assertEquals($date . '-' . $i, $invoice->codigo, 'bad-invoice-code-' . $i);
+            $this->assertEquals($i, $invoice->numero, 'bad-invoice-number-' . $i);
+
+            $date = date('d-m-Y', strtotime($date . ' + 1 day'));
+        }
+
+        // comprobamos que hay 10 facturas
+        $invoiceModel = new FacturaProveedor();
+        $this->assertEquals(10, $invoiceModel->count(), 'bad-invoice-count');
+
+        // obtenemos el ejercicio de la primera factura
+        $where = [new DataBaseWhere('codserie', $serie->codserie)];
+        $codejercicio = $invoiceModel->all($where, [], 0, 1)[0]->codejercicio;
+
+        // re-numeramos
+        $this->assertTrue(FacturaProveedorRenumber::run($codejercicio), 'cant-renumber-invoices');
+
+        // recorremos las facturas para comprobar que están numeradas correctamente
+        $orderBy = ['fecha' => 'ASC', 'hora' => 'ASC'];
+        $num = 1;
+        foreach ($invoiceModel->all($where, $orderBy, 0, 0) as $invoice) {
+            $this->assertEquals($num, $invoice->numero, 'bad-invoice-number-' . $num);
+            $num++;
+        }
+
+        // eliminamos las facturas
+        foreach ($invoiceModel->all($where, $orderBy, 0, 0) as $invoice) {
+            $this->assertTrue($invoice->delete(), 'cant-delete-invoice-' . $invoice->codigo);
+        }
+
+        // eliminamos el proveedor
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
+
+        // eliminamos la serie
+        $this->assertTrue($serie->delete(), 'cant-delete-serie');
     }
 
     protected function tearDown(): void

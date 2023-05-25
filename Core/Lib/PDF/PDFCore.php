@@ -103,6 +103,37 @@ abstract class PDFCore extends ExportBase
         $this->numberTools = new NumberTools();
     }
 
+    public function getOrientation()
+    {
+        return $this->pdf->ez['orientation'] ?? 'portrait';
+    }
+
+    /**
+     * Adds a new page.
+     *
+     * @param string $orientation
+     * @param bool $forceNewPage
+     */
+    public function newPage(string $orientation = 'portrait', bool $forceNewPage = false)
+    {
+        if ($this->pdf === null) {
+            $this->pdf = new Cezpdf('a4', $orientation);
+            $this->pdf->addInfo('Creator', 'FacturaScripts');
+            $this->pdf->addInfo('Producer', 'FacturaScripts');
+            $this->pdf->addInfo('Title', $this->getFileName());
+            $this->pdf->tempPath = FS_FOLDER . '/MyFiles/Cache';
+
+            $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
+
+            $this->pdf->ezStartPageNumbers(self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, 'left', '{PAGENUM} / {TOTALPAGENUM}');
+        } elseif ($forceNewPage || $this->pdf->y < 200) {
+            $this->pdf->ezNewPage();
+            $this->insertedHeader = false;
+        } else {
+            $this->pdf->ezText("\n");
+        }
+    }
+
     /**
      * Sets default orientation.
      *
@@ -271,31 +302,6 @@ abstract class PDFCore extends ExportBase
 
         if ($txt !== '') {
             $this->pdf->ezText($txt);
-        }
-    }
-
-    /**
-     * Adds a new page.
-     *
-     * @param string $orientation
-     */
-    protected function newPage(string $orientation = 'portrait')
-    {
-        if ($this->pdf === null) {
-            $this->pdf = new Cezpdf('a4', $orientation);
-            $this->pdf->addInfo('Creator', 'FacturaScripts');
-            $this->pdf->addInfo('Producer', 'FacturaScripts');
-            $this->pdf->addInfo('Title', $this->getFileName());
-            $this->pdf->tempPath = FS_FOLDER . '/MyFiles/Cache';
-
-            $this->tableWidth = $this->pdf->ez['pageWidth'] - self::CONTENT_X * 2;
-
-            $this->pdf->ezStartPageNumbers(self::CONTENT_X, self::FOOTER_Y, self::FONT_SIZE, 'left', '{PAGENUM} / {TOTALPAGENUM}');
-        } elseif ($this->pdf->y < 200) {
-            $this->pdf->ezNewPage();
-            $this->insertedHeader = false;
-        } else {
-            $this->pdf->ezText("\n");
         }
     }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,9 +20,11 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Base\Database\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 
 /**
@@ -30,10 +32,10 @@ use FacturaScripts\Dinamic\Model\DocTransformation;
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Rafael San José Tovar    <rafael.sanjose@x-netdigital.com>
+ * @author Raúl Jiménez             <raljopa@gmail.com>
  */
 class BusinessDocumentGenerator
 {
-
     use ExtensionsTrait;
 
     /**
@@ -183,8 +185,34 @@ class BusinessDocumentGenerator
             }
         }
 
+        // copy related files
+        $this->copyRelatedFiles($prototype, $newDoc);
+
         if (false === $this->pipeFalse('cloneLines', $prototype, $newDoc, $lines, $quantity)) {
             return false;
+        }
+
+        return true;
+    }
+
+    public function copyRelatedFiles(BusinessDocument $prototype, BusinessDocument $newDoc): bool
+    {
+        $relationModel = new AttachedFileRelation();
+        $whereDocs = [
+            new DatabaseWhere('model', $prototype->modelClassName()),
+            new DataBaseWhere('modelid', $prototype->primaryColumnValue())
+        ];
+        foreach ($relationModel->all($whereDocs, ['id' => 'ASC']) as $relation) {
+            $newRelation = new AttachedFileRelation();
+            $newRelation->idfile = $relation->idfile;
+            $newRelation->model = $newDoc->modelClassName();
+            $newRelation->modelid = $newDoc->primaryColumnValue();
+            $newRelation->nick = $relation->nick;
+            $newRelation->observations = $relation->observations;
+            $newRelation->modelcode = $newDoc->codigo;
+            if (false === $newRelation->save()) {
+                return false;
+            }
         }
 
         return true;

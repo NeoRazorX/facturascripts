@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use Exception;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Dinamic\Lib\IPFilter;
 
@@ -29,7 +30,6 @@ use FacturaScripts\Dinamic\Lib\IPFilter;
  */
 class ToolBox
 {
-
     /**
      * @return AppSettings
      */
@@ -39,12 +39,11 @@ class ToolBox
     }
 
     /**
-     * @return Cache
      * @deprecated since version 2022.5
      */
-    public static function cache(): Cache
+    public static function cache()
     {
-        return new Cache();
+        throw new Exception('Deprecated method. Use FacturaScripts/Core/Cache instead.');
     }
 
     /**
