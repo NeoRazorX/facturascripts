@@ -657,6 +657,7 @@
     "help-server-accepts-filesize": "This server support files up to %size% MB.",
     "hide": "hide",
     "high": "Alto",
+    "high-purchase-price": "Precio más alto",
     "hint-create-accounting-entry": "Create the accounting entry for the regularization of the taxes of the period",
     "hint-vat-register": "View\/Modify VAT registration",
     "history": "Historial",

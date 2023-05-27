@@ -657,6 +657,7 @@
     "help-server-accepts-filesize": "Dieser Server unterstützt eine maximale Größe von %1$s MB. Wenn das Plugin übernimmt, wird fehlschlagen, es zu laden, auch kann man nichts verlassen.",
     "hide": "verstecken",
     "high": "Alto",
+    "high-purchase-price": "Precio más alto",
     "hint-create-accounting-entry": "Erstellen des Buchhaltungseintrag für die steuerliche Regularisierung des Zeitraumes",
     "hint-vat-register": "View\/Modify VAT registration",
     "history": "Historial",

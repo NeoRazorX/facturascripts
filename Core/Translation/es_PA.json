@@ -657,6 +657,7 @@
     "help-server-accepts-filesize": "Este servidor admite un tamaño máximo de %size% MB.",
     "hide": "Ocultar",
     "high": "Alto",
+    "high-purchase-price": "Precio más alto",
     "hint-create-accounting-entry": "Crear el asiento contable para la regularización de impuestos del periodo",
     "hint-vat-register": "Ver\/Modificar registro de Impuesto",
     "history": "Historial",

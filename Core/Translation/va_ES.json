@@ -657,6 +657,7 @@
     "help-server-accepts-filesize": "Este servidor permet fitxers d'una mida màxima de %size% MB.",
     "hide": "Ocultar",
     "high": "Alto",
+    "high-purchase-price": "Precio más alto",
     "hint-create-accounting-entry": "Crear l'assentament contable per a regularisar els imposts del periodo",
     "hint-vat-register": "Vore\/Modificar el registre d'impost",
     "history": "Historial",
