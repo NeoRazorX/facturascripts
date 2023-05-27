@@ -64,26 +64,6 @@ class MailNotifierTest extends TestCase
         self::$notification->save();
     }
 
-    public function testPuedeEnviarNotificacionesPorEmail()
-    {
-        $this->markTestSkipped('Aún no es posible testear el envio de Correos. Hay que crear Mock, IOC, ...');
-
-        $params = [];
-        $adjuntos = [
-            FS_FOLDER . '/Test/__files/' . 'xss_img_src_onerror_alert(123).jpeg',
-        ];
-
-        $response = MailNotifier::send(
-            'sendmail-EmailTest',
-            'test@test.com',
-            'Test',
-            $params,
-            $adjuntos
-        );
-
-        $this->assertTrue($response);
-    }
-
     public function testNoPuedeEnviarEmailSiNoEstaConfigurado()
     {
         $appSettings = ToolBox::appSettings();
