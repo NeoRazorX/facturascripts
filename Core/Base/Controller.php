@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\DebugBar;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\KernelException;
 use FacturaScripts\Core\Model\User;
@@ -294,7 +295,7 @@ class Controller
         if ($this->template) {
             $response->setContent(Html::render($this->template, [
                 'controllerName' => $this->className,
-                'debugBarRender' => false,
+                'debugBarRender' => new DebugBar(),
                 'fsc' => $this,
                 'menuManager' => $menu,
                 'template' => $this->template,

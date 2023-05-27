@@ -206,6 +206,7 @@ final class Plugins
 
     public static function init(): void
     {
+        Kernel::startTimer('plugins::init');
         $save = false;
 
         // ejecutamos los procesos init de los plugins
@@ -218,6 +219,8 @@ final class Plugins
         if ($save) {
             self::save();
         }
+
+        Kernel::stopTimer('plugins::init');
     }
 
     public static function isEnabled(string $pluginName): bool

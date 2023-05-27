@@ -32,7 +32,8 @@ final class Kernel
     /** @var Closure[] */
     private static $routesCallbacks = [];
 
-    private static $startTime;
+    /** @var array */
+    private static $timers = [];
 
     public static function addRoute(string $route, string $controller, int $position = 0, string $customId = ''): void
     {
@@ -86,13 +87,19 @@ final class Kernel
 
     public static function getExecutionTime(int $decimals = 5): float
     {
-        $diff = microtime(true) - self::$startTime;
+        $start = self::$timers['kernel::init']['start'] ?? microtime(true);
+        $diff = microtime(true) - $start;
         return round($diff, $decimals);
+    }
+
+    public static function getTimers(): array
+    {
+        return self::$timers;
     }
 
     public static function init(): void
     {
-        self::$startTime = microtime(true);
+        self::startTimer('kernel::init');
 
         // cargamos algunas constantes para dar soporte a versiones antiguas
         $constants = [
@@ -112,6 +119,8 @@ final class Kernel
         // cargamos el idioma almacenado en la cookie o el predeterminado
         $lang = $_COOKIE['fsLang'] ?? Tools::config('lang', 'es_ES');
         Tools::lang()->setDefaultLang($lang);
+
+        self::stopTimer('kernel::init');
     }
 
     public static function rebuildRoutes(): void
@@ -154,6 +163,8 @@ final class Kernel
 
     public static function run(string $url): void
     {
+        Kernel::startTimer('kernel::run');
+
         $route = Tools::config('route', '');
         $relativeUrl = substr($url, strlen($route));
 
@@ -166,6 +177,8 @@ final class Kernel
             $handler = self::getErrorHandler($exception);
             $handler->run();
         }
+
+        Kernel::stopTimer('kernel::run');
     }
 
     public static function saveRoutes(): bool
@@ -253,9 +266,23 @@ final class Kernel
             . '</html>';
     }
 
+    public static function startTimer(string $name): void
+    {
+        self::$timers[$name] = ['start' => microtime(true)];
+    }
+
+    public static function stopTimer(string $name): void
+    {
+        if (!array_key_exists($name, self::$timers)) {
+            self::startTimer($name);
+        }
+
+        self::$timers[$name]['stop'] = microtime(true);
+    }
+
     public static function version(): float
     {
-        return 2023.02;
+        return 2023.03;
     }
 
     private static function cleanErrorMessage(string $file, string $message): string
