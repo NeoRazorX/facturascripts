@@ -47,7 +47,10 @@ Kernel::init();
 Plugins::init();
 
 // obtenemos la url y ejecutamos el controlador
-$url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+// si se le pasa el parámetro cron, entonces ejecutamos la url /cron
+$url = isset($argv[1]) && $argv[1] === '-cron' ?
+    '/cron' :
+    parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 Kernel::run($url);
 
 // guardamos los logs y cerramos la conexión a la base de datos
