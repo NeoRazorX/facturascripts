@@ -73,7 +73,7 @@ final class ToolsTest extends TestCase
     public function testFolderFunctions()
     {
         $this->assertEquals(FS_FOLDER, Tools::folder());
-        $this->assertEquals(FS_FOLDER . '/Test', Tools::folder('Test'));
+        $this->assertEquals(FS_FOLDER . DIRECTORY_SEPARATOR . 'Test', Tools::folder('Test'));
 
         // creamos la carpeta MyFiles/Test/Folder1
         $folder1 = Tools::folder('MyFiles', 'Test', 'Folder1');
@@ -88,7 +88,7 @@ final class ToolsTest extends TestCase
         file_put_contents(Tools::folder('MyFiles', 'Test', 'Folder1', 'file4.txt'), 'test');
 
         // comprobamos que existen los archivos
-        $fileListRecursive = ['Folder1', 'Folder1/file4.txt', 'file1.txt', 'file2.txt', 'file3.txt'];
+        $fileListRecursive = ['Folder1', 'Folder1'.DIRECTORY_SEPARATOR.'file4.txt', 'file1.txt', 'file2.txt', 'file3.txt'];
         $this->assertEquals($fileListRecursive, Tools::folderScan('MyFiles/Test', true));
 
         // sin recursividad
