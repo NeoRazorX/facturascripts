@@ -356,11 +356,11 @@ class SalesModalHTML
     {
         foreach ($items as $key => $item) {
             // obtenemos el último precio en facturas de este cliente
-            $sql = 'SELECT pvpunitario FROM lineasfacturascli'
-                . ' LEFT JOIN facturascli ON facturascli.idfactura = lineasfacturascli.idfactura'
-                . ' WHERE codcliente = ' . $db->var2str(self::$codcliente)
-                . ' AND referencia = ' . $db->var2str($item['referencia'])
-                . ' ORDER BY fecha DESC';
+            $sql = 'SELECT pvpunitario FROM lineasfacturascli l'
+                . ' LEFT JOIN facturascli f ON f.idfactura = l.idfactura'
+                . ' WHERE f.codcliente = ' . $db->var2str(self::$codcliente)
+                . ' AND l.referencia = ' . $db->var2str($item['referencia'])
+                . ' ORDER BY f.fecha DESC';
             foreach ($db->selectLimit($sql, 1) as $row) {
                 $items[$key]['ultimo_precio'] = $row['pvpunitario'];
                 continue 2;
