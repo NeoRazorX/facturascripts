@@ -237,18 +237,11 @@ class Tools
 
     public static function settingsSave(): bool
     {
-        if (self::$settings) {
-            return false;
-        }
-
-        $model = new Settings();
-        foreach ($model->all([], [], 0, 0) as $item) {
-            if (!isset(self::$settings[$item->name])) {
-                continue;
-            }
-
-            $item->properties = self::$settings[$item->name];
-            if (false === $item->save()) {
+        foreach (self::$settings as $key => $properties) {
+            $model = new Settings();
+            $model->name = $key;
+            $model->properties = $properties;
+            if (false === $model->save()) {
                 return false;
             }
         }

@@ -95,6 +95,11 @@ final class PluginDeploy
                 continue;
             }
 
+            // excluimos Installer y ApiRoot
+            if (in_array(substr($fileName, 0, -4), ['Installer', 'ApiRoot'])) {
+                continue;
+            }
+
             $controllerName = substr($fileName, 0, -4);
             $controllerNamespace = '\\FacturaScripts\\Dinamic\\Controller\\' . $controllerName;
 
