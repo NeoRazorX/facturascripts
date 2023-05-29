@@ -29,7 +29,7 @@ use SimpleXMLElement;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class DataBaseTools
+class DatabaseUpdater
 {
 
     /**
