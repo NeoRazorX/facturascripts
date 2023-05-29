@@ -17,9 +17,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\DataBase;
+namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\DataBase as db;
+use FacturaScripts\Core\Base\DataBase\DataBaseQueries;
 use FacturaScripts\Core\Base\ToolBox;
 use SimpleXMLElement;
 
