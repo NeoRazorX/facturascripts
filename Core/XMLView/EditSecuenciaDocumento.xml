@@ -67,6 +67,9 @@
             <column name="use-gaps" numcolumns="2" order="130">
                 <widget type="checkbox" fieldname="usarhuecos"/>
             </column>
+            <column name="keep-correlation-date" numcolumns="2" order="135">
+                <widget type="checkbox" fieldname="mantener_correlacion_fecha"/>
+            </column>
             <column name="pattern" order="140">
                 <widget type="text" fieldname="patron" maxlength="50" required="true"/>
             </column>

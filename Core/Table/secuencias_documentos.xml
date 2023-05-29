@@ -56,6 +56,12 @@
         <null>NO</null>
         <default>false</default>
     </column>
+    <column>
+        <name>mantener_correlacion_fecha</name>
+        <type>boolean</type>
+        <null>NO</null>
+        <default>true</default>
+    </column>
     <constraint>
         <name>secuencias_documentos_pkey</name>
         <type>PRIMARY KEY (idsecuencia)</type>

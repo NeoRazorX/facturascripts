@@ -21,10 +21,18 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Core\Model\AlbaranCliente;
 use FacturaScripts\Core\Model\Almacen;
+use FacturaScripts\Core\Model\Cliente;
+use FacturaScripts\Core\Model\Divisa;
+use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\Empresa;
+use FacturaScripts\Core\Model\EstadoDocumento;
+use FacturaScripts\Core\Model\SecuenciaDocumento;
+use FacturaScripts\Core\Model\Serie;
 use FacturaScripts\Core\Model\Stock;
+use FacturaScripts\Core\Model\User;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -39,6 +47,20 @@ final class AlbaranClienteTest extends TestCase
     public static function setUpBeforeClass(): void
     {
         self::setDefaultSettings();
+
+        new Agente();
+        new Almacen();
+        new Cliente();
+        new Divisa();
+        new Ejercicio();
+        new Empresa();
+        new EstadoDocumento();
+        new Serie();
+        new User();
+
+        $albaran_para_generar_secuencias = new AlbaranCliente();
+        $albaran_para_generar_secuencias->save();
+        $albaran_para_generar_secuencias->delete();
     }
 
     public function testDefaultValues()
@@ -296,6 +318,132 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($subject->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($subject->delete(), 'cliente-cant-delete');
         $this->assertTrue($company2->delete(), 'empresa-cant-delete');
+    }
+
+    public function testNoUsarHuecosAlbaranCliente()
+    {
+        $subject = $this->getRandomCustomer();
+        $subject->save();
+
+        $secuencia = (new SecuenciaDocumento())->all([
+            new DataBaseWhere('codejercicio', date('Y')),
+            new DataBaseWhere('codejercicio', '0001', '=', 'OR'),
+            new DataBaseWhere('tipodoc', 'AlbaranCliente'),
+        ]);
+
+        $secuencia[0]->usarhuecos = false;
+        $secuencia[0]->save();
+
+        $doc1 = new AlbaranCliente();
+        $doc1->setSubject($subject);
+        $doc1->save();
+        $doc1->delete();
+
+        $doc2 = new AlbaranCliente();
+        $doc2->setSubject($subject);
+        $doc2->save();
+
+        $this->assertEquals(($doc1->numero + 1), $doc2->numero);
+        $this->assertNotEquals($doc1->numero, $doc2->numero);
+
+        $doc1->delete();
+        $doc2->delete();
+        $subject->getDefaultAddress()->delete();
+        $subject->delete();
+    }
+
+    public function testUsarHuecosAlbaranClienteSinMantenerCorrelacionFechas()
+    {
+        $subject = $this->getRandomCustomer();
+        $subject->save();
+
+        $secuencia = (new SecuenciaDocumento())->all([
+            new DataBaseWhere('codejercicio', date('Y')),
+            new DataBaseWhere('codejercicio', '0001', '=', 'OR'),
+            new DataBaseWhere('tipodoc', 'AlbaranCliente'),
+        ]);
+
+        $secuencia[0]->usarhuecos = true;
+        $secuencia[0]->mantener_correlacion_fecha = false;
+        $secuencia[0]->save();
+
+        $doc1 = new AlbaranCliente();
+        $doc1->setSubject($subject);
+        $doc1->save();
+
+        $doc2 = new AlbaranCliente();
+        $doc2->setSubject($subject);
+        $doc2->save();
+
+        $doc3 = new AlbaranCliente();
+        $doc3->setSubject($subject);
+        $doc3->fecha = '01-01-2023';
+        $doc3->hora = '12:00:00';
+        $doc3->save();
+
+        $doc2->delete();
+
+        $doc4 = new AlbaranCliente();
+        $doc4->setSubject($subject);
+        $doc4->save();
+
+        $this->assertEquals($doc2->numero, $doc4->numero);
+        $this->assertNotEquals($doc4->fecha, $doc3->fecha);
+        $this->assertNotEquals($doc4->hora, $doc3->hora);
+
+        $doc1->delete();
+        $doc2->delete();
+        $doc3->delete();
+        $doc4->delete();
+        $subject->getDefaultAddress()->delete();
+        $subject->delete();
+    }
+
+    public function testUsarHuecosAlbaranClienteManteniendoCorrelacionFechas()
+    {
+        $subject = $this->getRandomCustomer();
+        $subject->save();
+
+        $secuencia = (new SecuenciaDocumento())->all([
+            new DataBaseWhere('codejercicio', date('Y')),
+            new DataBaseWhere('codejercicio', '0001', '=', 'OR'),
+            new DataBaseWhere('tipodoc', 'AlbaranCliente'),
+        ]);
+
+        $secuencia[0]->usarhuecos = true;
+        $secuencia[0]->mantener_correlacion_fecha = true;
+        $secuencia[0]->save();
+
+        $doc1 = new AlbaranCliente();
+        $doc1->setSubject($subject);
+        $doc1->save();
+
+        $doc2 = new AlbaranCliente();
+        $doc2->setSubject($subject);
+        $doc2->save();
+
+        $doc3 = new AlbaranCliente();
+        $doc3->setSubject($subject);
+        $doc3->fecha = '01-01-2023';
+        $doc3->hora = '12:00:00';
+        $doc3->save();
+
+        $doc2->delete();
+
+        $doc4 = new AlbaranCliente();
+        $doc4->setSubject($subject);
+        $doc4->save();
+
+        $this->assertEquals($doc2->numero, $doc4->numero);
+        $this->assertEquals($doc4->fecha, $doc3->fecha);
+        $this->assertEquals($doc4->hora, $doc3->hora);
+
+        $doc1->delete();
+        $doc2->delete();
+        $doc3->delete();
+        $doc4->delete();
+        $subject->getDefaultAddress()->delete();
+        $subject->delete();
     }
 
     protected function tearDown(): void

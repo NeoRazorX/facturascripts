@@ -59,6 +59,9 @@ class SecuenciaDocumento extends Base\ModelClass
     /** @var bool */
     public $usarhuecos;
 
+    /** @var bool */
+    public $mantener_correlacion_fecha;
+
     public function clear()
     {
         parent::clear();
@@ -67,6 +70,7 @@ class SecuenciaDocumento extends Base\ModelClass
         $this->numero = 1;
         $this->patron = '{EJE}{SERIE}{0NUM}';
         $this->usarhuecos = false;
+        $this->mantener_correlacion_fecha = true;
     }
 
     public function install(): string
