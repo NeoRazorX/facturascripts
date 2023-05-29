@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseTools;
+use FacturaScripts\Core\DatabaseUpdater;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\Import\CSVImport;
@@ -287,14 +287,14 @@ abstract class ModelCore
     {
         $xmlCols = [];
         $xmlCons = [];
-        if (false === DataBaseTools::getXmlTable(static::tableName(), $xmlCols, $xmlCons)) {
+        if (false === DatabaseUpdater::getXmlTable(static::tableName(), $xmlCols, $xmlCons)) {
             $this->toolBox()->i18nLog()->critical('error-on-xml-file', ['%fileName%' => static::tableName() . '.xml']);
             return false;
         }
 
         $sql = self::$dataBase->tableExists(static::tableName()) ?
-            DataBaseTools::checkTable(static::tableName(), $xmlCols, $xmlCons) :
-            DataBaseTools::generateTable(static::tableName(), $xmlCols, $xmlCons) . $this->install();
+            DatabaseUpdater::checkTable(static::tableName(), $xmlCols, $xmlCons) :
+            DatabaseUpdater::generateTable(static::tableName(), $xmlCols, $xmlCons) . $this->install();
 
         if ($sql !== '' && false === self::$dataBase->exec($sql)) {
             $this->toolBox()->i18nLog()->critical('check-table', ['%tableName%' => static::tableName()]);
