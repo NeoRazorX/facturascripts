@@ -298,7 +298,7 @@ final class Plugin
 
     private function loadIniFile(): void
     {
-        $iniPath = self::folder() . DIRECTORY_SEPARATOR . 'facturascripts.ini';
+        $iniPath = $this->folder() . DIRECTORY_SEPARATOR . 'facturascripts.ini';
         if (!file_exists($iniPath)) {
             return;
         }
