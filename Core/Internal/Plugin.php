@@ -41,6 +41,9 @@ final class Plugin
     /** @var bool */
     public $enabled = false;
 
+    /** @var string */
+    public $folder = '-';
+
     /** @var bool */
     public $hidden = false;
 
@@ -77,6 +80,7 @@ final class Plugin
     public function __construct(array $data = [])
     {
         $this->enabled = $data['enabled'] ?? false;
+        $this->folder = $data['folder'] ?? $data['name'] ?? '-';
         $this->name = $data['name'] ?? '-';
         $this->order = intval($data['order'] ?? 0);
         $this->post_disable = $data['post_disable'] ?? false;
@@ -171,12 +175,15 @@ final class Plugin
             return null;
         }
 
+        // cargamos los datos del init
         $zipIndex = $zip->locateName('facturascripts.ini', ZipArchive::FL_NODIR);
         $iniData = parse_ini_string($zip->getFromIndex($zipIndex));
+        $plugin = new Plugin();
+        $pathIni = $zip->getNameIndex($zipIndex);
+        $plugin->folder = substr($pathIni, 0, strpos($pathIni, '/'));
+        $plugin->loadIniData($iniData);
         $zip->close();
 
-        $plugin = new Plugin();
-        $plugin->loadIniData($iniData);
         return $plugin;
     }
 
@@ -291,7 +298,7 @@ final class Plugin
 
     private function loadIniFile(): void
     {
-        $iniPath = Plugins::folder() . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'facturascripts.ini';
+        $iniPath = self::folder() . DIRECTORY_SEPARATOR . 'facturascripts.ini';
         if (!file_exists($iniPath)) {
             return;
         }

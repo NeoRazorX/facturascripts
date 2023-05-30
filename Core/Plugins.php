@@ -69,10 +69,22 @@ final class Plugins
         }
         $zipFile->close();
 
+        // renombramos la carpeta
+        if ($plugin->folder && $plugin->folder !== $plugin->name) {
+            $from = self::folder() . DIRECTORY_SEPARATOR . $plugin->folder;
+            $to = self::folder() . DIRECTORY_SEPARATOR . $plugin->name;
+            if (false === rename($from, $to)) {
+                Tools::log()->error('PLUGIN FOLDER RENAME ERROR: ' . $plugin->folder . ' -> ' . $plugin->name);
+                return false;
+            }
+            $plugin->folder = $plugin->name;
+        }
+
         // si el plugin no estaba en la lista, lo añadimos
         if (false === $plugin->installed) {
             // añadimos el plugin
             self::load();
+            $plugin->installed = true;
             self::$plugins[] = $plugin;
         }
 
@@ -141,6 +153,12 @@ final class Plugins
         $plugin = self::get($pluginName);
         if (null === $plugin || $plugin->enabled) {
             return true;
+        }
+
+        // si la carpeta del plugin no es igual al nombre del plugin, no podemos activarlo
+        if ($plugin->folder !== $plugin->name) {
+            Tools::log()->error('plugin-folder-not-equal-name', ['%pluginName%' => $pluginName]);
+            return false;
         }
 
         // si no se cumplen las dependencias, no se activa
@@ -333,7 +351,7 @@ final class Plugins
             }
 
             // no está en la lista, lo añadimos
-            self::$plugins[] = new Plugin(['name' => $pluginName]);
+            self::$plugins[] = new Plugin(['name' => $pluginName, 'folder' => $pluginName]);
         }
     }
 

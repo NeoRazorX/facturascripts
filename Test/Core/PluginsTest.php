@@ -110,6 +110,8 @@ final class PluginsTest extends TestCase
         // cargamos los datos
         $plugin = Plugin::getFromZip($zipPath);
         $this->assertEquals('TestPlugin1', $plugin->name);
+        $this->assertFalse($plugin->enabled);
+        $this->assertFalse($plugin->installed);
     }
 
     public function testPlugin2()
@@ -136,6 +138,7 @@ final class PluginsTest extends TestCase
         $this->assertEquals(1, $plugin->version);
         $this->assertEquals(2023, $plugin->min_version);
         $this->assertTrue($plugin->compatible);
+        $this->assertTrue($plugin->installed);
         $this->assertFalse($plugin->enabled);
 
         // activamos el plugin
@@ -199,8 +202,16 @@ final class PluginsTest extends TestCase
         $this->assertFileExists($iniPath);
         $this->assertStringNotContainsString('test = 1', file_get_contents($iniPath));
 
+        // comprobamos que sigue instalado
+        $plugin = Plugins::get('TestPlugin2');
+        $this->assertTrue($plugin->installed);
+        $this->assertFalse($plugin->enabled);
+
         // eliminamos el plugin
         $this->assertTrue(Plugins::remove('TestPlugin2'));
+
+        // comprobamos que se ha eliminado el plugin
+        $this->assertNull(Plugins::get('TestPlugin2'));
     }
 
     public function testPlugin3()
@@ -319,6 +330,36 @@ final class PluginsTest extends TestCase
 
         // comprobamos que podemos eliminar el plugin
         $this->assertTrue(Plugins::remove('PluginRequirePHP'));
+    }
+
+    public function testPluginRenameFolder()
+    {
+        // comprobamos que podemos añadir el plugin
+        $zipPath = __DIR__ . '/../__files/RenameFolder.zip';
+        $this->assertTrue(Plugins::add($zipPath));
+
+        // comprobamos los datos del plugin
+        $plugin = Plugins::get('RenameFolder');
+        $this->assertEquals('RenameFolder', $plugin->name);
+        $this->assertEquals('RenameFolder', $plugin->folder);
+
+        // comprobamos que la carpeta del plugin se ha renombrado
+        $this->assertTrue(is_dir(Plugins::folder() . '/RenameFolder'));
+
+        // comprobamos que podemos activar el plugin
+        $this->assertTrue(Plugins::enable('RenameFolder'));
+
+        // comprobamos que podemos desactivar el plugin
+        $this->assertTrue(Plugins::disable('RenameFolder'));
+
+        // comprobamos que podemos eliminar el plugin
+        $this->assertTrue(Plugins::remove('RenameFolder'));
+
+        // comprobamos que la carpeta del plugin se ha eliminado
+        $this->assertFalse(is_dir(Plugins::folder() . '/RenameFolder'));
+
+        // comprobamos que ya no podemos obtener los datos del plugin
+        $this->assertNull(Plugins::get('RenameFolder'));
     }
 
     public function testPluginsOrder()
