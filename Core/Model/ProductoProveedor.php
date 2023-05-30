@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,60 +38,41 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     use Base\ModelTrait;
     use Base\ProductRelationTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $actualizado;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $coddivisa;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codproveedor;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $dtopor;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $dtopor2;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $id;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $neto;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $netoeuros;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $precio;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $referencia;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $refproveedor;
+
+    /** @var float */
+    public $stock;
 
     public function clear()
     {
@@ -103,6 +84,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
         $this->neto = 0.0;
         $this->netoeuros = 0.0;
         $this->precio = 0.0;
+        $this->stock = 0.0;
     }
 
     /**
