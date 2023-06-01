@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -345,10 +345,10 @@ class SalesLineHTML
             case 'dtopor2':
                 return self::dtopor2($i18n, $idlinea, $line, $model, 'dtopor2', 'salesFormActionWait');
 
-            case 'exception_vat':
-                return self::exceptionVat($i18n, $idlinea, $line, $model, 'exceptionvat', 'salesFormActionWait');
+            case 'exceptionvat':
+                return self::exceptionvat($i18n, $idlinea, $line, $model, 'exceptionvat', 'salesFormActionWait');
 
-                case 'irpf':
+            case 'irpf':
                 return self::irpf($i18n, $idlinea, $line, $model, 'salesFormAction');
 
             case 'mostrar_cantidad':
@@ -392,11 +392,11 @@ class SalesLineHTML
             . self::renderField($i18n, $idlinea, $line, $model, 'dtopor2')
             . self::renderField($i18n, $idlinea, $line, $model, 'recargo')
             . self::renderField($i18n, $idlinea, $line, $model, 'irpf')
+            . self::renderField($i18n, $idlinea, $line, $model, 'exceptionvat')
             . self::renderField($i18n, $idlinea, $line, $model, 'suplido')
             . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_cantidad')
             . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_precio')
             . self::renderField($i18n, $idlinea, $line, $model, 'salto_pagina')
-            . self::renderField($i18n, $idlinea, $line, $model, 'exception_vat')
             . self::renderNewModalFields($i18n, $idlinea, $line, $model)
             . '</div>'
             . '</div>'

@@ -127,7 +127,7 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function exceptionVat(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
+    private static function exceptionvat(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
     {
         $attributes = $model->editable ?
             'name="exceptionvat_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
@@ -144,9 +144,7 @@ trait CommonLineHTML
 
         return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans('vat-exception')
-            . '<select ' . $attributes . ' class="form-control">'
-            . $options
-            . '</select>'
+            . '<select ' . $attributes . ' class="form-control">' . $options . '</select>'
             . '</div>'
             . '</div>';
     }
