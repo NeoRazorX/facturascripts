@@ -27,16 +27,17 @@ namespace FacturaScripts\Core\Lib;
 class ProductType
 {
     const PRODUCT_TYPE_NORMAL = 'Normal';
-    const PRODUCT_TYPE_SECOND_HAND = 'SecondHand';
-    const PRODUCT_TYPE_SERVICE = 'Service';
-    const PRODUCT_TYPE_TRAVEL = 'Travel';
+    const PRODUCT_TYPE_SECOND_HAND = 'Segunda mano';
+    const PRODUCT_TYPE_SERVICE = 'Servicio';
+    const PRODUCT_TYPE_TRAVEL = 'Viaje';
 
     /** @var array */
     private static $types = [];
 
-    public static function addType(string $key, string $value)
+    public static function add(string $key, string $value): void
     {
-        self::$types[substr($key, 0, 20)] = $value;
+        $fixedKey = substr($key, 0, 20);
+        self::$types[$fixedKey] = $value;
     }
 
     public static function all(): array

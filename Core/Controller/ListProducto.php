@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
 use FacturaScripts\Core\Lib\ProductType;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 
 /**
  * Controller to list the items in the Producto model
@@ -77,20 +78,30 @@ class ListProducto extends ListController
         $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
         $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
 
-        $types = [];
+        $types = [['code' => '', 'description' => '------']];
         foreach (ProductType::all() as $key => $value) {
             $types[] = [
                 'code' => $key,
                 'description' => $this->toolBox()->i18n()->trans($value)
             ];
         }
-        $this->addFilterSelect($viewName, 'type', 'type', 'type', $types);
+        $this->addFilterSelect($viewName, 'tipo', 'type', 'tipo', $types);
+
+        $this->addFilterNumber($viewName, 'min-price', 'price', 'precio', '<=');
+        $this->addFilterNumber($viewName, 'max-price', 'price', 'precio', '>=');
 
         $taxes = Impuestos::codeModel();
         $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
 
-        $this->addFilterNumber($viewName, 'min-price', 'price', 'precio', '<=');
-        $this->addFilterNumber($viewName, 'max-price', 'price', 'precio', '>=');
+        $exceptions = [['code' => '', 'description' => '------']];
+        foreach (RegimenIVA::allExceptions() as $key => $value) {
+            $exceptions[] = [
+                'code' => $key,
+                'description' => $this->toolBox()->i18n()->trans($value)
+            ];
+        }
+        $this->addFilterSelect($viewName, 'excepcioniva', 'vat-exception', 'excepcioniva', $exceptions);
+
         $this->addFilterNumber($viewName, 'min-stock', 'stock', 'stockfis', '<=');
         $this->addFilterNumber($viewName, 'max-stock', 'stock', 'stockfis', '>=');
 

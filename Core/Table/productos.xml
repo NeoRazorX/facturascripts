@@ -44,7 +44,7 @@
         <type>text</type>
     </column>
     <column>
-        <name>exceptionvat</name>
+        <name>excepcioniva</name>
         <type>character varying(15)</type>
     </column>
     <column>
@@ -96,7 +96,7 @@
         <default>0</default>
     </column>
     <column>
-        <name>type</name>
+        <name>tipo</name>
         <type>character varying(20)</type>
     </column>
     <column>

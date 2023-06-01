@@ -197,7 +197,7 @@ class SalesLineHTML
         $line->dtopor = (float)$formData['dtopor_' . $id];
         $line->dtopor2 = (float)$formData['dtopor2_' . $id];
         $line->descripcion = $formData['descripcion_' . $id];
-        $line->exceptionvat = $formData['exceptionvat_' . $id] ?? null;
+        $line->excepcioniva = $formData['excepcioniva_' . $id] ?? null;
         $line->irpf = (float)($formData['irpf_' . $id] ?? '0');
         $line->mostrar_cantidad = (bool)($formData['mostrar_cantidad_' . $id] ?? '0');
         $line->mostrar_precio = (bool)($formData['mostrar_precio_' . $id] ?? '0');
@@ -345,8 +345,8 @@ class SalesLineHTML
             case 'dtopor2':
                 return self::dtopor2($i18n, $idlinea, $line, $model, 'dtopor2', 'salesFormActionWait');
 
-            case 'exceptionvat':
-                return self::exceptionvat($i18n, $idlinea, $line, $model, 'exceptionvat', 'salesFormActionWait');
+            case 'excepcioniva':
+                return self::excepcioniva($i18n, $idlinea, $line, $model, 'excepcioniva', 'salesFormActionWait');
 
             case 'irpf':
                 return self::irpf($i18n, $idlinea, $line, $model, 'salesFormAction');
@@ -392,7 +392,7 @@ class SalesLineHTML
             . self::renderField($i18n, $idlinea, $line, $model, 'dtopor2')
             . self::renderField($i18n, $idlinea, $line, $model, 'recargo')
             . self::renderField($i18n, $idlinea, $line, $model, 'irpf')
-            . self::renderField($i18n, $idlinea, $line, $model, 'exceptionvat')
+            . self::renderField($i18n, $idlinea, $line, $model, 'excepcioniva')
             . self::renderField($i18n, $idlinea, $line, $model, 'suplido')
             . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_cantidad')
             . self::renderField($i18n, $idlinea, $line, $model, 'mostrar_precio')

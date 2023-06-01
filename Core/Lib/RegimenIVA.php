@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,41 +34,53 @@ class RegimenIVA
     const ES_TAX_EXCEPTION_E5 = 'ES_25';
     const ES_TAX_EXCEPTION_E6 = 'ES_OTHER';
 
-    const TAX_SYSTEM_CASH_CRITERIA = 'Cash';
+    const TAX_SYSTEM_AGRARIAN = 'Agrario';
+    const TAX_SYSTEM_CASH_CRITERIA = 'Caja';
     const TAX_SYSTEM_EXEMPT = 'Exento';
     const TAX_SYSTEM_GENERAL = 'General';
+    const TAX_SYSTEM_GOLD = 'Oro';
+    const TAX_SYSTEM_GROUP_ENTITIES = 'Grupo entidades';
     const TAX_SYSTEM_SIMPLIFIED = 'Simplificado';
     const TAX_SYSTEM_SURCHARGE = 'Recargo';
-    const TAX_SYSTEM_ESPECIAL_AGP = 'Especial_AGP';
-    const TAX_SYSTEM_ESPECIAL_GOAC = 'Especial_GOAC';
-    const TAX_SYSTEM_ESPECIAL_GOLD = 'Especial_GOLD';
-    const TAX_SYSTEM_ESPECIAL_GROUP_ENTITIES = 'Especial_GE';
-    const TAX_SYSTEM_ESPECIAL_TELECOM = 'Especial_TELECOM';
-    const TAX_SYSTEM_ESPECIAL_TRAVEL = 'Especial_TRAVEL';
+    const TAX_SYSTEM_TELECOM = 'Telecom';
+    const TAX_SYSTEM_TRAVEL = 'Agencias de viaje';
+    const TAX_SYSTEM_USED_GOODS = 'Bienes usados';
 
     /** @var array */
     private static $exceptions = [];
 
-    public static function addException(string $key, string $value)
+    /** @var array */
+    private static $values = [];
+
+    public static function add(string $key, string $value): void
     {
-        self::$exceptions[substr($key, 0, 20)] = $value;
+        $fixedKey = substr($key, 0, 20);
+        self::$exceptions[$fixedKey] = $value;
+    }
+
+    public static function addException(string $key, string $value): void
+    {
+        $fixedKey = substr($key, 0, 15);
+        self::$exceptions[$fixedKey] = $value;
     }
 
     public static function all(): array
     {
-        return [
+        $defaultValues = [
+            self::TAX_SYSTEM_AGRARIAN => 'es-tax-regime-agrarian',
+            self::TAX_SYSTEM_CASH_CRITERIA => 'es-tax-regime-cash-criteria',
             self::TAX_SYSTEM_EXEMPT => 'es-tax-regime-exempt',
             self::TAX_SYSTEM_GENERAL => 'es-tax-regime-general',
+            self::TAX_SYSTEM_GOLD => 'es-tax-regime-gold',
+            self::TAX_SYSTEM_GROUP_ENTITIES => 'es-tax-regime-group-entities',
             self::TAX_SYSTEM_SIMPLIFIED => 'es-tax-regime-simplified',
             self::TAX_SYSTEM_SURCHARGE => 'es-tax-regime-surcharge',
-            self::TAX_SYSTEM_ESPECIAL_AGP => 'es-tax-regime-especial-agp',
-            self::TAX_SYSTEM_CASH_CRITERIA => 'es-tax-regime-cash-criteria',
-            self::TAX_SYSTEM_ESPECIAL_GOAC => 'es-tax-regime-goac',
-            self::TAX_SYSTEM_ESPECIAL_GOLD => 'es-tax-regime-gold',
-            self::TAX_SYSTEM_ESPECIAL_TRAVEL => 'es-tax-regime-travel',
-            self::TAX_SYSTEM_ESPECIAL_TELECOM => 'es-tax-regime-telecom',
-            self::TAX_SYSTEM_ESPECIAL_GROUP_ENTITIES => 'es-tax-regime-group-entities',
+            self::TAX_SYSTEM_TRAVEL => 'es-tax-regime-travel',
+            self::TAX_SYSTEM_TELECOM => 'es-tax-regime-telecom',
+            self::TAX_SYSTEM_USED_GOODS => 'es-tax-regime-used-goods',
         ];
+
+        return array_merge($defaultValues, self::$values);
     }
 
     public static function allExceptions(): array

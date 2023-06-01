@@ -127,18 +127,18 @@ trait CommonLineHTML
             . '</div>';
     }
 
-    private static function exceptionvat(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
+    private static function excepcioniva(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
     {
         $attributes = $model->editable ?
-            'name="exceptionvat_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
+            'name="excepcioniva_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
             'disabled=""';
 
         $options = '<option value="" selected>------</option>';
         $product = $line->getProducto();
-        $exceptionVat = empty($line->idlinea) && empty($line->{$field}) ? $product->{$field} : $line->{$field};
+        $excepcionIva = empty($line->idlinea) && empty($line->{$field}) ? $product->{$field} : $line->{$field};
 
         foreach (RegimenIVA::allExceptions() as $key => $value) {
-            $selected = $exceptionVat === $key ? 'selected' : '';
+            $selected = $excepcionIva === $key ? 'selected' : '';
             $options .= '<option value="' . $key . '" ' . $selected . '>' . $i18n->trans($value) . '</option>';
         }
 

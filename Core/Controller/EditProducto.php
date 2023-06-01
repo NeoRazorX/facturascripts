@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -119,10 +119,7 @@ class EditProducto extends EditController
         return parent::execPreviousAction($action);
     }
 
-    /**
-     * @return bool
-     */
-    protected function insertAction()
+    protected function insertAction(): bool
     {
         if (parent::insertAction()) {
             return true;
@@ -135,7 +132,7 @@ class EditProducto extends EditController
         return false;
     }
 
-    protected function loadCustomAttributeWidgets(string $viewName)
+    protected function loadCustomAttributeWidgets(string $viewName): void
     {
         $values = $this->codeModel->all('AtributoValor', 'id', '');
         foreach (['attribute-value-1', 'attribute-value-2', 'attribute-value-3', 'attribute-value-4'] as $colName) {
@@ -146,12 +143,13 @@ class EditProducto extends EditController
         }
     }
 
-    protected function loadCustomReferenceWidget(string $viewName)
+    protected function loadCustomReferenceWidget(string $viewName): void
     {
         $references = [];
-        $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
-        $where = [new DataBaseWhere('idproducto', $idproducto)];
-        foreach ($this->codeModel->all('variantes', 'referencia', 'referencia', false, $where) as $code) {
+        $id = $this->getViewModelValue('EditProducto', 'idproducto');
+        $where = [new DataBaseWhere('idproducto', $id)];
+        $values = $this->codeModel->all('variantes', 'referencia', 'referencia', false, $where);
+        foreach ($values as $code) {
             $references[] = ['value' => $code->code, 'title' => $code->description];
         }
 
@@ -169,8 +167,8 @@ class EditProducto extends EditController
      */
     protected function loadData($viewName, $view)
     {
-        $idproducto = $this->getViewModelValue('EditProducto', 'idproducto');
-        $where = [new DataBaseWhere('idproducto', $idproducto)];
+        $id = $this->getViewModelValue('EditProducto', 'idproducto');
+        $where = [new DataBaseWhere('idproducto', $id)];
 
         switch ($viewName) {
             case $this->getMainViewName():
@@ -189,7 +187,7 @@ class EditProducto extends EditController
                 break;
 
             case 'EditProductoImagen':
-                $where = [new DataBaseWhere('idproducto', $idproducto)];
+                $where = [new DataBaseWhere('idproducto', $id)];
                 $orderBy = ['referencia' => 'ASC', 'id' => 'ASC'];
                 $view->loadData('', $where, $orderBy);
                 break;
@@ -209,17 +207,17 @@ class EditProducto extends EditController
         }
     }
 
-    protected function loadTypes(string $viewName)
+    protected function loadTypes(string $viewName): void
     {
         $column = $this->views[$viewName]->columnForName('type');
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(ProductType::all(), true, true);
         }
     }
-  
-    protected function loadExceptionVat(string $viewName)
+
+    protected function loadExceptionVat(string $viewName): void
     {
-        $column = $this->views[$viewName]->columnForName('exceptionvat');
+        $column = $this->views[$viewName]->columnForName('vat-exception');
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
         }
