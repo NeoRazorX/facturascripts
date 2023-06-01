@@ -24,15 +24,16 @@ use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
+use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
 
 /**
  * Controller to edit a single item from the EditProducto model
  *
- * @author Carlos García Gómez          <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author Fco. Antonio Moreno Pérez    <famphuelva@gmail.com>
+ * @author Fco. Antonio Moreno Pérez     <famphuelva@gmail.com>
  */
 class EditProducto extends EditController
 {
@@ -174,6 +175,7 @@ class EditProducto extends EditController
         switch ($viewName) {
             case $this->getMainViewName():
                 parent::loadData($viewName, $view);
+                $this->loadTypes($viewName);
                 $this->loadExceptionVat($viewName);
                 if (empty($view->model->primaryColumnValue())) {
                     $view->disableColumn('stock');
@@ -207,6 +209,14 @@ class EditProducto extends EditController
         }
     }
 
+    protected function loadTypes(string $viewName)
+    {
+        $column = $this->views[$viewName]->columnForName('type');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(ProductType::all(), true, true);
+        }
+    }
+  
     protected function loadExceptionVat(string $viewName)
     {
         $column = $this->views[$viewName]->columnForName('exceptionvat');
