@@ -24,6 +24,7 @@ use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
 
 /**
@@ -173,6 +174,7 @@ class EditProducto extends EditController
         switch ($viewName) {
             case $this->getMainViewName():
                 parent::loadData($viewName, $view);
+                $this->loadExceptionVat($viewName);
                 if (empty($view->model->primaryColumnValue())) {
                     $view->disableColumn('stock');
                 }
@@ -202,6 +204,14 @@ class EditProducto extends EditController
             case 'EditProductoProveedor':
                 $view->loadData('', $where, ['id' => 'DESC']);
                 break;
+        }
+    }
+
+    protected function loadExceptionVat(string $viewName)
+    {
+        $column = $this->views[$viewName]->columnForName('exceptionvat');
+        if ($column && $column->widget->getType() === 'select') {
+            $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
         }
     }
 }
