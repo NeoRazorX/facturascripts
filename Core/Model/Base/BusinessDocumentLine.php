@@ -80,6 +80,9 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
      */
     public $dtopor2;
 
+    /** @var string */
+    public $exceptionvat;
+
     /**
      * Primary key.
      *

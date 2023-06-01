@@ -40,6 +40,11 @@
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"/>
                 </widget>
             </column>
+            <column name="exceptionvat" title="vat-exception" order="140">
+                <widget type="select" fieldname="exceptionvat">
+                    <values/>
+                </widget>
+            </column>
         </group>
         <group name="description" numcolumns="12">
             <column name="description" order="100">
