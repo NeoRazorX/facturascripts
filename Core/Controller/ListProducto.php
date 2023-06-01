@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Lib\ProductType;
 
 /**
  * Controller to list the items in the Producto model
@@ -75,6 +76,15 @@ class ListProducto extends ListController
 
         $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
         $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
+
+        $types = [];
+        foreach (ProductType::all() as $key => $value) {
+            $types[] = [
+                'code' => $key,
+                'description' => $this->toolBox()->i18n()->trans($value)
+            ];
+        }
+        $this->addFilterSelect($viewName, 'type', 'type', 'type', $types);
 
         $taxes = Impuestos::codeModel();
         $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);

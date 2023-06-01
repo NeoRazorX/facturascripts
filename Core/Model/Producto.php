@@ -164,6 +164,9 @@ class Producto extends Base\ModelClass
      */
     public $stockfis;
 
+    /** @var string */
+    public $type;
+
     /**
      * True -> allow sales without stock.
      *

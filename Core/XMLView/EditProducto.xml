@@ -40,6 +40,11 @@
                     <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"/>
                 </widget>
             </column>
+            <column name="type" order="150">
+                <widget type="select" fieldname="type">
+                    <values/>
+                </widget>
+            </column>
         </group>
         <group name="description" numcolumns="12">
             <column name="description" order="100">
