@@ -93,6 +93,9 @@ class Producto extends Base\ModelClass
      */
     public $descripcion;
 
+    /** @var string */
+    public $exceptionvat;
+
     /**
      * Date on which the product was registered.
      *

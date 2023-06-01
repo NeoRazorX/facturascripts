@@ -195,6 +195,7 @@ class PurchasesLineHTML
         $line->dtopor = (float)$formData['dtopor_' . $id];
         $line->dtopor2 = (float)$formData['dtopor2_' . $id];
         $line->descripcion = $formData['descripcion_' . $id];
+        $line->exceptionvat = $formData['exceptionvat_' . $id] ?? null;
         $line->irpf = (float)($formData['irpf_' . $id] ?? '0');
         $line->suplido = (bool)($formData['suplido_' . $id] ?? '0');
         $line->pvpunitario = (float)$formData['pvpunitario_' . $id];
@@ -300,6 +301,9 @@ class PurchasesLineHTML
             case 'dtopor2':
                 return self::dtopor2($i18n, $idlinea, $line, $model, 'dtopor2', 'purchasesFormActionWait');
 
+            case 'exceptionvat':
+                return self::exceptionvat($i18n, $idlinea, $line, $model, 'exceptionvat', 'purchasesFormActionWait');
+
             case 'irpf':
                 return self::irpf($i18n, $idlinea, $line, $model, 'purchasesFormAction');
 
@@ -325,21 +329,18 @@ class PurchasesLineHTML
             . '<div class="modal-dialog modal-dialog-centered">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">'
-            . $line->referencia
-            . '</h5>'
+            . '<h5 class="modal-title"><i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $line->referencia . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="form-row">'
+            . self::renderField($i18n, $idlinea, $line, $model, 'dtopor2')
             . self::renderField($i18n, $idlinea, $line, $model, 'recargo')
             . self::renderField($i18n, $idlinea, $line, $model, 'irpf')
-            . '</div>'
-            . '<div class="form-row">'
+            . self::renderField($i18n, $idlinea, $line, $model, 'exceptionvat')
             . self::renderField($i18n, $idlinea, $line, $model, 'suplido')
-            . self::renderField($i18n, $idlinea, $line, $model, 'dtopor2')
             . '</div>'
             . '<div class="form-row">'
             . self::renderNewModalFields($i18n, $idlinea, $line, $model)
