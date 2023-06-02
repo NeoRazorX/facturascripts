@@ -209,7 +209,7 @@ class DatabaseUpdaterTest extends TestCase
         $result = DatabaseUpdater::checkTable($this->tableName, $xmlCols, $this->xmlCons);
 
         // Esperamos obtener el sql necesario para modificar la columna .
-        $expected = $this->dataBase->getEngine()->getSQL()->sqlAlterModifyColumn($this->tableName, $xmlCols[0]);
+        $expected = $this->dataBase->getEngine()->getSQL()->sqlAlterColumnDefault($this->tableName, $xmlCols[0]);
 
         // Comprobamos que sean iguales.
         static::assertEquals($expected, $result);
@@ -238,7 +238,7 @@ class DatabaseUpdaterTest extends TestCase
         $result = DatabaseUpdater::checkTable($this->tableName, $xmlCols, $this->xmlCons);
 
         // Esperamos obtener el sql necesario para modificar la columna .
-        $expected = $this->dataBase->getEngine()->getSQL()->sqlAlterModifyColumn($this->tableName, $xmlCols[0]);
+        $expected = $this->dataBase->getEngine()->getSQL()->sqlAlterColumnNull($this->tableName, $xmlCols[0]);
 
         // Comprobamos que sean iguales.
         static::assertEquals($expected, $result);
