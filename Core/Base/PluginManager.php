@@ -185,7 +185,9 @@ final class PluginManager
     {
         $enabled = [];
         foreach (self::$enabledPlugins as $value) {
-            $enabled[] = $value['name'];
+            if ($value['enabled']) {
+                $enabled[] = $value['name'];
+            }
         }
 
         return $enabled;
