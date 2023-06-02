@@ -26,10 +26,10 @@ namespace FacturaScripts\Core\Lib;
  */
 class ProductType
 {
-    const PRODUCT_TYPE_NORMAL = 'Normal';
-    const PRODUCT_TYPE_SECOND_HAND = 'Segunda mano';
-    const PRODUCT_TYPE_SERVICE = 'Servicio';
-    const PRODUCT_TYPE_TRAVEL = 'Viaje';
+    const NORMAL = 'Normal';
+    const SECOND_HAND = 'Segunda mano';
+    const SERVICE = 'Servicio';
+    const TRAVEL = 'Viaje';
 
     /** @var array */
     private static $types = [];
@@ -43,10 +43,10 @@ class ProductType
     public static function all(): array
     {
         $defaultTypes = [
-            self::PRODUCT_TYPE_NORMAL => 'normal',
-            self::PRODUCT_TYPE_SECOND_HAND => 'second-hand',
-            self::PRODUCT_TYPE_SERVICE => 'service',
-            self::PRODUCT_TYPE_TRAVEL => 'travel'
+            self::NORMAL => 'normal',
+            self::SECOND_HAND => 'second-hand',
+            self::SERVICE => 'service',
+            self::TRAVEL => 'travel'
         ];
 
         return array_merge($defaultTypes, self::$types);
