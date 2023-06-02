@@ -60,7 +60,7 @@ class RegimenIVA
 
     public static function addException(string $key, string $value): void
     {
-        $fixedKey = substr($key, 0, 15);
+        $fixedKey = substr($key, 0, 20);
         self::$exceptions[$fixedKey] = $value;
     }
 
