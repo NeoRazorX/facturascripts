@@ -38,6 +38,7 @@ final class Migrations
     {
         self::unlockNullProducts();
         self::updateInvoiceStatus();
+        self::updateExceptionVatCompany();
         self::fixInvoiceLines();
         self::fixAccountingEntries();
         self::fixContacts();
@@ -176,6 +177,31 @@ final class Migrations
         // version 2022.06, fecha 05-05-2022
         if (self::db()->tableExists('productos')) {
             $sql = 'UPDATE productos SET bloqueado = false WHERE bloqueado IS NULL;';
+            self::db()->exec($sql);
+        }
+    }
+
+    private static function updateExceptionVatCompany()
+    {
+        $existIVA = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . FS_DB_NAME . "' AND TABLE_NAME = 'empresas' AND COLUMN_NAME = 'excepcioniva';";
+        $existVAT = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . FS_DB_NAME . "' AND TABLE_NAME = 'empresas' AND COLUMN_NAME = 'exceptioniva';";
+
+        // comprobamos si existe la columna excepcioniva en la tabla
+        // si no existe, pero si existe la columna exceptioniva
+        // renombramos la columna exceptioniva por excepcioniva de la tabla
+        if (empty(self::db()->select($existIVA)) && false === empty(self::db()->select($existVAT))) {
+            $sql = "ALTER TABLE empresas CHANGE exceptioniva excepcioniva VARCHAR(20) NULL DEFAULT NULL;";
+            self::db()->exec($sql);
+            return;
+        }
+
+        // si existe la columna excepcioniva y exceptioniva,
+        // copiamos el valor de la columna exceptioniva a la columna excepcioniva
+        // y eliminamos la columna exceptioniva
+        if (false === empty(self::db()->select($existIVA)) && false === empty(self::db()->select($existVAT))) {
+            $sql = "UPDATE empresas SET excepcioniva = exceptioniva;";
+            self::db()->exec($sql);
+            $sql = "ALTER TABLE empresas DROP COLUMN exceptioniva;";
             self::db()->exec($sql);
         }
     }

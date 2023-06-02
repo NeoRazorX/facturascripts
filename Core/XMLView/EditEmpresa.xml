@@ -100,7 +100,7 @@
                 </widget>
             </column>
             <column name="vat-exception" numcolumns="3" order="120">
-                <widget type="select" fieldname="exceptioniva">
+                <widget type="select" fieldname="excepcioniva">
                     <values/>
                 </widget>
             </column>
