@@ -20,8 +20,10 @@
 namespace FacturaScripts\Core\Lib\PDF;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\Utils;
+use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Dinamic\Model\AgenciaTransporte;
 use FacturaScripts\Dinamic\Model\AttachedFile;
@@ -177,61 +179,43 @@ abstract class PDFDocument extends PDFCore
         ];
     }
 
-    /**
-     * @param BusinessDocument $model
-     */
-    protected function getTaxesRows($model)
+    protected function getTaxesRows(BusinessDocument $model): array
     {
-        $eud = $model->getEUDiscount();
+        $lines = $model->getLines();
+        $subtotalsCal = Calculator::getSubtotals($model, $lines);
 
         $subtotals = [];
-        foreach ($model->getLines() as $line) {
-            if (empty($line->pvptotal) || $line->suplido) {
-                continue;
-            }
-
-            $key = $line->codimpuesto . '_' . $line->iva . '_' . $line->recargo;
+        foreach ($subtotalsCal['iva'] as $iva) {
+            $key = $iva['codimpuesto'] . '_' . $iva['iva'] . '_' . $iva['recargo'];
             if (!isset($subtotals[$key])) {
                 $subtotals[$key] = [
                     'tax' => $key,
                     'taxbase' => 0,
-                    'taxp' => $line->iva . '%',
+                    'taxp' => $iva['iva'] . '%',
                     'taxamount' => 0,
-                    'taxsurchargep' => $line->recargo . '%',
+                    'taxsurchargep' => $iva['recargo'] . '%',
                     'taxsurcharge' => 0
                 ];
 
-                $impuesto = new Impuesto();
-                if (!empty($line->codimpuesto) && $impuesto->loadFromCode($line->codimpuesto)) {
-                    $subtotals[$key]['tax'] = $impuesto->descripcion;
-                }
+                $subtotals[$key]['tax'] = Impuestos::get($iva['codimpuesto'])->descripcion;
             }
 
-            $subtotals[$key]['taxbase'] += $line->pvptotal * $eud;
-            $subtotals[$key]['taxamount'] += $line->pvptotal * $eud * $line->iva / 100;
-            $subtotals[$key]['taxsurcharge'] += $line->pvptotal * $eud * $line->recargo / 100;
+            $subtotals[$key]['taxbase'] += $iva['neto'];
+            $subtotals[$key]['taxamount'] += $iva['totaliva'];
+            $subtotals[$key]['taxsurcharge'] += $iva['totalrecargo'];
         }
 
         // irpf
-        foreach ($model->getLines() as $line) {
-            if (empty($line->irpf)) {
-                continue;
-            }
-
-            $key = 'irpf_' . $line->irpf;
-            if (!isset($subtotals[$key])) {
-                $subtotals[$key] = [
-                    'tax' => $this->i18n->trans('irpf') . ' ' . $line->irpf . '%',
-                    'taxbase' => 0,
-                    'taxp' => $line->irpf . '%',
-                    'taxamount' => 0,
-                    'taxsurchargep' => 0,
-                    'taxsurcharge' => 0
-                ];
-            }
-
-            $subtotals[$key]['taxbase'] += $line->pvptotal * $eud;
-            $subtotals[$key]['taxamount'] -= $line->pvptotal * $eud * $line->irpf / 100;
+        if ($subtotalsCal['irpf'] > 0) {
+            $key = 'irpf_' . $subtotalsCal['irpf'];
+            $subtotals[$key] = [
+                'tax' => $this->i18n->trans('irpf') . ' ' . $subtotalsCal['irpf'] . '%',
+                'taxbase' => $subtotalsCal['totalirpf'],
+                'taxp' => $subtotalsCal['irpf'] . '%',
+                'taxamount' => $subtotalsCal['totalirpf'],
+                'taxsurchargep' => 0,
+                'taxsurcharge' => 0
+            ];
         }
 
         // round

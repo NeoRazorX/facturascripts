@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\Contract\CalculatorModInterface;
+use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
@@ -112,6 +113,8 @@ final class Calculator
                 continue;
             }
 
+            self::vatRegimeSecondHand($doc, $line, $pvpTotal, $subtotals);
+
             // IRPF
             $subtotals['irpf'] = max([$line->irpf, $subtotals['irpf']]);
             $subtotals['totalirpf'] += $pvpTotal * $line->irpf / 100;
@@ -131,7 +134,7 @@ final class Calculator
             }
 
             $subtotals['iva'][$ivaKey]['neto'] += $pvpTotal;
-            $subtotals['iva'][$ivaKey]['netosindto'] += $line->pvptotal;
+            $subtotals['iva'][$ivaKey]['netosindto'] += $pvpTotal;
 
             if ($line->iva > 0) {
                 $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
@@ -313,5 +316,35 @@ final class Calculator
         }
 
         return $doc->save();
+    }
+
+    protected static function vatRegimeSecondHand(BusinessDocument $doc, BusinessDocumentLine $line, float &$pvpTotal, array &$subtotals): void
+    {
+        // comprobamos si la empresa del documento tiene un regimen especial de bienes usados
+        // y el producto de la línea es de segunda mano
+        // y si la línea tiene un coste
+        if ($doc->getCompany()->regimeniva !== RegimenIVA::TAX_SYSTEM_USED_GOODS
+            || $line->getProducto()->tipo !== ProductType::SECOND_HAND
+            || false === property_exists($line, 'coste')) {
+            return;
+        }
+
+        $pvpTotal = $pvpTotal - ($line->coste * $line->cantidad);
+
+        $ivaKey = '0|0';
+        if (false === array_key_exists($ivaKey, $subtotals['iva'])) {
+            $subtotals['iva'][$ivaKey] = [
+                'codimpuesto' => null,
+                'iva' => 0.0,
+                'neto' => $line->coste * $line->cantidad,
+                'netosindto' => $line->coste * $line->cantidad,
+                'recargo' => 0.0,
+                'totaliva' => 0.0,
+                'totalrecargo' => 0.0
+            ];
+        } else {
+            $subtotals['iva'][$ivaKey]['neto'] += $line->coste * $line->cantidad;
+            $subtotals['iva'][$ivaKey]['netosindto'] += $line->coste * $line->cantidad;
+        }
     }
 }

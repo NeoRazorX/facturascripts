@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
@@ -200,6 +201,8 @@ trait CommonLineHTML
             '';
 
         $subtotal = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+        self::vatRegimeSecondHand($model, $line, $subtotal);
+
         return '<div class="col col-lg-1 order-7 columSubtotal ' . $cssSubtotal . '">'
             . '<div class="d-lg-none mt-2 small">' . $i18n->trans('subtotal') . '</div>'
             . '<input type="number" name="linetotal_' . $idlinea . '"  value="' . number_format($subtotal, FS_NF0, '.', '')
@@ -337,5 +340,20 @@ trait CommonLineHTML
 
         return '<div class="col-lg-1 text-right order-7 columSubtotal ' . $cssSubtotal . '">' . $i18n->trans('subtotal') . '</div>'
             . '<div class="col-lg-1 text-right order-7 columNeto ' . $cssNeto . '">' . $i18n->trans('net') . '</div>';
+    }
+
+    protected static function vatRegimeSecondHand(TransformerDocument$model, BusinessDocumentLine $line, float &$subtotal)
+    {
+        // comprobamos si la empresa del documento tiene un regimen especial de bienes usados
+        // y el producto de la línea es de segunda mano
+        // y si la línea tiene un coste
+        if ($model->getCompany()->regimeniva !== RegimenIVA::TAX_SYSTEM_USED_GOODS
+            || $line->getProducto()->tipo !== ProductType::SECOND_HAND
+            || false === property_exists($line, 'coste')) {
+            return;
+        }
+
+        $pvpTotalTemp = $line->pvptotal - ($line->coste * $line->cantidad);
+        $subtotal = ($pvpTotalTemp * (100 + $line->iva + $line->recargo - $line->irpf) / 100) - $pvpTotalTemp + $line->pvptotal;
     }
 }
