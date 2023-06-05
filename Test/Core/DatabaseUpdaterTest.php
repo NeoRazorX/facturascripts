@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace FacturaScripts\Test\Core;
@@ -6,17 +7,20 @@ namespace FacturaScripts\Test\Core;
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\DatabaseUpdater;
+use FacturaScripts\Core\Model\Role;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Class DatabaseUpdaterTest
- * @package FacturaScripts\Test\Core
  */
 class DatabaseUpdaterTest extends TestCase
 {
     private string $tableName;
+
     private array $xmlCols;
+
     private array $xmlCons;
+
     private DataBase $dataBase;
 
     protected function setUp(): void
@@ -31,14 +35,14 @@ class DatabaseUpdaterTest extends TestCase
                 'type' => 'character varying(20)',
                 'null' => 'NO',
                 'default' => '',
-            ]
+            ],
         ];
 
         $this->xmlCons = [
             [
                 'name' => 'tests_pkey',
                 'constraint' => 'PRIMARY KEY (test_field)',
-            ]
+            ],
         ];
 
         $this->dataBase = new DataBase();
@@ -282,13 +286,13 @@ class DatabaseUpdaterTest extends TestCase
         ];
         $constraints = [
             [
-            'name' => 'ca_test2_test1',
-            'constraint' => 'FOREIGN KEY (cod_test) REFERENCES test_1 (cod_test) ON DELETE CASCADE ON UPDATE CASCADE',
+                'name' => 'ca_test2_test1',
+                'constraint' => 'FOREIGN KEY (cod_test) REFERENCES test_1 (cod_test) ON DELETE CASCADE ON UPDATE CASCADE',
             ],
             [
                 'name' => 'unique_test',
                 'constraint' => 'UNIQUE (cod_test)',
-            ]
+            ],
         ];
         $sql_query = $this->dataBase->getEngine()->getSQL()->sqlCreateTable('test_2', [$column], $constraints);
         $this->dataBase->exec($sql_query);
@@ -300,17 +304,17 @@ class DatabaseUpdaterTest extends TestCase
             [
                 'name' => 'test',
                 'constraint' => 'UNIQUE',
-            ]
+            ],
         ]);
 
         // Esperamos obtener el sql necesario para eliminar las dos constraints y agregar la nueva.
         $expected = $this->dataBase->getEngine()->getSQL()->sqlDropConstraint('test_2', [
             'name' => 'ca_test2_test1',
-            'type' => 'FOREIGN KEY'
+            'type' => 'FOREIGN KEY',
         ]);
         $expected .= $this->dataBase->getEngine()->getSQL()->sqlDropConstraint('test_2', [
             'name' => 'unique_test',
-            'type' => 'UNIQUE'
+            'type' => 'UNIQUE',
         ]);
         $expected .= $this->dataBase->getEngine()->getSQL()->sqlAddConstraint('test_2', 'test', 'UNIQUE');
 
@@ -391,9 +395,9 @@ class DatabaseUpdaterTest extends TestCase
         // normalizamos el separador de los path segun el sistema operativo donde corre el test.
         $result = str_replace('/', DIRECTORY_SEPARATOR, $result);
 
-        $expected = join(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Dinamic', 'Table', $this->tableName . '.xml']);
-        if(FS_DEBUG){
-            $expected = join(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Core', 'Table', $this->tableName . '.xml']);
+        $expected = implode(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Dinamic', 'Table', $this->tableName.'.xml']);
+        if (FS_DEBUG) {
+            $expected = implode(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Core', 'Table', $this->tableName.'.xml']);
         }
 
         static::assertEquals($expected, $result);
@@ -423,13 +427,13 @@ class DatabaseUpdaterTest extends TestCase
                 'type' => 'character varying(200)',
                 'null' => 'NO',
                 'default' => '',
-            ]
+            ],
         ], $columns);
         static::assertEquals([
             [
                 'name' => 'roles_pkey',
                 'constraint' => 'PRIMARY KEY (codrole)',
-            ]
+            ],
         ], $constraints);
     }
 
@@ -459,7 +463,7 @@ class DatabaseUpdaterTest extends TestCase
     {
         MiniLog::clear();
 
-        $file_path = join(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Dinamic', 'Table', $this->tableName . '.xml']);
+        $file_path = implode(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Dinamic', 'Table', $this->tableName.'.xml']);
         touch($file_path);
 
         $columns = [];
@@ -481,7 +485,7 @@ class DatabaseUpdaterTest extends TestCase
     {
         MiniLog::clear();
 
-        $file_path = join(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Dinamic', 'Table', $this->tableName . '.xml']);
+        $file_path = implode(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Dinamic', 'Table', $this->tableName.'.xml']);
         file_put_contents($file_path, '<?xml version="1.0" encoding="UTF-8"?><table></table>');
 
         $columns = [];
@@ -491,5 +495,57 @@ class DatabaseUpdaterTest extends TestCase
         static::assertEquals(false, $result);
 
         unlink($file_path);
+    }
+
+    /**
+     * Comprobamos que al instanciar un modelo se crea la tabla
+     * correspondiente.
+     */
+    public function testCreateTableFromModelInstanced()
+    {
+        $file_path = DatabaseUpdater::CHECKED_TABLES_FILE_PATH;
+
+        // Borramos el archivo json con las tablas checkeadas.
+        if (file_exists($file_path)) {
+            unlink($file_path);
+        }
+
+        // Borramos las tablas si existen.
+        $sql_query = $this->dataBase->getEngine()->getSQL()->sqlDropTable('roles');
+        $this->dataBase->exec($sql_query);
+
+        // Instanciamos el modelo Role que tiene pocas columnas y así
+        // podemos comparar mejor el string de las columnas en el test.
+        $role = new Role();
+
+        $resultColumns = $this->dataBase->getColumns($role->tableName());
+
+        self::assertArrayHasKey('codrole', $resultColumns);
+        self::assertArrayHasKey('descripcion', $resultColumns);
+
+        self::assertFileExists($file_path);
+        self::assertEquals('["roles"]', file_get_contents($file_path));
+
+        // Volvemos a instanciar el modelo de nuevo para comprobar
+        // que no se vuelve a checkear la tabla.
+        new Role();
+        self::assertEquals('["roles"]', file_get_contents($file_path));
+    }
+
+    /**
+     * Comprobamos que al instanciar un modelo se crea la tabla
+     * correspondiente.
+     */
+    public function testDeleteCheckedTablesFile()
+    {
+        $file_path = DatabaseUpdater::CHECKED_TABLES_FILE_PATH;
+
+        // Creamos el archivo para el test
+        if (! file_exists($file_path)) {
+            file_put_contents($file_path, json_encode([]));
+        }
+
+        // Borramos el archivo json con las tablas checkeadas.
+        self::assertTrue(DatabaseUpdater::removeCheckedTablesFile());
     }
 }

@@ -129,20 +129,23 @@ abstract class ModelCore
      */
     public function __construct(array $data = [])
     {
-        if (self::$dataBase === null) {
+        if (!(self::$dataBase instanceof DataBase)) {
             self::$dataBase = new DataBase();
-
-            $tables = Cache::get('fs_checked_tables');
-            if (is_array($tables) && !empty($tables)) {
-                self::$checkedTables = $tables;
-            }
         }
 
-        if (static::tableName() !== '' && false === in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
-            $this->toolBox()->i18nLog()->debug('table-checked', ['%tableName%' => static::tableName()]);
-            self::$checkedTables[] = static::tableName();
-            Cache::set('fs_checked_tables', self::$checkedTables);
-        }
+        if(DatabaseUpdater::check(static::tableName())) static::install();
+
+        // $tables = Cache::get('fs_checked_tables');
+        // if (is_array($tables) && !empty($tables)) {
+        //     self::$checkedTables = $tables;
+        // }
+        
+
+        // if (static::tableName() !== '' && false === in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
+        //     $this->toolBox()->i18nLog()->debug('table-checked', ['%tableName%' => static::tableName()]);
+        //     self::$checkedTables[] = static::tableName();
+        //     Cache::set('fs_checked_tables', self::$checkedTables);
+        // }
 
         $this->loadModelFields(self::$dataBase, static::tableName());
         if (empty($data)) {

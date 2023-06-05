@@ -31,6 +31,7 @@ use SimpleXMLElement;
  */
 class DatabaseUpdater
 {
+    const CHECKED_TABLES_FILE_PATH = FS_FOLDER . '/MyFiles/DatabaseUpdater.json';
 
     /**
      * DataBase object.
@@ -291,5 +292,64 @@ class DatabaseUpdater
     private static function sql(): DataBaseQueries
     {
         return static::dataBase()->getEngine()->getSQL();
+    }
+
+    public static function check(string $tableName)
+    {
+        $file_path = self::CHECKED_TABLES_FILE_PATH;
+
+        // Si no existe el archivo lo creamos con un array vacío
+        if (!file_exists($file_path)) file_put_contents($file_path, json_encode([]));
+
+        // Obtenemos las tablas checkeadas desde el archivo DatabaseUpdater.json
+        $checked_tables = json_decode(file_get_contents($file_path));
+
+        // Si la tabla no se encuentra en el array, la creamos o actualizamos
+        if(!in_array($tableName, $checked_tables)){
+
+            // Obtenemos las columnas y las constraints del archivo xml
+            $xmlCols = [];
+            $xmlCons = [];
+            if (false === self::getXmlTable($tableName, $xmlCols, $xmlCons)) {
+                ToolBox::i18nLog()->critical('error-on-xml-file', ['%fileName%' => $tableName . '.xml']);
+                return false;
+            }
+
+            // Obtenemos el sql necesario para crear o actualizar la tabla.
+            $sql = self::dataBase()->tableExists($tableName) ?
+                self::checkTable($tableName, $xmlCols, $xmlCons) :
+                self::generateTable($tableName, $xmlCols, $xmlCons);
+
+            // Ejecutamos la consulta sql.
+            if ($sql !== '' && false === self::dataBase()->exec($sql)) {
+                ToolBox::i18nLog()->critical('check-table', ['%tableName%' => $tableName]);
+                return false;
+            }
+
+            // Agregamos al array la tabla checkeada
+            array_push($checked_tables, $tableName);
+
+            // Guardamos las tablas checkeadas en el archivo
+            file_put_contents($file_path, json_encode($checked_tables));
+
+            ToolBox::i18nLog()->debug('table-checked', ['%tableName%' => $tableName]);
+
+            // Retornamos true para que llame al metodo install() del modelo.
+            return true;
+        };
+
+        // Retornamos false para que no llame al metodo install() del modelo.
+        return false;
+    }
+
+    public static function removeCheckedTablesFile()
+    {
+        $file_path = self::CHECKED_TABLES_FILE_PATH;
+
+        if (file_exists($file_path)){
+            return unlink($file_path);
+        }
+
+        return true;
     }
 }
