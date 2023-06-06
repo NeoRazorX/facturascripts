@@ -301,8 +301,16 @@ class DatabaseUpdater
     {
         $file_path = self::CHECKED_TABLES_FILE_PATH;
 
-        // Si no existe el archivo lo creamos con un array vacío
-        if (!file_exists($file_path)) file_put_contents($file_path, json_encode([]));
+        // Si no existe el archivo lo creamos con un array vacío        
+        if (!file_exists($file_path)){
+            // Si no existe el directorio, lo creamos
+            $folder = dirname($file_path);
+            if (false === file_exists($folder)) {
+                mkdir($folder, 0777, true);
+            }
+            // Creamos el archivo
+            file_put_contents($file_path, json_encode([]));
+        }
 
         // Obtenemos las tablas checkeadas desde el archivo DatabaseUpdater.json
         $checked_tables = json_decode(file_get_contents($file_path));

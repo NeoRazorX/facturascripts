@@ -96,6 +96,8 @@ final class Plugins
 
     public static function deploy(bool $clean = true, bool $initControllers = false): void
     {
+        DatabaseUpdater::removeCheckedTablesFile();
+        
         $pluginDeploy = new PluginDeploy();
         $pluginDeploy->deploy(
             self::folder() . DIRECTORY_SEPARATOR,
