@@ -133,7 +133,7 @@ abstract class ModelCore
             self::$dataBase = new DataBase();
         }
 
-        if(DatabaseUpdater::check(static::tableName())) static::install();
+        DatabaseUpdater::check(static::tableName());
 
         // $tables = Cache::get('fs_checked_tables');
         // if (is_array($tables) && !empty($tables)) {
