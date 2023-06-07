@@ -79,6 +79,11 @@ END;
             } catch (Exception $ex) {
                 Tools::log()->error($ex->getMessage());
             }
+
+            // si no se está ejecutando en modo cli y lleva más de 20 segundos, se detiene
+            if (PHP_SAPI != 'cli' && Kernel::getExecutionTime() > 20) {
+                break;
+            }
         }
     }
 }
