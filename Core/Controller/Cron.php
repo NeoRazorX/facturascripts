@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Controller;
 
+use Exception;
 use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
@@ -72,8 +73,12 @@ END;
             echo Tools::lang()->trans('running-plugin-cron', ['%pluginName%' => $pluginName]);
             Tools::log('cron')->notice('running-plugin-cron', ['%pluginName%' => $pluginName]);
 
-            $cron = new $cronClass($pluginName);
-            $cron->run();
+            try {
+                $cron = new $cronClass($pluginName);
+                $cron->run();
+            } catch (Exception $ex) {
+                Tools::log()->error($ex->getMessage());
+            }
         }
     }
 }
