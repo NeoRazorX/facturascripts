@@ -333,6 +333,10 @@ class Wizard extends Controller
             'Impuesto', 'Retencion', 'Serie', 'Provincia']);
         $this->saveAddress($codpais);
 
+        // settings
+        $this->appSettings->set('default', 'google-tag-manager', (bool)$this->request->request->get('google-tag-manager', false));
+        $this->appSettings->save();
+
         // change password
         $pass = $this->request->request->get('password', '');
         if ('' !== $pass && false === $this->saveNewPassword($pass)) {

@@ -179,6 +179,10 @@
                         </div>
                     {% endif %}
                     <div class="text-right">
+                        <div class="custom-control custom-checkbox custom-checkbox-right mb-3">
+                            <input type="checkbox" class="custom-control-input" id="googleTagManagerCheck1" name="google-tag-manager" value="1" {{ settings('default', 'google-tag-manager') ? 'checked' : '' }}>
+                            <label class="custom-control-label" for="googleTagManagerCheck1">{{ i18n.trans('send-anonymous-data') }}</label>
+                        </div>
                         <button type="submit" class="btn btn-primary" id="btnWizard">
                             {{ i18n.trans('continue') }}
                         </button>
@@ -193,6 +197,22 @@
 {% block css %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('Dinamic/Assets/CSS/custom.css') }}"/>
+    <style>
+        .custom-checkbox-right {
+            padding-left: 0;
+        }
+
+        .custom-checkbox-right .custom-control-label {
+            position: relative;
+            padding-right: 1.5rem;
+        }
+
+        .custom-checkbox-right .custom-control-label::before,
+        .custom-checkbox-right .custom-control-label::after{
+            right: 0;
+            left: auto;
+        }
+    </style>
 {% endblock %}
 
 {% block javascripts %}

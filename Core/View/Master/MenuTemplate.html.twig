@@ -17,10 +17,12 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
  */
 #}
+{% import 'Macro/GoogleTagManager.html.twig' as GoogleTagManager %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG') | slice(0, 2) }}"
       xml:lang="{{ constant('FS_LANG') | slice(0, 2) }}">
 <head>
+    {{ GoogleTagManager.head() }}
     {% block meta %}
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <title>{{ fsc.title | raw }}</title>
@@ -59,6 +61,7 @@
 </head>
 {% block fullBody %}
     <body>
+    {{ GoogleTagManager.body() }}
     {% block navbar %}
         <nav class="navbar navbar-expand navbar-dark bg-primary sticky-top d-print-none">
             {% block navbarContent %}
