@@ -86,21 +86,18 @@ class Cliente extends Base\ComercialContact
      */
     public $riesgomax;
 
-    public function checkVies(): bool
+    public function checkVies(bool $notify = true): bool
     {
         $address = $this->getDefaultAddress();
-        switch (Vies::check($this->cifnif, Paises::get($address->codpais)->codiso)) {
-            case -1:
-                return false;
-
-            case 1:
-                $this->toolBox()->i18nLog()->info('vat-number-has-vies', ['%vat-number%' => $this->cifnif]);
-                return true;
-
-            default:
-                $this->toolBox()->i18nLog()->warning('vat-number-not-vies', ['%vat-number%' => $this->cifnif]);
-                return false;
+        if (Vies::check($this->cifnif, Paises::get($address->codpais)->codiso) !== 1) {
+            return false;
         }
+
+        if ($notify) {
+            $this->toolBox()->i18nLog()->info('vat-number-has-vies', ['%vat-number%' => $this->cifnif]);
+        }
+
+        return true;
     }
 
     public function clear()

@@ -90,6 +90,7 @@ class SalesHeaderHTML
         $model->hora = $formData['hora'] ?? $model->hora;
         $model->nombrecliente = $formData['nombrecliente'] ?? $model->nombrecliente;
         $model->numero2 = $formData['numero2'] ?? $model->numero2;
+        $model->operacion = $formData['operacion'] ?? $model->operacion;
         $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
 
         foreach (['codagente', 'codtrans', 'fechadevengo', 'finoferta'] as $key) {
@@ -374,6 +375,7 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'hora')
             . self::renderField($i18n, $model, 'femail')
             . self::renderField($i18n, $model, 'user')
+            . self::renderField($i18n, $model, 'operacion')
             . self::renderField($i18n, $model, 'coddivisa')
             . self::renderField($i18n, $model, 'tasaconv')
             . self::renderField($i18n, $model, 'codagente')
@@ -582,6 +584,9 @@ class SalesHeaderHTML
 
             case 'numero2':
                 return self::numero2($i18n, $model);
+
+            case 'operacion':
+                return self::operacion($i18n, $model);
 
             case 'provincia':
                 return self::provincia($i18n, $model, 6, 100);

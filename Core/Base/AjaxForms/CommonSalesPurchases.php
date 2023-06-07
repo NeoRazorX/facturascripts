@@ -454,6 +454,25 @@ trait CommonSalesPurchases
             . '</div></div>';
     }
 
+    protected static function operacion(Translator $i18n, BusinessDocument $model): string
+    {
+        $options = ['<option value="">------</option>'];
+        foreach ($model::getOperationValues() as $key => $value) {
+            $options[] = ($key === $model->operacion) ?
+                '<option value="' . $key . '" selected>' . $i18n->trans($value) . '</option>' :
+                '<option value="' . $key . '">' . $i18n->trans($value) . '</option>';
+        }
+
+        $attributes = $model->editable ? 'name="operacion"' : 'disabled=""';
+        return '<div class="col-sm-6">'
+            . '<div class="form-group">'
+            . $i18n->trans('operation') . '</a>'
+            . '<select ' . $attributes . ' class="form-control">'
+            . implode('', $options) . '</select>'
+            . '</div>'
+            . '</div>';
+    }
+
     protected static function paid(Translator $i18n, BusinessDocument $model, string $jsName): string
     {
         if (empty($model->primaryColumnValue()) || false === method_exists($model, 'getReceipts')) {

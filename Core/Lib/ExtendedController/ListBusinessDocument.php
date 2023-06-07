@@ -28,6 +28,7 @@ use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
+use FacturaScripts\Dinamic\Model\Base\BusinessDocument;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
@@ -196,6 +197,15 @@ abstract class ListBusinessDocument extends ListController
         $carriers = $this->codeModel->all('agenciastrans', 'codtrans', 'nombre');
         $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
+
+        $operations = [];
+        foreach (BusinessDocument::getOperationValues() as $key => $value) {
+            $operations[] = [
+                'code' => $key,
+                'description' => self::toolBox()::i18n()->trans($value)
+            ];
+        }
+        $this->addFilterSelect($viewName, 'operacion', 'operation', 'operacion', $operations);
 
         // asignamos los colores
         $this->addColorStatus($viewName, $modelName);
