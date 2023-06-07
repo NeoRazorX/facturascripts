@@ -79,6 +79,17 @@ class EditContacto extends EditController
         }
     }
 
+    protected function checkViesAction(): bool
+    {
+        $model = $this->getModel();
+        if (false === $model->loadFromCode($this->request->get('code'))) {
+            return true;
+        }
+
+        $model->checkVies();
+        return true;
+    }
+
     protected function createCustomerAction()
     {
         $access = $this->getRolePermissions('EditCliente');
@@ -179,11 +190,14 @@ class EditContacto extends EditController
      *
      * @return bool
      */
-    protected function execPreviousAction($action)
+    protected function execPreviousAction($action): bool
     {
         switch ($action) {
             case 'add-file':
                 return $this->addFileAction();
+
+            case 'check-vies':
+                return $this->checkViesAction();
 
             case 'delete-file':
                 return $this->deleteFileAction();
@@ -242,8 +256,17 @@ class EditContacto extends EditController
             case $mainViewName:
                 parent::loadData($viewName, $view);
                 $this->loadLanguageValues($viewName);
-                if ($view->model->exists() && $this->permissions->allowUpdate) {
-                    $this->addConversionButtons($viewName, $view);
+                if ($view->model->exists()) {
+                    if ($this->permissions->allowUpdate) {
+                        $this->addConversionButtons($viewName, $view);
+                    }
+                    $this->addButton($viewName, [
+                        'action' => 'check-vies',
+                        'color' => 'info',
+                        'icon' => 'fas fa-check-double',
+                        'label' => 'check-vies',
+                        'type' => 'action'
+                    ]);
                 }
                 break;
         }

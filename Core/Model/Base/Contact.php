@@ -30,6 +30,8 @@ abstract class Contact extends ModelClass
 {
     use GravatarTrait;
 
+    abstract public function checkVies(): bool;
+
     /**
      * Tax identifier of the customer.
      *

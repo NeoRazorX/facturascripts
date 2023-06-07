@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\CuentaBancoProveedor as DinCuentaBancoProveedor;
 
@@ -54,6 +56,23 @@ class Proveedor extends Base\ComercialContact
      * @var int
      */
     public $idcontacto;
+
+    public function checkVies(): bool
+    {
+        $address = $this->getDefaultAddress();
+        switch (Vies::check($this->cifnif, Paises::get($address->codpais)->codiso)) {
+            case -1:
+                return false;
+
+            case 1:
+                $this->toolBox()->i18nLog()->info('vat-number-has-vies', ['%vat-number%' => $this->cifnif]);
+                return true;
+
+            default:
+                $this->toolBox()->i18nLog()->warning('vat-number-not-vies', ['%vat-number%' => $this->cifnif]);
+                return false;
+        }
+    }
 
     public function clear()
     {

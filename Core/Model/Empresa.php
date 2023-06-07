@@ -21,6 +21,8 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Empresas;
+use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Almacen as DinAlmacen;
@@ -73,6 +75,22 @@ class Empresa extends Base\Contact
 
     /** @var string */
     public $web;
+
+    public function checkVies(): bool
+    {
+        switch (Vies::check($this->cifnif, Paises::get($this->codpais)->codiso)) {
+            case -1:
+                return false;
+
+            case 1:
+                $this->toolBox()->i18nLog()->info('vat-number-has-vies', ['%vat-number%' => $this->cifnif]);
+                return true;
+
+            default:
+                $this->toolBox()->i18nLog()->warning('vat-number-not-vies', ['%vat-number%' => $this->cifnif]);
+                return false;
+        }
+    }
 
     public function clear()
     {
