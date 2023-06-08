@@ -75,7 +75,7 @@
                         {% endfor %}
                     </ul>
                     <ul class="navbar-nav flex-row ml-auto">
-                        {% for item in getIncludeViews('MenuTemplate', 'MenuIconAfter') %}
+                        {% for item in getIncludeViews('MenuTemplate', 'MenuIconBefore') %}
                             {% include item['path'] %}
                         {% endfor %}
                         <li class="nav-item{{ template == 'MegaSearch.html.twig' ? ' active' : '' }}"
@@ -104,7 +104,7 @@
                                 </a>
                             </div>
                         </li>
-                        {% for item in getIncludeViews('MenuTemplate', 'MenuIconBefore') %}
+                        {% for item in getIncludeViews('MenuTemplate', 'MenuIconAfter') %}
                             {% include item['path'] %}
                         {% endfor %}
                     </ul>
