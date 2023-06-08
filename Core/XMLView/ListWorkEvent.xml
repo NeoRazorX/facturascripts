@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view>
+    <columns>
+        <column name="id" order="100">
+            <widget type="text" fieldname="id"/>
+        </column>
+        <column name="name" order="110">
+            <widget type="text" fieldname="name"/>
+        </column>
+        <column name="value" order="120">
+            <widget type="text" fieldname="value"/>
+        </column>
+        <column name="creation-date" display="right" order="130">
+            <widget type="datetime" fieldname="creation_date"/>
+        </column>
+        <column name="done" display="center" order="140">
+            <widget type="checkbox" fieldname="done"/>
+        </column>
+        <column name="done-date" display="right" order="150">
+            <widget type="datetime" fieldname="done_date"/>
+        </column>
+    </columns>
+    <rows>
+        <row type="status">
+            <option color="success" fieldname="done" title="done">1</option>
+        </row>
+    </rows>
+</view>

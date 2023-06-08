@@ -22,6 +22,7 @@ use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\WorkQueue;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -52,6 +53,9 @@ $url = isset($argv[1]) && $argv[1] === '-cron' ?
     '/cron' :
     parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 Kernel::run($url);
+
+// ejecutamos la cola de trabajos
+WorkQueue::run();
 
 // guardamos los logs y cerramos la conexión a la base de datos
 $db = new DataBase();

@@ -24,6 +24,7 @@ use FacturaScripts\Core\Contract\ControllerInterface;
 use FacturaScripts\Core\Kernel;
 use FacturaScripts\Core\Plugins;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Core\WorkQueue;
 
 class Cron implements ControllerInterface
 {
@@ -55,7 +56,15 @@ END;
         echo PHP_EOL . PHP_EOL . Tools::lang()->trans('starting-cron') . PHP_EOL;
         Tools::log('cron')->notice('starting-cron');
 
+        // ejecutamos el cron de cada plugin
         $this->runPlugins();
+
+        // si se está ejecutando en modo cli, ejecutamos la cola de trabajos
+        while (PHP_SAPI === 'cli') {
+            if (false === WorkQueue::run()) {
+                break;
+            }
+        }
 
         $executionTime = Kernel::getExecutionTime();
         echo Tools::lang()->trans('finished-cron', ['%timeNeeded%' => $executionTime]) . PHP_EOL;

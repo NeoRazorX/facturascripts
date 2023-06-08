@@ -42,11 +42,12 @@ class ListLogMessage extends ListController
 
     protected function createViews()
     {
-        $this->createLogMessageView();
-        $this->createCronJobView();
+        $this->createViewsLogs();
+        $this->createViewsCronJobs();
+        $this->createViewsWorkEvents();
     }
 
-    protected function createCronJobView(string $viewName = 'ListCronJob')
+    protected function createViewsCronJobs(string $viewName = 'ListCronJob'): void
     {
         $this->addView($viewName, 'CronJob', 'crons', 'fas fa-cogs');
         $this->addSearchFields($viewName, ['jobname', 'pluginname']);
@@ -79,7 +80,7 @@ class ListLogMessage extends ListController
         ]);
     }
 
-    protected function createLogMessageView(string $viewName = 'ListLogMessage')
+    protected function createViewsLogs(string $viewName = 'ListLogMessage'): void
     {
         $this->addView($viewName, 'LogMessage', 'history', 'fas fa-history');
         $this->addSearchFields($viewName, ['context', 'message', 'uri']);
@@ -108,6 +109,19 @@ class ListLogMessage extends ListController
         // desactivamos el botón nuevo
         $this->setSettings($viewName, 'btnNew', false);
     }
+
+    protected function createViewsWorkEvents(string $viewName = 'ListWorkEvent'): void
+    {
+        $this->addView($viewName, 'WorkEvent', 'work-events', 'fas fa-calendar-alt');
+        $this->addSearchFields($viewName, ['name', 'value']);
+        $this->addOrderBy($viewName, ['creation_date'], 'creation-date');
+        $this->addOrderBy($viewName, ['done_date'], 'date');
+        $this->addOrderBy($viewName, ['id'], 'id');
+
+        // desactivamos el botón nuevo
+        $this->setSettings($viewName, 'btnNew', false);
+    }
+
 
     protected function enableCronJobAction(bool $value): void
     {
