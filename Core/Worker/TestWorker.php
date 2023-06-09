@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Worker;
 
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Model\WorkEvent;
-use FacturaScripts\Core\Template\Worker;
+use FacturaScripts\Core\Template\WorkerClass;
 
-final class TestWorker extends Worker
+final class TestWorker extends WorkerClass
 {
     public function run(WorkEvent $event): bool
     {
