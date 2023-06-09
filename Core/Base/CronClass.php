@@ -27,6 +27,7 @@ use FacturaScripts\Core\Model\CronJob;
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Rafael San José Tovar
+ * @deprecated since version 2023
  */
 abstract class CronClass
 {

@@ -2,6 +2,7 @@
 <phpunit
         beStrictAboutTestsThatDoNotTestAnything="false"
         bootstrap="Test/bootstrap.php"
+        colors="true"
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
         stopOnError="false"

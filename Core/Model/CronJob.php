@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,67 +19,123 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
+
 /**
  * Class to store log information when a plugin is executed from cron.
  *
  * @author Carlos García Gómez      <carlos@facturascripts.com>
  * @author Francesc Pineda Segarra  <francesc.pineda@x-netdigital.com>
  */
-class CronJob extends Base\ModelClass
+class CronJob extends ModelClass
 {
+    use ModelTrait;
 
-    use Base\ModelTrait;
-
-    /**
-     * Date of execution of the plugin with cron.
-     *
-     * @var string
-     */
+    /** @var string */
     public $date;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $done;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $duration;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $enabled;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int */
     public $id;
 
-    /**
-     * Name of the cron job.
-     *
-     * @var string
-     */
+    /** @var string */
     public $jobname;
 
-    /**
-     * Name of the plugin executed in cron.
-     *
-     * @var string
-     */
+    /** @var string */
     public $pluginname;
+
+    /** @var int */
+    private $start;
 
     public function clear()
     {
         parent::clear();
-        $this->date = date(self::DATETIME_STYLE);
+        $this->date = Tools::dateTime();
         $this->done = false;
         $this->duration = 0.0;
         $this->enabled = true;
+    }
+
+    public function done(): bool
+    {
+        $this->done = true;
+        $this->duration = round(microtime(true) - $this->start, 5);
+        $this->date = Tools::dateTime($this->start);
+        return $this->save();
+    }
+
+    public function every(string $period): bool
+    {
+        if (false === $this->enabled) {
+            return false;
+        }
+
+        if (false === $this->exists()) {
+            return true;
+        }
+
+        $this->start = microtime(true);
+        return strtotime($this->date) <= strtotime('-' . $period);
+    }
+
+    public function everyDayAt(int $hour, bool $strict = false): bool
+    {
+        return $this->everyDayAux('today', $hour, $strict);
+    }
+
+    public function everyFirstDayOfMonthAt(int $hour, bool $strict): bool
+    {
+        return $this->everyDayAux('first day of this month', $hour, $strict);
+    }
+
+    public function everyFridayAt(int $hour, bool $strict): bool
+    {
+        return $this->everyDayAux('friday', $hour, $strict);
+    }
+
+    public function everyLastDayOfMonthAt(int $hour, bool $strict): bool
+    {
+        return $this->everyDayAux('last day of this month', $hour, $strict);
+    }
+
+    public function everyMondayAt(int $hour, bool $strict): bool
+    {
+        return $this->everyDayAux('monday', $hour, $strict);
+    }
+
+    public function everySaturdayAt(int $hour, bool $strict): bool
+    {
+        return $this->everyDayAux('saturday', $hour, $strict);
+    }
+
+    public function everySundayAt(int $hour, bool $strict): bool
+    {
+        return $this->everyDayAux('sunday', $hour, $strict);
+    }
+
+    public function everyThursdayAt(int $hour, bool $strict): bool
+    {
+        return $this->everyDayAux('thursday', $hour, $strict);
+    }
+
+    public function everyTuesdayAt(int $hour, bool $strict): bool
+    {
+        return $this->everyDayAux('tuesday', $hour, $strict);
+    }
+
+    public function everyWednesdayAt(int $hour, bool $strict): bool
+    {
+        return $this->everyDayAux('wednesday', $hour, $strict);
     }
 
     public static function primaryColumn(): string
@@ -94,14 +150,37 @@ class CronJob extends Base\ModelClass
 
     public function test(): bool
     {
-        $utils = $this->toolBox()->utils();
-        $this->jobname = $utils->noHtml($this->jobname);
-        $this->pluginname = $utils->noHtml($this->pluginname);
+        $this->jobname = Tools::noHtml($this->jobname);
+        $this->pluginname = Tools::noHtml($this->pluginname);
+
         return parent::test();
     }
 
     public function url(string $type = 'auto', string $list = 'ListLogMessage?activetab=List'): string
     {
         return parent::url($type, $list);
+    }
+
+    private function everyDayAux(string $day, int $hour, bool $strict): bool
+    {
+        if (false === $this->enabled) {
+            return false;
+        }
+
+        if (false === $this->exists()) {
+            return true;
+        }
+
+        // devolvemos true si la última ejecución es anterior a hoy a la hora indicada
+        $last = strtotime($this->date);
+        $start = strtotime($day . ' +' . $hour . ' hours');
+
+        // si strict es true, solamente devolvemos true si es la hora exacta
+        $end = $strict ?
+            strtotime($day . ' +' . $hour . ' hours +59 minutes') :
+            strtotime($day . ' +23 hours +59 minutes');
+
+        $this->start = microtime(true);
+        return $last <= $start && $this->start >= $start && $this->start <= $end;
     }
 }
