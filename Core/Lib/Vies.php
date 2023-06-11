@@ -25,14 +25,14 @@ use FacturaScripts\Core\Tools;
 use SoapClient;
 
 /**
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class Vies
 {
     const VIES_URL = "https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl";
 
-    public static function check(string $cifnif, ?string $codiso = null): int
+    public static function check(string $cifnif, string $codiso): int
     {
         // quitamos caracteres especiales del cifnif
         $cifnif = str_replace(['_', '-', '.', ',', '?', '¿', ' ', '/', '\\'], '', strtoupper(trim($cifnif)));
@@ -43,21 +43,7 @@ class Vies
             return -1;
         }
 
-        // si codiso está vacío,
-        // obtenemos los primeros caracteres del cifnif mientras sean letras,
-        // hasta encontrar números
-        if (empty($codiso)) {
-            $codiso = '';
-            for ($i = 0; $i < strlen($cifnif); $i++) {
-                if (ctype_alpha($cifnif[$i])) {
-                    $codiso .= $cifnif[$i];
-                } else {
-                    break;
-                }
-            }
-        }
-
-        // si codiso sigue estando vacío o es diferente de 2 caracteres, devolvemos error
+        // si codiso está vacío o es diferente de 2 caracteres, devolvemos error
         if (empty($codiso) || strlen($codiso) !== 2) {
             ToolBox::i18nLog()->warning('invalid-iso-code', ['%iso-code%' => $codiso]);
             return -1;
@@ -68,17 +54,19 @@ class Vies
             $cifnif = substr($cifnif, 2);
         }
 
-        return static::setViesInfo($cifnif, $codiso);
+        return static::getViesInfo($cifnif, $codiso);
     }
 
-    private static function setViesInfo(string $vatNumber, string $codiso): int
+    private static function getViesInfo(string $vatNumber, string $codiso): int
     {
         try {
             $client = new SoapClient(self::VIES_URL, ['exceptions' => true]);
-            $json = json_encode($client->checkVat([
-                'countryCode' => $codiso,
-                'vatNumber' => $vatNumber,
-            ]));
+            $json = json_encode(
+                $client->checkVat([
+                    'countryCode' => $codiso,
+                    'vatNumber' => $vatNumber,
+                ])
+            );
 
             $result = json_decode($json, true);
             if (isset($result["valid"]) && $result["valid"]) {
