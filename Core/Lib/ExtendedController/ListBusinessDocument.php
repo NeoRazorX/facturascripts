@@ -27,8 +27,9 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\InvoiceOperation;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentGenerator;
-use FacturaScripts\Dinamic\Model\Base\BusinessDocument;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 /**
@@ -83,6 +84,15 @@ abstract class ListBusinessDocument extends ListController
             $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', $series);
         }
 
+        $operations = [['code' => '', 'description' => '------']];
+        foreach (InvoiceOperation::all() as $key => $value) {
+            $operations[] = [
+                'code' => $key,
+                'description' => Tools::lang()->trans($value)
+            ];
+        }
+        $this->addFilterSelect($viewName, 'operacion', 'operation', 'operacion', $operations);
+
         $payMethods = FormasPago::codeModel();
         if (count($payMethods) > 2) {
             $this->addFilterSelect($viewName, 'codpago', 'payment-method', 'codpago', $payMethods);
@@ -116,11 +126,11 @@ abstract class ListBusinessDocument extends ListController
 
         $stock = [
             ['code' => '', 'description' => '------'],
-            ['code' => -2, 'description' => self::toolBox()::i18n()->trans('book')],
-            ['code' => -1, 'description' => self::toolBox()::i18n()->trans('subtract')],
-            ['code' => 0, 'description' => self::toolBox()::i18n()->trans('do-nothing')],
-            ['code' => 1, 'description' => self::toolBox()::i18n()->trans('add')],
-            ['code' => 2, 'description' => self::toolBox()::i18n()->trans('foresee')]
+            ['code' => -2, 'description' => Tools::lang()->trans('book')],
+            ['code' => -1, 'description' => Tools::lang()->trans('subtract')],
+            ['code' => 0, 'description' => Tools::lang()->trans('do-nothing')],
+            ['code' => 1, 'description' => Tools::lang()->trans('add')],
+            ['code' => 2, 'description' => Tools::lang()->trans('foresee')]
         ];
         $this->addFilterSelect($viewName, 'actualizastock', 'stock', 'actualizastock', $stock);
 
@@ -198,15 +208,6 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterSelect($viewName, 'codtrans', 'carrier', 'codtrans', $carriers);
         $this->addFilterCheckbox($viewName, 'femail', 'email-not-sent', 'femail', 'IS', null);
 
-        $operations = [];
-        foreach (BusinessDocument::getOperationValues() as $key => $value) {
-            $operations[] = [
-                'code' => $key,
-                'description' => self::toolBox()::i18n()->trans($value)
-            ];
-        }
-        $this->addFilterSelect($viewName, 'operacion', 'operation', 'operacion', $operations);
-
         // asignamos los colores
         $this->addColorStatus($viewName, $modelName);
     }
@@ -247,6 +248,8 @@ abstract class ListBusinessDocument extends ListController
 
     private function tableColToNumber(string $name): string
     {
-        return strtolower(FS_DB_TYPE) == 'postgresql' ? 'CAST(' . $name . ' as integer)' : 'CAST(' . $name . ' as unsigned)';
+        return strtolower(FS_DB_TYPE) == 'postgresql' ?
+            'CAST(' . $name . ' as integer)' :
+            'CAST(' . $name . ' as unsigned)';
     }
 }
