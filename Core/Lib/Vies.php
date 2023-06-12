@@ -73,6 +73,7 @@ class Vies
                 return 1;
             }
 
+            ToolBox::i18nLog()->warning('vat-number-not-vies', ['%vat-number%' => $vatNumber]);
             return 0;
         } catch (Exception $ex) {
             Tools::log('VatInfoFinder')->error($ex->getCode() . ' - ' . $ex->getMessage());

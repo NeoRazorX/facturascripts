@@ -115,7 +115,11 @@
     <column>
         <name>observaciones</name>
         <type>text</type>
-    </column>    
+    </column>
+    <column>
+        <name>operacion</name>
+        <type>character varying(20)</type>
+    </column>
     <column>
         <name>tasaconv</name>
         <type>double precision</type>

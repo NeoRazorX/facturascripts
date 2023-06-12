@@ -80,6 +80,7 @@ class PurchasesHeaderHTML
         $model->hora = $formData['hora'] ?? $model->hora;
         $model->nombre = $formData['nombre'] ?? $model->nombre;
         $model->numproveedor = $formData['numproveedor'] ?? $model->numproveedor;
+        $model->operacion = $formData['operacion'] ?? $model->operacion;
         $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
 
         foreach (['fechadevengo'] as $key) {
@@ -200,6 +201,7 @@ class PurchasesHeaderHTML
             . self::renderField($i18n, $model, 'hora')
             . self::renderField($i18n, $model, 'femail')
             . self::renderField($i18n, $model, 'user')
+            . self::renderField($i18n, $model, 'operacion')
             . self::renderField($i18n, $model, 'coddivisa')
             . self::renderField($i18n, $model, 'tasaconv')
             . self::renderNewFields($i18n, $model)
@@ -301,6 +303,9 @@ class PurchasesHeaderHTML
 
             case 'numproveedor':
                 return self::numproveedor($i18n, $model);
+
+            case 'operacion':
+                return self::operacion($i18n, $model);
 
             case 'tasaconv':
                 return self::tasaconv($i18n, $model);
