@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,7 +34,6 @@ use FacturaScripts\Dinamic\Model\Producto as DinProducto;
  */
 class Agente extends Base\Contact
 {
-
     use Base\ModelTrait;
     use Base\ProductRelationTrait;
 
@@ -53,18 +52,21 @@ class Agente extends Base\Contact
     /** @var integer */
     public $idcontacto;
 
-    public function checkVies(bool $notify = true): bool
+    public function checkVies(): bool
     {
-        $contact = $this->getContact();
-        if (Vies::check($this->cifnif, Paises::get($contact->codpais)->codiso) !== 1) {
-            return false;
-        }
+        $codiso = Paises::get($this->getContact()->codpais)->codiso ?? '';
+        switch (Vies::check($this->cifnif ?? '', $codiso)) {
+            case -1:
+                return false;
 
-        if ($notify) {
-            $this->toolBox()->i18nLog()->info('vat-number-has-vies', ['%vat-number%' => $this->cifnif]);
-        }
+            case 1:
+                $this->toolBox()->i18nLog()->info('vat-number-has-vies', ['%vat-number%' => $this->cifnif]);
+                return true;
 
-        return true;
+            default:
+                $this->toolBox()->i18nLog()->warning('vat-number-not-vies', ['%vat-number%' => $this->cifnif]);
+                return false;
+        }
     }
 
     public function getContact(): DinContacto
