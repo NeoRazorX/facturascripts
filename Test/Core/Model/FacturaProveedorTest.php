@@ -48,7 +48,7 @@ final class FacturaProveedorTest extends TestCase
         self::removeTaxRegularization();
     }
 
-    public function testCreateNewInvoice()
+    public function testCreateNewInvoice(): void
     {
         // creamos el proveedor
         $supplier = $this->getRandomSupplier();
@@ -97,13 +97,13 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete(), 'cant-delete-invoice');
     }
 
-    public function testCanNotCreateInvoiceWithoutSupplier()
+    public function testCanNotCreateInvoiceWithoutSupplier(): void
     {
         $invoice = new FacturaProveedor();
         $this->assertFalse($invoice->save(), 'can-create-invoice-without-supplier');
     }
 
-    public function testInvoiceLineUpdateStock()
+    public function testInvoiceLineUpdateStock(): void
     {
         // creamos el proveedor
         $supplier = $this->getRandomSupplier();
@@ -148,7 +148,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($product->delete(), 'cant-delete-producto');
     }
 
-    public function testCreateInvoiceCreatesAccountingEntry()
+    public function testCreateInvoiceCreatesAccountingEntry(): void
     {
         // creamos el proveedor
         $supplier = $this->getRandomSupplier();
@@ -176,6 +176,8 @@ final class FacturaProveedorTest extends TestCase
         $entry = $invoice->getAccountingEntry();
         $this->assertTrue($entry->exists(), 'accounting-entry-not-found');
         $this->assertEquals($total, $entry->importe, 'accounting-entry-bad-importe');
+        $this->assertEquals($invoice->fecha, $entry->fecha, 'accounting-entry-bad-fecha');
+        $this->assertEquals($invoice->idasiento, $entry->idasiento, 'accounting-entry-bad-idasiento');
 
         // cambiamos el descuento para que cambie el total (el asiento debe cambiar)
         $invoice->dtopor1 = 50;
@@ -197,7 +199,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
-    public function testCantUpdateOrDeleteNonEditableInvoice()
+    public function testCantUpdateOrDeleteNonEditableInvoice(): void
     {
         // creamos el proveedor
         $supplier = $this->getRandomSupplier();
@@ -246,7 +248,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
-    public function testCreateInvoiceWithRetention()
+    public function testCreateInvoiceWithRetention(): void
     {
         // creamos un proveedor con retención
         $supplier = $this->getRandomSupplier();
@@ -293,7 +295,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
-    public function testCreateInvoiceWithSurcharge()
+    public function testCreateInvoiceWithSurcharge(): void
     {
         // creamos un proveedor con el régimen de recargo de equivalencia
         $supplier = $this->getRandomSupplier();
@@ -327,7 +329,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
-    public function testCreateInvoiceWithSupplied()
+    public function testCreateInvoiceWithSupplied(): void
     {
         // creamos un proveedor
         $supplier = $this->getRandomSupplier();
@@ -371,7 +373,7 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
-    public function testRenumber()
+    public function testRenumber(): void
     {
         // creamos un proveedor
         $supplier = $this->getRandomSupplier();
@@ -434,6 +436,46 @@ final class FacturaProveedorTest extends TestCase
 
         // eliminamos la serie
         $this->assertTrue($serie->delete(), 'cant-delete-serie');
+    }
+
+    public function testInvoiceWithDifferentAccountingDate(): void
+    {
+        // creamos un proveedor
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
+
+        // creamos una factura con fecha del 3 de marzo y fecha devengo del 28 de febrero
+        $date = date('03-03-Y');
+        $entryDate = date('28-02-Y');
+        $invoice = new FacturaProveedor();
+        $invoice->setSubject($supplier);
+        $invoice->setDate($date, $invoice->hora);
+        $invoice->fechadevengo = $entryDate;
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // añadimos una línea
+        $firstLine = $invoice->getNewLine();
+        $firstLine->cantidad = 2;
+        $firstLine->pvpunitario = 100;
+        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        // comprobamos la fecha de la factura
+        $this->assertEquals($date, $invoice->fecha, 'bad-invoice-date');
+
+        // comprobamos la fecha de devengo de la factura
+        $this->assertEquals($entryDate, $invoice->fechadevengo, 'bad-invoice-entry-date');
+
+        // comprobamos la fecha del asiento
+        $this->assertEquals($entryDate, $invoice->getAccountingEntry()->fecha, 'bad-entry-date');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
     }
 
     protected function tearDown(): void

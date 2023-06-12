@@ -167,15 +167,6 @@ trait InvoiceTrait
         return 'idfactura';
     }
 
-    public function test(): bool
-    {
-        if (empty($this->fechadevengo)) {
-            $this->fechadevengo = $this->fecha;
-        }
-
-        return parent::test();
-    }
-
     /**
      * @param string $field
      *
