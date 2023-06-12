@@ -269,7 +269,7 @@ trait CommonSalesPurchases
         }
 
         $attributes = $model->editable ? 'name="fechadevengo" required=""' : 'disabled=""';
-        $value = empty($model->fechadevengo) ? date('Y-m-d', strtotime($model->fecha)) : date('Y-m-d', strtotime($model->fechadevengo));
+        $value = empty($model->fechadevengo) ? '' : date('Y-m-d', strtotime($model->fechadevengo));
         return empty($model->subjectColumnValue()) ? '' : '<div class="col-sm">'
             . '<div class="form-group">' . $i18n->trans('accrual-date')
             . '<input type="date" ' . $attributes . ' value="' . $value . '" class="form-control"/>'
