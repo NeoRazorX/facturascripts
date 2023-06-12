@@ -22,12 +22,13 @@ namespace FacturaScripts\Core\Lib\Accounting;
 use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
-use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Join\PurchasesDocIrpfAccount;
 use FacturaScripts\Dinamic\Model\Join\PurchasesDocLineAccount;
 use FacturaScripts\Dinamic\Model\Join\SalesDocLineAccount;
@@ -229,17 +230,35 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addPurchaseTaxLines(Asiento $entry): bool
     {
-        $tax = new Impuesto();
-        foreach ($this->subtotals['iva'] as $key => $value) {
-            // search for tax data
-            $tax->loadFromCode($value['codimpuesto']);
-            $subAccount = $this->getTaxSupportedAccount($tax);
-            if (false === $subAccount->exists()) {
+        foreach ($this->subtotals['iva'] as $value) {
+            // buscamos el impuesto
+            $tax = Impuestos::get($value['codimpuesto']);
+            $subAccountSup = $this->getTaxSupportedAccount($tax);
+            if (false === $subAccountSup->exists()) {
                 ToolBox::i18nLog()->warning('ivasop-account-not-found');
                 return false;
             }
+            $subAccountImp = $this->getTaxImpactedAccount($tax);
+            if (false === $subAccountImp->exists()) {
+                ToolBox::i18nLog()->warning('ivarep-account-not-found');
+                return false;
+            }
 
-            if (false === $this->addTaxLine($entry, $subAccount, $this->counterpart, true, $value)) {
+            // si la operación es intracomunitaria, añadimos también la línea de IVA repercutido
+            if ($this->document->operacion === InvoiceOperation::INTRA_COMMUNITY) {
+                // calculamos el importe del IVA
+                $value['totaliva'] = round($value['neto'] * $tax->iva / 100, 2);
+                if (false === $this->addTaxLine($entry, $subAccountSup, $this->counterpart, true, $value)) {
+                    return false;
+                }
+                if (false === $this->addTaxLine($entry, $subAccountImp, $this->counterpart, false, $value)) {
+                    return false;
+                }
+                continue;
+            }
+
+            // añadimos la línea de IVA soportado
+            if (false === $this->addTaxLine($entry, $subAccountSup, $this->counterpart, true, $value)) {
                 return false;
             }
         }
@@ -306,18 +325,33 @@ class InvoiceToAccounting extends AccountingClass
      */
     protected function addSalesTaxLines(Asiento $entry): bool
     {
-        $tax = new Impuesto();
-        foreach ($this->subtotals['iva'] as $key => $value) {
+        foreach ($this->subtotals['iva'] as $value) {
             // search for tax data
-            $tax->loadFromCode($value['codimpuesto']);
-            $subAccount = $this->getTaxImpactedAccount($tax);
-            if (false === $subAccount->exists()) {
+            $tax = Impuestos::get($value['codimpuesto']);
+            $subAccountImp = $this->getTaxImpactedAccount($tax);
+            if (false === $subAccountImp->exists()) {
                 ToolBox::i18nLog()->warning('ivarep-subaccount-not-found');
                 return false;
             }
+            $subAccountSup = $this->getTaxSupportedAccount($tax);
+            if (false === $subAccountSup->exists()) {
+                ToolBox::i18nLog()->warning('ivasop-subaccount-not-found');
+                return false;
+            }
+
+            if ($this->document->operacion === InvoiceOperation::INTRA_COMMUNITY) {
+                $value['totaliva'] = round($value['neto'] * $tax->iva / 100, 2);
+                if (false === $this->addTaxLine($entry, $subAccountImp, $this->counterpart, false, $value)) {
+                    return false;
+                }
+                if (false === $this->addTaxLine($entry, $subAccountSup, $this->counterpart, true, $value)) {
+                    return false;
+                }
+                continue;
+            }
 
             // add tax line
-            if (false === $this->addTaxLine($entry, $subAccount, $this->counterpart, false, $value)) {
+            if (false === $this->addTaxLine($entry, $subAccountImp, $this->counterpart, false, $value)) {
                 return false;
             }
         }
