@@ -26,6 +26,7 @@ use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\FormasPago;
 use FacturaScripts\Core\DataSrc\Series;
+use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
@@ -457,7 +458,7 @@ trait CommonSalesPurchases
     protected static function operacion(Translator $i18n, BusinessDocument $model): string
     {
         $options = ['<option value="">------</option>'];
-        foreach ($model::getOperationValues() as $key => $value) {
+        foreach (InvoiceOperation::all() as $key => $value) {
             $options[] = ($key === $model->operacion) ?
                 '<option value="' . $key . '" selected>' . $i18n->trans($value) . '</option>' :
                 '<option value="' . $key . '">' . $i18n->trans($value) . '</option>';
@@ -465,8 +466,7 @@ trait CommonSalesPurchases
 
         $attributes = $model->editable ? ' name="operacion"' : ' disabled';
         return '<div class="col-sm-6">'
-            . '<div class="form-group">'
-            . $i18n->trans('operation') . '</a>'
+            . '<div class="form-group">' . $i18n->trans('operation')
             . '<select' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';

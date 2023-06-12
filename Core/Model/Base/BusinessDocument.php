@@ -449,12 +449,6 @@ abstract class BusinessDocument extends ModelOnChangeClass
             case 'numero':
                 BusinessDocumentCode::setNewCode($this, false);
                 break;
-
-            case 'operacion':
-                if ($this->operacion === self::$operacionIntracomunitaria && false === $this->setIntracomunitaria()) {
-                    return false;
-                }
-                break;
         }
 
         return parent::onChange($field);
@@ -490,7 +484,10 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     protected function setPreviousData(array $fields = [])
     {
-        $more = ['codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'numero', 'operacion', 'total'];
+        $more = [
+            'codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'numero',
+            'operacion', 'total'
+        ];
         parent::setPreviousData(array_merge($more, $fields));
     }
 }

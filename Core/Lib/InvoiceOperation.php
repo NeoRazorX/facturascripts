@@ -20,17 +20,13 @@
 namespace FacturaScripts\Core\Lib;
 
 /**
- * This class centralizes all types of products.
+ * This class centralizes all available invoice operations.
  *
- * @author Carlos García Gómez      <carlos@facturascripts.com>
- * @author Daniel Fernández Giménez <hola@danielfg.es>
+ * @author Carlos Garcia Gómez <carlos@facturascripts.com>
  */
-class ProductType
+class InvoiceOperation
 {
-    const NORMAL = 'Normal';
-    const SECOND_HAND = 'Segunda mano';
-    const SERVICE = 'Servicio';
-    const TRAVEL = 'Viaje';
+    const INTRA_COMMUNITY = 'intracomunitaria';
 
     /** @var array */
     private static $all = [];
@@ -43,13 +39,10 @@ class ProductType
 
     public static function all(): array
     {
-        $defaultTypes = [
-            self::NORMAL => 'normal',
-            self::SECOND_HAND => 'second-hand',
-            self::SERVICE => 'service',
-            self::TRAVEL => 'travel'
+        $defaults = [
+            self::INTRA_COMMUNITY => 'intra-community'
         ];
 
-        return array_merge($defaultTypes, self::$all);
+        return array_merge($defaults, self::$all);
     }
 }

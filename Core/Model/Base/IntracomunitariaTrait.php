@@ -19,9 +19,10 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Tools;
 
 /**
  * @author Daniel Fernández Giménez <hola@danielfg.es>
@@ -35,37 +36,12 @@ trait IntracomunitariaTrait
      */
     public $operacion;
 
-    /** @var string */
-    protected static $operacionIntracomunitaria = 'intracomunitaria';
-
-    /** @var array */
-    private static $operationValues = [];
-
-    /** @var array */
-    private static $paisesUE = [
-        'DE', 'AT', 'BE', 'BG', 'CZ', 'CY', 'HR', 'DK', 'SK', 'SI',
-        'EE', 'FI', 'FR', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU',
-        'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'GB', 'ES'
-    ];
-
-    public static function addOperationValue(string $key, string $value)
-    {
-        $key = substr($key, 0, 20);
-        self::$operationValues[$key] = $value;
-    }
-
-    public static function getOperationValues(): array
-    {
-        $default = [self::$operacionIntracomunitaria => 'intra-community'];
-        return array_merge($default, self::$operationValues);
-    }
-
     public function setIntracomunitaria(): bool
     {
         // comprobamos que el país de la empresa este dentro de la UE
         $company = $this->getCompany();
-        if (false === in_array(Paises::get($company->codpais)->codiso, self::$paisesUE)) {
-            ToolBox::i18nLog()->warning('company-not-in-eu');
+        if (false === Paises::miembroUE($company->codpais)) {
+            Tools::log()->warning('company-not-in-eu');
             return false;
         }
 
@@ -73,30 +49,31 @@ trait IntracomunitariaTrait
         // o el país de la dirección de facturación cuando es de compra
         // este dentro de la UE
         $subject = $this->getSubject();
-        $country = $subject->modelClassName() === 'Cliente'
+        $country = property_exists($this, 'codpais')
             ? Paises::get($this->codpais)
             : Paises::get($subject->getDefaultAddress()->codpais);
-        if (false === in_array($country->codiso, self::$paisesUE)) {
-            ToolBox::i18nLog()->warning('subject-not-in-eu');
+        if (false === Paises::miembroUE($country->codpais)) {
+            Tools::log()->warning('subject-not-in-eu');
             return false;
         }
 
         // si el país de la empresa es el mismo que el del cliente/proveedor, no es intracomunitario
         if ($company->codpais === $country->codpais) {
-            ToolBox::i18nLog()->warning('company-subject-same-country');
+            Tools::log()->warning('company-subject-same-country');
             return false;
         }
 
         // comprobamos el vies de la empresa
-        if (false === $company->checkVies(false)) {
+        if (false === $company->checkVies()) {
             return false;
         }
 
         // comprobamos el vies del documento
-        if (Vies::check($this->cifnif, $country->codiso) !== 1) {
-            return false;
+        if (Vies::check($this->cifnif, $country->codiso) === 1) {
+            $this->operacion = InvoiceOperation::INTRA_COMMUNITY;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }
