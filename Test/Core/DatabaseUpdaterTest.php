@@ -395,9 +395,9 @@ class DatabaseUpdaterTest extends TestCase
         // normalizamos el separador de los path segun el sistema operativo donde corre el test.
         $result = str_replace('/', DIRECTORY_SEPARATOR, $result);
 
-        $expected = implode(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Dinamic', 'Table', $this->tableName.'.xml']);
+        $expected = implode(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Dinamic', 'Table', $this->tableName . '.xml']);
         if (FS_DEBUG) {
-            $expected = implode(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Core', 'Table', $this->tableName.'.xml']);
+            $expected = implode(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Core', 'Table', $this->tableName . '.xml']);
         }
 
         static::assertEquals($expected, $result);
@@ -463,7 +463,7 @@ class DatabaseUpdaterTest extends TestCase
     {
         MiniLog::clear();
 
-        $file_path = implode(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Dinamic', 'Table', $this->tableName.'.xml']);
+        $file_path = implode(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Dinamic', 'Table', $this->tableName . '.xml']);
         touch($file_path);
 
         $columns = [];
@@ -485,7 +485,7 @@ class DatabaseUpdaterTest extends TestCase
     {
         MiniLog::clear();
 
-        $file_path = implode(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Dinamic', 'Table', $this->tableName.'.xml']);
+        $file_path = implode(DIRECTORY_SEPARATOR, [FS_FOLDER, 'Dinamic', 'Table', $this->tableName . '.xml']);
         file_put_contents($file_path, '<?xml version="1.0" encoding="UTF-8"?><table></table>');
 
         $columns = [];
@@ -505,10 +505,8 @@ class DatabaseUpdaterTest extends TestCase
     {
         $file_path = DatabaseUpdater::CHECKED_TABLES_FILE_PATH;
 
-        // Borramos el archivo json con las tablas checkeadas.
-        if (file_exists($file_path)) {
-            unlink($file_path);
-        }
+        // Borramos las tablas checkeadas.
+        DatabaseUpdater::removeCheckedTablesFile();
 
         // Borramos las tablas si existen.
         $sql_query = $this->dataBase->getEngine()->getSQL()->sqlDropTable('roles');
@@ -518,7 +516,7 @@ class DatabaseUpdaterTest extends TestCase
         // podemos comparar mejor el string de las columnas en el test.
         $role = new Role();
 
-        $resultColumns = $this->dataBase->getColumns($role->tableName());
+        $resultColumns = $this->dataBase->getColumns($role::tableName());
 
         self::assertArrayHasKey('codrole', $resultColumns);
         self::assertArrayHasKey('descripcion', $resultColumns);
@@ -541,7 +539,7 @@ class DatabaseUpdaterTest extends TestCase
         $file_path = DatabaseUpdater::CHECKED_TABLES_FILE_PATH;
 
         // Creamos el archivo para el test
-        if (! file_exists($file_path)) {
+        if (!file_exists($file_path)) {
             file_put_contents($file_path, json_encode([]));
         }
 

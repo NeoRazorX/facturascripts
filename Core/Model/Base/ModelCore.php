@@ -133,19 +133,18 @@ abstract class ModelCore
             self::$dataBase = new DataBase();
         }
 
-        DatabaseUpdater::check(static::tableName());
-
-        // $tables = Cache::get('fs_checked_tables');
-        // if (is_array($tables) && !empty($tables)) {
-        //     self::$checkedTables = $tables;
-        // }
-        
-
-        // if (static::tableName() !== '' && false === in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
-        //     $this->toolBox()->i18nLog()->debug('table-checked', ['%tableName%' => static::tableName()]);
-        //     self::$checkedTables[] = static::tableName();
-        //     Cache::set('fs_checked_tables', self::$checkedTables);
-        // }
+        // Comprobamos si la tabla se ha comprobado anteriormente
+        if(false === DatabaseUpdater::tableChecked(static::tableName()))
+        {
+            // Si no se ha comprobado anteriormente, sincroniza la base de datos
+            // con la estructura de la tabla que se encuentra en el archivo XML
+            if(true === $this->syncDatabaseFromXmlData())
+            {
+                // Si la sincronización ha sido correcta, agregamos la tabla al array
+                // de las tablas comprobadas
+                DatabaseUpdater::addCheckedTable(static::tableName());
+            }
+        }
 
         $this->loadModelFields(self::$dataBase, static::tableName());
         if (empty($data)) {
@@ -282,11 +281,12 @@ abstract class ModelCore
     }
 
     /**
-     * Checks and updates the structure of the table if necessary.
+     * Sincroniza la base de datos con la estructura de la tabla
+     * que se encuentra en el archivo XML
      *
      * @return bool
      */
-    private function checkTable(): bool
+    private function syncDatabaseFromXmlData(): bool
     {
         $xmlCols = [];
         $xmlCons = [];
