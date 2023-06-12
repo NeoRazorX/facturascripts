@@ -34,6 +34,9 @@
         <link rel="apple-touch-icon" sizes="180x180"
               href="{{ asset('Dinamic/Assets/Images/apple-icon-180x180.png') }}"/>
     {% endblock %}
+    {% for item in getIncludeViews('MenuTemplate', 'CssBefore') %}
+        {% include item['path'] %}
+    {% endfor %}
     {% block css %}
         <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.min.css') }}"/>
         <link rel="stylesheet" href="{{ asset('node_modules/@fortawesome/fontawesome-free/css/all.min.css') }}"/>
@@ -42,6 +45,12 @@
     {# Adds custom CSS assets #}
     {% for css in assetManager.get('css') %}
         <link rel="stylesheet" href="{{ css }}"/>
+    {% endfor %}
+    {% for item in getIncludeViews('MenuTemplate', 'CssAfter') %}
+        {% include item['path'] %}
+    {% endfor %}
+    {% for item in getIncludeViews('MenuTemplate', 'JsHeadBefore') %}
+        {% include item['path'] %}
     {% endfor %}
     {% block javascripts %}
         <script src="{{ asset('node_modules/jquery/dist/jquery.min.js') }}"></script>
@@ -54,6 +63,9 @@
     {# Adds custom JS assets #}
     {% for js in assetManager.get('js') %}
         <script src="{{ js }}"></script>
+    {% endfor %}
+    {% for item in getIncludeViews('MenuTemplate', 'JsHeadAfter') %}
+        {% include item['path'] %}
     {% endfor %}
     {{ debugBarRender.renderHead() | raw }}
 </head>
@@ -131,6 +143,9 @@
     </div>
     {% block body %}
     {% endblock %}
+    {% for item in getIncludeViews('MenuTemplate', 'JsFooter') %}
+        {% include item['path'] %}
+    {% endfor %}
     <br/>
     <br/>
     <br/>
