@@ -76,17 +76,10 @@ class Empresa extends Base\Contact
     /** @var string */
     public $web;
 
-    public function checkVies(bool $notify = true): bool
+    public function checkVies(): bool
     {
-        if (Vies::check($this->cifnif, Paises::get($this->codpais)->codiso) !== 1) {
-            return false;
-        }
-
-        if ($notify) {
-            $this->toolBox()->i18nLog()->info('vat-number-has-vies', ['%vat-number%' => $this->cifnif]);
-        }
-
-        return true;
+        $codiso = Paises::get($this->codpais)->codiso ?? '';
+        return Vies::check($this->cifnif ?? '', $codiso) === 1;
     }
 
     public function clear()

@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\CuentaBancoCliente as DinCuentaBancoCliente;
 
@@ -34,78 +35,40 @@ class Cliente extends Base\ComercialContact
 {
     use Base\ModelTrait;
 
-    /**
-     * Agent assigned to this customer. Agent model.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codagente;
 
-    /**
-     * Group to which the client belongs.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codgrupo;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codtarifa;
 
-    /**
-     * Preferred payment days when calculating the due date of invoices.
-     * Days separated by commas: 1,15,31
-     *
-     * @var string
-     */
+    /** @var string */
     public $diaspago;
 
-    /**
-     * Default contact for the shipment of products
-     *
-     * @var integer
-     */
+    /** @var integer */
     public $idcontactoenv;
 
-    /**
-     * Default contact for sending documentation
-     *
-     * @var integer
-     */
+    /** @var integer */
     public $idcontactofact;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $riesgoalcanzado;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $riesgomax;
 
     public function checkVies(): bool
     {
         $codiso = Paises::get($this->getDefaultAddress()->codpais)->codiso ?? '';
-        switch (Vies::check($this->cifnif ?? '', $codiso)) {
-            case -1:
-                return false;
-
-            case 1:
-                $this->toolBox()->i18nLog()->info('vat-number-has-vies', ['%vat-number%' => $this->cifnif]);
-                return true;
-
-            default:
-                $this->toolBox()->i18nLog()->warning('vat-number-not-vies', ['%vat-number%' => $this->cifnif]);
-                return false;
-        }
+        return Vies::check($this->cifnif ?? '', $codiso) === 1;
     }
 
     public function clear()
     {
         parent::clear();
-        $this->codretencion = $this->toolBox()->appSettings()->get('default', 'codretencion');
+        $this->codretencion = Tools::settings('default', 'codretencion');
     }
 
     /**
@@ -206,7 +169,7 @@ class Cliente extends Base\ComercialContact
     public function test(): bool
     {
         if (empty($this->nombre)) {
-            $this->toolBox()->i18nLog()->warning(
+            Tools::log()->warning(
                 'field-can-not-be-null',
                 ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]
             );
@@ -214,7 +177,7 @@ class Cliente extends Base\ComercialContact
         }
 
         if (!empty($this->codcliente) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcliente)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codcliente, '%column%' => 'codcliente', '%min%' => '1', '%max%' => '10']
             );

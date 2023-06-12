@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\CuentaBancoProveedor as DinCuentaBancoProveedor;
 
@@ -34,50 +35,26 @@ class Proveedor extends Base\ComercialContact
 {
     use Base\ModelTrait;
 
-    /**
-     * True -> the supplier is a creditor, that is, we do not buy him merchandise,
-     * we buy services, etc.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $acreedor;
 
-    /**
-     * Transport tax.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codimpuestoportes;
 
-    /**
-     * Default contact.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idcontacto;
 
     public function checkVies(): bool
     {
         $codiso = Paises::get($this->getDefaultAddress()->codpais)->codiso ?? '';
-        switch (Vies::check($this->cifnif ?? '', $codiso)) {
-            case -1:
-                return false;
-
-            case 1:
-                $this->toolBox()->i18nLog()->info('vat-number-has-vies', ['%vat-number%' => $this->cifnif]);
-                return true;
-
-            default:
-                $this->toolBox()->i18nLog()->warning('vat-number-not-vies', ['%vat-number%' => $this->cifnif]);
-                return false;
-        }
+        return Vies::check($this->cifnif ?? '', $codiso) === 1;
     }
 
     public function clear()
     {
         parent::clear();
         $this->acreedor = false;
-        $this->codimpuestoportes = $this->toolBox()->appSettings()->get('default', 'codimpuesto');
+        $this->codimpuestoportes = Tools::settings('default', 'codimpuesto');
     }
 
     public function codeModelSearch(string $query, string $fieldCode = '', array $where = []): array
@@ -143,7 +120,7 @@ class Proveedor extends Base\ComercialContact
     public function test(): bool
     {
         if (empty($this->nombre)) {
-            $this->toolBox()->i18nLog()->warning(
+            Tools::log()->warning(
                 'field-can-not-be-null',
                 ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]
             );
@@ -151,7 +128,7 @@ class Proveedor extends Base\ComercialContact
         }
 
         if (!empty($this->codproveedor) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codproveedor)) {
-            $this->toolBox()->i18nLog()->warning(
+            Tools::log()->warning(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codproveedor, '%column%' => 'codproveedor', '%min%' => '1', '%max%' => '10']
             );

@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core\Lib;
 
 use Exception;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Tools;
 use SoapClient;
 
@@ -39,13 +38,13 @@ class Vies
 
         // si el cifnif tiene menos de 5 caracteres, devolvemos error
         if (strlen($cifnif) < 5) {
-            ToolBox::i18nLog()->warning('vat-number-is-short', ['%vat-number%' => $cifnif]);
+            Tools::log()->warning('vat-number-is-short', ['%vat-number%' => $cifnif]);
             return -1;
         }
 
         // si codiso está vacío o es diferente de 2 caracteres, devolvemos error
         if (empty($codiso) || strlen($codiso) !== 2) {
-            ToolBox::i18nLog()->warning('invalid-iso-code', ['%iso-code%' => $codiso]);
+            Tools::log()->warning('invalid-iso-code', ['%iso-code%' => $codiso]);
             return -1;
         }
 
@@ -73,7 +72,7 @@ class Vies
                 return 1;
             }
 
-            ToolBox::i18nLog()->warning('vat-number-not-vies', ['%vat-number%' => $vatNumber]);
+            Tools::log()->warning('vat-number-not-vies', ['%vat-number%' => $vatNumber]);
             return 0;
         } catch (Exception $ex) {
             Tools::log('VatInfoFinder')->error($ex->getCode() . ' - ' . $ex->getMessage());
@@ -83,7 +82,7 @@ class Vies
         }
 
         // se ha producido error al comprobar el VAT number con VIES
-        ToolBox::i18nLog()->warning('error-checking-vat-number', ['%vat-number%' => $vatNumber]);
+        Tools::log()->warning('error-checking-vat-number', ['%vat-number%' => $vatNumber]);
         return -1;
     }
 }

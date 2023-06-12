@@ -463,12 +463,11 @@ trait CommonSalesPurchases
                 '<option value="' . $key . '">' . $i18n->trans($value) . '</option>';
         }
 
-        $attributes = $model->editable ? 'name="operacion"' : 'disabled=""';
+        $attributes = $model->editable ? ' name="operacion"' : ' disabled';
         return '<div class="col-sm-6">'
             . '<div class="form-group">'
             . $i18n->trans('operation') . '</a>'
-            . '<select ' . $attributes . ' class="form-control">'
-            . implode('', $options) . '</select>'
+            . '<select' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
             . '</div>'
             . '</div>';
     }

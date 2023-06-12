@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Model;
 use FacturaScripts\Core\DataSrc\Agentes;
 use FacturaScripts\Core\DataSrc\Paises;
 use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 
@@ -55,18 +56,7 @@ class Agente extends Base\Contact
     public function checkVies(): bool
     {
         $codiso = Paises::get($this->getContact()->codpais)->codiso ?? '';
-        switch (Vies::check($this->cifnif ?? '', $codiso)) {
-            case -1:
-                return false;
-
-            case 1:
-                $this->toolBox()->i18nLog()->info('vat-number-has-vies', ['%vat-number%' => $this->cifnif]);
-                return true;
-
-            default:
-                $this->toolBox()->i18nLog()->warning('vat-number-not-vies', ['%vat-number%' => $this->cifnif]);
-                return false;
-        }
+        return Vies::check($this->cifnif ?? '', $codiso) === 1;
     }
 
     public function getContact(): DinContacto
@@ -123,11 +113,11 @@ class Agente extends Base\Contact
 
     public function test(): bool
     {
-        $this->cargo = $this->toolBox()->utils()->noHtml($this->cargo);
+        $this->cargo = Tools::noHtml($this->cargo);
         $this->debaja = !empty($this->fechabaja);
 
         if ($this->codagente && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codagente)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codagente, '%column%' => 'codagente', '%min%' => '1', '%max%' => '10']
             );
