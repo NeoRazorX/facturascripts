@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,7 +34,6 @@ use FacturaScripts\Dinamic\Model\Producto as DinProducto;
  */
 class Agente extends Base\Contact
 {
-
     use Base\ModelTrait;
     use Base\ProductRelationTrait;
 
@@ -55,8 +54,8 @@ class Agente extends Base\Contact
 
     public function checkVies(): bool
     {
-        $contact = $this->getContact();
-        switch (Vies::check($this->cifnif, Paises::get($contact->codpais)->codiso)) {
+        $codiso = Paises::get($this->getContact()->codpais)->codiso ?? '';
+        switch (Vies::check($this->cifnif ?? '', $codiso)) {
             case -1:
                 return false;
 

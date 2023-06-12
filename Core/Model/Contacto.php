@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -34,7 +34,6 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
  */
 class Contacto extends Base\Contact
 {
-
     use Base\ModelTrait;
     use Base\PasswordTrait;
 
@@ -222,7 +221,8 @@ class Contacto extends Base\Contact
 
     public function checkVies(): bool
     {
-        switch (Vies::check($this->cifnif, Paises::get($this->codpais)->codiso)) {
+        $codiso = Paises::get($this->codpais)->codiso ?? '';
+        switch (Vies::check($this->cifnif ?? '', $codiso)) {
             case -1:
                 return false;
 

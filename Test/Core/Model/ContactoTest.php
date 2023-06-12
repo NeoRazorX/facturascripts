@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,7 @@ final class ContactoTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $contact = new Contacto();
         $contact->nombre = 'Test';
@@ -40,7 +40,7 @@ final class ContactoTest extends TestCase
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
     }
 
-    public function testCreateEmail()
+    public function testCreateEmail(): void
     {
         $contact = new Contacto();
         $contact->email = 'pepe@test.es';
@@ -50,7 +50,7 @@ final class ContactoTest extends TestCase
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
     }
 
-    public function testCreateCustomerAddress()
+    public function testCreateCustomerAddress(): void
     {
         // creamos el cliente
         $customer = $this->getRandomCustomer();
@@ -72,7 +72,7 @@ final class ContactoTest extends TestCase
         $this->assertTrue($customer->delete(), 'customer-cant-delete');
     }
 
-    public function testCreateSupplierAddress()
+    public function testCreateSupplierAddress(): void
     {
         // creamos el proveedor
         $supplier = $this->getRandomSupplier();
@@ -94,7 +94,7 @@ final class ContactoTest extends TestCase
         $this->assertTrue($supplier->delete(), 'supplier-cant-delete');
     }
 
-    public function testCantCreateEmpty()
+    public function testCantCreateEmpty(): void
     {
         $contact = new Contacto();
         $contact->nombre = '';
@@ -105,7 +105,7 @@ final class ContactoTest extends TestCase
         $this->assertFalse($contact->save(), 'contact-cant-save-empty');
     }
 
-    public function testBadEmail()
+    public function testBadEmail(): void
     {
         $contact = new Contacto();
         $contact->email = 'pepe-mail';
@@ -119,7 +119,7 @@ final class ContactoTest extends TestCase
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
     }
 
-    public function testHtmlOnFields()
+    public function testHtmlOnFields(): void
     {
         $contact = new Contacto();
         $contact->nombre = '<script>alert("test");</script>';
@@ -154,7 +154,7 @@ final class ContactoTest extends TestCase
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
     }
 
-    public function testNotNullFields()
+    public function testNotNullFields(): void
     {
         // creamos un contacto
         $contact = new Contacto();
@@ -176,6 +176,22 @@ final class ContactoTest extends TestCase
 
         // eliminamos
         $this->assertTrue($contact->delete(), 'contact-cant-delete');
+    }
+
+    public function testVies(): void
+    {
+        // creamos un contacto sin cif/nif
+        $contact = new Contacto();
+        $contact->nombre = 'Test';
+        $this->assertFalse($contact->checkVies());
+
+        // asignamos un cif/nif incorrecto
+        $contact->cifnif = '123456789';
+        $this->assertFalse($contact->checkVies());
+
+        // asignamos un cif/nif correcto
+        $contact->cifnif = 'ESB01563311';
+        $this->assertTrue($contact->checkVies());
     }
 
     protected function tearDown(): void

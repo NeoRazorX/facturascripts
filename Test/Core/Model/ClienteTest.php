@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@ final class ClienteTest extends TestCase
 {
     use LogErrorsTrait;
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $cliente = new Cliente();
         $cliente->nombre = 'Test';
@@ -44,7 +44,7 @@ final class ClienteTest extends TestCase
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
-    public function testCantCreateEmpty()
+    public function testCantCreateEmpty(): void
     {
         $cliente = new Cliente();
         $cliente->nombre = '';
@@ -55,7 +55,7 @@ final class ClienteTest extends TestCase
         $this->assertFalse($cliente->exists(), 'cliente-persisted');
     }
 
-    public function testBadEmail()
+    public function testBadEmail(): void
     {
         $cliente = new Cliente();
         $cliente->nombre = 'Test';
@@ -75,7 +75,7 @@ final class ClienteTest extends TestCase
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
-    public function testHtmlOnFields()
+    public function testHtmlOnFields(): void
     {
         $cliente = new Cliente();
         $cliente->nombre = '<test>';
@@ -101,7 +101,7 @@ final class ClienteTest extends TestCase
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
-    public function testBadWeb()
+    public function testBadWeb(): void
     {
         $cliente = new Cliente();
         $cliente->nombre = 'Test';
@@ -118,7 +118,7 @@ final class ClienteTest extends TestCase
         $this->assertFalse($cliente->save(), 'cliente-can-save-bad-web-3');
     }
 
-    public function testGoodWeb()
+    public function testGoodWeb(): void
     {
         $cliente = new Cliente();
         $cliente->nombre = 'Test';
@@ -129,7 +129,7 @@ final class ClienteTest extends TestCase
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
-    public function testNotNullFields()
+    public function testNotNullFields(): void
     {
         $cliente = new Cliente();
         $cliente->nombre = 'Test';
@@ -148,7 +148,7 @@ final class ClienteTest extends TestCase
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
     }
 
-    public function testPaymentDays()
+    public function testPaymentDays(): void
     {
         // creamos un cliente sin días de pago
         $cliente = new Cliente();
@@ -165,6 +165,33 @@ final class ClienteTest extends TestCase
         // añadimos un segundo día de pago
         $cliente->diaspago = '1,5';
         $this->assertEquals([1, 5], $cliente->getPaymentDays(), 'cliente-has-payment-days');
+    }
+
+    public function testVies(): void
+    {
+        // creamos un cliente sin cifnif
+        $cliente = new Cliente();
+        $cliente->nombre = 'Test';
+        $cliente->cifnif = '';
+        $this->assertTrue($cliente->save());
+        $this->assertFalse($cliente->checkVies());
+
+        // asignamos dirección de Portugal
+        $address = $cliente->getDefaultAddress();
+        $address->codpais = 'PRT';
+        $this->assertTrue($address->save());
+
+        // asignamos un cifnif incorrecto
+        $cliente->cifnif = '12345678A';
+        $this->assertFalse($cliente->checkVies());
+
+        // asignamos un cifnif correcto
+        $cliente->cifnif = '503297887';
+        $this->assertTrue($cliente->checkVies());
+
+        // eliminamos
+        $this->assertTrue($address->delete());
+        $this->assertTrue($cliente->delete());
     }
 
     protected function tearDown(): void
