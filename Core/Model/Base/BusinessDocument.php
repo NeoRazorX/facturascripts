@@ -60,6 +60,11 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     public $codigo;
 
+    /** @var array */
+    protected static $dont_copy_fields = ['codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora',
+        'idasiento', 'idestado', 'idfacturarect', 'neto', 'netosindto', 'numero', 'pagada', 'total', 'totalirpf',
+        'totaliva', 'totalrecargo', 'totalsuplidos'];
+
     /**
      * Percentage of discount.
      *
@@ -247,6 +252,17 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
         $this->totalsuplidos = 0.0;
+    }
+
+    public static function dontCopyField(string $field): void
+    {
+        static::$dont_copy_fields[] = $field;
+    }
+
+    public static function dontCopyFields(): array
+    {
+        $more = [static::primaryColumn()];
+        return array_merge(static::$dont_copy_fields, $more);
     }
 
     /**

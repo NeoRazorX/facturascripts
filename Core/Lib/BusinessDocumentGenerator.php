@@ -38,30 +38,10 @@ class BusinessDocumentGenerator
 {
     use ExtensionsTrait;
 
-    /**
-     * Document fields to exclude.
-     *
-     * @var array
-     */
-    public $excludeFields = [
-        'codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora', 'idasiento', 'idestado', 'idfacturarect',
-        'neto', 'netosindto', 'numero', 'pagada', 'total', 'totalirpf', 'totaliva', 'totalrecargo', 'totalsuplidos'];
-
-    /**
-     * Line fields to exclude.
-     *
-     * @var array
-     */
-    public $excludeLineFields = ['idlinea', 'orden', 'servido'];
-
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $lastDocs = [];
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private static $sameDate = false;
 
     /**
@@ -77,14 +57,11 @@ class BusinessDocumentGenerator
      */
     public function generate(BusinessDocument $prototype, string $newClass, array $lines = [], array $quantity = [], array $properties = []): bool
     {
-        // Add primary column to exclude fields
-        $this->excludeFields[] = $prototype->primaryColumn();
-
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
         foreach (array_keys($prototype->getModelFields()) as $field) {
             // exclude some properties
-            if (in_array($field, $this->excludeFields)) {
+            if (in_array($field, $prototype::dontCopyFields())) {
                 continue;
             }
 
@@ -149,7 +126,7 @@ class BusinessDocumentGenerator
             // copy line properties to new line
             $arrayLine = [];
             foreach (array_keys($line->getModelFields()) as $field) {
-                if (in_array($field, $this->excludeLineFields) === false) {
+                if (false === in_array($field, $line::dontCopyFields())) {
                     $arrayLine[$field] = $line->{$field};
                 }
             }
