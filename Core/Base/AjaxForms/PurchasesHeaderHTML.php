@@ -199,11 +199,11 @@ class PurchasesHeaderHTML
             . self::renderField($i18n, $model, 'cifnif')
             . self::renderField($i18n, $model, 'fechadevengo')
             . self::renderField($i18n, $model, 'hora')
-            . self::renderField($i18n, $model, 'femail')
-            . self::renderField($i18n, $model, 'user')
             . self::renderField($i18n, $model, 'operacion')
+            . self::renderField($i18n, $model, 'femail')
             . self::renderField($i18n, $model, 'coddivisa')
             . self::renderField($i18n, $model, 'tasaconv')
+            . self::renderField($i18n, $model, 'user')
             . self::renderNewFields($i18n, $model)
             . '</div>'
             . '</div>'
