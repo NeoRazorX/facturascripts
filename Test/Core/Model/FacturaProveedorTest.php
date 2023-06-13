@@ -21,8 +21,10 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
+use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
@@ -476,6 +478,96 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
         $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($supplier->delete(), 'cant-delete-supplier');
+    }
+
+    public function testIntraCommunity(): void
+    {
+        // creamos un proveedor
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save());
+
+        // creamos una factura
+        $invoice = new FacturaProveedor();
+        $invoice->setSubject($supplier);
+        $invoice->operacion = InvoiceOperation::INTRA_COMMUNITY;
+        $this->assertTrue($invoice->save());
+
+        // añadimos una línea
+        $line = $invoice->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $this->assertTrue($line->save());
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true));
+
+        // comprobamos los totales
+        $this->assertEquals(100, $invoice->neto);
+        $this->assertEquals(0, $invoice->totaliva);
+        $this->assertEquals(0, $invoice->totalirpf);
+        $this->assertEquals(100, $invoice->total);
+
+        // comprobamos que el asiento tiene 4 líneas
+        $entry = $invoice->getAccountingEntry();
+        $this->assertCount(4, $entry->getLines());
+
+        // eliminamos
+        $this->assertTrue($invoice->delete());
+        $this->assertTrue($supplier->getDefaultAddress()->delete());
+        $this->assertTrue($supplier->delete());
+    }
+
+    public function testSetIntraCommunity(): void
+    {
+        // establecemos la empresa en España con un cif español
+        $company = Empresas::default();
+        $company->codpais = 'ESP';
+        $company->cifnif = 'B13658620';
+        $company->tipoidfiscal = 'CIF';
+        $this->assertTrue($company->save());
+
+        // creamos un proveedor de Portugal con nif de Portugal
+        $supplier = $this->getRandomSupplier();
+        $supplier->cifnif = 'PT513969144';
+        $this->assertTrue($supplier->save());
+        $address = $supplier->getDefaultAddress();
+        $address->codpais = 'PRT';
+        $this->assertTrue($address->save());
+
+        // creamos una factura
+        $invoice = new FacturaProveedor();
+        $invoice->setSubject($supplier);
+        $this->assertTrue($invoice->setIntracomunitaria());
+
+        // comprobamos que la operación es intracomunitaria
+        $this->assertEquals(InvoiceOperation::INTRA_COMMUNITY, $invoice->operacion);
+
+        // quitamos la operación
+        $invoice->operacion = null;
+
+        // cambiamos la empresa a Perú
+        $company->codpais = 'PER';
+        $this->assertTrue($company->save());
+
+        // comprobamos que no se puede establecer la operación
+        $this->assertFalse($invoice->setIntracomunitaria());
+
+        // volvemos a España
+        $company->codpais = 'ESP';
+        $this->assertTrue($company->save());
+
+        // cambiamos el proveedor a España
+        $address->codpais = 'ESP';
+        $this->assertTrue($address->save());
+
+        // comprobamos que no se puede establecer la operación
+        $this->assertFalse($invoice->setIntracomunitaria());
+
+        // eliminamos
+        $this->assertTrue($invoice->delete());
+        $this->assertTrue($address->delete());
+        $this->assertTrue($supplier->delete());
     }
 
     protected function tearDown(): void
