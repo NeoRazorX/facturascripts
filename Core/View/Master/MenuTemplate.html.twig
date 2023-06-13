@@ -21,6 +21,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ constant('FS_LANG') | slice(0, 2) }}"
       xml:lang="{{ constant('FS_LANG') | slice(0, 2) }}">
 <head>
+    {% for item in getIncludeViews('MenuTemplate', 'HeadFirst') %}
+        {% include item['path'] %}
+    {% endfor %}
     {% block meta %}
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <title>{{ fsc.title | raw }}</title>
@@ -68,9 +71,15 @@
         {% include item['path'] %}
     {% endfor %}
     {{ debugBarRender.renderHead() | raw }}
+    {% for item in getIncludeViews('MenuTemplate', 'HeadEnd') %}
+        {% include item['path'] %}
+    {% endfor %}
 </head>
 {% block fullBody %}
     <body>
+    {% for item in getIncludeViews('MenuTemplate', 'BodyFirst') %}
+        {% include item['path'] %}
+    {% endfor %}
     {% block navbar %}
         <nav class="navbar navbar-expand navbar-dark bg-primary sticky-top d-print-none">
             {% block navbarContent %}
@@ -150,6 +159,9 @@
     <br/>
     <br/>
     {{ debugBarRender.render() | raw }}
+    {% for item in getIncludeViews('MenuTemplate', 'BodyEnd') %}
+        {% include item['path'] %}
+    {% endfor %}
     </body>
 {% endblock %}
 </html>
