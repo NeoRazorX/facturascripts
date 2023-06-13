@@ -709,6 +709,7 @@
     "integrity-check": "Comprovar l'integritat",
     "integrity-check-help": "Esta és una comprovació de l'integritat del sistema descrita com",
     "international-identifier": "Identificador internacional",
+    "intra-community": "Intracomunitaria",
     "invalid-alphanumeric-code": "El codi introduït (%value%) no és vàlid. (%column%) ha de tindre entre %min% i %max% números o lletres.",
     "invalid-column-lenght": "La columna %column% ha de tindre entre %min% i %max% caràcters.",
     "invalid-date": "%date% no és una data vàlida.",

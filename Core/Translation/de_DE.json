@@ -709,6 +709,7 @@
     "integrity-check": "Integrity check",
     "integrity-check-help": "This is a check of system integrity, described as",
     "international-identifier": "Internationale Kennung",
+    "intra-community": "Intracomunitaria",
     "invalid-alphanumeric-code": "invalid-alphanumeric-code",
     "invalid-column-lenght": "%column% must have between %min% and %max% characters.",
     "invalid-date": "Datum %1$s ungültig.",
