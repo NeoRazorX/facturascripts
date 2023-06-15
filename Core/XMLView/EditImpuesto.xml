@@ -24,23 +24,23 @@
 <view>
     <columns>
         <group name="data" numcolumns="12">
-            <column name="description" numcolumns="8" order="100">
+            <column name="description" numcolumns="6" order="100">
                 <widget type="text" fieldname="descripcion" maxlength="50" required="true"/>
             </column>
-            <column name="code" description="optional" numcolumns="2" order="110">
-                <widget type="text" fieldname="codimpuesto" icon="fas fa-hashtag" maxlength="10" readonly="dinamic"/>
-            </column>
-            <column name="type" numcolumns="2" order="120">
+            <column name="type" numcolumns="2" order="110">
                 <widget type="select" fieldname="tipo" translate="true" required="true">
                     <values title="percentage">1</values>
                     <values title="fixed-value">2</values>
                 </widget>
             </column>
-            <column name="vat" order="130">
+            <column name="vat" numcolumns="2" order="120">
                 <widget type="number" decimal="2" fieldname="iva" required="true"/>
             </column>
-            <column name="surcharge" order="140">
+            <column name="surcharge" numcolumns="2" order="130">
                 <widget type="number" decimal="2" fieldname="recargo" required="true"/>
+            </column>
+            <column name="code" description="optional" numcolumns="2" order="140">
+                <widget type="text" fieldname="codimpuesto" icon="fas fa-hashtag" maxlength="10" readonly="dinamic"/>
             </column>
             <column name="impacted-tax-subaccount" description="optional" order="150">
                 <widget type="autocomplete" fieldname="codsubcuentarep">
