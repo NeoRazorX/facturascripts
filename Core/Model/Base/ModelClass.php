@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Dinamic\Model\CodeModel;
 
 /**
@@ -123,6 +124,10 @@ abstract class ModelClass extends ModelCore
      */
     public function delete()
     {
+        if (null === $this->primaryColumnValue()) {
+            return true;
+        }
+
         if ($this->pipeFalse('deleteBefore') === false) {
             return false;
         }
@@ -130,12 +135,17 @@ abstract class ModelClass extends ModelCore
         $sql = 'DELETE FROM ' . static::tableName() . ' WHERE ' . static::primaryColumn()
             . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
 
-        if (self::$dataBase->exec($sql)) {
-            Cache::delete('model-' . $this->modelClassName() . '-count');
-            return $this->pipeFalse('delete');
+        if (false === self::$dataBase->exec($sql)) {
+            return false;
         }
 
-        return false;
+        Cache::delete('model-' . $this->modelClassName() . '-count');
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Delete',
+            $this->primaryColumnValue(),
+            $this->toArray()
+        );
+        return $this->pipeFalse('delete');
     }
 
     /**
@@ -264,7 +274,11 @@ abstract class ModelClass extends ModelCore
             return false;
         }
 
-        Cache::delete('model-' . $this->modelClassName() . '-count');
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Save',
+            $this->primaryColumnValue(),
+            $this->toArray()
+        );
         return $this->pipeFalse('save');
     }
 
@@ -353,18 +367,26 @@ abstract class ModelClass extends ModelCore
             }
         }
 
-        $sql = 'INSERT INTO ' . static::tableName() . ' (' . implode(',', $insertFields) . ') VALUES (' . implode(',', $insertValues) . ');';
-        if (self::$dataBase->exec($sql)) {
-            if ($this->primaryColumnValue() === null) {
-                $this->{static::primaryColumn()} = self::$dataBase->lastval();
-            } else {
-                self::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
-            }
-
-            return $this->pipeFalse('saveInsert');
+        $sql = 'INSERT INTO ' . static::tableName() . ' (' . implode(',', $insertFields)
+            . ') VALUES (' . implode(',', $insertValues) . ');';
+        if (false === self::$dataBase->exec($sql)) {
+            return false;
         }
 
-        return false;
+        if ($this->primaryColumnValue() === null) {
+            $this->{static::primaryColumn()} = self::$dataBase->lastval();
+        } else {
+            self::$dataBase->updateSequence(static::tableName(), $this->getModelFields());
+        }
+
+        Cache::delete('model-' . $this->modelClassName() . '-count');
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Insert',
+            $this->primaryColumnValue(),
+            $this->toArray()
+        );
+
+        return $this->pipeFalse('saveInsert');
     }
 
     /**
@@ -393,11 +415,17 @@ abstract class ModelClass extends ModelCore
         }
 
         $sql .= ' WHERE ' . static::primaryColumn() . ' = ' . self::$dataBase->var2str($this->primaryColumnValue()) . ';';
-        if (self::$dataBase->exec($sql)) {
-            return $this->pipeFalse('saveUpdate');
+        if (false === self::$dataBase->exec($sql)) {
+            return false;
         }
 
-        return false;
+        Cache::delete('model-' . $this->modelClassName() . '-count');
+        WorkQueue::send(
+            'Model.' . $this->modelClassName() . '.Update',
+            $this->primaryColumnValue(),
+            $this->toArray()
+        );
+        return $this->pipeFalse('saveUpdate');
     }
 
     /**

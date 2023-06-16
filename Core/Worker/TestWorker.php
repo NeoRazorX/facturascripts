@@ -27,7 +27,8 @@ final class TestWorker extends WorkerClass
 {
     public function run(WorkEvent $event): bool
     {
-        Cache::set('test-worker', $event->value);
+        Cache::set('test-worker-name', $event->name);
+        Cache::set('test-worker-value', $event->value);
 
         return $this->done();
     }

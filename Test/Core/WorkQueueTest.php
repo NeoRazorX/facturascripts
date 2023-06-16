@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\WorkEvent;
 use FacturaScripts\Core\WorkQueue;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
@@ -103,8 +104,9 @@ final class WorkQueueTest extends TestCase
 
     public function testAddEventAndRun(): void
     {
-        // establecemos el valor de cache a 0
-        Cache::set('test-worker', 0);
+        // establecemos el valor inicial de caché
+        Cache::set('test-worker-name', '-');
+        Cache::set('test-worker-value', -1);
 
         // añadimos el worker
         WorkQueue::addWorker('TestWorker', 'test-event-worker');
@@ -113,13 +115,15 @@ final class WorkQueueTest extends TestCase
         $this->assertTrue(WorkQueue::send('test-event-worker', '123456'));
 
         // comprobamos que el valor de cache no ha cambiado
-        $this->assertEquals(0, Cache::get('test-worker'));
+        $this->assertEquals('-', Cache::get('test-worker-name'));
+        $this->assertEquals(-1, Cache::get('test-worker-value'));
 
         // ejecutamos la cola
         $this->assertTrue(WorkQueue::run());
 
         // comprobamos que el valor de cache ha cambiado
-        $this->assertEquals('123456', Cache::get('test-worker'));
+        $this->assertEquals('test-event-worker', Cache::get('test-worker-name'));
+        $this->assertEquals('123456', Cache::get('test-worker-value'));
 
         // comprobamos que el evento se ha guardado como realizado
         $model = new WorkEvent();
@@ -128,6 +132,7 @@ final class WorkQueueTest extends TestCase
         $this->assertCount(1, $events);
         $this->assertTrue($events[0]->done);
         $this->assertNotNull($events[0]->done_date);
+        $this->assertEquals('test-event-worker', $events[0]->name);
         $this->assertEquals('123456', $events[0]->value);
         $this->assertEquals(1, $events[0]->workers);
         $this->assertEquals('TestWorker', $events[0]->worker_list);
@@ -137,6 +142,59 @@ final class WorkQueueTest extends TestCase
 
         // eliminamos el worker
         WorkQueue::removeAllWorkers();
+    }
+
+    public function testModelEvents(): void
+    {
+        // eliminamos todos los eventos de la tabla
+        $model = new WorkEvent();
+        foreach ($model->all([], [], 0, 0) as $event) {
+            $event->delete();
+        }
+
+        // añadimos un worker que escuche el evento Model.Producto.Save y Model.Producto.Delete
+        WorkQueue::addWorker('TestWorker', 'Model.Producto.Save');
+        WorkQueue::addWorker('TestWorker', 'Model.Producto.Delete');
+
+        // creamos un producto
+        $producto = new Producto();
+        $producto->referencia = 'test-producto';
+        $producto->descripcion = 'test-producto-description';
+        $this->assertTrue($producto->save());
+
+        // comprobamos que se ha guardado el evento
+        $event = new WorkEvent();
+        $where = [new DataBaseWhere('name', 'Model.Producto.Save')];
+        $this->assertTrue($event->loadFromCode('', $where));
+
+        // ejecutamos la cola
+        $this->assertTrue(WorkQueue::run());
+
+        // comprobamos que el evento se ha guardado como realizado
+        $this->assertTrue($event->loadFromCode($event->primaryColumnValue()));
+        $this->assertTrue($event->done);
+
+        // comprobamos que se ha actualizado la caché
+        $this->assertEquals('Model.Producto.Save', Cache::get('test-worker-name'));
+        $this->assertEquals($producto->primaryColumnValue(), Cache::get('test-worker-value'));
+
+        // eliminamos el producto
+        $this->assertTrue($producto->delete());
+
+        // comprobamos que se ha guardado el evento
+        $where = [new DataBaseWhere('name', 'Model.Producto.Delete')];
+        $this->assertTrue($event->loadFromCode('', $where));
+
+        // ejecutamos la cola
+        $this->assertTrue(WorkQueue::run());
+
+        // comprobamos que el evento se ha guardado como realizado
+        $this->assertTrue($event->loadFromCode($event->primaryColumnValue()));
+        $this->assertTrue($event->done);
+
+        // comprobamos que se ha actualizado la caché
+        $this->assertEquals('Model.Producto.Delete', Cache::get('test-worker-name'));
+        $this->assertEquals($producto->primaryColumnValue(), Cache::get('test-worker-value'));
     }
 
     protected function tearDown(): void
