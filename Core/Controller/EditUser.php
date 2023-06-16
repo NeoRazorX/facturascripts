@@ -255,11 +255,6 @@ class EditUser extends EditController
                 $langs[] = ['value' => $key, 'title' => $value];
             }
 
-            // sorting
-            usort($langs, function ($objA, $objB) {
-                return strcmp($objA['title'], $objB['title']);
-            });
-
             $columnLangCode->widget->setValuesFromArray($langs, false);
         }
     }

@@ -37,6 +37,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
     use ExerciseRelationTrait;
     use PaymentRelationTrait;
     use SerieRelationTrait;
+    use IntracomunitariaTrait;
 
     /**
      * VAT number of the customer or supplier.
@@ -58,6 +59,11 @@ abstract class BusinessDocument extends ModelOnChangeClass
      * @var string
      */
     public $codigo;
+
+    /** @var array */
+    protected static $dont_copy_fields = ['codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora',
+        'idasiento', 'idestado', 'idfacturarect', 'neto', 'netosindto', 'numero', 'pagada', 'total', 'totalirpf',
+        'totaliva', 'totalrecargo', 'totalsuplidos'];
 
     /**
      * Percentage of discount.
@@ -248,6 +254,17 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->totalsuplidos = 0.0;
     }
 
+    public static function dontCopyField(string $field): void
+    {
+        static::$dont_copy_fields[] = $field;
+    }
+
+    public static function dontCopyFields(): array
+    {
+        $more = [static::primaryColumn()];
+        return array_merge(static::$dont_copy_fields, $more);
+    }
+
     /**
      * Returns the Equivalent Unified Discount.
      *
@@ -341,6 +358,26 @@ abstract class BusinessDocument extends ModelOnChangeClass
         }
 
         $this->toolBox()->i18nLog()->warning('accounting-exercise-not-found');
+        return false;
+    }
+
+    /**
+     * Sets warehouse and company for this document.
+     *
+     * @param string $codalmacen
+     *
+     * @return bool
+     */
+    public function setWarehouse(string $codalmacen): bool
+    {
+        $almacen = new Almacen();
+        if ($almacen->loadFromCode($codalmacen)) {
+            $this->codalmacen = $almacen->codalmacen;
+            $this->idempresa = $almacen->idempresa ?? $this->idempresa;
+            return true;
+        }
+
+        $this->toolBox()->i18nLog()->warning('warehouse-not-found');
         return false;
     }
 
@@ -463,27 +500,10 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     protected function setPreviousData(array $fields = [])
     {
-        $more = ['codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'numero', 'total'];
+        $more = [
+            'codalmacen', 'coddivisa', 'codpago', 'codserie', 'fecha', 'hora', 'idempresa', 'numero',
+            'operacion', 'total'
+        ];
         parent::setPreviousData(array_merge($more, $fields));
-    }
-
-    /**
-     * Sets warehouse and company for this document.
-     *
-     * @param string $codalmacen
-     *
-     * @return bool
-     */
-    protected function setWarehouse(string $codalmacen): bool
-    {
-        $almacen = new Almacen();
-        if ($almacen->loadFromCode($codalmacen)) {
-            $this->codalmacen = $almacen->codalmacen;
-            $this->idempresa = $almacen->idempresa ?? $this->idempresa;
-            return true;
-        }
-
-        $this->toolBox()->i18nLog()->warning('warehouse-not-found');
-        return false;
     }
 }

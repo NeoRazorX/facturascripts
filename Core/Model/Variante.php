@@ -176,7 +176,7 @@ class Variante extends Base\ModelClass
     public function delete(): bool
     {
         // no se puede eliminar la variante principal
-        if ($this->referencia == $this->getProducto()->referencia) {
+        if ($this->referencia === $this->getProducto()->referencia) {
             $this->toolBox()->i18nLog()->warning('you-cant-delete-primary-variant');
             return false;
         }

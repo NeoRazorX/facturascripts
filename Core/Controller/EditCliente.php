@@ -182,7 +182,8 @@ class EditCliente extends ComercialContactController
      */
     protected function loadData($viewName, $view)
     {
-        $codcliente = $this->getViewModelValue('EditCliente', 'codcliente');
+        $mainViewName = $this->getMainViewName();
+        $codcliente = $this->getViewModelValue($mainViewName, 'codcliente');
         $where = [new DataBaseWhere('codcliente', $codcliente)];
 
         switch ($viewName) {
@@ -208,9 +209,30 @@ class EditCliente extends ComercialContactController
                 $view->loadData('', $where);
                 break;
 
+            case $mainViewName:
+                parent::loadData($viewName, $view);
+                $this->loadLanguageValues($viewName);
+                break;
+
             default:
                 parent::loadData($viewName, $view);
                 break;
+        }
+    }
+
+    /**
+     * Load the available language values from translator.
+     */
+    protected function loadLanguageValues(string $viewName)
+    {
+        $columnLangCode = $this->views[$viewName]->columnForName('language');
+        if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
+            $langs = [];
+            foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
+                $langs[] = ['value' => $key, 'title' => $value];
+            }
+
+            $columnLangCode->widget->setValuesFromArray($langs, false, true);
         }
     }
 

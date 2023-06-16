@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Http;
+use FacturaScripts\Core\Kernel;
+use FacturaScripts\Core\Plugins;
 
 /**
  * This class allow sending telemetry data to the master server,
@@ -29,7 +32,6 @@ use FacturaScripts\Core\App\AppSettings;
  */
 final class TelemetryManager
 {
-
     const TELEMETRY_URL = 'https://facturascripts.com/Telemetry';
 
     /**
@@ -99,8 +101,7 @@ final class TelemetryManager
 
         $params = $this->collectData();
         $params['action'] = 'install';
-        $json = DownloadTools::getContents(self::TELEMETRY_URL . '?' . http_build_query($params), 10);
-        $data = json_decode($json, true);
+        $data = Http::get(self::TELEMETRY_URL, $params)->setTimeout(10)->json();
         if ($data['idinstall']) {
             $this->idinstall = $data['idinstall'];
             $this->signkey = $data['signkey'];
@@ -136,8 +137,7 @@ final class TelemetryManager
         $params = $this->collectData();
         $params['action'] = 'unlink';
         $this->calculateHash($params);
-        $json = DownloadTools::getContents(self::TELEMETRY_URL . '?' . http_build_query($params), 10);
-        $data = json_decode($json, true);
+        $data = Http::get(self::TELEMETRY_URL, $params)->setTimeout(10)->json();
         if (isset($data['error']) && $data['error']) {
             return false;
         }
@@ -162,8 +162,7 @@ final class TelemetryManager
         $params['action'] = 'update';
         $this->calculateHash($params);
 
-        $json = DownloadTools::getContents(self::TELEMETRY_URL . '?' . http_build_query($params), 3);
-        $data = json_decode($json, true);
+        $data = Http::get(self::TELEMETRY_URL, $params)->setTimeout(3)->json();
 
         $this->save();
         return isset($data['ok']) && $data['ok'];
@@ -178,7 +177,7 @@ final class TelemetryManager
     {
         $data = [
             'codpais' => FS_CODPAIS,
-            'coreversion' => PluginManager::CORE_VERSION,
+            'coreversion' => Kernel::version(),
             'idinstall' => $this->idinstall,
             'langcode' => FS_LANG,
             'phpversion' => (float)PHP_VERSION,
@@ -186,8 +185,7 @@ final class TelemetryManager
         ];
 
         if (false === $minimum) {
-            $pluginManager = new PluginManager();
-            $data['pluginlist'] = implode(',', $pluginManager->enabledPlugins());
+            $data['pluginlist'] = implode(',', Plugins::enabled());
         }
 
         return $data;

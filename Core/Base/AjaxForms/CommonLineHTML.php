@@ -67,7 +67,7 @@ trait CommonLineHTML
         $options = ['<option value="">------</option>'];
         foreach (Impuestos::all() as $imp) {
             $options[] = $line->codimpuesto == $imp->codimpuesto ?
-                '<option value="' . $imp->codimpuesto . '" selected="">' . $imp->descripcion . '</option>' :
+                '<option value="' . $imp->codimpuesto . '" selected>' . $imp->descripcion . '</option>' :
                 '<option value="' . $imp->codimpuesto . '">' . $imp->descripcion . '</option>';
         }
 
@@ -127,12 +127,34 @@ trait CommonLineHTML
             . '</div>';
     }
 
+    private static function excepcioniva(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
+    {
+        $attributes = $model->editable ?
+            'name="excepcioniva_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
+            'disabled=""';
+
+        $options = '<option value="" selected>------</option>';
+        $product = $line->getProducto();
+        $excepcionIva = empty($line->idlinea) && empty($line->{$field}) ? $product->{$field} : $line->{$field};
+
+        foreach (RegimenIVA::allExceptions() as $key => $value) {
+            $selected = $excepcionIva === $key ? 'selected' : '';
+            $options .= '<option value="' . $key . '" ' . $selected . '>' . $i18n->trans($value) . '</option>';
+        }
+
+        return '<div class="col-6">'
+            . '<div class="mb-2">' . $i18n->trans('vat-exception')
+            . '<select ' . $attributes . ' class="form-control">' . $options . '</select>'
+            . '</div>'
+            . '</div>';
+    }
+
     private static function genericBool(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $label): string
     {
         $attributes = $model->editable ? 'name="' . $field . '_' . $idlinea . '"' : 'disabled=""';
         $options = $line->{$field} ?
-            ['<option value="0">' . $i18n->trans('no') . '</option>', '<option value="1" selected="">' . $i18n->trans('yes') . '</option>'] :
-            ['<option value="0" selected="">' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
+            ['<option value="0">' . $i18n->trans('no') . '</option>', '<option value="1" selected>' . $i18n->trans('yes') . '</option>'] :
+            ['<option value="0" selected>' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
         return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans($label)
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'
@@ -145,12 +167,12 @@ trait CommonLineHTML
         $options = ['<option value="">------</option>'];
         foreach (Retenciones::all() as $ret) {
             $options[] = $line->irpf === $ret->porcentaje ?
-                '<option value="' . $ret->porcentaje . '" selected="">' . $ret->descripcion . '</option>' :
+                '<option value="' . $ret->porcentaje . '" selected>' . $ret->descripcion . '</option>' :
                 '<option value="' . $ret->porcentaje . '">' . $ret->descripcion . '</option>';
         }
 
         $attributes = $model->editable && false === $line->suplido ?
-            'name="irpf_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
+            'name="irpf_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         return '<div class="col-6">'
             . '<div class="mb-2"><a href="ListImpuesto?activetab=ListRetencion">' . $i18n->trans('retention') . '</a>'
@@ -255,11 +277,11 @@ trait CommonLineHTML
     private static function suplido(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $jsFunc): string
     {
         $attributes = $model->editable ?
-            'name="suplido_' . $idlinea . '" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
+            'name="suplido_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
             'disabled=""';
         $options = $line->suplido ?
-            ['<option value="0">' . $i18n->trans('no') . '</option>', '<option value="1" selected="">' . $i18n->trans('yes') . '</option>'] :
-            ['<option value="0" selected="">' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
+            ['<option value="0">' . $i18n->trans('no') . '</option>', '<option value="1" selected>' . $i18n->trans('yes') . '</option>'] :
+            ['<option value="0" selected>' . $i18n->trans('no') . '</option>', '<option value="1">' . $i18n->trans('yes') . '</option>'];
         return '<div class="col-6">'
             . '<div class="mb-2">' . $i18n->trans('supplied')
             . '<select ' . $attributes . ' class="form-control">' . implode('', $options) . '</select>'

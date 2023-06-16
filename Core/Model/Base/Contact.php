@@ -30,6 +30,8 @@ abstract class Contact extends ModelClass
 {
     use GravatarTrait;
 
+    abstract public function checkVies(): bool;
+
     /**
      * Tax identifier of the customer.
      *
@@ -57,6 +59,9 @@ abstract class Contact extends ModelClass
      * @var string
      */
     public $fechaalta;
+
+    /** @var string */
+    public $langcode;
 
     /**
      * Name by which we know the contact, not necessarily the official.

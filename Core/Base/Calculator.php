@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\Contract\CalculatorModInterface;
+use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
@@ -133,14 +134,14 @@ final class Calculator
             $subtotals['iva'][$ivaKey]['neto'] += $pvpTotal;
             $subtotals['iva'][$ivaKey]['netosindto'] += $line->pvptotal;
 
-            if ($line->iva > 0) {
+            if ($line->iva > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
                 $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
                     $pvpTotal * $line->iva :
                     $pvpTotal * $line->iva / 100;
             }
 
             // recargo de equivalencia
-            if ($line->recargo > 0) {
+            if ($line->recargo > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
                 $subtotals['iva'][$ivaKey]['totalrecargo'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
                     $pvpTotal * $line->recargo :
                     $pvpTotal * $line->recargo / 100;

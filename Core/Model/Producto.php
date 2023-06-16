@@ -93,6 +93,9 @@ class Producto extends Base\ModelClass
      */
     public $descripcion;
 
+    /** @var string */
+    public $excepcioniva;
+
     /**
      * Date on which the product was registered.
      *
@@ -163,6 +166,9 @@ class Producto extends Base\ModelClass
      * @var float|int
      */
     public $stockfis;
+
+    /** @var string */
+    public $tipo;
 
     /**
      * True -> allow sales without stock.
