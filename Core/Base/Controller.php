@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 use FacturaScripts\Dinamic\Lib\MultiRequestProtection;
@@ -241,6 +242,14 @@ class Controller
 
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $this->empresa = Empresas::get($idempresa);
+
+        /**
+         * Guardamos la uri a la que el usuario
+         * ha intentado acceder sin estar logueado, 
+         * para mas tarde acceder a ella una vez que el usuario 
+         * se ha logueado correctamente.
+         */
+        Cache::set('intended_uri', str_replace(['/', 'index.php'], '', $this->uri));
     }
 
     /**

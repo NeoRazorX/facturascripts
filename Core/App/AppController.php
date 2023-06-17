@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\Debug\DumbBar;
 use FacturaScripts\Core\Base\MenuManager;
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Html;
 use FacturaScripts\Core\Session;
 use FacturaScripts\Dinamic\Model\User;
@@ -152,8 +153,22 @@ class AppController extends App
             return $this->getUriParam(0);
         }
 
-        if ($this->user && !empty($this->user->homepage)) {
-            return $this->user->homepage;
+        if ($this->user) {
+
+            /**
+             * Devolvemos la uri a la que el usuario
+             * ha intentado acceder sin estar logueado, 
+             * una vez que el usuario se ha logueado correctamente.
+             */
+            $intended_uri = Cache::get('intended_uri');
+            if ($intended_uri) {
+                Cache::delete('intended_uri');
+                return $intended_uri;
+            }
+            
+            if (!empty($this->user->homepage)) {
+                return $this->user->homepage;
+            }
         }
 
         return ToolBox::appSettings()->get('default', 'homepage', 'Wizard');
