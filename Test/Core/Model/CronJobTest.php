@@ -110,6 +110,28 @@ final class CronJobTest extends TestCase
         $this->assertTrue($job->delete());
     }
 
+    public function testEveryDayFunction(): void
+    {
+        $currentDay = date('d') < 28 ? (int)date('d') : 10;
+
+        $job = new CronJob();
+        $job->jobname = 'TestName';
+        $job->pluginname = 'TestPlugin';
+
+        // como nunca se ha ejecutado, si decimos de ejecutar hoy, se ejecutará
+        $this->assertTrue($job->everyDay($currentDay, 1));
+        $this->assertTrue($job->save());
+
+        // como ya se ha ejecutado, si decimos de ejecutar hoy, no se ejecutará
+        $this->assertFalse($job->everyDayAt($currentDay, 1));
+
+        // como ya se ha ejecutado, si decimos de ejecutar mañana, no se ejecutará
+        $this->assertFalse($job->everyDayAt($currentDay + 1, 1));
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
     public function testEveryDayAtFunction(): void
     {
         $job = new CronJob();

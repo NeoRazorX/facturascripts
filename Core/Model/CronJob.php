@@ -88,14 +88,15 @@ class CronJob extends ModelClass
         return strtotime($this->date) <= strtotime('-' . $period);
     }
 
+    public function everyDay(int $day, int $hour, bool $strict = false): bool
+    {
+        $date = date('Y-m-' . $day);
+        return $this->everyDayAux($date, $hour, $strict);
+    }
+
     public function everyDayAt(int $hour, bool $strict = false): bool
     {
         return $this->everyDayAux('today', $hour, $strict);
-    }
-
-    public function everyFirstDayOfMonthAt(int $hour, bool $strict): bool
-    {
-        return $this->everyDayAux('first day of this month', $hour, $strict);
     }
 
     public function everyFridayAt(int $hour, bool $strict): bool
@@ -171,15 +172,14 @@ class CronJob extends ModelClass
             return true;
         }
 
-        // devolvemos true si la última ejecución es anterior a hoy a la hora indicada
-        $last = strtotime($this->date);
-        $start = strtotime($day . ' +' . $hour . ' hours');
-
         // si strict es true, solamente devolvemos true si es la hora exacta
         $end = $strict ?
             strtotime($day . ' +' . $hour . ' hours +59 minutes') :
             strtotime($day . ' +23 hours +59 minutes');
 
+        // devolvemos true si la última ejecución es anterior a hoy a la hora indicada
+        $last = strtotime($this->date);
+        $start = strtotime($day . ' +' . $hour . ' hours');
         $this->start = microtime(true);
         return $last <= $start && $this->start >= $start && $this->start <= $end;
     }
