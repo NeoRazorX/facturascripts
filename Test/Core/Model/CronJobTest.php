@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use Exception;
 use FacturaScripts\Core\Model\CronJob;
 use FacturaScripts\Core\Tools;
 use PHPUnit\Framework\TestCase;
@@ -43,6 +44,7 @@ final class CronJobTest extends TestCase
         $this->assertEquals('TestPlugin', $job2->pluginname);
         $this->assertTrue($job2->enabled);
         $this->assertFalse($job2->done);
+        $this->assertFalse($job2->failed);
         $this->assertEquals(0.0, $job2->duration);
 
         // eliminamos
@@ -71,38 +73,38 @@ final class CronJobTest extends TestCase
         $job = new CronJob();
         $job->jobname = 'TestName';
         $job->pluginname = 'TestPlugin';
-        $this->assertTrue($job->every('1 day'));
+        $this->assertTrue($job->every('1 day')->ready);
         $this->assertTrue($job->save());
-        $this->assertFalse($job->every('1 day'));
+        $this->assertFalse($job->every('1 day')->ready);
 
         $this->assertFalse($job->done);
 
         // ahora ponemos fecha de hace un día
         $job->date = Tools::dateTime('-1 day');
-        $this->assertFalse($job->every('2 days'));
-        $this->assertTrue($job->every('1 day'));
-        $this->assertTrue($job->every('6 hours'));
-        $this->assertTrue($job->every('1 hour'));
-        $this->assertTrue($job->every('30 minutes'));
+        $this->assertFalse($job->every('2 days')->ready);
+        $this->assertTrue($job->every('1 day')->ready);
+        $this->assertTrue($job->every('6 hours')->ready);
+        $this->assertTrue($job->every('1 hour')->ready);
+        $this->assertTrue($job->every('30 minutes')->ready);
 
         $this->assertFalse($job->done);
 
         // ahora ponemos fecha de hace una hora
         $job->date = Tools::dateTime('-1 hour');
-        $this->assertFalse($job->every('1 day'));
-        $this->assertFalse($job->every('2 hours'));
-        $this->assertTrue($job->every('1 hour'));
-        $this->assertTrue($job->every('30 minutes'));
+        $this->assertFalse($job->every('1 day')->ready);
+        $this->assertFalse($job->every('2 hours')->ready);
+        $this->assertTrue($job->every('1 hour')->ready);
+        $this->assertTrue($job->every('30 minutes')->ready);
 
         $this->assertFalse($job->done);
 
         // desactivamos
         $job->enabled = true;
         $job->date = Tools::dateTime('-1 hour');
-        $this->assertFalse($job->every('1 day'));
-        $this->assertFalse($job->every('2 hours'));
-        $this->assertTrue($job->every('1 hour'));
-        $this->assertTrue($job->every('30 minutes'));
+        $this->assertFalse($job->every('1 day')->ready);
+        $this->assertFalse($job->every('2 hours')->ready);
+        $this->assertTrue($job->every('1 hour')->ready);
+        $this->assertTrue($job->every('30 minutes')->ready);
 
         $this->assertFalse($job->done);
 
@@ -119,14 +121,14 @@ final class CronJobTest extends TestCase
         $job->pluginname = 'TestPlugin';
 
         // como nunca se ha ejecutado, si decimos de ejecutar hoy, se ejecutará
-        $this->assertTrue($job->everyDay($currentDay, 1));
+        $this->assertTrue($job->everyDay($currentDay, 1)->ready);
         $this->assertTrue($job->save());
 
         // como ya se ha ejecutado, si decimos de ejecutar hoy, no se ejecutará
-        $this->assertFalse($job->everyDayAt($currentDay, 1));
+        $this->assertFalse($job->everyDayAt($currentDay, 1)->ready);
 
         // como ya se ha ejecutado, si decimos de ejecutar mañana, no se ejecutará
-        $this->assertFalse($job->everyDayAt($currentDay + 1, 1));
+        $this->assertFalse($job->everyDayAt($currentDay + 1, 1)->ready);
 
         // eliminamos
         $this->assertTrue($job->delete());
@@ -137,17 +139,17 @@ final class CronJobTest extends TestCase
         $job = new CronJob();
         $job->jobname = 'TestName';
         $job->pluginname = 'TestPlugin';
-        $this->assertTrue($job->everyDayAt(0));
+        $this->assertTrue($job->everyDayAt(0)->ready);
         $this->assertTrue($job->save());
-        $this->assertFalse($job->everyDayAt(0));
+        $this->assertFalse($job->everyDayAt(0)->ready);
 
         $this->assertFalse($job->done);
 
         // ahora ponemos fecha de hace un día
         $job->date = Tools::dateTime('-1 day');
         $hour = (int)date('H');
-        $this->assertTrue($job->everyDayAt($hour));
-        $this->assertFalse($job->everyDayAt($hour + 1));
+        $this->assertTrue($job->everyDayAt($hour)->ready);
+        $this->assertFalse($job->everyDayAt($hour + 1)->ready);
 
         $this->assertFalse($job->done);
 
@@ -155,19 +157,47 @@ final class CronJobTest extends TestCase
         $this->assertTrue($job->delete());
     }
 
-    public function testDoneFunction(): void
+    public function testRunFunction(): void
     {
         $job = new CronJob();
         $job->jobname = 'TestName';
         $job->pluginname = 'TestPlugin';
-        $this->assertTrue($job->everyDayAt(0));
+        $this->assertTrue($job->everyDayAt(0)->ready);
 
-        // esperamos 1 segundo
-        sleep(1);
+        $this->assertTrue(
+            $job->run(function () {
+                // esperamos 1 segundo
+                sleep(1);
 
-        $this->assertTrue($job->done());
+                return true;
+            })
+        );
         $this->assertTrue($job->done);
-        $this->assertGreaterThan(0.0, $job->duration);
+        $this->assertFalse($job->failed);
+        $this->assertGreaterThan(0.99, $job->duration);
+
+        // eliminamos
+        $this->assertTrue($job->delete());
+    }
+
+    public function testRunFailFunction(): void
+    {
+        $job = new CronJob();
+        $job->jobname = 'TestName';
+        $job->pluginname = 'TestPlugin';
+        $this->assertTrue($job->everyDayAt(0)->ready);
+
+        $this->assertFalse(
+            $job->run(function () {
+                // esperamos 1 segundo
+                sleep(1);
+
+                throw new Exception('Test');
+            })
+        );
+        $this->assertTrue($job->done);
+        $this->assertTrue($job->failed);
+        $this->assertGreaterThan(0.99, $job->duration);
 
         // eliminamos
         $this->assertTrue($job->delete());

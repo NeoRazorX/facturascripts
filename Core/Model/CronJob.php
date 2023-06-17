@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Model;
 
+use Closure;
+use Exception;
 use FacturaScripts\Core\Model\Base\ModelClass;
 use FacturaScripts\Core\Model\Base\ModelTrait;
 use FacturaScripts\Core\Tools;
@@ -45,6 +47,9 @@ class CronJob extends ModelClass
     /** @var bool */
     public $enabled;
 
+    /** @var bool */
+    public $failed;
+
     /** @var int */
     public $id;
 
@@ -53,6 +58,9 @@ class CronJob extends ModelClass
 
     /** @var string */
     public $pluginname;
+
+    /** @var bool */
+    public $ready;
 
     /** @var int */
     private $start;
@@ -64,77 +72,79 @@ class CronJob extends ModelClass
         $this->done = false;
         $this->duration = 0.0;
         $this->enabled = true;
+        $this->failed = false;
+        $this->ready = false;
     }
 
-    public function done(): bool
-    {
-        $this->done = true;
-        $this->duration = round(microtime(true) - $this->start, 5);
-        $this->date = Tools::dateTime($this->start);
-        return $this->save();
-    }
-
-    public function every(string $period): bool
+    public function every(string $period): self
     {
         if (false === $this->enabled) {
-            return false;
+            $this->ready = false;
+            return $this;
         }
 
         if (false === $this->exists()) {
-            return true;
+            $this->ready = true;
+            return $this;
         }
 
         $this->start = microtime(true);
-        return strtotime($this->date) <= strtotime('-' . $period);
+        if (strtotime($this->date) <= strtotime('-' . $period)) {
+            $this->ready = true;
+            return $this;
+        }
+
+        $this->ready = false;
+        return $this;
     }
 
-    public function everyDay(int $day, int $hour, bool $strict = false): bool
+    public function everyDay(int $day, int $hour, bool $strict = false): self
     {
         $date = date('Y-m-' . $day);
         return $this->everyDayAux($date, $hour, $strict);
     }
 
-    public function everyDayAt(int $hour, bool $strict = false): bool
+    public function everyDayAt(int $hour, bool $strict = false): self
     {
         return $this->everyDayAux('today', $hour, $strict);
     }
 
-    public function everyFridayAt(int $hour, bool $strict): bool
+    public function everyFridayAt(int $hour, bool $strict): self
     {
         return $this->everyDayAux('friday', $hour, $strict);
     }
 
-    public function everyLastDayOfMonthAt(int $hour, bool $strict): bool
+    public function everyLastDayOfMonthAt(int $hour, bool $strict): self
     {
         return $this->everyDayAux('last day of this month', $hour, $strict);
     }
 
-    public function everyMondayAt(int $hour, bool $strict): bool
+    public function everyMondayAt(int $hour, bool $strict): self
     {
         return $this->everyDayAux('monday', $hour, $strict);
     }
 
-    public function everySaturdayAt(int $hour, bool $strict): bool
+    public function everySaturdayAt(int $hour, bool $strict): self
     {
         return $this->everyDayAux('saturday', $hour, $strict);
     }
 
-    public function everySundayAt(int $hour, bool $strict): bool
+    public function everySundayAt(int $hour, bool $strict): self
     {
         return $this->everyDayAux('sunday', $hour, $strict);
     }
 
-    public function everyThursdayAt(int $hour, bool $strict): bool
+    public function everyThursdayAt(int $hour, bool $strict): self
     {
         return $this->everyDayAux('thursday', $hour, $strict);
     }
 
-    public function everyTuesdayAt(int $hour, bool $strict): bool
+    public function everyTuesdayAt(int $hour, bool $strict): self
     {
         return $this->everyDayAux('tuesday', $hour, $strict);
     }
 
-    public function everyWednesdayAt(int $hour, bool $strict): bool
+    public function everyWednesdayAt(int $hour, bool $strict): self
     {
         return $this->everyDayAux('wednesday', $hour, $strict);
     }
@@ -142,6 +152,40 @@ class CronJob extends ModelClass
     public static function primaryColumn(): string
     {
         return 'id';
+    }
+
+    public function run(Closure $function): bool
+    {
+        if (false === $this->ready) {
+            return false;
+        }
+
+        $this->start = microtime(true);
+        $this->done = false;
+        $this->failed = false;
+        $this->duration = 0.0;
+        $this->date = Tools::dateTime($this->start);
+        $this->save();
+
+        try {
+            $function();
+        } catch (Exception $e) {
+            Tools::log('cron')->error($e->getMessage(), [
+                'jobname' => $this->jobname,
+                'pluginname' => $this->pluginname,
+            ]);
+
+            $this->duration = round(microtime(true) - $this->start, 5);
+            $this->done = true;
+            $this->failed = true;
+            $this->save();
+            return false;
+        }
+
+        $this->duration = round(microtime(true) - $this->start, 5);
+        $this->done = true;
+        $this->save();
+        return true;
     }
 
     public static function tableName(): string
@@ -162,14 +206,16 @@ class CronJob extends ModelClass
         return parent::url($type, $list);
     }
 
-    private function everyDayAux(string $day, int $hour, bool $strict): bool
+    private function everyDayAux(string $day, int $hour, bool $strict): self
     {
         if (false === $this->enabled) {
-            return false;
+            $this->ready = false;
+            return $this;
         }
 
         if (false === $this->exists()) {
-            return true;
+            $this->ready = true;
+            return $this;
         }
 
         // si strict es true, solamente devolvemos true si es la hora exacta
@@ -181,6 +227,12 @@ class CronJob extends ModelClass
         $last = strtotime($this->date);
         $start = strtotime($day . ' +' . $hour . ' hours');
         $this->start = microtime(true);
-        return $last <= $start && $this->start >= $start && $this->start <= $end;
+        if ($last <= $start && $this->start >= $start && $this->start <= $end) {
+            $this->ready = true;
+            return $this;
+        }
+
+        $this->ready = false;
+        return $this;
     }
 }
