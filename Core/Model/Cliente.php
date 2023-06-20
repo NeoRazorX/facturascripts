@@ -209,6 +209,7 @@ class Cliente extends Base\ComercialContact
             $contact = new DinContacto();
             $contact->apellidos = count($parts) > 1 ? implode(' ', array_slice($parts, 1)) : '';
             $contact->cifnif = $this->cifnif;
+            $contact->codagente = $this->codagente;
             $contact->codcliente = $this->codcliente;
             $contact->descripcion = $this->nombre;
             $contact->email = $this->email;

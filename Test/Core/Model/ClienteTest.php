@@ -39,6 +39,16 @@ final class ClienteTest extends TestCase
         // razón social es igual a nombre
         $this->assertEquals($cliente->nombre, $cliente->razonsocial);
 
+        // comprobamos que se ha creado una dirección por defecto
+        $addresses = $cliente->getAddresses();
+        $this->assertCount(1, $addresses, 'cliente-default-address-not-created');
+        foreach ($addresses as $address) {
+            $this->assertEquals($address->cifnif, $cliente->cifnif);
+            $this->assertEquals($address->codagente, $cliente->codagente);
+            $this->assertEquals($address->codcliente, $cliente->codcliente);
+            $this->assertEquals($address->idcontacto, $cliente->idcontactofact);
+        }
+
         // eliminamos
         $this->assertTrue($cliente->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($cliente->delete(), 'cliente-cant-delete');
