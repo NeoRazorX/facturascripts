@@ -28,6 +28,7 @@ use FacturaScripts\Core\Lib\MultiRequestProtection;
 use FacturaScripts\Core\Model\AttachedFile;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -300,6 +301,38 @@ final class Html
     }
 
     /**
+     * Devuelve el HTML de los mensajes flash guardados
+     * en la Sesión
+     *
+     * @return TwigFunction
+     */
+    private static function flashMessagesFunction(): TwigFunction
+    {
+        return new TwigFunction('flashMessages', function () {
+
+            $session = new Session();
+            $template = '/Block/FlashMessages.html.twig';
+
+            // display warnings
+            foreach ($session->getFlashBag()->get('warning', []) as $message) {
+                echo self::twig()->render($template, ['message' => $message, 'type' => 'warning']);
+            }
+
+            // display errors
+            foreach ($session->getFlashBag()->get('error', []) as $message) {
+                echo self::twig()->render($template, ['message' => $message, 'type' => 'danger']);
+            }
+
+            // display all flashes at once
+            foreach ($session->getFlashBag()->all() as $type => $messages) {
+                foreach ($messages as $message) {
+                    echo self::twig()->render($template, ['message' => $message, 'type' => $type]);
+                }
+            }
+        });
+    }
+
+    /**
      * @throws LoaderError
      */
     private static function twig(): Environment
@@ -340,6 +373,7 @@ final class Html
         self::$twig->addFunction(self::numberFunction());
         self::$twig->addFunction(self::settingsFunction());
         self::$twig->addFunction(self::transFunction());
+        self::$twig->addFunction(self::flashMessagesFunction());
         foreach (self::$functions as $function) {
             self::$twig->addFunction($function);
         }

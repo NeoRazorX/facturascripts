@@ -21,6 +21,7 @@ use FacturaScripts\Core\App\AppCron;
 use FacturaScripts\Core\App\AppInstaller;
 use FacturaScripts\Core\App\AppRouter;
 use FacturaScripts\Core\Base\Debug\ProductionErrorHandler;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
@@ -88,6 +89,10 @@ if (isset($argv[1]) && $argv[1] === '-cron') {
 
     // Connect to the database, cache, etc.
     $app->connect();
+
+    // Start Symfony Session
+    $session = new Session();
+    $session->start();
 
     // Executes App logic
     $app->run();

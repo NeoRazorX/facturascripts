@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Base;
 use Exception;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Dinamic\Lib\IPFilter;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Description of ToolBox
@@ -123,5 +124,19 @@ class ToolBox
     public static function utils(): Utils
     {
         return new Utils();
+    }
+
+    /**
+     * Agrega un mensaje a los mensajes flash
+     * de la Sesión
+     *
+     * @param string $type
+     * @param string $message
+     */
+    public static function flash(string $type, string $message): void
+    {
+        $session = new Session();
+        $flashes = $session->getFlashBag();
+        $flashes->add($type, $message);
     }
 }
