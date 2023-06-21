@@ -152,6 +152,8 @@ class ListCliente extends ListController
 
         $vatRegimes = $this->codeModel->all('clientes', 'regimeniva', 'regimeniva');
         $this->addFilterSelect($viewName, 'regimeniva', 'vat-regime', 'regimeniva', $vatRegimes);
+
+        $this->addFilterNumber($viewName, 'riesgoalcanzado', 'current-risk', 'riesgoalcanzado');
     }
 
     protected function createViewGroups(string $viewName = 'ListGrupoClientes')
