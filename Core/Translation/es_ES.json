@@ -499,6 +499,7 @@
     "error": "ERROR: %error%",
     "error-connecting-memcache": "Error al conectar con el servidor Memcache.",
     "error-deleting-lines": "Error al eliminar líneas",
+    "error-more-quant-than-line": "No se puede seleccionar una cantidad superior a la de la linea. Revise la linea: '%description%', cantidad: '%quantity%', cant. seleccionada: '%selected_quantity%'.",
     "error-no-name-in-settings": "Error en la vista %viewName%. Falta informar el 'name' en alguna columna del xml",
     "error-on-xml-file": "Error en archivo XML %fileName%",
     "error-processing-xmlview": "Error procesando el XML de la vista, el archivo '%fileName%' no existe o esta mal formado",

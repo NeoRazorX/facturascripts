@@ -104,7 +104,6 @@ class DocumentStitcher extends Controller
         $this->loadMoreDocuments();
 
         if (false === $this->validatedQuantities()) {
-            $this->dataBase->rollback();
             return;
         }
 
@@ -406,9 +405,11 @@ class DocumentStitcher extends Controller
                 $quantity = (float)$this->request->request->get('approve_quant_' . $line->primaryColumnValue(), '0');
 
                 if ($quantity > $line->cantidad) {
-                    $error_text = 'No se puede seleccionar una cantidad superior a la de la linea. Revise la linea: ';
-                    $error_text .= $line->descripcion . ", cantidad: " . $line->cantidad . ", cant. seleccionada: " . $quantity;
-                    static::toolBox()::log()->error($error_text);
+                    static::toolBox()::i18nLog()->error('error-more-quant-than-line', [
+                        '%description%' => $line->descripcion,
+                        '%quantity%' => $line->cantidad,
+                        '%selected_quantity%' => $quantity,
+                    ]);
                     return false;
                 }
             }
