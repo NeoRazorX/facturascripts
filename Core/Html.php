@@ -249,7 +249,7 @@ final class Html
 
     private static function moneyFunction(): TwigFunction
     {
-        return new TwigFunction('money', function (float $number, string $coddivisa = '') {
+        return new TwigFunction('money', function (?float $number, string $coddivisa = '') {
             if (empty($coddivisa)) {
                 $coddivisa = AppSettings::get('default', 'coddivisa');
             }
@@ -269,7 +269,7 @@ final class Html
 
     private static function numberFunction(): TwigFunction
     {
-        return new TwigFunction('number', function (float $number, ?int $decimals = null) {
+        return new TwigFunction('number', function (?float $number, ?int $decimals = null) {
             if ($decimals === null) {
                 $decimals = AppSettings::get('default', 'decimals');
             }
