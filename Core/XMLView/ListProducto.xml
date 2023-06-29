@@ -66,6 +66,9 @@
                 <values source="impuestos" fieldcode="codimpuesto" fieldtitle="descripcion"/>
             </widget>
         </column>
+        <column name="price-with-tax" display="right" order="225">
+            <widget type="money" fieldname="pricewithtax"/>
+        </column>
         <column name="stock" display="right" order="230">
             <widget type="number" fieldname="stockfis"/>
         </column>
