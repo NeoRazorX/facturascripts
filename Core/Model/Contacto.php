@@ -154,7 +154,7 @@ class Contacto extends Base\Contact
     {
         $results = [];
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
-        $fields = 'apellidos|cifnif|descripcion|email|empresa|idcontacto|nombre|observaciones|telefono1|telefono2';
+        $fields = 'apellidos|cifnif|descripcion|email|empresa|nombre|observaciones|telefono1|telefono2';
         $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
         foreach ($this->all($where) as $item) {
             $results[] = new CodeModel(['code' => $item->{$field}, 'description' => $item->fullName()]);
