@@ -59,7 +59,7 @@
     </columns>
     <modals>
         <group name="renumber" title="renumber-accounting" icon="fas fa-sort-numeric-down">
-            <column name="exercise">
+            <column name="exercise" description="renumber-accounting-p">
                 <widget type="select" fieldname="exercise" required="true">
                     <values source="ejercicios" fieldcode="codejercicio"/>
                 </widget>
