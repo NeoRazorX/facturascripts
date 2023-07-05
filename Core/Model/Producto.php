@@ -133,6 +133,13 @@ class Producto extends Base\ModelClass
     public $precio;
 
     /**
+     * Item price with taxes.
+     *
+     * @var float|int
+     */
+    public $pricewithtax;
+
+    /**
      * True -> will be synchronized with the online store.
      *
      * @var bool
@@ -176,6 +183,12 @@ class Producto extends Base\ModelClass
      * @var bool
      */
     public $ventasinstock;
+
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);        
+        $this->pricewithtax = $this->priceWithTax();
+    }
 
     public function clear()
     {
