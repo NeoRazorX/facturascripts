@@ -159,7 +159,15 @@ final class Plugin
 
     public function forja(string $field, $default)
     {
+        // buscamos el plugin en la lista pública de plugins
         foreach (Forja::plugins() as $item) {
+            if ($item['name'] === $this->name) {
+                return $item[$field] ?? $default;
+            }
+        }
+
+        // no lo hemos encontrado en la lista de plugins, lo buscamos en la lista de builds
+        foreach (Forja::builds() as $item) {
             if ($item['name'] === $this->name) {
                 return $item[$field] ?? $default;
             }

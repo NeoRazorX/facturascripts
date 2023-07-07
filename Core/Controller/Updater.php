@@ -132,6 +132,7 @@ class Updater extends Controller
             }
 
             $this->toolBox()->i18nLog()->error('download-error', [
+                '%body%' => $http->body(),
                 '%error%' => $http->errorMessage(),
                 '%status%' => $http->status(),
             ]);
