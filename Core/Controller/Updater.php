@@ -124,13 +124,17 @@ class Updater extends Controller
             }
 
             $url = $this->telemetryManager->signUrl($item['url']);
-            if (Http::get($url)->saveAs(FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
+            $http = Http::get($url);
+            if ($http->saveAs(FS_FOLDER . DIRECTORY_SEPARATOR . $item['filename'])) {
                 $this->toolBox()->i18nLog()->notice('download-completed');
                 $this->updaterItems[$key]['downloaded'] = true;
                 break;
             }
 
-            $this->toolBox()->i18nLog()->error('download-error');
+            $this->toolBox()->i18nLog()->error('download-error', [
+                '%error%' => $http->errorMessage(),
+                '%status%' => $http->status(),
+            ]);
         }
 
         // ¿Hay que desactivar algo?
