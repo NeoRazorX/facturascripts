@@ -66,12 +66,13 @@ class DataBaseWhere
     private $value;
 
     /**
-     * DataBaseWhere constructor.
+     * Filtra los resultados en los métodos all(), count() y loadFromCode() de los modelos.
+     * @link https://facturascripts.com/publicaciones/databasewhere-478
      *
-     * @param string $fields
-     * @param mixed $value
-     * @param string $operator
-     * @param string $operation
+     * @param string $fields Nombre del campo sobre el que se realiza el filtro. Se puede usar 'campo1|campo2|campo3'.
+     * @param mixed $value Valor por el cual se filtra.
+     * @param string $operator Operador a aplicar('=' por defecto): '=', '<', '>', '<=', '>=', '!=', 'IN', 'NOT IN', 'IS', 'IS NOT', 'LIKE', 'XLIKE', 'REGEXP'.
+     * @param string $operation Operador lógico a aplicar('AND' por defecto): 'AND', 'OR'. Importante: esta operación se aplica al propio elemento, no al siguiente.
      */
     public function __construct($fields, $value, $operator = '=', $operation = 'AND')
     {
