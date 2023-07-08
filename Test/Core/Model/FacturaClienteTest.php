@@ -407,13 +407,21 @@ final class FacturaClienteTest extends TestCase
         // añadimos una línea
         $firstLine = $invoice->getNewLine();
         $firstLine->cantidad = 1;
-        $firstLine->pvpunitario = self::PRODUCT1_PRICE;
+        $firstLine->pvpunitario = 200;
         $this->assertTrue($firstLine->save(), 'cant-save-first-line');
 
         // recalculamos
         $lines = $invoice->getLines();
         $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
-        $this->assertGreaterThan(0, $invoice->totalrecargo, 'bad-totalrecargo');
+
+        // comprobamos los totales
+        $this->assertEquals(200, $invoice->neto, 'bad-neto');
+        $this->assertEquals(200, $invoice->netosindto, 'bad-netosindto');
+        $this->assertEquals(42, $invoice->totaliva, 'bad-totaliva');
+        $this->assertEquals(10.4, $invoice->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0, $invoice->totalirpf, 'bad-totalirpf');
+        $this->assertEquals(0, $invoice->totalsuplidos, 'bad-totalsuplidos');
+        $this->assertEquals(252.4, $invoice->total, 'bad-total');
 
         // comprobamos el asiento
         $entry = $invoice->getAccountingEntry();
@@ -424,6 +432,52 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
         $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
         $this->assertTrue($customer->delete(), 'cant-delete-customer');
+    }
+
+    public function testCompanyWithSurcharge(): void
+    {
+        // creamos una empresa con régimen de recargo de equivalencia
+        $company = $this->getRandomCompany();
+        $company->regimeniva = RegimenIVA::TAX_SYSTEM_SURCHARGE;
+        $this->assertTrue($company->save(), 'cant-create-company');
+
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save(), 'cant-create-customer');
+
+        // creamos la factura
+        $invoice = new FacturaCliente();
+        foreach ($company->getWarehouses() as $warehouse) {
+            $invoice->setWarehouse($warehouse->codalmacen);
+            break;
+        }
+        $invoice->setSubject($customer);
+        $this->assertTrue($invoice->save(), 'cant-create-invoice');
+
+        // añadimos una línea
+        $firstLine = $invoice->getNewLine();
+        $firstLine->cantidad = 1;
+        $firstLine->pvpunitario = 200;
+        $this->assertTrue($firstLine->save(), 'cant-save-first-line');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        // comprobamos los totales
+        $this->assertEquals(200, $invoice->neto, 'bad-neto');
+        $this->assertEquals(200, $invoice->netosindto, 'bad-netosindto');
+        $this->assertEquals(42, $invoice->totaliva, 'bad-totaliva');
+        $this->assertEquals(10.4, $invoice->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0, $invoice->totalirpf, 'bad-totalirpf');
+        $this->assertEquals(0, $invoice->totalsuplidos, 'bad-totalsuplidos');
+        $this->assertEquals(252.4, $invoice->total, 'bad-total');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete(), 'cant-delete-invoice');
+        $this->assertTrue($customer->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($customer->delete(), 'cant-delete-customer');
+        $this->assertTrue($company->delete(), 'cant-delete-company');
     }
 
     public function testCreateInvoiceWithSupplied(): void

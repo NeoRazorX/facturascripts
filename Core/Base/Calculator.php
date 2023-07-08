@@ -27,6 +27,7 @@ use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\ImpuestoZona;
+use FacturaScripts\Core\Tools;
 
 /**
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
@@ -212,6 +213,7 @@ final class Calculator
     {
         $sinIva = $doc->getSerie()->siniva;
         $regimen = $doc->getSubject()->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
+        $company = $doc->getCompany();
 
         // cargamos las zonas de impuestos
         $taxZones = [];
@@ -231,7 +233,7 @@ final class Calculator
         foreach ($lines as $line) {
             // Si es una compra de bienes usados, no aplicamos impuestos
             if ($doc->subjectColumn() === 'codproveedor'
-                && $doc->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
+                && $company->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
                 && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
                 $line->codimpuesto = null;
                 $line->iva = $line->recargo = 0.0;
@@ -256,7 +258,8 @@ final class Calculator
             }
 
             // ¿El régimen IVA es sin recargo de equivalencia?
-            if ($regimen != RegimenIVA::TAX_SYSTEM_SURCHARGE) {
+            if ($regimen != RegimenIVA::TAX_SYSTEM_SURCHARGE
+                && $company->regimeniva != RegimenIVA::TAX_SYSTEM_SURCHARGE) {
                 $line->recargo = 0.0;
             }
         }
