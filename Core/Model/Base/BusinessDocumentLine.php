@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\DocTransformation;
 use FacturaScripts\Dinamic\Model\Impuesto;
 use FacturaScripts\Dinamic\Model\Producto;
 use FacturaScripts\Dinamic\Model\Stock;
@@ -424,6 +425,7 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
     {
         $this->cantidad = 0.0;
         $this->updateStock();
+        $this->updateTransformerDocument();
         parent::onDelete();
     }
 
@@ -507,5 +509,34 @@ abstract class BusinessDocumentLine extends ModelOnChangeClass
         }
 
         return false;
+    }
+
+
+    /**
+     * Actualiza las cantidades servidas del documento
+     * del que proviene. Es util cuando la linea viene de un
+     * documento anterior como un Pedido, devuelve la cantidad servida
+     * al estado en el que estaba antes de transformarlo en Albaran.
+     */
+    protected function updateTransformerDocument(): void
+    {
+        $documentosRestituibles = ['LineaAlbaranCliente', 'LineaAlbaranProveedor'];
+
+        if (in_array($this->modelClassName(), $documentosRestituibles)) {
+            $docTransformations = new DocTransformation();
+
+            $where = [
+                new DataBaseWhere('iddoc2', $this->idalbaran),
+                new DataBaseWhere('idlinea2', $this->idlinea),
+            ];
+
+            $docTransformation = $docTransformations->all($where)[0] ?? null;
+
+            if ($docTransformation) {
+                $linea = $docTransformation->getParentLine();
+                $linea->servido = -$this->cantidad;
+                $linea->save();
+            }
+        }
     }
 }

@@ -20,11 +20,14 @@
 namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\Calculator;
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Model\AlbaranCliente;
 use FacturaScripts\Core\Model\Almacen;
 use FacturaScripts\Core\Model\Empresa;
+use FacturaScripts\Core\Model\PedidoCliente;
 use FacturaScripts\Core\Model\Stock;
+use FacturaScripts\Core\Model\User;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -38,6 +41,10 @@ final class AlbaranClienteTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
+        (new DataBase())->connect();
+
+        new User();
+
         self::setDefaultSettings();
     }
 
@@ -297,6 +304,43 @@ final class AlbaranClienteTest extends TestCase
         $this->assertTrue($subject->delete(), 'cliente-cant-delete');
         $this->assertTrue($company2->delete(), 'empresa-cant-delete');
     }
+
+    public function testEliminarLineaRecalculaStock()
+    {
+        // Creamos un pedido
+        $subject = $this->getRandomCustomer();
+        $subject->save();
+
+        $pedido = new PedidoCliente();
+        $pedido->setSubject($subject);
+        $pedido->save();
+
+        // Añadimos linea
+        $line = $pedido->getNewLine();
+        $line->cantidad = 1;
+        $line->pvpunitario = 100;
+        $line->save();
+
+        // Actualizamos los totales
+        $lines = $pedido->getLines();
+        Calculator::calculate($pedido, $lines, true);
+
+        // Lo convertimos a Albaran
+        $pedido->idestado = 5;
+        $pedido->save();
+
+        // Comprobamos que se haya actualizado las cantidades servidas del pedido
+        $this->assertEquals(1, $pedido->getLines()[0]->servido);
+
+        // Eliminamos linea
+        $albaran = $pedido->childrenDocuments()[0];
+        $line = $albaran->getLines()[0];
+        $line->delete();
+
+        // Comprobamos que se hayan restituido en el pedido las cantidades servidas
+        $this->assertEquals(0, $pedido->getLines()[0]->servido);
+    }
+
 
     protected function tearDown(): void
     {
