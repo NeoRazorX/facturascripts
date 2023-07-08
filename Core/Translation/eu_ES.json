@@ -454,6 +454,7 @@
     "dont-sell-below-cost": "Ez saldu kostu prezioaren azpitik",
     "download": "Deskarga",
     "download-completed": "Deskarga amaitua",
+    "download-error": "Error al descargar. Código %status% - %error%",
     "download-xml": "XMLa Deskargatu",
     "downloads": "Deskargak",
     "drag": "Arrastatu",

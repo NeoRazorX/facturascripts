@@ -454,6 +454,7 @@
     "dont-sell-below-cost": "Non vendere sottocosto",
     "download": "Scarica",
     "download-completed": "download-completed",
+    "download-error": "Error al descargar. Código %status% - %error%",
     "download-xml": "Descargar XML",
     "downloads": "downloads",
     "drag": "Arrastrar",
