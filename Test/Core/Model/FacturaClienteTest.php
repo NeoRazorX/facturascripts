@@ -23,6 +23,7 @@ use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\InvoiceOperation;
+use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\FacturaCliente;
@@ -705,6 +706,63 @@ final class FacturaClienteTest extends TestCase
         $this->assertTrue($invoice->delete());
         $this->assertTrue($address->delete());
         $this->assertTrue($customer->delete());
+    }
+
+    public function testShellUsedGoods(): void
+    {
+        // creamos una empresa con el régimen de bienes usados
+        $company = $this->getRandomCompany();
+        $company->regimeniva = RegimenIVA::TAX_SYSTEM_USED_GOODS;
+        $this->assertTrue($company->save());
+
+        // creamos un producto de segunda mano
+        $product = $this->getRandomProduct();
+        $product->tipo = ProductType::SECOND_HAND;
+        $product->ventasinstock = true;
+        $this->assertTrue($product->save());
+
+        // le asignamos un coste de 900 y un precio de 1200 a su variante
+        foreach ($product->getVariants() as $variant) {
+            $variant->coste = 900;
+            $variant->precio = 1200;
+            $this->assertTrue($variant->save());
+            break;
+        }
+
+        // creamos un cliente
+        $customer = $this->getRandomCustomer();
+        $this->assertTrue($customer->save());
+
+        // creamos una factura
+        $invoice = new FacturaCliente();
+        foreach ($company->getWarehouses() as $warehouse) {
+            $invoice->setWarehouse($warehouse->codalmacen);
+            break;
+        }
+        $invoice->setSubject($customer);
+        $this->assertTrue($invoice->save());
+
+        // añadimos el producto
+        $firstLine = $invoice->getNewProductLine($product->referencia);
+        $firstLine->cantidad = 1;
+        $this->assertTrue($firstLine->save());
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true));
+
+        // comprobamos los totales
+        $this->assertEquals(1200, $invoice->neto);
+        $this->assertEquals(63, $invoice->totaliva);
+        $this->assertEquals(0, $invoice->totalirpf);
+        $this->assertEquals(1263, $invoice->total);
+
+        // eliminamos
+        $this->assertTrue($invoice->delete());
+        $this->assertTrue($customer->getDefaultAddress()->delete());
+        $this->assertTrue($customer->delete());
+        $this->assertTrue($product->delete());
+        $this->assertTrue($company->delete());
     }
 
     protected function tearDown(): void

@@ -25,6 +25,7 @@ use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\FacturaProveedorRenumber;
 use FacturaScripts\Core\Lib\InvoiceOperation;
+use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\FacturaProveedor;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
@@ -568,6 +569,55 @@ final class FacturaProveedorTest extends TestCase
         $this->assertTrue($invoice->delete());
         $this->assertTrue($address->delete());
         $this->assertTrue($supplier->delete());
+    }
+
+    public function testBuyUsedGoods(): void
+    {
+        // creamos una empresa con el régimen de bienes usados
+        $company = $this->getRandomCompany();
+        $company->regimeniva = RegimenIVA::TAX_SYSTEM_USED_GOODS;
+        $this->assertTrue($company->save());
+
+        // creamos un producto de segunda mano
+        $product = $this->getRandomProduct();
+        $product->tipo = ProductType::SECOND_HAND;
+        $this->assertTrue($product->save());
+
+        // creamos un proveedor
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save());
+
+        // creamos una factura
+        $invoice = new FacturaProveedor();
+        foreach($company->getWarehouses() as $warehouse) {
+            $invoice->setWarehouse($warehouse->codalmacen);
+            break;
+        }
+        $invoice->setSubject($supplier);
+        $this->assertTrue($invoice->save());
+
+        // añadimos el producto
+        $line = $invoice->getNewProductLine($product->referencia);
+        $line->cantidad = 1;
+        $line->pvpunitario = 900;
+        $this->assertTrue($line->save());
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true));
+
+        // comprobamos los totales
+        $this->assertEquals(900, $invoice->neto);
+        $this->assertEquals(0, $invoice->totaliva);
+        $this->assertEquals(0, $invoice->totalirpf);
+        $this->assertEquals(900, $invoice->total);
+
+        // eliminamos
+        $this->assertTrue($invoice->delete());
+        $this->assertTrue($supplier->getDefaultAddress()->delete());
+        $this->assertTrue($supplier->delete());
+        $this->assertTrue($product->delete());
+        $this->assertTrue($company->delete());
     }
 
     protected function tearDown(): void

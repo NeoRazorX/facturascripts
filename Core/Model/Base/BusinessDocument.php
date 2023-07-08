@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Model\Base;
 
+use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Dinamic\Lib\BusinessDocumentCode;
 use FacturaScripts\Dinamic\Model\Almacen;
 use FacturaScripts\Dinamic\Model\Divisa;
@@ -370,11 +371,12 @@ abstract class BusinessDocument extends ModelOnChangeClass
      */
     public function setWarehouse(string $codalmacen): bool
     {
-        $almacen = new Almacen();
-        if ($almacen->loadFromCode($codalmacen)) {
-            $this->codalmacen = $almacen->codalmacen;
-            $this->idempresa = $almacen->idempresa ?? $this->idempresa;
-            return true;
+        foreach (Almacenes::all() as $almacen) {
+            if ($almacen->codalmacen == $codalmacen) {
+                $this->codalmacen = $almacen->codalmacen;
+                $this->idempresa = $almacen->idempresa ?? $this->idempresa;
+                return true;
+            }
         }
 
         $this->toolBox()->i18nLog()->warning('warehouse-not-found');
