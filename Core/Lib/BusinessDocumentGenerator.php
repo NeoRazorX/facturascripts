@@ -122,13 +122,23 @@ class BusinessDocumentGenerator
     protected function cloneLines(BusinessDocument $prototype, BusinessDocument $newDoc, array $lines, array $quantity): bool
     {
         $docTrans = new DocTransformation();
+        $fields = array_keys($newDoc->getNewLine()->getModelFields());
+
         foreach ($lines as $line) {
             // copy line properties to new line
             $arrayLine = [];
             foreach (array_keys($line->getModelFields()) as $field) {
-                if (false === in_array($field, $line::dontCopyFields())) {
-                    $arrayLine[$field] = $line->{$field};
+                // exclude properties not in new line
+                if (false === in_array($field, $fields)) {
+                    continue;
                 }
+
+                // exclude some properties
+                if (in_array($field, $line::dontCopyFields())) {
+                    continue;
+                }
+
+                $arrayLine[$field] = $line->{$field};
             }
 
             if (isset($quantity[$line->primaryColumnValue()])) {
