@@ -59,7 +59,14 @@ class BusinessDocumentGenerator
     {
         $newDocClass = '\\FacturaScripts\\Dinamic\\Model\\' . $newClass;
         $newDoc = new $newDocClass();
+        $fields = array_keys($newDoc->getModelFields());
+
         foreach (array_keys($prototype->getModelFields()) as $field) {
+            // exclude properties not in new line
+            if (false === in_array($field, $fields)) {
+                continue;
+            }
+
             // exclude some properties
             if (in_array($field, $prototype::dontCopyFields())) {
                 continue;
