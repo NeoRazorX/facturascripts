@@ -143,6 +143,9 @@ class ListCliente extends ListController
             ['label' => Tools::lang()->trans('company'), 'where' => [new DataBaseWhere('personafisica', false)]]
         ]);
 
+        $fiscalIds = $this->codeModel->all('clientes', 'tipoidfiscal', 'tipoidfiscal');
+        $this->addFilterSelect($viewName, 'tipoidfiscal', 'fiscal-id', 'tipoidfiscal', $fiscalIds);
+
         $groupValues = $this->codeModel->all('gruposclientes', 'codgrupo', 'nombre');
         $this->addFilterSelect($viewName, 'codgrupo', 'group', 'codgrupo', $groupValues);
 

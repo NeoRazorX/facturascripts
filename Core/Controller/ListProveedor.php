@@ -120,6 +120,9 @@ class ListProveedor extends ListController
             ['label' => Tools::lang()->trans('supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
         ]);
 
+        $fiscalIds = $this->codeModel->all('proveedores', 'tipoidfiscal', 'tipoidfiscal');
+        $this->addFilterSelect($viewName, 'tipoidfiscal', 'fiscal-id', 'tipoidfiscal', $fiscalIds);
+
         $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', Series::codeModel());
         $this->addFilterSelect($viewName, 'codretencion', 'retentions', 'codretencion', Retenciones::codeModel());
         $this->addFilterSelect($viewName, 'codpago', 'payment-methods', 'codpago', FormasPago::codeModel());
