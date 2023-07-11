@@ -155,7 +155,7 @@ abstract class AccountingClass extends AccountingAccounts
         /// add tax register data
         $line->baseimponible = (float)$values['neto'];
         $line->iva = (float)$values['iva'];
-        $line->recargo = 0;
+        $line->recargo = (float)$values['recargo'];
         $line->cifnif = $this->document->cifnif;
         $line->codserie = $this->document->codserie;
         $line->documento = $this->document->codigo;
