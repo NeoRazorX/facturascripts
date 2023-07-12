@@ -33,12 +33,13 @@ abstract class ModelClass extends ModelCore
 {
 
     /**
-     * Returns all models that correspond to the selected filters.
+     * Devuelve un array con todos los registros de del modelo que cumplen los parámetros indicados.
+     * @link https://facturascripts.com/publicaciones/all-863
      *
-     * @param array $where filters to apply to model records.
-     * @param array $order fields to use in the sorting. For example ['code' => 'ASC']
-     * @param int $offset
-     * @param int $limit
+     * @param array $where (opcional) filtros a aplicar al listado. Un array de filtros {@see DataBaseWhere}.
+     * @param array $order (opcional) ordenación a aplicar. Array ['key' => 'valor'] donde la key es el nombre de la columna y el valor puede ser ASC o DESC. Ejemplo ['fecha' => 'ASC'].
+     * @param int $offset (opcional) permite indicar un desplazamiento del primer registro a recorrer.
+     * @param int $limit (opcional) permite indicar el número máximo de registros(50 por defecto)(0 sin límite).
      *
      * @return static[]
      */
