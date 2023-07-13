@@ -122,8 +122,10 @@ class BusinessDocumentCode
                     $expectedNumber >= $sequence->inicio &&
                     $document->codejercicio == $preCodejercicio) {
                     // hole found
-                    $document->fecha = $preDate;
-                    $document->hora = $preHour;
+                    if ($sequence->mantener_correlacion_fecha) {
+                        $document->fecha = $preDate;
+                        $document->hora = $preHour;
+                    }
                     $sequence->save();
                     return (string)$expectedNumber;
                 }
