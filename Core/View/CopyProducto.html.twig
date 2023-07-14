@@ -1,0 +1,96 @@
+{% extends 'Master/MenuBgTemplate.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h1 class="h3">
+                    <i class="fas fa-cut"></i> {{ fsc.title }}
+                </h1>
+                <p>{{ trans('copy-p') }}</p>
+                <form method="post">
+                    {{ formToken() }}
+                    <input type="hidden" name="action" value="save"/>
+                    <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
+                    <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
+
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col">
+                                    <h3>Producto original</h3>
+                                    <div class="row">
+                                        <div class="col"><p>Referencia: <strong>{{ fsc.model.referencia }}</strong></p>
+                                        </div>
+                                        <div class="col"><p>Descripción: <strong>{{ fsc.model.descripcion }}</strong>
+                                            </p></div>
+                                    </div>
+
+                                    <h4>Variantes del producto original</h4>
+                                    {% if fsc.model.getVariants() | length > 0 %}
+                                        <div class="row">
+                                            <div class="col">
+                                                {% for variante in fsc.model.getVariants() %}
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <p>
+                                                                Referencia:
+                                                                <strong>{{ variante.referencia }}</strong>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col">
+                                                            <p>
+                                                                Coste:
+                                                                <strong>{{ variante.coste }}</strong>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col">
+                                                            <p>
+                                                                Precio:
+                                                                <strong>{{ variante.precio }}</strong>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label class="mb-0">{{ trans('description') }}</label>
+                                        <div class="input-group">
+                                            <textarea rows="3" name="descripcion" class="form-control" required
+                                                      autocomplete="off"
+                                                      placeholder="{{ trans('description') }}">{{ trans('copy') }} {{ fsc.model.descripcion }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> {{ trans('save') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

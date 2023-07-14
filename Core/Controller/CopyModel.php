@@ -86,6 +86,11 @@ class CopyModel extends Controller
             $this->setTemplate(self::TEMPLATE_ASIENTO);
         }
 
+        // si se trata de un producto, cargamos su plantilla
+        if ($this->modelClass === 'Producto') {
+            $this->setTemplate('CopyProducto');
+        }
+
         $this->title .= ' ' . $this->model->primaryDescription();
         if ($action === 'save') {
             switch ($this->modelClass) {
@@ -105,6 +110,10 @@ class CopyModel extends Controller
 
                 case 'Asiento':
                     $this->saveAccountingEntry();
+                    break;
+
+                case 'Producto':
+                    $this->saveProduct();
                     break;
             }
         }
@@ -199,9 +208,36 @@ class CopyModel extends Controller
             return;
         }
 
-        // buscamos el proveedor
-        $subject = new Proveedor();
-        if (false === $subject->loadFromCode($this->request->request->get('codproveedor'))) {
+        $this->dataBase->beginTransaction();
+
+        // TODO obtenemos el producto origen
+
+        // TODO obtenemos las variantes del producto origen
+
+        // TODO creamos el nuevo producto
+
+        // TODO creamos las nuevas variantes
+
+        // TODO asignamos variantes al producto nuevo
+
+        $this->dataBase->commit();
+//        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+//        $this->redirect($newDoc->url() . '&action=save-ok');
+//
+//        $this->dataBase->commit();
+//        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+//        $this->redirect($newDoc->url() . '&action=save-ok');
+    }
+
+    protected function saveSalesDocument()
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        // buscamos el cliente
+        $subject = new Cliente();
+        if (false === $subject->loadFromCode($this->request->request->get('codcliente'))) {
             $this->toolBox()->i18nLog()->warning('record-not-found');
             return;
         }
@@ -220,7 +256,7 @@ class CopyModel extends Controller
         $newDoc->dtopor1 = (float)$this->request->request->get('dtopor1', 0);
         $newDoc->dtopor2 = (float)$this->request->request->get('dtopor2', 0);
         $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
-        $newDoc->numproveedor = $this->request->request->get('numproveedor');
+        $newDoc->numero2 = $this->request->request->get('numero2');
         $newDoc->observaciones = $this->request->request->get('observaciones');
         if (false === $newDoc->save()) {
             $this->toolBox()->i18nLog()->warning('record-save-error');
@@ -241,7 +277,7 @@ class CopyModel extends Controller
         $this->saveDocumentEnd($newDoc);
     }
 
-    protected function saveSalesDocument()
+    protected function saveProduct()
     {
         if (false === $this->validateFormToken()) {
             return;

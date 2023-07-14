@@ -116,9 +116,6 @@ class EditProducto extends EditController
 
             case 'delete-image':
                 return $this->deleteImageAction();
-
-            case 'copy-product':
-                return $this->copyProductAction();
         }
 
         return parent::execPreviousAction($action);
@@ -191,7 +188,7 @@ class EditProducto extends EditController
                 $this->loadCustomReferenceWidget('EditStock');
 
                 $this->addButton($viewName, [
-                    'action' => $this->url() . '?action=copy-product&code=' . $this->request->query->get('code'),
+                    'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
                     'icon' => 'fas fa-cut',
                     'label' => 'copy',
                     'type' => 'link'
@@ -234,40 +231,5 @@ class EditProducto extends EditController
         if ($column && $column->widget->getType() === 'select') {
             $column->widget->setValuesFromArrayKeys(RegimenIVA::allExceptions(), true, true);
         }
-    }
-
-    /**
-     * Copy Product.
-     */
-    protected function copyProductAction(): void
-    {
-        // TODO ACL
-
-        $idproduct = $this->request->query->get('code');
-
-        $product = new Producto();
-        $product->loadFromCode($idproduct);
-
-        $productCopy = new Producto();
-
-        $exceptFields = ['actualizado', 'fechaalta', 'idproducto', 'referencia', 'descripcion'];
-        $modelFields = $product->getModelFields();
-
-        foreach (array_keys($modelFields) as $field) {
-            if (false === in_array($field, $exceptFields)) {
-                $productCopy->{$field} = $product->{$field};
-            }
-        }
-
-        // TODO ver si crear una traduccion del string "copia"
-        $productCopy->descripcion = ToolBox::i18n()->trans('copy') . ' ' . $product->descripcion;
-
-        if (false === $productCopy->save()) {
-            // TODO error message
-            $this->redirect($this->url());
-        }
-
-        // TODO success message
-        $this->redirect($productCopy->url());
     }
 }
