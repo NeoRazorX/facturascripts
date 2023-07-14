@@ -23,6 +23,8 @@ use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Producto;
+use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -305,24 +307,65 @@ class CopyModel extends Controller
             return;
         }
 
+        // TODO ACL
+
         $this->dataBase->beginTransaction();
 
-        // TODO obtenemos el producto origen
+        // obtenemos el producto origen
+        /** @var Producto $productoOrigen */
+        $productoOrigen = $this->model;
 
-        // TODO obtenemos las variantes del producto origen
+        // obtenemos las variantes del producto origen
+        $variantesProductoOrigen = $productoOrigen->getVariants();
 
-        // TODO creamos el nuevo producto
+        // creamos el nuevo producto y copiamos los campos del producto origen
+        $productoDestino = new Producto();
 
-        // TODO creamos las nuevas variantes
+        $camposProducto = array_keys((new Producto())->getModelFields());
+        $camposExcluidos = ['actualizado', 'descripcion', 'fechaalta', 'idproducto', 'referencia'];
 
-        // TODO asignamos variantes al producto nuevo
+        foreach ($camposProducto as $campo) {
+            if (false === in_array($campo, $camposExcluidos)) {
+                $productoDestino->{$campo} = $productoOrigen->{$campo};
+            }
+        }
+
+        $productoDestino->descripcion = $this->request->request->get('descripcion');
+        $productoDestino->referencia = $this->request->request->get('referencia');
+
+        if (false === $productoDestino->save()) {
+            $this->toolBox()->i18nLog()->warning('record-save-error');
+            $this->dataBase->rollback();
+            return;
+        }
+
+
+        // creamos las nuevas variantes
+        $camposVariante = array_keys((new Variante())->getModelFields());
+        $camposExcluidos = ['idvariante', 'idproducto', 'referencia'];
+
+        foreach ($variantesProductoOrigen as $variante) {
+            $varianteDestino = new Variante();
+
+            foreach ($camposVariante as $campo) {
+                if (false === in_array($campo, $camposExcluidos)) {
+                    $varianteDestino->{$campo} = $variante->{$campo};
+                }
+
+                $varianteDestino->referencia = $variante->referencia . ' - copia';
+            }
+
+            // asignamos variantes al producto nuevo
+            $varianteDestino->idproducto = $productoDestino->idproducto;
+            if (false === $varianteDestino->save()) {
+                $this->toolBox()->i18nLog()->warning('record-save-error');
+                $this->dataBase->rollback();
+                return;
+            }
+        }
 
         $this->dataBase->commit();
-//        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-//        $this->redirect($newDoc->url() . '&action=save-ok');
-//
-//        $this->dataBase->commit();
-//        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-//        $this->redirect($newDoc->url() . '&action=save-ok');
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        $this->redirect($productoDestino->url() . '&action=save-ok');
     }
 }

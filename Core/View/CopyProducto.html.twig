@@ -62,9 +62,22 @@
                             <div class="form-row">
                                 <div class="col-sm">
                                     <div class="form-group">
-                                        <label class="mb-0">{{ trans('description') }}</label>
+                                        <label for="referencia" class="mb-0">{{ trans('reference') }}</label>
                                         <div class="input-group">
-                                            <textarea rows="3" name="descripcion" class="form-control" required
+                                            <input type="text" name="referencia" id="referencia" class="form-control"
+                                                   required
+                                                   autocomplete="off"
+                                                   placeholder="{{ trans('reference') }}"
+                                                   value="{{ trans('copy') }} {{ fsc.model.referencia }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="descripcion" class="mb-0">{{ trans('description') }}</label>
+                                        <div class="input-group">
+                                            <textarea rows="3" name="descripcion" id="descripcion" class="form-control"
+                                                      required
                                                       autocomplete="off"
                                                       placeholder="{{ trans('description') }}">{{ trans('copy') }} {{ fsc.model.descripcion }}</textarea>
                                         </div>
