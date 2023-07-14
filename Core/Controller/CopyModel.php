@@ -82,13 +82,14 @@ class CopyModel extends Controller
         }
 
         // si no es un documento de compra o venta, cargamos su plantilla
-        if ($this->modelClass === 'Asiento') {
-            $this->setTemplate(self::TEMPLATE_ASIENTO);
-        }
+        switch ($this->modelClass) {
+            case 'Asiento':
+                $this->setTemplate(self::TEMPLATE_ASIENTO);
+                break;
 
-        // si se trata de un producto, cargamos su plantilla
-        if ($this->modelClass === 'Producto') {
-            $this->setTemplate('CopyProducto');
+            case 'Producto':
+                $this->setTemplate('CopyProducto');
+                break;
         }
 
         $this->title .= ' ' . $this->model->primaryDescription();
@@ -208,25 +209,46 @@ class CopyModel extends Controller
             return;
         }
 
+        // buscamos el proveedor
+        $subject = new Proveedor();
+        if (false === $subject->loadFromCode($this->request->request->get('codproveedor'))) {
+            $this->toolBox()->i18nLog()->warning('record-not-found');
+            return;
+        }
+
         $this->dataBase->beginTransaction();
 
-        // TODO obtenemos el producto origen
+        // creamos el nuevo documento
+        $className = self::MODEL_NAMESPACE . $this->modelClass;
+        $newDoc = new $className();
+        $newDoc->setAuthor($this->user);
+        $newDoc->setSubject($subject);
+        $newDoc->codalmacen = $this->request->request->get('codalmacen');
+        $newDoc->setCurrency($this->model->coddivisa);
+        $newDoc->codpago = $this->request->request->get('codpago');
+        $newDoc->codserie = $this->request->request->get('codserie');
+        $newDoc->dtopor1 = (float)$this->request->request->get('dtopor1', 0);
+        $newDoc->dtopor2 = (float)$this->request->request->get('dtopor2', 0);
+        $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
+        $newDoc->numproveedor = $this->request->request->get('numproveedor');
+        $newDoc->observaciones = $this->request->request->get('observaciones');
+        if (false === $newDoc->save()) {
+            $this->toolBox()->i18nLog()->warning('record-save-error');
+            $this->dataBase->rollback();
+            return;
+        }
 
-        // TODO obtenemos las variantes del producto origen
+        // copiamos las líneas del documento
+        foreach ($this->model->getLines() as $line) {
+            $newLine = $newDoc->getNewLine($line->toArray());
+            if (false === $newLine->save()) {
+                $this->toolBox()->i18nLog()->warning('record-save-error');
+                $this->dataBase->rollback();
+                return;
+            }
+        }
 
-        // TODO creamos el nuevo producto
-
-        // TODO creamos las nuevas variantes
-
-        // TODO asignamos variantes al producto nuevo
-
-        $this->dataBase->commit();
-//        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-//        $this->redirect($newDoc->url() . '&action=save-ok');
-//
-//        $this->dataBase->commit();
-//        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
-//        $this->redirect($newDoc->url() . '&action=save-ok');
+        $this->saveDocumentEnd($newDoc);
     }
 
     protected function saveSalesDocument()
@@ -283,45 +305,24 @@ class CopyModel extends Controller
             return;
         }
 
-        // buscamos el cliente
-        $subject = new Cliente();
-        if (false === $subject->loadFromCode($this->request->request->get('codcliente'))) {
-            $this->toolBox()->i18nLog()->warning('record-not-found');
-            return;
-        }
-
         $this->dataBase->beginTransaction();
 
-        // creamos el nuevo documento
-        $className = self::MODEL_NAMESPACE . $this->modelClass;
-        $newDoc = new $className();
-        $newDoc->setAuthor($this->user);
-        $newDoc->setSubject($subject);
-        $newDoc->codalmacen = $this->request->request->get('codalmacen');
-        $newDoc->setCurrency($this->model->coddivisa);
-        $newDoc->codpago = $this->request->request->get('codpago');
-        $newDoc->codserie = $this->request->request->get('codserie');
-        $newDoc->dtopor1 = (float)$this->request->request->get('dtopor1', 0);
-        $newDoc->dtopor2 = (float)$this->request->request->get('dtopor2', 0);
-        $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
-        $newDoc->numero2 = $this->request->request->get('numero2');
-        $newDoc->observaciones = $this->request->request->get('observaciones');
-        if (false === $newDoc->save()) {
-            $this->toolBox()->i18nLog()->warning('record-save-error');
-            $this->dataBase->rollback();
-            return;
-        }
+        // TODO obtenemos el producto origen
 
-        // copiamos las líneas del documento
-        foreach ($this->model->getLines() as $line) {
-            $newLine = $newDoc->getNewLine($line->toArray());
-            if (false === $newLine->save()) {
-                $this->toolBox()->i18nLog()->warning('record-save-error');
-                $this->dataBase->rollback();
-                return;
-            }
-        }
+        // TODO obtenemos las variantes del producto origen
 
-        $this->saveDocumentEnd($newDoc);
+        // TODO creamos el nuevo producto
+
+        // TODO creamos las nuevas variantes
+
+        // TODO asignamos variantes al producto nuevo
+
+        $this->dataBase->commit();
+//        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+//        $this->redirect($newDoc->url() . '&action=save-ok');
+//
+//        $this->dataBase->commit();
+//        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+//        $this->redirect($newDoc->url() . '&action=save-ok');
     }
 }
