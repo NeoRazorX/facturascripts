@@ -322,7 +322,7 @@ class CopyModel extends Controller
         $productoDestino = new Producto();
 
         $camposProducto = array_keys((new Producto())->getModelFields());
-        $camposExcluidos = ['actualizado', 'descripcion', 'fechaalta', 'idproducto', 'referencia'];
+        $camposExcluidos = ['actualizado', 'descripcion', 'fechaalta', 'idproducto', 'referencia', 'stockfis'];
 
         foreach ($camposProducto as $campo) {
             if (false === in_array($campo, $camposExcluidos)) {
@@ -331,7 +331,6 @@ class CopyModel extends Controller
         }
 
         $productoDestino->descripcion = $this->request->request->get('descripcion');
-        $productoDestino->referencia = $this->request->request->get('referencia');
 
         if (false === $productoDestino->save()) {
             $this->toolBox()->i18nLog()->warning('record-save-error');
@@ -339,20 +338,26 @@ class CopyModel extends Controller
             return;
         }
 
-
         // creamos las nuevas variantes
         $camposVariante = array_keys((new Variante())->getModelFields());
-        $camposExcluidos = ['idvariante', 'idproducto', 'referencia'];
+        $camposExcluidos = ['idvariante', 'idproducto', 'referencia', 'stockfis'];
 
         foreach ($variantesProductoOrigen as $variante) {
-            $varianteDestino = new Variante();
+            // Como al crear un producto siempre se crea
+            // una variante principal aprovechamos esta
+            // y la modificamos para que el producto destino
+            // no tenga una variante mas que el producto origen
+            if ($variante === reset($variantesProductoOrigen)) {
+                // si es el primer elemento del array, modificamos la variante existente
+                $varianteDestino = $productoDestino->getVariants()[0];
+            }else{
+                $varianteDestino = new Variante();
+            }
 
             foreach ($camposVariante as $campo) {
                 if (false === in_array($campo, $camposExcluidos)) {
                     $varianteDestino->{$campo} = $variante->{$campo};
                 }
-
-                $varianteDestino->referencia = $variante->referencia . ' - copia';
             }
 
             // asignamos variantes al producto nuevo

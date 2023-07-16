@@ -13,79 +13,44 @@
                     <input type="hidden" name="action" value="save"/>
                     <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
                     <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
-
                     <div class="card shadow mb-4">
                         <div class="card-body">
-
-                            <div class="row">
-                                <div class="col">
-                                    <h3>Producto original</h3>
-                                    <div class="row">
-                                        <div class="col"><p>Referencia: <strong>{{ fsc.model.referencia }}</strong></p>
-                                        </div>
-                                        <div class="col"><p>Descripción: <strong>{{ fsc.model.descripcion }}</strong>
-                                            </p></div>
-                                    </div>
-
-                                    <h4>Variantes del producto original</h4>
-                                    {% if fsc.model.getVariants() | length > 0 %}
-                                        <div class="row">
-                                            <div class="col">
-                                                {% for variante in fsc.model.getVariants() %}
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <p>
-                                                                Referencia:
-                                                                <strong>{{ variante.referencia }}</strong>
-                                                            </p>
-                                                        </div>
-                                                        <div class="col">
-                                                            <p>
-                                                                Coste:
-                                                                <strong>{{ variante.coste }}</strong>
-                                                            </p>
-                                                        </div>
-                                                        <div class="col">
-                                                            <p>
-                                                                Precio:
-                                                                <strong>{{ variante.precio }}</strong>
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-
                             <div class="form-row">
                                 <div class="col-sm">
                                     <div class="form-group">
-                                        <label for="referencia" class="mb-0">{{ trans('reference') }}</label>
-                                        <div class="input-group">
-                                            <input type="text" name="referencia" id="referencia" class="form-control"
-                                                   required
-                                                   autocomplete="off"
-                                                   placeholder="{{ trans('reference') }}"
-                                                   value="{{ trans('copy') }} {{ fsc.model.referencia }}">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm">
-                                    <div class="form-group">
-                                        <label for="descripcion" class="mb-0">{{ trans('description') }}</label>
-                                        <div class="input-group">
-                                            <textarea rows="3" name="descripcion" id="descripcion" class="form-control"
-                                                      required
-                                                      autocomplete="off"
-                                                      placeholder="{{ trans('description') }}">{{ trans('copy') }} {{ fsc.model.descripcion }}</textarea>
-                                        </div>
+                                        <label for="descripcion">{{ trans('description') }}</label>
+                                        <input type="text" name="descripcion" id="descripcion" value="{{ trans('copy') }} {{ fsc.model.descripcion }}"
+                                               class="form-control" required/>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>{{ trans('reference') }}</th>
+                                    <th>{{ trans('barcode') }}</th>
+                                    <th class="text-right">{{ trans('cost-price') }}</th>
+                                    <th class="text-right">{{ trans('margin') }}</th>
+                                    <th class="text-right">{{ trans('price') }}</th>
+                                    <th class="text-right">{{ trans('stock') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for variante in fsc.model.getVariants() %}
+                                    <tr>
+                                        <td>{{ variante.referencia }}</td>
+                                        <td>{{ variante.codbarras }}</td>
+                                        <td class="text-right">{{ money(variante.coste) }}</td>
+                                        <td class="text-right">{{ fsc.toolBox().numbers().format(variante.margen) }} %</td>
+                                        <td class="text-right">{{ money(variante.precio) }}</td>
+                                        <td class="text-right">{{ fsc.toolBox().numbers().format(variante.stockfis) }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                         <div class="card-footer">
                             <div class="text-right">
                                 <button type="submit" class="btn btn-primary">
@@ -98,12 +63,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block css %}
-    {{ parent() }}
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
 {% endblock %}
