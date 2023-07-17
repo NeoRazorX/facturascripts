@@ -62,8 +62,8 @@ class EditImpuesto extends EditController
     protected function createViewsAccounts(string $viewName = 'ListSubcuenta'): void
     {
         $this->addListView($viewName, 'Subcuenta', 'subaccounts', 'fas fa-folder-open');
-        $this->views[$viewName]->addOrderBy(['codsubcuenta', 'idsubcuenta'], 'code', 2);
-        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
+        $this->views[$viewName]->addOrderBy(['codejercicio', 'codsubcuenta'], 'code', 2);
+        $this->views[$viewName]->addOrderBy(['codejercicio', 'descripcion'], 'description');
         $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
         $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
 
