@@ -27,7 +27,6 @@ use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
 use FacturaScripts\Core\Model\Impuesto;
 use FacturaScripts\Core\Model\ImpuestoZona;
-use FacturaScripts\Core\Tools;
 
 /**
  * @author       Carlos García Gómez      <carlos@facturascripts.com>
@@ -167,11 +166,11 @@ final class Calculator
         }
 
         // redondeamos los IVA
-        foreach ($subtotals['iva'] as $value) {
-            $value['neto'] = round($value['neto'], FS_NF0);
-            $value['netosindto'] = round($value['netosindto'], FS_NF0);
-            $value['totaliva'] = round($value['totaliva'], FS_NF0);
-            $value['totalrecargo'] = round($value['totalrecargo'], FS_NF0);
+        foreach ($subtotals['iva'] as $key => $value) {
+            $subtotals['iva'][$key]['neto'] = round($value['neto'], FS_NF0);
+            $subtotals['iva'][$key]['netosindto'] = round($value['netosindto'], FS_NF0);
+            $subtotals['iva'][$key]['totaliva'] = round($value['totaliva'], FS_NF0);
+            $subtotals['iva'][$key]['totalrecargo'] = round($value['totalrecargo'], FS_NF0);
 
             // trasladamos a los subtotales
             $subtotals['neto'] += round($value['neto'], FS_NF0);
