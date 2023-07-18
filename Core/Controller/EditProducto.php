@@ -20,13 +20,11 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Core\Lib\ProductType;
-use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
 
@@ -187,12 +185,14 @@ class EditProducto extends EditController
                 }
                 $this->loadCustomReferenceWidget('EditStock');
 
-                $this->addButton($viewName, [
-                    'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
-                    'icon' => 'fas fa-cut',
-                    'label' => 'copy',
-                    'type' => 'link'
-                ]);
+                if (false === empty($view->model->primaryColumnValue())) {
+                    $this->addButton($viewName, [
+                        'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
+                        'icon' => 'fas fa-cut',
+                        'label' => 'copy',
+                        'type' => 'link'
+                    ]);
+                }
 
                 break;
 
