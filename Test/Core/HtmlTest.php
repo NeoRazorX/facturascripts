@@ -42,7 +42,13 @@ final class HtmlTest extends TestCase
             . Tools::config('test123', '123') . "\n"
             . Tools::money(123.45) . "\n"
             . Tools::number(123.45) . "\n"
-            . Tools::lang()->trans('save');
+            . Tools::lang()->trans('save') . "\n"
+            . Tools::bytes(0, 0) . "\n"
+            . Tools::bytes(1, 1) . "\n"
+            . Tools::bytes(2, 2) . "\n"
+            . Tools::bytes(1025, 1) . "\n"
+            . Tools::bytes(1048577, 0) . "\n"
+            . Tools::bytes(1073741825);
 
         $html = Html::render('@Test/testTemplate.html.twig');
         $this->assertEquals($expected, $html, 'html-not-equal-for-testTemplate');
