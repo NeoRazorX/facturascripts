@@ -270,6 +270,10 @@ class Variante extends Base\ModelClass
 
     public function save(): bool
     {
+        $this->precio = $this->precio ?: 0.0;
+        $this->coste = $this->coste ?: 0.0;
+        $this->margen = $this->margen ?: 0.0;
+
         if ($this->margen > 0) {
             $newPrice = $this->coste * (100 + $this->margen) / 100;
             $this->precio = round($newPrice, DinProducto::ROUND_DECIMALS);
