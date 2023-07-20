@@ -193,4 +193,14 @@ final class ToolsTest extends TestCase
         $this->assertEquals("Lorem ipsum dolor sit amet,...", Tools::textBreak($text, 30));
         $this->assertEquals("Lorem ipsum dolor sit amet,(...)", Tools::textBreak($text, 32, '(...)'));
     }
+
+    public function testBytes()
+    {
+        $this->assertEquals('0 bytes', Tools::bytes(0, 0));
+        $this->assertEquals('1.0 byte', Tools::bytes(1, 1));
+        $this->assertEquals('2.00 bytes', Tools::bytes(2, 2));
+        $this->assertEquals('1.0 KB', Tools::bytes(1025, 1));
+        $this->assertEquals('1 MB', Tools::bytes(1048577, 0));
+        $this->assertEquals('1.00 GB', Tools::bytes(1073741825));
+    }
 }

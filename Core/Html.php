@@ -299,6 +299,13 @@ final class Html
         });
     }
 
+    private static function bytesFunction(): TwigFunction
+    {
+        return new TwigFunction('bytes', function ($size, int $decimals = 2) {
+            return Tools::bytes($size, $decimals);
+        });
+    }
+
     /**
      * @throws LoaderError
      */
@@ -340,6 +347,7 @@ final class Html
         self::$twig->addFunction(self::numberFunction());
         self::$twig->addFunction(self::settingsFunction());
         self::$twig->addFunction(self::transFunction());
+        self::$twig->addFunction(self::bytesFunction());
         foreach (self::$functions as $function) {
             self::$twig->addFunction($function);
         }
