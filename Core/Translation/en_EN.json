@@ -1044,6 +1044,7 @@
     "phone": "Phone",
     "phone2": "Phone 2",
     "phones": "Phones",
+    "php-extension-needed": "Se requiere la extensión %extension% en la configuración de PHP",
     "php-extension-not-found": "You don't have the %extension% PHP extension installed.",
     "php-support-end": "Support for PHP %current% will end soon. Please update PHP to version %min% or higher.",
     "physical-stock": "Physical stock",

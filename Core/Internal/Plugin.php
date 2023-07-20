@@ -139,7 +139,7 @@ final class Plugin
                 continue;
             }
             if ($showErrors) {
-                ToolBox::i18nLog()->warning('php-extension-needed', ['%extensionName%' => $require]);
+                ToolBox::i18nLog()->warning('php-extension-needed', ['%extension%' => $require]);
             }
             return false;
         }
