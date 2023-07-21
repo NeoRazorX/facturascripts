@@ -108,7 +108,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterCheckbox($viewName, 'totalsuplidos', 'supplied-amount', 'totalsuplidos', '!=', 0);
     }
 
-    protected function createViewLines(string $viewName, string $modelName)
+    protected function createViewLines(string $viewName, string $modelName): void
     {
         $this->addView($viewName, $modelName, 'lines', 'fas fa-list');
         $this->addSearchFields($viewName, ['referencia', 'descripcion']);
@@ -149,6 +149,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterNumber($viewName, 'pvptotal-gt', 'amount', 'pvptotal');
         $this->addFilterNumber($viewName, 'pvptotal-lt', 'amount', 'pvptotal', '<=');
 
+        $this->addFilterCheckbox($viewName, 'no-ref', 'no-reference', 'referencia', 'IS', null);
         $this->addFilterCheckbox($viewName, 'recargo', 'surcharge', 'recargo', '!=', 0);
         $this->addFilterCheckbox($viewName, 'irpf', 'retention', 'irpf', '!=', 0);
         $this->addFilterCheckbox($viewName, 'suplido', 'supplied', 'suplido');
