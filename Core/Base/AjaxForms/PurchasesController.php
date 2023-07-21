@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -223,11 +223,16 @@ abstract class PurchasesController extends PanelController
     protected function exportAction()
     {
         $this->setTemplate(false);
+
+        $subjectLang = $this->views[static::MAIN_VIEW_NAME]->model->getSubject()->langcode;
+        $requestLang = $this->request->request->get('langcode');
+        $langCode = $requestLang ?? $subjectLang ?? '';
+
         $this->exportManager->newDoc(
             $this->request->get('option', ''),
             $this->title,
             (int)$this->request->request->get('idformat', ''),
-            $this->request->request->get('langcode', '')
+            $langCode
         );
         $this->exportManager->addBusinessDocPage($this->views[static::MAIN_VIEW_NAME]->model);
         $this->exportManager->show($this->response);
