@@ -226,11 +226,20 @@ abstract class SalesController extends PanelController
     protected function exportAction()
     {
         $this->setTemplate(false);
+
+        $subject_langcode = $this->views[static::MAIN_VIEW_NAME]->model->getSubject()->langcode;
+        $subject_langcode = (false === empty($subject_langcode)) ? $subject_langcode : null;
+
+        $request_langcode = $this->request->request->get('langcode', '');
+        $request_langcode = (false === empty($request_langcode)) ? $request_langcode : null;
+
+        $langcode = $request_langcode ?? $subject_langcode ?? '';
+
         $this->exportManager->newDoc(
             $this->request->get('option', ''),
             $this->title,
             (int)$this->request->request->get('idformat', ''),
-            $this->request->request->get('langcode', '')
+            $langcode
         );
         $this->exportManager->addBusinessDocPage($this->views[static::MAIN_VIEW_NAME]->model);
         $this->exportManager->show($this->response);
