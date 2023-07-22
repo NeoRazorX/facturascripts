@@ -427,4 +427,19 @@ final class Plugins
 
         return true;
     }
+
+    /**
+     * @param string $pluginName
+     * @return bool
+     */
+    public static function isInstalled(string $pluginName): bool
+    {
+        $plugin = self::get($pluginName);
+
+        if($plugin){
+            return $plugin->installed;
+        }
+
+        return false;
+    }
 }

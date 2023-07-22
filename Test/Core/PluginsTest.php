@@ -401,6 +401,23 @@ final class PluginsTest extends TestCase
         $this->assertTrue(Plugins::remove('TestPlugin4'));
     }
 
+    public function testIsInstalled()
+    {
+        // Instalamos un plugin
+        Plugins::add(__DIR__ . '/../__files/TestPlugin2.zip');
+
+        // Comprobamos que se encuentra instalado
+        $result = Plugins::isInstalled('TestPlugin2');
+        $this->assertTrue($result);
+
+        // Desinstalamos el plugin
+        Plugins::remove('TestPlugin2');
+
+        // Comprobamos que no se encuentra instalado
+        $result = Plugins::isInstalled('TestPlugin2');
+        $this->assertFalse($result);
+    }
+
     protected function tearDown(): void
     {
         $this->logErrors();
