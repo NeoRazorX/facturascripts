@@ -122,7 +122,7 @@ class CopyModel extends Controller
         }
     }
 
-    protected function autocompleteAction()
+    protected function autocompleteAction(): void
     {
         $this->setTemplate(false);
         $results = [];
@@ -148,7 +148,7 @@ class CopyModel extends Controller
         return $this->model->loadFromCode($this->modelCode);
     }
 
-    protected function saveDocumentEnd(BusinessDocument $newDoc)
+    protected function saveDocumentEnd(BusinessDocument $newDoc): void
     {
         $lines = $newDoc->getLines();
         if (false === Calculator::calculate($newDoc, $lines, true)) {
@@ -162,7 +162,7 @@ class CopyModel extends Controller
         $this->redirect($newDoc->url() . '&action=save-ok');
     }
 
-    protected function saveAccountingEntry()
+    protected function saveAccountingEntry(): void
     {
         if (false === $this->validateFormToken()) {
             return;
@@ -205,7 +205,7 @@ class CopyModel extends Controller
         $this->redirect($newEntry->url() . '&action=save-ok');
     }
 
-    protected function savePurchaseDocument()
+    protected function savePurchaseDocument(): void
     {
         if (false === $this->validateFormToken()) {
             return;
@@ -253,7 +253,7 @@ class CopyModel extends Controller
         $this->saveDocumentEnd($newDoc);
     }
 
-    protected function saveSalesDocument()
+    protected function saveSalesDocument(): void
     {
         if (false === $this->validateFormToken()) {
             return;
@@ -301,13 +301,11 @@ class CopyModel extends Controller
         $this->saveDocumentEnd($newDoc);
     }
 
-    protected function saveProduct()
+    protected function saveProduct(): void
     {
         if (false === $this->validateFormToken()) {
             return;
         }
-
-        // TODO ACL
 
         $this->dataBase->beginTransaction();
 
@@ -331,6 +329,7 @@ class CopyModel extends Controller
         }
 
         $productoDestino->descripcion = $this->request->request->get('descripcion');
+        $productoDestino->referencia = $this->request->request->get('referencia');
 
         if (false === $productoDestino->save()) {
             $this->toolBox()->i18nLog()->warning('record-save-error');
@@ -350,7 +349,7 @@ class CopyModel extends Controller
             if ($variante === reset($variantesProductoOrigen)) {
                 // si es el primer elemento del array, modificamos la variante existente
                 $varianteDestino = $productoDestino->getVariants()[0];
-            }else{
+            } else {
                 $varianteDestino = new Variante();
             }
 

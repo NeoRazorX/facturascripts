@@ -18,9 +18,18 @@
                             <div class="form-row">
                                 <div class="col-sm">
                                     <div class="form-group">
+                                        <label for="reference">{{ trans('reference') }}</label>
+                                        <input type="text" name="referencia" id="reference" class="form-control"
+                                               placeholder="{{ trans('optional') }}" maxlength="30"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-sm">
+                                    <div class="form-group">
                                         <label for="descripcion">{{ trans('description') }}</label>
-                                        <input type="text" name="descripcion" id="descripcion" value="{{ trans('copy') }} {{ fsc.model.descripcion }}"
-                                               class="form-control" required/>
+                                        <textarea name="descripcion" id="descripcion" class="form-control" rows="3"
+                                                  required>{{ trans('copy') }} {{ fsc.model.descripcion }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -29,7 +38,7 @@
                             <table class="table table-hover mb-0">
                                 <thead>
                                 <tr>
-                                    <th>{{ trans('reference') }}</th>
+                                    <th>{{ trans('variants') }}</th>
                                     <th>{{ trans('barcode') }}</th>
                                     <th class="text-right">{{ trans('cost-price') }}</th>
                                     <th class="text-right">{{ trans('margin') }}</th>
@@ -43,9 +52,10 @@
                                         <td>{{ variante.referencia }}</td>
                                         <td>{{ variante.codbarras }}</td>
                                         <td class="text-right">{{ money(variante.coste) }}</td>
-                                        <td class="text-right">{{ fsc.toolBox().numbers().format(variante.margen) }} %</td>
+                                        <td class="text-right">{{ number(variante.margen) }}%
+                                        </td>
                                         <td class="text-right">{{ money(variante.precio) }}</td>
-                                        <td class="text-right">{{ fsc.toolBox().numbers().format(variante.stockfis) }}</td>
+                                        <td class="text-right">{{ number(variante.stockfis) }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>

@@ -178,13 +178,11 @@ class EditProducto extends EditController
                 if (empty($view->model->primaryColumnValue())) {
                     $view->disableColumn('stock');
                 }
-                $this->loadCustomReferenceWidget('EditProductoProveedor');
                 if ($view->model->nostock) {
                     $this->setSettings('EditStock', 'active', false);
-                    break;
                 }
+                $this->loadCustomReferenceWidget('EditProductoProveedor');
                 $this->loadCustomReferenceWidget('EditStock');
-
                 if (false === empty($view->model->primaryColumnValue())) {
                     $this->addButton($viewName, [
                         'action' => 'CopyModel?model=' . $this->getModelClassName() . '&code=' . $view->model->primaryColumnValue(),
@@ -193,7 +191,6 @@ class EditProducto extends EditController
                         'type' => 'link'
                     ]);
                 }
-
                 break;
 
             case 'EditProductoImagen':
