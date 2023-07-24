@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Lib;
 
 use FacturaScripts\Core\Base\Calculator;
-use FacturaScripts\Core\Base\Database\DataBaseWhere;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
@@ -193,7 +193,7 @@ class BusinessDocumentGenerator
     {
         $relationModel = new AttachedFileRelation();
         $whereDocs = [
-            new DatabaseWhere('model', $prototype->modelClassName()),
+            new DataBaseWhere('model', $prototype->modelClassName()),
             new DataBaseWhere('modelid', $prototype->primaryColumnValue())
         ];
         foreach ($relationModel->all($whereDocs, ['id' => 'ASC']) as $relation) {
