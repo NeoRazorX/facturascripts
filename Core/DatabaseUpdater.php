@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -17,9 +18,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FacturaScripts\Core\Base\DataBase;
+namespace FacturaScripts\Core;
 
-use FacturaScripts\Core\Base\DataBase as db;
+use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseQueries;
 use FacturaScripts\Core\Base\ToolBox;
 use SimpleXMLElement;
 
@@ -28,15 +30,12 @@ use SimpleXMLElement;
  *
  * @author Carlos Garcia Gomez <carlos@facturascripts.com>
  */
-class DataBaseTools
+class DatabaseUpdater
 {
+    public const CHECKED_TABLES_FILE_PATH = FS_FOLDER . '/MyFiles/DatabaseUpdater.json';
 
-    /**
-     * DataBase object.
-     *
-     * @var db
-     */
-    private static $dataBase;
+    private static DataBase $dataBase;
+    private static array $checked_tables;
 
     /**
      * Checks and compares the database table structure with the xml definition.
@@ -135,7 +134,7 @@ class DataBaseTools
         foreach ($xml->column as $col) {
             $columns[$key]['name'] = (string)$col->name;
             $columns[$key]['type'] = (string)$col->type;
-            $columns[$key]['null'] = $col->null && strtolower($col->null) === 'no' ? 'NO' : 'YES';
+            $columns[$key]['null'] = (string)$col->null && strtolower((string)$col->null) === 'no' ? 'NO' : 'YES';
             $columns[$key]['default'] = $col->default === '' ? null : (string)$col->default;
             ++$key;
         }
@@ -258,10 +257,10 @@ class DataBaseTools
         return static::dataBase()->getEngine()->compareDataTypes($dbType, $xmlType);
     }
 
-    private static function dataBase(): db
+    private static function dataBase(): DataBase
     {
         if (!isset(self::$dataBase)) {
-            self::$dataBase = new db();
+            self::$dataBase = new DataBase();
         }
 
         return self::$dataBase;
@@ -290,5 +289,80 @@ class DataBaseTools
     private static function sql(): DataBaseQueries
     {
         return static::dataBase()->getEngine()->getSQL();
+    }
+
+    /**
+     * Elimina el archivo DatabaseUpdater.json donde se encuentran
+     * almacenadas las tablas comprobadas. Igualmente con la
+     * variable estatica $checked_tables
+     * @return bool
+     */
+    public static function removeCheckedTablesFile(): bool
+    {
+        $file_path = self::CHECKED_TABLES_FILE_PATH;
+        $response = true;
+
+        // Eliminamos el archivo que continen las tablas comprobadas
+        if (file_exists($file_path)) {
+            $response = unlink($file_path);
+        }
+
+        // Eliminamos las tablas comprobadas del array
+        // que continen las tablas comprobadas
+        self::$checked_tables = [];
+
+        return $response;
+    }
+
+
+    /**
+     * Comprueba si la tabla se ha comprobado anteriormente
+     * @param string $table_name
+     * @return bool
+     */
+    public static function tableChecked(string $table_name): bool
+    {
+        if ([] === self::$checked_tables) {
+            self::$checked_tables = self::loadCheckedTablesFromFile(self::CHECKED_TABLES_FILE_PATH);
+        }
+
+        return in_array($table_name, self::$checked_tables);
+    }
+
+    /**
+     * Devuelve un array con las tablas comprobadas
+     * almacenadas en el archivo DatabaseUpdater.json
+     * @param string $file_path
+     * @return array
+     */
+    private static function loadCheckedTablesFromFile(string $file_path): array
+    {
+        // Si no existe el archivo lo creamos con un array vacío
+        if (!file_exists($file_path)) {
+            // Si no existe el directorio, lo creamos
+            $folder = dirname($file_path);
+            if (false === file_exists($folder)) {
+                mkdir($folder, 0777, true);
+            }
+            // Creamos el archivo
+            file_put_contents($file_path, json_encode([]));
+        }
+
+        return json_decode(file_get_contents($file_path));
+    }
+
+    /**
+     * Agregamos la tabla al array de tablas comprobadas
+     * @param string $table_name
+     */
+    public static function addCheckedTable(string $table_name)
+    {
+        // Agregamos al array la tabla comprobada
+        array_push(self::$checked_tables, $table_name);
+
+        // Guardamos las tablas checkeadas en el archivo
+        file_put_contents(self::CHECKED_TABLES_FILE_PATH, json_encode(self::$checked_tables));
+
+        ToolBox::i18nLog()->debug('table-checked', ['%tableName%' => $table_name]);
     }
 }

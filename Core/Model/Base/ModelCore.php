@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Model\Base;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\DataBase\DataBaseTools;
+use FacturaScripts\Core\DatabaseUpdater;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Cache;
 use FacturaScripts\Core\Lib\Import\CSVImport;
@@ -129,19 +129,21 @@ abstract class ModelCore
      */
     public function __construct(array $data = [])
     {
-        if (self::$dataBase === null) {
+        if (!(self::$dataBase instanceof DataBase)) {
             self::$dataBase = new DataBase();
-
-            $tables = Cache::get('fs_checked_tables');
-            if (is_array($tables) && !empty($tables)) {
-                self::$checkedTables = $tables;
-            }
         }
 
-        if (static::tableName() !== '' && false === in_array(static::tableName(), self::$checkedTables, false) && $this->checkTable()) {
-            $this->toolBox()->i18nLog()->debug('table-checked', ['%tableName%' => static::tableName()]);
-            self::$checkedTables[] = static::tableName();
-            Cache::set('fs_checked_tables', self::$checkedTables);
+        // Comprobamos si la tabla se ha comprobado anteriormente
+        if(false === DatabaseUpdater::tableChecked(static::tableName()))
+        {
+            // Si no se ha comprobado anteriormente, sincroniza la base de datos
+            // con la estructura de la tabla que se encuentra en el archivo XML
+            if(true === $this->syncDatabaseFromXmlData())
+            {
+                // Si la sincronización ha sido correcta, agregamos la tabla al array
+                // de las tablas comprobadas
+                DatabaseUpdater::addCheckedTable(static::tableName());
+            }
         }
 
         $this->loadModelFields(self::$dataBase, static::tableName());
@@ -279,22 +281,23 @@ abstract class ModelCore
     }
 
     /**
-     * Checks and updates the structure of the table if necessary.
+     * Sincroniza la base de datos con la estructura de la tabla
+     * que se encuentra en el archivo XML
      *
      * @return bool
      */
-    private function checkTable(): bool
+    private function syncDatabaseFromXmlData(): bool
     {
         $xmlCols = [];
         $xmlCons = [];
-        if (false === DataBaseTools::getXmlTable(static::tableName(), $xmlCols, $xmlCons)) {
+        if (false === DatabaseUpdater::getXmlTable(static::tableName(), $xmlCols, $xmlCons)) {
             $this->toolBox()->i18nLog()->critical('error-on-xml-file', ['%fileName%' => static::tableName() . '.xml']);
             return false;
         }
 
         $sql = self::$dataBase->tableExists(static::tableName()) ?
-            DataBaseTools::checkTable(static::tableName(), $xmlCols, $xmlCons) :
-            DataBaseTools::generateTable(static::tableName(), $xmlCols, $xmlCons) . $this->install();
+            DatabaseUpdater::checkTable(static::tableName(), $xmlCols, $xmlCons) :
+            DatabaseUpdater::generateTable(static::tableName(), $xmlCols, $xmlCons) . $this->install();
 
         if ($sql !== '' && false === self::$dataBase->exec($sql)) {
             $this->toolBox()->i18nLog()->critical('check-table', ['%tableName%' => static::tableName()]);
