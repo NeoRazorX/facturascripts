@@ -248,7 +248,7 @@ class WidgetSelect extends BaseWidget
             // don't use strict comparison (===)
             if ($option['value'] == $this->value) {
                 $found = true;
-                $html .= '<option value="' . $option['value'] . '" selected="">' . $title . '</option>';
+                $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
                 continue;
             }
 
@@ -257,7 +257,7 @@ class WidgetSelect extends BaseWidget
 
         // value not found?
         if (!$found && !empty($this->value)) {
-            $html .= '<option value="' . $this->value . '" selected="">'
+            $html .= '<option value="' . $this->value . '" selected>'
                 . static::$codeModel->getDescription($this->source, $this->fieldcode, $this->value, $this->fieldtitle)
                 . '</option>';
         }

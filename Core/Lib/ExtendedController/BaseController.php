@@ -429,7 +429,7 @@ abstract class BaseController extends Controller
 
         $results = [];
         $utils = $this->toolBox()->utils();
-        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $value) {
+        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], true, $where) as $value) {
             $results[] = ['key' => $utils->fixHtml($value->code), 'value' => $utils->fixHtml($value->description)];
         }
 
