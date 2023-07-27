@@ -602,6 +602,13 @@ trait CommonSalesPurchases
             . '</div></div></div>';
     }
 
+    protected static function undoBtn(Translator $i18n, BusinessDocument $model): string
+    {
+        return $model->subjectColumnValue() && $model->editable ? '<a href="' . $model->url() . '" class="btn btn-secondary">'
+            . '<i class="fas fa-undo fa-fw"></i> ' . $i18n->trans('undo')
+            . '</a>' : '';
+    }
+
     protected static function user(Translator $i18n, BusinessDocument $model): string
     {
         $attributes = 'disabled=""';
