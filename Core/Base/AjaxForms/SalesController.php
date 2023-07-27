@@ -425,7 +425,16 @@ abstract class SalesController extends PanelController
             return false;
         }
 
+        // si la factura es de 0 €, la marcamos como pagada
         $model = $this->getModel();
+        if (empty($model->total) && property_exists($model, 'pagada')) {
+            $model->pagada = (bool)$this->request->request->get('selectedLine');
+            $model->save();
+            $this->response->setContent(json_encode(['ok' => true, 'newurl' => $model->url() . '&action=save-ok']));
+            return false;
+        }
+
+        // comprobamos si tiene recibos
         $receipts = $model->getReceipts();
         if (empty($receipts)) {
             self::toolBox()::i18nLog()->warning('invoice-has-no-receipts');
@@ -433,6 +442,7 @@ abstract class SalesController extends PanelController
             return false;
         }
 
+        // marcamos los recibos como pagados, eso marca la factura como pagada
         foreach ($receipts as $receipt) {
             $receipt->nick = $this->user->nick;
             $receipt->pagado = (bool)$this->request->request->get('selectedLine');
