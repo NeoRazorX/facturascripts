@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -79,9 +79,10 @@ class WidgetTextarea extends WidgetText
         $class = 'text-' . $display;
         $value = $this->show();
         $final = mb_strlen($value) > $limit ? mb_substr($value, 0, $limit) . '...' : $value;
-        $title = mb_strlen($value) > $limit ? $value : '';
 
-        return '<td class="' . $this->tableCellClass($class) . '" title="' . $title . '">' . $this->onclickHtml($final) . '</td>';
+        return mb_strlen($value) > $limit ?
+            '<td class="' . $this->tableCellClass($class) . '" title="' . $value . '">' . $this->onclickHtml($final) . '</td>' :
+            '<td class="' . $this->tableCellClass($class) . '">' . $this->onclickHtml($final) . '</td>';
     }
 
     /**
