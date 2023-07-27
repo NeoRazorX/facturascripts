@@ -74,12 +74,14 @@ class WidgetTextarea extends WidgetText
      */
     public function tableCell($model, $display = 'left')
     {
+        $limit = 60;
         $this->setValue($model);
         $class = 'text-' . $display;
         $value = $this->show();
-        $final = mb_strlen($value) > 60 ? mb_substr($value, 0, 60) . '...' : $value;
+        $final = mb_strlen($value) > $limit ? mb_substr($value, 0, $limit) . '...' : $value;
+        $title = mb_strlen($value) > $limit ? $value : '';
 
-        return '<td class="' . $this->tableCellClass($class) . '">' . $this->onclickHtml($final) . '</td>';
+        return '<td class="' . $this->tableCellClass($class) . '" title="' . $title . '">' . $this->onclickHtml($final) . '</td>';
     }
 
     /**
