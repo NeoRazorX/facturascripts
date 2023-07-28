@@ -180,15 +180,15 @@ class SalesModalHTML
         if (self::$query) {
             $words = explode(' ', self::$query);
             if (count($words) === 1) {
-                $sql .= " AND (LOWER(v.codbarras) = " . $dataBase->var2str(self::$query)
-                    . " OR LOWER(v.referencia) LIKE '" . self::$query . "%'"
-                    . " OR LOWER(p.descripcion) LIKE '%" . self::$query . "%')";
+                $sql .= " AND (LOWER(v.codbarras) = LOWER(" . $dataBase->var2str(self::$query) . ")"
+                    . " OR LOWER(v.referencia) LIKE LOWER('%" . self::$query . "%')"
+                    . " OR LOWER(p.descripcion) LIKE LOWER('%" . self::$query . "%'))";
             } elseif (count($words) > 1) {
-                $sql .= " AND (LOWER(v.referencia) LIKE '" . self::$query . "%' OR (";
+                $sql .= " AND (LOWER(v.referencia) LIKE LOWER('%" . self::$query . "%') OR (";
                 foreach ($words as $wc => $word) {
                     $sql .= $wc > 0 ?
-                        " AND LOWER(p.descripcion) LIKE '%" . $word . "%'" :
-                        "LOWER(p.descripcion) LIKE '%" . $word . "%'";
+                        " AND LOWER(p.descripcion) LIKE LOWER('%" . $word . "%')" :
+                        "LOWER(p.descripcion) LIKE LOWER('%" . $word . "%')";
                 }
                 $sql .= "))";
             }
