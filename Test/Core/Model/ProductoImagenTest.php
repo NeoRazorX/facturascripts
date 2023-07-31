@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,12 +25,14 @@ use FacturaScripts\Core\Base\MyFilesToken;
 use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Model\ProductoImagen;
 use FacturaScripts\Core\Tools;
+use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final class ProductoImagenTest extends TestCase
 {
+    use LogErrorsTrait;
     use RandomDataTrait;
 
     public function testGetThumbnail(): void
@@ -275,5 +277,10 @@ final class ProductoImagenTest extends TestCase
         $attachedFile = new AttachedFile();
         $attachedFile->path = $file_name;
         return $attachedFile;
+    }
+
+    protected function tearDown(): void
+    {
+        $this->logErrors();
     }
 }
