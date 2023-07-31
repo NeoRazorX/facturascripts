@@ -1,7 +1,7 @@
 {#
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,17 +30,17 @@
         <div class="row">
             <div class="col-12">
                 <form action="{{ fsc.url() }}" method="post" enctype="multipart/form-data">
+                    {{ formToken() }}
                     <input type="hidden" name="action" value="send"/>
-                    <input type="hidden" name="multireqtoken" value="{{ fsc.multiRequestProtection.newToken() }}"/>
                     <div class="card shadow">
                         <div class="card-body">
                             <h1 class="h3 mb-3">
-                                <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ i18n.trans('send-mail') }}
+                                <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send-mail') }}
                             </h1>
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ i18n.trans('from') }}</span>
+                                        <span class="input-group-text">{{ trans('from') }}</span>
                                     </div>
                                     <select class="custom-select" name="email-from">
                                         {% for emailFrom in fsc.newMail.getAvailableMailboxes() %}
@@ -52,21 +52,19 @@
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ i18n.trans('to') }}</span>
+                                        <span class="input-group-text">{{ trans('to') }}</span>
                                     </div>
                                     {% set emails = fsc.newMail.getToAddresses() is empty ? '' : fsc.newMail.getToAddresses() | join(',') ~ ', ' %}
                                     <input type="text" id="email" name="email" value="{{ emails }}" class="form-control"
-                                           required="" placeholder="{{ i18n.trans('email-to') }}"/>
+                                           placeholder="{{ trans('email-to') }}" required/>
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-outline-secondary"
-                                                title="{{ i18n.trans('email-cc') }}" onclick="$('#fgCC').show();
-                                                $(this).hide();">
-                                            {{ i18n.trans('cc') }}
+                                                title="{{ trans('email-cc') }}" onclick="$('#fgCC').show();
+                                                $(this).hide();">{{ trans('cc') }}
                                         </button>
                                         <button type="button" class="btn btn-outline-secondary"
-                                                title="{{ i18n.trans('email-bcc') }}" onclick="$('#fgBCC').show();
-                                                $(this).hide();">
-                                            {{ i18n.trans('bcc') }}
+                                                title="{{ trans('email-bcc') }}" onclick="$('#fgBCC').show();
+                                                $(this).hide();">{{ trans('bcc') }}
                                         </button>
                                     </div>
                                 </div>
@@ -74,28 +72,28 @@
                             <div id="fgCC" class="form-group" style="display: none;">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ i18n.trans('cc') }}</span>
+                                        <span class="input-group-text">{{ trans('cc') }}</span>
                                     </div>
                                     <input type="text" id="email-cc" name="email-cc" class="form-control"
-                                           placeholder="{{ i18n.trans('email-cc') }}"/>
+                                           placeholder="{{ trans('email-cc') }}"/>
                                 </div>
                             </div>
                             <div id="fgBCC" class="form-group" style="display: none;">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ i18n.trans('bcc') }}</span>
+                                        <span class="input-group-text">{{ trans('bcc') }}</span>
                                     </div>
                                     <input type="text" id="email-bcc" name="email-bcc" class="form-control"
-                                           placeholder="{{ i18n.trans('email-bcc') }}"/>
+                                           placeholder="{{ trans('email-bcc') }}"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text">{{ i18n.trans('subject') }}</span>
+                                        <span class="input-group-text">{{ trans('subject') }}</span>
                                     </div>
                                     <input type="text" name="subject" value="{{ fsc.newMail.title }}"
-                                           class="form-control" required="" placeholder="{{ i18n.trans('subject') }}"/>
+                                           class="form-control" placeholder="{{ trans('subject') }}" required/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -103,9 +101,8 @@
                             </div>
                             {% if fsc.newMail.signature %}
                                 <div class="form-group">
-                                    {{ i18n.trans('email-signature') }}
-                                    <textarea rows="3" class="form-control"
-                                              readonly="true">{{ fsc.newMail.signature }}</textarea>
+                                    {{ trans('email-signature') }}
+                                    <textarea rows="3" class="form-control" readonly>{{ fsc.newMail.signature }}</textarea>
                                 </div>
                             {% endif %}
                             <div class="form-group">
@@ -124,15 +121,14 @@
                                             <input type="checkbox" name="replyto" value="1" {{ check }}
                                                    class="form-check-input" id="replytoCheck"/>
                                             <label class="form-check-label" for="replytoCheck">
-                                                {{ i18n.trans('email-replies-to', {'%email%': fsc.user.email}) }}
+                                                {{ trans('email-replies-to', {'%email%': fsc.user.email}) }}
                                             </label>
                                         </div>
                                     {% endif %}
                                 </div>
                                 <div class="col-sm-6 text-right">
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-envelope fa-fw"
-                                           aria-hidden="true"></i> {{ i18n.trans('send') }}
+                                        <i class="fas fa-envelope fa-fw" aria-hidden="true"></i> {{ trans('send') }}
                                     </button>
                                 </div>
                             </div>
