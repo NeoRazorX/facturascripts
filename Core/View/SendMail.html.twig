@@ -97,7 +97,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <textarea name="body" rows="5" class="form-control">{{ fsc.newMail.text }}</textarea>
+                                <textarea name="body" rows="5" class="form-control">{{ fsc.newMail.text | raw }}</textarea>
                             </div>
                             {% if fsc.newMail.signature %}
                                 <div class="form-group">
