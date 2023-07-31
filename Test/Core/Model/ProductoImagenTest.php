@@ -19,11 +19,12 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use Exception;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\MyFilesToken;
-use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\AttachedFile;
 use FacturaScripts\Core\Model\ProductoImagen;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -44,98 +45,80 @@ final class ProductoImagenTest extends TestCase
         $this->assertEquals('', $result);
 
         // Relacionamos un archivo y un producto
-        $attached_file = $this->getFakeAttachedFile('test.jpeg');
+        $attachedFile = $this->getFakeAttachedFile('product_image.jpg');
+        $this->assertTrue($attachedFile->save());
 
-        $productoImagen->idfile = $attached_file->idfile;
+        $productoImagen->idfile = $attachedFile->idfile;
         $productoImagen->idproducto = $producto->idproducto;
         $productoImagen->referencia = $producto->referencia;
 
         // Devuelve la ruta del archivo JPEG. Creamos una thumbnail JPEG sin parámetros
         $result = $productoImagen->getThumbnail();
 
-        $expected_path = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attached_file->filename, PATHINFO_FILENAME) . '_100x100.jpeg';
-        $this->assertEquals($expected_path, $result);
-        $this->assertFileExists(FS_FOLDER . $expected_path);
-
-        unlink(FS_FOLDER . $expected_path);
+        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME) . '_100x100.jpg';
+        $this->assertEquals($expectedPath, $result);
+        $this->assertFileExists(FS_FOLDER . $expectedPath);
 
         // Comprobamos las rutas con tokens
-        $thumbnails_path = $expected_path;
-
+        $thumbnailsPath = $expectedPath;
         $result = $productoImagen->getThumbnail(100, 100, true, false);
-        $expected_path = '/MyFiles/Tmp/Thumbnails/test_100x100.jpeg?myft=' . MyFilesToken::get($thumbnails_path, false);
-        $this->assertEquals($expected_path, $result);
+        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME)
+            . '_100x100.jpg?myft=' . MyFilesToken::get($thumbnailsPath, false);
+        $this->assertEquals($expectedPath, $result);
 
         $result = $productoImagen->getThumbnail(100, 100, true, true);
-        $expected_path = '/MyFiles/Tmp/Thumbnails/test_100x100.jpeg?myft=' . MyFilesToken::get($thumbnails_path, true);
-        $this->assertEquals($expected_path, $result);
+        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME)
+            . '_100x100.jpg?myft=' . MyFilesToken::get($thumbnailsPath, true);
+        $this->assertEquals($expectedPath, $result);
 
         // Devuelve la ruta del archivo PNG
-        $png_file = $this->getFakeAttachedFile('test.png');
-        $productoImagen->idfile = $png_file->idfile;
-
+        $pngFile = $this->getFakeAttachedFile('product_image.png');
+        $this->assertTrue($pngFile->save());
+        $productoImagen->idfile = $pngFile->idfile;
         $result = $productoImagen->getThumbnail();
-
-        $expected_path = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attached_file->filename, PATHINFO_FILENAME) . '_100x100.png';
-
-        $this->assertEquals($expected_path, $result);
-
-        $png_file->delete();
+        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($pngFile->filename, PATHINFO_FILENAME) . '_100x100.png';
+        $this->assertEquals($expectedPath, $result);
 
         // Devuelve la ruta del archivo GIF
-        $png_file = $this->getFakeAttachedFile('test.gif');
-        $productoImagen->idfile = $png_file->idfile;
-
+        $gifFile = $this->getFakeAttachedFile('product_image.gif');
+        $this->assertTrue($gifFile->save());
+        $productoImagen->idfile = $gifFile->idfile;
         $result = $productoImagen->getThumbnail();
-
-        $expected_path = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attached_file->filename, PATHINFO_FILENAME) . '_100x100.gif';
-        $this->assertEquals($expected_path, $result);
-
-        $png_file->delete();
+        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($gifFile->filename, PATHINFO_FILENAME) . '_100x100.gif';
+        $this->assertEquals($expectedPath, $result);
 
         // Devuelve string vacío al pasarle un archivo con extensión no permitida
-        $wrong_file = $this->getFakeAttachedFile('test.wrong_extension');
-        $productoImagen->idfile = $wrong_file->idfile;
-
+        $wrongFile = $this->getFakeAttachedFile('testTemplate.html.twig');
+        $this->assertTrue($wrongFile->save());
+        $productoImagen->idfile = $wrongFile->idfile;
         $result = $productoImagen->getThumbnail();
-
         $this->assertEquals('', $result);
 
-        $wrong_file->delete();
-
         // Creamos una thumbnail pasando dimensiones
-        $png_file = $this->getFakeAttachedFile('test.jpeg');
-        $productoImagen->idfile = $png_file->idfile;
-
+        $productoImagen->idfile = $pngFile->idfile;
         $result = $productoImagen->getThumbnail(100, 50);
+        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($pngFile->filename, PATHINFO_FILENAME) . '_100x50.png';
+        $this->assertEquals($expectedPath, $result);
+        $this->assertFileExists(FS_FOLDER . $expectedPath);
+        $this->assertEquals(50, getimagesize(FS_FOLDER . $expectedPath)[0]);
+        $this->assertEquals(50, getimagesize(FS_FOLDER . $expectedPath)[1]);
+        unlink(FS_FOLDER . $expectedPath);
 
-        $expected_path = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attached_file->filename, PATHINFO_FILENAME) . '_100x50.jpeg';
-        $this->assertEquals($expected_path, $result);
-        $this->assertFileExists(FS_FOLDER . $expected_path);
-        $this->assertEquals(75, getimagesize(FS_FOLDER . $expected_path)[0]);
-        $this->assertEquals(50, getimagesize(FS_FOLDER . $expected_path)[1]);
-
-        unlink(FS_FOLDER . $expected_path);
-
-        // Devuelve string vacío y genera log al pasarle un archivo erroneo
+        // Devuelve string vacío y genera log al pasarle un archivo erróneo
         file_put_contents(FS_FOLDER . '/MyFiles/wrong_file.jpeg', 'wrong_content');
-
-        $attached_file = new AttachedFile();
-        $attached_file->path = 'wrong_file.jpeg';
-        $attached_file->save();
-
-        $productoImagen->idfile = $attached_file->idfile;
-
+        $attachedFile = new AttachedFile();
+        $attachedFile->path = 'wrong_file.jpeg';
+        $attachedFile->save();
+        $productoImagen->idfile = $attachedFile->idfile;
         $result = $productoImagen->getThumbnail();
-
         $this->assertEquals('', $result);
 
         $logs = MiniLog::read();
         $this->assertEquals('imagecreatefromstring(): Data is not in a recognized format', end($logs)['message']);
 
-        // Si no existe el directorio THUMBNAIL_PATH = '/MyFiles/Tmp/Thumbnails/', lo crea
+        // Si existe el directorio THUMBNAIL_PATH, lo eliminamos
         if (is_dir(FS_FOLDER . $productoImagen::THUMBNAIL_PATH)) {
-            ToolBox::files()::delTree(FS_FOLDER . $productoImagen::THUMBNAIL_PATH);
+            Tools::folderDelete(FS_FOLDER . $productoImagen::THUMBNAIL_PATH);
         }
 
         $this->assertDirectoryNotExists(FS_FOLDER . $productoImagen::THUMBNAIL_PATH);
@@ -143,8 +126,9 @@ final class ProductoImagenTest extends TestCase
         $this->assertDirectoryExists(FS_FOLDER . $productoImagen::THUMBNAIL_PATH);
 
         // eliminamos
-        $attached_file->delete();
-        $png_file->delete();
+        $attachedFile->delete();
+        $pngFile->delete();
+        $gifFile->delete();
         $producto->delete();
     }
 
@@ -153,10 +137,11 @@ final class ProductoImagenTest extends TestCase
         $producto = $this->getRandomProduct();
         $this->assertTrue($producto->save());
 
-        $attached_file = $this->getFakeAttachedFile('test.jpeg');
+        $attachedFile = $this->getFakeAttachedFile('product_image.jpg');
+        $this->assertTrue($attachedFile->save());
 
         $productoImagen = new ProductoImagen();
-        $productoImagen->idfile = $attached_file->idfile;
+        $productoImagen->idfile = $attachedFile->idfile;
         $productoImagen->idproducto = $producto->idproducto;
         $productoImagen->referencia = $producto->referencia;
         $productoImagen->save();
@@ -166,24 +151,24 @@ final class ProductoImagenTest extends TestCase
         $productoImagen->getThumbnail(300, 500);
 
         // Comprobamos antes de borrarlo que existen los archivos y entradas en la BBDD
-        $expected_path = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/' . pathinfo($attached_file->filename, PATHINFO_FILENAME);
-        $this->assertFileExists($expected_path . '_100x100.jpeg');
-        $this->assertFileExists($expected_path . '_200x200.jpeg');
-        $this->assertFileExists($expected_path . '_300x500.jpeg');
+        $expectedPath = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME);
+        $this->assertFileExists($expectedPath . '_100x100.jpg');
+        $this->assertFileExists($expectedPath . '_200x200.jpg');
+        $this->assertFileExists($expectedPath . '_300x500.jpg');
         $this->assertTrue((new ProductoImagen())->loadFromCode($productoImagen->id));
 
         // BORRAMOS
         $productoImagen->delete();
 
         // Comprobamos que, una vez borrado, no existen los archivos ni las entradas en la BBDD
-        $expected_path = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/' . pathinfo($attached_file->filename, PATHINFO_FILENAME);
-        $this->assertFileNotExists($expected_path . '_100x100.jpeg');
-        $this->assertFileNotExists($expected_path . '_200x200.jpeg');
-        $this->assertFileNotExists($expected_path . '_300x500.jpeg');
+        $expectedPath = FS_FOLDER . '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME);
+        $this->assertFileNotExists($expectedPath . '_100x100.jpg');
+        $this->assertFileNotExists($expectedPath . '_200x200.jpg');
+        $this->assertFileNotExists($expectedPath . '_300x500.jpg');
         $this->assertFalse((new ProductoImagen())->loadFromCode($productoImagen->id));
 
         // eliminamos
-        $attached_file->delete();
+        $attachedFile->delete();
         $producto->delete();
     }
 
@@ -204,9 +189,10 @@ final class ProductoImagenTest extends TestCase
         $productoImagen = new ProductoImagen();
 
         // Relacionamos un archivo y un producto
-        $attached_file = $this->getFakeAttachedFile('test.jpeg');
+        $attachedFile = $this->getFakeAttachedFile('product_image.jpg');
+        $this->assertTrue($attachedFile->save());
 
-        $productoImagen->idfile = $attached_file->idfile;
+        $productoImagen->idfile = $attachedFile->idfile;
         $productoImagen->idproducto = $producto->idproducto;
         $productoImagen->referencia = $producto->referencia;
 
@@ -216,7 +202,7 @@ final class ProductoImagenTest extends TestCase
         $this->assertEquals($producto->descripcion, $result->descripcion);
 
         // eliminamos
-        $attached_file->delete();
+        $attachedFile->delete();
         $producto->delete();
     }
 
@@ -224,14 +210,15 @@ final class ProductoImagenTest extends TestCase
     {
         $productoImagen = new ProductoImagen();
 
-        $attached_file = $this->getFakeAttachedFile('test.jpeg');
+        $attachedFile = $this->getFakeAttachedFile('product_image.jpg');
+        $this->assertTrue($attachedFile->save());
 
-        $productoImagen->idfile = $attached_file->idfile;
+        $productoImagen->idfile = $attachedFile->idfile;
 
         $result = $productoImagen->getFile();
 
-        $this->assertEquals($attached_file->idfile, $result->idfile);
-        $this->assertEquals($attached_file->path, $result->path);
+        $this->assertEquals($attachedFile->idfile, $result->idfile);
+        $this->assertEquals($attachedFile->path, $result->path);
     }
 
     public function testPrimaryColumn(): void
@@ -277,15 +264,16 @@ final class ProductoImagenTest extends TestCase
 
     private function getFakeAttachedFile(string $file_name): AttachedFile
     {
-        $tests_file_name = 'xss_img_src_onerror_alert(123).jpeg';
-        $source_path = FS_FOLDER . '/Test/__files/' . $tests_file_name;
+        $source_path = FS_FOLDER . '/Test/__files/' . $file_name;
+        if (false === file_exists($source_path)) {
+            throw new Exception("File $source_path not found");
+        }
+
         $dest_path = FS_FOLDER . '/MyFiles/' . $file_name;
         copy($source_path, $dest_path);
 
-        $attached_file = new AttachedFile();
-        $attached_file->path = $file_name;
-        $attached_file->save();
-
-        return $attached_file;
+        $attachedFile = new AttachedFile();
+        $attachedFile->path = $file_name;
+        return $attachedFile;
     }
 }
