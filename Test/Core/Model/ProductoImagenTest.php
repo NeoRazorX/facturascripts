@@ -42,6 +42,11 @@ final class ProductoImagenTest extends TestCase
             $this->markTestSkipped('The GD extension is not available.');
         }
 
+        // saltamos el test si GD no soporta JPEG
+        if (!in_array('jpeg', gd_info()['formats'])) {
+            $this->markTestSkipped('GD does not support JPEG.');
+        }
+
         $producto = $this->getRandomProduct();
         $this->assertTrue($producto->save());
 
@@ -144,6 +149,11 @@ final class ProductoImagenTest extends TestCase
         // saltamos el test si la extensión GD no está instalada
         if (!extension_loaded('gd')) {
             $this->markTestSkipped('La extensión GD no está instalada.');
+        }
+
+        // saltamos el test si GD no soporta JPEG
+        if (!in_array('jpeg', gd_info()['formats'])) {
+            $this->markTestSkipped('GD does not support JPEG.');
         }
 
         $producto = $this->getRandomProduct();
