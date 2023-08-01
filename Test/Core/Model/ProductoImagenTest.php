@@ -37,6 +37,11 @@ final class ProductoImagenTest extends TestCase
 
     public function testGetThumbnail(): void
     {
+        // saltamos el test si no tenemos la extensión GD
+        if (!extension_loaded('gd')) {
+            $this->markTestSkipped('The GD extension is not available.');
+        }
+
         $producto = $this->getRandomProduct();
         $this->assertTrue($producto->save());
 
@@ -136,6 +141,11 @@ final class ProductoImagenTest extends TestCase
 
     public function testDelete(): void
     {
+        // saltamos el test si la extensión GD no está instalada
+        if (!extension_loaded('gd')) {
+            $this->markTestSkipped('La extensión GD no está instalada.');
+        }
+
         $producto = $this->getRandomProduct();
         $this->assertTrue($producto->save());
 
