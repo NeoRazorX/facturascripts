@@ -247,10 +247,19 @@ class PurchasesLineHTML
             return $model->getNewLine();
         }
 
+        // buscamos el código de barras en las variantes
         $variantModel = new Variante();
         $whereBarcode = [new DataBaseWhere('codbarras', $formData['fastli'])];
         foreach ($variantModel->all($whereBarcode) as $variante) {
             return $model->getNewProductLine($variante->referencia);
+        }
+
+        // buscamos el código de barras con los mods
+        foreach (self::$mods as $mod) {
+            $line = $mod->getFastLine($model, $formData);
+            if ($line) {
+                return $line;
+            }
         }
 
         ToolBox::i18nLog()->warning('product-not-found', ['%ref%' => $formData['fastli']]);
