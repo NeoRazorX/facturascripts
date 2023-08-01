@@ -43,16 +43,16 @@ final class ProductoImagenTest extends TestCase
         }
 
         // saltamos el test si GD no soporta JPEG
-        if (!in_array('jpeg', gd_info()['formats'])) {
+        $info = gd_info();
+        if (!isset($info['JPEG Support']) || !$info['JPEG Support']) {
             $this->markTestSkipped('GD does not support JPEG.');
         }
 
         $producto = $this->getRandomProduct();
         $this->assertTrue($producto->save());
 
+        // Como la imagen no existe, devuelve un string vacío
         $productoImagen = new ProductoImagen();
-
-        // Como la imagen no existe, devuelve en string vacío
         $result = $productoImagen->getThumbnail();
         $this->assertEquals('', $result);
 
@@ -152,7 +152,8 @@ final class ProductoImagenTest extends TestCase
         }
 
         // saltamos el test si GD no soporta JPEG
-        if (!in_array('jpeg', gd_info()['formats'])) {
+        $info = gd_info();
+        if (!isset($info['JPEG Support']) || !$info['JPEG Support']) {
             $this->markTestSkipped('GD does not support JPEG.');
         }
 
