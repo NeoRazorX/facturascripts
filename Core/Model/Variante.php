@@ -258,12 +258,14 @@ class Variante extends Base\ModelClass
     {
         $product = $this->getProducto();
 
-        if ($product->tipo !== ProductType::SECOND_HAND) {
-            return $this->precio * (100 + $product->getTax()->iva) / 100;
+        if ($product->tipo === ProductType::SECOND_HAND) {
+            $diff = $this->precio - $this->coste;
+            $newPrice = $this->precio + ($diff * $product->getTax()->iva / 100);
+            return round($newPrice, DinProducto::ROUND_DECIMALS);
         }
 
-        $diff = $this->precio - $this->coste;
-        return $this->precio + ($diff * $product->getTax()->iva / 100);
+        $newPrice = $this->precio * (100 + $product->getTax()->iva) / 100;
+        return round($newPrice, DinProducto::ROUND_DECIMALS);
     }
 
     public static function primaryColumn(): string
@@ -295,19 +297,19 @@ class Variante extends Base\ModelClass
         return false;
     }
 
-    public function setPriceWithTax(float $price)
+    public function setPriceWithTax(float $price): void
     {
         $product = $this->getProducto();
         $this->margen = 0;
 
-        if ($product->tipo !== ProductType::SECOND_HAND) {
-            $newPrice = (100 * $price) / (100 + $product->getTax()->iva);
+        if ($product->tipo === ProductType::SECOND_HAND) {
+            $price -= $this->coste;
+            $newPrice = $this->coste + (100 * $price) / (100 + $product->getTax()->iva);
             $this->precio = round($newPrice, DinProducto::ROUND_DECIMALS);
             return;
         }
 
-        $price -= $this->coste;
-        $newPrice = $this->coste + (100 * $price) / (100 + $product->getTax()->iva);
+        $newPrice = (100 * $price) / (100 + $product->getTax()->iva);
         $this->precio = round($newPrice, DinProducto::ROUND_DECIMALS);
     }
 
