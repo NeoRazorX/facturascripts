@@ -35,7 +35,22 @@ final class ProductoImagenTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
-    public function testGetThumbnail(): void
+
+    public function fileNameProvider(): array
+    {
+        return [
+            ['product_image.jpg'],
+            ['product_image.png'],
+            ['product_image.gif'],
+        ];
+    }
+
+    /**
+     * @dataProvider fileNameProvider
+     * @param string $fileName
+     * @throws Exception
+     */
+    public function testGetThumbnail(string $fileName): void
     {
         // saltamos el test si no tenemos la extensión GD
         if (!extension_loaded('gd')) {
@@ -57,17 +72,20 @@ final class ProductoImagenTest extends TestCase
         $this->assertEquals('', $result);
 
         // Relacionamos un archivo y un producto
-        $attachedFile = $this->getFakeAttachedFile('product_image.jpg');
+        $attachedFile = $this->getFakeAttachedFile($fileName);
         $this->assertTrue($attachedFile->save());
+
+        // Obtenemos la extensión del archivo
+        $extension = pathinfo(FS_FOLDER . '/MyFiles/' . $fileName, PATHINFO_EXTENSION);
 
         $productoImagen->idfile = $attachedFile->idfile;
         $productoImagen->idproducto = $producto->idproducto;
         $productoImagen->referencia = $producto->referencia;
 
-        // Devuelve la ruta del archivo JPEG. Creamos una thumbnail JPEG sin parámetros
+        // Devuelve la ruta del archivo. Creamos una thumbnail sin parámetros
         $result = $productoImagen->getThumbnail();
 
-        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME) . '_100x100.jpg';
+        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME) . '_100x100.' . $extension;
         $this->assertEquals($expectedPath, $result);
         $this->assertFileExists(FS_FOLDER . $expectedPath);
 
@@ -75,28 +93,12 @@ final class ProductoImagenTest extends TestCase
         $thumbnailsPath = $expectedPath;
         $result = $productoImagen->getThumbnail(100, 100, true, false);
         $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME)
-            . '_100x100.jpg?myft=' . MyFilesToken::get($thumbnailsPath, false);
+            . '_100x100.' . $extension . '?myft=' . MyFilesToken::get($thumbnailsPath, false);
         $this->assertEquals($expectedPath, $result);
 
         $result = $productoImagen->getThumbnail(100, 100, true, true);
         $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME)
-            . '_100x100.jpg?myft=' . MyFilesToken::get($thumbnailsPath, true);
-        $this->assertEquals($expectedPath, $result);
-
-        // Devuelve la ruta del archivo PNG
-        $pngFile = $this->getFakeAttachedFile('product_image.png');
-        $this->assertTrue($pngFile->save());
-        $productoImagen->idfile = $pngFile->idfile;
-        $result = $productoImagen->getThumbnail();
-        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($pngFile->filename, PATHINFO_FILENAME) . '_100x100.png';
-        $this->assertEquals($expectedPath, $result);
-
-        // Devuelve la ruta del archivo GIF
-        $gifFile = $this->getFakeAttachedFile('product_image.gif');
-        $this->assertTrue($gifFile->save());
-        $productoImagen->idfile = $gifFile->idfile;
-        $result = $productoImagen->getThumbnail();
-        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($gifFile->filename, PATHINFO_FILENAME) . '_100x100.gif';
+            . '_100x100.' . $extension . '?myft=' . MyFilesToken::get($thumbnailsPath, true);
         $this->assertEquals($expectedPath, $result);
 
         // Devuelve string vacío al pasarle un archivo con extensión no permitida
@@ -107,9 +109,9 @@ final class ProductoImagenTest extends TestCase
         $this->assertEquals('', $result);
 
         // Creamos una thumbnail pasando dimensiones
-        $productoImagen->idfile = $pngFile->idfile;
+        $productoImagen->idfile = $attachedFile->idfile;
         $result = $productoImagen->getThumbnail(100, 50);
-        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($pngFile->filename, PATHINFO_FILENAME) . '_100x50.png';
+        $expectedPath = '/MyFiles/Tmp/Thumbnails/' . pathinfo($attachedFile->filename, PATHINFO_FILENAME) . '_100x50.' . $extension;
         $this->assertEquals($expectedPath, $result);
         $this->assertFileExists(FS_FOLDER . $expectedPath);
         $this->assertEquals(50, getimagesize(FS_FOLDER . $expectedPath)[0]);
@@ -139,8 +141,6 @@ final class ProductoImagenTest extends TestCase
 
         // eliminamos
         $attachedFile->delete();
-        $pngFile->delete();
-        $gifFile->delete();
         $producto->delete();
     }
 
