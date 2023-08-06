@@ -266,6 +266,9 @@ class MysqlQueries implements DataBaseQueries
             }
         }
 
+        // No permitimos el uso de comillas dobles en las restricciones.
+        $sql = str_replace('"', '`', $sql);
+
         return $this->fixPostgresql($sql);
     }
 
