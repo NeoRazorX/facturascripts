@@ -39,9 +39,9 @@ final class ProductoImagenTest extends TestCase
     public function fileNameProvider(): array
     {
         return [
-            ['product_image.jpg'],
-            ['product_image.png'],
-            ['product_image.gif'],
+            ['product_image.jpg', 'JPEG Support', 'GD does not support JPEG'],
+            ['product_image.png', 'PNG Support', 'GD does not support PNG'],
+            ['product_image.gif', 'GIF Create Support', 'GD does not support GIF'],
         ];
     }
 
@@ -50,17 +50,17 @@ final class ProductoImagenTest extends TestCase
      * @param string $fileName
      * @throws Exception
      */
-    public function testGetThumbnail(string $fileName): void
+    public function testGetThumbnail(string $fileName, string $supportExtensionKey, string $notSupportText): void
     {
         // saltamos el test si no tenemos la extensión GD
         if (!extension_loaded('gd')) {
             $this->markTestSkipped('The GD extension is not available.');
         }
 
-        // saltamos el test si GD no soporta JPEG
+        // saltamos el test si GD no soporta el tipo de archivo testeado
         $info = gd_info();
-        if (!isset($info['JPEG Support']) || !$info['JPEG Support']) {
-            $this->markTestSkipped('GD does not support JPEG.');
+        if (!isset($info[$supportExtensionKey]) || !$info[$supportExtensionKey]) {
+            $this->markTestSkipped($notSupportText);
         }
 
         $producto = $this->getRandomProduct();
