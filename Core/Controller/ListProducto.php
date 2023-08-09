@@ -63,7 +63,7 @@ class ListProducto extends ListController
         $this->addOrderBy($viewName, ['actualizado'], 'update-time');
         $this->addSearchFields($viewName, ['referencia', 'descripcion', 'observaciones']);
 
-        // filters
+        // filtros
         $i18n = $this->toolBox()->i18n();
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
@@ -123,7 +123,13 @@ class ListProducto extends ListController
         $this->addOrderBy($viewName, ['productos.descripcion', 'variantes.referencia'], 'product');
         $this->addSearchFields($viewName, ['variantes.referencia', 'variantes.codbarras', 'productos.descripcion']);
 
-        // filters
+        // filtros
+        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
+        $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
+
+        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
+
         $attributes = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
         $this->addFilterSelect($viewName, 'idatributovalor1', 'attribute-value-1', 'variantes.idatributovalor1', $attributes);
         $this->addFilterSelect($viewName, 'idatributovalor2', 'attribute-value-2', 'variantes.idatributovalor2', $attributes);
@@ -133,12 +139,8 @@ class ListProducto extends ListController
         $this->addFilterNumber($viewName, 'max-price', 'price', 'variantes.precio', '>=');
         $this->addFilterNumber($viewName, 'min-stock', 'stock', 'variantes.stockfis', '<=');
         $this->addFilterNumber($viewName, 'max-stock', 'stock', 'variantes.stockfis', '>=');
-        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
-        $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
 
-        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
-        $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
-        // disable buttons
+        // desactivamos los botones de nuevo y eliminar
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
     }
@@ -154,7 +156,7 @@ class ListProducto extends ListController
         $this->addOrderBy($viewName, ['productos.descripcion', 'stocks.referencia'], 'product');
         $this->addSearchFields($viewName, ['stocks.referencia', 'productos.descripcion']);
 
-        // filters
+        // filtros
         $warehouses = Almacenes::codeModel();
         $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'stocks.codalmacen', $warehouses);
 
@@ -176,7 +178,7 @@ class ListProducto extends ListController
         $this->addFilterNumber($viewName, 'max-stock', 'quantity', 'cantidad', '>=');
         $this->addFilterNumber($viewName, 'min-stock', 'quantity', 'cantidad', '<=');
 
-        // disable buttons
+        // desactivamos los botones de nuevo y eliminar
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
     }
