@@ -63,43 +63,7 @@ class EditProducto extends EditController
         $this->createViewsProductImages();
         $this->createViewsStock();
         $this->createViewsSuppliers();
-
-		if ($this->user->can('ListAlbaranProveedor')) {
-			$this->addListView('ListLineaAlbaranProveedor', 'LineaAlbaranProveedor', 'supplier-delivery-notes', 'fas fa-cubes');
-			$this->commonOptions('ListLineaAlbaranProveedor');
-        }
-
-		if ($this->user->can('ListFacturaProveedor')) {
-            $this->addListView('ListLineaFacturaProveedor', 'LineaFacturaProveedor', 'supplier-invoices', 'fas fa-cubes');
-			$this->commonOptions('ListLineaFacturaProveedor');
-        }
-		
-		if ($this->user->can('ListAlbaranCliente')) {
-            $this->addListView('ListLineaAlbaranCliente', 'LineaAlbaranCliente', 'customer-delivery-notes', 'fas fa-cubes');
-			$this->commonOptions('ListLineaAlbaranCliente');
-        }
-
-		if ($this->user->can('ListFacturaCliente')) {
-            $this->addListView('ListLineaFacturaCliente', 'LineaFacturaCliente', 'customer-invoices', 'fas fa-cubes');
-			$this->commonOptions('ListLineaFacturaCliente');
-        }
     }
-
-	protected function commonOptions(string $viewName)
-	{
-		// sort options
-        $this->views[$viewName]->addOrderBy(['referencia'], 'reference', 2);
-        $this->views[$viewName]->addOrderBy(['cantidad'], 'quantity');
-        $this->views[$viewName]->addOrderBy(['pvptotal'], 'amount');
-
-        // search columns
-        $this->views[$viewName]->addSearchFields(['referencia', 'descripcion']);
-
-        // disable buttons
-        $this->setSettings($viewName, 'btnDelete', false);
-        $this->setSettings($viewName, 'btnNew', false);
-        $this->setSettings($viewName, 'checkBoxes', false);
-	}
 
     protected function createViewsStock(string $viewName = 'EditStock')
     {
@@ -247,31 +211,6 @@ class EditProducto extends EditController
             case 'EditProductoProveedor':
                 $view->loadData('', $where, ['id' => 'DESC']);
                 break;
-				
-			case 'ListLineaAlbaranProveedor':
-				$inSQL = 'SELECT idalbaran FROM albaranesprov WHERE idproducto = ' . $this->dataBase->var2str($idproducto);
-				$where = [new DataBaseWhere('idalbaran', $inSQL, 'IN')];
-                $view->loadData('', $where);
-                break;
-				
-			case 'ListLineaFacturaProveedor':
-                $inSQL = 'SELECT idfactura FROM facturasprov WHERE idproducto = ' . $this->dataBase->var2str($idproducto);
-                $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
-                $view->loadData('', $where);
-                break;
-				
-			case 'ListLineaAlbaranCliente':
-				$inSQL = 'SELECT idalbaran FROM albaranescli WHERE idproducto = ' . $this->dataBase->var2str($idproducto);
-				$where = [new DataBaseWhere('idalbaran', $inSQL, 'IN')];
-                $view->loadData('', $where);
-                break;
-			
-			case 'ListLineaFacturaCliente':
-                $inSQL = 'SELECT idfactura FROM facturascli WHERE idproducto = ' . $this->dataBase->var2str($idproducto);
-                $where = [new DataBaseWhere('idfactura', $inSQL, 'IN')];
-                $view->loadData('', $where);
-                break;
-			
         }
     }
 
