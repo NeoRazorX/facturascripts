@@ -25,7 +25,6 @@ use FacturaScripts\Core\Lib\ExtendedController\BaseView;
 use FacturaScripts\Core\Lib\ExtendedController\EditController;
 use FacturaScripts\Core\Lib\ExtendedController\ProductImagesTrait;
 use FacturaScripts\Core\Lib\ProductType;
-use FacturaScripts\Core\Model\AtributoValor;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model\Atributo;
 
@@ -136,34 +135,39 @@ class EditProducto extends EditController
     protected function loadCustomAttributeWidgets(string $viewName): void
     {
         $columnsName = ['attribute-value-1', 'attribute-value-2', 'attribute-value-3', 'attribute-value-4'];
-
         foreach ($columnsName as $key => $colName) {
             $column = $this->views[$viewName]->columnForName($colName);
-
             if ($column && $column->widget->getType() === 'select') {
-                // Obtenemos los atributos con numero de combo ($key + 1)
-                $atributos = new Atributo();
-                $atributos = $atributos->all([
-                    new DataBaseWhere('numerocombo', ($key + 1)),
+                // Obtenemos los atributos con número de selector ($key + 1)
+                $atributoModel = new Atributo();
+                $atributos = $atributoModel->all([
+                    new DataBaseWhere('num_selector', ($key + 1)),
                 ]);
+
+                // si no hay ninguno, obtenemos los que tienen número de selector 0
+                if (count($atributos) === 0) {
+                    $atributos = $atributoModel->all([
+                        new DataBaseWhere('num_selector', 0),
+                    ]);
+                }
 
                 $valoresAtributos = [];
 
-                if (count($atributos) > 0) {
-                    foreach ($atributos as $atributo) {
-                        // Obtenemos los valores de los atributos
-                        $valoresAtributo = new AtributoValor();
-                        $valoresAtributo = $valoresAtributo->all([
-                            new DataBaseWhere('codatributo', $atributo->codatributo),
-                        ]);
+                foreach ($atributos as $atributo) {
+                    // si ya tenemos valore, añadimos un separador
+                    if (count($valoresAtributos) > 0) {
+                        $valoresAtributos[] = [
+                            'value' => '',
+                            'title' => '------',
+                        ];
+                    }
 
-                        // Agregamos al array con los campos que se usaran en el select.
-                        foreach ($valoresAtributo as $valor) {
-                            $valoresAtributos[] = [
-                                'value' => $valor->id,
-                                'title' => $valor->valor,
-                            ];
-                        }
+                    // agregamos al array con los campos que se usaran en el select.
+                    foreach ($atributo->getValores() as $valor) {
+                        $valoresAtributos[] = [
+                            'value' => $valor->id,
+                            'title' => $valor->descripcion,
+                        ];
                     }
                 }
 
