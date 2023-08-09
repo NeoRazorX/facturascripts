@@ -133,7 +133,11 @@ class ListProducto extends ListController
         $this->addFilterNumber($viewName, 'max-price', 'price', 'variantes.precio', '>=');
         $this->addFilterNumber($viewName, 'min-stock', 'stock', 'variantes.stockfis', '<=');
         $this->addFilterNumber($viewName, 'max-stock', 'stock', 'variantes.stockfis', '>=');
+        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
+        $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
 
+        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
         // disable buttons
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
