@@ -25,7 +25,16 @@
             <column name="name" order="100">
                 <widget type="text" fieldname="nombre" maxlength="100" required="true"/>
             </column>
-            <column name="code" description="optional" numcolumns="3" order="110">
+            <column name="combo-number" order="200" numcolumns="2">
+                <widget type="select" fieldname="numerocombo" translate="true" required="true">
+                    <values title="select">0</values>
+                    <values title="1">1</values>
+                    <values title="2">2</values>
+                    <values title="3">3</values>
+                    <values title="4">4</values>
+                </widget>
+            </column>
+            <column name="code" description="optional" numcolumns="3" order="300">
                 <widget type="text" fieldname="codatributo" icon="fas fa-hashtag" maxlength="20" readonly="dinamic"/>
             </column>
         </group>
