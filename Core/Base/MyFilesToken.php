@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -79,7 +79,7 @@ class MyFilesToken
         return $token === static::get($path, true) || $token === static::get($path, false);
     }
 
-    private static function checkPath(string &$path)
+    private static function checkPath(string &$path): void
     {
         // comprobamos si el path empieza por / y lo eliminamos
         if (strpos($path, '/') === 0) {

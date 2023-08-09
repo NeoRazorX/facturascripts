@@ -268,9 +268,9 @@ final class Html
         });
     }
 
-    private static function myfilesUrlFunction(): TwigFunction
+    private static function myFilesUrlFunction(): TwigFunction
     {
-        return new TwigFunction('myfilesUrl', function (string $path, bool $permanent = false, string $expiration = '') {
+        return new TwigFunction('myFilesUrl', function (string $path, bool $permanent = false, string $expiration = '') {
             return $path . '?myft=' . MyFilesToken::get($path, $permanent, $expiration);
         });
     }
@@ -352,7 +352,7 @@ final class Html
         self::$twig->addFunction(self::formTokenFunction());
         self::$twig->addFunction(self::getIncludeViews());
         self::$twig->addFunction(self::moneyFunction());
-        self::$twig->addFunction(self::myfilesUrlFunction());
+        self::$twig->addFunction(self::myFilesUrlFunction());
         self::$twig->addFunction(self::numberFunction());
         self::$twig->addFunction(self::settingsFunction());
         self::$twig->addFunction(self::transFunction());
