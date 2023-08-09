@@ -420,6 +420,7 @@ abstract class BaseController extends Controller
      */
     protected function selectAction(): array
     {
+        $required = (bool)$this->request->get('required', false);
         $data = $this->requestGet(['field', 'fieldcode', 'fieldfilter', 'fieldtitle', 'formname', 'source', 'term']);
 
         $where = [];
@@ -429,12 +430,22 @@ abstract class BaseController extends Controller
 
         $results = [];
         $utils = $this->toolBox()->utils();
-        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], true, $where) as $value) {
+        foreach ($this->codeModel->all($data['source'], $data['fieldcode'], $data['fieldtitle'], false, $where) as $value) {
             $results[] = ['key' => $utils->fixHtml($value->code), 'value' => $utils->fixHtml($value->description)];
         }
 
+        // cuando el widget es requerido
+        // devolvemos los datos encontrados aunque estén vacíos
+        if ($required) {
+            return $results;
+        }
+
         if (empty($results)) {
+            // si no hay datos, añadimos un valor nulo avisando de que no hay datos
             $results[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-data')];
+        } else {
+            // si hay datos, pero el widget no es requerido, añadimos un valor nulo al principio
+            $results = array_merge([['key' => null, 'value' => '------']], $results);
         }
 
         return $results;
