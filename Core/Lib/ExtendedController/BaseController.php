@@ -440,14 +440,14 @@ abstract class BaseController extends Controller
             return $results;
         }
 
+        // si no hay datos, añadimos un valor nulo avisando de que no hay datos
         if (empty($results)) {
-            // si no hay datos, añadimos un valor nulo avisando de que no hay datos
             $results[] = ['key' => null, 'value' => $this->toolBox()->i18n()->trans('no-data')];
-        } else {
-            // si hay datos, pero el widget no es requerido, añadimos un valor nulo al principio
-            $results = array_merge([['key' => null, 'value' => '------']], $results);
+            return $results;
         }
 
+        // si hay datos, pero el widget no es requerido, añadimos un valor nulo al principio
+        array_unshift($results, ['key' => null, 'value' => '------']);
         return $results;
     }
 }
