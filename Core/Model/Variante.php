@@ -138,6 +138,7 @@ class Variante extends Base\ModelClass
         array_unshift(
             $where,
             new DataBaseWhere('LOWER(v.referencia)', $find . '%', 'LIKE'),
+            new DataBaseWhere('LOWER(v.referencia)', '%' . $find, 'LIKE', 'OR'),
             new DataBaseWhere('LOWER(v.codbarras)', $find, '=', 'OR'),
             new DataBaseWhere('LOWER(p.descripcion)', $find, 'LIKE', 'OR')
         );
