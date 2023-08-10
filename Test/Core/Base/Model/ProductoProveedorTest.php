@@ -45,7 +45,7 @@ class ProductoProveedorTest extends TestCase
      */
     public function testItCanCreateProductoProveedor()
     {
-        $proveedor = static::getRandomSupplier();
+        $proveedor = $this->getRandomSupplier();
         static::assertTrue($proveedor->save());
 
         $productoProveedor = new ProductoProveedor();
@@ -83,7 +83,7 @@ class ProductoProveedorTest extends TestCase
     public function testItDeleteProductosProveedorOnCascade()
     {
         // Creamos un proveedor con dos productos
-        $proveedor = static::getRandomSupplier();
+        $proveedor = $this->getRandomSupplier();
         static::assertTrue($proveedor->save());
 
         $productoProveedor1 = new ProductoProveedor();
@@ -261,7 +261,7 @@ class ProductoProveedorTest extends TestCase
 
     public function testUrl()
     {
-        $producto = static::getRandomProduct();
+        $producto = $this->getRandomProduct();
         static::assertTrue($producto->save());
 
         $productoProveedor = new ProductoProveedor();
@@ -296,7 +296,7 @@ class ProductoProveedorTest extends TestCase
 
     public function testGetVariant()
     {
-        $producto = static::getRandomProduct();
+        $producto = $this->getRandomProduct();
         static::assertTrue($producto->save());
 
         $productoProveedor = new ProductoProveedor();
@@ -313,7 +313,7 @@ class ProductoProveedorTest extends TestCase
 
     public function testGetSupplier()
     {
-        $proveedor = static::getRandomSupplier();
+        $proveedor = $this->getRandomSupplier();
         static::assertTrue($proveedor->save());
 
         $productoProveedor = new ProductoProveedor();
@@ -339,7 +339,7 @@ class ProductoProveedorTest extends TestCase
 
     public function testTest()
     {
-        $proveedor = static::getRandomSupplier();
+        $proveedor = $this->getRandomSupplier();
         static::assertTrue($proveedor->save());
 
         $productoProveedor = new ProductoProveedor();
@@ -423,11 +423,11 @@ class ProductoProveedorTest extends TestCase
     private function getAlbaranConLineaProducto()
     {
         // creamos un proveedor
-        $subject = static::getRandomSupplier();
+        $subject = $this->getRandomSupplier();
         static::assertTrue($subject->save());
 
         // creamos un producto
-        $product = static::getRandomProduct();
+        $product = $this->getRandomProduct();
         static::assertTrue($product->save());
 
         // creamos un albarán
@@ -458,6 +458,6 @@ class ProductoProveedorTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        static::logErrors();
+        $this->logErrors();
     }
 }
