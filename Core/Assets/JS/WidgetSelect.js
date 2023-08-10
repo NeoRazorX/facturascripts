@@ -20,12 +20,13 @@ function widgetSelectGetData(select, parent) {
     let data = {
         action: 'select',
         activetab: select.closest('form').find('input[name="activetab"]').val(),
-        term: getValueTypeParent(parent),
         field: select.attr("data-field"),
         fieldcode: select.attr("data-fieldcode"),
         fieldfilter: select.attr("data-fieldfilter"),
         fieldtitle: select.attr("data-fieldtitle"),
+        required: select.attr('required') === 'required' ? 1 : 0,
         source: select.attr("data-source"),
+        term: getValueTypeParent(parent),
     };
 
     $.ajax({

@@ -134,11 +134,44 @@ class EditProducto extends EditController
 
     protected function loadCustomAttributeWidgets(string $viewName): void
     {
-        $values = $this->codeModel->all('AtributoValor', 'id', '');
-        foreach (['attribute-value-1', 'attribute-value-2', 'attribute-value-3', 'attribute-value-4'] as $colName) {
+        $columnsName = ['attribute-value-1', 'attribute-value-2', 'attribute-value-3', 'attribute-value-4'];
+        foreach ($columnsName as $key => $colName) {
             $column = $this->views[$viewName]->columnForName($colName);
             if ($column && $column->widget->getType() === 'select') {
-                $column->widget->setValuesFromCodeModel($values);
+                // Obtenemos los atributos con número de selector ($key + 1)
+                $atributoModel = new Atributo();
+                $atributos = $atributoModel->all([
+                    new DataBaseWhere('num_selector', ($key + 1)),
+                ]);
+
+                // si no hay ninguno, obtenemos los que tienen número de selector 0
+                if (count($atributos) === 0) {
+                    $atributos = $atributoModel->all([
+                        new DataBaseWhere('num_selector', 0),
+                    ]);
+                }
+
+                $valoresAtributos = [];
+
+                foreach ($atributos as $atributo) {
+                    // si ya tenemos valore, añadimos un separador
+                    if (count($valoresAtributos) > 0) {
+                        $valoresAtributos[] = [
+                            'value' => '',
+                            'title' => '------',
+                        ];
+                    }
+
+                    // agregamos al array con los campos que se usaran en el select.
+                    foreach ($atributo->getValores() as $valor) {
+                        $valoresAtributos[] = [
+                            'value' => $valor->id,
+                            'title' => $valor->descripcion,
+                        ];
+                    }
+                }
+
+                $column->widget->setValuesFromArray($valoresAtributos, false, true);
             }
         }
     }

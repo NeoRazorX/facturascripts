@@ -225,10 +225,9 @@ class WidgetSelect extends BaseWidget
 
         if ($this->readonly()) {
             return '<input type="hidden" name="' . $this->fieldname . '" value="' . $this->value . '"/>'
-                . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly=""/>';
+                . '<input type="text" value="' . $this->show() . '" class="' . $class . '" readonly/>';
         }
 
-        $found = false;
         $html = '<select'
             . ' name="' . $this->fieldname . '"'
             . ' id="' . $this->id . '"'
@@ -242,13 +241,17 @@ class WidgetSelect extends BaseWidget
             . ' data-fieldtitle="' . $this->fieldtitle . '"'
             . ' data-fieldfilter="' . $this->fieldfilter . '"'
             . '>';
+
+        $found = false;
+        $selected = false;
         foreach ($this->values as $option) {
             $title = empty($option['title']) ? $option['value'] : $option['title'];
 
             // don't use strict comparison (===)
-            if ($option['value'] == $this->value) {
+            if ($option['value'] == $this->value && !$selected) {
                 $found = true;
                 $html .= '<option value="' . $option['value'] . '" selected>' . $title . '</option>';
+                $selected = true;
                 continue;
             }
 

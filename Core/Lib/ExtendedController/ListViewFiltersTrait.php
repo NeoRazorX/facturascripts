@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -39,7 +39,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 trait ListViewFiltersTrait
 {
-
     /**
      * Filter configuration preset by the user
      *
@@ -156,6 +155,7 @@ trait ListViewFiltersTrait
      *
      * @param string $key
      * @param array $values
+     * @param string $label
      *
      * Example of values:
      *   [
@@ -164,9 +164,9 @@ trait ListViewFiltersTrait
      *    ['label' => 'All records', 'where' => []],
      *   ]
      */
-    public function addFilterSelectWhere(string $key, array $values)
+    public function addFilterSelectWhere(string $key, array $values, string $label = '')
     {
-        $this->filters[$key] = new SelectWhereFilter($key, $values);
+        $this->filters[$key] = new SelectWhereFilter($key, $values, $label);
     }
 
     /**

@@ -328,7 +328,7 @@ class EditFacturaProveedor extends PurchasesController
      *
      * @param ReciboProveedor[] $receipts
      */
-    private function checkReceiptsTotal(array &$receipts)
+    private function checkReceiptsTotal(array &$receipts): void
     {
         $total = 0.00;
         foreach ($receipts as $row) {
@@ -336,7 +336,7 @@ class EditFacturaProveedor extends PurchasesController
         }
 
         $diff = $this->getModel()->total - $total;
-        if (false === $this->toolBox()->utils()->floatcmp($diff, 0.0, FS_NF0, true)) {
+        if (abs($diff) > 0.01) {
             $this->toolBox()->i18nLog()->warning('invoice-receipts-diff', ['%diff%' => $diff]);
         }
     }
