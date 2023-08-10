@@ -38,7 +38,8 @@ function widgetSelectGetData(select, parent) {
             select.html('');
             results.forEach(function (element) {
                 let selected = (element.key == select.attr('value')) ? 'selected' : '';
-                select.append('<option value="' + element.key + '" ' + selected + '>' + element.value + '</option>');
+                let key = (element.key == null) ? '' : element.key;
+                select.append('<option value="' + key + '" ' + selected + '>' + element.value + '</option>');
             });
         },
         error: function (msg) {
