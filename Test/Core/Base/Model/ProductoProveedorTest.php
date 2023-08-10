@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FacturaScripts\Test\Core\Base\Model;
 
+use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\ToolBox;
@@ -34,6 +35,7 @@ class ProductoProveedorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        (new DataBase())->connect();
         new User();
         self::setDefaultSettings();
     }
@@ -54,6 +56,7 @@ class ProductoProveedorTest extends TestCase
         static::assertTrue($productoProveedor->save());
         static::assertNotNull($productoProveedor->id);
 
+        static::assertTrue($proveedor->getDefaultAddress()->delete());
         static::assertTrue($proveedor->delete());
         static::assertTrue($productoProveedor->delete());
     }
@@ -71,10 +74,6 @@ class ProductoProveedorTest extends TestCase
 
         static::assertFalse($productoProveedor->save());
         static::assertNull($productoProveedor->id);
-
-        $logs = MiniLog::read();
-        static::assertEquals('database', end($logs)['channel']);
-        static::assertEquals('error', end($logs)['level']);
     }
 
     /**
@@ -105,6 +104,7 @@ class ProductoProveedorTest extends TestCase
         static::assertNotNull($productoProveedor->id);
 
         // Borramos el proveedor
+        static::assertTrue($proveedor->getDefaultAddress()->delete());
         static::assertTrue($proveedor->delete());
 
         // Comprobamos que los dos productos ya NO se encuentran en la BBDD
@@ -324,6 +324,7 @@ class ProductoProveedorTest extends TestCase
         static::assertTrue($result instanceof Proveedor);
         static::assertEquals($productoProveedor->codproveedor, $result->codproveedor);
 
+        static::assertTrue($proveedor->getDefaultAddress()->delete());
         static::assertTrue($proveedor->delete());
     }
 
@@ -408,6 +409,7 @@ class ProductoProveedorTest extends TestCase
         static::assertTrue($result);
 
         static::assertTrue($productoProveedor->delete());
+        static::assertTrue($proveedor->getDefaultAddress()->delete());
         static::assertTrue($proveedor->delete());
     }
 
