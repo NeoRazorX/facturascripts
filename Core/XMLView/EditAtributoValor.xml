@@ -34,7 +34,7 @@
                 <widget type="text" fieldname="valor" maxlength="100"/>
             </column>
             <column name="sort" numcolumns="3" order="130">
-                <widget type="number" decimal="0" min="0" max="9999" step="1" fieldname="orden"/>
+                <widget type="number" decimal="0" min="0" step="1" fieldname="orden"/>
             </column>
         </group>
     </columns>
