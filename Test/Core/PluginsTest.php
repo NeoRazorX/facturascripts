@@ -377,6 +377,12 @@ final class PluginsTest extends TestCase
         // comprobamos que los plugins están en el orden correcto
         $this->assertEquals(['TestPlugin2', 'TestPlugin4', 'TestPlugin3'], Plugins::enabled());
 
+        $lstByOrder = Plugins::list(true, 'order');
+        $count = count($lstByOrder);
+        $this->assertEquals('TestPlugin2', $lstByOrder[$count - 3]->name);
+        $this->assertEquals('TestPlugin4', $lstByOrder[$count - 2]->name);
+        $this->assertEquals('TestPlugin3', $lstByOrder[$count - 1]->name);
+
         // desactivamos todos los plugins
         foreach (Plugins::enabled() as $pluginName) {
             $this->assertTrue(Plugins::disable($pluginName));

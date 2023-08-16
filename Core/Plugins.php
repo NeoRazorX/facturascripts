@@ -224,7 +224,7 @@ final class Plugins
         $save = false;
 
         // ejecutamos los procesos init de los plugins
-        foreach (self::list(true) as $plugin) {
+        foreach (self::list(true, 'order') as $plugin) {
             if ($plugin->init()) {
                 $save = true;
             }
@@ -248,9 +248,10 @@ final class Plugins
 
     /**
      * @param bool $hidden
+     * @param string $orderBy
      * @return Plugin[]
      */
-    public static function list(bool $hidden = false): array
+    public static function list(bool $hidden = false, string $orderBy = 'name'): array
     {
         $list = [];
 
@@ -261,10 +262,22 @@ final class Plugins
             }
         }
 
-        // ordenamos por name
-        usort($list, function ($a, $b) {
-            return strcasecmp($a->name, $b->name);
-        });
+        // ordenamos
+        switch ($orderBy) {
+            default:
+                // ordenamos por nombre
+                usort($list, function ($a, $b) {
+                    return strcasecmp($a->name, $b->name);
+                });
+                break;
+
+            case 'order':
+                // ordenamos por orden
+                usort($list, function ($a, $b) {
+                    return $a->order - $b->order;
+                });
+                break;
+        }
 
         return $list;
     }
