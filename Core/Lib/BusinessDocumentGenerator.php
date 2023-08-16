@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtensionsTrait;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
+use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Model\AttachedFileRelation;
 use FacturaScripts\Dinamic\Model\DocTransformation;
 
@@ -180,7 +181,9 @@ class BusinessDocumentGenerator
         }
 
         // copy related files
-        $this->copyRelatedFiles($prototype, $newDoc);
+        if ($newDoc instanceof TransformerDocument) {
+            $this->copyRelatedFiles($newDoc);
+        }
 
         if (false === $this->pipeFalse('cloneLines', $prototype, $newDoc, $lines, $quantity)) {
             return false;
@@ -189,23 +192,25 @@ class BusinessDocumentGenerator
         return true;
     }
 
-    public function copyRelatedFiles(BusinessDocument $prototype, BusinessDocument $newDoc): bool
+    public function copyRelatedFiles(TransformerDocument $newDoc): bool
     {
         $relationModel = new AttachedFileRelation();
-        $whereDocs = [
-            new DataBaseWhere('model', $prototype->modelClassName()),
-            new DataBaseWhere('modelid', $prototype->primaryColumnValue())
-        ];
-        foreach ($relationModel->all($whereDocs, ['id' => 'ASC']) as $relation) {
-            $newRelation = new AttachedFileRelation();
-            $newRelation->idfile = $relation->idfile;
-            $newRelation->model = $newDoc->modelClassName();
-            $newRelation->modelid = $newDoc->primaryColumnValue();
-            $newRelation->nick = $relation->nick;
-            $newRelation->observations = $relation->observations;
-            $newRelation->modelcode = $newDoc->codigo;
-            if (false === $newRelation->save()) {
-                return false;
+        foreach ($newDoc->parentDocuments() as $parent) {
+            $whereDocs = [
+                new DataBaseWhere('model', $parent->modelClassName()),
+                new DataBaseWhere('modelid', $parent->primaryColumnValue())
+            ];
+            foreach ($relationModel->all($whereDocs, ['id' => 'ASC']) as $relation) {
+                $newRelation = new AttachedFileRelation();
+                $newRelation->idfile = $relation->idfile;
+                $newRelation->model = $newDoc->modelClassName();
+                $newRelation->modelid = $newDoc->primaryColumnValue();
+                $newRelation->nick = $relation->nick;
+                $newRelation->observations = $relation->observations;
+                $newRelation->modelcode = $newDoc->codigo;
+                if (false === $newRelation->save()) {
+                    return false;
+                }
             }
         }
 
