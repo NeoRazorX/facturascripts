@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -40,7 +40,6 @@ use SimpleXMLElement;
  */
 class AccountingPlanImport
 {
-
     /**
      * @var DataBase
      */
@@ -140,7 +139,7 @@ class AccountingPlanImport
     /**
      * Insert/update and account in accounting plan.
      */
-    protected function createAccount(string $code, string $definition, string $parentCode = '', string $codcuentaesp = ''): bool
+    protected function createAccount(string $code, string $definition, ?string $parentCode = '', ?string $codcuentaesp = ''): bool
     {
         // the account exists?
         $account = new Cuenta();
@@ -163,7 +162,7 @@ class AccountingPlanImport
     /**
      * Insert or update an account in accounting Plan.
      */
-    protected function createSubaccount(string $code, string $description, string $parentCode, string $codcuentaesp = ''): bool
+    protected function createSubaccount(string $code, string $description, string $parentCode, ?string $codcuentaesp = ''): bool
     {
         // the subaccount exists?
         $subaccount = new Subcuenta();
