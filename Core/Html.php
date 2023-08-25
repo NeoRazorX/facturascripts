@@ -110,6 +110,13 @@ final class Html
         });
     }
 
+    private static function cacheFunction(): TwigFunction
+    {
+        return new TwigFunction('cache', function (string $key) {
+            return Cache::get($key);
+        });
+    }
+
     private static function configFunction(): TwigFunction
     {
         return new TwigFunction('config', function (string $key, $default = null) {
@@ -347,6 +354,7 @@ final class Html
         // cargamos las funciones de twig
         self::$twig->addFunction(self::assetFunction());
         self::$twig->addFunction(self::attachedFileFunction());
+        self::$twig->addFunction(self::cacheFunction());
         self::$twig->addFunction(self::configFunction());
         self::$twig->addFunction(self::fixHtmlFunction());
         self::$twig->addFunction(self::formTokenFunction());
