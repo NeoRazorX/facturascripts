@@ -1151,6 +1151,7 @@
     "refresh": "Refresh",
     "refresh-page": "Refresh page",
     "refund-amount": "Cantidad devuelta",
+    "refund-payment-concept": "Devolución del recibo %document%",
     "refunds": "Refunds",
     "register": "Register",
     "register-installation": "Register installation",
