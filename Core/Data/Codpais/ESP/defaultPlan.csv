@@ -278,7 +278,7 @@
 "435";"Clientes, otras partes vinculadas";""
 "436";"Clientes de dudoso cobro";""
 "437";"Envases y embalajes a devolver por clientes";""
-"438";"Anticipos de clientes";""
+"438";"Anticipos de clientes";"ANTCLI"
 "44";"Deudores varios";""
 "4400";"Deudores (euros)";""
 "4404";"Deudores (moneda extranjera)";""
