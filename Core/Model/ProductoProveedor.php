@@ -154,7 +154,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
 
         $this->neto = round($this->precio * $this->getEUDiscount(), DinProducto::ROUND_DECIMALS);
         $tasaconv = Divisas::get($this->coddivisa)->tasaconvcompra;
-        $this->netoeuros = empty($tasaconv) ? 0 : round($this->netoeuros / $tasaconv, 5);
+        $this->netoeuros = empty($tasaconv) ? 0 : round($this->neto / $tasaconv, 5);
         return parent::test();
     }
 
