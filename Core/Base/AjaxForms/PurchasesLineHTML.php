@@ -130,10 +130,10 @@ class PurchasesLineHTML
             $map['iva_' . $idlinea] = $line->iva;
 
             // total
-            $map['linetotal_' . $idlinea] = $line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100;
+            $map['linetotal_' . $idlinea] = ToolBox::numbers()::format($line->pvptotal * (100 + $line->iva + $line->recargo - $line->irpf) / 100);
 
             // neto
-            $map['lineneto_' . $idlinea] = $line->pvptotal;
+            $map['lineneto_' . $idlinea] = ToolBox::numbers()::format($line->pvptotal);
         }
 
         // mods
