@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CostPriceTools;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
@@ -34,7 +35,6 @@ use FacturaScripts\Dinamic\Model\Variante as DinVariante;
  */
 class ProductoProveedor extends Base\ModelOnChangeClass
 {
-
     use Base\ModelTrait;
     use Base\ProductRelationTrait;
 
@@ -77,7 +77,7 @@ class ProductoProveedor extends Base\ModelOnChangeClass
     public function clear()
     {
         parent::clear();
-        $this->actualizado = date(self::DATETIME_STYLE);
+        $this->actualizado = Tools::dateTime();
         $this->coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
         $this->dtopor = 0.0;
         $this->dtopor2 = 0.0;
@@ -138,11 +138,14 @@ class ProductoProveedor extends Base\ModelOnChangeClass
 
     public function test(): bool
     {
-        $this->referencia = self::toolBox()::utils()::noHtml($this->referencia);
-        $this->refproveedor = self::toolBox()::utils()::noHtml($this->refproveedor);
+        $this->referencia = Tools::noHtml($this->referencia);
+        $this->refproveedor = Tools::noHtml($this->refproveedor);
 
         if (empty($this->referencia)) {
-            $this->toolBox()->i18nLog()->warning('field-can-not-be-null', ['%fieldName%' => 'referencia', '%tableName%' => static::tableName()]);
+            Tools::log()->warning('field-can-not-be-null', [
+                '%fieldName%' => 'referencia',
+                '%tableName%' => static::tableName()
+            ]);
             return false;
         } elseif (empty($this->refproveedor)) {
             $this->refproveedor = $this->referencia;
@@ -153,8 +156,10 @@ class ProductoProveedor extends Base\ModelOnChangeClass
         }
 
         $this->neto = round($this->precio * $this->getEUDiscount(), DinProducto::ROUND_DECIMALS);
-        $tasaconv = Divisas::get($this->coddivisa)->tasaconvcompra;
-        $this->netoeuros = empty($tasaconv) ? 0 : round($this->neto / $tasaconv, 5);
+
+        $tasaConv = Divisas::get($this->coddivisa)->tasaconvcompra;
+        $this->netoeuros = empty($tasaconv) ? 0 : round($this->neto / $tasaConv, 5);
+
         return parent::test();
     }
 
