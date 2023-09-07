@@ -42,6 +42,8 @@ class CodeModel
      */
     protected static $dataBase;
 
+    protected static int $limit;
+
     /**
      * Value of the code field of the model read.
      *
@@ -107,7 +109,7 @@ class CodeModel
 
         $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description '
             . 'FROM ' . $tableName . DataBaseWhere::getSQLWhere($where) . ' ORDER BY 2 ASC';
-        foreach (self::$dataBase->selectLimit($sql, self::ALL_LIMIT) as $row) {
+        foreach (self::$dataBase->selectLimit($sql, self::getLimit()) as $row) {
             $result[] = new static($row);
         }
 
@@ -189,6 +191,14 @@ class CodeModel
     }
 
     /**
+     * @return int
+     */
+    public static function getLimit(): int
+    {
+        return self::$limit ?? self::ALL_LIMIT;
+    }
+
+    /**
      * Load a CodeModel list (code and description) for the indicated table and search.
      *
      * @param string $tableName
@@ -211,6 +221,14 @@ class CodeModel
         $fields = $fieldCode . '|' . $fieldDescription;
         $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
         return self::all($tableName, $fieldCode, $fieldDescription, false, $where);
+    }
+
+    /**
+     * @param int $newLimit
+     */
+    public static function setLimit(int $newLimit): void
+    {
+        self::$limit = $newLimit;
     }
 
     /**
