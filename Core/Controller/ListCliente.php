@@ -108,6 +108,8 @@ class ListCliente extends ListController
             $this->addFilterSelect($viewName, 'provincia', 'province', 'provincia', $provinces);
         }
 
+		$this->addFilterAutocomplete($viewName, 'codpostal', 'zip-code', 'codpostal', 'contactos', 'codpostal');
+
         $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
         if (count($cities) >= CodeModel::ALL_LIMIT) {
             $this->addFilterAutocomplete($viewName, 'ciudad', 'city', 'ciudad', 'contactos', 'ciudad');
