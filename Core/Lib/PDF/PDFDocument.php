@@ -452,7 +452,9 @@ abstract class PDFDocument extends PDFCore
 
         // rectified invoice?
         if (isset($model->codigorect) && !empty($model->codigorect)) {
-            $tableData[3] = ['key' => $this->i18n->trans('original'), 'value' => $model->codigorect];
+            $model2 = new $model();
+			$model2->loadFromCode('', [new DataBaseWhere('codigo', $model->codigorect)]);
+			$tableData[3] = ['key' => $this->i18n->trans('original'), 'value' => $model->codigorect . ', ' . $model2->fecha];
         } elseif (property_exists($model, 'numproveedor') && $model->numproveedor) {
             $tableData[3] = ['key' => $this->i18n->trans('numsupplier'), 'value' => $model->numproveedor];
         } elseif (property_exists($model, 'numero2') && $model->numero2) {
