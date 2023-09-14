@@ -168,7 +168,14 @@ class SalesModalHTML
         }
 
         if (self::$codfamilia) {
-            $sql .= ' AND codfamilia = ' . $dataBase->var2str(self::$codfamilia);
+            $arbol_query = 'WITH RECURSIVE arbol_familias AS (SELECT codfamilia, descripcion, madre'
+                . ' FROM familias WHERE codfamilia = ' . $dataBase->var2str(self::$codfamilia)
+                . ' OR madre = ' . $dataBase->var2str(self::$codfamilia)
+                . ' UNION ALL SELECT child.codfamilia, child.descripcion, child.madre '
+                . ' FROM familias child JOIN arbol_familias d'
+                . ' ON d.codfamilia = child.madre) ';
+
+            $sql = $arbol_query . $sql . ' AND codfamilia IN (SELECT f.codfamilia FROM arbol_familias f)';
         }
 
         if (self::$vendido) {
