@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Lib;
 
+use FacturaScripts\Core\Session;
 use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ExtensionsTrait;
@@ -76,6 +77,9 @@ class BusinessDocumentGenerator
             // copy properties to new document
             $newDoc->{$field} = $prototype->{$field};
         }
+
+		$user = Session::get('user');
+		$newDoc->nick = $user->nick;
 
         if (self::$sameDate) {
             $newDoc->fecha = $prototype->fecha;
