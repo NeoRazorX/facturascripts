@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use Exception;
+use FacturaScripts\Core\Translator as CoreTranslator;
 use SimpleXMLElement;
 
 /**
@@ -69,10 +70,8 @@ final class PluginDeploy
         }
 
         // reload translations
-        $i18n = ToolBox::i18n();
-        if (method_exists($i18n, 'reload')) {
-            $i18n::reload();
-        }
+        CoreTranslator::deploy();
+        CoreTranslator::reload();
     }
 
     /**

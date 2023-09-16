@@ -21,9 +21,9 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Contract\SalesModInterface;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Translator;
 
 /**
  * Description of SalesFooterHTML

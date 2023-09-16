@@ -20,7 +20,6 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Model\Settings;
 
@@ -124,7 +123,7 @@ class Tools
             return rmdir($folder);
         }
 
-        return unlink($folder);
+        return file_exists($folder) ? unlink($folder) : true;
     }
 
     public static function folderScan(string $folder, bool $recursive = false, array $exclude = ['.DS_Store', '.well-known']): array

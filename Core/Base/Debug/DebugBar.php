@@ -20,7 +20,7 @@
 namespace FacturaScripts\Core\Base\Debug;
 
 use FacturaScripts\Core\Base\MiniLog;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Lib\AssetManager;
 
 /**

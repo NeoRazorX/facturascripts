@@ -22,9 +22,9 @@ namespace FacturaScripts\Core\Lib\PDF;
 use Cezpdf;
 use FacturaScripts\Core\Base\DivisaTools;
 use FacturaScripts\Core\Base\NumberTools;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Base\Utils;
 use FacturaScripts\Core\Lib\Export\ExportBase;
+use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
 /**

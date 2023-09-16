@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Translator as CoreTranslator;
 use FacturaScripts\Dinamic\Lib\MenuItem;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleAccess;
@@ -223,7 +225,7 @@ class MenuManager
         $menuValue = null;
         $submenuValue = null;
         $menuItem = null;
-        $i18n = new Translator();
+        $i18n = new CoreTranslator();
 
         /// We load the list of pages for the user
         $pages = $this->loadPages();
@@ -258,7 +260,7 @@ class MenuManager
     /**
      * Returns if the page should be saved.
      *
-     * @param Page  $pageModel
+     * @param Page $pageModel
      * @param array $pageData
      *
      * @return bool
@@ -292,7 +294,7 @@ class MenuManager
      * Assign active menu item.
      *
      * @param MenuItem[] $menu
-     * @param Page       $pageModel
+     * @param Page $pageModel
      */
     private function setActiveMenuItem(&$menu, $pageModel)
     {

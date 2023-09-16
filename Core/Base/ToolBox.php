@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Base;
 
 use Exception;
 use FacturaScripts\Core\App\AppSettings;
+use FacturaScripts\Core\Translator as CoreTranslator;
 use FacturaScripts\Dinamic\Lib\IPFilter;
 
 /**
@@ -62,14 +63,9 @@ class ToolBox
         return new FileManager();
     }
 
-    /**
-     * @param string $langcode
-     *
-     * @return Translator
-     */
-    public static function i18n(string $langcode = ''): Translator
+    public static function i18n(string $langcode = ''): CoreTranslator
     {
-        return new Translator($langcode);
+        return new CoreTranslator($langcode);
     }
 
     /**
@@ -79,7 +75,7 @@ class ToolBox
      */
     public static function i18nLog(string $channel = ''): MiniLog
     {
-        $translator = new Translator();
+        $translator = new CoreTranslator();
         return new MiniLog($channel, $translator);
     }
 

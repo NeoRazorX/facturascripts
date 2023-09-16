@@ -22,7 +22,6 @@ namespace FacturaScripts\Core;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\MyFilesToken;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\Lib\AssetManager;
 use FacturaScripts\Core\Lib\MultiRequestProtection;
