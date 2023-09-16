@@ -35,9 +35,9 @@ final class Translator
     /** @var array */
     private static $translations = [];
 
-    public function __construct(string $langcode = '')
+    public function __construct(string $langCode = '')
     {
-        $this->setLang($langcode);
+        $this->setLang($langCode);
     }
 
     public function customTrans(string $langCode, ?string $txt, array $parameters = []): string
@@ -158,9 +158,9 @@ final class Translator
         self::$defaultLang = $langCode;
     }
 
-    public function setLang(string $langcode): void
+    public function setLang(string $langCode): void
     {
-        $this->lang = empty($langcode) ? $this->getDefaultLang() : $langcode;
+        $this->lang = empty($langCode) ? $this->getDefaultLang() : $langCode;
 
         $this->load($this->lang);
     }
@@ -190,7 +190,7 @@ final class Translator
         return self::$defaultLang ?? constant('FS_LANG');
     }
 
-    private function getTransKey(string $txt): string
+    private function getTransKey(?string $txt): string
     {
         $specialKeys = [
             'AlbaranCliente' => 'customer-delivery-note',
