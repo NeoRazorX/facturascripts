@@ -660,6 +660,7 @@
     "group-or-split-p": "Este asistente permite generar un nuevo documento a partir de las líneas de otros. Seleccione las cantidades que desea usar, la fecha del nuevo documento y pulse el botón generar.",
     "grouping-type": "Agrupación",
     "groups": "Grupos",
+    "has-attachments": "¿Tiene adjuntos?",
     "has-parent": "Tiene padre",
     "hash": "Hash",
     "heading-account-group-id": "ID grupo epígrafes",

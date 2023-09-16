@@ -137,6 +137,13 @@ abstract class BusinessDocument extends ModelOnChangeClass
     public $numero;
 
     /**
+     * Number of attached documents.
+     *
+     * @var int
+     */
+    public $numdocs;
+
+    /**
      * Notes of the document.
      *
      * @var string
@@ -253,6 +260,7 @@ abstract class BusinessDocument extends ModelOnChangeClass
         $this->totaliva = 0.0;
         $this->totalrecargo = 0.0;
         $this->totalsuplidos = 0.0;
+        $this->numdocs = 0;
     }
 
     public static function dontCopyField(string $field): void

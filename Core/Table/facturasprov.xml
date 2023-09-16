@@ -176,6 +176,12 @@
         <type>boolean</type>
         <default>false</default>
     </column>
+    <column>
+        <name>numdocs</name>
+        <type>integer</type>
+        <null>NO</null>
+        <default>0</default>
+    </column>
     <constraint>
         <name>facturasprov_pkey</name>
         <type>PRIMARY KEY (idfactura)</type>
