@@ -21,14 +21,14 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Contract\PurchasesModInterface;
+use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\PurchaseDocument;
 use FacturaScripts\Core\Model\User;
-use FacturaScripts\Core\Translator;
 
 /**
  * Description of PurchasesFooterHTML
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class PurchasesFooterHTML

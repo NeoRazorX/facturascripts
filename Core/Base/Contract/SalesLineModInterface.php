@@ -19,9 +19,9 @@
 
 namespace FacturaScripts\Core\Base\Contract;
 
+use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Base\SalesDocumentLine;
-use FacturaScripts\Core\Translator;
 
 interface SalesLineModInterface
 {

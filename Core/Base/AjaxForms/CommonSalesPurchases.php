@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\ToolBox;
+use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Divisas;
 use FacturaScripts\Core\DataSrc\Empresas;
@@ -28,7 +29,6 @@ use FacturaScripts\Core\DataSrc\Series;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
-use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
 trait CommonSalesPurchases
