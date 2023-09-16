@@ -25,6 +25,7 @@ use FacturaScripts\Core\Model\Contacto;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 final class ContactoTest extends TestCase
 {
@@ -376,6 +377,14 @@ final class ContactoTest extends TestCase
 
         $result = $contacto->verifyLogkey('fake-logkey-2');
         static::assertFalse($result);
+    }
+
+    public function testCountryMethodReturnStringOrNull()
+    {
+        $reflectionMethod = new ReflectionMethod(Contacto::class, 'country');
+
+        self::assertEquals('string', $reflectionMethod->getReturnType()->getName());
+        self::assertTrue($reflectionMethod->getReturnType()->allowsNull());
     }
 
     protected function tearDown(): void

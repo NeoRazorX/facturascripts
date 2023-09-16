@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -162,7 +162,10 @@ class Contacto extends Base\Contact
         return $results;
     }
 
-    public function country(): string
+    /**
+     * @return string|null
+     */
+    public function country(): ?string
     {
         $country = new DinPais();
         $where = [new DataBaseWhere('codiso', $this->codpais)];
