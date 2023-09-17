@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\ControllerPermissions;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -314,6 +315,49 @@ abstract class PanelController extends BaseController
         }
 
         return true;
+    }
+
+    protected function exportAction()
+    {
+        if (false === $this->views[$this->active]->settings['btnPrint']
+            || false === $this->permissions->allowExport) {
+            Tools::log()->warning('no-print-permission');
+            return;
+        }
+
+        $this->setTemplate(false);
+        $this->exportManager->newDoc(
+            $this->request->get('option', ''),
+            $this->title,
+            (int)$this->request->request->get('idformat', ''),
+            $this->request->request->get('langcode', '')
+        );
+
+        foreach ($this->views as $selectedView) {
+            if (false === $selectedView->settings['active']) {
+                continue;
+            }
+
+            $selectedTab = $this->request->query->get('selectedTab', '');
+            $mainViewIsSelected = $this->getMainViewName() === $selectedTab;
+            $isMainView = $this->getMainViewName() === $selectedView->getViewName();
+            $isSelectedTab = $selectedTab === $selectedView->getViewName();
+
+            // Si se ha seleccionado una pestaña y no se trata de la vista principal, aplicamos filtro.
+            if (false === empty($selectedTab) && false === $mainViewIsSelected) {
+                // Continuamos siempre que no se trate de la vista principial o la pestaña seleccionada
+                // que son las que queremos exportar/imprimir
+                if (false === $isMainView && false === $isSelectedTab) {
+                    continue;
+                }
+            }
+
+            $codes = $this->request->request->get('code');
+            if (false === $selectedView->export($this->exportManager, $codes)) {
+                break;
+            }
+        }
+        $this->exportManager->show($this->response);
     }
 
     /**

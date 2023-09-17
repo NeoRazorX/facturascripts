@@ -149,6 +149,35 @@
             if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) == false) {
                 $("input:visible,textarea:visible").filter(":not([readonly='readonly']):not([disabled='disabled']):not([type='hidden']):not([type='checkbox']):not([type='radio'])").first().focus();
             }
+
+            // Cuando cambiamos de pestaña, modificamos la uri del boton imprimir o exportar,
+            // para que solo se imprima esa pestaña y no todas
+            $('#mainTabs a[data-toggle="pill"]').on('shown.bs.tab', function (event) {
+
+                // nos aseguramos que es la pestaña activa comprobando que incluye la clase 'active'
+                if(event.target.classList.contains('active')){
+
+                    // Obtenemos el nombre de la pestaña seleccionada
+                    const selectedTab = event.target.getAttribute('aria-controls');
+
+                    // Obtenemos todas las opciones de exportación para modificar el href de los links
+                    const exportOptions = JSON.parse("{{ fsc.exportManager.options()|json_encode()|escape('js') }}");
+
+                    // Recorremos todas las opciones y seleccionamos el boton que corresponda para cambiarle la URL
+                    for (const [key, value] of Object.entries(exportOptions)) {
+
+                        // Obtenemos el botón de la opción de exportación
+                        const btnPrint = document.getElementById('btn-print-' + key);
+
+                        // cambiamos la url incluyendo el parametro de la pestaña seleccionada
+                        const url = new URL(btnPrint.href);
+                        url.searchParams.set('selectedTab', selectedTab);
+
+                        // asignamos la nueva url al botón
+                        btnPrint.href = url;
+                    }
+                }
+            })
         });
     </script>
 {% endblock %}
@@ -189,7 +218,7 @@
 
 {% macro printButton(fsc, firstView, i18n) %}
     <div class="btn-group">
-        <a href="{{ firstView.model.url() }}&action=export&option={{ fsc.exportManager.defaultOption() }}"
+        <a id="btn-print-{{ fsc.exportManager.defaultOption() }}" href="{{ firstView.model.url() }}&action=export&option={{ fsc.exportManager.defaultOption() }}"
            target="_blank" class="btn btn-sm btn-secondary">
             <i class="fas fa-print fa-fw" aria-hidden="true"></i>
             <span class="d-none d-lg-inline-block">{{ trans('print') }}</span>
@@ -201,7 +230,7 @@
         <div class="dropdown-menu dropdown-menu-right">
             {% for key, option in fsc.exportManager.options() %}
                 {% if key != fsc.exportManager.defaultOption() %}
-                    <a href="{{ firstView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
+                    <a id="btn-print-{{ key }}" href="{{ firstView.model.url() }}&action=export&option={{ key }}" class="dropdown-item">
                         <i class="{{ option.icon }} fa-fw" aria-hidden="true"></i>
                         {{ trans(option.description) }}
                     </a>

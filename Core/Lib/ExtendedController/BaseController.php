@@ -347,35 +347,6 @@ abstract class BaseController extends Controller
         return false;
     }
 
-    protected function exportAction()
-    {
-        if (false === $this->views[$this->active]->settings['btnPrint']
-            || false === $this->permissions->allowExport) {
-            Tools::log()->warning('no-print-permission');
-            return;
-        }
-
-        $this->setTemplate(false);
-        $this->exportManager->newDoc(
-            $this->request->get('option', ''),
-            $this->title,
-            (int)$this->request->request->get('idformat', ''),
-            $this->request->request->get('langcode', '')
-        );
-
-        foreach ($this->views as $selectedView) {
-            if (false === $selectedView->settings['active']) {
-                continue;
-            }
-
-            $codes = $this->request->request->get('code');
-            if (false === $selectedView->export($this->exportManager, $codes)) {
-                break;
-            }
-        }
-        $this->exportManager->show($this->response);
-    }
-
     /**
      * Return values from Widget Values for autocomplete action
      *
