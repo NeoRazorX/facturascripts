@@ -105,8 +105,12 @@ class Cuenta extends Base\ModelClass
             return $code;
         }
 
-        // conformamos un array con el número del cliente y los 100 primeros números
-        $numbers = array_merge([$code], range(1, 99));
+        // conformamos un array con el número del cliente, los 99 primeros números y un número aleatorio
+        $numbers = array_merge(
+            [$code],
+            range(1, 99),
+            [rand(100, 9999)]
+        );
 
         // añadimos también los 100 siguientes números al total de subcuentas
         $subcuenta = new Subcuenta();
@@ -142,6 +146,9 @@ class Cuenta extends Base\ModelClass
                 return $newCode;
             }
         }
+
+        // no hemos encontrado ninguna subcuenta libre
+        Tools::log()->error('no-empty-account-found');
 
         return '';
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Cuenta;
 use FacturaScripts\Dinamic\Model\Ejercicio;
@@ -228,8 +229,12 @@ class AccountingCreation
             return $code;
         }
 
-        // conformamos un array con el número del cliente y los 100 primeros números
-        $numbers = array_merge([$code], range(1, 99));
+        // conformamos un array con el número del cliente, los 99 primeros números y un número aleatorio
+        $numbers = array_merge(
+            [$code],
+            range(1, 99),
+            [rand(100, 9999)]
+        );
 
         // añadimos también los 100 siguientes números al total de subcuentas
         $subcuenta = new Subcuenta();
@@ -265,6 +270,9 @@ class AccountingCreation
                 return $newCode;
             }
         }
+
+        // no hemos encontrado ninguna subcuenta libre
+        Tools::log()->error('no-empty-account-found');
 
         return '';
     }
