@@ -132,7 +132,7 @@ class PaymentToAccounting
         }
 
         $newLine = $entry->getNewLine($account);
-        $newLine->debe = $this->payment->importe + $this->getExpenses();
+        $newLine->debe = $this->payment->importe + abs($this->payment->gastos);
         return $newLine->save();
     }
 
@@ -146,7 +146,7 @@ class PaymentToAccounting
 
         $expLine = $entry->getNewLine($account);
         $expLine->concepto = ToolBox::i18n()->trans('receipt-expense-account', ['%document%' => $entry->documento]);
-        $expLine->haber = $this->getExpenses();
+        $expLine->haber = abs($this->payment->gastos);
         return $expLine->save();
     }
 
@@ -228,12 +228,5 @@ class PaymentToAccounting
         $entry->fecha = $this->payment->fecha;
         $entry->idempresa = $this->exercise->idempresa;
         $entry->importe = $this->payment->importe;
-    }
-
-    private function getExpenses(): float
-    {
-        return ($this->payment->importe < 0)
-            ? ($this->payment->gastos * -1)
-            : $this->payment->gastos;
     }
 }
