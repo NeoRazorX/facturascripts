@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,6 @@ namespace FacturaScripts\Core\Base;
 
 use Exception;
 use FacturaScripts\Core\App\AppSettings;
-use FacturaScripts\Core\Translator as CoreTranslator;
 use FacturaScripts\Dinamic\Lib\IPFilter;
 
 /**
@@ -63,9 +62,9 @@ class ToolBox
         return new FileManager();
     }
 
-    public static function i18n(string $langcode = ''): CoreTranslator
+    public static function i18n(string $langcode = ''): Translator
     {
-        return new CoreTranslator($langcode);
+        return new Translator($langcode);
     }
 
     /**
@@ -75,7 +74,7 @@ class ToolBox
      */
     public static function i18nLog(string $channel = ''): MiniLog
     {
-        $translator = new CoreTranslator();
+        $translator = new Translator();
         return new MiniLog($channel, $translator);
     }
 
