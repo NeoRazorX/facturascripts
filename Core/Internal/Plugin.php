@@ -190,6 +190,7 @@ final class Plugin
         $pathIni = $zip->getNameIndex($zipIndex);
         $plugin->folder = substr($pathIni, 0, strpos($pathIni, '/'));
         $plugin->loadIniData($iniData);
+        $plugin->enabled = Plugins::isEnabled($plugin->name);
         $zip->close();
 
         return $plugin;
@@ -202,9 +203,16 @@ final class Plugin
 
     public function init(): bool
     {
-        // si el plugin no está activado o no tiene clase Init, no hacemos nada
+        // si el plugin no está activado, no hacemos nada
+        if (!$this->enabled) {
+            return false;
+        }
+
+        // si el plugin no tiene clase Init, no hacemos nada
         $className = 'FacturaScripts\\Plugins\\' . $this->name . '\\Init';
-        if (!$this->enabled || !class_exists($className)) {
+        if (!class_exists($className)) {
+            $this->post_disable = false;
+            $this->post_enable = false;
             return false;
         }
 

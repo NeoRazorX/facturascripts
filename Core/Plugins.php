@@ -89,6 +89,7 @@ final class Plugins
         }
 
         // si el plugin estaba activado, marcamos el post_enable
+        $plugin = self::get($plugin->name);
         if ($plugin->enabled) {
             $plugin->post_enable = true;
             $plugin->post_disable = false;
