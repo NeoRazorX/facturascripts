@@ -663,6 +663,7 @@
     "groups": "Taldeak",
     "has-parent": "Arbasoa dauka",
     "hash": "Hash",
+    "header": "Cabecera",
     "heading-account-group-id": "Epigrafe taldearen ID",
     "heading-account-id-root": "Kontu nagusiaren erroa",
     "health": "Osasuna",

@@ -663,6 +663,7 @@
     "groups": "gruppi",
     "has-parent": "has-parent",
     "hash": "Hash",
+    "header": "Cabecera",
     "heading-account-group-id": "Gruppo ID dell'account di intestazioni",
     "heading-account-id-root": "Radice dell'account di intestazione",
     "health": "health",
