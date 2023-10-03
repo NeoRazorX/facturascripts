@@ -1,10 +1,25 @@
 <?php
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-declare(strict_types=1);
 
-namespace FacturaScripts\Test\Core\Base\Model;
+namespace FacturaScripts\Test\Core\Model;
 
-use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\MiniLog;
 use FacturaScripts\Core\Base\ToolBox;
@@ -14,7 +29,6 @@ use FacturaScripts\Core\Model\Divisa;
 use FacturaScripts\Core\Model\Producto;
 use FacturaScripts\Core\Model\ProductoProveedor;
 use FacturaScripts\Core\Model\Proveedor;
-use FacturaScripts\Core\Model\User;
 use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Core\Tools;
 use FacturaScripts\Test\Traits\DefaultSettingsTrait;
@@ -26,7 +40,7 @@ use PHPUnit\Framework\TestCase;
  * Class ProductoProveedorTest
  * @package FacturaScripts\Test\Core\Base\Model
  */
-class ProductoProveedorTest extends TestCase
+final class ProductoProveedorTest extends TestCase
 {
     use LogErrorsTrait;
     use RandomDataTrait;
@@ -34,93 +48,90 @@ class ProductoProveedorTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
-        (new DataBase())->connect();
-        new User();
         self::setDefaultSettings();
     }
 
     /**
      * Comprobamos que se puede crear un ProductoProveedor
      */
-    public function testItCanCreateProductoProveedor()
+    public function testItCanCreateProductoProveedor(): void
     {
+        // creamos un proveedor
         $proveedor = $this->getRandomSupplier();
-        static::assertTrue($proveedor->save());
+        $this->assertTrue($proveedor->save());
 
+        // creamos un producto del proveedor
         $productoProveedor = new ProductoProveedor();
-
         $productoProveedor->referencia = 'test';
         $productoProveedor->codproveedor = $proveedor->codproveedor;
+        $this->assertTrue($productoProveedor->save());
+        $this->assertNotNull($productoProveedor->id);
 
-        static::assertTrue($productoProveedor->save());
-        static::assertNotNull($productoProveedor->id);
-
-        static::assertTrue($proveedor->getDefaultAddress()->delete());
-        static::assertTrue($proveedor->delete());
-        static::assertTrue($productoProveedor->delete());
+        // eliminamos
+        $this->assertTrue($proveedor->getDefaultAddress()->delete());
+        $this->assertTrue($proveedor->delete());
+        $this->assertTrue($productoProveedor->delete());
     }
 
     /**
      * Comprobamos que NO se puede crear un ProductoProveedor
      * cuando el Proveedor no existe
      */
-    public function testItCanNotCreateProductoProveedorWhitoutSupplier()
+    public function testItCanNotCreateProductoProveedorWhitOutSupplier(): void
     {
         $productoProveedor = new ProductoProveedor();
-
         $productoProveedor->referencia = 'test';
         $productoProveedor->codproveedor = 'wrong-cod';
 
-        static::assertFalse($productoProveedor->save());
-        static::assertNull($productoProveedor->id);
+        $this->assertFalse($productoProveedor->save());
+        $this->assertNull($productoProveedor->id);
     }
 
     /**
      * Comprobamos que al eliminar un proveedor
-     * se eliminan tambien sus modelos ProductoProveedor
+     * se eliminan también sus modelos ProductoProveedor
      */
-    public function testItDeleteProductosProveedorOnCascade()
+    public function testItDeleteProductosProveedorOnCascade(): void
     {
         // Creamos un proveedor con dos productos
         $proveedor = $this->getRandomSupplier();
-        static::assertTrue($proveedor->save());
+        $this->assertTrue($proveedor->save());
 
         $productoProveedor1 = new ProductoProveedor();
         $productoProveedor1->referencia = 'test-1';
         $productoProveedor1->codproveedor = $proveedor->codproveedor;
-        static::assertTrue($productoProveedor1->save());
+        $this->assertTrue($productoProveedor1->save());
 
         $productoProveedor2 = new ProductoProveedor();
         $productoProveedor2->referencia = 'test-2';
         $productoProveedor2->codproveedor = $proveedor->codproveedor;
-        static::assertTrue($productoProveedor2->save());
+        $this->assertTrue($productoProveedor2->save());
 
         // Comprobamos que los dos productos se encuentran en la BBDD
         $productoProveedor = new ProductoProveedor();
         $productoProveedor->loadFromCode($productoProveedor1->id);
-        static::assertNotNull($productoProveedor->id);
+        $this->assertNotNull($productoProveedor->id);
         $productoProveedor->loadFromCode($productoProveedor2->id);
-        static::assertNotNull($productoProveedor->id);
+        $this->assertNotNull($productoProveedor->id);
 
         // Borramos el proveedor
-        static::assertTrue($proveedor->getDefaultAddress()->delete());
-        static::assertTrue($proveedor->delete());
+        $this->assertTrue($proveedor->getDefaultAddress()->delete());
+        $this->assertTrue($proveedor->delete());
 
         // Comprobamos que los dos productos ya NO se encuentran en la BBDD
         $productoProveedor->loadFromCode($productoProveedor1->id);
-        static::assertNull($productoProveedor->id);
+        $this->assertNull($productoProveedor->id);
         $productoProveedor->loadFromCode($productoProveedor2->id);
-        static::assertNull($productoProveedor->id);
+        $this->assertNull($productoProveedor->id);
     }
 
     /**
-     * Comprobamos que al crear una linea de Albarán se
+     * Comprobamos que al crear una línea de Albarán se
      * crea un ProductoProveedor
      */
-    public function testItCanCreateProductoProveedorWhenCreatingAlbaran()
+    public function testItCanCreateProductoProveedorWhenCreatingAlbaran(): void
     {
-        [$subject, $product, $doc, $pvpunitario, $dtopor, $dtopor2] = $this->getAlbaranConLineaProducto();
+        [$subject, $product, $doc, $pvpUnitario, $dtopor, $dtopor2] = $this->getAlbaranConLineaProducto();
 
         $productoProveedor = new ProductoProveedor();
         $productoProveedor = $productoProveedor->all(
@@ -130,76 +141,76 @@ class ProductoProveedorTest extends TestCase
             ]
         )[0];
 
-        static::assertEquals($doc->coddivisa, $productoProveedor->coddivisa);
-        static::assertEquals($doc->codproveedor, $subject->codproveedor);
-        static::assertEquals(5.6, $productoProveedor->neto);
-        static::assertEquals(5.6, $productoProveedor->netoeuros);
-        static::assertEquals($pvpunitario, $productoProveedor->precio);
-        static::assertEquals($dtopor, $productoProveedor->dtopor);
-        static::assertEquals($dtopor2, $productoProveedor->dtopor2);
+        $this->assertEquals($doc->coddivisa, $productoProveedor->coddivisa);
+        $this->assertEquals($doc->codproveedor, $subject->codproveedor);
+        $this->assertEquals(5.6, $productoProveedor->neto);
+        $this->assertEquals(5.6, $productoProveedor->netoeuros);
+        $this->assertEquals($pvpUnitario, $productoProveedor->precio);
+        $this->assertEquals($dtopor, $productoProveedor->dtopor);
+        $this->assertEquals($dtopor2, $productoProveedor->dtopor2);
 
         // eliminamos
-        static::assertTrue($doc->delete());
-        static::assertTrue($subject->getDefaultAddress()->delete());
-        static::assertTrue($subject->delete());
-        static::assertTrue($product->delete());
+        $this->assertTrue($doc->delete());
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
+        $this->assertTrue($product->delete());
     }
 
     /**
-     * Comprobamos que al crear una linea de Albarán
+     * Comprobamos que al crear una línea de Albarán
      * con un Producto previamente incluido en otro Albarán
      * mantiene el precio del ProductoProveedor creado en el Albarán previo
      * y no el precio del Producto.
      */
-    public function testItCanAssignProductoProveedorPrice()
+    public function testItCanAssignProductoProveedorPrice(): void
     {
-        [$subject, $product, $doc, $pvpunitario, $dtopor, $dtopor2] = $this->getAlbaranConLineaProducto();
+        [$subject, $product, $doc, $pvpUnitario, $dtopor, $dtopor2] = $this->getAlbaranConLineaProducto();
 
         // Creamos otro albarán
         $doc2 = new AlbaranProveedor();
         $doc2->setSubject($subject);
-        static::assertTrue($doc2->save());
+        $this->assertTrue($doc2->save());
 
         $line = $doc2->getNewProductLine($product->referencia);
-        static::assertTrue($line->save());
+        $this->assertTrue($line->save());
 
-        static::assertEquals($pvpunitario, $line->pvpunitario);
-        static::assertEquals($dtopor, $line->dtopor);
-        static::assertEquals($dtopor2, $line->dtopor2);
-        static::assertNotEquals($product->precio, $line->pvpunitario);
+        $this->assertEquals($pvpUnitario, $line->pvpunitario);
+        $this->assertEquals($dtopor, $line->dtopor);
+        $this->assertEquals($dtopor2, $line->dtopor2);
+        $this->assertNotEquals($product->precio, $line->pvpunitario);
 
         // eliminamos
-        static::assertTrue($doc->delete());
-        static::assertTrue($doc2->delete());
-        static::assertTrue($subject->getDefaultAddress()->delete());
-        static::assertTrue($subject->delete());
-        static::assertTrue($product->delete());
+        $this->assertTrue($doc->delete());
+        $this->assertTrue($doc2->delete());
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
+        $this->assertTrue($product->delete());
     }
 
     /**
-     * Comprobamos que al crear una linea de Albarán
+     * Comprobamos que al crear una línea de Albarán
      * con un Producto previamente incluido en otro Albarán
      * y creamos otro Albarán con distinta Divisa incluyendo el mismo Producto,
      * se crea un ProductoProveedor nuevo con la Divisa del Albarán
      */
-    public function testItCanAssignProductoProveedorCurrency()
+    public function testItCanAssignProductoProveedorCurrency(): void
     {
         [$subject, $product, $doc] = $this->getAlbaranConLineaProducto();
 
         // Creamos otra divisa
         $divisa = new Divisa();
         $divisa->coddivisa = 'USD';
-        static::assertTrue($divisa->save());
+        $this->assertTrue($divisa->save());
 
         // Creamos otro albarán
         $doc2 = new AlbaranProveedor();
         $doc2->setSubject($subject);
         $doc2->setCurrency('USD');
-        static::assertTrue($doc2->save());
+        $this->assertTrue($doc2->save());
 
         $line = $doc2->getNewProductLine($product->referencia);
         $line->pvpunitario = 1000;
-        static::assertTrue($line->save());
+        $this->assertTrue($line->save());
 
         $productosProveedor = new ProductoProveedor();
         $productosProveedor = $productosProveedor->all(
@@ -209,95 +220,95 @@ class ProductoProveedorTest extends TestCase
             ]
         );
 
-        static::assertCount(2, $productosProveedor);
-        static::assertEquals($productosProveedor[0]->referencia, $productosProveedor[1]->referencia);
-        static::assertEquals('EUR', $productosProveedor[0]->coddivisa);
-        static::assertEquals('USD', $productosProveedor[1]->coddivisa);
+        $this->assertCount(2, $productosProveedor);
+        $this->assertEquals($productosProveedor[0]->referencia, $productosProveedor[1]->referencia);
+        $this->assertEquals('EUR', $productosProveedor[0]->coddivisa);
+        $this->assertEquals('USD', $productosProveedor[1]->coddivisa);
 
         // eliminamos
-        static::assertTrue($doc->delete());
-        static::assertTrue($doc2->delete());
-        static::assertTrue($subject->getDefaultAddress()->delete());
-        static::assertTrue($subject->delete());
-        static::assertTrue($product->delete());
-        static::assertTrue($divisa->delete());
+        $this->assertTrue($doc->delete());
+        $this->assertTrue($doc2->delete());
+        $this->assertTrue($subject->getDefaultAddress()->delete());
+        $this->assertTrue($subject->delete());
+        $this->assertTrue($product->delete());
+        $this->assertTrue($divisa->delete());
     }
 
-    public function testPrimaryColumn()
+    public function testPrimaryColumn(): void
     {
         $result = ProductoProveedor::primaryColumn();
 
-        static::assertEquals('id', $result);
+        $this->assertEquals('id', $result);
     }
 
-    public function testGetEUDiscount()
+    public function testGetEUDiscount(): void
     {
         $productoProveedor = new ProductoProveedor();
 
         $result = $productoProveedor->getEUDiscount();
 
-        static::assertEquals(1, $result);
+        $this->assertEquals(1, $result);
 
         $productoProveedor->dtopor = 10;
 
         $result = $productoProveedor->getEUDiscount();
 
-        static::assertEquals(0.9, $result);
+        $this->assertEquals(0.9, $result);
 
         $productoProveedor->dtopor = 10;
         $productoProveedor->dtopor2 = 10;
 
         $result = $productoProveedor->getEUDiscount();
 
-        static::assertEquals(0.81, $result);
+        $this->assertEquals(0.81, $result);
     }
 
-    public function testTableName()
+    public function testTableName(): void
     {
         $result = ProductoProveedor::tableName();
 
-        static::assertEquals('productosprov', $result);
+        $this->assertEquals('productosprov', $result);
     }
 
-    public function testUrl()
+    public function testUrl(): void
     {
         $producto = $this->getRandomProduct();
-        static::assertTrue($producto->save());
+        $this->assertTrue($producto->save());
 
         $productoProveedor = new ProductoProveedor();
 
         $result = $productoProveedor->url();
-        static::assertEquals('ListProducto', $result);
+        $this->assertEquals('ListProducto', $result);
 
         $productoProveedor->idproducto = $producto->idproducto;
         $productoProveedor->referencia = $producto->referencia;
 
         $result = $productoProveedor->url();
-        static::assertEquals('EditProducto?code=' . $producto->idproducto, $result);
+        $this->assertEquals('EditProducto?code=' . $producto->idproducto, $result);
 
-        static::assertTrue($producto->delete());
+        $this->assertTrue($producto->delete());
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $productoProveedor = new ProductoProveedor();
 
         $productoProveedor->clear();
 
-        static::assertNotNull($productoProveedor->actualizado);
-        static::assertEquals(ToolBox::appSettings()::get('default', 'coddivisa'), $productoProveedor->coddivisa);
-        static::assertEquals(0, $productoProveedor->dtopor);
-        static::assertEquals(0, $productoProveedor->dtopor2);
-        static::assertEquals(0, $productoProveedor->neto);
-        static::assertEquals(0, $productoProveedor->netoeuros);
-        static::assertEquals(0, $productoProveedor->precio);
-        static::assertEquals(0, $productoProveedor->stock);
+        $this->assertNotNull($productoProveedor->actualizado);
+        $this->assertEquals(ToolBox::appSettings()::get('default', 'coddivisa'), $productoProveedor->coddivisa);
+        $this->assertEquals(0, $productoProveedor->dtopor);
+        $this->assertEquals(0, $productoProveedor->dtopor2);
+        $this->assertEquals(0, $productoProveedor->neto);
+        $this->assertEquals(0, $productoProveedor->netoeuros);
+        $this->assertEquals(0, $productoProveedor->precio);
+        $this->assertEquals(0, $productoProveedor->stock);
     }
 
-    public function testGetVariant()
+    public function testGetVariant(): void
     {
         $producto = $this->getRandomProduct();
-        static::assertTrue($producto->save());
+        $this->assertTrue($producto->save());
 
         $productoProveedor = new ProductoProveedor();
         $productoProveedor->idproducto = $producto->idproducto;
@@ -305,42 +316,42 @@ class ProductoProveedorTest extends TestCase
 
         $result = $productoProveedor->getVariant();
 
-        static::assertTrue($result instanceof Variante);
-        static::assertEquals($productoProveedor->referencia, $result->referencia);
+        $this->assertTrue($result instanceof Variante);
+        $this->assertEquals($productoProveedor->referencia, $result->referencia);
 
-        static::assertTrue($producto->delete());
+        $this->assertTrue($producto->delete());
     }
 
-    public function testGetSupplier()
+    public function testGetSupplier(): void
     {
         $proveedor = $this->getRandomSupplier();
-        static::assertTrue($proveedor->save());
+        $this->assertTrue($proveedor->save());
 
         $productoProveedor = new ProductoProveedor();
         $productoProveedor->codproveedor = $proveedor->codproveedor;
 
         $result = $productoProveedor->getSupplier();
 
-        static::assertTrue($result instanceof Proveedor);
-        static::assertEquals($productoProveedor->codproveedor, $result->codproveedor);
+        $this->assertTrue($result instanceof Proveedor);
+        $this->assertEquals($productoProveedor->codproveedor, $result->codproveedor);
 
-        static::assertTrue($proveedor->getDefaultAddress()->delete());
-        static::assertTrue($proveedor->delete());
+        $this->assertTrue($proveedor->getDefaultAddress()->delete());
+        $this->assertTrue($proveedor->delete());
     }
 
-    public function testInstall()
+    public function testInstall(): void
     {
         $productoProveedor = new ProductoProveedor();
 
         $result = $productoProveedor->install();
 
-        static::assertEquals('', $result);
+        $this->assertEquals('', $result);
     }
 
-    public function testTest()
+    public function testTest(): void
     {
         $proveedor = $this->getRandomSupplier();
-        static::assertTrue($proveedor->save());
+        $this->assertTrue($proveedor->save());
 
         $productoProveedor = new ProductoProveedor();
 
@@ -355,8 +366,8 @@ class ProductoProveedorTest extends TestCase
                 '%tableName%' => ProductoProveedor::tableName(),
             ]
         );
-        static::assertEquals($expected, end($logs)['message']);
-        static::assertFalse($result);
+        $this->assertEquals($expected, end($logs)['message']);
+        $this->assertFalse($result);
 
         // Agregamos la referencia al modelo
         $productoProveedor->referencia = 'test';
@@ -372,18 +383,18 @@ class ProductoProveedorTest extends TestCase
                 '%tableName%' => ProductoProveedor::tableName(),
             ]
         );
-        static::assertEquals($expected, end($logs)['message']);
-        static::assertFalse($result);
+        $this->assertEquals($expected, end($logs)['message']);
+        $this->assertFalse($result);
 
         // Agregamos el codproveedor al modelo y borramos los logs para comprobar que ahora no existen errores.
         $productoProveedor->codproveedor = $proveedor->codproveedor;
         MiniLog::clear();
 
-        static::assertTrue($productoProveedor->save());
+        $this->assertTrue($productoProveedor->save());
         $result = $productoProveedor->test();
 
         // Comprobamos que las validaciones son correctas.
-        static::assertTrue($result);
+        $this->assertTrue($result);
 
         // Comprobamos los valores calculados
         $productoProveedor->precio = 100;
@@ -393,63 +404,63 @@ class ProductoProveedorTest extends TestCase
 
         $result = $productoProveedor->test();
 
-        static::assertEquals($productoProveedor->refproveedor, $productoProveedor->referencia);
-        static::assertEquals($productoProveedor->idproducto, $productoProveedor->getVariant()->idproducto);
-        static::assertEquals(
+        $this->assertEquals($productoProveedor->refproveedor, $productoProveedor->referencia);
+        $this->assertEquals($productoProveedor->idproducto, $productoProveedor->getVariant()->idproducto);
+        $this->assertEquals(
             $productoProveedor->neto,
             round(
                 $productoProveedor->precio * $productoProveedor->getEUDiscount(),
                 Producto::ROUND_DECIMALS
             )
         );
-        static::assertEquals(
+        $this->assertEquals(
             $productoProveedor->netoeuros,
             Divisas::get($productoProveedor->coddivisa)->tasaconvcompra * $productoProveedor->neto
         );
-        static::assertTrue($result);
+        $this->assertTrue($result);
 
-        static::assertTrue($productoProveedor->delete());
-        static::assertTrue($proveedor->getDefaultAddress()->delete());
-        static::assertTrue($proveedor->delete());
+        $this->assertTrue($productoProveedor->delete());
+        $this->assertTrue($proveedor->getDefaultAddress()->delete());
+        $this->assertTrue($proveedor->delete());
     }
 
     /**
-     * Devuelve un albarán con una linea de producto.
-     * Tambien se devuelven los modelos y variables que han sido
+     * Devuelve un albarán con una línea de producto.
+     * También se devuelven los modelos y variables que han sido
      * necesarias para crear el albarán.
      *
      * @return array
      */
-    private function getAlbaranConLineaProducto()
+    private function getAlbaranConLineaProducto(): array
     {
         // creamos un proveedor
         $subject = $this->getRandomSupplier();
-        static::assertTrue($subject->save());
+        $this->assertTrue($subject->save());
 
         // creamos un producto
         $product = $this->getRandomProduct();
-        static::assertTrue($product->save());
+        $this->assertTrue($product->save());
 
         // creamos un albarán
         $doc = new AlbaranProveedor();
         $doc->setSubject($subject);
-        static::assertTrue($doc->save());
+        $this->assertTrue($doc->save());
 
         // añadimos el producto
-        $pvpunitario = 10;
+        $pvpUnitario = 10;
         $dtopor = 20;
         $dtopor2 = 30;
         $line = $doc->getNewProductLine($product->referencia);
-        $line->pvpunitario = $pvpunitario;
+        $line->pvpunitario = $pvpUnitario;
         $line->dtopor = $dtopor;
         $line->dtopor2 = $dtopor2;
-        static::assertTrue($line->save());
+        $this->assertTrue($line->save());
 
         return [
             $subject,
             $product,
             $doc,
-            $pvpunitario,
+            $pvpUnitario,
             $dtopor,
             $dtopor2,
         ];
@@ -457,7 +468,6 @@ class ProductoProveedorTest extends TestCase
 
     protected function tearDown(): void
     {
-        parent::tearDown();
         $this->logErrors();
     }
 }

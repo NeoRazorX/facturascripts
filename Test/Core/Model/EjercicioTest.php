@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
