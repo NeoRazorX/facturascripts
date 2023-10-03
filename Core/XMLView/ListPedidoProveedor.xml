@@ -70,6 +70,9 @@
                 <values source="estados_documentos" fieldcode="idestado" fieldtitle="nombre"/>
             </widget>
         </column>
+        <column name="number-attachments" display="none" order="215">
+            <widget type="number" fieldname="numdocs" decimal="0"/>
+        </column>
         <column name="email-sent" display="none" order="220">
             <widget type="checkbox" fieldname="femail"/>
         </column>

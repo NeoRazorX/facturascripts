@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * This file is part of FacturaScripts
  * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
@@ -169,19 +169,17 @@ trait DocFilesTrait
     /**
      * Actualiza el número de adjuntos del documento.
      */
-    protected function updateNumDocs()
+    protected function updateNumDocs(): void
     {
         $attachedFileRelation = new AttachedFileRelation();
-
         $where = [
             new DataBaseWhere('model', $this->getModelClassName()),
             new DataBaseWhere('modelid', $this->request->get('code'))
         ];
-
-        $numdocs = count($attachedFileRelation->all($where, [], 0, 0));
+        $numDocs = count($attachedFileRelation->all($where, [], 0, 0));
 
         $model = $this->getModel();
-        $model->numdocs = $numdocs;
+        $model->numdocs = $numDocs;
         if (false === $model->save()) {
             $this->response->setContent(json_encode(['ok' => false, 'messages' => self::toolBox()::log()::read('', $this->logLevels)]));
         }
