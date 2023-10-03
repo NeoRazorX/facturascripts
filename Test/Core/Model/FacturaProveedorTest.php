@@ -374,10 +374,10 @@ final class FacturaProveedorTest extends TestCase
         $this->assertEquals(100, $invoice->neto, 'bad-neto');
         $this->assertEquals(100, $invoice->netosindto, 'bad-netosindto');
         $this->assertEquals(21, $invoice->totaliva, 'bad-totaliva');
-        $this->assertEquals(5.2, $invoice->totalrecargo, 'bad-totalrecargo');
+        $this->assertEquals(0, $invoice->totalrecargo, 'bad-totalrecargo');
         $this->assertEquals(0, $invoice->totalirpf, 'bad-totalirpf');
         $this->assertEquals(0, $invoice->totalsuplidos, 'bad-totalsuplidos');
-        $this->assertEquals(126.2, $invoice->total, 'bad-total');
+        $this->assertEquals(121, $invoice->total, 'bad-total');
 
         // eliminamos
         $this->assertTrue($invoice->delete(), 'cant-delete-invoice');

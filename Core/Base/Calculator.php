@@ -257,8 +257,7 @@ final class Calculator
             }
 
             // ¿El régimen IVA es sin recargo de equivalencia?
-            if ($regimen != RegimenIVA::TAX_SYSTEM_SURCHARGE
-                && $company->regimeniva != RegimenIVA::TAX_SYSTEM_SURCHARGE) {
+            if ($regimen != RegimenIVA::TAX_SYSTEM_SURCHARGE) {
                 $line->recargo = 0.0;
             }
         }
