@@ -186,7 +186,7 @@ abstract class PDFDocument extends PDFCore
 
         $subtotals = [];
         foreach ($model->getLines() as $line) {
-            if (empty($line->pvptotal) || $line->suplido) {
+            if (empty($line->codimpuesto) || empty($line->pvptotal) || $line->suplido) {
                 continue;
             }
 
