@@ -106,6 +106,7 @@ abstract class ListBusinessDocument extends ListController
         $this->addFilterCheckbox($viewName, 'totalrecargo', 'surcharge', 'totalrecargo', '!=', 0);
         $this->addFilterCheckbox($viewName, 'totalirpf', 'retention', 'totalirpf', '!=', 0);
         $this->addFilterCheckbox($viewName, 'totalsuplidos', 'supplied-amount', 'totalsuplidos', '!=', 0);
+        $this->addFilterCheckbox($viewName, 'numdocs', 'has-attachments', 'numdocs', '!=', 0);
     }
 
     protected function createViewLines(string $viewName, string $modelName): void

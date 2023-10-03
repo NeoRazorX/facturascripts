@@ -1,7 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,6 +22,7 @@ namespace FacturaScripts\Core\Lib\ExtendedController;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\AttachedFileRelation;
+use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Dinamic\Model\AttachedFile;
 
 /**
@@ -63,6 +64,11 @@ trait DocFilesTrait
                 ToolBox::i18nLog()->error('fail-relation');
                 return true;
             }
+
+            // Si se trata de un documento, actualizamos el número de documentos adjuntos.
+            if ($this->getModel() instanceof BusinessDocument) {
+                $this->updateNumDocs();
+            }
         }
 
         ToolBox::i18nLog()->notice('record-updated-correctly');
@@ -92,6 +98,12 @@ trait DocFilesTrait
         }
 
         ToolBox::i18nLog()->notice('record-deleted-correctly');
+
+        // Si se trata de un documento, actualizamos el número de documentos adjuntos.
+        if ($this->getModel() instanceof BusinessDocument) {
+            $this->updateNumDocs();
+        }
+
         return true;
     }
 
@@ -145,7 +157,34 @@ trait DocFilesTrait
         }
 
         ToolBox::i18nLog()->notice('record-updated-correctly');
+
+        // Si se trata de un documento, actualizamos el número de documentos adjuntos.
+        if ($this->getModel() instanceof BusinessDocument) {
+            $this->updateNumDocs();
+        }
+
         return true;
+    }
+
+    /**
+     * Actualiza el número de adjuntos del documento.
+     */
+    protected function updateNumDocs()
+    {
+        $attachedFileRelation = new AttachedFileRelation();
+
+        $where = [
+            new DataBaseWhere('model', $this->getModelClassName()),
+            new DataBaseWhere('modelid', $this->request->get('code'))
+        ];
+
+        $numdocs = count($attachedFileRelation->all($where, [], 0, 0));
+
+        $model = $this->getModel();
+        $model->numdocs = $numdocs;
+        if (false === $model->save()) {
+            $this->response->setContent(json_encode(['ok' => false, 'messages' => self::toolBox()::log()::read('', $this->logLevels)]));
+        }
     }
 
     private function validateFileActionToken(): bool
