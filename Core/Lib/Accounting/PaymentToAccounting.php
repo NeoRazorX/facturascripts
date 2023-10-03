@@ -132,7 +132,7 @@ class PaymentToAccounting
         }
 
         $newLine = $entry->getNewLine($account);
-        $newLine->debe = $this->payment->importe + $this->payment->gastos;
+        $newLine->debe = $this->payment->importe + abs($this->payment->gastos);
         return $newLine->save();
     }
 
@@ -146,7 +146,7 @@ class PaymentToAccounting
 
         $expLine = $entry->getNewLine($account);
         $expLine->concepto = ToolBox::i18n()->trans('receipt-expense-account', ['%document%' => $entry->documento]);
-        $expLine->haber = $this->payment->gastos;
+        $expLine->haber = abs($this->payment->gastos);
         return $expLine->save();
     }
 
