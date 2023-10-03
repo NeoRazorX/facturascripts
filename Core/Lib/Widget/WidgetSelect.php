@@ -44,7 +44,7 @@ class WidgetSelect extends BaseWidget
     protected $fieldtitle;
 
     /** @var int */
-    protected int $limit;
+    protected $limit;
 
     /** @var string */
     protected $parent;
