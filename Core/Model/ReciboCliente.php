@@ -62,7 +62,7 @@ class ReciboCliente extends Base\Receipt
     {
         $payModel = new DinPagoCliente();
         $where = [new DataBaseWhere('idrecibo', $this->idrecibo)];
-        return $payModel->all($where, [], 0, 0);
+        return $payModel->all($where, ['fecha' => 'DESC', 'hora' => 'DESC'], 0, 0);
     }
 
     public function getSubject(): DinCliente
