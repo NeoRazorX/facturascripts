@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -44,8 +44,8 @@
                 </widget>
             </column>
             <column name="exercise" titleurl="ListEjercicio" order="130">
-                <widget type="select" fieldname="codejercicio" onclick="EditEjercicio">
-                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre"/>
+                <widget type="select" fieldname="codejercicio" parent="idempresa" onclick="EditEjercicio">
+                    <values source="ejercicios" fieldcode="codejercicio" fieldtitle="nombre" fieldfilter="idempresa"/>
                 </widget>
             </column>
             <column name="serie" titleurl="ListSerie" order="140">
