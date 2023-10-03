@@ -43,6 +43,9 @@ class WidgetSelect extends BaseWidget
     /** @var string */
     protected $fieldtitle;
 
+    /** @var int */
+    protected int $limit;
+
     /** @var string */
     protected $parent;
 
@@ -94,7 +97,8 @@ class WidgetSelect extends BaseWidget
             'source' => $this->source,
             'fieldcode' => $this->fieldcode,
             'fieldfilter' => $this->fieldfilter,
-            'fieldtitle' => $this->fieldtitle
+            'fieldtitle' => $this->fieldtitle,
+            'limit' => $this->limit
         ];
     }
 
@@ -240,6 +244,7 @@ class WidgetSelect extends BaseWidget
             . ' data-fieldcode="' . $this->fieldcode . '"'
             . ' data-fieldtitle="' . $this->fieldtitle . '"'
             . ' data-fieldfilter="' . $this->fieldfilter . '"'
+            . ' data-limit="' . $this->limit . '"'
             . '>';
 
         $found = false;
@@ -281,7 +286,9 @@ class WidgetSelect extends BaseWidget
         $this->fieldcode = $child['fieldcode'] ?? 'id';
         $this->fieldfilter = $child['fieldfilter'] ?? $this->fieldfilter;
         $this->fieldtitle = $child['fieldtitle'] ?? $this->fieldcode;
+        $this->limit = $child['limit'] ?? CodeModel::ALL_LIMIT;
         if ($loadData && $this->source) {
+            static::$codeModel::setLimit($this->limit);
             $values = static::$codeModel->all($this->source, $this->fieldcode, $this->fieldtitle, !$this->required);
             $this->setValuesFromCodeModel($values, $this->translate);
         }
