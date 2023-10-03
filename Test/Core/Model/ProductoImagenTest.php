@@ -35,7 +35,6 @@ final class ProductoImagenTest extends TestCase
     use LogErrorsTrait;
     use RandomDataTrait;
 
-
     public function fileNameProvider(): array
     {
         return [
@@ -48,6 +47,8 @@ final class ProductoImagenTest extends TestCase
     /**
      * @dataProvider fileNameProvider
      * @param string $fileName
+     * @param string $supportExtensionKey
+     * @param string $notSupportText
      * @throws Exception
      */
     public function testGetThumbnail(string $fileName, string $supportExtensionKey, string $notSupportText): void
