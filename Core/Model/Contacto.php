@@ -167,10 +167,10 @@ class Contacto extends Base\Contact
         $country = new DinPais();
         $where = [new DataBaseWhere('codiso', $this->codpais)];
         if ($country->loadFromCode($this->codpais) || $country->loadFromCode('', $where)) {
-            return Tools::fixHtml($country->nombre);
+            return Tools::fixHtml($country->nombre) ?? '';
         }
 
-        return $this->codpais;
+        return $this->codpais ?? '';
     }
 
     /**
