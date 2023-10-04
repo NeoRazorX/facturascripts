@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,14 +25,14 @@
             <column name="description" order="100">
                 <widget type="text" fieldname="descripcion" maxlength="100" required="true"/>
             </column>
-            <column name="type" numcolumns="2" order="110">
-                <widget type="select" fieldname="tipo">
+            <column name="code" description="optional" numcolumns="2" order="110">
+                <widget type="text" fieldname="codserie" icon="fas fa-hashtag" maxlength="4" readonly="dinamic"/>
+            </column>
+            <column name="type" numcolumns="2" order="120">
+                <widget type="select" fieldname="tipo" translate="true">
                     <values title="simplified">S</values>
                     <values title="rectifying">R</values>
                 </widget>
-            </column>
-            <column name="code" description="optional" numcolumns="2" order="120">
-                <widget type="text" fieldname="codserie" icon="fas fa-hashtag" maxlength="4" readonly="dinamic"/>
             </column>
             <column name="journal" titleurl="ListAsiento?activetab=ListDiario" display="none" order="130">
                 <widget type="select" fieldname="iddiario" onclick="EditDiario">

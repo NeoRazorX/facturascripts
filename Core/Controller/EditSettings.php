@@ -320,7 +320,7 @@ class EditSettings extends PanelController
         }
     }
 
-    protected function loadLogoImageValues($viewName)
+    protected function loadLogoImageValues($viewName): void
     {
         $columnLogo = $this->views[$viewName]->columnForName('login-image');
         if ($columnLogo && $columnLogo->widget->getType() === 'select') {
@@ -331,7 +331,7 @@ class EditSettings extends PanelController
         }
     }
 
-    protected function loadPaymentMethodValues(string $viewName)
+    protected function loadPaymentMethodValues(string $viewName): void
     {
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
@@ -343,7 +343,7 @@ class EditSettings extends PanelController
         }
     }
 
-    protected function loadSerie(string $viewName)
+    protected function loadSerie(string $viewName): void
     {
         $columnSerie = $this->views[$viewName]->columnForName('serie');
         if ($columnSerie && $columnSerie->widget->getType() === 'select') {
@@ -355,7 +355,7 @@ class EditSettings extends PanelController
         }
     }
 
-    protected function loadSerieRectifying(string $viewName)
+    protected function loadSerieRectifying(string $viewName): void
     {
         $columnSerie = $this->views[$viewName]->columnForName('rectifying-serie');
         if ($columnSerie && $columnSerie->widget->getType() === 'select') {
@@ -366,7 +366,7 @@ class EditSettings extends PanelController
         }
     }
 
-    protected function loadWarehouseValues(string $viewName)
+    protected function loadWarehouseValues(string $viewName): void
     {
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
