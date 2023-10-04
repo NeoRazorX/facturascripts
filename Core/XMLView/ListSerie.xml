@@ -24,18 +24,24 @@
         <column name="code" order="100">
             <widget type="text" fieldname="codserie" onclick="EditSerie"/>
         </column>
-        <column name="description" order="110">
+        <column name="type" numcolumns="2" order="110">
+            <widget type="select" fieldname="tipo">
+                <values title="simplified">S</values>
+                <values title="rectifying">R</values>
+            </widget>
+        </column>
+        <column name="description" order="120">
             <widget type="textarea" fieldname="descripcion"/>
         </column>
-        <column name="journal" display="none" order="120">
+        <column name="journal" display="none" order="130">
             <widget type="select" fieldname="iddiario">
                 <values source="diarios" fieldcode="iddiario" fieldtitle="descripcion"/>
             </widget>
         </column>
-        <column name="channel" display="none" order="130">
+        <column name="channel" display="none" order="140">
             <widget type="number" fieldname="canal" decimal="0" min="0"/>
         </column>
-        <column name="without-taxation" display="center" order="140">
+        <column name="without-taxation" display="center" order="150">
             <widget type="checkbox" fieldname="siniva"/>
         </column>
     </columns>
