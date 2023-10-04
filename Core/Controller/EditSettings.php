@@ -306,6 +306,8 @@ class EditSettings extends PanelController
                 $this->loadPaymentMethodValues($viewName);
                 $this->loadWarehouseValues($viewName);
                 $this->loadLogoImageValues($viewName);
+                $this->loadSerie($viewName);
+                $this->loadSerieRectifying($viewName);
                 break;
 
             default:
@@ -338,6 +340,29 @@ class EditSettings extends PanelController
         $columnPayment = $this->views[$viewName]->columnForName('payment-method');
         if ($columnPayment && $columnPayment->widget->getType() === 'select') {
             $columnPayment->widget->setValuesFromCodeModel($methods);
+        }
+    }
+
+    protected function loadSerie(string $viewName)
+    {
+        $columnSerie = $this->views[$viewName]->columnForName('serie');
+        if ($columnSerie && $columnSerie->widget->getType() === 'select') {
+            $series = $this->codeModel->all('series', 'codserie', 'descripcion', false, [
+                new DataBaseWhere('tipo', 'R', '!='),
+                new DataBaseWhere('tipo', null, '=', 'OR')
+            ]);
+            $columnSerie->widget->setValuesFromCodeModel($series);
+        }
+    }
+
+    protected function loadSerieRectifying(string $viewName)
+    {
+        $columnSerie = $this->views[$viewName]->columnForName('rectifying-serie');
+        if ($columnSerie && $columnSerie->widget->getType() === 'select') {
+            $series = $this->codeModel->all('series', 'codserie', 'descripcion', false, [
+                new DataBaseWhere('tipo', 'R')
+            ]);
+            $columnSerie->widget->setValuesFromCodeModel($series);
         }
     }
 
