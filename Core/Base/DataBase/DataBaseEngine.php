@@ -18,7 +18,7 @@
  */
 namespace FacturaScripts\Core\Base\DataBase;
 
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Translator;
 
 /**
  * Interface for each of the compatible database engines

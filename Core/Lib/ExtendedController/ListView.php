@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -306,11 +306,19 @@ class ListView extends BaseView
             return;
         }
 
+        $modelFields = $this->model->getModelFields();
         foreach ($this->getColumns() as $col) {
+            // si la columna está oculta o es de un tipo que no hay que mostrar totales, entonces no se procesa
             if ($col->hidden() || false === $col->widget->showTableTotals()) {
                 continue;
             }
 
+            // si la columna no pertenece al modelo, entonces no se procesa
+            if (false === array_key_exists($col->widget->fieldname, $modelFields)) {
+                continue;
+            }
+
+            // calculamos el total de la página
             $pageTotalAmount = 0;
             foreach ($this->cursor as $model) {
                 $pageTotalAmount += $model->{$col->widget->fieldname};

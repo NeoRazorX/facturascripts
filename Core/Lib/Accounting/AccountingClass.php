@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -33,7 +33,6 @@ use FacturaScripts\Dinamic\Model\Subcuenta;
  */
 abstract class AccountingClass extends AccountingAccounts
 {
-
     /**
      * @var ModelClass
      */
@@ -101,6 +100,44 @@ abstract class AccountingClass extends AccountingAccounts
         return true;
     }
 
+    /**
+     * Add a line of taxes to the accounting entry based on the sub-account
+     * and values reported
+     *
+     * @param Asiento $accountEntry
+     * @param Subcuenta $subaccount
+     * @param Subcuenta $counterpart
+     * @param bool $isDebit
+     * @param array $values
+     *
+     * @return bool
+     */
+    protected function addSurchargeLine($accountEntry, $subaccount, $counterpart, $isDebit, $values): bool
+    {
+        if (empty($values['totalrecargo'])) {
+            return true;
+        }
+
+        /// add basic data
+        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $values['totalrecargo']);
+
+        /// counterpart?
+        if (!empty($counterpart)) {
+            $line->setCounterpart($counterpart);
+        }
+
+        /// add tax register data
+        $line->baseimponible = (float)$values['neto'];
+        $line->iva = 0;
+        $line->recargo = (float)$values['recargo'];
+        $line->cifnif = $this->document->cifnif;
+        $line->codserie = $this->document->codserie;
+        $line->documento = $this->document->codigo;
+        $line->factura = $this->document->numero;
+
+        /// save new line
+        return $line->save();
+    }
 
     /**
      * Add a line of taxes to the accounting entry based on the sub-account
@@ -117,8 +154,7 @@ abstract class AccountingClass extends AccountingAccounts
     protected function addTaxLine($accountEntry, $subaccount, $counterpart, $isDebit, $values): bool
     {
         /// add basic data
-        $amount = (float)$values['totaliva'] + (float)$values['totalrecargo'];
-        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $amount);
+        $line = $this->getBasicLine($accountEntry, $subaccount, $isDebit, $values['totaliva']);
 
         /// counterpart?
         if (!empty($counterpart)) {
@@ -128,7 +164,7 @@ abstract class AccountingClass extends AccountingAccounts
         /// add tax register data
         $line->baseimponible = (float)$values['neto'];
         $line->iva = (float)$values['iva'];
-        $line->recargo = (float)$values['recargo'];
+        $line->recargo = 0;
         $line->cifnif = $this->document->cifnif;
         $line->codserie = $this->document->codserie;
         $line->documento = $this->document->codigo;

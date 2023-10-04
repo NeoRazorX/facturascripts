@@ -63,6 +63,12 @@ class Serie extends Base\ModelClass
      */
     public $siniva;
 
+    /**
+     *
+     * @var string
+     */
+    public $tipo;
+
     public function clear()
     {
         parent::clear();

@@ -93,6 +93,9 @@ class Producto extends Base\ModelClass
      */
     public $descripcion;
 
+    /** @var string */
+    public $excepcioniva;
+
     /**
      * Date on which the product was registered.
      *
@@ -164,12 +167,24 @@ class Producto extends Base\ModelClass
      */
     public $stockfis;
 
+    /** @var string */
+    public $tipo;
+
     /**
      * True -> allow sales without stock.
      *
      * @var bool
      */
     public $ventasinstock;
+
+    public function __get($name)
+    {
+        if ($name === 'precio_iva') {
+            return $this->priceWithTax();
+        }
+
+        return null;
+    }
 
     public function clear()
     {

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,9 +22,11 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\DownloadTools;
+use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelCore;
+use FacturaScripts\Core\Plugins;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
@@ -46,47 +48,27 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Dashboard extends Controller
 {
-
-    /**
-     * @var array
-     */
+    /** @var array */
     public $createLinks = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $lowStock = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $news = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $openLinks = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $receipts = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $sections = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $stats = [];
 
-    /**
-     * Return the basic data for this page.
-     *
-     * @return array
-     */
     public function getPageData(): array
     {
         $data = parent::getPageData();
@@ -108,6 +90,20 @@ class Dashboard extends Controller
         parent::privateCore($response, $user, $permissions);
         $this->title = $this->toolBox()->i18n()->trans('dashboard-for', ['%company%' => $this->empresa->nombrecorto]);
         $this->loadExtensions();
+    }
+
+    public function showBackupWarning(): bool
+    {
+        // comprobamos si estamos el localhost
+        if ($_SERVER['REMOTE_ADDR'] == 'localhost' ||
+            $_SERVER['REMOTE_ADDR'] == '::1' ||
+            substr($_SERVER['REMOTE_ADDR'], 0, 4) == '192.' ||
+            substr($_SERVER['REMOTE_ADDR'], 0, 4) == '172.') {
+            // si el plugin Backup está activo, devolvemos false
+            return !Plugins::isEnabled('Backup');
+        }
+
+        return false;
     }
 
     /**
@@ -202,12 +198,20 @@ class Dashboard extends Controller
      */
     private function loadNews()
     {
-        $data = DownloadTools::getContents('https://facturascripts.com/comm3/index.php?page=community_changelog&json=TRUE');
-        if ($data === 'ERROR') {
+        // buscamos en la caché
+        $news = Cache::get('dashboard-news');
+        if($news !== null) {
+            $this->news = $news;
             return;
         }
 
-        $this->news = json_decode($data, true);
+        // si no está en caché, consultamos a facturascripts.com
+        $this->news = Http::get('https://facturascripts.com/comm3/index.php?page=community_changelog&json=TRUE')
+            ->setTimeout(5)
+            ->json();
+
+        // guardamos en caché
+        Cache::set('dashboard-news', $this->news);
     }
 
     /**

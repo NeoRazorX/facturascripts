@@ -58,6 +58,11 @@
         <type>character varying(30)</type>
         <null>NO</null>
     </column>
+    <column>
+        <name>stock</name>
+        <type>double precision</type>
+        <default>0</default>
+    </column>
     <constraint>
         <name>productosprov_pkey</name>
         <type>PRIMARY KEY (id)</type>

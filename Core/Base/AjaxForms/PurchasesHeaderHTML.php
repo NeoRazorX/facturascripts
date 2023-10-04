@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -69,8 +69,8 @@ class PurchasesHeaderHTML
             return;
         }
 
+        $model->setWarehouse($formData['codalmacen'] ?? $model->codalmacen);
         $model->cifnif = $formData['cifnif'] ?? $model->cifnif;
-        $model->codalmacen = $formData['codalmacen'] ?? $model->codalmacen;
         $model->coddivisa = $formData['coddivisa'] ?? $model->coddivisa;
         $model->codpago = $formData['codpago'] ?? $model->codpago;
         $model->codproveedor = $formData['codproveedor'] ?? $model->codproveedor;
@@ -80,7 +80,14 @@ class PurchasesHeaderHTML
         $model->hora = $formData['hora'] ?? $model->hora;
         $model->nombre = $formData['nombre'] ?? $model->nombre;
         $model->numproveedor = $formData['numproveedor'] ?? $model->numproveedor;
+        $model->operacion = $formData['operacion'] ?? $model->operacion;
         $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
+
+        foreach (['fechadevengo'] as $key) {
+            if (isset($formData[$key])) {
+                $model->{$key} = empty($formData[$key]) ? null : $formData[$key];
+            }
+        }
 
         // mods
         foreach (self::$mods as $mod) {
@@ -190,11 +197,12 @@ class PurchasesHeaderHTML
             . '<div class="form-row">'
             . self::renderField($i18n, $model, 'nombre')
             . self::renderField($i18n, $model, 'cifnif')
+            . self::renderField($i18n, $model, 'fechadevengo')
+            . self::renderField($i18n, $model, 'hora')
+            . self::renderField($i18n, $model, 'operacion')
+            . self::renderField($i18n, $model, 'femail')
             . self::renderField($i18n, $model, 'coddivisa')
             . self::renderField($i18n, $model, 'tasaconv')
-            . self::renderField($i18n, $model, '_fecha')
-            . self::renderField($i18n, $model, 'hora')
-            . self::renderField($i18n, $model, 'femail')
             . self::renderField($i18n, $model, 'user')
             . self::renderNewFields($i18n, $model)
             . '</div>'
@@ -261,7 +269,7 @@ class PurchasesHeaderHTML
                 return self::cifnif($i18n, $model);
 
             case 'codalmacen':
-                return self::codalmacen($i18n, $model);
+                return self::codalmacen($i18n, $model, 'purchasesFormAction');
 
             case 'coddivisa':
                 return self::coddivisa($i18n, $model);
@@ -278,6 +286,9 @@ class PurchasesHeaderHTML
             case 'fecha':
                 return self::fecha($i18n, $model);
 
+            case 'fechadevengo':
+                return self::fechadevengo($i18n, $model);
+
             case 'femail':
                 return self::femail($i18n, $model);
 
@@ -292,6 +303,9 @@ class PurchasesHeaderHTML
 
             case 'numproveedor':
                 return self::numproveedor($i18n, $model);
+
+            case 'operacion':
+                return self::operacion($i18n, $model);
 
             case 'tasaconv':
                 return self::tasaconv($i18n, $model);

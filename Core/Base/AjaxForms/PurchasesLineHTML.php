@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -195,6 +195,7 @@ class PurchasesLineHTML
         $line->dtopor = (float)$formData['dtopor_' . $id];
         $line->dtopor2 = (float)$formData['dtopor2_' . $id];
         $line->descripcion = $formData['descripcion_' . $id];
+        $line->excepcioniva = $formData['excepcioniva_' . $id] ?? null;
         $line->irpf = (float)($formData['irpf_' . $id] ?? '0');
         $line->suplido = (bool)($formData['suplido_' . $id] ?? '0');
         $line->pvpunitario = (float)$formData['pvpunitario_' . $id];
@@ -246,10 +247,19 @@ class PurchasesLineHTML
             return $model->getNewLine();
         }
 
+        // buscamos el código de barras en las variantes
         $variantModel = new Variante();
         $whereBarcode = [new DataBaseWhere('codbarras', $formData['fastli'])];
         foreach ($variantModel->all($whereBarcode) as $variante) {
             return $model->getNewProductLine($variante->referencia);
+        }
+
+        // buscamos el código de barras con los mods
+        foreach (self::$mods as $mod) {
+            $line = $mod->getFastLine($model, $formData);
+            if ($line) {
+                return $line;
+            }
         }
 
         ToolBox::i18nLog()->warning('product-not-found', ['%ref%' => $formData['fastli']]);
@@ -300,6 +310,9 @@ class PurchasesLineHTML
             case 'dtopor2':
                 return self::dtopor2($i18n, $idlinea, $line, $model, 'dtopor2', 'purchasesFormActionWait');
 
+            case 'excepcioniva':
+                return self::excepcioniva($i18n, $idlinea, $line, $model, 'excepcioniva', 'purchasesFormActionWait');
+
             case 'irpf':
                 return self::irpf($i18n, $idlinea, $line, $model, 'purchasesFormAction');
 
@@ -325,21 +338,18 @@ class PurchasesLineHTML
             . '<div class="modal-dialog modal-dialog-centered">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">'
-            . $line->referencia
-            . '</h5>'
+            . '<h5 class="modal-title"><i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $line->referencia . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
             . '</div>'
             . '<div class="modal-body">'
             . '<div class="form-row">'
+            . self::renderField($i18n, $idlinea, $line, $model, 'dtopor2')
             . self::renderField($i18n, $idlinea, $line, $model, 'recargo')
             . self::renderField($i18n, $idlinea, $line, $model, 'irpf')
-            . '</div>'
-            . '<div class="form-row">'
+            . self::renderField($i18n, $idlinea, $line, $model, 'excepcioniva')
             . self::renderField($i18n, $idlinea, $line, $model, 'suplido')
-            . self::renderField($i18n, $idlinea, $line, $model, 'dtopor2')
             . '</div>'
             . '<div class="form-row">'
             . self::renderNewModalFields($i18n, $idlinea, $line, $model)

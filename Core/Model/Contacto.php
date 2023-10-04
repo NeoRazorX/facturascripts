@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Agente as DinAgente;
 use FacturaScripts\Dinamic\Model\Cliente as DinCliente;
 use FacturaScripts\Dinamic\Model\Pais as DinPais;
@@ -32,174 +35,78 @@ use FacturaScripts\Dinamic\Model\Proveedor as DinProveedor;
  */
 class Contacto extends Base\Contact
 {
-
     use Base\ModelTrait;
     use Base\PasswordTrait;
 
-    /**
-     * True if contact accepts the privacy policy.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $aceptaprivacidad;
 
-    /**
-     * True if it supports marketing, but False.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $admitemarketing;
 
-    /**
-     * Post office box of the address.
-     *
-     * @var string
-     */
+    /** @var string */
     public $apartado;
 
-    /**
-     * Last name.
-     *
-     * @var string
-     */
+    /** @var string */
     public $apellidos;
 
-    /**
-     * Contact charge.
-     *
-     * @var string
-     */
+    /** @var string */
     public $cargo;
 
-    /**
-     * Contact city.
-     *
-     * @var string
-     */
+    /** @var string */
     public $ciudad;
 
-    /**
-     * Associated agente to this contact. Agent model.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codagente;
 
-    /**
-     * Associated customer to this contact. Customer model.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codcliente;
 
-    /**
-     * Contact country.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codpais;
 
-    /**
-     * Postal code of the contact.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codpostal;
 
-    /**
-     * Associated supplier to this contact. Supplier model.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codproveedor;
 
-    /**
-     * Description of the contact.
-     *
-     * @var string
-     */
+    /** @var string */
     public $descripcion;
 
-    /**
-     * Address of the contact.
-     *
-     * @var string
-     */
+    /** @var string */
     public $direccion;
 
-    /**
-     * Contact company.
-     *
-     * @var string
-     */
+    /** @var string */
     public $empresa;
 
-    /**
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $habilitado;
 
-    /**
-     * Primary key.
-     *
-     * @var int
-     */
+    /** @var int */
     public $idcontacto;
 
-    /**
-     * Last activity date.
-     *
-     * @var string
-     */
+    /** @var string */
     public $lastactivity;
 
-    /**
-     * Last IP used.
-     *
-     * @var string
-     */
+    /** @var string */
     public $lastip;
 
-    /**
-     * Indicates the level of security that the contact can access.
-     *
-     * @var integer
-     */
+    /** @var integer */
     public $level;
 
-    /**
-     * Session key, saved also in cookie. Regenerated when user log in.
-     *
-     * @var string
-     */
+    /** @var string */
     public $logkey;
 
-    /**
-     * Contact province.
-     *
-     * @var string
-     */
+    /** @var string */
     public $provincia;
 
-    /**
-     *
-     * @var integer
-     */
+    /** @var integer */
     public $puntos;
 
-    /**
-     * TRUE if contact is verified.
-     *
-     * @var bool
-     */
+    /** @var bool */
     public $verificado;
 
-    /**
-     * Returns an unique alias for this contact.
-     *
-     * @return string
-     */
     public function alias(): string
     {
         if (empty($this->email) || strpos($this->email, '@') === false) {
@@ -218,12 +125,18 @@ class Contacto extends Base\Contact
         }
     }
 
+    public function checkVies(): bool
+    {
+        $codiso = Paises::get($this->codpais)->codiso ?? '';
+        return Vies::check($this->cifnif ?? '', $codiso) === 1;
+    }
+
     public function clear()
     {
         parent::clear();
         $this->aceptaprivacidad = false;
         $this->admitemarketing = false;
-        $this->codpais = $this->toolBox()->appSettings()->get('default', 'codpais');
+        $this->codpais = Tools::settings('default', 'codpais');
         $this->habilitado = true;
         $this->level = 1;
         $this->puntos = 0;
@@ -241,7 +154,7 @@ class Contacto extends Base\Contact
     {
         $results = [];
         $field = empty($fieldCode) ? $this->primaryColumn() : $fieldCode;
-        $fields = 'apellidos|cifnif|descripcion|email|empresa|idcontacto|nombre|observaciones|telefono1|telefono2';
+        $fields = 'apellidos|cifnif|descripcion|email|empresa|nombre|observaciones|telefono1|telefono2';
         $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
         foreach ($this->all($where) as $item) {
             $results[] = new CodeModel(['code' => $item->{$field}, 'description' => $item->fullName()]);
@@ -254,10 +167,10 @@ class Contacto extends Base\Contact
         $country = new DinPais();
         $where = [new DataBaseWhere('codiso', $this->codpais)];
         if ($country->loadFromCode($this->codpais) || $country->loadFromCode('', $where)) {
-            return $this->toolBox()->utils()->fixHtml($country->nombre);
+            return Tools::fixHtml($country->nombre) ?? '';
         }
 
-        return $this->codpais;
+        return $this->codpais ?? '';
     }
 
     /**
@@ -270,12 +183,7 @@ class Contacto extends Base\Contact
         return $this->nombre . ' ' . $this->apellidos;
     }
 
-    /**
-     * @param bool $create
-     *
-     * @return DinCliente
-     */
-    public function getCustomer(bool $create = true)
+    public function getCustomer(bool $create = true): Cliente
     {
         $cliente = new DinCliente();
         if ($this->codcliente && $cliente->loadFromCode($this->codcliente)) {
@@ -291,6 +199,7 @@ class Contacto extends Base\Contact
             $cliente->fax = $this->fax;
             $cliente->idcontactoenv = $this->idcontacto;
             $cliente->idcontactofact = $this->idcontacto;
+            $cliente->langcode = $this->langcode;
             $cliente->nombre = $this->fullName();
             $cliente->observaciones = $this->observaciones;
             $cliente->personafisica = $this->personafisica;
@@ -306,12 +215,7 @@ class Contacto extends Base\Contact
         return $cliente;
     }
 
-    /**
-     * @param bool $create
-     *
-     * @return DinProveedor
-     */
-    public function getSupplier(bool $create = true)
+    public function getSupplier(bool $create = true): Proveedor
     {
         $proveedor = new DinProveedor();
         if ($this->codproveedor && $proveedor->loadFromCode($this->codproveedor)) {
@@ -325,6 +229,7 @@ class Contacto extends Base\Contact
             $proveedor->email = $this->email;
             $proveedor->fax = $this->fax;
             $proveedor->idcontacto = $this->idcontacto;
+            $proveedor->langcode = $this->langcode;
             $proveedor->nombre = $this->fullName();
             $proveedor->observaciones = $this->observaciones;
             $proveedor->personafisica = $this->personafisica;
@@ -361,7 +266,7 @@ class Contacto extends Base\Contact
     {
         $this->lastactivity = date(self::DATETIME_STYLE);
         $this->lastip = $ipAddress;
-        $this->logkey = $this->toolBox()->utils()->randomString(99);
+        $this->logkey = Tools::randomString(99);
         return $this->logkey;
     }
 
@@ -383,22 +288,23 @@ class Contacto extends Base\Contact
     public function test(): bool
     {
         if (empty($this->nombre) && empty($this->email) && empty($this->direccion)) {
-            $this->toolBox()->i18nLog()->warning('empty-contact-data');
+            Tools::log()->warning('empty-contact-data');
             return false;
         }
 
         if (empty($this->descripcion)) {
-            $this->descripcion = empty($this->codcliente) && empty($this->codproveedor) ? $this->fullName() : $this->direccion;
+            $this->descripcion = empty($this->codcliente) && empty($this->codproveedor) ?
+                $this->fullName() :
+                $this->direccion;
         }
 
-        $utils = $this->toolBox()->utils();
-        $this->descripcion = $utils->noHtml($this->descripcion);
-        $this->apellidos = $utils->noHtml($this->apellidos) ?? '';
-        $this->cargo = $utils->noHtml($this->cargo) ?? '';
-        $this->ciudad = $utils->noHtml($this->ciudad) ?? '';
-        $this->direccion = $utils->noHtml($this->direccion) ?? '';
-        $this->empresa = $utils->noHtml($this->empresa) ?? '';
-        $this->provincia = $utils->noHtml($this->provincia) ?? '';
+        $this->descripcion = Tools::noHtml($this->descripcion);
+        $this->apellidos = Tools::noHtml($this->apellidos) ?? '';
+        $this->cargo = Tools::noHtml($this->cargo) ?? '';
+        $this->ciudad = Tools::noHtml($this->ciudad) ?? '';
+        $this->direccion = Tools::noHtml($this->direccion) ?? '';
+        $this->empresa = Tools::noHtml($this->empresa) ?? '';
+        $this->provincia = Tools::noHtml($this->provincia) ?? '';
 
         return $this->testPassword() && parent::test();
     }

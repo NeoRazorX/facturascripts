@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -30,17 +30,17 @@
             </widget>
         </column>
         <column name="warehouse" display="none" order="110">
-            <widget type="select" fieldname="codalmacen" onclick="EditAlmacen">
+            <widget type="select" fieldname="codalmacen">
                 <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"/>
             </widget>
         </column>
         <column name="serie" display="none" order="120">
-            <widget type="select" fieldname="codserie" onclick="EditSerie">
+            <widget type="select" fieldname="codserie">
                 <values source="series" fieldcode="codserie" fieldtitle="codserie"/>
             </widget>
         </column>
         <column name="exercise" display="none" order="130">
-            <widget type="select" fieldname="codejercicio" onclick="EditEjercicio">
+            <widget type="select" fieldname="codejercicio">
                 <values source="ejercicios" fieldcode="codejercicio" fieldtitle="codejercicio"/>
             </widget>
         </column>
@@ -93,14 +93,17 @@
                 <values source="estados_documentos" fieldcode="idestado" fieldtitle="nombre"/>
             </widget>
         </column>
+        <column name="number-attachments" display="none" order="275">
+            <widget type="number" fieldname="numdocs" decimal="0"/>
+        </column>
         <column name="email-sent" display="center" order="280">
             <widget type="checkbox" fieldname="femail"/>
         </column>
         <column name="paid" display="center" order="290">
             <widget type="checkbox" fieldname="pagada"/>
         </column>
-        <column name="payment-methods" display="none" order="300">
-            <widget type="select" fieldname="codpago" onclick="EditFormaPago">
+        <column name="payment-method" display="none" order="300">
+            <widget type="select" fieldname="codpago">
                 <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"/>
             </widget>
         </column>
@@ -116,54 +119,51 @@
         <column name="total-cost" display="none" order="340">
             <widget type="money" fieldname="totalcoste"/>
         </column>
-        <column name="total-benefit" display="none" order="350">
-            <widget type="money" fieldname="totalbeneficio" />
-        </column>
-        <column name="net" display="none" order="360">
+        <column name="net" display="none" order="350">
             <widget type="money" fieldname="neto"/>
         </column>
-        <column name="taxes" display="none" order="370">
+        <column name="taxes" display="none" order="360">
             <widget type="money" fieldname="totaliva"/>
         </column>
-        <column name="surcharge" display="none" order="380">
+        <column name="surcharge" display="none" order="370">
             <widget type="money" fieldname="totalrecargo"/>
         </column>
-        <column name="retention" display="none" order="390">
+        <column name="retention" display="none" order="380">
             <widget type="percentage" fieldname="irpf"/>
         </column>
-        <column name="retentions" display="none" order="400">
+        <column name="retentions" display="none" order="390">
             <widget type="money" fieldname="totalirpf"/>
         </column>
-        <column name="supplied-amount" display="none" order="410">
+        <column name="supplied-amount" display="none" order="400">
             <widget type="money" fieldname="totalsuplidos"/>
         </column>
-        <column name="total" display="right" order="420">
+        <column name="total" display="right" order="410">
             <widget type="money" fieldname="total">
                 <option color="danger">lt:0</option>
             </widget>
         </column>
-        <column name="currency" display="none" order="430">
-            <widget type="select" fieldname="coddivisa" onclick="EditDivisa">
+        <column name="currency" display="none" order="420">
+            <widget type="select" fieldname="coddivisa">
                 <values source="divisas" fieldcode="coddivisa" fieldtitle="coddivisa"/>
             </widget>
         </column>
-        <column name="agent" display="none" order="440">
+        <column name="agent" display="none" order="430">
             <widget type="autocomplete" fieldname="codagente">
                 <values source="agentes" fieldcode="codagente" fieldtitle="nombre"/>
             </widget>
         </column>
-        <column name="date" display="right" order="450">
+        <column name="date" display="right" order="440">
             <widget type="date" fieldname="fecha"/>
         </column>
     </columns>
     <rows>
         <row type="status">
-            <option color="danger" title="rectified-invoice" fieldname="idfacturarect">notnull:</option>
+            <option color="dark" title="rectified-invoice" fieldname="idfacturarect">notnull:</option>
             <option color="success" title="paid" fieldname="pagada">1</option>
             <option color="danger" fieldname="vencida" title="expired-receipt">1</option>
             <option color="warning" title="non-editable-document" fieldname="editable">0</option>
             <option color="info" title="email-sent" fieldname="femail">notnull:</option>
-            <option color="dark" title="invoice-without-acc-entry" fieldname="idasiento">null:</option>
+            <option color="light" title="invoice-without-acc-entry" fieldname="idasiento">null:</option>
         </row>
     </rows>
 </view>

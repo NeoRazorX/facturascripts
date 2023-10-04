@@ -1,0 +1,76 @@
+{% extends 'Master/MenuBgTemplate.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h1 class="h3">
+                    <i class="fas fa-cut"></i> {{ fsc.title }}
+                </h1>
+                <p>{{ trans('copy-p') }}</p>
+                <form method="post">
+                    {{ formToken() }}
+                    <input type="hidden" name="action" value="save"/>
+                    <input type="hidden" name="code" value="{{ fsc.modelCode }}"/>
+                    <input type="hidden" name="model" value="{{ fsc.modelClass }}"/>
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="reference">{{ trans('reference') }}</label>
+                                        <input type="text" name="referencia" id="reference" class="form-control"
+                                               placeholder="{{ trans('optional') }}" maxlength="30"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label for="descripcion">{{ trans('description') }}</label>
+                                        <textarea name="descripcion" id="descripcion" class="form-control" rows="3"
+                                                  required>{{ trans('copy') }} {{ fsc.model.descripcion }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>{{ trans('variants') }}</th>
+                                    <th>{{ trans('barcode') }}</th>
+                                    <th class="text-right">{{ trans('cost-price') }}</th>
+                                    <th class="text-right">{{ trans('margin') }}</th>
+                                    <th class="text-right">{{ trans('price') }}</th>
+                                    <th class="text-right">{{ trans('stock') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for variante in fsc.model.getVariants() %}
+                                    <tr>
+                                        <td>{{ variante.referencia }}</td>
+                                        <td>{{ variante.codbarras }}</td>
+                                        <td class="text-right">{{ money(variante.coste) }}</td>
+                                        <td class="text-right">{{ number(variante.margen) }}%
+                                        </td>
+                                        <td class="text-right">{{ money(variante.precio) }}</td>
+                                        <td class="text-right">{{ number(variante.stockfis) }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer">
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> {{ trans('save') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

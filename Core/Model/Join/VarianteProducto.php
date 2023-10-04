@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,7 +31,6 @@ use FacturaScripts\Dinamic\Model\Producto as DinProducto;
  */
 class VarianteProducto extends JoinModel
 {
-
     /**
      * Class constructor.
      * Set master model for controller actions.
@@ -60,8 +59,10 @@ class VarianteProducto extends JoinModel
             'idatributovalor4' => 'variantes.idatributovalor4',
             'idproducto' => 'variantes.idproducto',
             'idvariante' => 'variantes.idvariante',
+            'iva' => 'impuestos.iva',
             'margen' => 'variantes.margen',
             'precio' => 'variantes.precio',
+            'precio_iva' => '(variantes.precio * (100 + impuestos.iva) / 100)',
             'referencia' => 'variantes.referencia',
             'stockfis' => 'variantes.stockfis',
             'descripcion' => 'productos.descripcion'
@@ -75,7 +76,9 @@ class VarianteProducto extends JoinModel
      */
     protected function getSQLFrom(): string
     {
-        return 'variantes LEFT JOIN productos ON productos.idproducto = variantes.idproducto';
+        return 'variantes'
+            . ' LEFT JOIN productos ON productos.idproducto = variantes.idproducto'
+            . ' LEFT JOIN impuestos ON impuestos.codimpuesto = productos.codimpuesto';
     }
 
     /**
@@ -85,6 +88,6 @@ class VarianteProducto extends JoinModel
      */
     protected function getTables(): array
     {
-        return ['productos', 'variantes'];
+        return ['productos', 'variantes', 'impuestos'];
     }
 }

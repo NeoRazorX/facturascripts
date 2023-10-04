@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,6 +23,8 @@ use FacturaScripts\Core\Base\Calculator;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
+use FacturaScripts\Core\Model\Producto;
+use FacturaScripts\Core\Model\Variante;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -82,8 +84,14 @@ class CopyModel extends Controller
         }
 
         // si no es un documento de compra o venta, cargamos su plantilla
-        if ($this->modelClass === 'Asiento') {
-            $this->setTemplate(self::TEMPLATE_ASIENTO);
+        switch ($this->modelClass) {
+            case 'Asiento':
+                $this->setTemplate(self::TEMPLATE_ASIENTO);
+                break;
+
+            case 'Producto':
+                $this->setTemplate('CopyProducto');
+                break;
         }
 
         $this->title .= ' ' . $this->model->primaryDescription();
@@ -106,11 +114,15 @@ class CopyModel extends Controller
                 case 'Asiento':
                     $this->saveAccountingEntry();
                     break;
+
+                case 'Producto':
+                    $this->saveProduct();
+                    break;
             }
         }
     }
 
-    protected function autocompleteAction()
+    protected function autocompleteAction(): void
     {
         $this->setTemplate(false);
         $results = [];
@@ -136,7 +148,7 @@ class CopyModel extends Controller
         return $this->model->loadFromCode($this->modelCode);
     }
 
-    protected function saveDocumentEnd(BusinessDocument $newDoc)
+    protected function saveDocumentEnd(BusinessDocument $newDoc): void
     {
         $lines = $newDoc->getLines();
         if (false === Calculator::calculate($newDoc, $lines, true)) {
@@ -150,7 +162,7 @@ class CopyModel extends Controller
         $this->redirect($newDoc->url() . '&action=save-ok');
     }
 
-    protected function saveAccountingEntry()
+    protected function saveAccountingEntry(): void
     {
         if (false === $this->validateFormToken()) {
             return;
@@ -162,6 +174,9 @@ class CopyModel extends Controller
         $newEntry = new Asiento();
         $newEntry->canal = $this->request->request->get('canal');
         $newEntry->concepto = $this->request->request->get('concepto');
+
+        $company = $this->request->request->get('idempresa');
+        $newEntry->idempresa = empty($company) ? $newEntry->idempresa : $company;
 
         $diario = $this->request->request->get('iddiario');
         $newEntry->iddiario = empty($diario) ? null : $diario;
@@ -190,7 +205,7 @@ class CopyModel extends Controller
         $this->redirect($newEntry->url() . '&action=save-ok');
     }
 
-    protected function savePurchaseDocument()
+    protected function savePurchaseDocument(): void
     {
         if (false === $this->validateFormToken()) {
             return;
@@ -214,8 +229,8 @@ class CopyModel extends Controller
         $newDoc->setCurrency($this->model->coddivisa);
         $newDoc->codpago = $this->request->request->get('codpago');
         $newDoc->codserie = $this->request->request->get('codserie');
-        $newDoc->dtopor1 = $this->request->request->get('dtopor1', 0);
-        $newDoc->dtopor2 = $this->request->request->get('dtopor2', 0);
+        $newDoc->dtopor1 = (float)$this->request->request->get('dtopor1', 0);
+        $newDoc->dtopor2 = (float)$this->request->request->get('dtopor2', 0);
         $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
         $newDoc->numproveedor = $this->request->request->get('numproveedor');
         $newDoc->observaciones = $this->request->request->get('observaciones');
@@ -238,7 +253,7 @@ class CopyModel extends Controller
         $this->saveDocumentEnd($newDoc);
     }
 
-    protected function saveSalesDocument()
+    protected function saveSalesDocument(): void
     {
         if (false === $this->validateFormToken()) {
             return;
@@ -262,8 +277,8 @@ class CopyModel extends Controller
         $newDoc->setCurrency($this->model->coddivisa);
         $newDoc->codpago = $this->request->request->get('codpago');
         $newDoc->codserie = $this->request->request->get('codserie');
-        $newDoc->dtopor1 = $this->request->request->get('dtopor1', 0);
-        $newDoc->dtopor2 = $this->request->request->get('dtopor2', 0);
+        $newDoc->dtopor1 = (float)$this->request->request->get('dtopor1', 0);
+        $newDoc->dtopor2 = (float)$this->request->request->get('dtopor2', 0);
         $newDoc->setDate($this->request->request->get('fecha'), $this->request->request->get('hora'));
         $newDoc->numero2 = $this->request->request->get('numero2');
         $newDoc->observaciones = $this->request->request->get('observaciones');
@@ -284,5 +299,77 @@ class CopyModel extends Controller
         }
 
         $this->saveDocumentEnd($newDoc);
+    }
+
+    protected function saveProduct(): void
+    {
+        if (false === $this->validateFormToken()) {
+            return;
+        }
+
+        $this->dataBase->beginTransaction();
+
+        // obtenemos el producto origen
+        /** @var Producto $productoOrigen */
+        $productoOrigen = $this->model;
+
+        // obtenemos las variantes del producto origen
+        $variantesProductoOrigen = $productoOrigen->getVariants();
+
+        // creamos el nuevo producto y copiamos los campos del producto origen
+        $productoDestino = new Producto();
+
+        $camposProducto = array_keys((new Producto())->getModelFields());
+        $camposExcluidos = ['actualizado', 'descripcion', 'fechaalta', 'idproducto', 'referencia', 'stockfis'];
+
+        foreach ($camposProducto as $campo) {
+            if (false === in_array($campo, $camposExcluidos)) {
+                $productoDestino->{$campo} = $productoOrigen->{$campo};
+            }
+        }
+
+        $productoDestino->descripcion = $this->request->request->get('descripcion');
+        $productoDestino->referencia = $this->request->request->get('referencia');
+
+        if (false === $productoDestino->save()) {
+            $this->toolBox()->i18nLog()->warning('record-save-error');
+            $this->dataBase->rollback();
+            return;
+        }
+
+        // creamos las nuevas variantes
+        $camposVariante = array_keys((new Variante())->getModelFields());
+        $camposExcluidos = ['idvariante', 'idproducto', 'referencia', 'stockfis'];
+
+        foreach ($variantesProductoOrigen as $variante) {
+            // Como al crear un producto siempre se crea
+            // una variante principal aprovechamos esta
+            // y la modificamos para que el producto destino
+            // no tenga una variante mas que el producto origen
+            if ($variante === reset($variantesProductoOrigen)) {
+                // si es el primer elemento del array, modificamos la variante existente
+                $varianteDestino = $productoDestino->getVariants()[0];
+            } else {
+                $varianteDestino = new Variante();
+            }
+
+            foreach ($camposVariante as $campo) {
+                if (false === in_array($campo, $camposExcluidos)) {
+                    $varianteDestino->{$campo} = $variante->{$campo};
+                }
+            }
+
+            // asignamos variantes al producto nuevo
+            $varianteDestino->idproducto = $productoDestino->idproducto;
+            if (false === $varianteDestino->save()) {
+                $this->toolBox()->i18nLog()->warning('record-save-error');
+                $this->dataBase->rollback();
+                return;
+            }
+        }
+
+        $this->dataBase->commit();
+        $this->toolBox()->i18nLog()->notice('record-updated-correctly');
+        $this->redirect($productoDestino->url() . '&action=save-ok');
     }
 }

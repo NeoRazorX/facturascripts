@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,7 @@ namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Divisas;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\CostPriceTools;
 use FacturaScripts\Dinamic\Model\Divisa as DinDivisa;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
@@ -34,75 +35,56 @@ use FacturaScripts\Dinamic\Model\Variante as DinVariante;
  */
 class ProductoProveedor extends Base\ModelOnChangeClass
 {
-
     use Base\ModelTrait;
     use Base\ProductRelationTrait;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $actualizado;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $coddivisa;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codproveedor;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $dtopor;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $dtopor2;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $id;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $neto;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $netoeuros;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $precio;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $referencia;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $refproveedor;
+
+    /** @var float */
+    public $stock;
 
     public function clear()
     {
         parent::clear();
-        $this->actualizado = date(self::DATETIME_STYLE);
+        $this->actualizado = Tools::dateTime();
         $this->coddivisa = $this->toolBox()->appSettings()->get('default', 'coddivisa');
         $this->dtopor = 0.0;
         $this->dtopor2 = 0.0;
         $this->neto = 0.0;
         $this->netoeuros = 0.0;
         $this->precio = 0.0;
+        $this->stock = 0.0;
     }
 
     /**
@@ -156,11 +138,14 @@ class ProductoProveedor extends Base\ModelOnChangeClass
 
     public function test(): bool
     {
-        $this->referencia = self::toolBox()::utils()::noHtml($this->referencia);
-        $this->refproveedor = self::toolBox()::utils()::noHtml($this->refproveedor);
+        $this->referencia = Tools::noHtml($this->referencia);
+        $this->refproveedor = Tools::noHtml($this->refproveedor);
 
         if (empty($this->referencia)) {
-            $this->toolBox()->i18nLog()->warning('field-can-not-be-null', ['%fieldName%' => 'referencia', '%tableName%' => static::tableName()]);
+            Tools::log()->warning('field-can-not-be-null', [
+                '%fieldName%' => 'referencia',
+                '%tableName%' => static::tableName()
+            ]);
             return false;
         } elseif (empty($this->refproveedor)) {
             $this->refproveedor = $this->referencia;
@@ -171,7 +156,10 @@ class ProductoProveedor extends Base\ModelOnChangeClass
         }
 
         $this->neto = round($this->precio * $this->getEUDiscount(), DinProducto::ROUND_DECIMALS);
-        $this->netoeuros = Divisas::get($this->coddivisa)->tasaconvcompra * $this->neto;
+
+        $tasaConv = Divisas::get($this->coddivisa)->tasaconvcompra;
+        $this->netoeuros = empty($tasaConv) ? 0 : round($this->neto / $tasaConv, 5);
+
         return parent::test();
     }
 

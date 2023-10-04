@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core;
 
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Dinamic\Model\User as DinUser;
 
 /**
  * @author Carlos García Gómez <carlos@facturascripts.com>
@@ -55,6 +56,9 @@ final class Session
             return self::$data['user'];
         }
 
-        return new User();
+        // si la clase existe en Dinamic, la usamos
+        return class_exists('\\FacturaScripts\\Dinamic\\Model\\User') ?
+            new DinUser() :
+            new User();
     }
 }

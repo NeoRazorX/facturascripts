@@ -222,11 +222,18 @@ class EditSettings extends PanelController
         $this->views[$viewName]->addOrderBy(['numero'], 'number');
         $this->views[$viewName]->addSearchFields(['patron', 'tipodoc']);
 
+        // disable company column if there is only one company
+        if ($this->empresa->count() < 2) {
+            $this->views[$viewName]->disableColumn('company');
+        } else {
+            // Filters with various companies
+            $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
+        }
+
         // Filters
-        $this->createDocTypeFilter($viewName);
-        $this->views[$viewName]->addFilterSelect('idempresa', 'company', 'idempresa', Empresas::codeModel());
         $this->views[$viewName]->addFilterSelect('codejercicio', 'exercise', 'codejercicio', Ejercicios::codeModel());
         $this->views[$viewName]->addFilterSelect('codserie', 'serie', 'codserie', Series::codeModel());
+        $this->createDocTypeFilter($viewName);
     }
 
     protected function createViewStates(string $viewName = 'ListEstadoDocumento')
@@ -299,6 +306,8 @@ class EditSettings extends PanelController
                 $this->loadPaymentMethodValues($viewName);
                 $this->loadWarehouseValues($viewName);
                 $this->loadLogoImageValues($viewName);
+                $this->loadSerie($viewName);
+                $this->loadSerieRectifying($viewName);
                 break;
 
             default:
@@ -311,7 +320,7 @@ class EditSettings extends PanelController
         }
     }
 
-    protected function loadLogoImageValues($viewName)
+    protected function loadLogoImageValues($viewName): void
     {
         $columnLogo = $this->views[$viewName]->columnForName('login-image');
         if ($columnLogo && $columnLogo->widget->getType() === 'select') {
@@ -322,7 +331,7 @@ class EditSettings extends PanelController
         }
     }
 
-    protected function loadPaymentMethodValues(string $viewName)
+    protected function loadPaymentMethodValues(string $viewName): void
     {
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];
@@ -334,7 +343,30 @@ class EditSettings extends PanelController
         }
     }
 
-    protected function loadWarehouseValues(string $viewName)
+    protected function loadSerie(string $viewName): void
+    {
+        $columnSerie = $this->views[$viewName]->columnForName('serie');
+        if ($columnSerie && $columnSerie->widget->getType() === 'select') {
+            $series = $this->codeModel->all('series', 'codserie', 'descripcion', false, [
+                new DataBaseWhere('tipo', 'R', '!='),
+                new DataBaseWhere('tipo', null, '=', 'OR')
+            ]);
+            $columnSerie->widget->setValuesFromCodeModel($series);
+        }
+    }
+
+    protected function loadSerieRectifying(string $viewName): void
+    {
+        $columnSerie = $this->views[$viewName]->columnForName('rectifying-serie');
+        if ($columnSerie && $columnSerie->widget->getType() === 'select') {
+            $series = $this->codeModel->all('series', 'codserie', 'descripcion', false, [
+                new DataBaseWhere('tipo', 'R')
+            ]);
+            $columnSerie->widget->setValuesFromCodeModel($series);
+        }
+    }
+
+    protected function loadWarehouseValues(string $viewName): void
     {
         $idempresa = $this->toolBox()->appSettings()->get('default', 'idempresa');
         $where = [new DataBaseWhere('idempresa', $idempresa)];

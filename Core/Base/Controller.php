@@ -320,7 +320,8 @@ class Controller
     protected function validateFormToken(): bool
     {
         // valid request?
-        $token = $this->request->request->get('multireqtoken', '');
+        $urlToken = $this->request->query->get('multireqtoken', '');
+        $token = $this->request->request->get('multireqtoken', $urlToken);
         if (empty($token) || false === $this->multiRequestProtection->validate($token)) {
             $this->toolBox()->i18nLog()->warning('invalid-request');
             return false;

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,7 +29,9 @@ use FacturaScripts\Core\Model\Base\SalesDocument;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Core\Model\Contacto;
 use FacturaScripts\Core\Model\User;
+use FacturaScripts\Dinamic\Model\Ciudad;
 use FacturaScripts\Dinamic\Model\Pais;
+use FacturaScripts\Dinamic\Model\Provincia;
 
 /**
  * Description of SalesHeaderHTML
@@ -76,8 +78,8 @@ class SalesHeaderHTML
             return;
         }
 
+        $model->setWarehouse($formData['codalmacen'] ?? $model->codalmacen);
         $model->cifnif = $formData['cifnif'] ?? $model->cifnif;
-        $model->codalmacen = $formData['codalmacen'] ?? $model->codalmacen;
         $model->codcliente = $formData['codcliente'] ?? $model->codcliente;
         $model->codigoenv = $formData['codigoenv'] ?? $model->codigoenv;
         $model->coddivisa = $formData['coddivisa'] ?? $model->coddivisa;
@@ -88,9 +90,10 @@ class SalesHeaderHTML
         $model->hora = $formData['hora'] ?? $model->hora;
         $model->nombrecliente = $formData['nombrecliente'] ?? $model->nombrecliente;
         $model->numero2 = $formData['numero2'] ?? $model->numero2;
+        $model->operacion = $formData['operacion'] ?? $model->operacion;
         $model->tasaconv = (float)($formData['tasaconv'] ?? $model->tasaconv);
 
-        foreach (['codagente', 'codtrans', 'finoferta'] as $key) {
+        foreach (['codagente', 'codtrans', 'fechadevengo', 'finoferta'] as $key) {
             if (isset($formData[$key])) {
                 $model->{$key} = empty($formData[$key]) ? null : $formData[$key];
             }
@@ -179,9 +182,38 @@ class SalesHeaderHTML
         $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
             'name="' . $field . '" maxlength="' . $maxlength . '" autocomplete="off"' :
             'disabled=""';
+
         return '<div class="col-sm-' . $size . '">'
             . '<div class="form-group">' . $i18n->trans($label)
             . '<input type="text" ' . $attributes . ' value="' . $model->{$field} . '" class="form-control"/>'
+            . '</div>'
+            . '</div>';
+    }
+
+    private static function ciudad(Translator $i18n, SalesDocument $model, int $size, int $maxlength): string
+    {
+        $list = '';
+        $dataList = '';
+        $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
+            'name="ciudad" maxlength="' . $maxlength . '" autocomplete="off"' :
+            'disabled=""';
+
+        if ($model->editable) {
+            // pre-cargamos listado de ciudades
+            $list = 'list="ciudades"';
+            $dataList = '<datalist id="ciudades">';
+
+            $ciudadModel = new Ciudad();
+            foreach ($ciudadModel->all([], ['ciudad' => 'ASC'], 0, 0) as $ciudad) {
+                $dataList .= '<option value="' . $ciudad->ciudad . '">' . $ciudad->ciudad . '</option>';
+            }
+            $dataList .= '</datalist>';
+        }
+
+        return '<div class="col-sm-' . $size . '">'
+            . '<div class="form-group">' . $i18n->trans('city')
+            . '<input type="text" ' . $attributes . ' value="' . $model->ciudad . '" ' . $list . ' class="form-control"/>'
+            . $dataList
             . '</div>'
             . '</div>';
     }
@@ -320,7 +352,7 @@ class SalesHeaderHTML
             . '<div class="modal-dialog modal-dialog-centered modal-lg">'
             . '<div class="modal-content">'
             . '<div class="modal-header">'
-            . '<h5 class="modal-title">' . $i18n->trans('detail') . '</h5>'
+            . '<h5 class="modal-title"><i class="fas fa-edit fa-fw" aria-hidden="true"></i> ' . $i18n->trans('detail') . '</h5>'
             . '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'
             . '<span aria-hidden="true">&times;</span>'
             . '</button>'
@@ -339,11 +371,12 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'idcontactoenv')
             . self::renderField($i18n, $model, 'codtrans')
             . self::renderField($i18n, $model, 'codigoenv')
+            . self::renderField($i18n, $model, 'fechadevengo')
+            . self::renderField($i18n, $model, 'hora')
+            . self::renderField($i18n, $model, 'operacion')
+            . self::renderField($i18n, $model, 'femail')
             . self::renderField($i18n, $model, 'coddivisa')
             . self::renderField($i18n, $model, 'tasaconv')
-            . self::renderField($i18n, $model, '_fecha')
-            . self::renderField($i18n, $model, 'hora')
-            . self::renderField($i18n, $model, 'femail')
             . self::renderField($i18n, $model, 'user')
             . self::renderField($i18n, $model, 'codagente')
             . self::renderNewFields($i18n, $model)
@@ -487,13 +520,13 @@ class SalesHeaderHTML
                 return self::cifnif($i18n, $model);
 
             case 'ciudad':
-                return self::addressField($i18n, $model, 'ciudad', 'city', 4, 100);
+                return self::ciudad($i18n, $model, 4, 100);
 
             case 'codagente':
                 return self::codagente($i18n, $model);
 
             case 'codalmacen':
-                return self::codalmacen($i18n, $model);
+                return self::codalmacen($i18n, $model, 'salesFormAction');
 
             case 'codcliente':
                 return self::codcliente($i18n, $model);
@@ -525,6 +558,9 @@ class SalesHeaderHTML
             case 'fecha':
                 return self::fecha($i18n, $model);
 
+            case 'fechadevengo':
+                return self::fechadevengo($i18n, $model);
+
             case 'femail':
                 return self::femail($i18n, $model);
 
@@ -549,8 +585,11 @@ class SalesHeaderHTML
             case 'numero2':
                 return self::numero2($i18n, $model);
 
+            case 'operacion':
+                return self::operacion($i18n, $model);
+
             case 'provincia':
-                return self::addressField($i18n, $model, 'provincia', 'province', 6, 100);
+                return self::provincia($i18n, $model, 6, 100);
 
             case 'tasaconv':
                 return self::tasaconv($i18n, $model);
@@ -563,6 +602,34 @@ class SalesHeaderHTML
         }
 
         return null;
+    }
+
+    private static function provincia(Translator $i18n, SalesDocument $model, int $size, int $maxlength): string
+    {
+        $list = '';
+        $dataList = '';
+        $attributes = $model->editable && (empty($model->idcontactofact) || empty($model->direccion)) ?
+            'name="provincia" maxlength="' . $maxlength . '" autocomplete="off"' :
+            'disabled=""';
+
+        if ($model->editable) {
+            // pre-cargamos listado de provincias
+            $list = 'list="provincias"';
+            $dataList = '<datalist id="provincias">';
+
+            $provinciaModel = new Provincia();
+            foreach ($provinciaModel->all([], ['provincia' => 'ASC'], 0, 0) as $provincia) {
+                $dataList .= '<option value="' . $provincia->provincia . '">' . $provincia->provincia . '</option>';
+            }
+            $dataList .= '</datalist>';
+        }
+
+        return '<div class="col-sm-' . $size . '">'
+            . '<div class="form-group">' . $i18n->trans('province')
+            . '<input type="text" ' . $attributes . ' value="' . $model->provincia . '" ' . $list . ' class="form-control"/>'
+            . $dataList
+            . '</div>'
+            . '</div>';
     }
 
     private static function renderNewFields(Translator $i18n, SalesDocument $model): string
