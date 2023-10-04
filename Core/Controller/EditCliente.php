@@ -94,6 +94,9 @@ class EditCliente extends ComercialContactController
     protected function createDocumentView(string $viewName, string $model, string $label)
     {
         $this->createCustomerListView($viewName, $model, $label);
+
+        // botones
+        $this->setSettings($viewName, 'btnPrint', true);
         $this->addButtonGroupDocument($viewName);
         $this->addButtonApproveDocument($viewName);
     }
@@ -101,6 +104,9 @@ class EditCliente extends ComercialContactController
     protected function createInvoiceView(string $viewName)
     {
         $this->createCustomerListView($viewName, 'FacturaCliente', 'invoices');
+
+        // botones
+        $this->setSettings($viewName, 'btnPrint', true);
         $this->addButtonLockInvoice($viewName);
     }
 

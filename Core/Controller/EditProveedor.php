@@ -82,6 +82,9 @@ class EditProveedor extends ComercialContactController
     protected function createDocumentView(string $viewName, string $model, string $label)
     {
         $this->createSupplierListView($viewName, $model, $label);
+
+        // botones
+        $this->setSettings($viewName, 'btnPrint', true);
         $this->addButtonGroupDocument($viewName);
         $this->addButtonApproveDocument($viewName);
     }
@@ -89,6 +92,9 @@ class EditProveedor extends ComercialContactController
     protected function createInvoiceView(string $viewName)
     {
         $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices');
+
+        // botones
+        $this->setSettings($viewName, 'btnPrint', true);
         $this->addButtonLockInvoice($viewName);
     }
 
