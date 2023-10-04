@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,7 +35,6 @@ use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
  */
 class EditProveedor extends ComercialContactController
 {
-
     /**
      * Returns the sum of the customer's total delivery notes.
      *
@@ -203,7 +202,7 @@ class EditProveedor extends ComercialContactController
 
             case 'ListFacturaProveedor':
                 $view->loadData('', $where);
-                $this->addButtonGenerateAccountingInvoices('ListFacturaProveedor', $codproveedor);
+                $this->addButtonGenerateAccountingInvoices($viewName, $codproveedor);
                 break;
 
             case 'ListAlbaranProveedor':

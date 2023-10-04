@@ -151,6 +151,7 @@ class ListFacturaCliente extends ListBusinessDocument
 
         // añadimos botón de bloquear facturas
         $this->addButtonLockInvoice($viewName);
+        $this->addButtonGenerateAccountingInvoices($viewName);
 
         // añadimos botón para buscar huecos en las facturas, si el usuario tiene permiso
         if (false === $this->permissions->onlyOwnerData) {
@@ -243,14 +244,6 @@ class ListFacturaCliente extends ListBusinessDocument
                 '%fecha%' => $gap['fecha'],
                 '%idempresa%' => Empresas::get($gap['idempresa'])->nombrecorto
             ]);
-        }
-    }
-
-    protected function loadData($viewName, $view)
-    {
-        parent::loadData($viewName, $view);
-        if ($viewName === 'ListFacturaCliente') {
-            $this->addButtonGenerateAccountingInvoices('ListFacturaCliente');
         }
     }
 }

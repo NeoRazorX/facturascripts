@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,14 +28,13 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
 /**
  * Controller to edit a single item from the Cliente model
  *
- * @author       Carlos García Gómez        <carlos@facturascripts.com>
+ * @author       Carlos García Gómez           <carlos@facturascripts.com>
  * @author       Jose Antonio Cuello Principal <yopli2000@gmail.com>
- * @author       Fco. Antonio Moreno Pérez  <famphuelva@gmail.com>
- * @collaborator Daniel Fernández Giménez   <hola@danielfg.es>
+ * @author       Fco. Antonio Moreno Pérez     <famphuelva@gmail.com>
+ * @collaborator Daniel Fernández Giménez      <hola@danielfg.es>
  */
 class EditCliente extends ComercialContactController
 {
-
     /**
      * Returns the customer's risk on pending delivery notes.
      *
@@ -197,7 +196,7 @@ class EditCliente extends ComercialContactController
 
             case 'ListFacturaCliente':
                 $view->loadData('', $where);
-                $this->addButtonGenerateAccountingInvoices('ListFacturaCliente', $codcliente);
+                $this->addButtonGenerateAccountingInvoices($viewName, $codcliente);
                 break;
 
             case 'ListAlbaranCliente':
