@@ -52,7 +52,10 @@
             <column name="net" order="170">
                 <widget type="money" fieldname="neto" readonly="true"/>
             </column>
-            <column name="update-time" display="none" order="180">
+            <column name="stock" display="none" order="180">
+                <widget type="number" fieldname="stock"/>
+            </column>
+            <column name="update-time" display="none" order="190">
                 <widget type="datetime" fieldname="actualizado" readonly="true"/>
             </column>
         </group>

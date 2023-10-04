@@ -22,10 +22,11 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\DownloadTools;
-use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Core\Cache;
+use FacturaScripts\Core\Http;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\ModelCore;
+use FacturaScripts\Core\Plugins;
 use FacturaScripts\Dinamic\Model\AlbaranCliente;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\Contacto;
@@ -95,11 +96,11 @@ class Dashboard extends Controller
     {
         // comprobamos si estamos el localhost
         if ($_SERVER['REMOTE_ADDR'] == 'localhost' ||
+            $_SERVER['REMOTE_ADDR'] == '::1' ||
             substr($_SERVER['REMOTE_ADDR'], 0, 4) == '192.' ||
             substr($_SERVER['REMOTE_ADDR'], 0, 4) == '172.') {
             // si el plugin Backup está activo, devolvemos false
-            $manager = new PluginManager();
-            return !in_array('Backup', $manager->enabledPlugins());
+            return !Plugins::isEnabled('Backup');
         }
 
         return false;
@@ -197,12 +198,20 @@ class Dashboard extends Controller
      */
     private function loadNews()
     {
-        $data = DownloadTools::getContents('https://facturascripts.com/comm3/index.php?page=community_changelog&json=TRUE');
-        if ($data === 'ERROR') {
+        // buscamos en la caché
+        $news = Cache::get('dashboard-news');
+        if($news !== null) {
+            $this->news = $news;
             return;
         }
 
-        $this->news = json_decode($data, true);
+        // si no está en caché, consultamos a facturascripts.com
+        $this->news = Http::get('https://facturascripts.com/comm3/index.php?page=community_changelog&json=TRUE')
+            ->setTimeout(5)
+            ->json();
+
+        // guardamos en caché
+        Cache::set('dashboard-news', $this->news);
     }
 
     /**

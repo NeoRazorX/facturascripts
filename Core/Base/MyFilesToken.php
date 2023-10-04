@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -31,6 +31,8 @@ class MyFilesToken
 
     public static function get(string $path, bool $permanent, string $expiration = ''): string
     {
+        self::checkPath($path);
+
         $init = FS_DB_NAME . FS_DB_PASS;
         if ($expiration && $permanent === false) {
             // si se especifica una fecha de expiración, la añadimos también al final para poder validarla
@@ -57,6 +59,8 @@ class MyFilesToken
 
     public static function validate(string $path, string $token): bool
     {
+        self::checkPath($path);
+
         // ¿El token contiene "|"?
         if (strpos($token, '|') !== false) {
             $expiration = explode('|', $token)[1];
@@ -73,5 +77,18 @@ class MyFilesToken
         }
 
         return $token === static::get($path, true) || $token === static::get($path, false);
+    }
+
+    private static function checkPath(string &$path): void
+    {
+        // comprobamos si el path empieza por / y lo eliminamos
+        if (strpos($path, '/') === 0) {
+            $path = substr($path, 1);
+        }
+
+        // comprobamos si el path empieza por \ y lo eliminamos
+        if (strpos($path, '\\') === 0) {
+            $path = substr($path, 1);
+        }
     }
 }

@@ -31,7 +31,7 @@ use FacturaScripts\Dinamic\Model\EmailNotification;
 class MailNotifier
 {
 
-    public static function send(string $notificationName, string $email, string $name = '', array $params = []): bool
+    public static function send(string $notificationName, string $email, string $name = '', array $params = [], array $adjuntos = []): bool
     {
         // ¿La notificación existe?
         $notification = new EmailNotification();
@@ -65,6 +65,12 @@ class MailNotifier
         $newMail->addAddress($email, $name);
         $newMail->title = static::getText($notification->subject, $params);
         $newMail->text = static::getText($notification->body, $params);
+
+        foreach ($adjuntos as $adjunto)
+        {
+            $newMail->addAttachment($adjunto, basename($adjunto));
+        }
+
         return $newMail->send();
     }
 

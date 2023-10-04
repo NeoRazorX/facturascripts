@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  */
 
 namespace FacturaScripts\Core\Controller;
@@ -21,7 +21,6 @@ use FacturaScripts\Dinamic\Model\ReciboCliente;
  */
 class EditFacturaCliente extends SalesController
 {
-
     private const VIEW_ACCOUNTS = 'ListAsiento';
     private const VIEW_RECEIPTS = 'ListReciboCliente';
 
@@ -273,12 +272,8 @@ class EditFacturaCliente extends SalesController
             }
         }
 
-        $excludeFields = ['codejercicio', 'codigo', 'codigorect', 'fecha', 'femail', 'hora', 'idasiento', 'idestado',
-            'idfacturarect', 'neto', 'netosindto', 'numero', 'pagada', 'total', 'totalirpf', 'totaliva', 'totalrecargo',
-            'totalsuplidos', $invoice->primaryColumn()];
-
         $newRefund = new FacturaCliente();
-        $newRefund->loadFromData($invoice->toArray(), $excludeFields);
+        $newRefund->loadFromData($invoice->toArray(), $invoice::dontCopyFields());
         $newRefund->codigorect = $invoice->codigo;
         $newRefund->codserie = $this->request->request->get('codserie');
         $newRefund->idfacturarect = $invoice->idfactura;
@@ -311,6 +306,14 @@ class EditFacturaCliente extends SalesController
             return true;
         }
 
+        // si la factura estaba pagada, marcamos los recibos de la nueva como pagados
+        if ($invoice->pagada) {
+            foreach ($newRefund->getReceipts() as $receipt) {
+                $receipt->pagado = true;
+                $receipt->save();
+            }
+        }
+
         $this->dataBase->commit();
         $this->toolBox()->i18nLog()->notice('record-updated-correctly');
         $this->redirect($newRefund->url() . '&action=save-ok');
@@ -323,7 +326,7 @@ class EditFacturaCliente extends SalesController
      *
      * @param ReciboCliente[] $receipts
      */
-    private function checkReceiptsTotal(array &$receipts)
+    private function checkReceiptsTotal(array &$receipts): void
     {
         $total = 0.00;
         foreach ($receipts as $row) {
@@ -331,7 +334,7 @@ class EditFacturaCliente extends SalesController
         }
 
         $diff = $this->getModel()->total - $total;
-        if (false === $this->toolBox()->utils()->floatcmp($diff, 0.0, FS_NF0, true)) {
+        if (abs($diff) > 0.01) {
             $this->toolBox()->i18nLog()->warning('invoice-receipts-diff', ['%diff%' => $diff]);
         }
     }

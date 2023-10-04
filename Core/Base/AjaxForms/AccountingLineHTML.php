@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
@@ -231,7 +231,7 @@ class AccountingLineHTML
      * @param Asiento $model
      * @param Partida[] $lines
      */
-    private static function calculateUnbalance(Asiento &$model, array $lines)
+    public static function calculateUnbalance(Asiento &$model, array $lines)
     {
         $model->debe = 0.0;
         $model->haber = 0.0;
@@ -382,11 +382,24 @@ class AccountingLineHTML
      */
     protected static function iva(Translator $i18n, Partida $line, Asiento $model): string
     {
+        // preseleccionamos el impuesto que corresponda
+        $codimpuesto = null;
+        foreach (Impuestos::all() as $imp) {
+            if ($imp->codsubcuentarep || $imp->codsubcuentasop) {
+                if (in_array($line->codsubcuenta, [$imp->codsubcuentarep, $imp->codsubcuentasop])) {
+                    $codimpuesto = $imp->codimpuesto;
+                    break;
+                }
+            }
+
+            if ($imp->iva === $line->iva) {
+                $codimpuesto = $imp->codimpuesto;
+            }
+        }
+
         $options = ['<option value="">------</option>'];
         foreach (Impuestos::all() as $imp) {
-            $selected = $imp->codsubcuentarep || $imp->codsubcuentasop ?
-                (in_array($line->codsubcuenta, [$imp->codsubcuentarep, $imp->codsubcuentasop]) ? ' selected' : '') :
-                ($imp->iva === $line->iva ? ' selected' : '');
+            $selected = $imp->codimpuesto === $codimpuesto ? ' selected' : '';
             $options[] = '<option value="' . $imp->iva . '"' . $selected . '>' . $imp->descripcion . '</option>';
         }
 

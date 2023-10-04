@@ -60,5 +60,9 @@ class ListAtributo extends ListController
         $this->addSearchFields($viewName, ['valor', 'codatributo']);
         $this->addOrderBy($viewName, ['codatributo', 'orden', 'valor'], 'sort', 2);
         $this->addOrderBy($viewName, ['codatributo', 'valor'], 'value');
+
+        // filtros
+        $attributes = $this->codeModel->all('atributos', 'codatributo', 'nombre');
+        $this->addFilterSelect($viewName, 'codatributo', 'attribute', 'codatributo', $attributes);
     }
 }

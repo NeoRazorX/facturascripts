@@ -63,6 +63,17 @@ abstract class ComercialContactController extends EditController
         }
     }
 
+    protected function checkViesAction(): bool
+    {
+        $model = $this->getModel();
+        if (false === $model->loadFromCode($this->request->get('code'))) {
+            return true;
+        }
+
+        $model->checkVies();
+        return true;
+    }
+
     /**
      * Add a Contact List View.
      *
@@ -248,11 +259,17 @@ abstract class ComercialContactController extends EditController
                 BusinessDocumentGenerator::setSameDate(true);
                 return $this->approveDocumentAction($codes, $model, $allowUpdate, $this->dataBase);
 
+            case 'check-vies':
+                return $this->checkViesAction();
+
             case 'delete-file':
                 return $this->deleteFileAction();
 
             case 'edit-file':
                 return $this->editFileAction();
+
+            case 'generate-accounting-entries':
+                return $this->generateAccountingEntriesAction($model, $allowUpdate, $this->dataBase);
 
             case 'group-document':
                 return $this->groupDocumentAction($codes, $model);
@@ -311,6 +328,15 @@ abstract class ComercialContactController extends EditController
             case $mainViewName:
                 parent::loadData($viewName, $view);
                 $this->setCustomWidgetValues($viewName);
+                if ($view->model->exists()) {
+                    $this->addButton($viewName, [
+                        'action' => 'check-vies',
+                        'color' => 'info',
+                        'icon' => 'fas fa-check-double',
+                        'label' => 'check-vies',
+                        'type' => 'action'
+                    ]);
+                }
                 break;
 
             case 'docfiles':

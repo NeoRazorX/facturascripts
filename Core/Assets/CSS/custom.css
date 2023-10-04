@@ -100,3 +100,7 @@
     width: 100%;
     height: 2px;
 }
+/* end pace customizations */
+.pointer {
+    cursor: pointer;
+}

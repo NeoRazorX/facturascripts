@@ -25,6 +25,7 @@ use FacturaScripts\Core\Base\MiniLog;
  * Description of DownloadTools
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @deprecated since version 2023
  */
 class DownloadTools
 {

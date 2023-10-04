@@ -34,6 +34,10 @@ final class AttachedFileTest extends TestCase
 
         // copiamos el archivo a MyFiles y renombramos
         $name = 'xss"\'><img src=x onerror=alert(123)>.jpeg';
+        if(PHP_OS_FAMILY == 'Windows')
+        {
+            $name = 'file_upload_xss_attack_not_possible_on_windows_os.jpeg';
+        }
         $this->assertTrue(copy($originalPath, FS_FOLDER . '/MyFiles/' . $name), 'File not copied');
 
         $model = new AttachedFile();

@@ -20,8 +20,7 @@
 namespace FacturaScripts\Core\Lib\Accounting;
 
 use FacturaScripts\Core\Base\DataBase;
-use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Core\Model\Base\ModelCore;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Ejercicio;
 use FacturaScripts\Dinamic\Model\Partida;
 
@@ -81,8 +80,7 @@ class Ledger
                 }
                 $ledger['totals'] = [[
                     'debe' => $this->formatMoney($debe, true),
-                    'haber' => $this->formatMoney($haber, true),
-                    'saldo' => $this->formatMoney($debe - $haber, true)
+                    'haber' => $this->formatMoney($haber, true)
                 ]];
                 break;
 
@@ -96,8 +94,7 @@ class Ledger
                 }
                 $ledger['totals'] = [[
                     'debe' => $this->formatMoney($debe, true),
-                    'haber' => $this->formatMoney($haber, true),
-                    'saldo' => $this->formatMoney($debe - $haber, true)
+                    'haber' => $this->formatMoney($haber, true)
                 ]];
                 break;
 
@@ -105,7 +102,7 @@ class Ledger
                 // do not group data
                 $ledger['lines'] = [];
                 foreach ($this->getData($params) as $line) {
-                    $this->processLine($ledger['lines'], $line);
+                    $this->processLine($ledger['lines'], $line, $params);
                     $debe += (float)$line['debe'];
                     $haber += (float)$line['haber'];
                 }
@@ -125,13 +122,17 @@ class Ledger
 
     protected function formatMoney(float $value, bool $bold): string
     {
+        $decimals = Tools::settings('default', 'decimals', 2);
+        $decimalSep = Tools::settings('default', 'decimal_separator', ',');
+        $thousandsSep = Tools::settings('default', 'thousands_separator', ' ');
+
         if ($this->format != 'PDF') {
-            return number_format($value, FS_NF0, '.', '');
+            return number_format($value, $decimals, '.', '');
         }
 
         return $bold ?
-            '<b>' . number_format($value, FS_NF0, ',', '&nbsp;') . '</b>' :
-            number_format($value, FS_NF0, ',', '&nbsp;');
+            '<b>' . number_format($value, $decimals, $decimalSep, $thousandsSep) . '</b>' :
+            number_format($value, $decimals, $decimalSep, $thousandsSep);
     }
 
     protected function getData(array $params = []): array
@@ -141,7 +142,7 @@ class Ledger
         }
 
         $sql = 'SELECT asientos.numero, asientos.fecha, partidas.codsubcuenta,'
-            . ' partidas.concepto, partidas.debe, partidas.haber,'
+            . ' partidas.concepto, partidas.debe, partidas.haber, partidas.saldo,'
             . ' subcuentas.codcuenta, subcuentas.descripcion as subcuentadesc,'
             . ' cuentas.descripcion as cuentadesc'
             . ' FROM partidas'
@@ -160,7 +161,7 @@ class Ledger
         }
 
         $sql = 'SELECT asientos.numero, asientos.fecha, partidas.codsubcuenta,'
-            . ' partidas.concepto, partidas.debe, partidas.haber,'
+            . ' partidas.concepto, partidas.debe, partidas.haber, partidas.saldo,'
             . ' subcuentas.codcuenta, subcuentas.descripcion as subcuentadesc,'
             . ' cuentas.descripcion as cuentadesc'
             . ' FROM partidas'
@@ -179,7 +180,7 @@ class Ledger
         }
 
         $sql = 'SELECT asientos.numero, asientos.fecha, partidas.codsubcuenta,'
-            . ' partidas.concepto, partidas.debe, partidas.haber,'
+            . ' partidas.concepto, partidas.debe, partidas.haber, partidas.saldo,'
             . ' subcuentas.codcuenta, subcuentas.descripcion as subcuentadesc,'
             . ' cuentas.descripcion as cuentadesc'
             . ' FROM partidas'
@@ -244,16 +245,29 @@ class Ledger
         return 0.00;
     }
 
-    protected function processLine(array &$ledger, array $line): void
+    protected function processLine(array &$ledger, array $line, array $params): void
     {
-        $ledger[] = [
+        $line = [
             'asiento' => $line['numero'],
-            'fecha' => date(ModelCore::DATE_STYLE, strtotime($line['fecha'])),
+            'fecha' => Tools::date($line['fecha']),
             'cuenta' => $line['codsubcuenta'],
-            'concepto' => ToolBox::utils()->fixHtml($line['concepto']),
+            'concepto' => Tools::fixHtml($line['concepto']),
             'debe' => $this->formatMoney($line['debe'], false),
-            'haber' => $this->formatMoney($line['haber'], false)
+            'haber' => $this->formatMoney($line['haber'], false),
+            'saldo' => $this->formatMoney($line['saldo'], false)
         ];
+
+        // si estamos filtrando por una cuenta, quitamos la columna de saldo
+        if (!empty($params['account-from'])) {
+            unset($line['saldo']);
+        }
+
+        // si estamos filtrando por subcuenta, quitamos la columna de cuenta
+        if (!empty($params['subaccount-from'])) {
+            unset($line['cuenta']);
+        }
+
+        $ledger[] = $line;
     }
 
     protected function processLineBalanceGroupedByAccount(array &$balances, array &$ledger, array $line)
@@ -266,9 +280,9 @@ class Ledger
         if (!isset($ledger[$codcuenta])) {
             $ledger[$codcuenta][] = [
                 'asiento' => '',
-                'fecha' => date(ModelCore::DATE_STYLE, strtotime($this->dateFrom)),
+                'fecha' => Tools::date($this->dateFrom),
                 'cuenta' => $codcuenta,
-                'concepto' => ToolBox::utils()->fixHtml($line['cuentadesc']),
+                'concepto' => Tools::fixHtml($line['cuentadesc']),
                 'debe' => $this->formatMoney(0, false),
                 'haber' => $this->formatMoney(0, false),
                 'saldo' => $this->formatMoney($balances[$codcuenta], false)
@@ -278,9 +292,9 @@ class Ledger
         $balances[$codcuenta] += (float)$line['debe'] - (float)$line['haber'];
         $ledger[$codcuenta][] = [
             'asiento' => $line['numero'],
-            'fecha' => date(ModelCore::DATE_STYLE, strtotime($line['fecha'])),
+            'fecha' => Tools::date($line['fecha']),
             'cuenta' => $codcuenta,
-            'concepto' => ToolBox::utils()->fixHtml($line['concepto']),
+            'concepto' => Tools::fixHtml($line['concepto']),
             'debe' => $this->formatMoney($line['debe'], false),
             'haber' => $this->formatMoney($line['haber'], false),
             'saldo' => $this->formatMoney($balances[$codcuenta], false)
@@ -297,9 +311,9 @@ class Ledger
         if (!isset($ledger[$codcuenta])) {
             $ledger[$codcuenta][] = [
                 'asiento' => '',
-                'fecha' => date(ModelCore::DATE_STYLE, strtotime($this->dateFrom)),
+                'fecha' => Tools::date($this->dateFrom),
                 'cuenta' => $codcuenta,
-                'concepto' => ToolBox::utils()->fixHtml($line['cuentadesc']),
+                'concepto' => Tools::fixHtml($line['subcuentadesc']),
                 'debe' => $this->formatMoney(0, false),
                 'haber' => $this->formatMoney(0, false),
                 'saldo' => $this->formatMoney($balances[$codcuenta], false)
@@ -309,9 +323,9 @@ class Ledger
         $balances[$codcuenta] += (float)$line['debe'] - (float)$line['haber'];
         $ledger[$codcuenta][] = [
             'asiento' => $line['numero'],
-            'fecha' => date(ModelCore::DATE_STYLE, strtotime($line['fecha'])),
+            'fecha' => Tools::date($line['fecha']),
             'cuenta' => $codcuenta,
-            'concepto' => ToolBox::utils()->fixHtml($line['concepto']),
+            'concepto' => Tools::fixHtml($line['concepto']),
             'debe' => $this->formatMoney($line['debe'], false),
             'haber' => $this->formatMoney($line['haber'], false),
             'saldo' => $this->formatMoney($balances[$codcuenta], false)

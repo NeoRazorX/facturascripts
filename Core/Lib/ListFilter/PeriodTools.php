@@ -19,7 +19,7 @@
 
 namespace FacturaScripts\Core\Lib\ListFilter;
 
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\Translator;
 
 /**
  * PeriodTools give us some basic and common methods for periods.

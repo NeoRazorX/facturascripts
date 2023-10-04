@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2021 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -23,26 +23,16 @@ namespace FacturaScripts\Core\Lib\ListFilter;
  * Selection filter of options where each option has a DataBaseWhere
  * associated for data filtering
  *
- * @author Carlos García Gómez <carlos@facturascripts.com>
+ * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class SelectWhereFilter extends SelectFilter
 {
-
-    /**
-     * @param string $key
-     * @param array $values
-     */
-    public function __construct(string $key, array $values = [])
+    public function __construct(string $key, array $values = [], string $label = '')
     {
-        parent::__construct($key, '', '', $values);
+        parent::__construct($key, '', $label, $values);
     }
 
-    /**
-     * @param array $where
-     *
-     * @return bool
-     */
     public function getDataBaseWhere(array &$where): bool
     {
         $value = ($this->value == '' || $this->value == null) ? 0 : $this->value;
@@ -53,14 +43,11 @@ class SelectWhereFilter extends SelectFilter
         return ($value > 0);
     }
 
-    /**
-     * @return string
-     */
     protected function getHtmlOptions(): string
     {
         $html = '';
         foreach ($this->values as $key => $data) {
-            $extra = ('' != $this->value && $key == $this->value) ? ' selected=""' : '';
+            $extra = ('' != $this->value && $key == $this->value) ? ' selected' : '';
             $html .= '<option value="' . $key . '"' . $extra . '>' . $data['label'] . '</option>';
         }
 

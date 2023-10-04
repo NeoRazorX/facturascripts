@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,74 +20,60 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\CuentaBancoCliente as DinCuentaBancoCliente;
+use FacturaScripts\Dinamic\Model\CuentaEspecial as DinCuentaEspecial;
+use FacturaScripts\Dinamic\Model\GrupoClientes as DinGrupoClientes;
+use FacturaScripts\Dinamic\Model\Subcuenta as DinSubcuenta;
 
 /**
- * The client. You can have one or more associated addresses and subaccounts.
+ * The client. You can have one or more associated addresses and accounts.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
 class Cliente extends Base\ComercialContact
 {
-
     use Base\ModelTrait;
 
-    /**
-     * Agent assigned to this customer. Agent model.
-     *
-     * @var string
-     */
+    const SPECIAL_ACCOUNT = 'CLIENT';
+
+    /** @var string */
     public $codagente;
 
-    /**
-     * Group to which the client belongs.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codgrupo;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $codtarifa;
 
-    /**
-     * Preferred payment days when calculating the due date of invoices.
-     * Days separated by commas: 1,15,31
-     *
-     * @var string
-     */
+    /** @var string */
     public $diaspago;
 
-    /**
-     * Default contact for the shipment of products
-     *
-     * @var integer
-     */
+    /** @var integer */
     public $idcontactoenv;
 
-    /**
-     * Default contact for sending documentation
-     *
-     * @var integer
-     */
+    /** @var integer */
     public $idcontactofact;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $riesgoalcanzado;
 
-    /**
-     * @var float
-     */
+    /** @var float */
     public $riesgomax;
+
+    public function checkVies(): bool
+    {
+        $codiso = Paises::get($this->getDefaultAddress()->codpais)->codiso ?? '';
+        return Vies::check($this->cifnif ?? '', $codiso) === 1;
+    }
 
     public function clear()
     {
         parent::clear();
-        $this->codretencion = $this->toolBox()->appSettings()->get('default', 'codretencion');
+        $this->codretencion = Tools::settings('default', 'codretencion');
     }
 
     /**
@@ -143,6 +129,13 @@ class Cliente extends Base\ComercialContact
         return $contact;
     }
 
+    public function getGroup(): GrupoClientes
+    {
+        $group = new DinGrupoClientes();
+        $group->loadFromCode($this->codgrupo);
+        return $group;
+    }
+
     /**
      * Returns the preferred payment days for this customer.
      *
@@ -158,6 +151,48 @@ class Cliente extends Base\ComercialContact
         }
 
         return $days;
+    }
+
+    public function getSubcuenta(string $codejercicio, bool $crear): Subcuenta
+    {
+        // ya tiene una subcuenta asignada
+        if ($this->codsubcuenta) {
+            // buscamos la subcuenta para el ejercicio
+            $subAccount = new DinSubcuenta();
+            $where = [
+                new DataBaseWhere('codsubcuenta', $this->codsubcuenta),
+                new DataBaseWhere('codejercicio', $codejercicio),
+            ];
+            if ($subAccount->loadFromCode('', $where)) {
+                return $subAccount;
+            }
+
+            // no hemos encontrado la subcuenta
+            // si no queremos crearla, devolvemos una vacía
+            if (false === $crear) {
+                return new DinSubcuenta();
+            }
+
+            // buscamos la cuenta especial
+            $special = new DinCuentaEspecial();
+            if (false === $special->loadFromCode(static::SPECIAL_ACCOUNT)) {
+                return new DinSubcuenta();
+            }
+
+            // ahora creamos la subcuenta
+            return $special->getCuenta($codejercicio)->createSubcuenta($this->codsubcuenta, $this->razonsocial);
+        }
+
+        // ¿El grupo tiene subcuenta?
+        $group = $this->getGroup();
+        if ($group->codsubcuenta) {
+            return $group->getSubcuenta($codejercicio, $crear);
+        }
+
+        // si no creamos la subcuenta, devolvemos una vacía
+        return $crear ?
+            $this->createSubcuenta($codejercicio) :
+            new DinSubcuenta();
     }
 
     public function install(): string
@@ -188,7 +223,7 @@ class Cliente extends Base\ComercialContact
     public function test(): bool
     {
         if (empty($this->nombre)) {
-            $this->toolBox()->i18nLog()->warning(
+            Tools::log()->warning(
                 'field-can-not-be-null',
                 ['%fieldName%' => 'nombre', '%tableName%' => static::tableName()]
             );
@@ -196,7 +231,7 @@ class Cliente extends Base\ComercialContact
         }
 
         if (!empty($this->codcliente) && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codcliente)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codcliente, '%column%' => 'codcliente', '%min%' => '1', '%max%' => '10']
             );
@@ -214,6 +249,39 @@ class Cliente extends Base\ComercialContact
         return parent::test();
     }
 
+    protected function createSubcuenta(string $codejercicio): Subcuenta
+    {
+        // buscamos la cuenta especial
+        $special = new DinCuentaEspecial();
+        if (false === $special->loadFromCode(static::SPECIAL_ACCOUNT)) {
+            return new DinSubcuenta();
+        }
+
+        // buscamos la cuenta
+        $cuenta = $special->getCuenta($codejercicio);
+        if (empty($cuenta->codcuenta)) {
+            return new DinSubcuenta();
+        }
+
+        // obtenemos un código de subcuenta libre
+        $code = $cuenta->getFreeSubjectAccountCode($this);
+        if (empty($code)) {
+            return new DinSubcuenta();
+        }
+
+        // creamos la subcuenta
+        $subAccount = $cuenta->createSubcuenta($code, $this->razonsocial);
+        if (false === $subAccount->save()) {
+            return new DinSubcuenta();
+        }
+
+        // guardamos el código de subcuenta
+        $this->codsubcuenta = $subAccount->codsubcuenta;
+        $this->save();
+
+        return $subAccount;
+    }
+
     protected function saveInsert(array $values = []): bool
     {
         if (empty($this->codcliente)) {
@@ -228,6 +296,7 @@ class Cliente extends Base\ComercialContact
             $contact = new DinContacto();
             $contact->apellidos = count($parts) > 1 ? implode(' ', array_slice($parts, 1)) : '';
             $contact->cifnif = $this->cifnif;
+            $contact->codagente = $this->codagente;
             $contact->codcliente = $this->codcliente;
             $contact->descripcion = $this->nombre;
             $contact->email = $this->email;
