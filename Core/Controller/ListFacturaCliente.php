@@ -245,4 +245,12 @@ class ListFacturaCliente extends ListBusinessDocument
             ]);
         }
     }
+
+    protected function loadData($viewName, $view)
+    {
+        parent::loadData($viewName, $view);
+        if ($viewName === 'ListFacturaCliente') {
+            $this->addButtonGenerateAccountingInvoices('ListFacturaCliente');
+        }
+    }
 }

@@ -20,9 +20,12 @@
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
 use FacturaScripts\Core\Base\DataBase;
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
 use FacturaScripts\Core\Model\Base\Receipt;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
+use FacturaScripts\Dinamic\Lib\Accounting\InvoiceToAccounting;
+use FacturaScripts\Dinamic\Model\Base\ModelCore;
 
 /**
  * Contains common utilities for grouping and collecting documents.
@@ -55,6 +58,40 @@ trait ListBusinessActionTrait
             'confirm' => 'true',
             'icon' => 'fas fa-check',
             'label' => 'approve-document'
+        ]);
+    }
+
+    /**
+     * Adds button to lock invoices.
+     *
+     * @param string $viewName
+     */
+    protected function addButtonGenerateAccountingInvoices(string $viewName, string $code = null)
+    {
+        $model = $this->views[$viewName]->model;
+        if (false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
+            return;
+        }
+
+        $where = [
+            new DataBaseWhere('idasiento', null),
+            new DataBaseWhere('fecha', date('Y-m-d', strtotime('-1 year')), '>')
+        ];
+
+        if (false === empty($code) && property_exists($model, 'codcliente')) {
+            $where[] = new DataBaseWhere('codcliente', $code);
+        } elseif (false === empty($code) && property_exists($model, 'codproveedor')) {
+            $where[] = new DataBaseWhere('codproveedor', $code);
+        }
+
+        if ($model->count($where) <= 0) {
+            return;
+        }
+
+        $this->addButton($viewName, [
+            'action' => 'generate-accounting-entries',
+            'icon' => 'fas fa-magic',
+            'label' => 'generate-accounting-entries'
         ]);
     }
 
@@ -149,6 +186,46 @@ trait ListBusinessActionTrait
         ToolBox::i18nLog()->notice('record-updated-correctly');
         $dataBase->commit();
         $model->clear();
+        return true;
+    }
+
+    protected function generateAccountingEntriesAction($model, $allowUpdate, $dataBase): bool
+    {
+        if (false === $allowUpdate) {
+            ToolBox::i18nLog()->warning('not-allowed-modify');
+            return true;
+        }
+
+        if (false === in_array($model->modelClassName(), ['FacturaCliente', 'FacturaProveedor'])) {
+            return true;
+        }
+
+        $where = [
+            new DataBaseWhere('idasiento', null),
+            new DataBaseWhere('fecha', date('Y-m-d', strtotime('-1 year')), '>')
+        ];
+
+        $dataBase->beginTransaction();
+        foreach ($model->all($where, ['idfactura' => 'ASC'], 0, 0) as $invoice) {
+            if (false === empty($invoice->idasiento)) {
+                continue;
+            }
+
+            $generator = new InvoiceToAccounting();
+            $generator->generate($invoice);
+            if (empty($invoice->idasiento)) {
+                $this->toolBox()->i18nLog()->error('record-save-error');
+                return true;
+            }
+
+            if (false === $invoice->save()) {
+                $this->toolBox()->i18nLog()->error('record-save-error');
+                return true;
+            }
+        }
+
+        ToolBox::i18nLog()->notice('record-updated-correctly');
+        $dataBase->commit();
         return true;
     }
 

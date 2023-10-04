@@ -81,6 +81,7 @@ class ListFacturaProveedor extends ListBusinessDocument
 
         // botones
         $this->addButtonLockInvoice('ListFacturaProveedor');
+        $this->addButtonGenerateAccountingInvoices('ListFacturaProveedor');
 
         if ($this->user->admin) {
             $this->addButton($viewName, [
@@ -174,6 +175,14 @@ class ListFacturaProveedor extends ListBusinessDocument
         }
 
         return parent::execPreviousAction($action);
+    }
+
+    protected function loadData($viewName, $view)
+    {
+        parent::loadData($viewName, $view);
+        if ($viewName === 'ListFacturaProveedor') {
+            $this->addButtonGenerateAccountingInvoices('ListFacturaProveedor');
+        }
     }
 
     protected function renumberInvoicesAction(): void
