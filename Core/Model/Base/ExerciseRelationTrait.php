@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2020-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2020-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -29,22 +29,12 @@ use FacturaScripts\Dinamic\Model\Ejercicio;
  */
 trait ExerciseRelationTrait
 {
-
     /**
      * Exercise code.
      *
      * @var string
      */
     public $codejercicio;
-
-    /**
-     * @return void
-     * @deprecated since 2022.1. Use Ejercicios::clear() instead.
-     */
-    public function clearExerciseCache()
-    {
-        Ejercicios::clear();
-    }
 
     public function getExercise(string $codejercicio = ''): Ejercicio
     {
