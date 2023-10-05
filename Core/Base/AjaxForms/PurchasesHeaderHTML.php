@@ -323,12 +323,12 @@ class PurchasesHeaderHTML
         return null;
     }
 
-    private static function renderNewFields(Translator $i18n, PurchaseDocument $model): string
+    private static function renderNewBtnFields(Translator $i18n, PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
         foreach (self::$mods as $mod) {
-            foreach ($mod->newFields() as $field) {
+            foreach ($mod->newBtnFields() as $field) {
                 if (false === in_array($field, $newFields)) {
                     $newFields[] = $field;
                 }
@@ -349,12 +349,12 @@ class PurchasesHeaderHTML
         return $html;
     }
 
-    private static function renderNewBtnFields(Translator $i18n, PurchaseDocument $model): string
+    private static function renderNewFields(Translator $i18n, PurchaseDocument $model): string
     {
         // cargamos los nuevos campos
         $newFields = [];
         foreach (self::$mods as $mod) {
-            foreach ($mod->newBtnFields() as $field) {
+            foreach ($mod->newFields() as $field) {
                 if (false === in_array($field, $newFields)) {
                     $newFields[] = $field;
                 }

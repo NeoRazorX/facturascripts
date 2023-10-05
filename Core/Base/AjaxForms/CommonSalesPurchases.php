@@ -31,6 +31,12 @@ use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\TransformerDocument;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 
+/**
+ * Description of CommonSalesPurchases
+ *
+ * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
+ * @author Daniel Fernández Giménez <hola@danielfg.es>
+ */
 trait CommonSalesPurchases
 {
     protected static $columnView;
@@ -608,7 +614,7 @@ trait CommonSalesPurchases
 
     protected static function undoBtn(Translator $i18n, BusinessDocument $model): string
     {
-        return $model->subjectColumnValue() && $model->editable ? '<a href="' . $model->url() . '" class="btn btn-secondary">'
+        return $model->subjectColumnValue() && $model->editable ? '<a href="' . $model->url() . '" class="btn btn-secondary mr-2">'
             . '<i class="fas fa-undo fa-fw"></i> ' . $i18n->trans('undo')
             . '</a>' : '';
     }
