@@ -16,7 +16,7 @@
   },
   "require": {
     "php": ">=7.2.5",
-    "mk-j/php_xlsxwriter": "0.38",
+    "mk-j/php_xlsxwriter": "0.39",
     "parsecsv/php-parsecsv": "1.*",
     "phpmailer/phpmailer": "6.*",
     "rospdf/pdf-php": "0.12.*",
