@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,9 @@
 namespace FacturaScripts\Core\Model;
 
 use FacturaScripts\Core\DataSrc\Agentes;
+use FacturaScripts\Core\DataSrc\Paises;
+use FacturaScripts\Core\Lib\Vies;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Model\Contacto as DinContacto;
 use FacturaScripts\Dinamic\Model\Producto as DinProducto;
 
@@ -32,7 +35,6 @@ use FacturaScripts\Dinamic\Model\Producto as DinProducto;
  */
 class Agente extends Base\Contact
 {
-
     use Base\ModelTrait;
     use Base\ProductRelationTrait;
 
@@ -50,6 +52,12 @@ class Agente extends Base\Contact
 
     /** @var integer */
     public $idcontacto;
+
+    public function checkVies(): bool
+    {
+        $codiso = Paises::get($this->getContact()->codpais)->codiso ?? '';
+        return Vies::check($this->cifnif ?? '', $codiso) === 1;
+    }
 
     public function getContact(): DinContacto
     {
@@ -105,11 +113,11 @@ class Agente extends Base\Contact
 
     public function test(): bool
     {
-        $this->cargo = $this->toolBox()->utils()->noHtml($this->cargo);
+        $this->cargo = Tools::noHtml($this->cargo);
         $this->debaja = !empty($this->fechabaja);
 
         if ($this->codagente && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,10}$/i', $this->codagente)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codagente, '%column%' => 'codagente', '%min%' => '1', '%max%' => '10']
             );

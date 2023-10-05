@@ -65,8 +65,8 @@
                 </widget>
             </column>
             <column name="payment" title="method-payment" order="120">
-                <widget type="select" fieldname="codpago" onclick="EditFormaPago" required="true">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"/>
+                <widget type="select" fieldname="codpago" parent="idempresa" onclick="EditFormaPago" required="true">
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" fieldfilter="idempresa"/>
                 </widget>
             </column>
             <column name="payment-date" order="130">

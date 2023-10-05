@@ -37,8 +37,8 @@
                 </widget>
             </column>
             <column name="warehouse" numcolumns="3" order="120">
-                <widget type="select" fieldname="codalmacen" onclick="EditAlmacen" required="true">
-                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre"/>
+                <widget type="select" fieldname="codalmacen" parent="idempresa" onclick="EditAlmacen" required="true">
+                    <values source="almacenes" fieldcode="codalmacen" fieldtitle="nombre" fieldfilter="idempresa"/>
                 </widget>
             </column>
             <column name="fiscal-id" titleurl="EditSettings?activetab=EditIdentificadorFiscal" numcolumns="3"
@@ -49,12 +49,12 @@
             </column>
             <column name="serie" numcolumns="3" order="140">
                 <widget type="select" fieldname="codserie" onclick="EditSerie" required="true">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"/>
+                    <values/>
                 </widget>
             </column>
             <column name="rectifying-serie" numcolumns="3" order="150">
                 <widget type="select" fieldname="codserierec" onclick="EditSerie" required="true">
-                    <values source="series" fieldcode="codserie" fieldtitle="descripcion"/>
+                    <values/>
                 </widget>
             </column>
             <column name="currency" numcolumns="3" order="160">
@@ -64,8 +64,8 @@
                 </widget>
             </column>
             <column name="payment-method" numcolumns="3" order="170">
-                <widget type="select" fieldname="codpago" onclick="EditFormaPago" required="true">
-                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion"/>
+                <widget type="select" fieldname="codpago" parent="idempresa" onclick="EditFormaPago" required="true">
+                    <values source="formaspago" fieldcode="codpago" fieldtitle="descripcion" fieldfilter="idempresa"/>
                 </widget>
             </column>
             <column name="tax" titleurl="ListImpuesto" numcolumns="3" order="180">
@@ -114,6 +114,7 @@
                     <values title="last-purchase-price">last-price</values>
                     <values title="average-purchase-price">average-price</values>
                     <values title="actual-cost-price">actual-price</values>
+                    <values title="high-purchase-price">high-price</values>
                 </widget>
             </column>
             <column name="update-supplier-prices" numcolumns="3" order="110">

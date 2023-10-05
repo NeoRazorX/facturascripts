@@ -4,6 +4,6 @@
  * Class created by Core/Base/PluginManager
  * @author FacturaScripts <carlos@facturascripts.com>
  */
-class FiscalNumberValitator extends \FacturaScripts\Core\Lib\FiscalNumberValitator
+class FacturaProveedorRenumber extends \FacturaScripts\Core\Lib\FacturaProveedorRenumber
 {
 }

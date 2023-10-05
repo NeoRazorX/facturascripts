@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2020 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace FacturaScripts\Core\Lib\Export;
 
 use FacturaScripts\Core\Model\Base\BusinessDocument;
@@ -30,15 +31,10 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class MAILExport extends ParentClass
 {
-
-    /**
-     *
-     * @var array
-     */
+    /** @var array */
     protected $sendParams = [];
 
     /**
-     * 
      * @param BusinessDocument $model
      *
      * @return bool
@@ -46,39 +42,53 @@ class MAILExport extends ParentClass
     public function addBusinessDocPage($model): bool
     {
         $this->sendParams['modelClassName'] = $model->modelClassName();
-        $this->sendParams['modelCode'] = $model->primaryColumnValue();
+
+        if (false === array_key_exists('modelCode', $this->sendParams)) {
+            $this->sendParams['modelCode'] = $model->primaryColumnValue();
+        } elseif (false === array_key_exists('modelCodes', $this->sendParams)) {
+            $this->sendParams['modelCodes'] = $model->primaryColumnValue();
+        } else {
+            $this->sendParams['modelCodes'] .= ',' . $model->primaryColumnValue();
+        }
+
         return parent::addBusinessDocPage($model);
     }
 
     /**
-     * 
      * @param ModelClass $model
-     * @param array      $columns
-     * @param string     $title
+     * @param array $columns
+     * @param string $title
      *
      * @return bool
      */
     public function addModelPage($model, $columns, $title = ''): bool
     {
         $this->sendParams['modelClassName'] = $model->modelClassName();
-        $this->sendParams['modelCode'] = $model->primaryColumnValue();
+
+        if (false === array_key_exists('modelCode', $this->sendParams)) {
+            $this->sendParams['modelCode'] = $model->primaryColumnValue();
+        } elseif (false === array_key_exists('modelCodes', $this->sendParams)) {
+            $this->sendParams['modelCodes'] = $model->primaryColumnValue();
+        } else {
+            $this->sendParams['modelCodes'] .= ',' . $model->primaryColumnValue();
+        }
+
         return parent::addModelPage($model, $columns, $title);
     }
 
     /**
-     * 
      * @param Response $response
      */
     public function show(Response &$response)
     {
         $fileName = $this->getFileName() . '_mail_' . time() . '.pdf';
-        $filePath = \FS_FOLDER . '/MyFiles/' . $fileName;
-        if (false === \file_put_contents($filePath, $this->getDoc())) {
+        $filePath = FS_FOLDER . '/MyFiles/' . $fileName;
+        if (false === file_put_contents($filePath, $this->getDoc())) {
             $this->toolBox()->i18nLog()->error('folder-not-writable');
             return;
         }
 
         $this->sendParams['fileName'] = $fileName;
-        $response->headers->set('Refresh', '0; SendMail?' . \http_build_query($this->sendParams));
+        $response->headers->set('Refresh', '0; SendMail?' . http_build_query($this->sendParams));
     }
 }

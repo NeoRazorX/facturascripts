@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -28,7 +28,7 @@ use FacturaScripts\Core\Model\User;
 /**
  * Description of PurchasesFooterHTML
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
  */
 class PurchasesFooterHTML
@@ -102,12 +102,9 @@ class PurchasesFooterHTML
             . self::renderField($i18n, $model, 'total')
             . '</div>'
             . '<div class="form-row">'
-            . '<div class="col-auto">'
-            . self::renderField($i18n, $model, '_deleteBtn')
-            . '</div>'
-            . '<div class="col text-right">'
-            . self::renderField($i18n, $model, '_saveBtn')
-            . '</div>'
+            . '<div class="col">' . self::renderField($i18n, $model, '_deleteBtn') . '</div>'
+            . '<div class="col-auto">' . self::renderField($i18n, $model, '_undoBtn') . '</div>'
+            . '<div class="col-auto">' . self::renderField($i18n, $model, '_saveBtn') . '</div>'
             . '</div>'
             . '</div>';
     }
@@ -142,6 +139,9 @@ class PurchasesFooterHTML
 
             case '_subtotalNetoBtn':
                 return self::subtotalNetoBtn($i18n);
+
+            case '_undoBtn':
+                return self::undoBtn($i18n, $model);
 
             case 'dtopor1':
                 return self::dtopor1($i18n, $model, 'purchasesFormActionWait');

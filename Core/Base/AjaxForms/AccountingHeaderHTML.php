@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2021-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2021-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,12 +20,12 @@
 namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\Translator;
+use FacturaScripts\Core\DataSrc\Empresas;
 use FacturaScripts\Core\Lib\CodePatterns;
+use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\ConceptoPartida;
 use FacturaScripts\Dinamic\Model\Diario;
-use FacturaScripts\Dinamic\Model\Empresa;
 use FacturaScripts\Dinamic\Model\FacturaCliente;
 use FacturaScripts\Dinamic\Model\FacturaProveedor;
 
@@ -37,11 +37,6 @@ use FacturaScripts\Dinamic\Model\FacturaProveedor;
  */
 class AccountingHeaderHTML
 {
-
-    /**
-     * @param Asiento $model
-     * @param array $formData
-     */
     public static function apply(Asiento &$model, array $formData)
     {
         $model->idempresa = $formData['idempresa'] ?? $model->idempresa;
@@ -53,13 +48,6 @@ class AccountingHeaderHTML
         $model->operacion = !empty($formData['operacion']) ? $formData['operacion'] : null;
     }
 
-    /**
-     * Render the view header.
-     *
-     * @param Asiento $model
-     *
-     * @return string
-     */
     public static function render(Asiento $model): string
     {
         $i18n = new Translator();
@@ -75,14 +63,6 @@ class AccountingHeaderHTML
             . '</div></div><br/>';
     }
 
-    /**
-     * Render the canal field
-     *
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
     protected static function canal(Translator $i18n, Asiento $model): string
     {
         $attributes = $model->editable ? 'name="canal"' : 'disabled';
@@ -93,14 +73,6 @@ class AccountingHeaderHTML
             . '</div>';
     }
 
-    /**
-     * Render the concept field
-     *
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
     protected static function concepto(Translator $i18n, Asiento $model): string
     {
         $attributes = $model->editable ? 'name="concepto" autocomplete="off" required' : 'disabled';
@@ -112,14 +84,6 @@ class AccountingHeaderHTML
             . '</div>';
     }
 
-    /**
-     * Render the document field
-     *
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
     protected static function documento(Translator $i18n, Asiento $model): string
     {
         if (empty($model->documento)) {
@@ -160,14 +124,6 @@ class AccountingHeaderHTML
             . '</div></div>';
     }
 
-    /**
-     * Render the diario field
-     *
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
     protected static function diario(Translator $i18n, Asiento $model): string
     {
         $options = '<option value="">------</option>';
@@ -185,14 +141,6 @@ class AccountingHeaderHTML
             . '</div>';
     }
 
-    /**
-     * Render the date field
-     *
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
     protected static function fecha(Translator $i18n, Asiento $model): string
     {
         $attributes = $model->editable ? 'name="fecha" required' : 'disabled';
@@ -203,13 +151,6 @@ class AccountingHeaderHTML
             . '</div>';
     }
 
-    /**
-     * Returns the list of predefined concepts.
-     *
-     * @param Asiento $model
-     *
-     * @return string
-     */
     private static function getConceptItems(Asiento $model): string
     {
         $result = '';
@@ -240,42 +181,22 @@ class AccountingHeaderHTML
         return $result;
     }
 
-    /**
-     * Render the company id field
-     *
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
     protected static function idempresa(Translator $i18n, Asiento $model): string
     {
-        $company = new Empresa();
-        $companyList = $company->all([], ['nombre' => 'ASC']);
+        $companyList = Empresas::all();
         if (count($companyList) < 2) {
             return '<input type="hidden" name="idempresa" value=' . $model->idempresa . ' />';
         }
 
         return '<div class="col-sm-3 col-md-2">'
             . '<div class="form-group">' . $i18n->trans('company')
-            . '<div class="input-group">'
-            . '<div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-building fa-fw"></i></span></div>'
             . '<select name="idempresa" class="form-control" required>'
             . static::getItems($companyList, 'idempresa', 'nombre', $model->idempresa)
             . '</select>'
             . '</div>'
-            . '</div>'
             . '</div>';
     }
 
-    /**
-     * Render the operacion field
-     *
-     * @param Translator $i18n
-     * @param Asiento $model
-     *
-     * @return string
-     */
     protected static function operacion(Translator $i18n, Asiento $model): string
     {
         $attributes = $model->editable ? 'name="operacion"' : 'disabled';

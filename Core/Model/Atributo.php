@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2015-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2015-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,29 +19,46 @@
 
 namespace FacturaScripts\Core\Model;
 
+use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Model\Base\ModelClass;
+use FacturaScripts\Core\Model\Base\ModelTrait;
+use FacturaScripts\Core\Tools;
+use FacturaScripts\Dinamic\Model\AtributoValor as DinAtributoValor;
+
 /**
  * Un atributo para artículos.
  *
  * @author Carlos García Gómez <carlos@facturascripts.com>
  */
-class Atributo extends Base\ModelClass
+class Atributo extends ModelClass
 {
+    use ModelTrait;
 
-    use Base\ModelTrait;
-
-    /**
-     * Primary key.
-     *
-     * @var string
-     */
+    /** @var string */
     public $codatributo;
 
-    /**
-     * Name of the attribute.
-     *
-     * @var string
-     */
+    /** @var string */
     public $nombre;
+
+    /** @var int */
+    public $num_selector;
+
+    public function clear()
+    {
+        parent::clear();
+        $this->num_selector = 0;
+    }
+
+    /**
+     * @return AtributoValor[]
+     */
+    public function getValores(): array
+    {
+        $valor = new DinAtributoValor();
+        $where = [new DataBaseWhere('codatributo', $this->codatributo)];
+        $orderBy = ['orden' => 'ASC'];
+        return $valor->all($where, $orderBy, 0, 0);
+    }
 
     public static function primaryColumn(): string
     {
@@ -55,11 +72,12 @@ class Atributo extends Base\ModelClass
 
     public function test(): bool
     {
-        $this->codatributo = $this->toolBox()->utils()->noHtml($this->codatributo);
-        $this->nombre = $this->toolBox()->utils()->noHtml($this->nombre);
+        // escapamos el html
+        $this->codatributo = Tools::noHtml($this->codatributo);
+        $this->nombre = Tools::noHtml($this->nombre);
 
         if ($this->codatributo && 1 !== preg_match('/^[A-Z0-9_\+\.\-]{1,20}$/i', $this->codatributo)) {
-            $this->toolBox()->i18nLog()->error(
+            Tools::log()->error(
                 'invalid-alphanumeric-code',
                 ['%value%' => $this->codatributo, '%column%' => 'codatributo', '%min%' => '1', '%max%' => '20']
             );

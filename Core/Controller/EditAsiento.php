@@ -40,7 +40,6 @@ use FacturaScripts\Dinamic\Model\Partida;
  */
 class EditAsiento extends PanelController
 {
-
     use DocFilesTrait;
     use LogAuditTrait;
 
@@ -99,6 +98,7 @@ class EditAsiento extends PanelController
      */
     public function renderAccEntryForm(Asiento $model, array $lines): string
     {
+        AccountingLineHTML::calculateUnbalance($model, $lines);
         return '<div id="accEntryFormHeader">' . AccountingHeaderHTML::render($model) . '</div>'
             . '<div id="accEntryFormLines">' . AccountingLineHTML::render($lines, $model) . '</div>'
             . '<div id="accEntryFormFooter">' . AccountingFooterHTML::render($model) . '</div>'
@@ -228,6 +228,12 @@ class EditAsiento extends PanelController
 
     protected function exportAction()
     {
+        if (false === $this->views[$this->active]->settings['btnPrint']
+            || false === $this->permissions->allowExport) {
+            $this->toolBox()->i18nLog()->warning('no-print-permission');
+            return;
+        }
+
         $this->setTemplate(false);
         AsientoExport::show(
             $this->getModel(),
@@ -292,6 +298,12 @@ class EditAsiento extends PanelController
                 $action = $this->request->request->get('action', '');
                 if ('' === $action && false === $view->model->exists()) {
                     $this->toolBox()->i18nLog()->warning('record-not-found');
+                    break;
+                }
+
+                // unbalanced?
+                if (false === $view->model->isBalanced()) {
+                    $this->toolBox()->i18nLog()->warning('unbalanced-entry');
                     break;
                 }
 

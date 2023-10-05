@@ -154,7 +154,7 @@
     {% if idfile > 0 %}
         {% set attached = attachedFile(idfile) %}
         {% if attached.filename is not empty %}
-            {% set url = attached.url('download') %}
+            {% set url = attached.url('download-permanent') %}
         {% endif %}
     {% endif %}
     <img class="card-img-top" src="{{ asset(url) }}" alt="FacturaScripts"/>

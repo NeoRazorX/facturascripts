@@ -19,6 +19,8 @@
 
 namespace FacturaScripts\Core\Lib\ExtendedController;
 
+use FacturaScripts\Core\Tools;
+
 /**
  * Controller to manage the data editing
  *
@@ -30,7 +32,7 @@ abstract class EditController extends PanelController
     /**
      * Returns the class name of the model to use in the editView.
      */
-    abstract public function getModelClassName();
+    abstract public function getModelClassName(): string;
 
     /**
      * Pointer to the data model.
@@ -43,7 +45,7 @@ abstract class EditController extends PanelController
         return $this->views[$viewName]->model;
     }
 
-    public function getPageData()
+    public function getPageData(): array
     {
         $data = parent::getPageData();
         $data['showonmenu'] = false;
@@ -62,6 +64,45 @@ abstract class EditController extends PanelController
 
         $this->addEditView($viewName, $modelName, $title, $viewIcon);
         $this->setSettings($viewName, 'btnPrint', true);
+    }
+
+    protected function exportAction()
+    {
+        // comprobamos permisos
+        if (false === $this->views[$this->active]->settings['btnPrint'] ||
+            false === $this->permissions->allowExport) {
+            Tools::log()->warning('no-print-permission');
+            return;
+        }
+
+        $this->setTemplate(false);
+        $this->exportManager->newDoc(
+            $this->request->get('option', ''),
+            $this->title,
+            (int)$this->request->request->get('idformat', ''),
+            $this->request->request->get('langcode', '')
+        );
+
+        // recorremos las pestañas para ver qué imprimir
+        foreach ($this->views as $name => $selectedView) {
+            if (false === $selectedView->settings['active']) {
+                continue;
+            }
+
+            // si tenemos una pestaña activa, excluimos las demás
+            $activeTab = $this->request->get('activetab', '');
+            if (!empty($activeTab) && $activeTab !== $name) {
+                continue;
+            }
+
+            // mandamos imprimir
+            $codes = $this->request->request->get('code');
+            if (false === $selectedView->export($this->exportManager, $codes)) {
+                break;
+            }
+        }
+
+        $this->exportManager->show($this->response);
     }
 
     /**
@@ -92,7 +133,7 @@ abstract class EditController extends PanelController
                 // Data not found?
                 $action = $this->request->request->get('action', '');
                 if ('' === $action && !empty($code) && false === $view->model->exists()) {
-                    $this->toolBox()->i18nLog()->warning('record-not-found');
+                    Tools::log()->warning('record-not-found');
                     break;
                 }
 

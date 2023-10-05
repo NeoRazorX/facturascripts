@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,32 +35,18 @@ class CodeModel
     const MODEL_NAMESPACE = '\\FacturaScripts\\Dinamic\\Model\\';
     const SEARCH_LIMIT = 50;
 
-    /**
-     * It provides direct access to the database.
-     *
-     * @var DataBase
-     */
+    /** @var DataBase */
     protected static $dataBase;
 
-    /**
-     * Value of the code field of the model read.
-     *
-     * @var string
-     */
+    /** @var int */
+    protected static $limit;
+
+    /** @var string */
     public $code;
 
-    /**
-     * Value of the field description of the model read.
-     *
-     * @var string
-     */
+    /** @var string */
     public $description;
 
-    /**
-     * Constructor and class initializer.
-     *
-     * @param array $data
-     */
     public function __construct(array $data = [])
     {
         if (empty($data)) {
@@ -107,7 +93,7 @@ class CodeModel
 
         $sql = 'SELECT DISTINCT ' . $fieldCode . ' AS code, ' . $fieldDescription . ' AS description '
             . 'FROM ' . $tableName . DataBaseWhere::getSQLWhere($where) . ' ORDER BY 2 ASC';
-        foreach (self::$dataBase->selectLimit($sql, self::ALL_LIMIT) as $row) {
+        foreach (self::$dataBase->selectLimit($sql, self::getLimit()) as $row) {
             $result[] = new static($row);
         }
 
@@ -188,6 +174,11 @@ class CodeModel
         return empty($model->description) ? (string)$code : $model->description;
     }
 
+    public static function getLimit(): int
+    {
+        return self::$limit ?? self::ALL_LIMIT;
+    }
+
     /**
      * Load a CodeModel list (code and description) for the indicated table and search.
      *
@@ -211,6 +202,11 @@ class CodeModel
         $fields = $fieldCode . '|' . $fieldDescription;
         $where[] = new DataBaseWhere($fields, mb_strtolower($query, 'UTF8'), 'LIKE');
         return self::all($tableName, $fieldCode, $fieldDescription, false, $where);
+    }
+
+    public static function setLimit(int $newLimit): void
+    {
+        self::$limit = $newLimit;
     }
 
     /**

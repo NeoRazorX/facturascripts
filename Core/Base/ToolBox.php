@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2019-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2019-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\Base;
 
+use Exception;
 use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Dinamic\Lib\IPFilter;
 
@@ -29,7 +30,6 @@ use FacturaScripts\Dinamic\Lib\IPFilter;
  */
 class ToolBox
 {
-
     /**
      * @return AppSettings
      */
@@ -39,12 +39,11 @@ class ToolBox
     }
 
     /**
-     * @return Cache
      * @deprecated since version 2022.5
      */
-    public static function cache(): Cache
+    public static function cache()
     {
-        return new Cache();
+        throw new Exception('Deprecated method. Use FacturaScripts/Core/Cache instead.');
     }
 
     /**
@@ -63,11 +62,6 @@ class ToolBox
         return new FileManager();
     }
 
-    /**
-     * @param string $langcode
-     *
-     * @return Translator
-     */
     public static function i18n(string $langcode = ''): Translator
     {
         return new Translator($langcode);

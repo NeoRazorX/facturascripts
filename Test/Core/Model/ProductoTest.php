@@ -178,7 +178,7 @@ final class ProductoTest extends TestCase
         $product = $this->getTestProduct();
         $this->assertTrue($product->save(), 'product-cant-save');
         $variant = $product->getVariants()[0];
-        $variant->coste = 100;
+        $variant->coste = 66;
         $this->assertTrue($variant->save(), 'variant-cant-save');
 
         // creamos un proveedor
@@ -195,7 +195,7 @@ final class ProductoTest extends TestCase
 
         // recargamos la variante para comprobar que NO se ha actualizado el coste, ya que no hay política asignada
         $variant->loadFromCode($variant->primaryColumnValue());
-        $this->assertTrue($variant->coste == 100, 'variant-cost-should-not-change');
+        $this->assertEquals(66, $variant->coste, 'variant-cost-should-not-change');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -243,7 +243,57 @@ final class ProductoTest extends TestCase
 
         // recargamos la variante para comprobar que SI se ha actualizado el coste
         $variant->loadFromCode($variant->primaryColumnValue());
-        $this->assertTrue($variant->coste == 200, 'variant-cost-not-last');
+        $this->assertEquals(200, $variant->coste, 'variant-cost-not-last');
+
+        // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertTrue($supplier1->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($supplier1->delete(), 'supplier-cant-delete');
+        $this->assertTrue($supplier2->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($supplier2->delete(), 'supplier-cant-delete');
+    }
+
+    public function testCostPricePolicyHighPrice()
+    {
+        // asignamos la política de precio de coste precio más alto
+        $settings = new AppSettings();
+        $settings->set('default', 'costpricepolicy', 'high-price');
+
+        // creamos un producto con coste 50
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+        $variant = $product->getVariants()[0];
+        $variant->coste = 50;
+        $this->assertTrue($variant->save(), 'variant-cant-save');
+
+        // creamos el proveedor 1
+        $supplier1 = $this->getTestSupplier();
+        $this->assertTrue($supplier1->save(), 'supplier-1-cant-save');
+
+        // creamos un producto de proveedor con este proveedor y este producto
+        $supplierProduct1 = new ProductoProveedor();
+        $supplierProduct1->codproveedor = $supplier1->codproveedor;
+        $supplierProduct1->referencia = $product->referencia;
+        $supplierProduct1->idproducto = $product->idproducto;
+        $supplierProduct1->precio = 200;
+        $supplierProduct1->actualizado = date(ModelCore::DATETIME_STYLE, strtotime("- 1 days"));
+        $this->assertTrue($supplierProduct1->save(), 'supplier-product-1-cant-save');
+
+        // creamos el proveedor 2
+        $supplier2 = $this->getTestSupplier();
+        $this->assertTrue($supplier2->save(), 'supplier-2-cant-save');
+
+        // creamos un producto de proveedor con este proveedor y este producto
+        $supplierProduct2 = new ProductoProveedor();
+        $supplierProduct2->codproveedor = $supplier2->codproveedor;
+        $supplierProduct2->referencia = $product->referencia;
+        $supplierProduct2->idproducto = $product->idproducto;
+        $supplierProduct2->precio = 100;
+        $this->assertTrue($supplierProduct2->save(), 'supplier-product-2-cant-save');
+
+        // recargamos la variante para comprobar que SI se ha actualizado el coste
+        $variant->loadFromCode($variant->primaryColumnValue());
+        $this->assertEquals(200, $variant->coste, 'variant-cost-not-last');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -255,7 +305,7 @@ final class ProductoTest extends TestCase
 
     public function testCostPricePolicyAveragePrice()
     {
-        // asignamos la política de precio de coste último precio
+        // asignamos la política de precio de coste precio medio
         $settings = new AppSettings();
         $settings->set('default', 'costpricepolicy', 'average-price');
 
@@ -292,7 +342,7 @@ final class ProductoTest extends TestCase
 
         // recargamos la variante para comprobar que SI se ha actualizado el coste
         $variant->loadFromCode($variant->primaryColumnValue());
-        $this->assertTrue($variant->coste == 150, 'variant-cost-not-average');
+        $this->assertEquals(150, $variant->coste, 'variant-cost-not-average');
 
         // eliminamos
         $this->assertTrue($product->delete(), 'product-cant-delete');
@@ -394,6 +444,31 @@ final class ProductoTest extends TestCase
         $this->assertTrue($variant->save(), 'variant-cant-save-without-ref');
 
         // eliminamos
+        $this->assertTrue($product->delete(), 'product-cant-delete');
+        $this->assertFalse($variant->exists(), 'variant-still-exists');
+    }
+
+    public function testVarianteWithRef()
+    {
+        // creamos un producto
+        $product = $this->getTestProduct();
+        $this->assertTrue($product->save(), 'product-cant-save');
+
+        // añadimos una variante con referencia
+        $variant = new Variante();
+        $variant->idproducto = $product->idproducto;
+        $variant->referencia = '0' . $product->referencia;
+        $this->assertTrue($variant->save(), 'variant-cant-save-with-ref');
+
+        // eliminamos variante
+        $this->assertTrue($variant->delete(), 'variant-cant-delete');
+
+        // comprobamos que no podemos eliminar la única variante
+        $where = [ new DataBaseWhere('referencia', $product->referencia) ];
+        $this->assertTrue($variant->loadFromCode('', $where), 'cant-reload-variant');
+        $this->assertFalse($variant->delete(), 'can-delete-only-variant');
+
+        // eliminamos el producto
         $this->assertTrue($product->delete(), 'product-cant-delete');
         $this->assertFalse($variant->exists(), 'variant-still-exists');
     }

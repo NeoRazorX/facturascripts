@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2022-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -147,7 +147,59 @@ class ReciboProveedorTest extends TestCase
         $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
     }
 
-    public function testReciptsTotalGreaterThanInvoice()
+    public function testCreatePaidInvoiceOnPastDateWithTimeLimit()
+    {
+        // creamos una forma de pago pagada con vencimiento a 10 días
+        $payMethod = new FormaPago();
+        $payMethod->descripcion = 'test';
+        $payMethod->plazovencimiento = 10;
+        $payMethod->tipovencimiento = 'days';
+        $payMethod->pagado = true;
+        $this->assertTrue($payMethod->save(), 'cant-save-forma-pago');
+
+        // creamos un proveedor
+        $supplier = $this->getRandomSupplier();
+        $this->assertTrue($supplier->save(), 'cant-create-supplier');
+
+        // creamos una factura el día 1 de este mes
+        $date = date('01-m-Y');
+        $invoice = new FacturaProveedor();
+        $invoice->setSubject($supplier);
+        $invoice->setDate($date, $invoice->hora);
+        $invoice->codpago = $payMethod->codpago;
+        $this->assertTrue($invoice->save(), 'can-not-create-invoice');
+
+        // añadimos una línea a la factura
+        $newLine = $invoice->getNewLine();
+        $newLine->cantidad = 1;
+        $newLine->descripcion = 'test';
+        $newLine->pvpunitario = 150;
+        $this->assertTrue($newLine->save(), 'cant-add-invoice-line');
+
+        // recalculamos
+        $lines = $invoice->getLines();
+        $this->assertTrue(Calculator::calculate($invoice, $lines, true), 'cant-update-invoice');
+
+        // comprobamos que la factura está pagada
+        $this->assertTrue($invoice->pagada, 'invoice-unpaid');
+
+        // comprobamos que existe un recibo pagado para esta factura
+        $receipts = $invoice->getReceipts();
+        $this->assertCount(1, $receipts, 'bad-invoice-receipts-count');
+        $this->assertTrue($receipts[0]->pagado, 'unpaid-receipt');
+        $this->assertEquals($date, $receipts[0]->fecha, 'bad-receipt-date');
+        $vencimiento = date('11-m-Y'); // 10 días después del día 1
+        $this->assertEquals($vencimiento, $receipts[0]->vencimiento, 'bad-receipt-expiration');
+        $this->assertEquals($date, $receipts[0]->fechapago, 'bad-receipt-payment-date');
+
+        // eliminamos
+        $this->assertTrue($invoice->delete(), 'can-not-delete-invoice');
+        $this->assertTrue($supplier->getDefaultAddress()->delete(), 'contacto-cant-delete');
+        $this->assertTrue($supplier->delete(), 'can-not-delete-supplier');
+        $this->assertTrue($payMethod->delete(), 'can-not-delete-forma-pago');
+    }
+
+    public function testReceiptsTotalGreaterThanInvoice()
     {
         // creamos una factura
         $invoice = $this->getRandomSupplierInvoice();

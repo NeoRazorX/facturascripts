@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -25,7 +25,8 @@ use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Base\PluginManager;
+use FacturaScripts\Core\Plugins;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Accounting\AccountingPlanImport;
 use FacturaScripts\Dinamic\Lib\RegimenIVA;
 use FacturaScripts\Dinamic\Model;
@@ -58,7 +59,7 @@ class Wizard extends Controller
     {
         $list = [];
         foreach (RegimenIVA::all() as $key => $value) {
-            $list[$key] = self::toolBox()::i18n()->trans($value);
+            $list[$key] = Tools::lang()->trans($value);
         }
         return $list;
     }
@@ -95,7 +96,7 @@ class Wizard extends Controller
     public function privateCore(&$response, $user, $permissions)
     {
         parent::privateCore($response, $user, $permissions);
-        $this->appSettings = self::toolBox()::appSettings();
+        $this->appSettings = new AppSettings();
 
         $action = $this->request->get('action', '');
         switch ($action) {
@@ -128,7 +129,7 @@ class Wizard extends Controller
     {
         $role = new Model\Role();
         $role->codrole = 'employee';
-        $role->descripcion = $this->toolBox()->i18n()->trans('employee');
+        $role->descripcion = Tools::lang()->trans('employee');
         if ($role->exists()) {
             return;
         }
@@ -169,13 +170,13 @@ class Wizard extends Controller
 
             // add pages to the role
             if (false === $roleAccess->addPagesToRole($codrole, $pages)) {
-                throw new Exception($this->toolBox()->i18n()->trans('cancel-process'));
+                throw new Exception(Tools::lang()->trans('cancel-process'));
             }
 
             $this->dataBase->commit();
         } catch (Exception $exc) {
             $this->dataBase->rollback();
-            $this->toolBox()->log()->error($exc->getMessage());
+            Tools::log()->error($exc->getMessage());
             return;
         }
     }
@@ -267,7 +268,7 @@ class Wizard extends Controller
         $this->empresa->codpostal = $this->request->request->get('codpostal', '');
         $this->empresa->direccion = $this->request->request->get('direccion', '');
         $this->empresa->nombre = $this->request->request->get('empresa', '');
-        $this->empresa->nombrecorto = mb_substr($this->empresa->nombre, 0, 32);
+        $this->empresa->nombrecorto = Tools::textBreak($this->empresa->nombre, 32);
         $this->empresa->personafisica = (bool)$this->request->request->get('personafisica', '0');
         $this->empresa->provincia = $this->request->request->get('provincia', '');
         $this->empresa->telefono1 = $this->request->request->get('telefono1', '');
@@ -379,8 +380,8 @@ class Wizard extends Controller
     {
         // load all models
         $modelNames = [];
-        $modelsFolder = FS_FOLDER . DIRECTORY_SEPARATOR . 'Dinamic' . DIRECTORY_SEPARATOR . 'Model';
-        foreach ($this->toolBox()->files()->scanFolder($modelsFolder) as $fileName) {
+        $modelsFolder = Tools::folder('Dinamic', 'Model');
+        foreach (Tools::folderScan($modelsFolder) as $fileName) {
             if ('.php' === substr($fileName, -4)) {
                 $modelNames[] = substr($fileName, 0, -4);
             }
@@ -391,8 +392,7 @@ class Wizard extends Controller
         }
 
         // load controllers
-        $pluginManager = new PluginManager();
-        $pluginManager->deploy(true, true);
+        Plugins::deploy(true, true);
 
         // add the default role for employees
         $this->addDefaultRoleAccess();
