@@ -48,9 +48,13 @@ class SalesHeaderHTML
     /** @var SalesModInterface[] */
     private static $mods = [];
 
+    /** @var array */
+    private static $newFields = [];
+
     public static function addMod(SalesModInterface $mod)
     {
         self::$mods[] = $mod;
+        self::getNewFields();
     }
 
     public static function apply(SalesDocument &$model, array $formData, User $user)
@@ -168,6 +172,7 @@ class SalesHeaderHTML
             . '</div>'
             . '<div class="form-row align-items-end">'
             . self::renderField($i18n, $model, '_detail')
+            . self::renderNewHeaderFields($i18n, $model)
             . self::renderField($i18n, $model, '_parents')
             . self::renderField($i18n, $model, '_children')
             . self::renderField($i18n, $model, '_email')
@@ -379,7 +384,7 @@ class SalesHeaderHTML
             . self::renderField($i18n, $model, 'tasaconv')
             . self::renderField($i18n, $model, 'user')
             . self::renderField($i18n, $model, 'codagente')
-            . self::renderNewFields($i18n, $model)
+            . self::renderNewModalFields($i18n, $model)
             . '</div>'
             . '</div>'
             . '<div class="modal-footer">'
@@ -647,6 +652,94 @@ class SalesHeaderHTML
         // renderizamos los campos
         $html = '';
         foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
+    }
+
+    /**
+     * Cargamos los nuevos campos agrupandolos por la posición donde
+     * deben aparecer.
+     */
+    private static function getNewFields(): void
+    {
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newFields() as $field => $position) {
+                $positions = [
+                    SalesModInterface::HEADER_POSITION,
+                    SalesModInterface::MODAL_POSITION,
+                ];
+
+                // Este if es para conservar la compatibilidad con versiones anteriores
+                // donde solo se pasaba el nombre del campo sin la posición.
+                if (in_array($position, $positions)) {
+                    // $field => $position
+                    if (false === in_array($field, self::$newFields[$position] ?? [])) {
+                        self::$newFields[$position][] = $field;
+                    }
+                } else {
+                    // Al no pasar una posición la variable $field es la $key del array
+                    // y la variable $position es el nombre del campo.
+                    // $arrayKey => $position(field) -> 0 => field
+                    if (false === in_array($position, self::$newFields[SalesModInterface::MODAL_POSITION] ?? [])) {
+                        self::$newFields[SalesModInterface::MODAL_POSITION][] = $position;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Renderiza los campos dentro del Modal Detalles
+     * @param Translator $i18n
+     * @param SalesDocument $model
+     * @return string|null
+     */
+    private static function renderNewModalFields(Translator $i18n, SalesDocument $model): ?string
+    {
+        $fields = self::$newFields[SalesModInterface::MODAL_POSITION] ?? null;
+
+        if ($fields && count($fields) > 0) {
+            return self::renderNF($fields, $i18n, $model);
+        }
+
+        return null;
+    }
+
+    /**
+     * Renderiza los campos dentro del PurchasesHeader
+     * @param Translator $i18n
+     * @param SalesDocument $model
+     * @return string|null
+     */
+    private static function renderNewHeaderFields(Translator $i18n, SalesDocument $model): ?string
+    {
+        $fields = self::$newFields[SalesModInterface::HEADER_POSITION] ?? null;
+
+        if ($fields && count($fields) > 0) {
+            return self::renderNF($fields, $i18n, $model);
+        }
+
+        return null;
+    }
+
+    /**
+     * Renderiza los nuevos campos pasados en el array.
+     * @param array $fields
+     * @param Translator $i18n
+     * @param SalesDocument $model
+     * @return string
+     */
+    private static function renderNF(array $fields, Translator $i18n, SalesDocument $model): string
+    {
+        $html = '';
+        foreach ($fields as $field) {
             foreach (self::$mods as $mod) {
                 $fieldHtml = $mod->renderField($i18n, $model, $field);
                 if ($fieldHtml !== null) {
