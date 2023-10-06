@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Controller;
 
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Tools;
 
 /**
  * Controller to list the items in the Serie model
@@ -49,5 +50,11 @@ class ListSerie extends ListController
         $this->addOrderBy('ListSerie', ['descripcion'], 'description');
 
         $this->addFilterCheckbox('ListSerie', 'siniva', 'without-tax', 'siniva');
+		
+		$this->addFilterSelect('ListSerie', 'tipo', 'type', 'tipo', 
+		[
+			'R' => Tools::lang()->trans('rectifying'),
+			'S' => Tools::lang()->trans('simplified'),
+		]);
     }
 }
