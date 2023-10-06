@@ -191,7 +191,7 @@ trait CommonSalesPurchases
             . '</div>';
     }
 
-    protected static function column(Translator $i18n, BusinessDocument $model, string $colName, string $label, bool $autoHide = false, int $level = 99): string
+    protected static function column(Translator $i18n, BusinessDocument $model, string $colName, string $label, bool $autoHide = false, int $level = 0): string
     {
         if (false === self::checkLevel($level)) {
             return '';
