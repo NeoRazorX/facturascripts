@@ -25,6 +25,7 @@ use FacturaScripts\Core\DataSrc\Retenciones;
 use FacturaScripts\Core\Lib\InvoiceOperation;
 use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
+use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Ejercicio;
 use FacturaScripts\Core\Model\FacturaCliente;
 use FacturaScripts\Core\Model\Stock;
@@ -718,6 +719,11 @@ final class FacturaClienteTest extends TestCase
 
     public function testSetIntraCommunity(): void
     {
+        // comprobamos primero si el VIES funciona
+        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
+            $this->markTestSkipped('Vies service is not available');
+        }
+
         // establecemos la empresa en España con un cif español
         $company = Empresas::default();
         $company->codpais = 'ESP';

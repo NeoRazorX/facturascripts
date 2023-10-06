@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Cliente;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -184,7 +185,12 @@ final class ClienteTest extends TestCase
         $cliente->nombre = 'Test';
         $cliente->cifnif = '';
         $this->assertTrue($cliente->save());
-        $this->assertFalse($cliente->checkVies());
+
+        $check1 = $cliente->checkVies();
+        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
+            $this->markTestSkipped('Vies service is not available');
+        }
+        $this->assertFalse($check1);
 
         // asignamos dirección de Portugal
         $address = $cliente->getDefaultAddress();

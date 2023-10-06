@@ -21,6 +21,7 @@ namespace FacturaScripts\Test\Core\Model;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
+use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Contacto;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use FacturaScripts\Test\Traits\RandomDataTrait;
@@ -195,7 +196,12 @@ final class ContactoTest extends TestCase
         // creamos un contacto sin cif/nif
         $contact = new Contacto();
         $contact->nombre = 'Test';
-        $this->assertFalse($contact->checkVies());
+
+        $check1 = $contact->checkVies();
+        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
+            $this->markTestSkipped('Vies service is not available');
+        }
+        $this->assertFalse($check1);
 
         // asignamos un cif/nif incorrecto
         $contact->cifnif = '123456789';

@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Test\Core\Model;
 
+use FacturaScripts\Core\Lib\Vies;
 use FacturaScripts\Core\Model\Agente;
 use FacturaScripts\Test\Traits\LogErrorsTrait;
 use PHPUnit\Framework\TestCase;
@@ -91,15 +92,28 @@ final class AgenteTest extends TestCase
         $agent = new Agente();
         $agent->codagente = 'Test';
         $agent->nombre = 'Test Agent';
-        $this->assertFalse($agent->checkVies());
+
+        $check1 = $agent->checkVies();
+        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
+            $this->markTestSkipped('Vies service is not available');
+        }
+        $this->assertFalse($check1);
 
         // asignamos un nif incorrecto
         $agent->cifnif = '12345678A';
-        $this->assertFalse($agent->checkVies());
+        $check2 = $agent->checkVies();
+        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
+            $this->markTestSkipped('Vies service is not available');
+        }
+        $this->assertFalse($check2);
 
         // asignamos un cif correcto
         $agent->cifnif = 'B87533303';
-        $this->assertTrue($agent->checkVies());
+        $check3 = $agent->checkVies();
+        if (Vies::getLastError() == 'MS_MAX_CONCURRENT_REQ') {
+            $this->markTestSkipped('Vies service is not available');
+        }
+        $this->assertTrue($check3);
     }
 
     protected function tearDown(): void

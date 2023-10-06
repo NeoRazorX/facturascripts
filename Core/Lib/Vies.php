@@ -31,6 +31,8 @@ class Vies
 {
     const VIES_URL = "https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl";
 
+    private static $lastError = '';
+
     public static function check(string $cifnif, string $codiso): int
     {
         // quitamos caracteres especiales del cifnif
@@ -56,8 +58,15 @@ class Vies
         return static::getViesInfo($cifnif, $codiso);
     }
 
+    public static function getLastError(): string
+    {
+        return static::$lastError;
+    }
+
     private static function getViesInfo(string $vatNumber, string $codiso): int
     {
+        static::$lastError = '';
+
         try {
             $client = new SoapClient(self::VIES_URL, ['exceptions' => true]);
             $json = json_encode(
@@ -76,6 +85,7 @@ class Vies
             return 0;
         } catch (Exception $ex) {
             Tools::log('VatInfoFinder')->error($ex->getCode() . ' - ' . $ex->getMessage());
+            static::$lastError = $ex->getMessage();
             if ($ex->getMessage() == 'INVALID_INPUT') {
                 return 0;
             }
