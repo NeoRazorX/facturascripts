@@ -28,7 +28,7 @@ use FacturaScripts\Core\Model\User;
 /**
  * Description of SalesFooterHTML
  *
- * @author Carlos Garcia Gomez <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 class SalesFooterHTML
@@ -212,7 +212,7 @@ class SalesFooterHTML
                 return self::column($i18n, $model, 'total', 'total', true);
 
             case 'totalbeneficio':
-                return self::column($i18n, $model, 'totalbeneficio', 'total-benefit', true, AppSettings::get('default', 'levelbenefitsales', 0));
+                return self::column($i18n, $model, 'totalbeneficio', 'profits', true, AppSettings::get('default', 'levelbenefitsales', 0));
 
             case 'totalcoste':
                 return self::column($i18n, $model, 'totalcoste', 'total-cost', true, AppSettings::get('default', 'levelcostsales', 0));

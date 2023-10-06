@@ -119,8 +119,8 @@
         <column name="total-cost" display="none" order="340">
             <widget type="money" fieldname="totalcoste"/>
         </column>
-        <column name="total-benefit" display="none" order="350">
-            <widget type="money" fieldname="totalbeneficio" />
+        <column name="profits" display="none" order="350">
+            <widget type="money" fieldname="totalbeneficio"/>
         </column>
         <column name="net" display="none" order="360">
             <widget type="money" fieldname="neto"/>
