@@ -60,12 +60,12 @@ class Vies
 
     public static function getLastError(): string
     {
-        return static::$lastError;
+        return self::$lastError;
     }
 
     private static function getViesInfo(string $vatNumber, string $codiso): int
     {
-        static::$lastError = '';
+        self::$lastError = '';
 
         try {
             $client = new SoapClient(self::VIES_URL, ['exceptions' => true]);
@@ -85,7 +85,7 @@ class Vies
             return 0;
         } catch (Exception $ex) {
             Tools::log('VatInfoFinder')->error($ex->getCode() . ' - ' . $ex->getMessage());
-            static::$lastError = $ex->getMessage();
+            self::$lastError = $ex->getMessage();
             if ($ex->getMessage() == 'INVALID_INPUT') {
                 return 0;
             }
