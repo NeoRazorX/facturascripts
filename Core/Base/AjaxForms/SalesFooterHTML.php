@@ -100,6 +100,8 @@ class SalesFooterHTML
             . self::renderField($i18n, $model, 'totalrecargo')
             . self::renderField($i18n, $model, 'totalirpf')
             . self::renderField($i18n, $model, 'totalsuplidos')
+            . self::renderField($i18n, $model, 'totalcoste')
+            . self::renderField($i18n, $model, 'totalbeneficio')
             . self::renderField($i18n, $model, 'total')
             . '</div>'
             . '<div class="form-row">'
@@ -208,6 +210,12 @@ class SalesFooterHTML
 
             case 'total':
                 return self::column($i18n, $model, 'total', 'total', true);
+
+            case 'totalbeneficio':
+                return self::column($i18n, $model, 'totalbeneficio', 'total-benefit', true, AppSettings::get('default', 'levelbenefitsales', 0));
+
+            case 'totalcoste':
+                return self::column($i18n, $model, 'totalcoste', 'total-cost', true, AppSettings::get('default', 'levelcostsales', 0));
 
             case 'totalirpf':
                 return self::column($i18n, $model, 'totalirpf', 'irpf', true);
