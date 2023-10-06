@@ -35,9 +35,11 @@ interface PurchasesLineModInterface
 
     public function map(array $lines, PurchaseDocument $model): array;
 
-    public function newModalFields(): array;
+    public function newBtnFields(): array;
 
     public function newFields(): array;
+
+    public function newModalFields(): array;
 
     public function newTitles(): array;
 
