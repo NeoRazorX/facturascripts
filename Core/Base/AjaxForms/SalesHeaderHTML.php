@@ -661,6 +661,32 @@ class SalesHeaderHTML
         return $html;
     }
 
+    private static function renderNewFields(Translator $i18n, SalesDocument $model): string
+    {
+        // cargamos los nuevos campos
+        $newFields = [];
+        foreach (self::$mods as $mod) {
+            foreach ($mod->newFields() as $field) {
+                if (false === in_array($field, $newFields)) {
+                    $newFields[] = $field;
+                }
+            }
+        }
+
+        // renderizamos los campos
+        $html = '';
+        foreach ($newFields as $field) {
+            foreach (self::$mods as $mod) {
+                $fieldHtml = $mod->renderField($i18n, $model, $field);
+                if ($fieldHtml !== null) {
+                    $html .= $fieldHtml;
+                    break;
+                }
+            }
+        }
+        return $html;
+    }
+
     private static function renderNewModalFields(Translator $i18n, SalesDocument $model): string
     {
         // cargamos los nuevos campos
