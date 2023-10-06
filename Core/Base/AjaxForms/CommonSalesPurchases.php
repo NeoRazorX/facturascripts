@@ -35,7 +35,7 @@ use FacturaScripts\Dinamic\Model\EstadoDocumento;
 /**
  * Description of CommonSalesPurchases
  *
- * @author Carlos Garcia Gomez           <carlos@facturascripts.com>
+ * @author Carlos Garcia Gomez      <carlos@facturascripts.com>
  * @author Daniel Fernández Giménez <hola@danielfg.es>
  */
 trait CommonSalesPurchases
@@ -57,11 +57,7 @@ trait CommonSalesPurchases
         }
 
         // si el nivel es menor que el del usuario, devolvemos false
-        if ($level < $user->level) {
-            return false;
-        }
-
-        return true;
+        return $level <= $user->level;
     }
 
     protected static function cifnif(Translator $i18n, BusinessDocument $model): string
