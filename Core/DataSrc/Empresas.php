@@ -19,6 +19,7 @@
 
 namespace FacturaScripts\Core\DataSrc;
 
+use FacturaScripts\Core\App\AppSettings;
 use FacturaScripts\Dinamic\Model\CodeModel;
 use FacturaScripts\Dinamic\Model\Empresa;
 
@@ -52,6 +53,12 @@ final class Empresas implements DataSrcInterface
         }
 
         return CodeModel::array2codeModel($codes, $addEmpty);
+    }
+
+    public static function default(): Empresa
+    {
+        $idempresa = AppSettings::get('default', 'idempresa');
+        return self::get($idempresa);
     }
 
     /**

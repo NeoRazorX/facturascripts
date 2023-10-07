@@ -29,6 +29,7 @@ use FacturaScripts\Dinamic\Lib\RegimenIVA;
  *
  * @author Carlos García Gómez           <carlos@facturascripts.com>
  * @author Jose Antonio Cuello Principal <yopli2000@gmail.com>
+ * @author Daniel Fernández Giménez      <hola@danielfg.es>
  */
 class EditEmpresa extends EditController
 {
@@ -44,6 +45,17 @@ class EditEmpresa extends EditController
         $data['title'] = 'company';
         $data['icon'] = 'fas fa-building';
         return $data;
+    }
+
+    protected function checkViesAction(): bool
+    {
+        $model = $this->getModel();
+        if (false === $model->loadFromCode($this->request->get('code'))) {
+            return true;
+        }
+
+        $model->checkVies();
+        return true;
     }
 
     protected function createViews()
@@ -79,6 +91,17 @@ class EditEmpresa extends EditController
         $this->views[$viewName]->disableColumn('company');
     }
 
+    protected function execPreviousAction($action): bool
+    {
+        switch ($action) {
+            case 'check-vies':
+                return $this->checkViesAction();
+
+            default:
+                return parent::execPreviousAction($action);
+        }
+    }
+
     /**
      * Load view data procedure
      *
@@ -102,6 +125,15 @@ class EditEmpresa extends EditController
             case $mvn:
                 parent::loadData($viewName, $view);
                 $this->setCustomWidgetValues($view);
+                if ($view->model->exists()) {
+                    $this->addButton($viewName, [
+                        'action' => 'check-vies',
+                        'color' => 'info',
+                        'icon' => 'fas fa-check-double',
+                        'label' => 'check-vies',
+                        'type' => 'action'
+                    ]);
+                }
                 break;
 
             default:

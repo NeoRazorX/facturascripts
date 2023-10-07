@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,8 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\Contract\CalculatorModInterface;
+use FacturaScripts\Core\Lib\InvoiceOperation;
+use FacturaScripts\Core\Lib\ProductType;
 use FacturaScripts\Core\Lib\RegimenIVA;
 use FacturaScripts\Core\Model\Base\BusinessDocument;
 use FacturaScripts\Core\Model\Base\BusinessDocumentLine;
@@ -66,6 +68,11 @@ final class Calculator
         $doc->totalrecargo = $subtotals['totalrecargo'];
         $doc->totalsuplidos = $subtotals['totalsuplidos'];
 
+        // si tiene totalbeneficio, lo asignamos
+        if (property_exists($doc, 'totalbeneficio')) {
+            $doc->totalbeneficio = $subtotals['totalbeneficio'];
+        }
+
         // si tiene totalcoste, lo asignamos
         if (property_exists($doc, 'totalcoste')) {
             $doc->totalcoste = $subtotals['totalcoste'];
@@ -107,7 +114,10 @@ final class Calculator
             $pvpTotal = $line->pvptotal * (100 - $doc->dtopor1) / 100 * (100 - $doc->dtopor2) / 100;
             if (empty($pvpTotal)) {
                 continue;
-            } elseif ($line->suplido) {
+            }
+
+            // los suplidos no tienen IVA ni IRPF
+            if ($line->suplido) {
                 $subtotals['totalsuplidos'] += $pvpTotal;
                 continue;
             }
@@ -130,25 +140,33 @@ final class Calculator
                 ];
             }
 
+            // coste
+            $totalCoste = isset($line->coste) ? $line->cantidad * $line->coste : 0.0;
+            if (isset($line->coste)) {
+                $subtotals['totalcoste'] += $totalCoste;
+            }
+
+            // si es una venta de segunda mano, calculamos el beneficio y el IVA
+            if (self::applyUsedGoods($subtotals, $doc, $line, $ivaKey, $pvpTotal, $totalCoste)) {
+                continue;
+            }
+
+            // neto
             $subtotals['iva'][$ivaKey]['neto'] += $pvpTotal;
             $subtotals['iva'][$ivaKey]['netosindto'] += $line->pvptotal;
 
-            if ($line->iva > 0) {
+            // IVA
+            if ($line->iva > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
                 $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
                     $pvpTotal * $line->iva :
                     $pvpTotal * $line->iva / 100;
             }
 
             // recargo de equivalencia
-            if ($line->recargo > 0) {
+            if ($line->recargo > 0 && $doc->operacion != InvoiceOperation::INTRA_COMMUNITY) {
                 $subtotals['iva'][$ivaKey]['totalrecargo'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
                     $pvpTotal * $line->recargo :
                     $pvpTotal * $line->recargo / 100;
-            }
-
-            // coste
-            if (isset($line->coste)) {
-                $subtotals['totalcoste'] += $line->cantidad * $line->coste;
             }
         }
 
@@ -173,6 +191,9 @@ final class Calculator
         $subtotals['totaliva'] = round($subtotals['totaliva'], FS_NF0);
         $subtotals['totalrecargo'] = round($subtotals['totalrecargo'], FS_NF0);
         $subtotals['totalsuplidos'] = round($subtotals['totalsuplidos'], FS_NF0);
+
+        // calculamos el beneficio
+        $subtotals['totalbeneficio'] = round($subtotals['neto'] - $subtotals['totalcoste'], FS_NF0);
 
         // calculamos el total
         $subtotals['total'] = round($subtotals['neto'] + $subtotals['totalsuplidos'] + $subtotals['totaliva']
@@ -199,6 +220,7 @@ final class Calculator
     {
         $sinIva = $doc->getSerie()->siniva;
         $regimen = $doc->getSubject()->regimeniva ?? RegimenIVA::TAX_SYSTEM_GENERAL;
+        $company = $doc->getCompany();
 
         // cargamos las zonas de impuestos
         $taxZones = [];
@@ -216,6 +238,15 @@ final class Calculator
         }
 
         foreach ($lines as $line) {
+            // Si es una compra de bienes usados, no aplicamos impuestos
+            if ($doc->subjectColumn() === 'codproveedor'
+                && $company->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
+                && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
+                $line->codimpuesto = null;
+                $line->iva = $line->recargo = 0.0;
+                continue;
+            }
+
             // aplicamos las excepciones de impuestos
             foreach ($taxZones as $taxZone) {
                 if ($line->codimpuesto === $taxZone->codimpuesto) {
@@ -246,6 +277,45 @@ final class Calculator
                 break;
             }
         }
+    }
+
+    private static function applyUsedGoods(array &$subtotals, BusinessDocument $doc, BusinessDocumentLine $line, string $ivaKey, float $pvpTotal, float $totalCoste): bool
+    {
+        if ($doc->subjectColumn() === 'codcliente'
+            && $doc->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_USED_GOODS
+            && $line->getProducto()->tipo === ProductType::SECOND_HAND) {
+            // IVA 0%
+            $ivaKey0 = '0|0';
+            if (false === array_key_exists($ivaKey0, $subtotals['iva'])) {
+                $subtotals['iva'][$ivaKey0] = [
+                    'codimpuesto' => null,
+                    'iva' => 0.0,
+                    'neto' => 0.0,
+                    'netosindto' => 0.0,
+                    'recargo' => 0.0,
+                    'totaliva' => 0.0,
+                    'totalrecargo' => 0.0
+                ];
+            }
+            $subtotals['iva'][$ivaKey0]['neto'] += $totalCoste;
+            $subtotals['iva'][$ivaKey0]['netosindto'] += $totalCoste;
+
+            // si el beneficio es negativo, no hay IVA
+            $beneficio = $pvpTotal - $totalCoste;
+            if ($beneficio <= 0) {
+                return true;
+            }
+
+            // IVA seleccionado
+            $subtotals['iva'][$ivaKey]['neto'] += $beneficio;
+            $subtotals['iva'][$ivaKey]['netosindto'] += $beneficio;
+            $subtotals['iva'][$ivaKey]['totaliva'] += $line->getTax()->tipo === Impuesto::TYPE_FIXED_VALUE ?
+                $beneficio * $line->iva :
+                $beneficio * $line->iva / 100;
+            return true;
+        }
+
+        return false;
     }
 
     private static function calculateLine(BusinessDocument $doc, BusinessDocumentLine &$line): void

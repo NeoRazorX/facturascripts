@@ -64,6 +64,9 @@ class EditCuenta extends EditController
     {
         $this->addListView($viewName, 'Subcuenta', 'subaccounts');
         $this->views[$viewName]->addOrderBy(['codsubcuenta'], 'code', 1);
+        $this->views[$viewName]->addOrderBy(['descripcion'], 'description');
+        $this->views[$viewName]->addOrderBy(['debe'], 'debit');
+        $this->views[$viewName]->addOrderBy(['haber'], 'credit');
         $this->views[$viewName]->addOrderBy(['saldo'], 'balance');
         $this->views[$viewName]->addSearchFields(['codsubcuenta', 'descripcion']);
 

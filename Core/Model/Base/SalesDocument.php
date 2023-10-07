@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2013-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2013-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -38,7 +38,6 @@ use FacturaScripts\Dinamic\Model\Variante;
  */
 abstract class SalesDocument extends TransformerDocument
 {
-
     /**
      * Mailbox of the client.
      *
@@ -138,6 +137,13 @@ abstract class SalesDocument extends TransformerDocument
     public $provincia;
 
     /**
+     * sum total of the benefits of the lines.
+     *
+     * @var float
+     */
+    public $totalbeneficio;
+
+    /**
      * total sum of the costs of the lines.
      *
      * @var float
@@ -151,6 +157,7 @@ abstract class SalesDocument extends TransformerDocument
     {
         parent::clear();
         $this->direccion = '';
+        $this->totalbeneficio = 0.0;
         $this->totalcoste = 0.0;
 
         // select default currency
@@ -162,10 +169,10 @@ abstract class SalesDocument extends TransformerDocument
     {
         $country = new Pais();
         if ($country->loadFromCode($this->codpais)) {
-            return $this->toolBox()->utils()->fixHtml($country->nombre);
+            return $this->toolBox()->utils()->fixHtml($country->nombre) ?? '';
         }
 
-        return $this->codpais;
+        return $this->codpais ?? '';
     }
 
     public function delete()

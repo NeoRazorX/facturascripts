@@ -21,8 +21,8 @@ namespace FacturaScripts\Core\Base\AjaxForms;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\Base\ToolBox;
-use FacturaScripts\Core\Base\Translator;
 use FacturaScripts\Core\DataSrc\Impuestos;
+use FacturaScripts\Core\Translator;
 use FacturaScripts\Dinamic\Model\Asiento;
 use FacturaScripts\Dinamic\Model\Partida;
 use FacturaScripts\Dinamic\Model\Subcuenta;
@@ -231,7 +231,7 @@ class AccountingLineHTML
      * @param Asiento $model
      * @param Partida[] $lines
      */
-    private static function calculateUnbalance(Asiento &$model, array $lines)
+    public static function calculateUnbalance(Asiento &$model, array $lines)
     {
         $model->debe = 0.0;
         $model->haber = 0.0;

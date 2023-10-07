@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2014-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2014-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -202,12 +202,17 @@ class Asiento extends Base\ModelOnChangeClass
     /**
      * @return DinPartida
      */
-    public function getNewLine()
+    public function getNewLine(?Subcuenta $subcuenta = null): Partida
     {
         $partida = new DinPartida();
         $partida->concepto = $this->concepto;
         $partida->documento = $this->documento;
         $partida->idasiento = $this->primaryColumnValue();
+
+        if ($subcuenta) {
+            $partida->setAccount($subcuenta);
+        }
+
         return $partida;
     }
 

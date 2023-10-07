@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2018-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2018-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -22,7 +22,7 @@ namespace FacturaScripts\Core\Controller;
 use FacturaScripts\Core\Base\Controller;
 use FacturaScripts\Core\Base\ControllerPermissions;
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\Base\ModelCore;
+use FacturaScripts\Core\Tools;
 use FacturaScripts\Dinamic\Lib\Email\NewMail;
 use FacturaScripts\Dinamic\Model\Cliente;
 use FacturaScripts\Dinamic\Model\CodeModel;
@@ -101,6 +101,9 @@ class SendMail extends Controller
         if ($this->request->get('modelClassName') && $this->request->get('modelCode')) {
             $sendParams['modelClassName'] = $this->request->get('modelClassName');
             $sendParams['modelCode'] = $this->request->get('modelCode');
+            if ($this->request->get('modelCodes')) {
+                $sendParams['modelCodes'] = urldecode($this->request->get('modelCodes'));
+            }
         }
 
         return parent::url() . '?' . http_build_query($sendParams);
@@ -296,16 +299,16 @@ class SendMail extends Controller
             $this->newMail->addAttachment($file->getPathname(), $file->getClientOriginalName());
         }
 
-        if ($this->newMail->send()) {
-            $fileName = $this->request->get('fileName', '');
-            if (file_exists(FS_FOLDER . '/MyFiles/' . $fileName)) {
-                unlink(FS_FOLDER . '/MyFiles/' . $fileName);
-            }
-
-            return true;
+        if (false === $this->newMail->send()) {
+            return false;
         }
 
-        return false;
+        $fileName = $this->request->get('fileName', '');
+        if (file_exists(FS_FOLDER . '/MyFiles/' . $fileName)) {
+            unlink(FS_FOLDER . '/MyFiles/' . $fileName);
+        }
+
+        return true;
     }
 
     /**
@@ -364,24 +367,33 @@ class SendMail extends Controller
             return;
         }
 
+        // marcamos la fecha del envío del email
         $model = new $className();
         $modelCode = $this->request->get('modelCode');
         if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
-            $model->femail = date(ModelCore::DATE_STYLE);
+            $model->femail = Tools::date();
             if (false === $model->save()) {
                 $this->toolBox()->i18nLog()->error('record-save-error');
                 return;
             }
 
+            // si el sujeto no tiene email, le asignamos el del destinatario
             $subject = $model->getSubject();
-            if (!empty($subject->email)) {
-                return;
+            if (empty($subject->email)) {
+                foreach ($this->newMail->getToAddresses() as $email) {
+                    $subject->email = $email;
+                    $subject->save();
+                    break;
+                }
             }
+        }
 
-            foreach ($this->newMail->getToAddresses() as $email) {
-                $subject->email = $email;
-                $subject->save();
-                return;
+        // si hay más documentos, marcamos también la fecha de envío
+        $modelCodes = $this->request->get('modelCodes', '');
+        foreach (explode(',', $modelCodes) as $modelCode) {
+            if ($model->loadFromCode($modelCode) && property_exists($className, 'femail')) {
+                $model->femail = Tools::date();
+                $model->save();
             }
         }
     }

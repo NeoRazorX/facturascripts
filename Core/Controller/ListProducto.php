@@ -23,6 +23,10 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Core\DataSrc\Almacenes;
 use FacturaScripts\Core\DataSrc\Impuestos;
 use FacturaScripts\Core\Lib\ExtendedController\ListController;
+use FacturaScripts\Core\Lib\ProductType;
+use FacturaScripts\Core\Model\CodeModel;
+use FacturaScripts\Dinamic\Lib\RegimenIVA;
+use FacturaScripts\Dinamic\Model\Atributo;
 
 /**
  * Controller to list the items in the Producto model
@@ -61,7 +65,7 @@ class ListProducto extends ListController
         $this->addOrderBy($viewName, ['actualizado'], 'update-time');
         $this->addSearchFields($viewName, ['referencia', 'descripcion', 'observaciones']);
 
-        // filters
+        // filtros
         $i18n = $this->toolBox()->i18n();
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => $i18n->trans('only-active'), 'where' => [new DataBaseWhere('bloqueado', false)]],
@@ -76,11 +80,30 @@ class ListProducto extends ListController
         $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
         $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
 
-        $taxes = Impuestos::codeModel();
-        $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
+        $types = [['code' => '', 'description' => '------']];
+        foreach (ProductType::all() as $key => $value) {
+            $types[] = [
+                'code' => $key,
+                'description' => $this->toolBox()->i18n()->trans($value)
+            ];
+        }
+        $this->addFilterSelect($viewName, 'tipo', 'type', 'tipo', $types);
 
         $this->addFilterNumber($viewName, 'min-price', 'price', 'precio', '<=');
         $this->addFilterNumber($viewName, 'max-price', 'price', 'precio', '>=');
+
+        $taxes = Impuestos::codeModel();
+        $this->addFilterSelect($viewName, 'codimpuesto', 'tax', 'codimpuesto', $taxes);
+
+        $exceptions = [['code' => '', 'description' => '------']];
+        foreach (RegimenIVA::allExceptions() as $key => $value) {
+            $exceptions[] = [
+                'code' => $key,
+                'description' => $this->toolBox()->i18n()->trans($value)
+            ];
+        }
+        $this->addFilterSelect($viewName, 'excepcioniva', 'vat-exception', 'excepcioniva', $exceptions);
+
         $this->addFilterNumber($viewName, 'min-stock', 'stock', 'stockfis', '<=');
         $this->addFilterNumber($viewName, 'max-stock', 'stock', 'stockfis', '>=');
 
@@ -102,18 +125,31 @@ class ListProducto extends ListController
         $this->addOrderBy($viewName, ['productos.descripcion', 'variantes.referencia'], 'product');
         $this->addSearchFields($viewName, ['variantes.referencia', 'variantes.codbarras', 'productos.descripcion']);
 
-        // filters
-        $attributes = $this->codeModel->all('atributos_valores', 'id', 'descripcion');
-        $this->addFilterSelect($viewName, 'idatributovalor1', 'attribute-value-1', 'variantes.idatributovalor1', $attributes);
-        $this->addFilterSelect($viewName, 'idatributovalor2', 'attribute-value-2', 'variantes.idatributovalor2', $attributes);
-        $this->addFilterSelect($viewName, 'idatributovalor3', 'attribute-value-3', 'variantes.idatributovalor3', $attributes);
-        $this->addFilterSelect($viewName, 'idatributovalor4', 'attribute-value-4', 'variantes.idatributovalor4', $attributes);
+        // filtros
+        $manufacturers = $this->codeModel->all('fabricantes', 'codfabricante', 'nombre');
+        $this->addFilterSelect($viewName, 'codfabricante', 'manufacturer', 'codfabricante', $manufacturers);
+
+        $families = $this->codeModel->all('familias', 'codfamilia', 'descripcion');
+        $this->addFilterSelect($viewName, 'codfamilia', 'family', 'codfamilia', $families);
+
+        $attributes1 = $this->getAttributesForFilter(1);
+        $this->addFilterSelect($viewName, 'idatributovalor1', 'attribute-value-1', 'variantes.idatributovalor1', $attributes1);
+
+        $attributes2 = $this->getAttributesForFilter(2);
+        $this->addFilterSelect($viewName, 'idatributovalor2', 'attribute-value-2', 'variantes.idatributovalor2', $attributes2);
+
+        $attributes3 = $this->getAttributesForFilter(3);
+        $this->addFilterSelect($viewName, 'idatributovalor3', 'attribute-value-3', 'variantes.idatributovalor3', $attributes3);
+
+        $attributes4 = $this->getAttributesForFilter(4);
+        $this->addFilterSelect($viewName, 'idatributovalor4', 'attribute-value-4', 'variantes.idatributovalor4', $attributes4);
+
         $this->addFilterNumber($viewName, 'min-price', 'price', 'variantes.precio', '<=');
         $this->addFilterNumber($viewName, 'max-price', 'price', 'variantes.precio', '>=');
         $this->addFilterNumber($viewName, 'min-stock', 'stock', 'variantes.stockfis', '<=');
         $this->addFilterNumber($viewName, 'max-stock', 'stock', 'variantes.stockfis', '>=');
 
-        // disable buttons
+        // desactivamos los botones de nuevo y eliminar
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
     }
@@ -129,7 +165,7 @@ class ListProducto extends ListController
         $this->addOrderBy($viewName, ['productos.descripcion', 'stocks.referencia'], 'product');
         $this->addSearchFields($viewName, ['stocks.referencia', 'productos.descripcion']);
 
-        // filters
+        // filtros
         $warehouses = Almacenes::codeModel();
         $this->addFilterSelect($viewName, 'codalmacen', 'warehouse', 'stocks.codalmacen', $warehouses);
 
@@ -151,8 +187,46 @@ class ListProducto extends ListController
         $this->addFilterNumber($viewName, 'max-stock', 'quantity', 'cantidad', '>=');
         $this->addFilterNumber($viewName, 'min-stock', 'quantity', 'cantidad', '<=');
 
-        // disable buttons
+        // desactivamos los botones de nuevo y eliminar
         $this->setSettings($viewName, 'btnDelete', false);
         $this->setSettings($viewName, 'btnNew', false);
+    }
+
+    protected function getAttributesForFilter(int $num): array
+    {
+        $values = [];
+
+        // buscamos los atributos que usen el selector $num
+        $attributeModel = new Atributo();
+        $where = [new DataBaseWhere('num_selector', $num)];
+        foreach ($attributeModel->all($where) as $attribute) {
+            foreach ($attribute->getValores() as $value) {
+                $values[] = new CodeModel([
+                    'code' => $value->id,
+                    'description' => $value->descripcion,
+                ]);
+            }
+        }
+
+        // si no hay ninguno, buscamos los que tenga el selector 0
+        if (empty($values)) {
+            $where = [new DataBaseWhere('num_selector', 0)];
+            foreach ($attributeModel->all($where) as $attribute) {
+                foreach ($attribute->getValores() as $value) {
+                    $values[] = new CodeModel([
+                        'code' => $value->id,
+                        'description' => $value->descripcion,
+                    ]);
+                }
+            }
+        }
+
+        // añadimos el valor vacío al principio
+        array_unshift($values, new CodeModel([
+            'code' => '',
+            'description' => '------'
+        ]));
+
+        return $values;
     }
 }

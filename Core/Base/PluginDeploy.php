@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -20,6 +20,7 @@
 namespace FacturaScripts\Core\Base;
 
 use Exception;
+use FacturaScripts\Core\Translator as CoreTranslator;
 use SimpleXMLElement;
 
 /**
@@ -29,15 +30,10 @@ use SimpleXMLElement;
  */
 final class PluginDeploy
 {
-
-    /**
-     * @var array
-     */
+    /** @var array */
     private $enabledPlugins = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $fileList = [];
 
     /**
@@ -74,10 +70,8 @@ final class PluginDeploy
         }
 
         // reload translations
-        $i18n = ToolBox::i18n();
-        if (method_exists($i18n, 'reload')) {
-            $i18n::reload();
-        }
+        CoreTranslator::deploy();
+        CoreTranslator::reload();
     }
 
     /**
@@ -286,6 +280,10 @@ final class PluginDeploy
 
         // Merge XML files
         $xml = simplexml_load_file($originPath);
+        if (false === $xml) {
+            return;
+        }
+
         foreach ($extensions as $extension) {
             $xmlExtension = simplexml_load_file($extension);
             $this->mergeXMLDocs($xml, $xmlExtension);

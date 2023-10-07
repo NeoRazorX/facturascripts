@@ -1,6 +1,23 @@
 <?php
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2023 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-namespace Lib\Email;
+namespace FacturaScripts\Test\Core\Lib\Email;
 
 use FacturaScripts\Core\Base\DataBase;
 use FacturaScripts\Core\Base\ToolBox;
@@ -62,26 +79,6 @@ class MailNotifierTest extends TestCase
 
         self::$notification->enabled = true;
         self::$notification->save();
-    }
-
-    public function testPuedeEnviarNotificacionesPorEmail()
-    {
-        $this->markTestSkipped('Aún no es posible testear el envio de Correos. Hay que crear Mock, IOC, ...');
-
-        $params = [];
-        $adjuntos = [
-            FS_FOLDER . '/Test/__files/' . 'xss_img_src_onerror_alert(123).jpeg',
-        ];
-
-        $response = MailNotifier::send(
-            'sendmail-EmailTest',
-            'test@test.com',
-            'Test',
-            $params,
-            $adjuntos
-        );
-
-        $this->assertTrue($response);
     }
 
     public function testNoPuedeEnviarEmailSiNoEstaConfigurado()

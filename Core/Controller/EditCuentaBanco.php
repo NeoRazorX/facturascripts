@@ -78,8 +78,12 @@ class EditCuentaBanco extends EditController
     {
         switch ($viewName) {
             case 'ListSubcuenta':
+                $codejercicios = implode(',', $this->getExerciseOfCompany());
                 $codsubcuenta = $this->getViewModelValue($this->getMainViewName(), 'codsubcuenta');
-                $where = [new DataBaseWhere('codsubcuenta', $codsubcuenta)];
+                $where = [
+                    new DataBaseWhere('codejercicio', $codejercicios, 'IN'),
+                    new DataBaseWhere('codsubcuenta', $codsubcuenta),
+                ];
                 $codsubcuenta2 = $this->getViewModelValue($this->getMainViewName(), 'codsubcuentagasto');
                 if ($codsubcuenta2 && $codsubcuenta2 != $codsubcuenta) {
                     $where[] = new DataBaseWhere('codsubcuenta', $codsubcuenta2, '=', 'OR');
@@ -91,5 +95,22 @@ class EditCuentaBanco extends EditController
                 parent::loadData($viewName, $view);
                 break;
         }
+    }
+
+    /**
+     * Returns the list of exercises of the selected company.
+     * 
+     * @return array
+     */
+    private function getExerciseOfCompany(): array
+    {
+        $result = [];
+        $where = [
+            new DataBaseWhere('idempresa', $this->getViewModelValue($this->getMainViewName(),'idempresa'))
+        ];
+        foreach ($this->codeModel->all('ejercicios', 'codejercicio', 'codejercicio', false, $where) as $row) {
+            $result[] = $row->code;
+        }
+        return $result;
     }
 }

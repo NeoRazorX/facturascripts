@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2017-2022 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2017-2023 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -35,7 +35,6 @@ use FacturaScripts\Dinamic\Lib\SupplierRiskTools;
  */
 class EditProveedor extends ComercialContactController
 {
-
     /**
      * Returns the sum of the customer's total delivery notes.
      *
@@ -83,6 +82,9 @@ class EditProveedor extends ComercialContactController
     protected function createDocumentView(string $viewName, string $model, string $label)
     {
         $this->createSupplierListView($viewName, $model, $label);
+
+        // botones
+        $this->setSettings($viewName, 'btnPrint', true);
         $this->addButtonGroupDocument($viewName);
         $this->addButtonApproveDocument($viewName);
     }
@@ -90,6 +92,9 @@ class EditProveedor extends ComercialContactController
     protected function createInvoiceView(string $viewName)
     {
         $this->createSupplierListView($viewName, 'FacturaProveedor', 'invoices');
+
+        // botones
+        $this->setSettings($viewName, 'btnPrint', true);
         $this->addButtonLockInvoice($viewName);
     }
 
@@ -188,7 +193,8 @@ class EditProveedor extends ComercialContactController
      */
     protected function loadData($viewName, $view)
     {
-        $codproveedor = $this->getViewModelValue('EditProveedor', 'codproveedor');
+        $mainViewName = $this->getMainViewName();
+        $codproveedor = $this->getViewModelValue($mainViewName, 'codproveedor');
         $where = [new DataBaseWhere('codproveedor', $codproveedor)];
 
         switch ($viewName) {
@@ -200,8 +206,12 @@ class EditProveedor extends ComercialContactController
                 $view->loadData('', $where, ['idcontacto' => 'DESC']);
                 break;
 
-            case 'ListAlbaranProveedor':
             case 'ListFacturaProveedor':
+                $view->loadData('', $where);
+                $this->addButtonGenerateAccountingInvoices($viewName, $codproveedor);
+                break;
+
+            case 'ListAlbaranProveedor':
             case 'ListPedidoProveedor':
             case 'ListPresupuestoProveedor':
             case 'ListProductoProveedor':
@@ -215,9 +225,30 @@ class EditProveedor extends ComercialContactController
                 $view->loadData('', $where);
                 break;
 
+            case $mainViewName:
+                parent::loadData($viewName, $view);
+                $this->loadLanguageValues($viewName);
+                break;
+
             default:
                 parent::loadData($viewName, $view);
                 break;
+        }
+    }
+
+    /**
+     * Load the available language values from translator.
+     */
+    protected function loadLanguageValues(string $viewName)
+    {
+        $columnLangCode = $this->views[$viewName]->columnForName('language');
+        if ($columnLangCode && $columnLangCode->widget->getType() === 'select') {
+            $langs = [];
+            foreach ($this->toolBox()->i18n()->getAvailableLanguages() as $key => $value) {
+                $langs[] = ['value' => $key, 'title' => $value];
+            }
+
+            $columnLangCode->widget->setValuesFromArray($langs, false, true);
         }
     }
 

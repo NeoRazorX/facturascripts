@@ -69,6 +69,7 @@ class PartidaAsiento extends JoinModel
     {
         return [
             'baseimponible' => 'partidas.baseimponible',
+            'canal' => 'asientos.canal',
             'concepto' => 'partidas.concepto',
             'debe' => 'partidas.debe',
             'fecha' => 'asientos.fecha',

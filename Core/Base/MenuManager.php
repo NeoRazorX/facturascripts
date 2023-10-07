@@ -20,11 +20,12 @@
 namespace FacturaScripts\Core\Base;
 
 use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
-use FacturaScripts\Core\Model\User;
+use FacturaScripts\Core\Translator as CoreTranslator;
 use FacturaScripts\Dinamic\Lib\MenuItem;
 use FacturaScripts\Dinamic\Model\Page;
 use FacturaScripts\Dinamic\Model\RoleAccess;
 use FacturaScripts\Dinamic\Model\RoleUser;
+use FacturaScripts\Dinamic\Model\User;
 
 /**
  * Manage the use of the Facturascripts menu.
@@ -229,7 +230,7 @@ class MenuManager
         $menuValue = null;
         $submenuValue = null;
         $menuItem = null;
-        $i18n = new Translator();
+        $i18n = new CoreTranslator();
 
         // We load the list of pages for the user
         $pages = $this->loadPages();

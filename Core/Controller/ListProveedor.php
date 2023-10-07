@@ -57,7 +57,7 @@ class ListProveedor extends ListController
     {
         $this->addView($viewName, 'Contacto', 'addresses-and-contacts', 'fas fa-address-book');
         $this->addSearchFields($viewName, [
-            'apellidos', 'codpostal', 'descripcion', 'direccion', 'email', 'empresa',
+            'apartado', 'apellidos', 'codpostal', 'descripcion', 'direccion', 'email', 'empresa',
             'nombre', 'observaciones', 'telefono1', 'telefono2'
         ]);
         $this->addOrderBy($viewName, ['descripcion'], 'description');
@@ -65,7 +65,7 @@ class ListProveedor extends ListController
         $this->addOrderBy($viewName, ['nombre'], 'name');
         $this->addOrderBy($viewName, ['fechaalta'], 'creation-date', 2);
 
-        // filters
+        // filtros
         $values = [
             [
                 'label' => Tools::lang()->trans('suppliers'),
@@ -89,23 +89,27 @@ class ListProveedor extends ListController
         $cities = $this->codeModel->all('contactos', 'ciudad', 'ciudad');
         $this->addFilterSelect($viewName, 'ciudad', 'city', 'ciudad', $cities);
 
-        $this->addFilterCheckbox($viewName, 'verificado', 'verified', 'verificado');
-        $this->addFilterCheckbox($viewName, 'admitemarketing', 'allow-marketing', 'admitemarketing');
+        $this->addFilterAutocomplete($viewName, 'codpostal', 'zip-code', 'codpostal', 'contactos', 'codpostal');
 
-        // disable mega-search
+        $this->addFilterCheckbox($viewName, 'verificado', 'verified', 'verificado');
+
+        // desactivamos el mega-search
         $this->setSettings($viewName, 'megasearch', false);
     }
 
     protected function createViewSuppliers(string $viewName = 'ListProveedor')
     {
         $this->addView($viewName, 'Proveedor', 'suppliers', 'fas fa-users');
-        $this->addSearchFields($viewName, ['cifnif', 'codproveedor', 'email', 'nombre', 'observaciones', 'razonsocial', 'telefono1', 'telefono2']);
         $this->addOrderBy($viewName, ['codproveedor'], 'code');
         $this->addOrderBy($viewName, ['cifnif'], 'fiscal-number');
         $this->addOrderBy($viewName, ['LOWER(nombre)'], 'name', 1);
         $this->addOrderBy($viewName, ['fechaalta'], 'creation-date');
+        $this->addSearchFields($viewName, [
+            'cifnif', 'codproveedor', 'codsubcuenta', 'email', 'nombre', 'observaciones', 'razonsocial',
+            'telefono1', 'telefono2'
+        ]);
 
-        // filters
+        // filtros
         $this->addFilterSelectWhere($viewName, 'status', [
             ['label' => Tools::lang()->trans('only-active'), 'where' => [new DataBaseWhere('debaja', false)]],
             ['label' => Tools::lang()->trans('only-suspended'), 'where' => [new DataBaseWhere('debaja', true)]],
@@ -116,6 +120,9 @@ class ListProveedor extends ListController
             ['label' => Tools::lang()->trans('is-creditor'), 'where' => [new DataBaseWhere('acreedor', true)]],
             ['label' => Tools::lang()->trans('supplier'), 'where' => [new DataBaseWhere('acreedor', false)]],
         ]);
+
+        $fiscalIds = $this->codeModel->all('proveedores', 'tipoidfiscal', 'tipoidfiscal');
+        $this->addFilterSelect($viewName, 'tipoidfiscal', 'fiscal-id', 'tipoidfiscal', $fiscalIds);
 
         $this->addFilterSelect($viewName, 'codserie', 'series', 'codserie', Series::codeModel());
         $this->addFilterSelect($viewName, 'codretencion', 'retentions', 'codretencion', Retenciones::codeModel());

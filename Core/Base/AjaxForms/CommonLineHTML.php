@@ -127,6 +127,28 @@ trait CommonLineHTML
             . '</div>';
     }
 
+    private static function excepcioniva(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $jsFunc): string
+    {
+        $attributes = $model->editable ?
+            'name="excepcioniva_' . $idlinea . '" onchange="return ' . $jsFunc . '(\'recalculate-line\', \'0\');"' :
+            'disabled=""';
+
+        $options = '<option value="" selected>------</option>';
+        $product = $line->getProducto();
+        $excepcionIva = empty($line->idlinea) && empty($line->{$field}) ? $product->{$field} : $line->{$field};
+
+        foreach (RegimenIVA::allExceptions() as $key => $value) {
+            $selected = $excepcionIva === $key ? 'selected' : '';
+            $options .= '<option value="' . $key . '" ' . $selected . '>' . $i18n->trans($value) . '</option>';
+        }
+
+        return '<div class="col-6">'
+            . '<div class="mb-2">' . $i18n->trans('vat-exception')
+            . '<select ' . $attributes . ' class="form-control">' . $options . '</select>'
+            . '</div>'
+            . '</div>';
+    }
+
     private static function genericBool(Translator $i18n, string $idlinea, BusinessDocumentLine $line, TransformerDocument $model, string $field, string $label): string
     {
         $attributes = $model->editable ? 'name="' . $field . '_' . $idlinea . '"' : 'disabled=""';
@@ -196,10 +218,11 @@ trait CommonLineHTML
         }
 
         // solamente se puede cambiar el recargo si el documento es editable,
-        // el sujeto tiene régimen de recargo, la serie tiene impuestos
-        // y la línea no tiene suplido
-        $editable = $model->editable && self::$regimeniva === RegimenIVA::TAX_SYSTEM_SURCHARGE
-            && false === Series::get($model->codserie)->siniva && false === $line->suplido;
+        // la línea no es un suplido, la serie no es sin IVA y el régimen de IVA es recargo de equivalencia
+        $editable = $model->editable
+            && false === $line->suplido
+            && false === Series::get($model->codserie)->siniva
+            && (self::$regimeniva === RegimenIVA::TAX_SYSTEM_SURCHARGE || $model->getCompany()->regimeniva === RegimenIVA::TAX_SYSTEM_SURCHARGE);
 
         $attributes = $editable ?
             'name="recargo_' . $idlinea . '" min="0" max="100" step="1" onkeyup="return ' . $jsFunc . '(\'recalculate-line\', \'0\', event);"' :
