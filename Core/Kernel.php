@@ -104,11 +104,11 @@ final class Kernel
         // cargamos algunas constantes para dar soporte a versiones antiguas
         $constants = [
             'FS_CODPAIS' => ['property' => 'codpais', 'default' => 'ESP'],
+            'FS_CURRENCY_POS' => ['property' => 'currency_position', 'default' => 'right'],
+            'FS_ITEM_LIMIT' => ['property' => 'item_limit', 'default' => 50],
             'FS_NF0' => ['property' => 'decimals', 'default' => 2],
             'FS_NF1' => ['property' => 'decimal_separator', 'default' => ','],
             'FS_NF2' => ['property' => 'thousands_separator', 'default' => ' '],
-            'FS_CURRENCY_POS' => ['property' => 'currency_position', 'default' => 'right'],
-            'FS_ITEM_LIMIT' => ['property' => 'item_limit', 'default' => 50],
         ];
         foreach ($constants as $key => $value) {
             if (!defined($key)) {
@@ -118,7 +118,7 @@ final class Kernel
 
         // cargamos el idioma almacenado en la cookie o el predeterminado
         $lang = $_COOKIE['fsLang'] ?? Tools::config('lang', 'es_ES');
-        Tools::lang()->setDefaultLang($lang);
+        Translator::setDefaultLang($lang);
 
         self::stopTimer('kernel::init');
     }
