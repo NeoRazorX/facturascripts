@@ -171,15 +171,27 @@ trait CommonSalesPurchases
 
     protected static function codserie(Translator $i18n, BusinessDocument $model, string $jsFunc): string
     {
+        // es una factura rectificativa?
+        $rectificativa = property_exists($model, 'idfacturarect') && $model->idfacturarect;
+
         $options = [];
         foreach (Series::all() as $row) {
-            if ($row->tipo === 'R') {
+            // es la serie seleccionada
+            if ($row->codserie === $model->codserie) {
+                $options[] = '<option value="' . $row->codserie . '" selected>' . $row->descripcion . '</option>';
                 continue;
             }
 
-            $options[] = ($row->codserie === $model->codserie) ?
-                '<option value="' . $row->codserie . '" selected>' . $row->descripcion . '</option>' :
-                '<option value="' . $row->codserie . '">' . $row->descripcion . '</option>';
+            // si la serie es rectificativa y la factura también, la añadimos
+            if ($rectificativa && $row->tipo === 'R') {
+                $options[] = '<option value="' . $row->codserie . '">' . $row->descripcion . '</option>';
+                continue;
+            }
+
+            // si la serie no es rectificativa y la factura tampoco, la añadimos
+            if (false === $rectificativa && $row->tipo !== 'R') {
+                $options[] = '<option value="' . $row->codserie . '">' . $row->descripcion . '</option>';
+            }
         }
 
         $attributes = $model->editable ?
