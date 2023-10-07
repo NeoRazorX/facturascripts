@@ -24,6 +24,7 @@ use FacturaScripts\Core\Base\DataBase\DataBaseWhere;
 use FacturaScripts\Dinamic\Model\EmailNotification;
 use FacturaScripts\Dinamic\Model\EstadoDocumento;
 use FacturaScripts\Dinamic\Model\LogMessage;
+use FacturaScripts\Dinamic\Model\Serie;
 use ParseCsv\Csv;
 
 /**
@@ -33,6 +34,7 @@ use ParseCsv\Csv;
  */
 final class Migrations
 {
+    /** @var DataBase */
     private static $database;
 
     public static function run(): void
@@ -92,9 +94,9 @@ final class Migrations
         return self::$database;
     }
 
+    // version 2022.09, fecha 05-06-2022
     private static function fixAccountingEntries(): void
     {
-        // version 2022.09, fecha 05-06-2022
         // si no existe la tabla 'partidas', terminamos
         if (false === self::db()->tableExists('partidas')) {
             return;
@@ -115,9 +117,9 @@ final class Migrations
         }
     }
 
+    // version 2022.09, fecha 05-06-2022
     private static function fixAgents(): void
     {
-        // version 2022.09, fecha 05-06-2022
         $table = 'agentes';
         if (self::db()->tableExists($table)) {
             $sqlUpdate = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;";
@@ -125,9 +127,9 @@ final class Migrations
         }
     }
 
+    // version 2022.09, fecha 05-06-2022
     private static function fixClients(): void
     {
-        // version 2022.09, fecha 05-06-2022
         $table = 'clientes';
         if (self::db()->tableExists($table)) {
             $sqlUpdate = "UPDATE " . $table . " SET debaja = false WHERE debaja IS NULL;"
@@ -136,9 +138,9 @@ final class Migrations
         }
     }
 
+    // version 2022.09, fecha 05-06-2022
     private static function fixContacts(): void
     {
-        // version 2022.09, fecha 05-06-2022
         $table = 'contactos';
         if (self::db()->tableExists($table)) {
             $sqlUpdate = "UPDATE " . $table . " SET aceptaprivacidad = false WHERE aceptaprivacidad IS NULL;"
@@ -150,9 +152,9 @@ final class Migrations
         }
     }
 
+    // version 2022.09, fecha 05-06-2022
     private static function fixInvoiceLines(): void
     {
-        // version 2022.09, fecha 05-06-2022
         $tables = ['lineasfacturascli', 'lineasfacturasprov'];
         foreach ($tables as $table) {
             if (self::db()->tableExists($table)) {
@@ -162,20 +164,25 @@ final class Migrations
         }
     }
 
+    // version 2023.06, fecha 07-10-2023
     private static function fixSeries(): void
     {
+        // forzamos la comprobación de la tabla series
+        new Serie();
+
         // actualizamos con el tipo R la serie marcada como rectificativa en el panel de control
         $serieRectifying = AppSettings::get('default', 'codserierec', '');
         if (empty($serieRectifying)) {
             return;
         }
+
         $sqlUpdate = "UPDATE series SET tipo = 'R' WHERE codserie = " . self::db()->var2str($serieRectifying) . ";";
         self::db()->exec($sqlUpdate);
     }
 
+    // version 2022.09, fecha 05-06-2022
     private static function fixSuppliers(): void
     {
-        // version 2022.09, fecha 05-06-2022
         $table = 'proveedores';
         if (self::db()->tableExists($table)) {
             $sqlUpdate = "UPDATE " . $table . " SET acreedor = false WHERE acreedor IS NULL;"
@@ -185,9 +192,9 @@ final class Migrations
         }
     }
 
+    // version 2022.06, fecha 05-05-2022
     private static function unlockNullProducts(): void
     {
-        // version 2022.06, fecha 05-05-2022
         if (self::db()->tableExists('productos')) {
             $sql = 'UPDATE productos SET bloqueado = false WHERE bloqueado IS NULL;';
             self::db()->exec($sql);
@@ -219,9 +226,9 @@ final class Migrations
         }
     }
 
+    // version 2021.81, fecha 01-02-2022
     private static function updateInvoiceStatus(): void
     {
-        // version 2021.81, fecha 01-02-2022
         $status = new EstadoDocumento();
         if ($status->loadFromCode('10') && $status->nombre === 'Nueva') {
             // unlock
